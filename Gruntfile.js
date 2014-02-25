@@ -80,7 +80,7 @@ module.exports = function(grunt) {
           report: 'min'
         },
         files: {
-          'dist/foo': ['./dist/src/**/*.css', '!./dist/src/**/*.min.css'],
+          'dist/foo': ['./dist/src/**/*.css', '!./dist/src/**/*.min.css']
         }
       },
       test: {
@@ -102,15 +102,15 @@ module.exports = function(grunt) {
     // only for the express task (our webserver)
     env: {
       options: {
-        API_ENDPOINT: 'http://adswhy:9000/solr/select',
+        API_ENDPOINT: 'http://adswhy:9000/solr/select'
       },
       dev: {
-        HOMEDIR: 'src',
+        HOMEDIR: 'src'
         //DEBUG: 'express:*'
       },
       prod: {
-        HOMEDIR: 'dist',
-      },
+        HOMEDIR: 'dist'
+      }
     },
     
     // start a development webserver 
@@ -124,13 +124,13 @@ module.exports = function(grunt) {
       dev: {
         options: {
           port: 8000,
-          script: 'server.js',
+          script: 'server.js'
         }
       },
       prod: {
         options: {
           port: 8001,
-          script: 'server.js',
+          script: 'server.js'
         }
       }
     },
@@ -192,60 +192,13 @@ module.exports = function(grunt) {
       }
     },
 
-    // Unit testing is provided by Karma.  Change the two commented locations
-    // below to either: mocha, jasmine, or qunit.
+    // Unit testing is provided by Karma.
     karma: {
-      options: {
-        basePath: process.cwd(),
-        singleRun: true,
-        captureTimeout: 7000,
-        autoWatch: true,
-
-        reporters: ['progress', 'coverage'],
-        browsers: ['PhantomJS'],
-
-        // Change this to the framework you want to use.
-        frameworks: ['mocha'],
-
-        plugins: [
-          'karma-jasmine',
-          'karma-mocha',
-          'karma-qunit',
-          'karma-phantomjs-launcher',
-          'karma-coverage'
-        ],
-
-        preprocessors: {
-          'src/js/**/*.js': 'coverage'
-        },
-
-        coverageReporter: {
-          type: 'lcov',
-          dir: 'test/coverage'
-        },
-
-        files: [
-          // You can optionally remove this or swap out for a different expect.
-          'src/libs/chai/chai.js',
-          'src/libs/requirejs/require.js',
-          'test/runner.js',
-
-          {
-            pattern: 'src/js/**/*.*',
-            included: false
-          },
-          // Derives test framework from Karma configuration.
-          {
-            pattern: 'test/<%= karma.options.frameworks[0] %>/**/*.spec.js',
-            included: false
-          }
-          
-        ]
-      },
 
       // This creates a server that will automatically run your tests when you
       // save a file and display results in the terminal.
       daemon: {
+        configFile: 'test/karma/karma.conf.js',
         options: {
           singleRun: false
         }
@@ -253,6 +206,7 @@ module.exports = function(grunt) {
 
       // This is useful for running the tests just once.
       run: {
+        configFile: 'test/karma/karma.conf.js',
         options: {
           singleRun: true
         }
@@ -322,7 +276,7 @@ module.exports = function(grunt) {
     'jshint',
     'copy',
     'processhtml',
-    'requirejs',
+    'requirejs'
     //'cssmin',
   ]);
   
