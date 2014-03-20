@@ -1,0 +1,31 @@
+
+<div class="facet-options">
+    {{#each visible}} 
+    <div class="facet-individual" data-facet="{{@key}}">
+                     {{#if ../hier}}
+                <i class="facet-closed show-hier" />
+            {{/if}}
+        <label data-facet="{{@key}}">
+            <input type="checkbox"/>&nbsp;{{@key}} ({{this}})</label>
+             {{#if ../hier}}
+                <div class="contains-hier"></div>
+            {{/if}}
+
+    </div>
+    {{/each}} 
+    {{#each invisible}}
+    <div class="facet-individual hide">
+    {{#if ../hier}}
+        <i class="facet-closed show-hier"/>
+    {{/if}}
+    <label data-facet="{{@key}}">
+        <input type="checkbox"/>&nbsp;{{@key}} ({{this}})</label>
+                     {{#if ../hier}}
+                <div class="contains-hier"></div>
+            {{/if}}
+    </div>
+    {{/each}}
+</div>
+{{#if more}}
+<span class="btn btn-default btn-xs show-more">more...</span>
+{{/if}}
