@@ -19,5 +19,7 @@ bower_components
 src/libs
 test/coverage
 test/reports
+src/styles/css/styles.css
+
 
 .idea

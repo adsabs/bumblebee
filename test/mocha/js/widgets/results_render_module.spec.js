@@ -1,10 +1,10 @@
-define(['marionette', 'backbone', 'js/widgets/results-render/controller/results-render-controller', 'js/components/api_response'], function(Marionette, Backbone, ResultsListController, Response){
+define(['marionette', 'backbone', 'js/widgets/results-render/controller/results-render-controller', 'js/components/api_response'], function(Marionette, Backbone, ResultsListController, Response) {
 
     describe("Render Results (UI Widget)", function() {
 
-      before(function () {
-        this.jsonData = $.parseJSON(
-          '{\
+        before(function() {
+            this.jsonData = $.parseJSON(
+                '{\
           "responseHeader":{\
             "status":0,\
               "QTime":88,\
@@ -71,10 +71,10 @@ define(['marionette', 'backbone', 'js/widgets/results-render/controller/results-
               "title":["<em>Star</em> Charts"]},\
             "139757":{\
               "title":["<em>Star</em> Streams"]}}}'
-        );
+            );
 
-        this.jsonDataTakeTwo = $.parseJSON(
-          '{\
+            this.jsonDataTakeTwo = $.parseJSON(
+                '{\
           "responseHeader":{\
             "status":0,\
               "QTime":88,\
@@ -118,55 +118,65 @@ define(['marionette', 'backbone', 'js/widgets/results-render/controller/results-
           "highlighting":{\
             "166243":{\
               "title":["Update Test"]}}}'
-        );
-
-      });
-
-      describe("takes a response object, returns a composite view", function(){
-
-        beforeEach(function(){
-
-          r = new Response(this.jsonData)
-
-          results = new ResultsListController(r)
+            );
 
         });
 
-        it("should join highlights with their records in the collection", function(){
+        describe("takes a response object, returns a composite view", function() {
 
-          expect(JSON.stringify(results.collection.get("139757").attributes.highlights)).to.equal(
-            JSON.stringify({"title":["<em>Star</em> Streams"]})
-          )
-        });
+            beforeEach(function() {
 
-        it("should return a Marionette.CompositeView object for insertion into the application layout", function(){
+                r = new Response(this.jsonData)
 
-          expect(results.returnView()).to.be.instanceof(Backbone.Marionette.CompositeView)
+                results = new ResultsListController(r)
 
-        });
+            });
 
+            it("should join highlights with their records in the collection", function() {
 
-        it.skip("should update automatically when update method is called and response object is provided", function(){
+                expect(JSON.stringify(results.collection.get("139757").attributes.highlights)).to.equal(
+                    JSON.stringify({
+                        "title": ["<em>Star</em> Streams"]
+                    })
+                )
+            });
 
-          var v = results.returnRenderedView()
+            it("should return a Marionette.CompositeView object for insertion into the application layout", function() {
 
-          expect($(v).find("li:first p:first").text()).to.equal("The Star of Bethlehem");
+                expect(results.returnView()).to.be.instanceof(Backbone.Marionette.CompositeView)
 
-          var secondResponse = new Response(this.jsonDataTakeTwo);
-
-          results.update(secondResponse);
-
-          expect($(v).find("li:first p:first").text()).to.equal("Update Test");
-
+            });
 
 
+            it("should update automatically when update method is called and response object is provided", function() {
 
-        });
+                var v = results.returnRenderedView()
+
+                expect($(v).find("li:first p:first").text()).to.equal("The Star of Bethlehem");
+
+                var secondResponse = new Response(this.jsonDataTakeTwo);
+
+                results.update(secondResponse);
+
+                expect($(v).find("li:first p:first").text()).to.equal("Update Test");
 
 
-      })
+
+
+            });
+
+
+            it("should return a 'no results found' template if there are zero search results", function() {
+
+                var empty = new ResultsListController();
+                // console.log(empty)
+                //     var v = empty.returnRenderedView();
+
+                //     expect($(v).find("p").text().to.equal("Your Search Returned No Results"))
+})
+
+        })
 
     })
 
-  }
-)
+})
