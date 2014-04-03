@@ -29,6 +29,8 @@ var tests = [
   tbase + '/widgets/api_response_widget.spec.js',
   tbase + '/widgets/api_query_widget.spec.js',
   tbase + '/widgets/api_request_widget.spec.js'
+  tbase + '/widgets/facets_widget.spec.js'
+
 
 ];
 

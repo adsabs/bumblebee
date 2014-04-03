@@ -188,7 +188,7 @@ define(['backbone', 'marionette', 'hbs!./templates/facet-container', './facets-c
 
                 var apiRequest = new ApiRequest(solrParams);
                 u = apiRequest.url();
-                u = u.match(/\/\?(.*)/)[1];
+                u = u.match(/\/?\?(.*)/)[1];
 
                 this.queriesInProgress[u] = {
                     "event": _event,
