@@ -1,5 +1,5 @@
 define(['marionette', 'backbone', 'js/widgets/results_render/results_render_widget', 'js/components/api_response', 'js/components/api_query', './test_json/test1', './test_json/test2', 'js/components/beehive', 'js/services/pubsub'],
-  function(Marionette, Backbone, ResultsListController, ApiResponse, ApiQuery, Test1, Test2, BeeHive, PubSub) {
+  function(Marionette, Backbone, ResultsListWidget, ApiResponse, ApiQuery, Test1, Test2, BeeHive, PubSub) {
 
     describe("Render Results (UI Widget)", function() {
 
@@ -15,7 +15,7 @@ define(['marionette', 'backbone', 'js/widgets/results_render/results_render_widg
         beehive.addService('PubSub', pubsub);
         key = pubsub.getPubSubKey();
 
-        widget = new ResultsListController();
+        widget = new ResultsListWidget();
 
         widget.activate(beehive.getHardenedInstance());
 
