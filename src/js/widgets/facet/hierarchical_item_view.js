@@ -78,6 +78,7 @@ define(['marionette', 'd3', 'hbs!./templates/item-checkbox', 'hbs!./templates/sl
         //just close the facet
         $target.removeClass("item-open").addClass("item-closed")
         //hiding .child-facets
+        this.$(".facet-body").addClass("hide");
 
 
       }
@@ -85,8 +86,8 @@ define(['marionette', 'd3', 'hbs!./templates/item-checkbox', 'hbs!./templates/sl
         if (this.collection && this.collection.models.length) {
           //reopening the toggle since the collection already has data
           $target.removeClass("item-closed").addClass("item-open")
-          $($target.siblings()[1]).removeClass("hide");
-          $($target.siblings()[2]).removeClass("hide")
+          this.$(".facet-body").removeClass("hide");
+
 
 
         }
@@ -96,7 +97,7 @@ define(['marionette', 'd3', 'hbs!./templates/item-checkbox', 'hbs!./templates/sl
 
           $target.removeClass("item-closed").addClass("item-open");
 
-          $($target.siblings()[1]).removeClass("hide")
+          this.$(".facet-body").removeClass("hide");
 
         }
       }
