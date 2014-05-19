@@ -153,11 +153,11 @@ define(['marionette', 'backbone', 'js/components/api_request', 'js/components/ap
       //XXX:alex - we need something better, I have no idea how to render templates
       // and if jquery modifications are OK
       disableLoadMore: function(text) {
-        this.$('.load-more').hide();
+        this.$('#load-more-results').addClass("hide");
       },
 
       enableLoadMore: function(text) {
-        this.$('.load-more').show();
+        this.$('#load-more-results').removeClass("hide");
       },
 
       showSnippetButton : function(){
@@ -260,10 +260,7 @@ define(['marionette', 'backbone', 'js/components/api_request', 'js/components/ap
 
         //console.log(ev);
 
-        if (ev == 'composite:rendered') {
-          this.view.disableLoadMore();
-        }
-        else if (ev == "fetchMore") {
+        if (ev == "fetchMore") {
 
           if (this.paginator.hasMore()) {
 
