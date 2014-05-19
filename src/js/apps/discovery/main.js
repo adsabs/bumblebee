@@ -2,7 +2,7 @@
 // assist with testing.
 console.log('loading: main.js');
 
-require(["config"], function() {
+require(["config"], function(config) {
   // Kick off the application
   require(["app", "router"], function(app, Router) {
       console.log('app object:');

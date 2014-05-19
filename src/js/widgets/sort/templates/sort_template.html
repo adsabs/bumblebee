@@ -1,0 +1,18 @@
+<!-- Single button -->
+<div class="btn-group sort-widget">
+    <button type="button" class="btn btn-info" id="sort-button">   Current Sort : {{current}}    </button>
+    <button type="button" class="btn btn-info dropdown-toggle" data-toggle="dropdown">
+        <span class="caret"></span>
+        <span class="sr-only">Toggle Dropdown</span>
+    </button>
+
+
+    <ul class="dropdown-menu" role="menu">
+
+        {{#each sortOptions}}
+        <li><a value="{{@key}}" class="choose-sort">{{this.displayName}}</a></li>
+        <!--<li class="divider"></li>-->
+        {{/each}}
+
+    </ul>
+</div>

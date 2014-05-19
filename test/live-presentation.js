@@ -1,18 +1,10 @@
-require([
-  'jquery',
-  'underscore',
-  'js/components/beehive',
-  'js/services/pubsub',
-  'js/components/query_mediator',
-  'js/services/api',
-  'js/widgets/search_bar/search_bar_widget',
-  'js/widgets/results/widget',
-  'js/widgets/facet/factory',
-  'js/widgets/query_info/query_info_widget',
-  'js/widgets/abstract/widget',
-  'js/widgets/contents_manager/widget'
-
-], function(
+require(['js/components/beehive', 'js/services/pubsub', 
+  'js/components/query_mediator', 'js/services/api',
+  'jquery', 'underscore',
+  'js/widgets/search_bar/search_bar_widget', 'js/widgets/results/widget',
+  'js/widgets/facet/factory', 'js/widgets/query_info/query_info_widget',
+  'js/widgets/sort/widget'
+],  function(
   $,
   _,
   BeeHive,
@@ -24,17 +16,20 @@ require([
   FacetFactory,
   QueryInfoWidget,
   AbstractWidget,
-  LayoutWidget
+  LayoutWidget,
+  SortWidget
   ) {
 
 
   var beehive = new BeeHive();
   beehive.addService('PubSub', new PubSub());
   beehive.addService('Api', new Api());
-  var queryMediator = new QueryMediator({cache:true, debug:true});
+  var queryMediator = new QueryMediator();
   queryMediator.activate(beehive);
 
   var queryInfo = new QueryInfoWidget();
+
+  var sort = new SortWidget()
 
   var abstract = new AbstractWidget();
   var layout = new LayoutWidget({widgetTitleMapping : {'abstract' : {widget: abstract, default : true}}});
@@ -67,24 +62,18 @@ require([
   var database = FacetFactory.makeBasicCheckboxFacet({
     facetField: "database",
     facetTitle: "Collections",
-    openByDefault: true,
-    logicOptions: {single: ['limit to', 'exclude'], 'multiple': ['and', 'or', 'exclude']},
-
+    openByDefault: true
   });
   var data = FacetFactory.makeBasicCheckboxFacet({
     facetField: "data_facet",
     facetTitle: "Data",
-    openByDefault: false,
-    logicOptions: {single: ['limit to', 'exclude'], 'multiple': ['and', 'or', 'exclude']},
-
+    openByDefault: false
   });
 
   var vizier = FacetFactory.makeBasicCheckboxFacet({
     facetField: "vizier_facet",
     facetTitle: "Vizier Tables",
-    openByDefault: false,
-    logicOptions: {single: ['limit to', 'exclude'], 'multiple': ['and', 'or', 'exclude']},
-
+    openByDefault: false
   });
 
   var pub = FacetFactory.makeBasicCheckboxFacet({
@@ -122,9 +111,7 @@ require([
         }
       })
       return returnList
-    },
-    logicOptions: {single: ['limit to', 'exclude'], 'multiple': ['and', 'or', 'exclude']}
-
+    }
   });
 
   var yearGraph = FacetFactory.makeGraphFacet({
@@ -133,6 +120,9 @@ require([
     xAxisTitle: "Year",
     openByDefault: true
   });
+
+    sort.activate(beehive.getHardenedInstance())
+
 
   abstract.activate(beehive.getHardenedInstance());
   queryInfo.activate(beehive.getHardenedInstance());
@@ -169,6 +159,7 @@ require([
 
 
 
+  $("#right").append(sort.getView().render().el)
 
   $("#right").append(queryInfo.render().el);
   //$("#right").append(yearGraph.render().el);
