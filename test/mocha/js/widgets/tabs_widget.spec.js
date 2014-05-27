@@ -6,16 +6,27 @@ define(['marionette', 'backbone', 'js/widgets/tabs/tabs_widget'], function (Mari
 
     var tabs
 
+    var removeCount = 0;
+
+
     beforeEach(function () {
       view1 = new Backbone.View()
       view1.render = function () {
         this.$el.html("<p>this is view 1</p>")
         return this
       }
+
+      view1.remove = function(){
+        removeCount++
+      }
+
       view2 = new Backbone.View()
       view2.render = function () {
         this.$el.html("<p>this is view 2<p/>")
         return this
+      }
+      view2.remove = function(){
+        removeCount++
       }
       tabs = new TabsWidget({tabs: [
         {title: "view1", view: view1, id: "view1", default: true},
@@ -41,6 +52,13 @@ define(['marionette', 'backbone', 'js/widgets/tabs/tabs_widget'], function (Mari
       expect($("#test div.active p").text()).to.match(/this is view 2/)
 
 
+    })
+
+    it("should close (Marionette) or remove (Backbone) all views when it itself is closed", function(){
+
+     tabs.close()
+
+     expect(removeCount).to.equal(2)
     })
 
   })
