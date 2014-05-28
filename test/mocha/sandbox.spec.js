@@ -9,21 +9,30 @@ var abase = tbase + '/apps/discovery';
 // These are the tests that we want to run for this app
 var tests = [
 
-    //tbase + '/widgets/facet_widget.spec.js',
-    //tbase + '/widgets/results_render_widget.spec.js',
-    //tbase + '/widgets/base_container_view.spec.js',
-
-    tbase + '/widgets/base_tree_view.spec.js',
-    tbase + '/widgets/facet_container_view.spec.js',
-
-    tbase + '/components/api_query_updater.spec.js',
+    tbase + '/widgets/results_render_widget.spec.js',
+    tbase + '/widgets/base_widget.spec.js',
+    tbase + '/widgets/multi_callback_widget.spec.js',
     tbase + '/widgets/facet_widget.spec.js',
-    //tbase + '/widgets/multi_callback_widget.spec.js',
-    //tbase + '/widgets/facet_item_views.spec.js',
-    //tbase + '/widgets/facet_controllers.spec.js'
+  tbase + '/widgets/facet_container_views.spec.js',
+    tbase + '/widgets/facet_item_views.spec.js',
+    tbase + '/widgets/facet_controllers.spec.js',
+  //tbase + '/components/services_container.spec.js',
+  //tbase + '/services/api.spec.js',
+  //tbase + '/components/beehive.spec.js',
+  //tbase + '/components/query_mediator.spec.js'
+  //tbase + '/services/pubsub.spec.js',
+  // tbase + '/widgets/results_render_widget.spec.js',
+//    tbase + '/widgets/facet_widget.spec.js',
+//  tbase + '/widgets/facet_container_views.spec.js',
+//    tbase + '/widgets/facet_item_views.spec.js',
+//    tbase + '/widgets/facet_controllers.spec.js',
+    tbase + '/widgets/tabs_widget.spec.js'
 
 
 
+
+
+  // tbase + '/widgets/app_test.spec.js'
 ];
 
 
