@@ -26,6 +26,7 @@ define(['marionette', 'backbone', 'js/components/api_request', 'js/components/ap
       parse: function (raw) {
         var that = this;
         var docs = raw.response.docs;
+        if (raw.highlighting){}
         var highlights = raw.highlighting;
 
         docs = _.map(docs, function (d) {
@@ -187,6 +188,8 @@ define(['marionette', 'backbone', 'js/components/api_request', 'js/components/ap
       initialize: function (options) {
         options.rows = options.rows || 40;
 
+        this.defaultQueryArguments = options.defaultQueryArguments || this.defaultQueryArguments;
+
         PaginatedBaseWidget.prototype.initialize.call(this, options);
 
         this.collection = new ListCollection();
@@ -230,6 +233,7 @@ define(['marionette', 'backbone', 'js/components/api_request', 'js/components/ap
       },
 
       processResponse: function (apiResponse) {
+        console.log("process response firing!")
 
         this.setCurrentQuery(apiResponse.getApiQuery());
 
