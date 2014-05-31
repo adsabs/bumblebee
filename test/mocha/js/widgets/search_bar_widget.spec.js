@@ -1,4 +1,6 @@
-define(['jquery', 'js/widgets/search_bar/search_bar_widget', 'js/components/beehive', 'js/services/pubsub', 'js/components/api_query'], function($, SearchBarWidget, BeeHive, PubSub, ApiQuery) {
+define(['jquery', 'js/widgets/search_bar/search_bar_widget', 'js/components/beehive',
+  'js/services/pubsub', 'js/components/api_query'],
+  function($, SearchBarWidget, BeeHive, PubSub, ApiQuery) {
 
 
   describe("Search Bar (UI Widget)", function() {
