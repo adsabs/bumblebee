@@ -19,6 +19,7 @@ define([
       NOT_FOUND: 404,
       INTERNAL_SERVER_ERROR: 500,
       BAD_GATEWAY: 502,
+      BAD_REQUEST : 400,
       SERVER_ERROR: 503,
       TOO_MANY_FAILURES: 580,
       ALL_FINE: 200,
