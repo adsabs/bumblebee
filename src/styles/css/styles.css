@@ -5808,9 +5808,6 @@ button.close {
 .item-open:before {
   content: "\e114";
 }
-.item-end {
-  color: #999999;
-}
 .hide {
   display: none;
 }
@@ -5831,6 +5828,9 @@ button.close {
   min-width: 120px;
   padding: 7px;
 }
+.field-options div:hover {
+  background-color: #d8eefb;
+}
 .field-options span {
   display: block;
 }
@@ -5841,50 +5841,41 @@ button.close {
   margin-top: -3px;
   margin-bottom: 2px;
 }
-.s-widget-meta {
+.facet-meta {
   height: 25px;
 }
-.s-widget-name {
-  cursor: pointer !important;
-}
-.s-widget label {
+.facet-widget label {
   font-weight: normal;
-  margin: 0px;
 }
-.s-item-children {
-  padding-left: 5%;
+.child-facets {
+  padding-left: 20px;
 }
-.s-logic-dropdown {
+.facet-meta .dropdown {
   position: relative;
   top: -33px;
   left: 140px;
 }
-.s-dropdown-menu {
-  padding: 15%;
-  min-width: 88px;
+.facet-meta .dropdown-menu {
+  min-width: 120px !important;
 }
-.s-widget-options {
-  height: 0px;
-}
-.s-widget-meta .dropdown-menu p {
+.facet-meta .dropdown-menu p {
   padding: 3px 5px 0px 5px;
 }
-.s-widget-meta .dropdown-menu label {
+.facet-meta .dropdown-menu label {
   padding: 0px 10px;
   margin: 0px;
 }
-.s-widget {
+.facet-widget {
   max-width: 400px;
   max-height: 500px;
   margin: 10px;
 }
-.s-widget-body {
+.facet-body {
   overflow-y: auto;
   padding-left: 10px;
   max-height: 340px;
-  padding-left: 5%;
 }
-.s-widget-body .selected {
+.facet-body .selected {
   color: #1d6bb5;
 }
 .logic-container label {
@@ -5971,7 +5962,7 @@ button.close {
   position: relative;
   background: #88b7d5;
   background-color: #c1e4f8;
-  border: 1px solid #6abeee;
+  border: 1px solid #1a99e2;
 }
 .contents-nav-active:after,
 .contents-nav-active:before {
@@ -5992,7 +5983,7 @@ button.close {
 }
 .contents-nav-active:before {
   border-color: rgba(204, 204, 204, 0);
-  border-left-color: #0097ed;
+  border-left-color: #1a99e2;
   border-width: 21px;
   margin-top: -21px;
 }
@@ -6000,13 +5991,53 @@ button.close {
   height: 100%;
   margin-right: 25%;
 }
-.results-item .panel-info {
-  border-color: white;
+#layout-nav {
+  background-color: white;
 }
-.results-item .panel-info em {
-  font-weight: bold;
-  font-size: larger;
+@-webkit-keyframes fadeIn {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
 }
-.results-item .panel-info li {
-  display: block;
+@-moz-keyframes fadeIn {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+@-o-keyframes fade-in {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+@keyframes fadeIn {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+.fade-in {
+  opacity: 0;
+  /* make things invisible upon start */
+  -webkit-animation: fadeIn ease-in 1;
+  /* call our keyframe named fadeIn, use animattion ease-in and repeat it only 1 time */
+  -moz-animation: fadeIn ease-in 1;
+  animation: fadeIn ease-in 1;
+  -webkit-animation-fill-mode: forwards;
+  /* this makes sure that after animation is done we remain at the last keyframe value (opacity: 1)*/
+  -moz-animation-fill-mode: forwards;
+  animation-fill-mode: forwards;
+  -webkit-animation-duration: 1s;
+  -moz-animation-duration: 1s;
+  animation-duration: 1s;
 }

@@ -40,6 +40,9 @@ define(['underscore'], function (_) {
         return apiQuery;
       }
 
+      this.cycle += 1;
+
+
       apiQuery.set(this.startName, this.start);
       apiQuery.set(this.rowsName, this.rows);
 
@@ -49,7 +52,6 @@ define(['underscore'], function (_) {
       if (this.maxNum > 0 && this.maxNum < this.start)
         this.start = this.maxNum;
 
-      this.cycle += 1;
       return apiQuery;
     },
 

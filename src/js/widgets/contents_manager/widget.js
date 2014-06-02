@@ -129,6 +129,19 @@ define(['backbone', 'marionette', 'js/widgets/base/base_widget', 'hbs!./template
       _.each(options.widgetTitleMapping, function(v,k){
         titleJSON.push({title : k, show: v.default});
         this.widgets[k] = v.widget;
+        if ( v.widget.view.onShow){
+          v.widget.view.onShow = function(){
+            v.widget.view.prototype.onShow.apply(this, arguments)
+            this.$el.addClass("fade-in");
+            v.widget.view.$el.width($("#layout-content").width());
+          };
+        }
+        else {
+          v.widget.view.onShow = function(){
+            this.$el.addClass("fade-in");
+            v.widget.view.$el.width($("#layout-content").width());
+          };
+        }
       }, this);
 
 
@@ -148,6 +161,7 @@ define(['backbone', 'marionette', 'js/widgets/base/base_widget', 'hbs!./template
     },
 
     changeContent : function(){
+      var viewToShow, widgetToShow;
       var v = arguments[0];
       var title = v.model.get("title");
       if(title !== this.currentViewTitle){
@@ -155,8 +169,10 @@ define(['backbone', 'marionette', 'js/widgets/base/base_widget', 'hbs!./template
 
  /*NOTE TO ROMAN: the more traditional layout widget use for the "show" command would be to do:
  *     this.content.show(new this.widgets[title]() */
+      widgetToShow = this.widgets[title]
+      viewToShow = widgetToShow.getView();
 
-       this.content.show(this.widgets[title].getView(),{preventClose : true});
+      this.content.show(viewToShow,{preventClose : true});
 
        this.currentViewTitle = title;
       }
