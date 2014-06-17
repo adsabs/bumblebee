@@ -5794,7 +5794,6 @@ button.close {
 }
 #s-right-col-container {
   padding: 8px;
-  border-bottom: 1px solid #dbdbdb;
   min-height: 500px;
   border-top: 1px solid #dbdbdb;
   -webkit-box-shadow: inset 0px 10px 10px -10px rgba(219, 219, 219, 0.3);
