@@ -1,27 +1,10 @@
 @import 'ads-variables';
-@import 'mixins';
 
-//tests
+@import 'mixins';
 
 #mocha-stats > li.progress {
   height: 40px;
 }
-
-//bootstrap overrides
-
-.form-control:focus {
-  border-color: @brand-info;
-  border-radius : border-radius(0px);
-}
-
-// overriding button link focus
-.btn-link:focus {
-  outline:none;
-  cursor: pointer;
-}
-
-
-// styling three main columns and general layout
 
 #s-facet-container {
   //  background-color: lighten(#f4f4f4, 2%) !important;
@@ -51,7 +34,6 @@
   -webkit-box-shadow: inset 0px 10px 10px -10px fade(darken(#f4f4f4, 10%), 30%);
   -moz-box-shadow: inset 0px 10px 10px -10px fade(darken(#f4f4f4, 10%), 30%);
   box-shadow: inset 0px 10px 10px -10px fade(darken(#f4f4f4, 10%), 30%);
-  padding:10px;
 }
 
 #left-column, #right-column, #middle-column {
@@ -63,43 +45,9 @@
   padding: 0px;
 }
 
-
-// utility classes/ general styling classes
-
 .buffer {
   margin-top: 10px;
 }
-
-.no-show {
-  visibility: hidden
-}
-
-.unselectable {
-  user-select: none;
-  -moz-user-select: none;
-  -khtml-user-select: none;
-  -webkit-user-select: none;
-  -ms-user-select: none;
-  user-select: none;
-}
-
-.hide {
-  display: none;
-}
-
-.chosen {
-  background-color: lighten(@brand-info, 40%)
-}
-
-
-
-
-.draw-attention {
-  transition-property: background-color;
-  transition-duration: 3s;
-  background-color: lighten(@brand-warning, 12%)
-}
-
 
 .s-item-closed {
   color: @gray-light;
@@ -111,10 +59,7 @@
   color: @gray-light;
   .glyphicon;
   .glyphicon-chevron-down;
-
 }
-
-/*facets */
 
 .s-child-facet-item-closed {
   display:inline-block;
@@ -167,74 +112,56 @@
   width: 74%
 }
 
+.hide {
+  display: none;
+}
 
-// results list css
+.chosen {
+  background-color: lighten(@brand-info, 40%)
+}
 
-  .just-authors {
-    display: inline-block
+.just-authors {
+  display: inline-block
+}
+
+.results-list {
+  h5 {
+    margin-top: 0px;
+    margin-bottom: 5px;
   }
 
-  .results-list {
-
-    margin-top: 20px;
-    h4 {
-      margin-top: 0px;
-      margin-bottom: 10px;
-      font-size:16px;
-      font-weight:500;
-    }
-
-
-    label {
-      font-weight: initial
-    }
+  label {
+    font-weight: initial
   }
+}
 
-  .field-options {
-    min-width: 120px;
-    padding: 7px;
-  }
+.field-options {
+  min-width: 120px;
+  padding: 7px;
+}
 
-  .field-options span {
-    display: block
-  }
+.field-options span {
+  display: block
+}
 
-  #results h5 {
-    margin-top: -3px;
-    margin-bottom: 2px;
-  }
+.no-show {
+  visibility: hidden
+}
 
-  li.article-author {
-    padding-left: 2px !important;
-    padding-right: 2px !important;
+#results h5 {
+  margin-top: -3px;
+  margin-bottom: 2px;
+}
 
-  }
-
-  button#toggle-aff {
-    float: right;
-  }
-
-  // end results list css
-  .size-graphic-container {
-    width: 77%;
-    display: inline-block;
-    background-color: lighten(@brand-info, 37%);
-    height: 18px;
-    margin-left: 2px;
-    margin-bottom: 4px;
-    font-weight: 500;
-    cursor: pointer;
-    white-space: nowrap;
-
-  }
 //facets
 
 .size-graphic {
   display: inline-block;
+  height: 18px;
+  margin-bottom: 4px;
   background-color: lighten(@brand-info, 23%);
   overflow: visible;
   color: black;
-   font-size : 13px !important;
 }
 
 .size-graphic-container {
@@ -424,180 +351,104 @@
 
 //end facets
 
+.draw-attention {
+  transition-property: background-color;
+  transition-duration: 3s;
+  background-color: lighten(@brand-warning, 10%)
+}
 
-// search bar css
+.draw-attention-text {
+  transition-property: color;
+  transition-duration: 2.5s;
+  color: darken(@brand-warning, 5%) !important;
+}
 
-  .open .show-form {
-    background-color: lighten(@brand-warning, 12%) !important
-  }
+.show-fields {
+  transition-property: background-color;
+  transition-duration: 2.5s;
+  background-color: none;
+}
 
-  .show-form:hover {
-    background-color: darken(@brand-warning, 10%)
-  }
+.inactive-style {
+  color: @gray-light
+}
 
-  .open .show-form:hover {
-    background-color: darken(@brand-warning, 10%) !important
-  }
+.active-style {
+  color: @component-active-bg
+}
 
-  .inactive-style {
-    color: @gray-light
-  }
+//weird stuff going on with input-addon overriding css
+.search-submit {
+  background-color: @brand-primary !important;
+  color: @body-bg !important
+}
 
-  .active-style {
-    color: @component-active-bg
-  }
-
-  //weird stuff going on with input-addon overriding css
-  .search-submit {
-    background-color: @brand-primary !important;
-    color: @body-bg !important
-  }
-
-  .search-dropdown {
-    position: relative;
-    left: 88%;
-    top: -32px;
-    z-index: 1000;
-
-    ul.dropdown-menu {
-      position: absolute;
-      left: -88%;
-      padding: 5px 10px;
-
-    }
-
-  }
-
-    #search-dropdown-icon {
-      font-size: 16px;
-      color: lighten(@brand-primary, 15%);
-    }
-
-    #search-dropdown-icon:hover {
-      color: @brand-primary;
-    }
-
-    .search-form-header .title {
-      font-size: 15px;
-    }
-
-    .search-form-header .title:hover {
-      color: darken(@brand-primary, 10%)
-
-    }
-
-  .search-form-title {
-    font-size: 14px;
-    display: inline !important;
-  }
-
-  .search-form-header {
-    font-size: 14px;
-    padding: 2px 8px;
-    cursor: pointer;
-
-  }
-
-  .search-form-header-active .title {
-    color: lighten(@brand-primary, 5%);
-  }
-
-  .search-form-header-active .title:hover {
-    color: lighten(@brand-primary, 10%) !important;
-  }
-
-  .search-form-section {
-    padding: 10px;
-  }
-
-.show-form {
-  .draw-attention-text {
-    transition-property: color;
-    transition-duration: 2.5s;
-    color: darken(@brand-warning, 5%) !important;
-  }
-
-  .show-fields {
-    transition-property: background-color;
-    transition-duration: 2.5s;
-    background-color: none;
-
+.contents-nav {
+  width: 100%;
+  margin: auto;
+  color: @gray-dark;
+  cursor: pointer;
+  list-style: none;
+  height: 42px;
+  padding: 12px 5px 10px 5px;
+  a {
+    text-decoration: none;
   }
 }
 
+.contents-nav:hover {
+  color: @gray-darker;
 
-// contents nav widget
+}
 
-  .contents-nav {
-    width: 100%;
-    margin: auto;
-    color: @gray-dark;
-    cursor: pointer;
-    list-style: none;
-    height: 42px;
-    padding: 12px 5px 10px 5px;
-    a {
-      text-decoration: none;
-    }
-  }
+.contents-nav-active {
+  position: relative;
+  background: #88b7d5;
+  background-color: lighten(@brand-info, 32%);
+  border: 1px solid lighten(@btn-info-border, 18%);
 
-  .contents-nav:hover {
-    color: @gray-darker;
+}
 
-  }
+.contents-nav-active:after, .contents-nav-active:before {
+  left: 100%;
+  top: 50%;
+  border: solid transparent;
+  content: " ";
+  height: 0;
+  width: 0;
+  position: absolute;
+  pointer-events: none;
+}
 
-  .contents-nav-active {
-    position: relative;
-    background: #88b7d5;
-    background-color: lighten(@brand-info, 32%);
-    border: 1px solid lighten(@btn-info-border, 18%);
+.contents-nav-active:after {
+  border-color: rgba(136, 183, 213, 0);
+  border-left-color: lighten(@brand-info, 32%);
+  border-width: 20px;
+  margin-top: -20px;
+}
 
-  }
+.contents-nav-active:before {
+  border-color: rgba(204, 204, 204, 0);
+  border-left-color: darken(saturate(@btn-info-border, 100%), 3%);
+  border-width: 21px;
+  margin-top: -21px;
+}
 
-  .contents-nav-active:after, .contents-nav-active:before {
-    left: 100%;
-    top: 50%;
-    border: solid transparent;
-    content: " ";
-    height: 0;
-    width: 0;
-    position: absolute;
-    pointer-events: none;
-  }
+.table-of-contents {
+  height: 100%;
+  margin-right: 25%
+}
 
-  .contents-nav-active:after {
-    border-color: rgba(136, 183, 213, 0);
-    border-left-color: lighten(@brand-info, 32%);
-    border-width: 20px;
-    margin-top: -20px;
-  }
+//overriding bootstrap input highlight
+//this is not working right now
+.form-control:focus {
+  border-color: @brand-info;
+  border-radius : border-radius(0px);
 
-  .contents-nav-active:before {
-    border-color: rgba(204, 204, 204, 0);
-    border-left-color: darken(saturate(@btn-info-border, 100%), 3%);
-    border-width: 21px;
-    margin-top: -21px;
-  }
+}
 
-  .table-of-contents {
-    height: 100%;
-    margin-right: 25%
-  }
-
-  .results-item .panel-info {
-    border-color: white;
-  }
-  .results-item .panel-info em {
-    font-weight: bold;
-    font-size: larger;
-  }
-
-  .results-item .panel-info li {
-    display: block;
-  }
-
-
-  .table-of-contents {
-    height: 100%;
-    margin-right: 25%
-  }
+// overriding button link focus
+.btn-link:focus {
+  outline:none;
+  cursor: pointer;
+}
