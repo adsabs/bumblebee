@@ -38,7 +38,6 @@ define([
 
         $("#body-template-container").append(threeColumnTemplate());
 
-        $("#results-control-row").append(resultsControlRowTemplate())
 
       },
 
@@ -59,7 +58,15 @@ define([
       },
 
       displayControlRow: function () {
-        $("#query-info-container").append(widgetDict.queryInfo.render().el)
+        var $controlRow = $(resultsControlRowTemplate());
+
+        $controlRow.find("#query-info-container").append(widgetDict.queryInfo.render().el);
+        //will fix later
+        $controlRow.find(".btn-group").eq(1).after(widgetDict.export.render().el);
+
+        $("#results-control-row").append($controlRow)
+
+
       },
 
       displayRightColumn: function () {

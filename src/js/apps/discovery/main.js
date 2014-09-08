@@ -307,6 +307,8 @@ define(["config", 'module'], function (config, module) {
         resultsWidgetDict.queryInfo = app.getWidget('QueryInfo');
         resultsWidgetDict.queryDebugInfo = app.getWidget('QueryDebugInfo');
 
+        resultsWidgetDict.export = app.getWidget("Export");
+
         _.each(resultsWidgetDict.graphTabs.widgets, function (w) {
           w.activate(beehive.getHardenedInstance());
         });

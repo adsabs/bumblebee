@@ -32,6 +32,9 @@ var tests = [
   tbase + '/widgets/coreads_widget.spec.js',
   tbase + '/page_managers/abstract_page_controller.spec.js',
   tbase + '/widgets/resources_widget.spec.js',
+  tbase + '/widgets/export_widget.spec.js',
+
+
 
 
   //  tbase + '/page_managers/abstract_page_controller.spec.js',
