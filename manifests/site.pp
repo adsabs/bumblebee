@@ -26,6 +26,12 @@ class initial_apt_update {
 
 include initial_apt_update
 package {
+  ['libfontconfig', 'libfontconfig-dev', 'libfreetype6-dev']:
+    require => Exec['apt-update2']
+    ensure => installed
+}
+
+package {
   ['nodejs',git]:
     ensure => installed,
     require => Class['initial_apt_update'];

@@ -28,6 +28,31 @@ define([
 
     var widgetDict, history, API;
 
+    // -----------------------------------
+    function getColString(identifierName){
+      var colString = $(identifierName).attr('class');
+      return colString;
+    }
+
+    function searchString(strArray){
+      console.log("Searching:" + strArray);
+      for (var j=0; j<strArray.length; j++){
+        var ser = strArray[j].match("col-md-");
+        if (ser){
+          return strArray[j];
+        }
+      }
+    }
+
+    function getColVal(colString){
+
+      var colArray = colString.split(" ");
+      var colNum = parseInt(searchString(colArray).replace("col-md-", ""));
+      console.log("getting value:" + colNum.toString())
+      return colNum;
+    }
+    // -----------------------------------
+
     //  router can make use of these functions
 
     API = {
@@ -84,6 +109,65 @@ define([
 
       },
 
+      enableLeftColToggle: function () {
+
+        $("#left-col-toggle").on("click", function (e) {
+
+          var $this = $(this);
+          var $i = $this.find("i");
+
+          // Calculate col-md for each panel
+          var middleString = getColString("#middle-column");
+          var middleNum = getColVal(middleString);
+
+          // if the right column is open, then resize this way
+          if ($("#right-col-toggle").find("i").hasClass("right-col-close")) {
+            var rightNum = 0;
+            var rightString = "0";
+          }
+          else{
+            var rightString = getColString("#right-column")
+            var rightNum = getColVal(rightString);
+          }
+
+          var leftNum = 2;
+
+          console.log("Right:" + rightString);
+          console.log("Middle:" + middleString);
+          console.log("Calculations complete.")
+
+          // We want to close the panel
+          if ($i.hasClass("right-col-close")) {
+
+            // var leftNum = 12 - middleNum - rightNum;
+            console.log("Left:" + leftNum.toString());
+            $i.removeClass("right-col-close").addClass("right-col-open");
+            $this.find("span").text("show specifiers");
+
+            // Hide left column
+            $("#left-column").addClass("no-display");
+
+
+            $("#middle-column").removeClass("col-md-"+middleNum.toString()).addClass("col-md-"+(leftNum+middleNum).toString());
+            console.log("Closing left. Making middle:" + "col-md-"+(leftNum+middleNum).toString());
+
+          }
+          // Open the panel
+          else {
+
+            // Show left display
+            $("#left-column").removeClass("no-display")
+
+            $i.removeClass("right-col-open").addClass("right-col-close");
+            $this.find("span").text("hide specifiers");
+
+            console.log("Left:" + leftNum.toString());
+            $("#middle-column").removeClass("col-md-"+middleNum.toString()).addClass("col-md-"+(middleNum-leftNum).toString());
+            console.log("Opening left. Making middle:" + "col-md-"+(middleNum-leftNum));
+          }
+        })
+      },
+
       enableRightColToggle: function () {
 
         $("#right-col-toggle").on("click", function (e) {
@@ -91,14 +175,36 @@ define([
           var $this = $(this);
           var $i = $this.find("i");
 
+          // Calculate col-md for each panel
+          var middleString = getColString("#middle-column");
+          var middleNum = getColVal(middleString);
+          console.log("Here1");
+          // if the left column is open, then resize this way
+          if ($("#left-col-toggle").find("i").hasClass("right-col-close")) {
+            var leftNum = 0;
+          }
+          else{
+
+            var leftString = getColString("#left-column")
+            var leftNum = getColVal(leftString);
+          }
+          console.log("Here2");
+          var rightNum = 3;
+          var rightString = rightNum.toString();
+
           if ($i.hasClass("right-col-open")) {
 
             $i.removeClass("right-col-open").addClass("right-col-close");
             $this.find("span").text("show 3rd col");
 
+            // Hide right column
             $("#right-column").addClass("no-display");
-            $("#middle-column").removeClass("col-md-7").addClass("col-md-9");
-            $("#left-column").removeClass("col-md-2").addClass("col-md-3");
+            $("#middle-column").removeClass("col-md-"+middleNum.toString()).addClass("col-md-"+(rightNum+middleNum).toString());
+            console.log("Closing right. Making middle:" + "col-md-"+(rightNum+middleNum).toString());
+
+            // $("#right-column").addClass("no-display");
+            // $("#middle-column").removeClass("col-md-7").addClass("col-md-9");
+            // $("#left-column").removeClass("col-md-2").addClass("col-md-3");
 
           }
           else {
@@ -107,12 +213,48 @@ define([
             $i.removeClass("right-col-close").addClass("right-col-open");
 
             $("#right-column").removeClass("no-display");
-            $("#middle-column").removeClass("col-md-9").addClass("col-md-7");
-            $("#left-column").removeClass("col-md-3").addClass("col-md-2");
+            $("#middle-column").removeClass("col-md-"+middleNum.toString()).addClass("col-md-"+(middleNum-rightNum).toString());
+
+            console.log("Right:" + rightNum.toString());
+            console.log("Opening right. Making middle:" + "col-md-"+(middleNum-rightNum));
+
+
+            // $("#middle-column").removeClass("col-md-9").addClass("col-md-7");
+            // $("#left-column").removeClass("col-md-3").addClass("col-md-2");
 
           }
         })
       }
+
+      // enableRightColToggle: function () {
+      //
+      //   $("#right-col-toggle").on("click", function (e) {
+      //
+      //     var $this = $(this);
+      //     var $i = $this.find("i");
+      //
+      //     if ($i.hasClass("right-col-open")) {
+      //
+      //       $i.removeClass("right-col-open").addClass("right-col-close");
+      //       $this.find("span").text("show 3rd col");
+      //
+      //       $("#right-column").addClass("no-display");
+      //       $("#middle-column").removeClass("col-md-7").addClass("col-md-9");
+      //       $("#left-column").removeClass("col-md-2").addClass("col-md-3");
+      //
+      //     }
+      //     else {
+      //       $this.find("span").text("hide 3rd col");
+      //
+      //       $i.removeClass("right-col-close").addClass("right-col-open");
+      //
+      //       $("#right-column").removeClass("no-display");
+      //       $("#middle-column").removeClass("col-md-9").addClass("col-md-7");
+      //       $("#left-column").removeClass("col-md-3").addClass("col-md-2");
+      //
+      //     }
+      //   })
+      // }
     };
 
     var ResultsController = BaseWidget.extend({
@@ -174,6 +316,7 @@ define([
           this.displayRightColumn();
           this.displayResultsList();
           this.enableRightColToggle();
+          this.enableLeftColToggle();
           //this.insertLoadingView()
 
         }
