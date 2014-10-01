@@ -8,13 +8,11 @@ define([
     'underscore',
     'js/widgets/list_of_things/widget',
     'js/widgets/base/base_widget',
-    'js/widgets/sort/widget'
     ],
 
   function (_,
     ListOfThingsWidget,
-    BaseWidget,
-    SortWidget) {
+    BaseWidget) {
 
     var ResultsWidget = ListOfThingsWidget.extend({
 

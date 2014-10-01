@@ -87,10 +87,18 @@ define([
 
       displayResultsList: function () {
 
+        //ideally I would pass it in using the options on initialization,
+        //but the way we load modules makes that impossible
+        //is there a better way to give the results view a reference to
+        //sort view?
+
+        this.widgetDict.results.view.sortView = this.widgetDict.sort.view;
+
         this.$(".main-content-container")
           .append(this.widgetDict.results.render().el);
 
-        $(".list-of-things").removeClass("hide")
+        $(".list-of-things").removeClass("hide");
+
 
       },
 
