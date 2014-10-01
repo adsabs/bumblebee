@@ -729,7 +729,6 @@ define([
             this.view.$el.append(this.loadingTemplate());
           }
         }
-      }
 
     });
 
