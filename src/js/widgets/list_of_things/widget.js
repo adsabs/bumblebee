@@ -42,14 +42,13 @@ define([
 
     var PaginationModel = Backbone.Model.extend({
 
-      defaults : function(){
-        return {
-          perPage : undefined,
-          page : 1,
-          currentQuery : undefined,
-          numFound : undefined
-        }
-      }
+      initialize: function(options){
+
+        this.defaults = options.defaults;
+
+        this.attributes = _.result(this, "defaults");
+
+    }
 
     })
 
@@ -214,17 +213,13 @@ define([
 
         this.listenTo(this.paginationModel, "change:page", this.onPaginationChange);
         this.listenTo(this.paginationModel, "change:perPage", this.onPaginationChange);
-        this.listenTo(this.paginationModel, "change:numFound", this.updateStartAndEndIndex);
 
-        // deactivated, because it is called both for collection.add([]) as well as for
-        // each of the collections model 'add' event
-        this.on("collection:augmented", this.transferModels);
+
+        this.on("collection:augmented", this.onCollectionAugmented);
 
         this.visibleCollection = options.visibleCollection;
 
         _.extend(MasterCollection.prototype, WidgetPaginationMixin);
-
-        this.updateStartAndEndIndex();
 
 
       },
@@ -247,7 +242,7 @@ define([
 
       },
 
-      onPaginationChange: function(model, options){
+      onPaginationChange: function(){
 
         //so controller can allow a request
         this.trigger("pagination:change");
@@ -258,9 +253,19 @@ define([
 
       },
 
+      onCollectionAugmented : function(){
+
+        this.updateStartAndEndIndex();
+
+        this.transferModels();
+
+      },
+
       requestData : function(){
+        //values for start and rows
         this.trigger("dataRequest", this.currentStartIndex, this.paginationModel.get("perPage"))
       },
+
 
       transferModels : function(){
 
@@ -305,7 +310,7 @@ define([
 
         if (data.author && data.author.length > maxAuthorNames) {
           data.extraAuthors = data.author.length - maxAuthorNames;
-          shownAuthors = data.author.splice(0, maxAuthorNames);
+          shownAuthors = data.author.slice(0, maxAuthorNames);
         } else if (data.author) {
           shownAuthors = data.author
         }
@@ -459,7 +464,13 @@ define([
           paginationOptions.perPage =  this.defaultQueryArguments.rows;
         }
 
-        this.paginationModel = new PaginationModel(paginationOptions);
+        paginationOptions.numFound = undefined;
+        paginationOptions.currentQuery = undefined;
+        paginationOptions.start = 0;
+
+        //have to use a cloned copy or else it will work on the first go but then
+        //be modified once the model itself is modified!!!
+        this.paginationModel = new PaginationModel({defaults : function(){return _.clone(paginationOptions)}});
 
         this.paginationView = new PaginationView({
           model : this.paginationModel,
@@ -537,6 +548,8 @@ define([
         }
 
         //numFound needs to equal undefined as a signal to other functions that the request cycle has restarted
+        //need to know whether to add or reset the collection (the absence of numFound means it is a new
+        //query that needs to be reset)
         this.resetWidget();
         this.resetBibcode(bibcode);
 
@@ -598,38 +611,39 @@ define([
 
         }
 
-        var docs = apiResponse.get("response.docs")
+       var docs = apiResponse.get("response.docs")
 
-        //any preprocessing before adding the resultsIndex is done here
-        docs = _.map(docs, function(d){
+         docs = _.map(docs, function(d) {
           d.identifier = d.bibcode;
-          return d
+           return d
         });
+
+        if (this.customResponseProcessing instanceof Function){
+
+         docs = this.customResponseProcessing(docs, apiResponse)
+
+        }
 
         docs = this.parseLinksData(docs);
 
         docs = this.addPaginationToDocs(docs, apiResponse);
 
 
-        if (!this.paginationModel.get("numFound")) {
+        if (!this.paginationModel.get("numFound") && docs.length) {
 
           //reset the pagination model with toSet values
           //has to happen right before collection changes
-          this.paginationModel.set(toSet);
+          this.paginationModel.set(toSet, {silent : true});
 
-          this.collection.reset(docs, {
-            parse: true
-          });
+          this.collection.reset(docs);
         }
-        else {
+        else if (docs.length) {
           //reset the pagination model with toSet values
           //has to happen right before collection changes
           this.paginationModel.set(toSet);
 
           //backbone ignores duplicate records because it has an idAttribute of "resultsIndex"
-          this.collection.add(docs, {
-            parse: true
-          });
+          this.collection.add(docs, {silent : true});
 
         }
 

@@ -85,7 +85,6 @@ define(['marionette',
 
       it.skip("should show three authors with semicolons in the correct places and, if there are more, show the number of the rest", function () {
         //$('#test').append($w);
-        debugger;
         var $parentRow = $($w.find("input[value='2002CeMDA..82..113F']").parents().eq(4))
         //
         expect($parentRow.find("ul.just-authors li:first").text()).to.equal("Fellhauer, M.;");
@@ -192,7 +191,7 @@ define(['marionette',
         done();
       });
 
-      it("should render the results button only if highlights exist given the paginated docs", function () {
+      it("should render the show details button only if highlights exist given the paginated docs", function () {
 
         var responseWithHighlights = new ApiResponse({
           "responseHeader": {
@@ -220,7 +219,7 @@ define(['marionette',
             "3513629": {"abstract": ""}
           }})
 
-        responseWithHighlights.setApiQuery(new ApiQuery())
+        responseWithHighlights.setApiQuery(new ApiQuery({start : 0, rows : 25}))
 
         widget.processResponse(responseWithHighlights);
 

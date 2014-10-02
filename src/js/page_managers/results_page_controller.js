@@ -15,16 +15,13 @@ define([
     "marionette",
     "hbs!./templates/results-page-layout",
     'js/widgets/base/base_widget',
-    'js/widgets/loading/widget',
     'hbs!./templates/results-control-row',
     'js/components/api_query'],
   function (
     Marionette,
     threeColumnTemplate,
     BaseWidget,
-    LoadingWidget,
-    resultsControlRowTemplate,
-    ApiQuery) {
+    resultsControlRowTemplate) {
 
 
 
@@ -96,8 +93,6 @@ define([
 
         this.$(".main-content-container")
           .append(this.widgetDict.results.render().el);
-
-        $(".list-of-things").removeClass("hide");
 
 
       },
@@ -236,9 +231,6 @@ define([
           var $b = $("#body-template-container");
 
           $b.children().detach();
-
-          //don't call render each time or else we
-          //would have to re-delegate widget events
 
           $b.append(this.controllerView.el);
 
