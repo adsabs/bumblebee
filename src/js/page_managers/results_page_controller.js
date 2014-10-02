@@ -15,16 +15,13 @@ define([
     "marionette",
     "hbs!./templates/results-page-layout",
     'js/widgets/base/base_widget',
-    'js/widgets/loading/widget',
     'hbs!./templates/results-control-row',
     'js/components/api_query'],
   function (
     Marionette,
     threeColumnTemplate,
     BaseWidget,
-    LoadingWidget,
-    resultsControlRowTemplate,
-    ApiQuery) {
+    resultsControlRowTemplate) {
 
 
 
@@ -87,10 +84,16 @@ define([
 
       displayResultsList: function () {
 
+        //ideally I would pass it in using the options on initialization,
+        //but the way we load modules makes that impossible
+        //is there a better way to give the results view a reference to
+        //sort view?
+
+        this.widgetDict.results.view.sortView = this.widgetDict.sort.view;
+
         this.$(".main-content-container")
           .append(this.widgetDict.results.render().el);
 
-        $(".list-of-things").removeClass("hide")
 
       },
 
@@ -228,9 +231,6 @@ define([
           var $b = $("#body-template-container");
 
           $b.children().detach();
-
-          //don't call render each time or else we
-          //would have to re-delegate widget events
 
           $b.append(this.controllerView.el);
 
