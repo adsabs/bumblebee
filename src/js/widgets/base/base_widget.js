@@ -39,7 +39,7 @@ define(['backbone', 'marionette',
    *
    *  defaultQueryArguments: this is a list of parameters added to each query
    *
-   *  showLoad == true will automatically fade out the widget while it waits for a response
+   *  showLoad = true will automatically fade out the widget while it waits for a response
    *
    */
 
@@ -241,7 +241,10 @@ define(['backbone', 'marionette',
           var removeLoadingView = function () {
             this.view.$el.find(".s-loading").remove();
           }
-          this.listenToOnce(this.collection, "reset", removeLoadingView);
+         this.listenTo(this.collection, "reset", removeLoadingView);
+         this.listenTo(this.collection, "add", removeLoadingView);
+         this.listenTo(this.collection, "noneFound", removeLoadingView)
+
         }
 
         if (this.view.$el.find(".s-loading").length === 0){

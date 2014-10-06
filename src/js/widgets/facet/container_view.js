@@ -55,7 +55,6 @@ define(['backbone', 'marionette',
 
       },
 
-      //id: "search-results",
       itemView: BaseItemView,
       template: WidgetContainerTemplate,
 
