@@ -1,4 +1,5 @@
 <div class="s-widget">
+
     <div class="widget-name widget-meta s-widget-name">
        {{#if title}} <h5><i class="main-caret item-closed hide"/>&nbsp;{{title}}</h5>{{/if}}
 
@@ -6,13 +7,17 @@
     </div>
 
 
-    <div class="widget-body s-widget-body hide">
+    <div class="widget-body s-widget-body hide"> </div>
 
-      {{#unless noOptions}} <div class="widget-options bottom hide"></div> {{/unless}}
+    {{#unless noOptions}}
+    <div class="widget-options bottom hide">
+
+    <button class="btn btn-xs btn-link" wtarget="ShowMore">show more</button>
 
     </div>
 
 
+    {{/unless}}
 
 </div>
 
