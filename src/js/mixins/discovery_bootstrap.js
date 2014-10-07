@@ -336,8 +336,16 @@ define([
               }
             });
 
-            returnList.push('notrefereed', apiResponse.get('response.numFound') - found);
-            return returnList;
+            var notRefereed =  apiResponse.get('response.numFound') - found;
+
+            returnList.push('notrefereed', notRefereed);
+            //dont return anything if all options are zero
+            if (v + notRefereed === 0 ){
+              return []
+            }
+            else {
+              return returnList;
+            }
           }
         },
         logicOptions: {single: ['limit to', 'exclude'], 'multiple': ['invalid choice']}
