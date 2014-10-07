@@ -157,20 +157,28 @@ define(['backbone',
         }
         else {
           coll.add(facetsCol);
+
+          if (!view.enableHierarchicalShowMore && facetsCol.length < this.view.displayNum){
+
+            view.disableShowMore();
+            //tell loading view that there is nothing else, it can remove itself
+            coll.trigger("noneFound")
+
+          }
+
         }
 
+      //check for hierarchical facets on both reset and add
+      if (facetsCol.length > 0 && view.enableHierarchicalShowMore) { // we got a full batch (so we'll assume there is more)
+            view.enableHierarchicalShowMore();
 
-        // for the first level display only (nested levels are triggered through toggleChildren)
-        //if (paginator.getCycle() <= 1 && this.view === view) {
-        //  view.displayMore(this.view.displayNum);
-        //}
+          }
+          else if (view.enableHierarchicalShowMore) {
 
-        if (facetsCol.length > 0) { // we got a full batch (so we'll assume there is more)
-          view.enableShowMore();
-        }
-        else {
-          view.disableShowMore();
-        }
+            view.disableHierarchicalShowMore();
+          }
+
+
       },
 
       getPreprocessorChain: function() {

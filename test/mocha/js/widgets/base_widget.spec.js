@@ -74,6 +74,76 @@ define(['marionette', 'backbone',
         expect(widget.render).to.be.instanceof(Function);
       });
 
+      it("has a loading view option that resolves automatically for itemviews and on add, reset or nonFound events for Collection or CompositeViews", function(){
+
+        var widget = new BaseWidget();
+
+        expect(widget.startWidgetLoad).to.be.instanceof(Function);
+        expect(widget.loadingTemplate().trim()).to.eql("<div class=\"s-loading\"></div>");
+
+        //test 1: adding and removing a loading view for an item view
+
+        widget.view = new Backbone.Marionette.ItemView({
+          template : function(){return "<div>not loading</div>"}
+        });
+        $("#test").append(widget.view.render().el);
+
+        widget.startWidgetLoad();
+
+        expect($("#test").find(".s-loading").length).to.eql(1);
+
+        widget.view.render();
+
+        expect($("#test").find(".s-loading").length).to.eql(0);
+
+        $("#test").empty();
+
+        // test 2: adding and removing a loading view for a composite view
+        //  loading view needs to remove itself on collection reset, add, or "noneFound" events
+
+        var c = new Backbone.Collection();
+
+        var widget = new BaseWidget();
+
+        widget.collection = c;
+
+        var V =  Backbone.Marionette.CompositeView.extend({
+          template : function(){return "<div class=\"container\"></div>"},
+
+          itemViewContainer : ".container"
+
+        });
+
+        widget.view = new V({ collection : widget.collection });
+
+        $("#test").append(widget.view.render().el);
+
+        widget.startWidgetLoad();
+
+        expect($("#test").find(".s-loading").length).to.eql(1);
+
+        widget.collection.reset();
+
+        expect($("#test").find(".s-loading").length).to.eql(0);
+
+        widget.startWidgetLoad();
+
+        expect($("#test").find(".s-loading").length).to.eql(1);
+
+        widget.collection.add({testModel : true});
+
+        expect($("#test").find(".s-loading").length).to.eql(0);
+
+        widget.startWidgetLoad();
+
+        expect($("#test").find(".s-loading").length).to.eql(1);
+
+        widget.collection.trigger("noneFound");
+
+        expect($("#test").find(".s-loading").length).to.eql(0);
+
+      })
+
 
     })
 

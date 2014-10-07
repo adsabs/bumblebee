@@ -41,7 +41,13 @@ define(['backbone', 'marionette',
               || ev.indexOf('collection:rendered') > -1
               || ev.indexOf('treeClicked') > -1) {
               this.refreshLogicTooltip();
+
             }
+
+            if (ev.indexOf('collection:rendered') !== -1){
+              this.toggleShowMore();
+            }
+
           });
 
           //this.on("itemview:itemClicked", this.refreshLogicTooltip);
@@ -55,7 +61,6 @@ define(['backbone', 'marionette',
 
       },
 
-      //id: "search-results",
       itemView: BaseItemView,
       template: WidgetContainerTemplate,
 
@@ -95,17 +100,30 @@ define(['backbone', 'marionette',
 
       onRender: function() {
         this._onRender();
-        if (this.collection && this.collection.models.length > this.displayNum) {
-          this.enableShowMore();
-        }
-        else {
-          this.disableShowMore();
-        }
+
+        this.toggleShowMore();
+
         if (this.logicOptions) {
           this.refreshLogicTooltip();
           this.closeLogic();
 
         }
+      },
+
+      num : 0,
+
+      toggleShowMore : function(){
+        this.num +=1;
+
+        if (this.collection && this.collection.models.length > this.displayNum) {
+          this.enableShowMore();
+
+        }
+        else {
+
+         this.disableShowMore();
+        }
+
       },
 
       onShowMore: function() {
@@ -128,25 +146,17 @@ define(['backbone', 'marionette',
 
       disableShowMore: function(text) {
         var $sm = this._getShowMore();
-        $sm.text('');
+        $sm.addClass("hide")
       },
 
       enableShowMore: function(text) {
         var $sm = this._getShowMore();
-        $sm.text('show more');
+        $sm.removeClass("hide")
       },
 
       _getShowMore: function() {
-        var $o = this.$('.widget-options.bottom:first');
-        //console.log($o.html())
+        var $o = this.$('.widget-options.bottom');
         var $sm = $o.find("button[wtarget=ShowMore]");
-        //console.log($sm)
-        if (!$sm.length) {
-        //  console.log("show more", $sm)
-
-          $sm = $('<button class="btn btn-xs btn-link" wtarget="ShowMore">show more</button>');
-          $o.append($sm);
-        }
         return $sm;
       },
 

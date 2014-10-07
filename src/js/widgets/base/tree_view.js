@@ -111,12 +111,12 @@ define(['marionette', 'hbs!./templates/item-tree'],
         }
       },
 
-      enableShowMore: function() {
+      enableHierarchicalShowMore: function() {
         this.$('.item-caret:first').removeClass('hide');
         this.$('.show-more:last').removeClass('hide');
       },
 
-      disableShowMore: function() {
+      disableHierarchicalShowMore: function() {
         this.$('.item-caret:first').removeClass('hide');
         if (this.collection.length == 0) {
           this.$(".item-caret:first").removeClass("item-open").removeClass("item-closed").addClass('item-end');
