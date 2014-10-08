@@ -16,13 +16,17 @@ define([
     "hbs!./templates/results-page-layout",
     'js/widgets/base/base_widget',
     'js/widgets/loading/widget',
-    'hbs!./templates/results-control-row'],
+    'hbs!./templates/results-control-row',
+    'js/page_managers/page_manager_mixin'
+  ],
   function (
     Marionette,
     threeColumnTemplate,
     BaseWidget,
     LoadingWidget,
-    resultsControlRowTemplate) {
+    resultsControlRowTemplate,
+    PageManagerMixin
+    ) {
 
 
 
@@ -34,6 +38,10 @@ define([
         this.widgetDict = options.widgetDict;
 
       },
+
+      className : "s-results-page-layout",
+
+      id : "results-page-layout",
 
       template : threeColumnTemplate,
 
@@ -221,34 +229,12 @@ define([
         this.controllerView = new ResultsControllerView({widgetDict : this.widgetDict, debug : beehive.getDebug()});
 
 
-      },
-
-      insertResultsControllerView : function(){
-
-          var $b = $("#body-template-container");
-
-          $b.children().detach();
-
-          //don't call render each time or else we
-          //would have to re-delegate widget events
-
-          $b.append(this.controllerView.el);
-
-          this.controllerView.triggerMethod("show");
-
-      },
-
-      showPage: function (options) {
-
-        var inDom = options.inDom;
-
-        if (!inDom){
-          this.insertResultsControllerView();
-        }
-
       }
 
+
     });
+
+    _.extend(ResultsController.prototype, PageManagerMixin)
 
     return ResultsController
 

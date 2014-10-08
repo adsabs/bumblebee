@@ -41,6 +41,7 @@ define([
 
         if (c.controllerView && c.controllerView.render){
           c.controllerView.render();
+
         }
       });
 
@@ -65,10 +66,11 @@ define([
 
       options.inDom = (this.currentPage === pageName) ? true : false;
 
-      if (!options.inDom){
+//      if (!options.inDom){
         //scroll up automatically
         window.scrollTo(0,0);
-      }
+//      }
+
         this.currentPage = pageName;
 
         this.pageControllers[pageName].showPage(options);
