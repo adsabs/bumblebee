@@ -25,7 +25,8 @@ define([
     'hbs!./templates/results-container-template',
     'js/mixins/link_generator_mixin',
     'hbs!./templates/pagination-template',
-    'js/mixins/add_stable_index_to_collection'
+    'js/mixins/add_stable_index_to_collection',
+    'js/mixins/formatter'
   ],
 
   function (Marionette,
@@ -37,7 +38,8 @@ define([
     ResultsContainerTemplate,
     LinkGenerator,
     PaginationTemplate,
-    WidgetPaginationMixin) {
+    WidgetPaginationMixin,
+    FormatMixin) {
 
 
     var PaginationModel = Backbone.Model.extend({
@@ -329,8 +331,12 @@ define([
           data.highlights = data.details.highlights
         }
 
-        if(data["[citations]"]){
-          data.citations = data["[citations]"]["num_citations"]
+        if(data["[citations]"] && data["[citations]"]["num_citations"]>0){
+          data.citations = this.formatNum(data["[citations]"]["num_citations"]);
+        }
+        else {
+          //formatNum would return "0" for zero, which would then evaluate to true in the template
+          data.citations = 0
         }
 
         data.orderNum = this.model.get("resultsIndex") + 1;
@@ -361,6 +367,8 @@ define([
       }
 
     });
+
+    _.extend(ItemView.prototype, FormatMixin);
 
     var ListViewModel = Backbone.Model.extend({
 
