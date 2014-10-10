@@ -192,6 +192,7 @@ define([
           doi: undefined,
           details: undefined,
           links_data : undefined,
+          "[citations]" : undefined,
           resultsIndex : undefined
         }
       },
@@ -301,7 +302,7 @@ define([
        */
       serializeData: function () {
 
-        var data ,shownAuthors;
+        var data, shownAuthors;
         data = this.model.toJSON();
 
         var maxAuthorNames = 3;
@@ -326,6 +327,10 @@ define([
         //if details/highlights
         if (data.details) {
           data.highlights = data.details.highlights
+        }
+
+        if(data["[citations]"]){
+          data.citations = data["[citations]"]["num_citations"]
         }
 
         data.orderNum = this.model.get("resultsIndex") + 1;
@@ -586,7 +591,7 @@ define([
       //will be requested in composeRequest
       defaultQueryArguments: function(){
         return {
-          fl: 'title,abstract,bibcode,author,keyword,citation_count,pub,aff,volume,year',
+          fl: 'title,abstract,bibcode,author,keyword,[citations],pub,aff,volume,year',
           rows : 25,
           start : 0
         }
