@@ -16,16 +16,18 @@ define(["marionette",
     'js/components/api_query',
     'js/mixins/add_stable_index_to_collection',
     'js/page_managers/abstract_title_view_mixin',
-    'js/page_managers/abstract_nav_view_mixin'
+    'js/page_managers/abstract_nav_view_mixin',
+    'js/page_managers/page_manager_mixin'
   ],
   function(Marionette,
     threeColumnTemplate,
     BaseWidget,
     ApiQuery,
-    abstractNavTemplate,
     WidgetPaginationMixin,
     AbstractTitleViewMixin,
-    AbstractNavViewMixin){
+    AbstractNavViewMixin,
+    PageManagerMixin
+    ){
 
 
     var AbstractMasterView = Marionette.ItemView.extend({
@@ -33,6 +35,10 @@ define(["marionette",
       initialize : function(options){
         this.widgetDict = options.widgetDict;
       },
+
+      className : "s-abstract-page-layout",
+
+      id : "abstract-page-layout",
 
       template : threeColumnTemplate,
 
@@ -197,31 +203,38 @@ define(["marionette",
 
         var dataForRouter, $middleCol, widget;
 
+        var that = this;
+
         if (!viewName) {
           console.warn("viewname undefined")
           return
         }
 
         //tell router to display the correct subview only if it's not already there
-        if (!this.collection.subPage || this.collection.subPage.viewKey !== viewName || $("s-middle-col-container").children().length === 0){
+        if (!this.collection.subPage || this.collection.subPage.viewKey !== viewName || this.controllerView.$("s-middle-col-container").children().length === 0){
 
           dataForRouter = "abs/" + this._bibcode + "/" + viewName;
 
           this.pubsub.publish(this.pubsub.NAVIGATE_WITHOUT_TRIGGER, dataForRouter);
 
-          $middleCol = $("#current-subview");
+          $middleCol = this.controllerView.$("#current-subview");
 
-          $middleCol.children().detach();
+          setTimeout(function(){
 
-          widget = this.abstractSubViews[viewName]["widget"];
+            $middleCol.children().detach();
 
-          $middleCol.append(widget.render().el);
+            widget = that.abstractSubViews[viewName]["widget"];
 
-          /*The two lines below notify the title descriptor view to change*/
-          this.collection.subPage = this.abstractSubViews[viewName];
-          this.collection.subPage.viewKey = viewName
+            $middleCol.append(widget.render().el);
 
-          this.collection.trigger("subPageChanged");
+            /*The two lines below notify the title descriptor view to change*/
+            that.collection.subPage = that.abstractSubViews[viewName];
+            that.collection.subPage.viewKey = viewName
+
+            that.collection.trigger("subPageChanged");
+
+          }, 150)
+
 
         }
 
@@ -248,21 +261,6 @@ define(["marionette",
         return this._bibcode;
       },
 
-      insertAbstractControllerView : function(){
-
-        var $b = $("#body-template-container");
-
-        $b.children().detach();
-
-        //don't call render each time or else we
-        //would have to re-delegate widget events
-
-        $b.append(this.controllerView.el);
-
-        this.controllerView.triggerMethod("show");
-
-      },
-
       // called by the router
 
       showPage : function(options){
@@ -274,7 +272,7 @@ define(["marionette",
 
         if (!inDom) {
 
-          this.insertAbstractControllerView();
+          this.insertControllerView();
 
         }
 
@@ -283,7 +281,6 @@ define(["marionette",
           this.setCurrentBibcode(bib);
           this.renderNewBibcode();
           this.loadWidgetData(bib);
-
 
         }
 
@@ -298,9 +295,16 @@ define(["marionette",
 
     })
 
+    /*
+    * _.defaults won't override a function if it's already in the prototype
+    * _.extend will
+    * */
+
     _.extend(AbstractController.prototype, WidgetPaginationMixin);
     _.extend(AbstractController.prototype, AbstractTitleViewMixin);
     _.extend(AbstractController.prototype, AbstractNavViewMixin);
+    _.defaults(AbstractController.prototype, PageManagerMixin);
+
 
     return AbstractController
 

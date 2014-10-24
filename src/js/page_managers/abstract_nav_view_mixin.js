@@ -28,7 +28,6 @@ define([
 
     model : AbstractNavModel,
 
-
     setActive: function(subPage){
 
       this.each(function(m){

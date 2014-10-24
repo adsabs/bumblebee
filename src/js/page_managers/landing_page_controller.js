@@ -1,59 +1,59 @@
-define(["marionette", "hbs!./templates/landing-page-layout",
-    "js/widgets/base/base_widget"
+define(["marionette",
+    "hbs!./templates/landing-page-layout",
+    "js/widgets/base/base_widget",
+    'js/page_managers/page_manager_mixin'
   ],
-  function (Marionette, fullLengthLayout, BaseWidget) {
+  function (Marionette,
+    fullLengthLayout,
+    BaseWidget,
+    PageManagerMixin) {
 
-    var history;
 
-    var API = {
+    var LandingPageView = Marionette.ItemView.extend({
 
-      insertTemplate: function () {
-        $("#body-template-container").empty()
-          .append(fullLengthLayout())
+      template : fullLengthLayout,
 
-      },
+      className : "s-landing-page-layout",
 
-      displayLandingPage: function () {
-        this.insertTemplate();
+      id : "landing-page-layout",
 
-        $(".search-bar-rows-container").append(this.widgetDict.searchBar.render().el);
+      onShow : function(){
+
+        var searchBar = Marionette.getOption(this, "widgetDict").searchBar
+
+        $(".search-bar-rows-container")
+          .append(searchBar.render().el);
 
       }
+      
+    });
 
-    };
 
     var LandingPageController = BaseWidget.extend({
-
 
       initialize: function (options) {
 
         options = options || {};
 
         this.widgetDict = options.widgetDict;
-        _.extend(this, API);
 
-
-        history = options.history;
-
+        this.controllerView = new LandingPageView({widgetDict : this.widgetDict});
 
       },
 
+      //don't need to activate this widget
       activate: function (beehive) {
 
-
-
       },
 
-      showPage: function (options) {
-
-        if (!options.inDom){
-          this.displayLandingPage()
-        }
+      //error unless this is overridden
+      processResponse : function(){
 
       }
 
     });
 
+    _.extend(LandingPageController.prototype, PageManagerMixin);
 
     return LandingPageController
 
