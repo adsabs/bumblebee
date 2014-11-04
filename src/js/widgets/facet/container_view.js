@@ -16,6 +16,7 @@ define(['backbone', 'marionette',
     WidgetContainerTemplate
     ) {
 
+
     var FacetContainerView = ContainerView.extend({
 
       initialize: function (options) {
@@ -36,15 +37,23 @@ define(['backbone', 'marionette',
             throw new Error('logicOptions should be null or an object with single/multiple keys and arrays of strings inside');
           }
 
+          this.listenTo(this.collection,"reset", function(){
+
+            this.resetLogicTooltip();
+
+          })
+
           this.on('all', function(ev, info) {
+//            console.log("event!", ev)
             if (ev.indexOf('itemClicked') > -1
-              || ev.indexOf('collection:rendered') > -1
+              //this catches each time the collection is re-rendered
+              || ev.indexOf('render:collection') > -1
               || ev.indexOf('treeClicked') > -1) {
               this.refreshLogicTooltip();
             }
           });
 
-          //this.on("itemview:itemClicked", this.refreshLogicTooltip);
+          //this.on("childview:itemClicked", this.refreshLogicTooltip);
 
           //clear out logic template when collection is reset
           //this.on("composite:collection:rendered", this.refreshLogicTooltip);
@@ -56,10 +65,10 @@ define(['backbone', 'marionette',
       },
 
       //id: "search-results",
-      itemView: BaseItemView,
+      childView: BaseItemView,
       template: WidgetContainerTemplate,
 
-      itemViewContainer:".widget-body",
+      childViewContainer:".widget-body",
 
       events: function () {
         var addEvents;
@@ -71,9 +80,9 @@ define(['backbone', 'marionette',
         return _.extend(_.clone(ContainerView.prototype.events), addEvents);
       },
 
-      itemViewOptions: function (model, index) {
+      childViewOptions: function (model, index) {
 //       merging in options from factory stage
-        additionalOptions = Marionette.getOption(this, "additionalItemViewOptions") || {};
+        additionalOptions = Marionette.getOption(this, "additionalChildViewOptions") || {};
 
         return _.extend({hide: true}, additionalOptions);
 
@@ -101,7 +110,7 @@ define(['backbone', 'marionette',
         else {
           this.disableShowMore();
         }
-        if (this.logicOptions) {
+        if (this.logicOptions && this.collection.length) {
           this.refreshLogicTooltip();
           this.closeLogic();
 
@@ -171,7 +180,17 @@ define(['backbone', 'marionette',
         this.trigger("containerLogicSelected", val);
       },
 
+      resetLogicTooltip : function(){
+
+        this.$(".dropdown-menu").html(FacetTooltipTemplate({
+          noneSelected: true
+        }));
+        this.$(".dropdown").removeClass("open").addClass("hide");
+
+      },
+
       refreshLogicTooltip: function(){
+
 
         var selected = this.$(".widget-item:checked");
         var numSelected = selected.length;
@@ -220,10 +239,9 @@ define(['backbone', 'marionette',
         }
         else {
 
-          this.$(".dropdown-menu").html(FacetTooltipTemplate({
-            noneSelected: true
-          }));
-          this.$(".dropdown").removeClass("open");
+          this.resetLogicTooltip();
+
+
         }
       }
 

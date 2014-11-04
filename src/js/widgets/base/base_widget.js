@@ -203,8 +203,8 @@ define(['backbone', 'marionette',
       return query;
     },
 
-    onClose: function () {
-      this.view.close();
+    onDestroy: function () {
+      this.view.destroy();
     },
 
     getView: function () {
@@ -240,7 +240,7 @@ define(['backbone', 'marionette',
       if (this.view){
         //composite view needs to explicitly remove the loading view
         //the first time, need to add event listeners to the collection
-        if (this.view.itemViewContainer && !this.callbacksAdded) {
+        if (this.view.childViewContainer && !this.callbacksAdded) {
 
           var removeLoadingView = function () {
             this.view.$el.find(".s-loading").remove();

@@ -160,8 +160,8 @@ define([
         $w.find('button[wtarget="ShowMore"]').click();
         setTimeout(
           function() {
-            expect($w.find('.item-view').not('.hide').length).to.be.equal(6);
-            expect($w.find('.item-view').filter('.hide').length).to.be.equal(4);
+            expect($w.find('.item-view').not('.hide').length).to.be.equal(5);
+            expect($w.find('.item-view').filter('.hide').length).to.be.equal(5);
             expect(widget.collection.models[0].get('title')).to.be.equal('0/Head, J');
             expect(widget.collection.models[5].get('title')).to.be.equal('0/Wang, J');
 

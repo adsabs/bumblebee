@@ -46,7 +46,7 @@ define([
 
   });
 
-  var ListView = Backbone.View.extend({
+  var ListView = Marionette.ItemView.extend({
 
         initialize : function(options){
           options = options || {};
@@ -385,12 +385,10 @@ define([
 
         },
 
-        close : function(){
+        onDestroy : function(){
 
           this.listView.close();
           this.view.close();
-
-          Marionette.Controller.prototype.close.apply(this, arguments);
 
         },
 

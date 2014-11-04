@@ -247,7 +247,7 @@ define(['marionette',
 
         expect($("#test .s-results-list").find(".s-results-links:first").find("a").text().trim()).to.eql("arXiv eprint");
 
-        expect($("#test .s-results-list").find("h5:first").text().trim()).to.eql("A bijection for tri-cellular maps");
+        expect($("#test .s-results-list").find("h3:first").text().trim()).to.eql("A bijection for tri-cellular maps");
 
         expect($("#test .s-results-list").find(".article-author:first").text().trim()).to.eql("Han, Hillary S. W.;");
 
@@ -262,7 +262,7 @@ define(['marionette',
 
         expect($("#test .s-results-list").find(".s-results-links:last").find("a").text().trim()).to.eql("Table of Contents");
 
-        expect($("#test .s-results-list").find("h5:last").text().trim()).to.eql("Diffuse high-energy radiation from regions of massive star formation.");
+        expect($("#test .s-results-list").find("h3:last").text().trim()).to.eql("Diffuse high-energy radiation from regions of massive star formation.");
 
         //checking render order of more than 3 authors
 
