@@ -32,7 +32,7 @@ define(['underscore', 'jquery', 'backbone', 'marionette',
       model : KeyValue
     });
 
-    var ItemView = Marionette.ItemView.extend({
+    var ChildView = Marionette.ItemView.extend({
       tagName: 'span',
       template : ItemTemplate,
       events : {
@@ -51,8 +51,8 @@ define(['underscore', 'jquery', 'backbone', 'marionette',
 
     var WidgetView = Marionette.CompositeView.extend({
       template : WidgetTemplate,
-      itemView : ItemView,
-      itemViewContainer: "#simple-breadcrumb",
+      childView : ChildView,
+      childViewContainer: "#simple-breadcrumb",
       events: {
       }
 
@@ -86,7 +86,7 @@ define(['underscore', 'jquery', 'backbone', 'marionette',
       },
 
       onNewQuery: function(apiQuery, key) {
-        console.log('START_SEARCH', apiQuery.url(), key);
+        ('START_SEARCH', apiQuery.url(), key);
         this.listening = true;
       },
 
@@ -96,7 +96,7 @@ define(['underscore', 'jquery', 'backbone', 'marionette',
 
         var q = apiRequest.get('query');
         if (q) {
-          console.log('NEW REQUEST', q);
+          ('NEW REQUEST', q);
           // remember who initiated the new-query
           pubsub.subscribeOnce(pubsub.DELIVERING_RESPONSE+key.getId(), this.onResponse);
           this.listening = false;
@@ -104,7 +104,7 @@ define(['underscore', 'jquery', 'backbone', 'marionette',
       },
 
       onResponse: function(apiResponse) {
-        console.log('NEW RESPONSE', apiResponse);
+        ('NEW RESPONSE', apiResponse);
       },
 
 
@@ -141,11 +141,11 @@ define(['underscore', 'jquery', 'backbone', 'marionette',
         //console.log('onAll', arguments[0]);
         var event = arguments[0];
 
-        if (event == 'itemview:item-click') {
+        if (event == 'childview:item-click') {
           // TODO: destroy all models after this one and issue new query with this request
           arguments[2].destroy();
         }
-        else if (event == 'itemview:item-remove') {
+        else if (event == 'childview:item-remove') {
           arguments[2].destroy();
         }
       },

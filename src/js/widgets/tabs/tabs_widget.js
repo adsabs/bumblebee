@@ -52,10 +52,10 @@ define(['marionette', 'bootstrap', 'hbs!./templates/tabs_inner', 'hbs!./template
 
     },
 
-    onClose: function () {
+    onDestroy: function () {
       _.each(this.tabs, function (t) {
-        if (t.widget.close) {
-          t.widget.close();
+        if (t.widget.destroy) {
+          t.widget.destroy();
         }
         else if (t.widget.remove) {
           t.widget.remove();

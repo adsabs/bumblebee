@@ -32,7 +32,7 @@ define(['backbone', 'marionette',
       /**
        * The container nested inside className object
        */
-      itemViewContainer: ".widget-body",
+      childViewContainer: ".widget-body",
 
       /**
        * What to use when there is no collection yet
@@ -72,8 +72,8 @@ define(['backbone', 'marionette',
         this._states = [];
       },
 
-      itemViewOptions: function (model, index) {
-        var additionalOptions = Marionette.getOption(this, "additionalItemViewOptions") || {};
+      childViewOptions: function (model, index) {
+        var additionalOptions = Marionette.getOption(this, "additionalChildViewOptions") || {};
         //if this is the initial round, hide fetchnum - displaynum
         if (index < this.displayNum) {
           return _.extend({hide: false}, additionalOptions);

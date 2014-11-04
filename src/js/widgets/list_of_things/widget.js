@@ -493,7 +493,7 @@ define([
       },
 
       className: "list-of-things",
-      itemView: ItemView,
+      childView: ItemView,
       alreadyRendered : false,
 
       getEmptyView : function(){
@@ -506,7 +506,7 @@ define([
         }
       },
 
-      itemViewContainer: ".results-list",
+      childViewContainer: ".results-list",
       events: {
         "click .show-details": "showDetails"
       },

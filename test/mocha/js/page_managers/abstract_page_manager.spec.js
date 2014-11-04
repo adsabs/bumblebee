@@ -26,6 +26,10 @@ define([
 
       })
 
+      afterEach(function(){
+        $("#test").empty();
+      })
+
       it("should show a back button only when there is a system-wide query to return to", function(){
 
         abstractPageController.controllerView.onRender = function(){};

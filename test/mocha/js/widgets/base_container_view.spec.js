@@ -137,7 +137,7 @@ define([
         // we'll render container inside container - the nested one will be collapsed
         // by default
         var view = new BaseContainerView({
-          itemView: BaseContainerView.extend({openByDefault:false}),
+          childView: BaseContainerView.extend({openByDefault:false}),
           model: new BaseContainerView.ContainerModelClass({title: "Widget Title"}),
           collection: c,
           openByDefault: true
@@ -189,7 +189,7 @@ define([
         });
 
         var view = new Modified({
-          itemView: BaseItemView,
+          childView: BaseItemView,
           model: new BaseContainerView.ContainerModelClass({title: "Widget Title"}),
           collection: c,
           openByDefault: true,
