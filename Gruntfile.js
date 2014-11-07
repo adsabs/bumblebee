@@ -31,6 +31,7 @@ module.exports = function(grunt) {
 
     // Run your source code through JSHint's defaults.
     jshint: {
+      'all' : ["./src/js/**/*.js"]
     },
 
     exec: {
@@ -199,7 +200,7 @@ module.exports = function(grunt) {
 
       scripts: {
         files: ['./src/js/**/*.js'],
-        tasks: ['jshint']
+        tasks: ['jshint:new']
       }
     },
 
@@ -374,8 +375,7 @@ module.exports = function(grunt) {
 
   // on watch events configure jshint:all to only run on changed file
   grunt.event.on('watch', function(action, filepath) {
-    console.log("Linting ", filepath)
-    grunt.config('jshint.all.src', filepath);
+    grunt.config('jshint.new.src', filepath);
     return
   });
 
