@@ -30,8 +30,8 @@ module.exports = function(grunt) {
     },
 
     // Run your source code through JSHint's defaults.
-    jshint: ['src/js/**/*.js'],
-
+    jshint: {
+    },
 
     exec: {
       // this is necessary to make the library AMD compatible
@@ -164,40 +164,45 @@ module.exports = function(grunt) {
     // **
     watch: {
       options: {
-        atBegin: true,
+        atBegin: false,
         spawn: false, // for grunt-contrib-watch v0.5.0+, "nospawn: true" for lower versions. Without this option specified express won't be reloaded
-        interrupt: true // necessary for windows
+        interrupt: true,// necessary for windows
       },
 
       server: {
-        files: ['./Gruntfile', './src/js/**/*.js', './src/*.js', './src/*.html', './server.js', './src/styles/css/*.css'],
-        tasks: ['env:dev', 'express:dev']
+        files: ['./Gruntfile', './src/**/*.js', './src/**/*.html', './server.js', './src/**/*.css'],
+        tasks: ['server']
       },
-
-      local_testing: {
-        files: ['./Gruntfile', './src/js/**/*.js', './test/mocha/**/*.js', './src/*.js', './src/*.html'],
-        tasks: ['mocha_phantomjs:local_testing', 'watch:local_testing']
-      },
-
-      web_testing: {
-        files: ['./Gruntfile', './src/js/**/*.js', './test/mocha/**/*.js', './src/*.js', './src/*.html'],
-        tasks: ['express:dev', 'mocha_phantomjs:web_testing', 'watch:web_testing']
-      },
-
-      sandbox_testing: {
-        files: ['./Gruntfile', './src/js/**/*.js', './test/mocha/**/*.js', './src/*.js', './src/*.html'],
-        tasks: ['express:dev', 'mocha_phantomjs:sandbox_testing', 'watch:sandbox_testing']
-      },
-
+//
+//      local_testing: {
+//        files: ['./Gruntfile', './src/js/**/*.js', './test/mocha/**/*.js', './src/*.js', './src/*.html'],
+//        tasks: ['mocha_phantomjs:local_testing', 'watch:local_testing']
+//      },
+//
+//      web_testing: {
+//        files: ['./Gruntfile', './src/js/**/*.js', './test/mocha/**/*.js', './src/*.js', './src/*.html'],
+//        tasks: ['express:dev', 'mocha_phantomjs:web_testing', 'watch:web_testing']
+//      },
+//
+//      sandbox_testing: {
+//        files: ['./Gruntfile', './src/js/**/*.js', './test/mocha/**/*.js', './src/*.js', './src/*.html'],
+//        tasks: ['express:dev', 'mocha_phantomjs:sandbox_testing', 'watch:sandbox_testing']
+//      },
+//
       styles: {
-        files: ['./src/styles/less/*.less'], // which files to watch
-        tasks: ['less']
+        files: ['./src/**/*.less'], // which files to watch
+        tasks: ['less'], //should trigger server restart
+        options : {
+          livereload : true
+        }
+      },
+
+      scripts: {
+        files: ['./src/js/**/*.js'],
+        tasks: ['jshint']
       }
     },
 
-    concurrent: {
-        serverTasks: ['watch:server', 'watch:styles']
-    },
     //**
     //* PhantomJS is a headless browser that runs our tests, by default it runs <mocha/discovery>.spec.html
     //* if you need to change the tested file: grunt --testname=foo ....
@@ -325,7 +330,6 @@ module.exports = function(grunt) {
   });
 
 
-
   // Basic environment config
   grunt.loadNpmTasks('grunt-env');
 
@@ -367,6 +371,15 @@ module.exports = function(grunt) {
 
   grunt.loadNpmTasks('grunt-concurrent');
 
+
+  // on watch events configure jshint:all to only run on changed file
+  grunt.event.on('watch', function(action, filepath) {
+    console.log("Linting ", filepath)
+    grunt.config('jshint.all.src', filepath);
+    return
+  });
+
+
   // Create an aliased test task.
   grunt.registerTask('setup', 'Sets up the development environment',
     ['install-dependencies', 'bower-setup', 'less', '_conditional_copy']);
@@ -383,7 +396,7 @@ module.exports = function(grunt) {
   grunt.registerTask('default', [
     'env:dev',
     'clean:dist',
-    'jshint',
+//    'jshint',
     'copy',
     'processhtml',
     'requirejs',
@@ -392,7 +405,7 @@ module.exports = function(grunt) {
   ]);
 
   // starts a web server (automatically reloading)
-  grunt.registerTask('server', ['env:dev',  "less", 'express:dev', 'concurrent:serverTasks']);
+  grunt.registerTask('server', ['env:dev', 'express:dev']);
 
   // runs tests in a web server (automatically reloading)
   grunt.registerTask('test:web', ['env:dev', 'watch:web_testing']);
@@ -406,4 +419,5 @@ module.exports = function(grunt) {
 
   grunt.registerTask('bower-setup', ['clean:bower', 'bower', 'exec:convert_dsjslib', 'exec:move_jqueryuicss']);
 
+  grunt.registerTask('development', ['setup', 'server', 'watch'])
 };
