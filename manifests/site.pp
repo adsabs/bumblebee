@@ -53,4 +53,5 @@ exec {
 
 class {"benchmark":
   pip_requirements => "/vagrant/requirements.txt",
+  require => Class['initial_apt_update'],
 }
