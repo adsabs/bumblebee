@@ -170,26 +170,7 @@ module.exports = function(grunt) {
         interrupt: true,// necessary for windows
       },
 
-      server: {
-        files: ['./Gruntfile', './src/**/*.js', './src/**/*.html', './server.js', './src/**/*.css'],
-        tasks: ['server']
-      },
-//
-//      local_testing: {
-//        files: ['./Gruntfile', './src/js/**/*.js', './test/mocha/**/*.js', './src/*.js', './src/*.html'],
-//        tasks: ['mocha_phantomjs:local_testing', 'watch:local_testing']
-//      },
-//
-//      web_testing: {
-//        files: ['./Gruntfile', './src/js/**/*.js', './test/mocha/**/*.js', './src/*.js', './src/*.html'],
-//        tasks: ['express:dev', 'mocha_phantomjs:web_testing', 'watch:web_testing']
-//      },
-//
-//      sandbox_testing: {
-//        files: ['./Gruntfile', './src/js/**/*.js', './test/mocha/**/*.js', './src/*.js', './src/*.html'],
-//        tasks: ['express:dev', 'mocha_phantomjs:sandbox_testing', 'watch:sandbox_testing']
-//      },
-//
+
       styles: {
         files: ['./src/**/*.less'], // which files to watch
         tasks: ['less'], //should trigger server restart
@@ -201,7 +182,28 @@ module.exports = function(grunt) {
       scripts: {
         files: ['./src/js/**/*.js'],
         tasks: ['jshint:new']
+      },
+
+      server: {
+        files: ['./Gruntfile', './src/js/**/*.js', './src/*.js', './src/*.html', './server.js', './src/styles/css/*.css'],
+        tasks: ['env:dev', 'express:dev']
+      },
+
+      local_testing: {
+        files: ['./Gruntfile', './src/js/**/*.js', './test/mocha/**/*.js', './src/*.js', './src/*.html'],
+        tasks: ['mocha_phantomjs:local_testing', 'watch:local_testing']
+      },
+
+      web_testing: {
+        files: ['./Gruntfile', './src/js/**/*.js', './test/mocha/**/*.js', './src/*.js', './src/*.html'],
+        tasks: ['express:dev', 'mocha_phantomjs:web_testing', 'watch:web_testing']
+      },
+
+      sandbox_testing: {
+        files: ['./Gruntfile', './src/js/**/*.js', './test/mocha/**/*.js', './src/*.js', './src/*.html'],
+        tasks: ['express:dev', 'mocha_phantomjs:sandbox_testing', 'watch:sandbox_testing']
       }
+
     },
 
     //**
