@@ -79,9 +79,16 @@ define([
       onSelectedChange: function(model) {
         if (model.attributes.isSelected) {
           // call the subordinate page-manager
+
           var res = model.attributes.object.show.apply(model.attributes.object, model.attributes.options);
 
           this.$el.append(res.el);
+
+          //note from alex: shouldn't "show" event mean that the view is currently in the dom?
+
+          res.triggerMethod("show")
+
+
           model.attributes.numAttach += 1;
 
           //scroll up automatically
@@ -90,6 +97,7 @@ define([
         else {
           if (model.attributes.object.view.$el.parent().length > 0) {
             model.attributes.object.view.$el.detach();
+            model.attributes.object.view.triggerMethod("detach")
             model.attributes.numDetach += 1;
           }
         }

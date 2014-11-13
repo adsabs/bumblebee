@@ -32,22 +32,13 @@ define([
       initialize : function(options){
         var options = options || {};
         this.widgets = options.widgets;
-        this.model = new ResultsStateModel;
+        this.model = new ResultsStateModel
 
+      },
 
-        var self = this;
+      onDetach : function(){
 
-        $(window).resize(function() {
-
-          if (self.$(".right-expand").css("display") == "none") {
-            self.model.set("largerThanTablet", false)
-          }
-          else {
-            self.model.set("largerThanTablet", true)
-
-          }
-
-        });
+      $(window).off("resize", this.setScreenSize)
 
       },
 
@@ -76,11 +67,19 @@ define([
         this.displayLeftColumn(this.options.displayLeftColumn);
         this.displayRightColumn(this.options.displayRightColumn);
         this.displayMiddleColumn(this.options.displayMiddleColumn);
+
       },
 
       onShow : function(){
         //these functions must be called every time the template is inserted
         this.displaySearchBar(true);
+
+        //let view know whether it should display a 2 or 3 column layout
+        this.setScreenSize();
+
+        //listen for resizing events
+        $(window).resize(_.bind(this.setScreenSize, this));
+
 
       },
 
@@ -103,6 +102,19 @@ define([
       displayMiddleColumn: function (show) {
         this.$(".s-left-col-container").toggle(show === null ? true : show);
       },
+
+      setScreenSize : _.debounce(function() {
+
+          if (this.$(".right-expand").css("display") == "none") {
+            this.model.set("largerThanTablet", false)
+          }
+          else {
+            this.model.set("largerThanTablet", true)
+
+          }
+        // higher debounce times had a noticable lag
+
+        }, 200),
 
       updateColumnContent: function () {
 
