@@ -6,8 +6,17 @@ class benchmark ($pip_requirements = "requirements.txt") {
   # Need an if command here, and run apt-get if it hasn't already been done
   # Actually, to make independent, need the site.pp manifest here a little bit
 
-  package {['firefox', 'python', 'python-pip', 'python-dev', 'xvfb']:
+  $build_packages = ['firefox', 'python', 'python-pip', 'python-dev', 'xvfb', 'libpng-dev', 'build-essential', 'libblas-dev', 'liblapack-dev', 'gfortran']
+
+  package {$build_packages: 
     ensure => installed,
+  }
+
+  exec {'distribute_upgrade':
+    command => "easy_install -U distribute",
+    logoutput => on_failure,
+    path => $path_var,
+    require => Package['python', 'python-pip', 'python-dev'],
   }
 
   exec {'pip_install_modules':
@@ -15,12 +24,11 @@ class benchmark ($pip_requirements = "requirements.txt") {
     logoutput => on_failure,
     path => $path_var,
     tries => 2,
-    timeout => 600, # Too long, but this can take awhile
-    require => Package['python-pip', 'python-dev'],
-    logoutput => on_failure,
+    timeout => 1000, # This is only require for Scipy/Matplotlib - they take a while
+    require => Package[$build_packages],
   }
 
-  Package['firefox', 'python-pip'] -> Exec['pip_install_modules']
+  Package[$build_packages] -> Exec['distribute_upgrade'] -> Exec['pip_install_modules']
 
 }
 
