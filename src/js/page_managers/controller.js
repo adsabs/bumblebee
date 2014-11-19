@@ -22,6 +22,7 @@ define([
         this.widgetId = null;
         this.assembled = false;
         _.extend(this, _.pick(options, ['debug', 'widgetId']));
+
       },
 
       setWidgetId: function(n) {
@@ -50,6 +51,20 @@ define([
         this.pubsub = beehive.getHardenedInstance().Services.get('PubSub');
         this.debug = beehive.getDebug(); // XXX:rca - think of st better
         this.view = this.createView({debug : this.debug, widgets: this.widgets});
+
+        //check if view can expand, and if so, allow controller to listen for expand/contract events
+
+        if (this.view.makeCenterFullWidth) {
+
+            this.on("expandMiddleCol", function(){
+              this.view.trigger("expandMiddleCol");
+
+            });
+          this.on("contractMiddleCol", function(){
+            this.view.trigger("contractMiddleCol");
+          });
+        }
+
       },
 
       /**

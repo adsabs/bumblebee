@@ -32,7 +32,10 @@ define([
       initialize : function(options){
         var options = options || {};
         this.widgets = options.widgets;
-        this.model = new ResultsStateModel
+        this.model = new ResultsStateModel;
+
+        this.on("expandMiddleCol", this.makeCenterFullWidth);
+        this.on("contractMiddleCol", this.returnColWidthsToDefault);
 
       },
 
