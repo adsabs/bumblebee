@@ -54,7 +54,7 @@ class WebPage(Firefox):
 
     # Pre-defined attributes
     self.url = url
-    self.minimum_timeout = 60
+    self.minimum_timeout = 120
     self.timed_out = False
 
     self.load_time = -99
