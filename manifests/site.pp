@@ -50,3 +50,8 @@ exec {
     cwd     => '/bumblebee/',
     require => Exec['npm_install_grunt'];
 }
+
+class {"benchmark":
+  pip_requirements => "/vagrant/requirements.txt",
+  require => Class['initial_apt_update'],
+}
