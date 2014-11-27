@@ -2,6 +2,7 @@
 import time
 import logging
 import sys
+import os
 from logging.handlers import RotatingFileHandler
 from selenium.webdriver import Firefox, FirefoxProfile
 from selenium.webdriver.common.by import By
@@ -11,7 +12,11 @@ from selenium.webdriver.support import expected_conditions as EC
 from selenium.common.exceptions import TimeoutException
 from xvfbwrapper import Xvfb
 
-STRESS_PATH = "/vagrant/benchmark"
+if os.path.isdir("/vagrant/"):
+  STRESS_PATH = "/vagrant/benchmark"
+else:
+  STRESS_PATH = "/home/jonny/software/vagrant/bumblebee/benchmark"
+
 FIREBUG_EXTENSION = "{0}/plugins/firebug-2.0.6.xpi".format(STRESS_PATH)
 NETEXPORT_EXTENSION = "{0}/plugins/netExport-0.9b6.xpi".format(STRESS_PATH)
 
@@ -54,7 +59,7 @@ class WebPage(Firefox):
 
     # Pre-defined attributes
     self.url = url
-    self.minimum_timeout = 120
+    self.minimum_timeout = 60 #300 # 5 minutes
     self.timed_out = False
 
     self.load_time = -99
@@ -173,26 +178,42 @@ class WebPage(Firefox):
     return config["headless"]
 
   def waitFor(self, wait):
-    
+   
+    def wait_for(condition_function):
+      start_time = time.time()
+      while time.time() < start_time + 3:
+          if condition_function():
+              return True
+          else:
+              time.sleep(0.1)
+      raise Exception(
+          'Timeout waiting for {}'.format(condition_function.__name__)
+      )
+ 
     try:
       wait_type = getattr(By, wait["type"])
       wait_value = wait["value"]
     except ValueError:
-      self.logger.warning("You gave the format")
+      self.logger.warning("You gave the wrong format")
       self.quit()
       sys.exit()
 
     try:
-      element = WebDriverWait(self, self.minimum_timeout).until(EC.presence_of_element_located((wait_type, wait_value)))
+      explicit_wait = (wait_type, wait_value)
+
+      element = WebDriverWait(self, self.minimum_timeout)
+      element.until(
+        EC.visibility_of_element_located(explicit_wait)
+      )
+#      element = WebDriverWait(self, self.minimum_timeout).until(EC.presence_of_element_located((wait_type, wait_value)))
 
     except TimeoutException:
       self.log_fail(TimeoutException)
       self.timed_out = True
+      element = False
 
-      element = Null
-
-    except:
-      self.logger.error("Unexpected behaviour. Terminating.")
+    except Exception:
+      self.logger.error("Unexpected behaviour. Terminating. {0}, {1}".format(Exception,sys.exc_info()[0]))
       self.quit()
       sys.exit()
 
@@ -219,8 +240,14 @@ class WebPage(Firefox):
 
     input_query = self.find_element(value="//input[starts-with(@class,\"form-control q\")]", by=By.XPATH)
     input_query.send_keys(query)
+    self.logger.info("Typing in text")
 
-    input_query.send_keys(Keys.RETURN) # click() and submit() do not work
+    #button = self.find_element(value=".btn.btn-primary.search-submit.s-search-submit", by=By.CSS_SELECTOR)
+    #button.submit()
+
+    button = self.find_element(value="//button[@type='submit']", by=By.XPATH).click()
+    self.logger.info("Clicking search")
+    #input_query.send_keys(Keys.RETURN) # click() and submit() do not work
 
     if wait:
       element = self.waitFor(wait)
