@@ -115,6 +115,7 @@ define([
               console.error("Cannot show widget: " + widgetName + "(because, frankly... there is no such widget there!)");
             }
           });
+
         }
 
         return this.view;
