@@ -2,7 +2,7 @@ import unittest
 import time
 from benchmark import WebPage
 
-localhost = "http://localhost:8000"
+localhost = "http://localhost:80"
 #localhost = "http://adslabs.org/bumblebee/"
 
 class Test(unittest.TestCase):
