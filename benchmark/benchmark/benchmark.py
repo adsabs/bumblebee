@@ -71,7 +71,7 @@ class WebPage(Firefox):
 
   def log_fail(self, failure):
 
-    self.logger.warning("Failure: {0}".format(failure))
+    self.logger.warning("Failure: {0} ({1})".format(failure,sys.exc_info()[0]))
     name_stamp = time.strftime("%Y-%m-%d_%H:%M:%S", time.localtime())
     self.logger.warning("Dumping contents to file: {0}".format(name_stamp))
 

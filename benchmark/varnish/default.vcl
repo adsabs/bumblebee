@@ -8,11 +8,25 @@ backend default {
     .host = "127.0.0.1";
     .port = "8000";
 }
+
+backend adsapi {
+     .host = "107.21.42.88";
+     #.host = "api.adslabs.org";
+     .port = "80";
+}
+
 # 
 # Below is a commented-out copy of the default VCL logic.  If you
 # redefine any of these subroutines, the built-in logic will be
 # appended to your code.
-# sub vcl_recv {
+sub vcl_recv {
+      # Regex: contains this text
+      if (req.url ~ "/v1/search" || req.url ~ "/v1/bumblebee/bootstrap") {
+        set req.backend = adsapi;
+      } else {
+        set req.backend = default;
+        # return (pass); # this will skip any caching
+      }
 #     if (req.restarts == 0) {
 # 	if (req.http.x-forwarded-for) {
 # 	    set req.http.X-Forwarded-For =
@@ -21,16 +35,16 @@ backend default {
 # 	    set req.http.X-Forwarded-For = client.ip;
 # 	}
 #     }
-#     if (req.request != "GET" &&
-#       req.request != "HEAD" &&
-#       req.request != "PUT" &&
-#       req.request != "POST" &&
-#       req.request != "TRACE" &&
-#       req.request != "OPTIONS" &&
-#       req.request != "DELETE") {
-#         /* Non-RFC2616 or CONNECT which is weird. */
-#         return (pipe);
-#     }
+     if (req.request != "GET" &&
+       req.request != "HEAD" &&
+       req.request != "PUT" &&
+       req.request != "POST" &&
+       req.request != "TRACE" &&
+       req.request != "OPTIONS" &&
+       req.request != "DELETE") {
+         /* Non-RFC2616 or CONNECT which is weird. */
+         return (pipe);
+     }
 #     if (req.request != "GET" && req.request != "HEAD") {
 #         /* We only deal with GET and HEAD by default */
 #         return (pass);
@@ -40,7 +54,7 @@ backend default {
 #         return (pass);
 #     }
 #     return (lookup);
-# }
+}
 # 
 # sub vcl_pipe {
 #     # Note that only the first request to the backend will have
@@ -56,25 +70,25 @@ backend default {
 #     return (pass);
 # }
 # 
-# sub vcl_hash {
-#     hash_data(req.url);
-#     if (req.http.host) {
-#         hash_data(req.http.host);
-#     } else {
-#         hash_data(server.ip);
-#     }
-#     return (hash);
-# }
+ sub vcl_hash {
+     hash_data(req.url);
+     if (req.http.host) {
+         hash_data(req.http.host);
+     } else {
+         hash_data(server.ip);
+     }
+     return (hash);
+ }
 # 
-# sub vcl_hit {
-#     return (deliver);
-# }
+ sub vcl_hit {
+     return (deliver);
+ }
 # 
-# sub vcl_miss {
-#     return (fetch);
-# }
+ sub vcl_miss {
+     return (fetch);
+ }
 # 
-# sub vcl_fetch {
+ sub vcl_fetch {
 #     if (beresp.ttl <= 0s ||
 #         beresp.http.Set-Cookie ||
 #         beresp.http.Vary == "*") {
@@ -84,12 +98,12 @@ backend default {
 # 		set beresp.ttl = 120 s;
 # 		return (hit_for_pass);
 #     }
-#     return (deliver);
-# }
+     return (deliver);
+ }
 # 
-# sub vcl_deliver {
-#     return (deliver);
-# }
+ sub vcl_deliver {
+     return (deliver);
+ }
 # 
 # sub vcl_error {
 #     set obj.http.Content-Type = "text/html; charset=utf-8";
