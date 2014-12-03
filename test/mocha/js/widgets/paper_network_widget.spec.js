@@ -756,19 +756,62 @@ define([
 
       paperNetwork.processResponse(new JsonResponse(testDataBig));
 
-      $("#test").append(paperNetwork.view.el)
+      $("#test").append(paperNetwork.view.el);
+
+      expect(d3.select(".summary-node-group:first-of-type").text()).to.eql("dwarfmassmechanicsmontenearbyspherical");
+
+      expect(d3.select(".summary-node-group:last-of-type").text()).to.eql("dwarfgalaxyobjectsformedmergermergingratestimescales");
+
+      //the font sizes of the words should represent the size score assigned by the api
+
+      var compare = d3.select(".summary-node-group:last-of-type").select("text");
+
+      var compareSize = compare.data()[0]["size"];
+
+      var compareFontSize =  compare.attr("font-size");
+
+      d3.select(".summary-node-group:last-of-type").selectAll("text").each(function(){
+
+        if (d3.select(this).data()[0]["size"] > compareSize){
+
+          expect(parseInt(d3.select(this).attr("font-size"))).to.be.greaterThan(compareFontSize);
+
+        }
+        else if (d3.select(this).data()[0]["size"] < compareSize) {
+
+          expect(parseInt(d3.select(this).attr("font-size"))).to.be.lessThan(compareFontSize);
+
+        }
+      })
 
 
-
-      expect(d3.select(".summary-node-group:first-of-type").text()).to.eql("dwarfmassmechanicsmontenearbyspherical")
     });
 
+    it.skip("should add mouseover interactions for the detail graph", function(){
 
+      var paperNetwork = new PaperNetwork();
+
+      paperNetwork.processResponse(new JsonResponse(testDataBig));
+
+      $("#test").append(paperNetwork.view.el);
+
+      //trigger detail view
+      $(".summary-node-group:first-of-type").click();
+
+      $(".detail-node:first-of-type").mouseover();
+
+      expect($(".popover").length).to.eql(1);
+
+      expect($(".popover").text()).to.eql("1991ASPC...13...73MTitle: The role of dense cores in isolated and cluster star formation.First Author: Myers, P. C.Citation Count: 6");
+
+      expect($(".popover").css("display")).to.eql("block");
+
+      $(".detail-node:first-of-type").mouseout();
+
+
+    })
 
 
   });
-
-
-
 
 });
