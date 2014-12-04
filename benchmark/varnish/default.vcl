@@ -25,7 +25,7 @@ sub vcl_recv {
         set req.backend = adsapi;
       } else {
         set req.backend = default;
-        # return (pass); # this will skip any caching
+        return (pass); # this will skip any caching
       }
 #     if (req.restarts == 0) {
 # 	if (req.http.x-forwarded-for) {
@@ -45,16 +45,32 @@ sub vcl_recv {
          /* Non-RFC2616 or CONNECT which is weird. */
          return (pipe);
      }
-#     if (req.request != "GET" && req.request != "HEAD") {
-#         /* We only deal with GET and HEAD by default */
-#         return (pass);
-#     }
+     #if (req.request != "GET" && req.request != "HEAD") {
+     #    /* We only deal with GET and HEAD by default */
+     #    return (pass);
+     #}
+
+     # Else strip all cookies
+     if (req.url ~ "/v1/") {
+       unset req.http.cookie;
+
+
+     }
+
 #     if (req.http.Authorization || req.http.Cookie) {
 #         /* Not cacheable by default */
 #         return (pass);
 #     }
-#     return (lookup);
+
+     return (lookup);
 }
+
+#sub vcl_backend_response {
+#    if (req.url ~ "/v1/") {
+#        unset beresp.http.set-cookie;
+#    }
+#}
+
 # 
 # sub vcl_pipe {
 #     # Note that only the first request to the backend will have
@@ -71,12 +87,25 @@ sub vcl_recv {
 # }
 # 
  sub vcl_hash {
-     hash_data(req.url);
-     if (req.http.host) {
-         hash_data(req.http.host);
+
+     # Hash on URL
+     hash_data(regsub(req.url, "\d*$", ""));
+
+     # Hash includes ip - do I care? Not for now.
+     #if (req.http.host) {
+     #    hash_data(req.http.host);
+     #} else {
+     #    hash_data(server.ip);
+     #}
+
+     # Differentiate based on login cookie too
+     if (req.http.cookie && req.backend == adsapi) {
+         hash_data(req.http.cookie);
+         set req.http.X-Hash-Cookie = "YES";
      } else {
-         hash_data(server.ip);
+         set req.http.X-Hash-Cookie = "NO";
      }
+
      return (hash);
  }
 # 
@@ -89,6 +118,17 @@ sub vcl_recv {
  }
 # 
  sub vcl_fetch {
+
+   #/* Set the clients TTL on this object */
+   #set beresp.http.cache-control = "max-age=10";
+
+   /* Set varnish TTL on this object */
+   set beresp.ttl = 200s;
+
+   /* Headers with info */
+   set beresp.http.X-Cacheable = "YES ";
+   set beresp.http.X-Ttl = beresp.ttl;
+
 #     if (beresp.ttl <= 0s ||
 #         beresp.http.Set-Cookie ||
 #         beresp.http.Vary == "*") {
@@ -102,6 +142,11 @@ sub vcl_recv {
  }
 # 
  sub vcl_deliver {
+     /* Set debugging header values */
+     set resp.http.X-Cache-Hits = obj.hits;
+     set resp.http.X-Backend = req.backend;
+     set resp.http.X-Hash-Cookie = req.http.X-Hash-Cookie;
+
      return (deliver);
  }
 # 
