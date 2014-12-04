@@ -46,10 +46,15 @@ define([
           app.getObject('MasterPageManager').show('SearchPage',
           searchPageAlwaysVisible);
           this.route = '#search/' + app.getWidget('SearchWidget').getCurrentQuery().url();
+
+          app.getWidget("SearchPage").trigger("contractMiddleCol");
         });
         this.set('show-author-network', function() {
           app.getObject('MasterPageManager').show('SearchPage',
-            ['AuthorNetwork'].concat(searchPageAlwaysVisible.slice(1)));
+          ['AuthorNetwork'].concat(searchPageAlwaysVisible.slice(1)));
+
+          app.getWidget("SearchPage").trigger("expandMiddleCol");
+
         });
         this.set("visualization-closed", this.get("results-page"));
         this.set('abstract-page', function() {
