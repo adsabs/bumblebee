@@ -52,11 +52,13 @@ exec {
 }
 
 class {"benchmark":
-  pip_requirements => "/vagrant/requirements.txt",
+  pip_requirements => "/tmp/requirements.txt",
   require => Class['initial_apt_update'],
 }
 
 class {"varnish":
-  default_vcl => "default.vcl",
-  default_varnish => "varnish",
+  default_vcl => "/etc/varnish/default.vcl",
+  default_varnish => "/etc/default/varnish",
+  varnish_storage => "/var/lib/varnish/varnish_storage.bin",
+  require => Class['initial_apt_update'],
 }
