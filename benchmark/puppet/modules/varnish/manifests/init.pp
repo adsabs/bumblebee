@@ -43,6 +43,6 @@ class varnish ($default_vcl = "default.vcl", $default_varnish = "varnish") {
 }
 
 class {"varnish":
-  default_vcl => "default.vcl,
+  default_vcl => "default.vcl",
   default_varnish => "varnish",
 }

@@ -55,3 +55,8 @@ class {"benchmark":
   pip_requirements => "/vagrant/requirements.txt",
   require => Class['initial_apt_update'],
 }
+
+class {"varnish":
+  default_vcl => "default.vcl",
+  default_varnish => "varnish",
+}

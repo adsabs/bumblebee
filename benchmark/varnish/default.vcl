@@ -6,27 +6,32 @@
 # 
 backend default {
     .host = "127.0.0.1";
-    .port = "8000";
+    .port = "8080";
 }
 
-backend adsapi {
-     .host = "107.21.42.88";
-     #.host = "api.adslabs.org";
-     .port = "80";
+backend google {
+    .host = "74.125.136.105";
+    .port = "80";
+#    .host = "107.21.42.88";
+    #.host = "api.adslabs.org";
+#    .port = "80";
 }
 
 # 
 # Below is a commented-out copy of the default VCL logic.  If you
 # redefine any of these subroutines, the built-in logic will be
 # appended to your code.
+# sub vcl_recv {
 sub vcl_recv {
-      # Regex: contains this text
-      if (req.url ~ "/v1/search" || req.url ~ "/v1/bumblebee/bootstrap") {
-        set req.backend = adsapi;
-      } else {
-        set req.backend = default;
-        return (pass); # this will skip any caching
-      }
+
+     # Regex: contains this text
+     if (req.url ~ "google") {
+             set req.backend = google;
+             set req.http.X-Backend = req.backend;
+     } else {
+               set req.backend = default;
+     }
+#}
 #     if (req.restarts == 0) {
 # 	if (req.http.x-forwarded-for) {
 # 	    set req.http.X-Forwarded-For =
@@ -45,32 +50,16 @@ sub vcl_recv {
          /* Non-RFC2616 or CONNECT which is weird. */
          return (pipe);
      }
-     #if (req.request != "GET" && req.request != "HEAD") {
-     #    /* We only deal with GET and HEAD by default */
-     #    return (pass);
-     #}
-
-     # Else strip all cookies
-     if (req.url ~ "/v1/") {
-       unset req.http.cookie;
-
-
+     if (req.request != "GET" && req.request != "HEAD") {
+         /* We only deal with GET and HEAD by default */
+         return (pass);
      }
-
 #     if (req.http.Authorization || req.http.Cookie) {
 #         /* Not cacheable by default */
 #         return (pass);
 #     }
-
-     return (lookup);
-}
-
-#sub vcl_backend_response {
-#    if (req.url ~ "/v1/") {
-#        unset beresp.http.set-cookie;
-#    }
-#}
-
+#     return (lookup);
+ }
 # 
 # sub vcl_pipe {
 #     # Note that only the first request to the backend will have
@@ -87,25 +76,12 @@ sub vcl_recv {
 # }
 # 
  sub vcl_hash {
-
-     # Hash on URL
-     hash_data(regsub(req.url, "\d*$", ""));
-
-     # Hash includes ip - do I care? Not for now.
-     #if (req.http.host) {
-     #    hash_data(req.http.host);
-     #} else {
-     #    hash_data(server.ip);
-     #}
-
-     # Differentiate based on login cookie too
-     if (req.http.cookie && req.backend == adsapi) {
-         hash_data(req.http.cookie);
-         set req.http.X-Hash-Cookie = "YES";
+     hash_data(req.url);
+     if (req.http.host) {
+         hash_data(req.http.host);
      } else {
-         set req.http.X-Hash-Cookie = "NO";
+         hash_data(server.ip);
      }
-
      return (hash);
  }
 # 
@@ -113,18 +89,18 @@ sub vcl_recv {
      return (deliver);
  }
 # 
- sub vcl_miss {
-     return (fetch);
- }
+# sub vcl_miss {
+#     return (fetch);
+# }
 # 
  sub vcl_fetch {
 
-   #/* Set the clients TTL on this object */
-   #set beresp.http.cache-control = "max-age=10";
+   /* Set the clients TTL on this object */
+   set beresp.http.cache-control = "max-age=10";
 
    /* Set varnish TTL on this object */
    set beresp.ttl = 200s;
-
+   
    /* Headers with info */
    set beresp.http.X-Cacheable = "YES ";
    set beresp.http.X-Ttl = beresp.ttl;
@@ -142,11 +118,9 @@ sub vcl_recv {
  }
 # 
  sub vcl_deliver {
-     /* Set debugging header values */
+     /* Set the clients TTL on this object */
      set resp.http.X-Cache-Hits = obj.hits;
      set resp.http.X-Backend = req.backend;
-     set resp.http.X-Hash-Cookie = req.http.X-Hash-Cookie;
-
      return (deliver);
  }
 # 
