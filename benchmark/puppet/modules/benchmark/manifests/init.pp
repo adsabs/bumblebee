@@ -5,6 +5,7 @@ class benchmark ($pip_requirements = "requirements.txt") {
   # TODO:
   # Need an if command here, and run apt-get if it hasn't already been done
   # Actually, to make independent, need the site.pp manifest here a little bit
+  # Can go in its own manifest module?
 
   $build_packages = ['firefox', 'python', 'python-pip', 'python-dev', 'xvfb', 'libpng-dev', 'build-essential', 'libblas-dev', 'liblapack-dev', 'gfortran']
 
