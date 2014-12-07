@@ -766,7 +766,6 @@ define([
      $("#test").find("i.icon-help").mouseout();
 
 
-      debugger;
     })
 
 
@@ -815,19 +814,6 @@ define([
 
       $("#test").append(paperNetwork.view.el);
 
-//      //trigger detail view sadly can't trigger mouse events on svg in phantomjs
-//      $(".summary-node-group:first-of-type").click();
-//
-//      $(".detail-node:first-of-type").mouseover();
-//
-//      expect($(".popover").length).to.eql(1);
-//
-//      expect($(".popover").text()).to.eql("1991ASPC...13...73MTitle: The role of dense cores in isolated and cluster star formation.First Author: Myers, P. C.Citation Count: 6");
-//
-//      expect($(".popover").css("display")).to.eql("block");
-//
-//      $(".detail-node:first-of-type").mouseout();
-
       paperNetwork.view.graphView.model.set("currentGroup", $(".summary-node-group:first-of-type").get(0));
 
       expect( $(".detail-node:first-of-type").data("content")).to.eql("<b>Title: </b>The role of dense cores in isolated and cluster star formation.<br/><b>First Author: </b>Myers, P. C.<br/><b>Citation Count: </b>6");
@@ -835,6 +821,29 @@ define([
       expect( $(".detail-node:last-of-type").data("content")).to.eql("<b>Title: </b>Steepest descent technique and stellar equilibrium statistical mechanics. IV. Gravitating systems with an energy cutoff.<br/><b>First Author: </b>Katz, J.<br/><b>Citation Count: </b>21");
 
 
+
+    })
+
+    it.skip("should add mouseover interactions for the detail graph", function(){
+
+      var paperNetwork = new PaperNetwork();
+
+      paperNetwork.processResponse(new JsonResponse(testDataBig));
+
+      $("#test").append(paperNetwork.view.el);
+
+      //trigger detail view sadly can't trigger mouse events on svg in phantomjs
+      $(".summary-node-group:first-of-type").click();
+
+      $(".detail-node:first-of-type").mouseover();
+
+      expect($(".popover").length).to.eql(1);
+
+      expect($(".popover").text()).to.eql("1991ASPC...13...73MTitle: The role of dense cores in isolated and cluster star formation.First Author: Myers, P. C.Citation Count: 6");
+
+      expect($(".popover").css("display")).to.eql("block");
+
+      $(".detail-node:first-of-type").mouseout();
 
     })
 
