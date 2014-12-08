@@ -26,7 +26,8 @@ require.config({
         services: {
           'Api': 'js/services/api',
           'PubSub': 'js/services/pubsub',
-          'Navigator': 'js/apps/discovery/navigator'
+          'Navigator': 'js/apps/discovery/navigator',
+          OrcidApi: 'js/services/orcid_api'
         },
         objects: {
           User: 'js/components/user',
@@ -53,6 +54,8 @@ require.config({
         VisualizationDropdown : 'js/wraps/visualization_dropdown',
         AuthorNetwork : 'js/wraps/author_network',
 
+        OrcidLogin: 'js/widgets/orcid_login/widget',
+
         AuthorFacet: 'js/wraps/author_facet',
         BibgroupFacet: 'js/wraps/bibgroup_facet',
         BibstemFacet: 'js/wraps/bibstem_facet',
@@ -73,7 +76,6 @@ require.config({
         ShowResources : 'js/widgets/resources/widget',
 
         TOCWidget: 'js/page_managers/toc_widget'
-
       },
       plugins: {
       }

@@ -13,6 +13,12 @@ var app = express();
 var API_ENDPOINT = process.env.API_ENDPOINT || 'http://localhost:5000/api/1';
 var SOLR_ENDPOINT = process.env.SOLR_ENDPOINT || API_ENDPOINT || "http://adswhy.cfa.harvard.edu:9000/solr/select";
 
+var ORCID_OAUTH_CLIENT_ID = process.env.ORCID_OAUTH_CLIENT_ID || 'APP-P5ANJTQRRTMA6GXZ';
+var ORCID_OAUTH_CLIENT_SECRET = process.env.ORCID_OAUTH_CLIENT_SECRET || '989e54c8-7093-4128-935f-30c19ed9158c';
+var ORCID_API_ENDPOINT = process.env.ORCID_API_ENDPOINT || 'https://api.sandbox.orcid.org';
+var ORCID_REDIRECT_URI = 'http://localhost:3000/OrcidAuth'
+
+
 // this examples does not have any routes, however
 // you may `app.use(app.router)` before or after these
 // static() middleware. If placed before them your routes
@@ -27,6 +33,35 @@ app.use(express.urlencoded()); // to support URL-encoded bodies
 // log requests
 app.use(express.logger('dev'));
 
+app.use('/oauth/exchangeAuthCode', function(req, res, next) {
+  var code = req.query.code;
+  var redirect_uri = ORCID_REDIRECT_URI;
+  var scope = req.query.scope;
+
+  var data = {
+    code: code,
+    redirect_uri: redirect_uri,
+    scope: scope,
+    grant_type: 'authorization_code',
+    client_id: ORCID_OAUTH_CLIENT_ID,
+    client_secret: ORCID_OAUTH_CLIENT_SECRET
+  };
+
+  var options = {
+    headers: {
+      'content-type': 'application/x-www-form-urlencoded'
+    }
+  };
+
+  needle.post(ORCID_API_ENDPOINT + '/oauth/token', data, options, function(err, resp, body) {
+    if (err) {
+      res.send(err.status || 500, err);
+    }
+    else {
+      res.send(resp.statusCode, body);
+    }
+  });
+});
 
 // a simple 'proxy' that takes the query and fetches response
 // from the remote url; care is taken to pass only parameters

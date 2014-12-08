@@ -38,6 +38,12 @@ define([
           api.url = conf.apiRoot;
         }
 
+        var orcidApi = beehive.getService('OrcidApi');
+
+        if (conf.orcidProxy){
+          orcidApi.orcidProxyUri = location.origin + conf.orcidProxy;
+        }
+
         this.bootstrapUrls = conf.bootstrapUrls;
 
         if (conf.useCache) {

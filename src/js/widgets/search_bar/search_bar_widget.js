@@ -1,3 +1,4 @@
+//noinspection Annotator
 define(['marionette',
     'js/components/api_query',
     'js/widgets/base/base_widget',

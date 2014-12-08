@@ -17,7 +17,6 @@ define([], function() {
      * secret on the server side
      */
     orcidProxy: '/oauth/exchangeAuthCode',
-
     /**
      * to let bumblebee discover oauth access_token at boot time
      * and load dynamic configuration (which will be merged with
