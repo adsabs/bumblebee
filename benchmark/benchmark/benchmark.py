@@ -3,6 +3,7 @@ import time
 import logging
 import sys
 import os
+import datetime
 from logging.handlers import RotatingFileHandler
 from selenium.webdriver import Firefox, FirefoxProfile
 from selenium.webdriver.common.by import By
@@ -54,17 +55,17 @@ class WebPage(Firefox):
     # NetExport output dir
     self.har_output = "{0}/har".format(STRESS_PATH)
 
-    # Firefox profiles
-    self.profile = self.makeProfile(self.config)
 
     # Pre-defined attributes
     self.url = url
     self.minimum_timeout = 60 #300 # 5 minutes
     self.timed_out = False
-
     self.load_time = -99
     self.login_time = -99
     self.logout_time = -99
+
+    # Firefox profiles
+    self.profile = self.makeProfile(self.config)
 
     Firefox.__init__(self, firefox_profile=self.profile)
 
@@ -158,12 +159,15 @@ class WebPage(Firefox):
         # Do not show preview output
         profile.set_preference(domain + "netexport.showPreview", True)
         # Log dir
-
         self.logger.info("NetExport profile settings enabled.")
+
+        # Har ID to check file exists
+        self.har_id = int((datetime.datetime.now()-datetime.datetime(1970,1,1)).total_seconds()*1000000)
+        self.url += "/?{0}".format(self.har_id)
+        #print self.url
 
     except KeyError:
       self.logger.warning("NetExport profile settings failed")
-      print "Passing"
       pass
 
     profile.update_preferences()
@@ -179,9 +183,9 @@ class WebPage(Firefox):
 
   def waitFor(self, wait):
    
-    def wait_for(condition_function):
+    def wait_for(condition_function, timeout):
       start_time = time.time()
-      while time.time() < start_time + 3:
+      while time.time() < start_time + timeout:
           if condition_function():
               return True
           else:

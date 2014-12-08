@@ -1,6 +1,6 @@
 import unittest
 import time
-from benchmark import WebPage
+from benchmark import WebPage, STRESS_PATH
 
 localhost = "http://localhost:80"
 #localhost = "http://adslabs.org/bumblebee/"
@@ -61,6 +61,46 @@ class Test(unittest.TestCase):
 
     try:
       self.assertTrue("Elliott" in myPage.page_source)
+    except Exception:
+      myPage.log_fail(Exception)
+    finally:
+      myPage.quit()
+
+  def test_har_parse(self):
+
+    myPage = WebPage(localhost)
+    har_text = myPage.parse_har("{0}/test.har".format(myPage.har_output))
+
+    self.assertTrue("1418045210512398" in har_text)
+
+  def test_har_output(self):
+    import glob
+ 
+    config = {"headless": True, "fire_bug": True, "net_export": True}
+
+    myPage = WebPage(localhost, config=config)
+
+    glob_re = "{0}/localhost+20??-??-??+??-??-??.har".format(myPage.har_output)
+
+    number_before = len(glob.glob(glob_re))
+    number_after = number_before
+
+    myPage.pageLoad(wait={"type": "CLASS_NAME", "value": "q"})
+
+    myPage.logger.info("Waiting for har output file...")
+    timer, timeout = 0, 30
+    while number_before == number_after:
+      number_after = len(glob.glob(glob_re))
+      time.sleep(1)
+      timer += 1
+      myPage.logger.info("... {0} seconds [{1}]".format(timer, timeout))
+ 
+      # Timeout
+      if timer == timeout: break
+
+    myPage.logger.info("Investigating output folder: {0}".format(glob_re))
+    try:
+      self.assertTrue(number_after > number_before)
     except Exception:
       myPage.log_fail(Exception)
     finally:
