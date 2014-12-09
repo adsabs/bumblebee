@@ -39,7 +39,9 @@ function (_, $, Marionette, BaseWidget, OrcidMediator, OrcidApi,  OrcidLoginTemp
             this.orcidApi = new OrcidApi();
 
             var orcidApi = this.beehive.getService('OrcidApi');
-            var result = orcidApi.getOAuthCode();
+            //var result = orcidApi.getOAuthCode();
+
+          orcidApi.showLoginDialog();
         }
     });
 

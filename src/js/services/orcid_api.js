@@ -28,6 +28,7 @@ function(
 
         },
         getOAuthCode : function(){
+
             var opts = {
                 url: this.orcidProxyUri + 'getAuthCode',
                 done: function(){},
@@ -36,6 +37,25 @@ function(
             }
 
             return this.sendData(opts);
+        },
+
+        showLoginDialog: function() {
+          var ORCID_OAUTH_CLIENT_ID = 'APP-P5ANJTQRRTMA6GXZ';
+          var ORCID_API_ENDPOINT = 'https://sandbox.orcid.org';
+          var ORCID_REDIRECT_URI = 'http://localhost:3000/oauthRedirect.html';
+
+          var url = ORCID_API_ENDPOINT
+            + "/oauth/authorize?scope=/orcid-profile/read-limited&response_type=code&access_type=offline"
+            + "&client_id=" + ORCID_OAUTH_CLIENT_ID
+            + "&redirect_uri=" + ORCID_REDIRECT_URI;
+
+
+          var WIDTH = 600;
+          var HEIGHT = 650;
+          var left = (screen.width / 2) - (WIDTH / 2);
+          var top = (screen.height / 2) - (HEIGHT / 2);
+
+          window.open(url, "ORCID Login", 'width=' + WIDTH + ', height=' + HEIGHT + ', top=' + top + ', left=' + left);
         },
 
         exchangeOAuthCode: function(){
