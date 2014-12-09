@@ -16,7 +16,7 @@ var SOLR_ENDPOINT = process.env.SOLR_ENDPOINT || API_ENDPOINT || "http://adswhy.
 var ORCID_OAUTH_CLIENT_ID = process.env.ORCID_OAUTH_CLIENT_ID || 'APP-P5ANJTQRRTMA6GXZ';
 var ORCID_OAUTH_CLIENT_SECRET = process.env.ORCID_OAUTH_CLIENT_SECRET || '989e54c8-7093-4128-935f-30c19ed9158c';
 var ORCID_API_ENDPOINT = process.env.ORCID_API_ENDPOINT || 'https://api.sandbox.orcid.org';
-var ORCID_REDIRECT_URI = 'http://localhost:3000/oauth/redirect'
+var ORCID_REDIRECT_URI = 'http://localhost:3000/oauthRedirect.html';
 
 
 // this examples does not have any routes, however
