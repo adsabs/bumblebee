@@ -29,6 +29,10 @@ class HTTPArchive(object):
     with open(self.file_name, "r") as f:
       self.file_output = json.load(f)
 
+  def get_entry_summary(self):
+    """This will execute all actions on the entry object"""
+    self.log.entries.get_totals()
+
   def parse(self):
 
     self.log = Log()
@@ -231,13 +235,67 @@ class HTTPArchive(object):
      
       entry.request = request
       entry.response = response
-      entries.entry_list.append(entry)
 
+      # Cache
+      cache = Cache()
+      for key in entry_["cache"]:
+        try:
+          setattr(cache, key, entry_["cache"][key])
+        except:
+          pass
+
+      # Before/After requests
+      beforeRequest = BARequest()
+      afterRequest = BARequest()
+      if "beforeRequest" in entry_["cache"]:
+        beforeRequest.expires = time_parse.parse(entry_["cache"]["beforeRequest"]["expires"])
+        beforeRequest.lastAccess = time_parse.parse(entry_["cache"]["beforeRequest"]["lastAccess"])
+        beforeRequest.hitCount = int(entry_["cache"]["beforeRequest"]["hitCount"])
+
+        for key in ["eTag", "comment"]:
+          try:
+            setattr(beforeRequest, key, entry_["cache"]["beforeRequest"])
+          except:
+            pass
+
+      if "afterRequest" in entry_["cache"]:
+
+        afterRequest.expires = time_parse.parse(entry_["cache"]["afterRequest"]["expires"])
+        afterRequest.lastAccess = time_parse.parse(entry_["cache"]["afterRequest"]["lastAccess"])
+        afterRequest.hitCount = int(entry_["cache"]["afterRequest"]["hitCount"])
+
+        for key in ["eTag", "comment"]:
+          try:
+            setattr(afterRequest, key, entry_["cache"]["afterRequest"])
+          except:
+            pass
+
+      cache.beforeRequest = beforeRequest
+      cache.afterRequest = afterRequest
+      
+
+
+      entry.cache = cache
+
+
+      # Timings
+      timings = Timings()
+      for key in entry_["timings"]:
+        try:
+          setattr(timings, key, int(entry_["timings"][key]))
+        except ValueError:
+          setattr(timings, key, entry_["timings"][key])
+        except:
+          pass 
+      entry.timings = timings
+
+
+
+
+      entries.entry_list.append(entry)
     self.log.entries = entries
     # -------------
 
-
-      
        
 
 
@@ -284,6 +342,24 @@ class PageTimings(object):
 class Entries(object):
   def __init__(self):
     self.entry_list = []
+
+  def get_totals(self):
+    item_list = ["blocked", "dns", "connect", \
+    "send", "wait", "receive", "ssl"]
+    entry_dict = {}
+    for item in item_list:
+      entry_dict[item] = 0
+
+    for entry in self.entry_list:
+      for item in item_list:
+        try:
+          entry_dict[item] += getattr(entry.timings, item)
+        except TypeError:
+          print item
+
+    for item in item_list:
+      setattr(self, item + "_total", entry_dict[item])
+      
 
 class Entry(object):
   def __init__(self):
@@ -385,29 +461,26 @@ class Content(object):
     self.comment = ""
 
 class Cache(object):
+  def __init__(self):
+    self.beforeRequest = None
+    self.afterRequest = None
+    self.comment = ""
 
-timings": {
-    "blocked": 0,
-    "dns": -1,
-    "connect": 15,
-    "send": 20,
-    "wait": 38,
-    "receive": 12,
-    "ssl": -1,
-    "comment": ""
-}
+class Timings(object):
+  def __init__(self):
+    self.blocked = 0
+    self.dns = 0
+    self.connect = 0
+    self.send = 0
+    self.wait = 0
+    self.receive = 0
+    self.ssl = 0
+    self.comment = ""
 
-"cache": {
-    "beforeRequest": {},
-    "afterRequest": {},
-    "comment": ""
-}
-
-Both beforeRequest and afterRequest object share the following structure.
-"beforeRequest": {
-    "expires": "2009-04-16T15:50:36",
-    "lastAccess": "2009-16-02T15:50:34",
-    "eTag": "",
-    "hitCount": 0,
-    "comment": ""
-}
+class BARequest(object):
+  def __init__(self):
+    self.expires = ""
+    self.lastAccess = ""
+    self.eTag = ""
+    self.hitCount = ""
+    self.comment = ""
