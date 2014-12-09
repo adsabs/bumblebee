@@ -495,6 +495,8 @@ module.exports = function(grunt) {
   // runs tests (only once)
   grunt.registerTask('test', ['env:dev', 'express:dev', 'mocha_phantomjs:full_testing']);
 
+  // runs test server only
+  grunt.registerTask('test:server', ['env:dev', 'express:dev', 'watch:server']);
   // run tests locally
   grunt.registerTask('test:local', ['env:dev', 'watch:local_testing']);
 

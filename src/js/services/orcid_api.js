@@ -3,20 +3,14 @@ define([
         'bootstrap',
         'jquery',
         'js/components/generic_module',
-        'js/mixins/dependon',
-        'js/mixins/hardened',
-        'js/components/api_query',
-        'js/components/api_request'
+        'js/mixins/dependon'
 ],
 function(
     _,
     Bootstrap,
     $,
     GenericModule,
-    Mixins,
-    Hardened,
-    ApiQuery,
-    ApiRequest
+    Mixins
 ){
     var OrcidApi = GenericModule.extend({
         orcidProxyUri: '',
@@ -44,7 +38,7 @@ function(
                 done: function(){},
                 fail: function(){},
                 data: {scope: '/orcid-profile/read-limited'}
-            }
+            };
 
             return this.sendData(opts);
         },

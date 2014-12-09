@@ -37,10 +37,10 @@ app.use('/oauth/redirect', function(req, res, next){
   var code = req.query.code;
 
   // pair thru ids in headers ????
-})
+});
 
 //https://sandbox.orcid.org/oauth/authorize
-// ?client_id=0000-0003-2736-8061
+// ?client_id=APP-P5ANJTQRRTMA6GXZ
 // &response_type=code
 // &scope=/orcid-profile/read-limited
 // &redirect_uri=https://developers.google.com/oauthplayground
@@ -51,7 +51,7 @@ app.use('/oauth/getAuthCode', function(req, res, next){
     client_id: ORCID_OAUTH_CLIENT_ID,
     response_type: 'code',
     scope: scope,
-    redirect_uri: ORCID_REDIRECT_URI,
+    redirect_uri: ORCID_REDIRECT_URI
   };
 
   var options = {
