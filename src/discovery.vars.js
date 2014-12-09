@@ -16,7 +16,8 @@ define([], function() {
      * The url for orcid proxy, which adds the application token and
      * secret on the server side
      */
-    orcidProxy: '/oauth/exchangeAuthCode',
+    orcidProxy: '/oauth/',
+
     /**
      * to let bumblebee discover oauth access_token at boot time
      * and load dynamic configuration (which will be merged with

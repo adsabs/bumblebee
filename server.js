@@ -16,7 +16,7 @@ var SOLR_ENDPOINT = process.env.SOLR_ENDPOINT || API_ENDPOINT || "http://adswhy.
 var ORCID_OAUTH_CLIENT_ID = process.env.ORCID_OAUTH_CLIENT_ID || 'APP-P5ANJTQRRTMA6GXZ';
 var ORCID_OAUTH_CLIENT_SECRET = process.env.ORCID_OAUTH_CLIENT_SECRET || '989e54c8-7093-4128-935f-30c19ed9158c';
 var ORCID_API_ENDPOINT = process.env.ORCID_API_ENDPOINT || 'https://api.sandbox.orcid.org';
-var ORCID_REDIRECT_URI = 'http://localhost:3000/OrcidAuth'
+var ORCID_REDIRECT_URI = 'http://localhost:3000/oauth/redirect'
 
 
 // this examples does not have any routes, however
@@ -32,6 +32,44 @@ app.use(express.urlencoded()); // to support URL-encoded bodies
 
 // log requests
 app.use(express.logger('dev'));
+
+app.use('/oauth/redirect', function(req, res, next){
+  var code = req.query.code;
+
+  // pair thru ids in headers ????
+})
+
+//https://sandbox.orcid.org/oauth/authorize
+// ?client_id=0000-0003-2736-8061
+// &response_type=code
+// &scope=/orcid-profile/read-limited
+// &redirect_uri=https://developers.google.com/oauthplayground
+
+app.use('/oauth/getAuthCode', function(req, res, next){
+  var scope = req.query.scope;
+  var data = {
+    client_id: ORCID_OAUTH_CLIENT_ID,
+    response_type: 'code',
+    scope: scope,
+    redirect_uri: ORCID_REDIRECT_URI,
+  };
+
+  var options = {
+    headers: {
+      'content-type': 'application/x-www-form-urlencoded'
+    }
+  };
+
+  needle.post(ORCID_API_ENDPOINT + '/oauth/authorize', data, options, function(err, resp, body) {
+    if (err) {
+      res.send(err.status || 500, err);
+    }
+    else {
+      res.send(resp.statusCode, body);
+    }
+  });
+
+});
 
 app.use('/oauth/exchangeAuthCode', function(req, res, next) {
   var code = req.query.code;

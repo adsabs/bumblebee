@@ -29,9 +29,6 @@ define(['underscore', 'jquery', 'js/components/generic_module', 'js/components/a
     },
     getNumOutstandingRequests: function() {
       return this.outstandingRequests;
-    },
-    getHardenedInstance: function(){
-      return this;
     }
   });
 

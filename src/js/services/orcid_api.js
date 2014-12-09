@@ -23,51 +23,54 @@ function(
 
         activate: function(beehive){
             this.setBeeHive(beehive);
-            this.api = beehive.Services.get('Api');
         },
         initialize : function(options){
 
         },
         getOAuthCode : function(){
-            return this.sendData({scope: '/orcid-profile/read-limited'});
+            var opts = {
+                url: this.orcidProxyUri + 'getAuthCode',
+                done: function(){},
+                fail: function(){},
+                data: {scope: '/orcid-profile/read-limited'}
+            }
+
+            return this.sendData(opts);
         },
 
-        sendData: function(data){
+        exchangeOAuthCode: function(){
+            var opts = {
+                url: this.orcidProxyUri + 'exchangeAuthCode',
+                done: function(){},
+                fail: function(){},
+                data: {scope: '/orcid-profile/read-limited'}
+            }
 
-            // rewrite using API.js
-            // now part of beehive
+            return this.sendData(opts);
+        },
 
-            //var opts = {
-            //    done: this.done,
-            //    fail: this.fail,
-            //    type: 'GET'
-            //};
-            //
-            //this.api.request(
-            //    new ApiRequest({
-            //        query: new ApiQuery({}),
-            //        target: ''})
-            //    , opts
-            //);
-
+        sendData: function(opts){
 
             var request = '';
 
-            var opts = {
+            var _opts = {
                 type: 'GET',
-                url: this.orcidProxyUri,
+                url: opts.url,
                 dataType: 'json',
-                data: data,
+                data: opts.data,
                 contentType: 'application/x-www-form-urlencoded',
                 cache: false,
-                headers: {},
-                context: {request: request, api: self }
+                headers: opts.headers || {},
+                context: {request: request, api: self },
+                done: opts.done,
+                fail: opts.fail,
+                always: opts.always
             };
 
             var jqXhr = $.ajax(opts)
-                .always(opts.always ? [this.always, opts.always] : this.always)
-                .done(opts.done || this.done)
-                .fail(opts.fail || this.fail);
+                .always(_opts.always ? [this.always, _opts.always] : this.always)
+                .done(_opts.done || this.done)
+                .fail(_opts.fail || this.fail);
 
             jqXhr = jqXhr.promise(jqXhr);
 
