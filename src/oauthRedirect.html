@@ -16,7 +16,7 @@
 
         var code = getParameterByName("code");
 
-        window.opener.alert(code);//.oauthAuthCodeReceived(code);
+        window.opener.oauthAuthCodeReceived(code);
         window.close();
     </script>
 </body>

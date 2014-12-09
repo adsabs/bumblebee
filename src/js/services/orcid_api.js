@@ -14,13 +14,22 @@ function(
 ){
     var OrcidApi = GenericModule.extend({
         orcidProxyUri: '',
+        authCode : '',
 
         activate: function(beehive){
             this.setBeeHive(beehive);
         },
         initialize : function(options){
+            var _that = this;
 
+            window.oauthAuthCodeReceived = function(code){
+                _that.oauthAuthCodeReceived(code);
+            }
         },
+        oauthAuthCodeReceived: function(code){
+            this.authCode = code;
+        },
+
         getOAuthCode : function(){
 
             var opts = {
