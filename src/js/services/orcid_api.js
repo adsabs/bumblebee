@@ -15,6 +15,7 @@ function(
     var OrcidApi = GenericModule.extend({
         orcidProxyUri: '',
         authCode : '',
+		accessToken: { },
 
         activate: function(beehive){
             this.setBeeHive(beehive);
@@ -27,8 +28,32 @@ function(
             }
         },
         oauthAuthCodeReceived: function(code){
-            this.authCode = code;
+			this.authCode = code;
+
+			var EXCHANGE_TOKEN_URI = 'http://localhost:3000/oauth/exchangeAuthCode';
+
+			return $.ajax({
+				type: "GET",
+				url: EXCHANGE_TOKEN_URI,
+				data: { code: code }})
+			  .done(function(data) {
+
+			  })
+			  .fail(function(error) {
+
+			  });
         },
+
+		getAccessToken: function(code) {
+
+			var EXCHANGE_TOKEN_URI = 'http://localhost:3000/oauth/exchangeAuthCode';
+
+			return $.ajax({
+				type: "GET",
+				url: EXCHANGE_TOKEN_URI,
+				data: { code: code }
+			});
+		},
 
         getOAuthCode : function(){
 
