@@ -12,10 +12,19 @@ function(
     GenericModule,
     Mixins
 ){
+
+	String.prototype.format = function () {
+		var args = arguments;
+		return this.replace(/\{\{|\}\}|\{(\d+)\}/g, function (m, n) {
+			if (m == "{{") { return "{"; }
+			if (m == "}}") { return "}"; }
+			return args[n];
+		});
+	};
+
     var OrcidApi = GenericModule.extend({
         orcidProxyUri: '',
-        authCode : '',
-		accessToken: { },
+		userData: { },
 
         activate: function(beehive){
             this.setBeeHive(beehive);
@@ -24,47 +33,48 @@ function(
             var _that = this;
 
             window.oauthAuthCodeReceived = function(code){
-                _that.oauthAuthCodeReceived(code);
+				_that.oauthAuthCodeReceived(code, _that);
             }
         },
-        oauthAuthCodeReceived: function(code){
-			this.authCode = code;
+        oauthAuthCodeReceived: function(code, orcidApiObj){
 
 			var EXCHANGE_TOKEN_URI = 'http://localhost:3000/oauth/exchangeAuthCode';
+			var ORCID_PROFILE_URL = 'https://api.sandbox.orcid.org/v1.1/{0}/orcid-profile';
 
-			return $.ajax({
+			var deferred = $.Deferred();
+
+			$.ajax({
 				type: "GET",
 				url: EXCHANGE_TOKEN_URI,
 				data: { code: code }})
-			  .done(function(data) {
+			  .done(function(authData) {
+
+				  $.ajax({
+					  type: "GET",
+					  url: ORCID_PROFILE_URL.format(authData.orcid),
+					  headers: {
+						  Authorization: "Bearer {0}".format(authData.access_token)
+					  }
+				  })
+					.done(function(orcidProfileXml) {
+						orcidApiObj.userData.authData = authData;
+						orcidApiObj.userData.orcidProfile = $.xml2json(orcidProfileXml);
+
+						deferred.resolve();
+
+						//var pubSub = this.beehive.getService('PubSub');
+						// TODO: Notify everybody
+					})
+					.fail(function(error) {
+						deferred.reject(error);
+					});
 
 			  })
 			  .fail(function(error) {
-
+				  deferred.reject(error);
 			  });
-        },
 
-		getAccessToken: function(code) {
-
-			var EXCHANGE_TOKEN_URI = 'http://localhost:3000/oauth/exchangeAuthCode';
-
-			return $.ajax({
-				type: "GET",
-				url: EXCHANGE_TOKEN_URI,
-				data: { code: code }
-			});
-		},
-
-        getOAuthCode : function(){
-
-            var opts = {
-                url: this.orcidProxyUri + 'getAuthCode',
-                done: function(){},
-                fail: function(){},
-                data: {scope: '/orcid-profile/read-limited'}
-            }
-
-            return this.sendData(opts);
+			return deferred.promise();
         },
 
         showLoginDialog: function() {
@@ -84,17 +94,6 @@ function(
           var top = (screen.height / 2) - (HEIGHT / 2);
 
           window.open(url, "ORCID Login", 'width=' + WIDTH + ', height=' + HEIGHT + ', top=' + top + ', left=' + left);
-        },
-
-        exchangeOAuthCode: function(){
-            var opts = {
-                url: this.orcidProxyUri + 'exchangeAuthCode',
-                done: function(){},
-                fail: function(){},
-                data: {scope: '/orcid-profile/read-limited'}
-            };
-
-            return this.sendData(opts);
         },
 
         sendData: function(opts){

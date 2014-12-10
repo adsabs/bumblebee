@@ -123,7 +123,8 @@ require.config({
     'hoverIntent': 'libs/jquery-hoverIntent/jquery.hoverIntent',
     'cache': 'libs/dsjslib/lib/Cache',
     'jquery-querybuilder': 'libs/jQuery-QueryBuilder/query-builder',
-    'd3-cloud' : 'libs/d3-cloud/d3.layout.cloud',
+    'd3-cloud': 'libs/d3-cloud/d3.layout.cloud',
+	'xml2json': 'libs/jquery-xml2json/xml2json',
 
     // only for testing (won't get loaded otherwise)
     'chai': '../bower_components/chai/chai',
@@ -139,7 +140,7 @@ require.config({
   shim: {
 
     'bootstrap' : {
-      deps: ['jquery']
+      deps: ['jquery', 'xml2json']
     },
     // This is required to ensure Backbone works as expected within the AMD
     // environment.

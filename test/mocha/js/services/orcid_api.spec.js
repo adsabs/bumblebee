@@ -29,13 +29,27 @@ define([
                 orcidApi.showLoginDialog();
                 var oauthAuthCodeReceived_original = orcidApi.oauthAuthCodeReceived;
 
-                orcidApi.oauthAuthCodeReceived = function(code){
-                    oauthAuthCodeReceived_original(code);
+                orcidApi.oauthAuthCodeReceived = function(code, _that){
 
-                    expect(code).to.be.a('string');
+					var deferred = $.Deferred();
 
-                    done();
+                    var promise = oauthAuthCodeReceived_original(code, _that);
 
+					promise
+					  .done(function() {
+						  expect(code).to.be.a('string');
+						  expect(orcidApi.userData.orcidProfile).to.be.an('object');
+						  expect(orcidApi.userData.authData).to.be.an('object');
+
+						  deferred.resolve();
+
+						  done();
+					  })
+					  .fail(function() {
+						  deferred.reject();
+					  });
+
+					return deferred.promise();
                 };
             });
         });
