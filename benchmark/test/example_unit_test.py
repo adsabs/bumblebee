@@ -1,5 +1,6 @@
 import unittest
 import time
+import glob
 from benchmark import WebPage, STRESS_PATH
 
 localhost = "http://localhost:80"
@@ -28,6 +29,7 @@ class Test(unittest.TestCase):
         "fire_bug": False,
         "net_export": False,
         "fake_input": False,
+        "net_export_output": "{0}/har".format(STRESS_PATH),
         }
     
     myPage = WebPage(localhost, config=config)
@@ -66,16 +68,66 @@ class Test(unittest.TestCase):
     finally:
       myPage.quit()
 
-  def test_har_parse(self):
+#  def test_har_parse(self):
+#
+#    myPage = WebPage(localhost)
+#    har_text = myPage.parse_har("./test.har")
+#
+#    self.assertTrue("1418045210512398" in har_text)
 
-    myPage = WebPage(localhost)
-    har_text = myPage.parse_har("{0}/test.har".format(myPage.har_output))
+  def test_har_nofiles(self):
 
-    self.assertTrue("1418045210512398" in har_text)
+    import os
+    har_file_made = False
+    config = {"headless": True, "fire_bug": True, "net_export": True}
+    myPage = WebPage(localhost, config=config)
+
+    glob_re = "{0}/localhost+20??-??-??+??-??-??.har".format(myPage.har_output)
+    
+    file_list = glob.glob(glob_re)
+    for file_indv in file_list:
+      myPage.logger.info(file_indv)
+      os.remove(file_indv)
+
+    number_before = len(glob.glob(glob_re))
+
+    try:
+      myPage.pageLoad(wait={"type": "CLASS_NAME", "value": "q"})
+      har_file_made = myPage.har_file_made
+    except Exception:
+      myPage.log_fail(Exception)
+    finally:
+      myPage.quit()
+    
+    number_after = len(glob.glob(glob_re))
+    simple_check = number_after > number_before
+
+    self.assertTrue(simple_check & har_file_made)
+
+
+  def test_har_filecheck(self):
+    har_file_made = False
+    config = {"headless": True, "fire_bug": True, "net_export": True}
+    myPage = WebPage(localhost, config=config)
+
+    glob_re = "{0}/localhost+20??-??-??+??-??-??.har".format(myPage.har_output)
+    number_before = len(glob.glob(glob_re))
+
+    try:
+      myPage.pageLoad(wait={"type": "CLASS_NAME", "value": "q"})
+      har_file_made = myPage.har_file_made
+    except Exception:
+      myPage.log_fail(Exception)
+    finally:
+      myPage.quit()
+    
+    number_after = len(glob.glob(glob_re))
+    simple_check = number_after > number_before
+
+    self.assertTrue(simple_check & har_file_made)
 
   def test_har_output(self):
-    import glob
- 
+     
     config = {"headless": True, "fire_bug": True, "net_export": True}
 
     myPage = WebPage(localhost, config=config)

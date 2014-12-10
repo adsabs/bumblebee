@@ -52,10 +52,6 @@ class WebPage(Firefox):
     # Headless Xvfb
     self.headless = self.makeHeadLess(self.config)
 
-    # NetExport output dir
-    self.har_output = "{0}/har".format(STRESS_PATH)
-
-
     # Pre-defined attributes
     self.url = url
     self.minimum_timeout = 60 #300 # 5 minutes
@@ -72,7 +68,7 @@ class WebPage(Firefox):
 
   def log_fail(self, failure):
 
-    self.logger.warning("Failure: {0} ({1})".format(failure,sys.exc_info()[0]))
+    self.logger.warning("Failure: {0} ({1})".format(failure,sys.exc_info()))
     name_stamp = time.strftime("%Y-%m-%d_%H:%M:%S", time.localtime())
     self.logger.warning("Dumping contents to file: {0}".format(name_stamp))
 
@@ -97,12 +93,14 @@ class WebPage(Firefox):
     headless: Run WebDriver as headless instance using Xvfb [True/False]
     fire_bug: Run Firebug plugin in Firefox [True/False]
     net_export: Run NetExport, a Firebug extension, in Firefox [True/False]
+    net_export_output: The path to store the HTTP Archive (HAR) files from NetExport
     """
 
     default_config = {
         "headless": True,
         "fire_bug": False,
         "net_export": False,
+        "net_export_output": "{0}/har".format(STRESS_PATH),
         }
 
     config_out = {}
@@ -152,12 +150,14 @@ class WebPage(Firefox):
         profile.add_extension(NETEXPORT_EXTENSION)
 
         # Set default NetExport preferences
-        #self.logger.info("Output HAR directory: {0}/har/".format(STRESS_PATH))
+        self.har_output = config["net_export_output"]
+        #self.logger.info("Output HAR directory: {0}".format(self.har_output))
         profile.set_preference(domain + "netexport.defaultLogDir", self.har_output)
         profile.set_preference(domain + "netexport.autoExportToFile", True)
         profile.set_preference(domain + "netexport.alwaysEnableAutoExport", True)
         # Do not show preview output
         profile.set_preference(domain + "netexport.showPreview", True)
+        profile.set_preference(domain + "netexport.pageLoadedTimeout", 3000)
         # Log dir
         self.logger.info("NetExport profile settings enabled.")
 
@@ -220,6 +220,44 @@ class WebPage(Firefox):
       self.logger.error("Unexpected behaviour. Terminating. {0}, {1}".format(Exception,sys.exc_info()[0]))
       self.quit()
       sys.exit()
+
+    if self.config["net_export"]:
+      import os, glob
+      from harparser import HTTPArchive
+      timer, time_out = 0, 30
+      self.har_file_made = False
+
+      self.logger.info("Checking HAR file was created...")
+      while timer < time_out:
+
+        try:
+          newest_har_file = max(glob.iglob("{0}/*.har".format(self.har_output)), key=os.path.getctime)
+          HAR_file = HTTPArchive(file_name=newest_har_file)
+
+          headers = HAR_file.log.entries.entry_list[0].request.headers.header_list
+          referer = "-1"
+          for header in headers:
+            if header.name == "Referer":
+              referer = header.value
+        
+          if str(self.har_id) in referer:
+            self.har_file_made = True
+            break
+
+        except ValueError:
+          continue
+
+        except Exception:
+          self.log_fail(Exception)
+
+        finally:
+          #self.logger.info("Timer: {0}".format(timer))
+          timer += 1
+          time.sleep(1.0)
+
+      if not self.har_file_made:
+        self.log_fail("HARFileError: File not created.")
+
 
     return element
 
