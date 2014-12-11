@@ -1,6 +1,7 @@
 define([
     'js/components/generic_module',
     'js/mixins/dependon',
+    'js/services/orcid_api'
     'js/services/orcid_api',
     'js/services/orcid_api_constants'
   ],
