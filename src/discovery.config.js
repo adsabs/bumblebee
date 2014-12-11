@@ -27,7 +27,9 @@ require.config({
           'Api': 'js/services/api',
           'PubSub': 'js/services/pubsub',
           'Navigator': 'js/apps/discovery/navigator',
-          OrcidApi: 'js/services/orcid_api'
+          OrcidApi: 'js/services/orcid_api',
+          LocalStorage: 'js/services/localStorage',
+          Json2Xml: 'js/services/json2xml'
         },
         objects: {
           User: 'js/components/user',
@@ -124,7 +126,8 @@ require.config({
     'cache': 'libs/dsjslib/lib/Cache',
     'jquery-querybuilder': 'libs/jQuery-QueryBuilder/query-builder',
     'd3-cloud': 'libs/d3-cloud/d3.layout.cloud',
-	'xml2json': 'libs/jquery-xml2json/xml2json',
+	  'xml2json': 'libs/jquery-xml2json/xml2json',
+    'localstorage': 'libs/backbone.localStorage/backbone.localStorage',
 
     // only for testing (won't get loaded otherwise)
     'chai': '../bower_components/chai/chai',
@@ -174,8 +177,8 @@ require.config({
       deps: ['jquery']
     },
 
-	xml2json: {
-	  deps: ['jquery']
-	}
+    xml2json: {
+      deps: ['jquery']
+    }
   }
 });
