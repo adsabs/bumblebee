@@ -80,7 +80,8 @@ define([
         'change input[name=identifier]': 'toggleSelect',
         'mouseenter .letter-icon': "showLinks",
         'mouseleave .letter-icon': "hideLinks",
-        'click .letter-icon': "pinLinks"
+        'click .letter-icon': "pinLinks",
+        "click .show-abstract" : "toggleAbstract"
       },
 
       modelEvents: {
@@ -90,6 +91,23 @@ define([
       collectionEvents: {
         "add": "render",
         "change:visible": "render"
+      },
+
+      toggleAbstract : function(){
+
+        this.$(".abstract-content").toggleClass("hidden");
+
+        if (this.$(".show-abstract i").hasClass("icon-item-closed")){
+
+          this.$(".show-abstract i").removeClass("icon-item-closed").addClass("icon-item-open")
+        }
+
+        else {
+
+          this.$(".show-abstract i").addClass("icon-item-closed").removeClass("icon-item-open")
+
+        }
+
       },
 
       toggleSelect: function () {

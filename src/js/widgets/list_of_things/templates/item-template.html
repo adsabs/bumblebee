@@ -92,6 +92,18 @@
 
 </div>
 
+{{#if abstract}}
+<div class="row">
+    <div class="col-xs-10 col-xs-offset-1">
+            <button class="btn show-abstract s-show-abstract"> <i class="icon-item-closed"></i><span> abstract</span></button>
+    <div class="hidden abstract-content s-abstract-content">
+        {{abstract}}
+    </div>
+ </div>
+</div>
+{{/if}}
+
+
 <div class="row">
     <div class="col-xs-10 col-xs-offset-1 s-more-info more-info hide">
         {{#if highlights}}
