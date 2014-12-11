@@ -185,6 +185,7 @@ define([
       showOrcidActions: function(){
         $orcidActions = this.$('.orcid-actions');
         $orcidActions.removeClass('hidden');
+        // TODO : show just relevant actions
       },
 
       hideOrcidActions: function(){

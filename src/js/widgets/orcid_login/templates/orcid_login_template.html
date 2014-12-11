@@ -1,10 +1,16 @@
 <div>
-    <button class="connect-orcid-button">Orcid login <i class="orcid-wait"></i> </button>
-    <div class="hidden connect-orcid-bio">
-        <!--{{#if profileData}}-->
-        <!--<div>profileData.creditName</div>-->
-        <!--<div class="hidden connect-orcid-loader"></div>-->
+    {{#if isSignedOut}}
+    <button class="login-orcid-button {{#if isWaitingForProfileInfo}} orcid-wait {{/if}} ">Orcid login</button>
+    {{/if}}
+    {{#if isSignedIn}}
+    <div class="orcid-bio">
 
-        <!--{{/if}}-->
+        <div>Orcid name: {{familyName}}, {{givenName}}</div>
+        <button class="signout-orcid-button">sign out</button>
+
     </div>
+    {{/if}}
+
+
+
 </div>
