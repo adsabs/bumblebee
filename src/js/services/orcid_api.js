@@ -117,9 +117,10 @@ define([
         return this.sendData({
           type: "POST",
           url: ORCID_WORKS_URL.format(userSession.authData.orcid),
-          data: Json2Xml.xml(orcidWorks, { attributes_key: '$' }),
+          data: Json2Xml.xml(orcidWorks, { attributes_key: '$', header: true }),
           headers: {
-            Authorization: "Bearer {0}".format(userSession.authData.access_token)
+            Authorization: "Bearer {0}".format(userSession.authData.access_token),
+            "Content-Type": "application/orcid+xml"
           }});
       },
 
@@ -136,7 +137,8 @@ define([
           url: ORCID_WORKS_URL.format(userSession.authData.orcid),
           data: Json2Xml.xml(orcidWorks, { attributes_key: '$' }),
           headers: {
-            Authorization: "Bearer {0}".format(userSession.authData.access_token)
+            Authorization: "Bearer {0}".format(userSession.authData.access_token),
+            "Content-Type": "application/orcid+xml"
           }});
       },
 
