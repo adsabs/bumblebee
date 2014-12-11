@@ -140,7 +140,7 @@ require.config({
   shim: {
 
     'bootstrap' : {
-      deps: ['jquery', 'xml2json']
+      deps: ['jquery']
     },
     // This is required to ensure Backbone works as expected within the AMD
     // environment.
@@ -172,6 +172,10 @@ require.config({
 
     'jquery-ui' : {
       deps: ['jquery']
-    }
+    },
+
+	xml2json: {
+	  deps: ['jquery']
+	}
   }
 });
