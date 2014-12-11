@@ -21,9 +21,8 @@ define([
 
       constructor: function (options){
 
-        Backbone.Events.on(OrcidApiConstants.Events.LoginSuccess, this.switchToProfileView);
-        Backbone.Events.on(OrcidApiConstants.Events.SignOut, this.swicthToLoginView);
 
+        return Marionette.ItemView.prototype.constructor.apply(this, arguments);
       },
 
       activate: function (beehive) {
@@ -42,7 +41,7 @@ define([
         // TODO
       },
 
-      swicthToLoginView: function(){
+      switchToLoginView: function(){
         // TODO
       }
 
@@ -55,6 +54,10 @@ define([
 
       initialize: function (options) {
         this.view = new OrcidLoginView();
+
+        Backbone.Events.on(OrcidApiConstants.Events.LoginSuccess, this.view.switchToProfileView);
+        Backbone.Events.on(OrcidApiConstants.Events.SignOut, this.view.switchToLoginView);
+
 
         BaseWidget.prototype.initialize.call(this, options)
         return this;

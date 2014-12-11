@@ -2,6 +2,7 @@ define([
     'underscore',
     'bootstrap',
     'jquery',
+    'xml2json',
     'backbone',
     'js/components/generic_module',
     'js/mixins/dependon',
@@ -10,6 +11,7 @@ define([
   function (_,
             Bootstrap,
             $,
+            Xml2json,
             Backbone,
             GenericModule,
             Mixins,
@@ -34,18 +36,21 @@ define([
 
       activate: function (beehive) {
         this.setBeeHive(beehive);
-        this.pubSub = this.getBeeHive().getService('PubSub');
-
-        this.pubSubKey = this.pubSub.getPubSubKey();
+        //this.pubSub = this.getBeeHive().getService('PubSub');
+        //
+        //this.pubSubKey = this.pubSub.getPubSubKey();
+      },
+      initialize: function (options) {
 
         var _that = this;
 
         window.oauthAuthCodeReceived = function (code) {
           _that.oauthAuthCodeReceived(code, _that);
         }
-      },
-      initialize: function (options) {
-        Backbone.Events.on(OrcidApiConstants.Events.OrcidAction, this.processOrcidAction)
+
+        Backbone.Events.on(OrcidApiConstants.Events.OrcidAction, function(){
+          _that.processOrcidAction();
+        })
       },
       oauthAuthCodeReceived: function (code, orcidApiObj) {
 
@@ -71,12 +76,12 @@ define([
             })
               .done(function (orcidProfileXml) {
                 orcidApiObj.userData.authData = authData;
-                //orcidApiObj.userData.orcidProfile = $.xml2json(orcidProfileXml);
+                orcidApiObj.userData.orcidProfile = $.xml2json(orcidProfileXml);
 
                 deferred.resolve();
 
-                var pubSub = orcidApiObj.pubSub;
-                pubSub.publish(orcidApiObj.pubSubKey, pubSub.ORCID_ANNOUNCEMENT, {msgType: 'login', state: 'completed'})
+                //var pubSub = orcidApiObj.pubSub;
+                //pubSub.publish(orcidApiObj.pubSubKey, pubSub.ORCID_ANNOUNCEMENT, {msgType: 'login', state: 'completed'})
 
                 Backbone.Events.trigger('Orcid-Login-Success');
               })

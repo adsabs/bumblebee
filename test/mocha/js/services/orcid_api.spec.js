@@ -1,9 +1,9 @@
 define([
     'js/components/generic_module',
     'js/mixins/dependon',
-    'js/services/orcid_api'
     'js/services/orcid_api',
     'js/services/orcid_api_constants'
+
   ],
   function (GenericModule,
             Mixins,
@@ -35,13 +35,15 @@ define([
       it('should trigger success over backbone.events', function(done){
         var orcidApi = new OrcidApi();
 
-        Backbone.Events.on(OrcidApiConstants.Events.LoginSuccess,
-          function(e){
+        var callback = function(e){
+          expect(e.dummy == 'dummy').to.be.true;
 
-            expect(e.dummy == 'dummy').to.be.true;
+          Backbone.Events.off(OrcidApiConstants.Events.LoginSuccess, callback);
 
-            done();
-          });
+          done();
+        };
+
+        Backbone.Events.on(OrcidApiConstants.Events.LoginSuccess, callback);
 
         orcidApi.triggerLoginSuccess({dummy:'dummy'});
 
@@ -50,11 +52,13 @@ define([
       it('should call processOrcidAction function on OrcidApiConstants.Events.OrcidAction', function(done){
         var orcidApi = new OrcidApi();
 
+        var spy = sinon.spy(orcidApi, "processOrcidAction");
+
         Backbone.Events.trigger(OrcidApiConstants.Events.OrcidAction, {dummy:'dummy'});
 
-        // TODO: use spy to assert the call of orcidApi.processOrcidAction
+        expect(spy.called).to.be.ok;
 
-
+        done();
       });
 
       it('show login dialog', function (done) {
