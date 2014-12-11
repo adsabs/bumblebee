@@ -90,10 +90,35 @@ define([
       });
 
       it('add orcid works', function (done) {
-//        var orcidApi = new OrcidApi();
-//        orcidApi.activate(beeHive);
-//
-        done();
+        var orcidApi = new OrcidApi();
+        orcidApi.activate(beeHive);
+
+        orcidApi.addWorks({
+          "orcid-message": {
+            "$": {
+              "xmlns": "http://www.orcid.org/ns/orcid"
+            },
+            "message-version": "1.1",
+            "orcid-profile": {
+              "orcid-activities": {
+                "$": {},
+                "orcid-works": {
+                  "$": {},
+                  "orcid-work": {
+                    "work-title": {
+                      "$": {},
+                      "title": "Testing publiction"
+                    },
+                    "work-type": "test"
+                  }
+                }
+              }
+            }
+          }
+        })
+          .done(done);
+
+        //done();
       });
     });
   }

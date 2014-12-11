@@ -117,7 +117,8 @@ define([
         return this.sendData({
           type: "POST",
           url: ORCID_WORKS_URL.format(userSession.authData.orcid),
-          data: Json2Xml.xml(orcidWorks, { attributes_key: '$', header: true }),
+          // TODO: Find better way how to do this
+          data: Json2Xml.xml(orcidWorks, { attributes_key: '$', header: true }).replace('<orcid-message>', '<orcid-message xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.orcid.org/ns/orcid https://raw.github.com/ORCID/ORCID-Source/master/orcid-model/src/main/resources/orcid-message-1.1.xsd" xmlns="http://www.orcid.org/ns/orcid">'),
           headers: {
             Authorization: "Bearer {0}".format(userSession.authData.access_token),
             "Content-Type": "application/orcid+xml"
@@ -135,7 +136,8 @@ define([
         return this.sendData({
           type: "PUT",
           url: ORCID_WORKS_URL.format(userSession.authData.orcid),
-          data: Json2Xml.xml(orcidWorks, { attributes_key: '$' }),
+          // TODO: Find better way how to do this
+          data: Json2Xml.xml(orcidWorks, { attributes_key: '$', header: true }).replace('<orcid-message>', '<orcid-message xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.orcid.org/ns/orcid https://raw.github.com/ORCID/ORCID-Source/master/orcid-model/src/main/resources/orcid-message-1.1.xsd" xmlns="http://www.orcid.org/ns/orcid">'),
           headers: {
             Authorization: "Bearer {0}".format(userSession.authData.access_token),
             "Content-Type": "application/orcid+xml"
