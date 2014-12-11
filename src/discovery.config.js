@@ -124,7 +124,7 @@ require.config({
     'cache': 'libs/dsjslib/lib/Cache',
     'jquery-querybuilder': 'libs/jQuery-QueryBuilder/query-builder',
     'd3-cloud': 'libs/d3-cloud/d3.layout.cloud',
-	'xml2json': 'libs/jquery-xml2json/xml2json',
+	  'xml2json': 'libs/jquery-xml2json/xml2json',
 
     // only for testing (won't get loaded otherwise)
     'chai': '../bower_components/chai/chai',

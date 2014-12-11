@@ -4,7 +4,8 @@ define([
     'js/components/api_request',
     'js/components/api_query',
     'js/widgets/base/base_widget',
-    'hbs!./templates/item-template'
+    'hbs!./templates/item-template',
+    'js/services/orcid_api_constants'
   ],
 
   function (Marionette,
@@ -12,7 +13,8 @@ define([
             ApiRequest,
             ApiQuery,
             BaseWidget,
-            ItemTemplate
+            ItemTemplate,
+            OrcidApiConstants
     ) {
 
     var ItemView = Marionette.ItemView.extend({
@@ -25,6 +27,10 @@ define([
         if (options) {
           _.defaults(options, _.pick(this, ['model', 'collectionEvents', 'modelEvents']));
         }
+
+        Backbone.Events.on(OrcidApiConstants.Events.LoginSuccess, this.showOrcidActions);
+        Backbone.Events.on(OrcidApiConstants.Events.SignOut, this.hideOrcidActions);
+
         return Marionette.ItemView.prototype.constructor.apply(this, arguments);
       },
 
@@ -80,7 +86,8 @@ define([
         'change input[name=identifier]': 'toggleSelect',
         'mouseenter .letter-icon': "showLinks",
         'mouseleave .letter-icon': "hideLinks",
-        'click .letter-icon': "pinLinks"
+        'click .letter-icon': "pinLinks",
+        'click .orcid-action': "orcidAction"
       },
 
       modelEvents: {
@@ -173,6 +180,28 @@ define([
           return
         }
         this.removeActiveQuickLinkState($c)
+      },
+
+      showOrcidActions: function(){
+        $orcidActions = this.$('.orcid-actions');
+        $orcidActions.removeClass('hidden');
+      },
+
+      hideOrcidActions: function(){
+        $orcidActions = this.$('.orcid-actions');
+        $orcidActions.addClass('hidden');
+      },
+
+      orcidAction: function(e){
+        $c = $(e.currentTarget);
+
+        var data = {
+          // TODO
+          // should be created from related model
+        };
+
+        Backbone.Events.trigger(OrcidApiConstants.Events.OrcidAction, data);
+
       }
     });
 

@@ -18,7 +18,7 @@
  *
  */
 
-define([], function() {
+define([], function () {
   var PubSubEvents = {
 
     /**
@@ -103,17 +103,17 @@ define([], function() {
      */
     GET_QTREE: '[FC]-GetQTree',
 
-    NAVIGATE : '[Router]-Navigate-Without-Trigger',
+    NAVIGATE: '[Router]-Navigate-Without-Trigger',
 
     /*for custom widget-to-widget events*/
 
-    CUSTOM_EVENT : '[PubSub]-Custom-Event',
+    CUSTOM_EVENT: '[PubSub]-Custom-Event',
 
 
-    ARIA_ANNOUNCEMENT : "[PubSub]-Aria-Announcement"
+    ARIA_ANNOUNCEMENT: "[PubSub]-Aria-Announcement",
 
-
-};
+    ORCID_ANNOUNCEMENT: "[PubSub]-Orcid-Announcement"
+  };
 
   return PubSubEvents;
 });

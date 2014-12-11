@@ -2,59 +2,69 @@
 define([
     'underscore',
     'jquery',
+    'backbone',
     'marionette',
     'js/widgets/base/base_widget',
-    'js/components/orcid_mediator',
     'js/services/orcid_api',
+    'js/services/orcid_api_constants',
     'hbs!./templates/orcid_login_template',
-    'bootstrap',
-    'hoverIntent',
 
-],
-function (_, $, Marionette, BaseWidget, OrcidMediator, OrcidApi,  OrcidLoginTemplate) {
+  ],
+  function (_, $, Backbone, Marionette, BaseWidget, OrcidApi, OrcidApiConstants, OrcidLoginTemplate) {
 
     var OrcidLoginView = Marionette.ItemView.extend({
-        template: OrcidLoginTemplate,
+      template: OrcidLoginTemplate,
 
-        render: function(){
-            Marionette.ItemView.prototype.render.apply(this, arguments);
+      events: {
+        "click .connect-orcid-button": "click"
+      },
 
-            this.render = function(){ return this}
-        },
-        events:{
-            "click" : "click"
-        },
+      constructor: function (options){
 
-        initialize: function(options){
+        Backbone.Events.on(OrcidApiConstants.Events.LoginSuccess, this.switchToProfileView);
+        Backbone.Events.on(OrcidApiConstants.Events.SignOut, this.swicthToLoginView);
 
-        },
+      },
 
-        activate: function(beehive){
-            this.beehive = beehive;
-        },
+      activate: function (beehive) {
+        this.beehive = beehive;
+      },
 
-        click: function(e){
-            e.preventDefault();
+      click: function (e) {
+        e.preventDefault();
 
-            this.orcidApi = new OrcidApi();
+        var orcidApi = this.beehive.getService('OrcidApi');
 
-            var orcidApi = this.beehive.getService('OrcidApi');
-            //var result = orcidApi.getOAuthCode();
+        orcidApi.showLoginDialog();
+      },
 
-          orcidApi.showLoginDialog();
-        }
+      switchToProfileView: function(){
+        // TODO
+      },
+
+      swicthToLoginView: function(){
+        // TODO
+      }
+
     });
 
     var OrcidLogin = BaseWidget.extend({
-        activate: function(beehive){
-            this.view.activate(beehive);
-        },
+      activate: function (beehive) {
+        this.view.activate(beehive);
+      },
 
-        initialize: function(options){
-            this.view = new OrcidLoginView();
-        }
+      initialize: function (options) {
+        this.view = new OrcidLoginView();
+
+        BaseWidget.prototype.initialize.call(this, options)
+        return this;
+      },
+      render: function () {
+        this.view.render();
+        return this.view;
+      }
 
     });
 
     return OrcidLogin;
-});
+  });
