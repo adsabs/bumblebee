@@ -81,14 +81,45 @@ define([
 
       });
 
-      it('should call processOrcidAction function on OrcidApiConstants.Events.OrcidAction', function(done){
+      it('function should be called on event trigger', function(done){
         var orcidApi = new OrcidApi();
+        orcidApi.activate(beeHive);
 
-        var spy = sinon.spy(orcidApi, "processOrcidAction");
-
-        Backbone.Events.trigger(OrcidApiConstants.Events.OrcidAction, {dummy:'dummy'});
-
+        orcidApi.signOut = function(){};
+        var spy = sinon.spy(orcidApi, "signOut");
+        Backbone.Events.trigger(OrcidApiConstants.Events.SignOut);
         expect(spy.called).to.be.ok;
+
+        orcidApi.showLoginDialog = function(){};
+        var spy = sinon.spy(orcidApi, "showLoginDialog");
+        Backbone.Events.trigger(OrcidApiConstants.Events.Login);
+        expect(spy.called).to.be.ok;
+
+        orcidApi.processOrcidAction = function(){};
+        var spy = sinon.spy(orcidApi, "processOrcidAction");
+        Backbone.Events.trigger(OrcidApiConstants.Events.OrcidAction, {dummy:'dummy'});
+        expect(spy.called).to.be.ok;
+
+        done();
+      });
+
+      it('should delete userSession data on SignOut', function(done){
+        var orcidApi = new OrcidApi();// beeHive.getService("OrcidApi");
+        orcidApi.activate(beeHive);
+
+        var LocalStorage = beeHive.getService("LocalStorage");
+
+        LocalStorage.setObject('userSession', {dummy: 'data'});
+
+        var userSession = LocalStorage.getObject("userSession");
+
+        expect(userSession).to.be.an('object');
+
+        orcidApi.signOut();
+
+        userSession = LocalStorage.getObject("userSession");
+
+        expect(userSession.isEmpty).to.be.true;
 
         done();
       });

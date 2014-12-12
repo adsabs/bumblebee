@@ -47,8 +47,6 @@ define([
         //this.pubSub = this.getBeeHive().getService('PubSub');
         ////
         //this.pubSubKey = this.pubSub.getPubSubKey();
-      },
-      initialize: function (options) {
 
         var _that = this;
 
@@ -67,6 +65,9 @@ define([
         Backbone.Events.on(OrcidApiConstants.Events.OrcidAction, function(){
           _that.processOrcidAction();
         });
+      },
+      initialize: function (options) {
+
       },
       oauthAuthCodeReceived: function (code, orcidApiObj) {
 
@@ -119,7 +120,7 @@ define([
       signOut : function(){
         this.getBeeHive()
           .getService('LocalStorage')
-          .setObject("userSession", undefined);
+          .setObject("userSession", {isEmpty:true});
       },
 
       triggerLoginSuccess: function(msg){
