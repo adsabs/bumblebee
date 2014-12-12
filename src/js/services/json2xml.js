@@ -53,9 +53,9 @@ define([
             var node = json[key],
               attributes = '';
 
-            if(opts.attributes_key && json[opts.attributes_key]){
-              Object.keys(json[opts.attributes_key]).forEach(function(k){
-                attributes += ' {0}="{1}"'.format(k, json[opts.attributes_key][k]);
+            if(opts.attributes_key && node[opts.attributes_key]){
+              Object.keys(node[opts.attributes_key]).forEach(function(k){
+                attributes += ' {0}="{1}"'.format(k, node[opts.attributes_key][k]);
               });
             }
             var inner = xml(node,opts);
