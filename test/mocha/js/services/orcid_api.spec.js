@@ -165,31 +165,64 @@ define([
         orcidApi.activate(beeHive);
 
         orcidApi.addWorks({
-          "orcid-message": {
-            "$": {
-              "xmlns": "http://www.orcid.org/ns/orcid"
-            },
-            "message-version": "1.1",
-            "orcid-profile": {
-              "orcid-activities": {
-                "$": {},
-                "orcid-works": {
+            "orcid-message": {
+              "$": {
+                "xmlns": "http://www.orcid.org/ns/orcid"
+              },
+              "message-version": "1.1",
+              "orcid-profile": {
+                "orcid-activities": {
                   "$": {},
-                  "orcid-work": {
-                    "work-title": {
-                      "$": {},
-                      "title": "Testing publiction"
-                    },
-                    "work-type": "test"
+                  "orcid-works": {
+                    "$": {},
+                    "orcid-work": {
+                      "work-title": {
+                        "$": {},
+                        "title": "Testing publiction"
+                      },
+                      "work-type": "test"
+                    }
                   }
                 }
               }
             }
-          }
-        })
-          .done(done);
+          })
+          .done(function() {
+            done();
+          });
 
-        //done();
+      });
+
+      it('replace all orcid works', function (done) {
+        var orcidApi = new OrcidApi();
+        orcidApi.activate(beeHive);
+
+        orcidApi.replaceAllWorks({
+            "orcid-message": {
+              "$": {
+                "xmlns": "http://www.orcid.org/ns/orcid"
+              },
+              "message-version": "1.1",
+              "orcid-profile": {
+                "orcid-activities": {
+                  "$": {},
+                  "orcid-works": {
+                    "$": {},
+                    "orcid-work": {
+                      "work-title": {
+                        "$": {},
+                        "title": "Testing publiction 2"
+                      },
+                      "work-type": "test"
+                    }
+                  }
+                }
+              }
+            }
+          })
+          .done(function() {
+            done();
+          });
       });
     });
   }

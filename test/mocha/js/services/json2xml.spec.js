@@ -36,7 +36,22 @@ define([
         });
       });
 
-      it('xml2json', function (done) {
+      it('simple xml2json', function (done) {
+        var json2Xml = beeHive.getService("Json2Xml");
+        var xml = json2Xml.xml({
+          root: {
+            $: {
+              a: "a"
+            },
+            b: "b"
+          }
+        }, { attributes_key: '$' });
+
+        var json = $.xml2json(xml);
+        done();
+      });
+
+      it('complex xml2json', function (done) {
         var json2Xml = beeHive.getService("Json2Xml");
         var xml = json2Xml.xml({
           "orcid-message": {
@@ -99,6 +114,8 @@ define([
             }
           }
         }, { attributes_key: '$' });
+
+        var json = $.xml2json(xml);
 
 
         done();
