@@ -54,7 +54,7 @@ define([
           _that.oauthAuthCodeReceived(code, _that);
         }
 
-        Backbone.Events.on(OrcidApiConstants.Events.Login, function(){
+        Backbone.Events.on(OrcidApiConstants.Events.LoginRequested, function(){
           _that.showLoginDialog();
         });
 
@@ -103,7 +103,7 @@ define([
                 //var pubSub = orcidApiObj.pubSub;
                 //pubSub.publish(orcidApiObj.pubSubKey, pubSub.ORCID_ANNOUNCEMENT, {msgType: 'login', state: 'completed'})
 
-                Backbone.Events.trigger(OrcidApiConstants.Events.LoginSuccess, userSession.orcidProfile['#document']['orcid-message']['orcid-profile']['orcid-bio']['personal-details']);
+                Backbone.Events.trigger(OrcidApiConstants.Events.LoginSuccess, userSession.orcidProfile['#document']['orcid-message']['orcid-profile']);
               })
               .fail(function (error) {
                 deferred.reject(error);

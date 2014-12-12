@@ -55,6 +55,7 @@ require.config({
         AuthorNetwork: 'js/wraps/author_network',
 
         OrcidLogin: 'js/widgets/orcid_login/widget',
+        OrcidWorks: 'js/widgets/orcid_works/widget',
 
         AuthorFacet: 'js/wraps/author_facet',
         BibgroupFacet: 'js/wraps/bibgroup_facet',

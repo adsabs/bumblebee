@@ -92,7 +92,7 @@ define([
 
         orcidApi.showLoginDialog = function(){};
         var spy = sinon.spy(orcidApi, "showLoginDialog");
-        Backbone.Events.trigger(OrcidApiConstants.Events.Login);
+        Backbone.Events.trigger(OrcidApiConstants.Events.LoginRequested);
         expect(spy.called).to.be.ok;
 
         orcidApi.processOrcidAction = function(){};

@@ -5,13 +5,12 @@ define([
     'backbone',
     'marionette',
     'js/widgets/base/base_widget',
-    'js/services/orcid_api',
     'js/services/orcid_api_constants',
     'hbs!./templates/orcid_login_template',
     './model'
 
   ],
-  function (_, $, Backbone, Marionette, BaseWidget, OrcidApi, OrcidApiConstants, OrcidLoginTemplate, Model) {
+  function (_, $, Backbone, Marionette, BaseWidget, OrcidApiConstants, OrcidLoginTemplate, Model) {
 
     var OrcidLoginView = Marionette.ItemView.extend({
       template: OrcidLoginTemplate,
@@ -30,12 +29,12 @@ define([
         return Marionette.ItemView.prototype.constructor.apply(this, arguments);
       },
 
-
       loginClick: function (e) {
         e.preventDefault();
 
         this.trigger('loginwidget:loginRequested');
       },
+
       signoutClick: function(e){
         e.preventDefault();
 
@@ -68,7 +67,9 @@ define([
         return this.view;
       },
 
-      switchToProfileView: function(personalDetails){
+      switchToProfileView: function(orcidProfile){
+
+        var personalDetails = orcidProfile['orcid-bio']['personal-details'];
 
         this.view.model.set('familyName', personalDetails['family-name']);
         this.view.model.set('givenName', personalDetails['given-names']);
@@ -94,7 +95,7 @@ define([
           this.view.model.set('isWaitingForProfileInfo', true);
           this.view.model.set('currentState', 'waitingForProfileInfo');
 
-          Backbone.Events.trigger(OrcidApiConstants.Events.Login);
+          Backbone.Events.trigger(OrcidApiConstants.Events.LoginRequested);
         }
         else if (ev === 'loginwidget:signoutRequested') {
           this.switchToLoginView();
