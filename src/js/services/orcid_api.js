@@ -135,17 +135,16 @@ define([
               authData: authData
             });
 
-            _that.getUserProfile()
-              .done(function (orcidProfileXml) {
-                var userSession = LocalStorage.getObject("userSession");
-
-                userSession.orcidProfile = $.xml2json(orcidProfileXml);
-
-                LocalStorage.setObject("userSession", userSession);
+            _that.refreshUserProfile()
+              .done(function () {
 
                 deferred.resolve();
 
-                Backbone.Events.trigger(OrcidApiConstants.Events.LoginSuccess, userSession.orcidProfile['#document']['orcid-message']['orcid-profile']['orcid-bio']['personal-details']);
+                var userSession = LocalStorage.getObject("userSession");
+
+                Backbone.Events.trigger(
+                  OrcidApiConstants.Events.LoginSuccess,
+                  userSession.orcidProfile['#document']['orcid-message']['orcid-profile']['orcid-bio']['personal-details']);
               })
               .fail(function (error) {
                 deferred.reject(error);
@@ -171,6 +170,25 @@ define([
 
       processOrcidAction: function(data){
 
+      },
+
+      refreshUserProfile: function() {
+        var _that = this;
+
+        return this.getUserProfile()
+          .done(function (orcidProfileXml) {
+            var beeHive = _that.getBeeHive();
+            var LocalStorage = beeHive.getService("LocalStorage");
+            var userSession = LocalStorage.getObject("userSession");
+
+            userSession.orcidProfile = $.xml2json(orcidProfileXml);
+
+            LocalStorage.setObject("userSession", userSession);
+
+            Backbone.Events.trigger(
+              OrcidApiConstants.Events.UserProfileRefreshed,
+              userSession.orcidProfile['#document']['orcid-message']['orcid-profile']['orcid-bio']['personal-details']);
+          })
       },
 
       getUserProfile: function() {
@@ -214,6 +232,8 @@ define([
 
         orcidWorks = addXmlHeadersToOrcidMessage(orcidWorks);
 
+        var _that = this;
+
         return this.sendData({
           type: "POST",
           url: ORCID_WORKS_URL.format(userSession.authData.orcid),
@@ -221,7 +241,10 @@ define([
           headers: {
             Authorization: "Bearer {0}".format(userSession.authData.access_token),
             "Content-Type": "application/orcid+xml"
-          }});
+          }})
+          .done(function() {
+            _that.refreshUserProfile();
+          });
       },
 
       replaceAllWorks: function(orcidWorks) {
@@ -232,6 +255,8 @@ define([
 
         orcidWorks = addXmlHeadersToOrcidMessage(orcidWorks);
 
+        var _that = this;
+
         return this.sendData({
           type: "PUT",
           url: ORCID_WORKS_URL.format(userSession.authData.orcid),
@@ -239,7 +264,10 @@ define([
           headers: {
             Authorization: "Bearer {0}".format(userSession.authData.access_token),
             "Content-Type": "application/orcid+xml"
-          }});
+          }})
+          .done(function() {
+            _that.refreshUserProfile();
+          });
       },
 
       sendData: function (opts) {

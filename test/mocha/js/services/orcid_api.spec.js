@@ -225,10 +225,14 @@ define([
                 }
               }
             }
-          })
-          .done(function() {
-            done();
           });
+
+        var callback = function() {
+          done();
+          Backbone.Events.off(OrcidApiConstants.Events.UserProfileRefreshed, callback);
+        };
+
+        Backbone.Events.on(OrcidApiConstants.Events.UserProfileRefreshed, callback);
 
       });
 
@@ -286,10 +290,14 @@ define([
                 }
               }
             }
-          })
-          .done(function() {
-            done();
           });
+
+        var callback = function() {
+          done();
+          Backbone.Events.off(OrcidApiConstants.Events.UserProfileRefreshed, callback);
+        };
+
+        Backbone.Events.on(OrcidApiConstants.Events.UserProfileRefreshed, callback);
       });
     });
   }
