@@ -129,27 +129,21 @@ define([
           }
         })
           .done(function (authData) {
+            var beeHive = _that.getBeeHive();
+            var LocalStorage = beeHive.getService("LocalStorage");
+            LocalStorage.setObject("userSession", {
+              authData: authData
+            });
 
-            _that.sendData({
-              type: "GET",
-              url: ORCID_PROFILE_URL.format(authData.orcid),
-              headers: {
-                Authorization: "Bearer {0}".format(authData.access_token)
-              }
-            })
+            _that.getUserProfile()
               .done(function (orcidProfileXml) {
-                var userSession = {
-                  authData: authData,
-                  orcidProfile: $.xml2json(orcidProfileXml)
-                };
+                var userSession = LocalStorage.getObject("userSession");
 
-                var beeHive = _that.getBeeHive();
-                var LocalStorage = beeHive.getService("LocalStorage");
+                userSession.orcidProfile = $.xml2json(orcidProfileXml);
 
                 LocalStorage.setObject("userSession", userSession);
 
                 deferred.resolve();
-
 
                 Backbone.Events.trigger(OrcidApiConstants.Events.LoginSuccess, userSession.orcidProfile['#document']['orcid-message']['orcid-profile']['orcid-bio']['personal-details']);
               })
@@ -177,6 +171,20 @@ define([
 
       processOrcidAction: function(data){
 
+      },
+
+      getUserProfile: function() {
+        var beeHive = this.getBeeHive();
+        var LocalStorage = beeHive.getService("LocalStorage");
+        var userSession = LocalStorage.getObject("userSession");
+
+        return this.sendData({
+          type: "GET",
+          url: ORCID_PROFILE_URL.format(userSession.authData.orcid),
+          headers: {
+            Authorization: "Bearer {0}".format(userSession.authData.access_token)
+          }
+        })
       },
 
       showLoginDialog: function () {

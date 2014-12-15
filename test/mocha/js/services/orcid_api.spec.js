@@ -131,8 +131,6 @@ define([
         var pubSub = beeHive.getService('PubSub');
         var pubSubKey = pubSub.getPubSubKey();
 
-        var oauthAuthCodeReceived_original = orcidApi.oauthAuthCodeReceived;
-
         orcidApi.oauthAuthCodeReceived = function (code, redirectUri, _that) {
           done();
         };
@@ -186,16 +184,44 @@ define([
               "orcid-profile": {
                 "orcid-activities": {
                   "$": {},
-                  "orcid-works": {
-                    "$": {},
-                    "orcid-work": {
-                      "work-title": {
-                        "$": {},
-                        "title": "Testing publiction"
-                      },
-                      "work-type": "test"
+                  "orcid-works": [
+                    {
+                      "orcid-work": {
+                        "work-title": {
+                          "$": {},
+                          "title": "Testing publication 2"
+                        },
+                        "work-type": "test"
+                      }
+                    },
+                    {
+                      "orcid-work": {
+                        "work-title": {
+                          "$": {},
+                          "title": "Testing publication 3"
+                        },
+                        "work-type": "test"
+                      }
+                    },
+                    {
+                      "orcid-work": {
+                        "work-title": {
+                          "$": {},
+                          "title": "Testing publication 4"
+                        },
+                        "work-type": "test"
+                      }
+                    },
+                    {
+                      "orcid-work": {
+                        "work-title": {
+                          "$": {},
+                          "title": "Testing publication 5"
+                        },
+                        "work-type": "test"
+                      }
                     }
-                  }
+                  ]
                 }
               }
             }
@@ -219,16 +245,44 @@ define([
               "orcid-profile": {
                 "orcid-activities": {
                   "$": {},
-                  "orcid-works": {
-                    "$": {},
-                    "orcid-work": {
-                      "work-title": {
-                        "$": {},
-                        "title": "Testing publiction 2"
-                      },
-                      "work-type": "test"
+                  "orcid-works": [
+                    {
+                      "orcid-work": {
+                        "work-title": {
+                          "$": {},
+                          "title": "Testing publication 2"
+                        },
+                        "work-type": "test"
+                      }
+                    },
+                    {
+                      "orcid-work": {
+                        "work-title": {
+                          "$": {},
+                          "title": "Testing publication 13"
+                        },
+                        "work-type": "test"
+                      }
+                    },
+                    {
+                      "orcid-work": {
+                        "work-title": {
+                          "$": {},
+                          "title": "Testing publication 14"
+                        },
+                        "work-type": "test"
+                      }
+                    },
+                    {
+                      "orcid-work": {
+                        "work-title": {
+                          "$": {},
+                          "title": "Testing publication 15"
+                        },
+                        "work-type": "test"
+                      }
                     }
-                  }
+                  ]
                 }
               }
             }
