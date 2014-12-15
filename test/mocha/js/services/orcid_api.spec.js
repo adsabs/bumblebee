@@ -6,10 +6,11 @@ define([
     'underscore',
     'xml2json',
     'js/components/application',
-    'js/services/orcid_api_constants'
+    'js/services/orcid_api_constants',
+    'js/components/pubsub_events'
   ],
 
-  function (GenericModule, Mixins, $, OrcidApi, _, xml2json, Application, OrcidApiConstants) {
+  function (GenericModule, Mixins, $, OrcidApi, _, xml2json, Application, OrcidApiConstants, PubSubEvents) {
 
     var app = new Application();
     var config = {
@@ -124,17 +125,32 @@ define([
         done();
       });
 
+      it('process full page oauth redirect', function(done) {
+        var orcidApi = new OrcidApi();
+        orcidApi.activate(beeHive);
+        var pubSub = beeHive.getService('PubSub');
+        var pubSubKey = pubSub.getPubSubKey();
+
+        var oauthAuthCodeReceived_original = orcidApi.oauthAuthCodeReceived;
+
+        orcidApi.oauthAuthCodeReceived = function (code, redirectUri, _that) {
+          done();
+        };
+
+        pubSub.publish(pubSubKey, PubSubEvents.BOOTSTRAP_CONFIGURED);
+      });
+
       it('show login dialog', function (done) {
         var orcidApi = new OrcidApi();// beeHive.getService("OrcidApi");
         orcidApi.activate(beeHive);
         orcidApi.showLoginDialog();
         var oauthAuthCodeReceived_original = orcidApi.oauthAuthCodeReceived;
 
-        orcidApi.oauthAuthCodeReceived = function (code, _that) {
+        orcidApi.oauthAuthCodeReceived = function (code, redirectUri, _that) {
 
           var deferred = $.Deferred();
 
-          var promise = oauthAuthCodeReceived_original(code, _that);
+          var promise = oauthAuthCodeReceived_original(code, redirectUri, _that);
 
           promise
             .done(function () {

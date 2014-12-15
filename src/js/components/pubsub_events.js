@@ -112,7 +112,9 @@ define([], function () {
 
     ARIA_ANNOUNCEMENT: "[PubSub]-Aria-Announcement",
 
-    ORCID_ANNOUNCEMENT: "[PubSub]-Orcid-Announcement"
+    ORCID_ANNOUNCEMENT: "[PubSub]-Orcid-Announcement",
+
+    BOOTSTRAP_CONFIGURED: "[PubSub]-Bootstrap-Configured"
   };
 
   return PubSubEvents;

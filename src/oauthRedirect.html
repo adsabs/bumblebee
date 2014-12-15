@@ -15,8 +15,9 @@
         }
 
         var code = getParameterByName("code");
+        var redirectUri = window.location.origin;
 
-        window.opener.oauthAuthCodeReceived(code);
+        window.opener.oauthAuthCodeReceived(code, redirectUri);
         window.close();
     </script>
 </body>

@@ -6,7 +6,8 @@ define([
     'backbone',
     'js/components/generic_module',
     'js/mixins/dependon',
-    'js/services/orcid_api_constants'
+    'js/services/orcid_api_constants',
+    'js/components/pubsub_events'
   ],
   function (_,
             Bootstrap,
@@ -15,14 +16,15 @@ define([
             Backbone,
             GenericModule,
             Mixins,
-            OrcidApiConstants) {
+            OrcidApiConstants,
+			      PubSubEvents) {
     function addXmlHeadersToOrcidMessage(message) {
       var messageCopy = $.extend(true, {}, message);
       messageCopy.$ = {
         "xmlns:xsi": "http://www.w3.org/2001/XMLSchema-instance",
         "xsi:schemaLocation": "http://www.orcid.org/ns/orcid https://raw.github.com/ORCID/ORCID-Source/master/orcid-model/src/main/resources/orcid-message-1.1.xsd",
         "xmlns": "http://www.orcid.org/ns/orcid"
-      }
+      };
       return messageCopy;
     }
 
@@ -40,10 +42,22 @@ define([
       });
     };
 
+    function getParameterByName(name) {
+      name = name.replace(/[\[]/, "\\[").replace(/[\]]/, "\\]");
+      var regex = new RegExp("[\\?&]" + name + "=([^&#]*)"),
+        results = regex.exec(location.search);
+      return results === null ? "" : decodeURIComponent(results[1].replace(/\+/g, " "));
+    }
+
+    var ORCID_OAUTH_CLIENT_ID = 'APP-P5ANJTQRRTMA6GXZ';
     var ORCID_ENDPOINT = 'https://sandbox.orcid.org';
     var ORCID_API_ENDPOINT = 'https://api.sandbox.orcid.org/v1.1';
     var ORCID_PROFILE_URL = ORCID_API_ENDPOINT + '/{0}/orcid-profile';
     var ORCID_WORKS_URL = ORCID_API_ENDPOINT + '/{0}/orcid-works';
+    var ORCID_OAUTH_LOGIN_URL = ORCID_ENDPOINT
+      + "/oauth/authorize?scope=/orcid-profile/read-limited,/orcid-works/create,/orcid-works/update&response_type=code&access_type=offline"
+      + "&client_id=" + ORCID_OAUTH_CLIENT_ID
+      + "&redirect_uri={0}";
     var EXCHANGE_TOKEN_URI = 'http://localhost:3000/oauth/exchangeAuthCode';
 
 
@@ -53,15 +67,23 @@ define([
 
       activate: function (beehive) {
         this.setBeeHive(beehive);
-        //this.pubSub = this.getBeeHive().getService('PubSub');
-        ////
-        //this.pubSubKey = this.pubSub.getPubSubKey();
+        this.pubSub = this.getBeeHive().getService('PubSub');
+        this.pubSubKey = this.pubSub.getPubSubKey();
 
         var _that = this;
 
-        window.oauthAuthCodeReceived = function (code) {
-          _that.oauthAuthCodeReceived(code, _that);
-        }
+        window.oauthAuthCodeReceived = function (code, redirectUri) {
+          _that.oauthAuthCodeReceived(code, redirectUri, _that);
+        };
+
+        this.pubSub.subscribe(this.pubSubKey, PubSubEvents.BOOTSTRAP_CONFIGURED, function(page) {
+          var code = getParameterByName("code");
+          _that.oauthAuthCodeReceived(code, window.location.origin, _that);
+        });
+
+        Backbone.Events.on(OrcidApiConstants.Events.RedirectToLogin, function(){
+          _that.redirectToLogin();
+        });
 
         Backbone.Events.on(OrcidApiConstants.Events.LoginRequested, function(){
           _that.showLoginDialog();
@@ -78,14 +100,26 @@ define([
       initialize: function (options) {
 
       },
-      oauthAuthCodeReceived: function (code, orcidApiObj) {
+      redirectToLogin: function() {
+        var url = ORCID_OAUTH_LOGIN_URL.format(window.location.origin);
+
+        window.location.replace(url);
+      },
+      oauthAuthCodeReceived: function (code, redirectUri, orcidApiObj) {
+
+        if (!code || !redirectUri) {
+          return;
+        }
 
         var deferred = $.Deferred();
 
         orcidApiObj.sendData({
           type: "GET",
           url: EXCHANGE_TOKEN_URI,
-          data: {code: code}
+          data: {
+            code: code,
+            redirectUri: redirectUri
+          }
         })
           .done(function (authData) {
 
@@ -112,7 +146,7 @@ define([
                 //var pubSub = orcidApiObj.pubSub;
                 //pubSub.publish(orcidApiObj.pubSubKey, pubSub.ORCID_ANNOUNCEMENT, {msgType: 'login', state: 'completed'})
 
-                Backbone.Events.trigger(OrcidApiConstants.Events.LoginSuccess, userSession.orcidProfile['#document']['orcid-message']['orcid-profile']);
+                Backbone.Events.trigger(OrcidApiConstants.Events.LoginSuccess, userSession.orcidProfile['#document']['orcid-message']['orcid-profile']['orcid-bio']['personal-details']);
               })
               .fail(function (error) {
                 deferred.reject(error);
@@ -141,14 +175,9 @@ define([
       },
 
       showLoginDialog: function () {
-        var ORCID_OAUTH_CLIENT_ID = 'APP-P5ANJTQRRTMA6GXZ';
         var ORCID_REDIRECT_URI = 'http://localhost:3000/oauthRedirect.html';
 
-        var url = ORCID_ENDPOINT
-          + "/oauth/authorize?scope=/orcid-profile/read-limited,/orcid-works/create,/orcid-works/update&response_type=code&access_type=offline"
-          + "&client_id=" + ORCID_OAUTH_CLIENT_ID
-          + "&redirect_uri=" + ORCID_REDIRECT_URI;
-
+        var url = ORCID_OAUTH_LOGIN_URL.format(ORCID_REDIRECT_URI);
 
         var WIDTH = 600;
         var HEIGHT = 650;
