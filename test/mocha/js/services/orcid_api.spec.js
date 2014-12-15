@@ -141,39 +141,36 @@ define([
       });
 
       it('show login dialog', function (done) {
-        var orcidApi = new OrcidApi();// beeHive.getService("OrcidApi");
+        var orcidApi = new OrcidApi();
         orcidApi.activate(beeHive);
         orcidApi.showLoginDialog();
-        var oauthAuthCodeReceived_original = orcidApi.oauthAuthCodeReceived;
 
-        orcidApi.oauthAuthCodeReceived = function (code, redirectUri, _that) {
+        var successCallback = function() {
+          Backbone.Events.off(OrcidApiConstants.Events.LoginSuccess, successCallback);
 
-          var deferred = $.Deferred();
+          var LocalStorage = beeHive.getService("LocalStorage");
+          var userSession = LocalStorage.getObject("userSession");
 
-          var promise = oauthAuthCodeReceived_original(code, redirectUri, _that);
+          expect(userSession.orcidProfile).to.be.an('object');
+          expect(userSession.authData).to.be.an('object');
 
-          promise
-            .done(function () {
-              expect(code).to.be.a('string');
-
-//              var beeHive = GenericModule.getBeeHive();
-              var LocalStorage = beeHive.getService("LocalStorage");
-
-              var userSession = LocalStorage.getObject("userSession");
-
-              expect(userSession.orcidProfile).to.be.an('object');
-              expect(userSession.authData).to.be.an('object');
-
-              deferred.resolve();
-
-              done();
-            })
-            .fail(function () {
-              deferred.reject();
-            });
-
-          return deferred.promise();
+          done();
         };
+
+        Backbone.Events.on(OrcidApiConstants.Events.LoginSuccess, successCallback);
+      });
+
+      it('should cancel login', function (done) {
+        var orcidApi = new OrcidApi();
+        orcidApi.activate(beeHive);
+        orcidApi.showLoginDialog();
+
+        var callback = function() {
+          done();
+          Backbone.Events.off(OrcidApiConstants.Events.LoginCancelled, callback);
+        };
+
+        Backbone.Events.on(OrcidApiConstants.Events.LoginCancelled, callback);
       });
 
       it('add orcid works', function (done) {

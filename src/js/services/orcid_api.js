@@ -72,10 +72,7 @@ define([
 
         var _that = this;
 
-        window.oauthAuthCodeReceived = function (code, redirectUri) {
-          _that.oauthAuthCodeReceived(code, redirectUri, _that);
-        };
-
+        window.oauthAuthCodeReceived = _.bind(this.oauthAuthCodeReceived, this);
         this.pubSub.subscribe(this.pubSubKey, PubSubEvents.BOOTSTRAP_CONFIGURED, function(page) {
           var code = getParameterByName("code");
           _that.oauthAuthCodeReceived(code, window.location.origin, _that);
@@ -100,12 +97,20 @@ define([
       initialize: function (options) {
 
       },
+      cleanLoginWindow: function() {
+        if (this.loginWindow) {
+          this.loginWindow.onbeforeunload = null;
+          this.loginWindow = null;
+        }
+      },
       redirectToLogin: function() {
         var url = ORCID_OAUTH_LOGIN_URL.format(window.location.origin);
 
         window.location.replace(url);
       },
-      oauthAuthCodeReceived: function (code, redirectUri, orcidApiObj) {
+      oauthAuthCodeReceived: function (code, redirectUri) {
+
+        this.cleanLoginWindow();
 
         if (!code || !redirectUri) {
           return;
@@ -113,7 +118,9 @@ define([
 
         var deferred = $.Deferred();
 
-        orcidApiObj.sendData({
+        var _that = this;
+
+        this.sendData({
           type: "GET",
           url: EXCHANGE_TOKEN_URI,
           data: {
@@ -123,7 +130,7 @@ define([
         })
           .done(function (authData) {
 
-            orcidApiObj.sendData({
+            _that.sendData({
               type: "GET",
               url: ORCID_PROFILE_URL.format(authData.orcid),
               headers: {
@@ -136,15 +143,13 @@ define([
                   orcidProfile: $.xml2json(orcidProfileXml)
                 };
 
-                var beeHive = orcidApiObj.getBeeHive();
+                var beeHive = _that.getBeeHive();
                 var LocalStorage = beeHive.getService("LocalStorage");
 
                 LocalStorage.setObject("userSession", userSession);
 
                 deferred.resolve();
 
-                //var pubSub = orcidApiObj.pubSub;
-                //pubSub.publish(orcidApiObj.pubSubKey, pubSub.ORCID_ANNOUNCEMENT, {msgType: 'login', state: 'completed'})
 
                 Backbone.Events.trigger(OrcidApiConstants.Events.LoginSuccess, userSession.orcidProfile['#document']['orcid-message']['orcid-profile']['orcid-bio']['personal-details']);
               })
@@ -184,7 +189,13 @@ define([
         var left = (screen.width / 2) - (WIDTH / 2);
         var top = (screen.height / 2) - (HEIGHT / 2);
 
-        window.open(url, "ORCID Login", 'width=' + WIDTH + ', height=' + HEIGHT + ', top=' + top + ', left=' + left);
+        this.cleanLoginWindow();
+
+        this.loginWindow = window.open(url, "ORCID Login", 'width=' + WIDTH + ', height=' + HEIGHT + ', top=' + top + ', left=' + left);
+        this.loginWindow.onbeforeunload = _.bind(function(e) {
+          this.cleanLoginWindow();
+          Backbone.Events.trigger(OrcidApiConstants.Events.LoginCancelled);
+        }, this);
       },
 
       addWorks: function(orcidWorks) {
