@@ -51,11 +51,25 @@ define([
       orcidProxyUri: '',
       userData: {},
 
+      routeOrcidPubSub: function(msg){
+
+        switch(msg.msgType){
+          case OrcidApiConstants.Events.LoginRequested:
+            this.showLoginDialog();
+            break;
+          case OrcidApiConstants.Events.SignOut:
+            this.signOut();
+            break;
+          case OrcidApiConstants.Events.OrcidAction:
+            this.processOrcidAction(msg.data);
+            break;
+        }
+      },
+
       activate: function (beehive) {
         this.setBeeHive(beehive);
-        //this.pubSub = this.getBeeHive().getService('PubSub');
-        ////
-        //this.pubSubKey = this.pubSub.getPubSubKey();
+        this.pubSub = this.getBeeHive().getService('PubSub').getHardenedInstance();
+        this.pubSubKey = this.pubSub.getPubSubKey();
 
         var _that = this;
 
@@ -63,17 +77,7 @@ define([
           _that.oauthAuthCodeReceived(code, _that);
         }
 
-        Backbone.Events.on(OrcidApiConstants.Events.LoginRequested, function(){
-          _that.showLoginDialog();
-        });
-
-        Backbone.Events.on(OrcidApiConstants.Events.SignOut, function(){
-          _that.signOut();
-        });
-
-        Backbone.Events.on(OrcidApiConstants.Events.OrcidAction, function(){
-          _that.processOrcidAction();
-        });
+        this.pubSub.subscribe(this.pubSub.ORCID_ANNOUNCEMENT, _.bind(this.routeOrcidPubSub, this));
       },
       initialize: function (options) {
 
@@ -109,10 +113,10 @@ define([
 
                 deferred.resolve();
 
-                //var pubSub = orcidApiObj.pubSub;
-                //pubSub.publish(orcidApiObj.pubSubKey, pubSub.ORCID_ANNOUNCEMENT, {msgType: 'login', state: 'completed'})
+                var orcidProfile = userSession.orcidProfile['#document']['orcid-message']['orcid-profile'];
 
-                Backbone.Events.trigger(OrcidApiConstants.Events.LoginSuccess, userSession.orcidProfile['#document']['orcid-message']['orcid-profile']);
+                var pubSub = orcidApiObj.pubSub;
+                pubSub.publish(pubSub.ORCID_ANNOUNCEMENT, {msgType: OrcidApiConstants.Events.LoginSuccess, data: orcidProfile});
               })
               .fail(function (error) {
                 deferred.reject(error);
@@ -132,12 +136,8 @@ define([
           .setObject("userSession", {isEmpty:true});
       },
 
-      triggerLoginSuccess: function(msg){
-        Backbone.Events.trigger(OrcidApiConstants.Events.LoginSuccess, msg);
-      },
-
       processOrcidAction: function(data){
-
+      // TODO
       },
 
       showLoginDialog: function () {

@@ -16,7 +16,8 @@ define([
     'js/mixins/add_stable_index_to_collection',
     'hbs!./templates/empty-view-template',
     'hbs!./templates/initial-view-template',
-    './item_view'
+    './item_view',
+    'js/widgets/orcid_model_notifier/orcid_model'
   ],
 
   function (Marionette,
@@ -31,7 +32,8 @@ define([
             WidgetPaginationMixin,
             EmptyViewTemplate,
             InitialViewTemplate,
-            ItemView
+            ItemView,
+            OrcidModel
     ) {
 
 
@@ -44,7 +46,7 @@ define([
       defaults: function () {
         return {
           showDetailsButton: false,
-          mainResults: false
+          mainResults: false,
         }
       }
     });
@@ -64,8 +66,21 @@ define([
         if (!options.model) {
           options.model = new MainViewModel();
         }
+
         var args = _.toArray(arguments);
         args[0] = options;
+
+        OrcidModel.on('change:actionsVisible',
+          _.bind(function(e){
+            if(e.get('actionsVisible')){
+              this.children.call('showOrcidActions');
+
+            } else{
+              this.children.call('hideOrcidActions');
+            }
+          } ,this)
+        );
+
         return Marionette.CompositeView.prototype.constructor.apply(this, args);
       },
 

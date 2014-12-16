@@ -21,11 +21,13 @@ define([
       },
 
       modelEvents:{
-        "change:currentState": 'render'
       },
 
       constructor: function (options){
         this.model = new Model();
+
+        this.listenTo(this, "all", this.onAllInternalEvents);
+
         return Marionette.ItemView.prototype.constructor.apply(this, arguments);
       },
 
@@ -40,12 +42,41 @@ define([
 
         this.trigger('loginwidget:signoutRequested');
 
+      },
+
+      onAllInternalEvents: function(ev, arg1, arg2) {
+        if (ev == 'loginwidget:stateChanged'){
+          this.stateChanged(arg1);
+        }
+      },
+      stateChanged: function(state){
+        this.model.set('isSignedIn', false);
+        this.model.set('isWaitingForProfileInfo', false);
+
+        switch (state){
+          case 'signedIn':
+            this.model.set('isSignedIn', true);
+            break;
+          case 'signedOut':
+            // isSignedIn is already false
+            break;
+          case 'waitingForProfileInfo':
+            this.model.set('isWaitingForProfileInfo', true);
+            break;
+        }
+
+        this.render();
       }
     });
 
     var OrcidLogin = BaseWidget.extend({
+
+
       activate: function (beehive) {
-        this.pubsub = beehive.Services.get('PubSub');
+        this.pubSub = beehive.Services.get('PubSub');
+        this.pubSubKey = this.pubSub.getPubSubKey();
+
+        this.pubSub.subscribe(this.pubSub.ORCID_ANNOUNCEMENT, _.bind(this.routeOrcidPubSub, this));
       },
 
       initialize: function (options) {
@@ -53,15 +84,23 @@ define([
 
         this.listenTo(this.view, "all", this.onAllInternalEvents);
 
-        var _that = this;
-
-        Backbone.Events.on(OrcidApiConstants.Events.LoginSuccess, function(data){ _that.switchToProfileView(data); });
-        Backbone.Events.on(OrcidApiConstants.Events.SignOut, function(data){_that.switchToLoginView(data); });
-
         BaseWidget.prototype.initialize.call(this, options);
 
         return this;
       },
+
+      routeOrcidPubSub : function(msg){
+
+        switch (msg.msgType){
+          case OrcidApiConstants.Events.LoginSuccess:
+            this.switchToProfileView(msg.data);
+            break;
+          case OrcidApiConstants.Events.SignOut:
+            this.switchToLoginView(msg.data);
+            break;
+        }
+      },
+
       render: function () {
         this.view.render();
         return this.view;
@@ -73,34 +112,29 @@ define([
 
         this.view.model.set('familyName', personalDetails['family-name']);
         this.view.model.set('givenName', personalDetails['given-names']);
-        this.view.model.set('isSignedOut', false);
-        this.view.model.set('isWaitingForProfileInfo', false);
 
-        this.view.model.set('isSignedIn', true);
-        this.view.model.set('currentState', 'signedIn');
+        this.view.trigger('loginwidget:stateChanged', 'signedIn');
 
       },
       switchToLoginView : function(){
         this.view.model.set('familyName', undefined);
         this.view.model.set('givenName', undefined);
-        this.view.model.set('isSignedIn', false);
-        this.view.model.set('isWaitingForProfileInfo', false);
-        this.view.model.set('isSignedOut', true);
 
-        this.view.model.set('currentState', 'signedOut');
-
+        this.view.trigger('loginwidget:stateChanged', 'signedOut');
       },
       onAllInternalEvents: function(ev, arg1, arg2) {
         if (ev === 'loginwidget:loginRequested') {
-          this.view.model.set('isWaitingForProfileInfo', true);
-          this.view.model.set('currentState', 'waitingForProfileInfo');
 
-          Backbone.Events.trigger(OrcidApiConstants.Events.LoginRequested);
+          this.view.trigger('loginwidget:stateChanged', 'waitingForProfileInfo');
+
+          this.pubSub.publish(this.pubSub.ORCID_ANNOUNCEMENT, {msgType: OrcidApiConstants.Events.LoginRequested});
+
+
+          //Backbone.Events.trigger(OrcidApiConstants.Events.LoginRequested);
         }
         else if (ev === 'loginwidget:signoutRequested') {
           this.switchToLoginView();
-
-          Backbone.Events.trigger(OrcidApiConstants.Events.SignOut);
+          this.pubSub.publish(this.pubSub.ORCID_ANNOUNCEMENT, {msgType: OrcidApiConstants.Events.SignOut});
         }
       }
     });

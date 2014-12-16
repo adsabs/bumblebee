@@ -19,12 +19,14 @@ define([
     'js/components/api_request',
     'js/components/api_query',
     'js/widgets/base/base_widget',
+    'js/services/orcid_api_constants',
     'hbs!./templates/item-template',
     'hbs!./templates/results-container-template',
     'hbs!./templates/pagination-template',
     'js/mixins/add_stable_index_to_collection',
     './model',
-    './paginated_view'
+    './paginated_view',
+    'js/widgets/orcid_model_notifier/orcid_model'
   ],
 
   function (Marionette,
@@ -32,12 +34,14 @@ define([
     ApiRequest,
     ApiQuery,
     BaseWidget,
+    OrcidApiConstants,
     ItemTemplate,
     ResultsContainerTemplate,
     PaginationTemplate,
     PaginationMixin,
     PaginatedCollection,
-    PaginatedView
+    PaginatedView,
+    OrcidModel
     ) {
 
 
@@ -86,16 +90,13 @@ define([
 
       },
 
-
       activate: function (beehive) {
         this.pubsub = beehive.Services.get('PubSub');
-        this.orcidApi = beehive.Services.get('OrcidApi');
 
-        _.bindAll(this, 'onStartSearch', 'onDisplayDocuments', 'processResponse', 'processOrcidMessage');
+        _.bindAll(this, 'onStartSearch', 'onDisplayDocuments', 'processResponse');
         this.pubsub.subscribe(this.pubsub.START_SEARCH, this.onStartSearch);
         this.pubsub.subscribe(this.pubsub.DISPLAY_DOCUMENTS, this.onDisplayDocuments);
         this.pubsub.subscribe(this.pubsub.DELIVERING_RESPONSE, this.processResponse);
-        this.pubsub.subscribe(this.pubsub.ORCID_ANNOUNCEMENT, this.processOrcidMessage);
       },
 
       onStartSearch: function(apiQuery) {
@@ -131,11 +132,6 @@ define([
         // XXX:rca - hack, to be solved later
         this.trigger('page-manager-event', 'widget-ready',
           {numFound: apiResponse.get("response.numFound"), widget: this});
-      },
-
-      processOrcidMessage: function(message){
-        //Backbone.Events.trigger('Orcid-Login-Success');
-
       },
 
       extractDocs: function(apiResponse) {
@@ -299,6 +295,9 @@ define([
             }
           }, this);
 
+        }
+        else if (ev == 'itemview:OrcidAction'){
+          this.pubsub.publish(this.pubsub.ORCID_ANNOUNCEMENT, {msgType: OrcidApiConstants.Events.OrcidAction, data: arg1});
         }
       },
 

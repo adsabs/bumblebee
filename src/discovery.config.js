@@ -56,6 +56,7 @@ require.config({
 
         OrcidLogin: 'js/widgets/orcid_login/widget',
         OrcidWorks: 'js/widgets/orcid_works/widget',
+        OrcidModelNotifier: 'js/widgets/orcid_model_notifier/widget',
 
         AuthorFacet: 'js/wraps/author_facet',
         BibgroupFacet: 'js/wraps/bibgroup_facet',

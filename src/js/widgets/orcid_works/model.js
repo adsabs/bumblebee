@@ -24,8 +24,10 @@ define([
         var result = {
 
           item: undefined,
-          isLoaded: false,
-          isLoading: false
+          isLoaded : false,
+          isWaitingForProfileInfo : false
+          //isLoaded: false,
+          //isLoading: false
         };
 
         return result;

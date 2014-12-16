@@ -30,8 +30,8 @@ define([
         var result = {
 
           item: undefined,
-          isLoaded: false,
-          isLoading: false
+          //isLoaded: false,
+          //isLoading: false
         };
 
         return result;
@@ -41,18 +41,17 @@ define([
     var OrcidWorkView = Marionette.ItemView.extend({
       template: OrcidWorkTemplate,
 
-      modelEvents:{
-        "change:isLoaded": 'render',
-        "change:isLoading": 'render'
+      modelEvents: {
+        //"change:isLoaded": 'render',
+        //"change:isLoading": 'render'
       },
 
-
-      events:{
+      events: {
         'mouseenter .letter-icon': "showLinks",
         'mouseleave .letter-icon': "hideLinks",
         'click .orcid-action': "orcidAction"
       },
-      constructor: function (options){
+      constructor: function (options) {
         this.model = new OrcidWorkModel();
         return Marionette.ItemView.prototype.constructor.apply(this, arguments);
       },
@@ -109,7 +108,7 @@ define([
 
       },
 
-      orcidAction : function(e){
+      orcidAction: function (e) {
         // notify on orcid action on orcid items
         // data should be picked from model
       }
@@ -120,7 +119,6 @@ define([
 
         var result = {
 
-          items: [],
           isLoaded: false,
           isLoading: false
         };
@@ -131,18 +129,17 @@ define([
 
     var OrcidWorksCollection = Backbone.Collection.extend({
 
-      initialize: function (models, options) {
-        this.on("change:selected", this.removeOtherSelected)
-      },
-
       model: OrcidWorkModel
 
     });
 
     var OrcidListOfWorks = Marionette.CompositeView.extend({
 
-      constructor: function(options){
+      constructor: function (options) {
         this.model = new OrcidWorksModel();
+
+        this.listenTo(this, "all", this.onAllInternalEvents);
+
         return Marionette.CompositeView.prototype.constructor.apply(this, arguments);
 
       },
@@ -153,24 +150,49 @@ define([
 
       template: OrcidWorksTemplate,
       itemView: OrcidWorkView,
-      itemViewContainer: '.items'
+
+      onAllInternalEvents: function(ev, arg1, arg2) {
+        if (ev == 'orchidWorksWidget:stateChanged'){
+          this.stateChanged(arg1);
+        }
+      },
+
+      stateChanged : function(state){
+        this.model.set('isLoaded', false);
+        this.model.set('isLoading', false);
+        this.itemViewContainer = '';
+
+        switch (state){
+          case 'loaded':
+            this.itemViewContainer = '.items';
+            this.model.set('isLoaded', true);
+            break;
+          case 'loading':
+            this.model.set('isLoading', true);
+            break;
+          case 'unloaded':
+            this.collection = new OrcidWorksCollection();
+            // both already set to false
+            break;
+        }
+
+        this.render();
+      }
 
     });
 
     var OrcidWorks = BaseWidget.extend({
       activate: function (beehive) {
-        this.pubsub = beehive.Services.get('PubSub');
+        this.pubSub = beehive.Services.get('PubSub');
+        this.pubSubKey = this.pubSub.getPubSubKey();
+
+        this.pubSub.subscribe(this.pubSub.ORCID_ANNOUNCEMENT, _.bind(this.routeOrcidPubSub, this));
       },
 
       initialize: function (options) {
         this.view = new OrcidListOfWorks();
 
         this.listenTo(this.view, "all", this.onAllInternalEvents);
-
-        var _that = this;
-
-        Backbone.Events.on(OrcidApiConstants.Events.LoginSuccess, function(data){ _that.showWorks(data); });
-        Backbone.Events.on(OrcidApiConstants.Events.LoginRequested, function(){_that.showLoading(); });
 
         BaseWidget.prototype.initialize.call(this, options);
 
@@ -180,18 +202,35 @@ define([
         return this.view;
       },
 
-      showLoading: function(){
-        this.view.model.set('isLoaded', false, {silent: true} );
-        this.view.model.set('isLoading', true);
+      routeOrcidPubSub : function(msg){
+
+        switch (msg.msgType){
+          case OrcidApiConstants.Events.LoginSuccess:
+            this.showWorks(msg.data);
+            break;
+          case OrcidApiConstants.Events.LoginRequested:
+            this.showLoading();
+            break;
+          case OrcidApiConstants.Events.SignOut:
+            this.hideWorks();
+            break;
+        }
       },
 
-      showWorks: function(personalProfile){
+      showLoading: function () {
+        this.view.trigger('orchidWorksWidget:stateChanged', 'loading');
+      },
+      hideWorks: function () {
+        this.view.trigger('orchidWorksWidget:stateChanged', 'unloaded');
+      },
+
+      showWorks: function (personalProfile) {
 
         var orcidWorks = personalProfile['orcid-activities']['orcid-works']['orcid-work'];
 
         var works = [];
 
-        _.each(orcidWorks, function(work){
+        _.each(orcidWorks, function (work) {
           var item = {
             publicationData: work['publication-date']['year'],
             workExternalIdentifiers: [],
@@ -227,20 +266,14 @@ define([
 
         this.view.collection = new OrcidWorksCollection(works);
         this.view.model.set('items', works);
-        this.view.model.set('isLoading', false, {silent: true} );
 
-        this.view.model.set('isLoaded', true);
-
-        this.view.render();
+        this.view.trigger('orchidWorksWidget:stateChanged', 'loaded');
       },
-      onAllInternalEvents: function(ev, arg1, arg2) {
+      onAllInternalEvents: function (ev, arg1, arg2) {
         // TODO actions on works will be routed here
 
-        //if (ev === 'loginwidget:loginRequested') {
-        //  this.view.model.set('isWaitingForProfileInfo', true);
-        //  this.view.model.set('currentState', 'waitingForProfileInfo');
-        //
-        //  Backbone.Events.trigger(OrcidApiConstants.Events.LoginRequested);
+        //if (ev === 'orchidWorksWidget:update') {
+        //  // trigger update on passed data
         //}
       }
     });

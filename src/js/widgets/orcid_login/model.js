@@ -13,12 +13,8 @@ define([
           familyName: undefined,
           givenName: undefined,
 
-
-          isSignedOut : true,
           isWaitingForProfileInfo : false,
-          isSignedIn : false,
-          currentState: 'signedOut'
-
+          isSignedIn : false
         };
 
         return result;

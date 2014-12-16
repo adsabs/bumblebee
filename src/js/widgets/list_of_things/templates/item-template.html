@@ -64,7 +64,8 @@
                 {{/if}}
             </div>
             {{/if}}
-            <div class="hidden letter-icon s-letter-icon orcid-actions">
+
+            <div class="{{#if this.orcidActionsVisible}}{{else}} hidden {{/if}} letter-icon s-letter-icon orcid-actions">
                 <button class="btn-link active-link s-active-link">
                     <i class="s-list-icon" aria-label="orcid actions"/>
                 </button>

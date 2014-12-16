@@ -5,7 +5,7 @@ define([
     'js/components/api_query',
     'js/widgets/base/base_widget',
     'hbs!./templates/item-template',
-    'js/services/orcid_api_constants'
+    'js/widgets/orcid_model_notifier/orcid_model'
   ],
 
   function (Marionette,
@@ -14,7 +14,7 @@ define([
             ApiQuery,
             BaseWidget,
             ItemTemplate,
-            OrcidApiConstants
+            OrcidModel
     ) {
 
     var ItemView = Marionette.ItemView.extend({
@@ -28,13 +28,13 @@ define([
           _.defaults(options, _.pick(this, ['model', 'collectionEvents', 'modelEvents']));
         }
 
-        Backbone.Events.on(OrcidApiConstants.Events.LoginSuccess, this.showOrcidActions);
-        Backbone.Events.on(OrcidApiConstants.Events.SignOut, this.hideOrcidActions);
-
         return Marionette.ItemView.prototype.constructor.apply(this, arguments);
       },
 
       render: function () {
+
+        this.model.set('orcidActionsVisible', OrcidModel.get('actionsVisible'));
+
         if (this.model.get('visible')) {
           return Marionette.ItemView.prototype.render.apply(this, arguments);
         }
@@ -186,6 +186,8 @@ define([
         $orcidActions = this.$('.orcid-actions');
         $orcidActions.removeClass('hidden');
         // TODO : show just relevant actions
+
+
       },
 
       hideOrcidActions: function(){
@@ -196,12 +198,24 @@ define([
       orcidAction: function(e){
         $c = $(e.currentTarget);
 
-        var data = {
-          // TODO
-          // should be created from related model
+        var actionType = '';
+
+        if ($c.hasClass('orcid-action-insert')){
+          actionType = 'insert';
+        } else if ($c.hasClass('orcid-action-update')){
+          actionType = 'update';
+        } else if ($c.hasClass('orcid-action-delete')){
+          actionType = 'delete';
+        }
+
+        var msg = {
+          actionType : actionType,
+          model: this.model.attributes
         };
 
-        Backbone.Events.trigger(OrcidApiConstants.Events.OrcidAction, data);
+        //Backbone.Events.trigger(OrcidApiConstants.Events.OrcidAction, data);
+
+        this.trigger('OrcidAction', msg);
 
       }
     });
