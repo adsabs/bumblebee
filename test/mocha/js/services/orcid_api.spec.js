@@ -6,10 +6,11 @@ define([
     'underscore',
     'xml2json',
     'js/components/application',
-    'js/services/orcid_api_constants'
+    'js/services/orcid_api_constants',
+    'js/components/pubsub_events'
   ],
 
-  function (GenericModule, Mixins, $, OrcidApi, _, xml2json, Application, OrcidApiConstants) {
+  function (GenericModule, Mixins, $, OrcidApi, _, xml2json, Application, OrcidApiConstants, PubSubEvents) {
 
     var app = new Application();
     var config = {
@@ -124,40 +125,50 @@ define([
         done();
       });
 
+      it('process full page oauth redirect', function(done) {
+        var orcidApi = new OrcidApi();
+        orcidApi.activate(beeHive);
+        var pubSub = beeHive.getService('PubSub');
+        var pubSubKey = pubSub.getPubSubKey();
+
+        orcidApi.oauthAuthCodeReceived = function (code, redirectUri, _that) {
+          done();
+        };
+
+        pubSub.publish(pubSubKey, PubSubEvents.BOOTSTRAP_CONFIGURED);
+      });
+
       it('show login dialog', function (done) {
-        var orcidApi = new OrcidApi();// beeHive.getService("OrcidApi");
+        var orcidApi = new OrcidApi();
         orcidApi.activate(beeHive);
         orcidApi.showLoginDialog();
-        var oauthAuthCodeReceived_original = orcidApi.oauthAuthCodeReceived;
 
-        orcidApi.oauthAuthCodeReceived = function (code, _that) {
+        var successCallback = function() {
+          Backbone.Events.off(OrcidApiConstants.Events.LoginSuccess, successCallback);
 
-          var deferred = $.Deferred();
+          var LocalStorage = beeHive.getService("LocalStorage");
+          var userSession = LocalStorage.getObject("userSession");
 
-          var promise = oauthAuthCodeReceived_original(code, _that);
+          expect(userSession.orcidProfile).to.be.an('object');
+          expect(userSession.authData).to.be.an('object');
 
-          promise
-            .done(function () {
-              expect(code).to.be.a('string');
-
-//              var beeHive = GenericModule.getBeeHive();
-              var LocalStorage = beeHive.getService("LocalStorage");
-
-              var userSession = LocalStorage.getObject("userSession");
-
-              expect(userSession.orcidProfile).to.be.an('object');
-              expect(userSession.authData).to.be.an('object');
-
-              deferred.resolve();
-
-              done();
-            })
-            .fail(function () {
-              deferred.reject();
-            });
-
-          return deferred.promise();
+          done();
         };
+
+        Backbone.Events.on(OrcidApiConstants.Events.LoginSuccess, successCallback);
+      });
+
+      it('should cancel login', function (done) {
+        var orcidApi = new OrcidApi();
+        orcidApi.activate(beeHive);
+        orcidApi.showLoginDialog();
+
+        var callback = function() {
+          done();
+          Backbone.Events.off(OrcidApiConstants.Events.LoginCancelled, callback);
+        };
+
+        Backbone.Events.on(OrcidApiConstants.Events.LoginCancelled, callback);
       });
 
       it('add orcid works', function (done) {
@@ -173,23 +184,55 @@ define([
               "orcid-profile": {
                 "orcid-activities": {
                   "$": {},
-                  "orcid-works": {
-                    "$": {},
-                    "orcid-work": {
-                      "work-title": {
-                        "$": {},
-                        "title": "Testing publiction"
-                      },
-                      "work-type": "test"
+                  "orcid-works": [
+                    {
+                      "orcid-work": {
+                        "work-title": {
+                          "$": {},
+                          "title": "Testing publication 2"
+                        },
+                        "work-type": "test"
+                      }
+                    },
+                    {
+                      "orcid-work": {
+                        "work-title": {
+                          "$": {},
+                          "title": "Testing publication 3"
+                        },
+                        "work-type": "test"
+                      }
+                    },
+                    {
+                      "orcid-work": {
+                        "work-title": {
+                          "$": {},
+                          "title": "Testing publication 4"
+                        },
+                        "work-type": "test"
+                      }
+                    },
+                    {
+                      "orcid-work": {
+                        "work-title": {
+                          "$": {},
+                          "title": "Testing publication 5"
+                        },
+                        "work-type": "test"
+                      }
                     }
-                  }
+                  ]
                 }
               }
             }
-          })
-          .done(function() {
-            done();
           });
+
+        var callback = function() {
+          done();
+          Backbone.Events.off(OrcidApiConstants.Events.UserProfileRefreshed, callback);
+        };
+
+        Backbone.Events.on(OrcidApiConstants.Events.UserProfileRefreshed, callback);
 
       });
 
@@ -206,23 +249,55 @@ define([
               "orcid-profile": {
                 "orcid-activities": {
                   "$": {},
-                  "orcid-works": {
-                    "$": {},
-                    "orcid-work": {
-                      "work-title": {
-                        "$": {},
-                        "title": "Testing publiction 2"
-                      },
-                      "work-type": "test"
+                  "orcid-works": [
+                    {
+                      "orcid-work": {
+                        "work-title": {
+                          "$": {},
+                          "title": "Testing publication 2"
+                        },
+                        "work-type": "test"
+                      }
+                    },
+                    {
+                      "orcid-work": {
+                        "work-title": {
+                          "$": {},
+                          "title": "Testing publication 13"
+                        },
+                        "work-type": "test"
+                      }
+                    },
+                    {
+                      "orcid-work": {
+                        "work-title": {
+                          "$": {},
+                          "title": "Testing publication 14"
+                        },
+                        "work-type": "test"
+                      }
+                    },
+                    {
+                      "orcid-work": {
+                        "work-title": {
+                          "$": {},
+                          "title": "Testing publication 15"
+                        },
+                        "work-type": "test"
+                      }
                     }
-                  }
+                  ]
                 }
               }
             }
-          })
-          .done(function() {
-            done();
           });
+
+        var callback = function() {
+          done();
+          Backbone.Events.off(OrcidApiConstants.Events.UserProfileRefreshed, callback);
+        };
+
+        Backbone.Events.on(OrcidApiConstants.Events.UserProfileRefreshed, callback);
       });
     });
   }

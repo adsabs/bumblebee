@@ -6,13 +6,15 @@ define([
     'underscore',
     'backbone',
     'js/components/api_query',
-    'js/components/api_request'
+    'js/components/api_request',
+    'js/components/pubsub_events'
     ],
   function(
     _,
     Backbone,
     ApiQuery,
-    ApiRequest) {
+    ApiRequest,
+    PubSubEvents) {
 
   var Mixin = {
 
@@ -49,6 +51,10 @@ define([
         if (conf.useCache) {
           this.triggerMethodOnAll('activateCache');
         }
+
+        var pubSub = beehive.getService('PubSub');
+        var pubSubKey = pubSub.getPubSubKey();
+        pubSub.publish(pubSubKey, PubSubEvents.BOOTSTRAP_CONFIGURED);
       }
 
 

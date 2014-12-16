@@ -73,7 +73,7 @@ app.use('/oauth/getAuthCode', function(req, res, next){
 
 app.use('/oauth/exchangeAuthCode', function(req, res, next) {
   var code = req.query.code;
-  var redirect_uri = ORCID_REDIRECT_URI;
+  var redirect_uri = req.query.redirectUri;
   var scope = req.query.scope;
 
   var data = {
