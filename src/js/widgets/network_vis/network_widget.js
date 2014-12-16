@@ -14,18 +14,7 @@ define([
     "bootstrap"
 
   ],
-  function (Marionette,
-            d3,
-            ApiRequest,
-            ApiQuery,
-            BaseWidget,
-            ApiQueryUpdater,
-            ContainerTemplate,
-            DetailTemplate,
-            SummaryTemplate,
-            selectedItemsTemplate,
-            notEnoughDataTemplate,
-            connectorTemplate) {
+  function (Marionette, d3, ApiRequest, ApiQuery, BaseWidget, ApiQueryUpdater, ContainerTemplate, DetailTemplate, SummaryTemplate, selectedItemsTemplate, notEnoughDataTemplate, connectorTemplate) {
 
 
     var ChosenNamesModel = Backbone.Model.extend({
@@ -126,8 +115,7 @@ define([
           nodes: [],
           links: [],
           currentGroup: undefined,
-          svg: undefined,
-          scales : {}
+          svg: undefined
 
         }
       }
@@ -254,6 +242,8 @@ define([
 
           _.extend(this.graphView, Marionette.getOption(this, "summaryMixin"));
 
+          debugger;
+
           this.ui.selectedContainer.append(this.chosenNamesView.render().el);
 
           this.$(".graph-region").append(this.graphView.render().el);
@@ -261,7 +251,6 @@ define([
           newGraphView = true;
 
         }
-
         //not enough data to make a graph
         else if (_.isEmpty(this.model.get("fullGraph")) || !this.model.get("fullGraph").nodes.length) {
 
@@ -379,10 +368,11 @@ define([
         if (node.connector) {
 
           this.ui.detailContainer.empty();
-          this.ui.detailContainer.append(connectorTemplate({nodeName: _.keys(node.nodeName)[0] }));
+          this.ui.detailContainer.append(connectorTemplate({nodeName: _.keys(node.nodeName[0])[0] }));
           this.ui.detailContainer.fadeIn();
 
           return
+
 
         }
 
@@ -501,7 +491,6 @@ define([
           return a - b;
         });
 
-        var self = this;
 
         var matrix = [],
           nodes = graphData.nodes,
@@ -525,10 +514,12 @@ define([
 
         });
 
+
         var chord = d3.layout.chord()
           .padding(.1)
           .sortSubgroups(d3.descending)
           .matrix(matrix);
+
 
         // get sizes of each group for the outer radius scale
         var sizes = [];
@@ -544,9 +535,9 @@ define([
 
         var width = 1000,
           height = 1000,
-          radiusScale = d3.scale.linear().domain([sizes[0], sizes[sizes.length - 1]]).range([1.3, 2.5]),
+          radiusScale = d3.scale.linear().domain([sizes[0], sizes[sizes.length - 1]]).range([1.1, 2]),
 
-          innerRadius = Math.min(width, height) * .13;
+          innerRadius = Math.min(width, height) * .18;
 
         var calculateOuterRadius = function (d) {
           var size = graphData.nodes[d.index].size;
@@ -556,7 +547,7 @@ define([
         //give the labels a little inner padding
         var calculateLabelPosition = function (d) {
           var size = graphData.nodes[d.index].size;
-          return innerRadius * radiusScale(size) * ( self.labelSpaceMultiplier || 1.1);
+          return innerRadius * radiusScale(size) * 1.5;
         };
 
         //ads colors
@@ -684,7 +675,7 @@ define([
             var textOpacity = opacity == .1 ? 1 : .25;
 
             //fade the text
-            d3.selectAll(self.$(".summary-label-container"))
+            d3.selectAll(".summary-label-container")
               .filter(function (d, i) {
                 return g.index == i
               })
@@ -951,17 +942,18 @@ define([
 
         g2 = g1.append("g");
 
+
         g2.append("rect")
           .attr("width", width)
           .attr("height", height)
           .style("fill", "none")
-          .style("pointer-events", "all")
+          .style("pointer-events", "all");
 
         this.model.set("g2", g2);
 
         force.nodes(this.model.get("nodes"))
           .links(this.model.get("links"))
-          .charge(-500)
+          .charge(-200)
           .start();
 
         this.model.set("force", force);
@@ -969,64 +961,31 @@ define([
         link = g2.selectAll(".detail-link")
           .data(this.model.get("links"))
           .enter().append("line")
-          .style("display", "none")
-          .classed("detail-link", true)
           .attr("class", "detail-link")
-          .style({"stroke-width": function (d) {
+          .style("stroke-width", function (d) {
             return scalesDict.lineScale(d.weight);
-          }});
-
-
-        if (this.renderNodes){
-
-          //so paper network can render nodes its own way
-          node = this.renderNodes({g2 : g2, scalesDict : scalesDict});
-
-        }
-        else {
-
-          node = g2.selectAll(".detail-node")
-            .data(this.model.get("nodes"))
-            .enter()
-            .append("text")
-            .text(function (d) {
-              return d.nodeName
-            })
-            .attr("font-size", function (d) {
-              return scalesDict.fontScale(d.nodeWeight) + "px"
-            })
-            .classed({"detail-node": true, "selected-node": function (d) {
-              return d.currentlySelected ? true : false
-            }});
-
-        }
-
-        node.on("mouseover", function(node){
-
-
-          g2.selectAll(".detail-link").each(function(link,linkIndex){
-
-            if (link.target == node || link.source == node){
-              d3.select(this)
-                .style({display : "block", stroke: groupColor});
-            }
-
-          })
-
-        })
-          .on("mouseout", function(node){
-
-
-            g2.selectAll(".detail-link").each(function(link,linkIndex){
-
-              if (link.target == node || link.source == node){
-                d3.select(this)
-                  .style({display : "none"});
-                ;
-              }
-            })
-
           });
+
+        node = g2.selectAll(".detail-node")
+          .data(this.model.get("nodes"))
+          .enter()
+          .append("text")
+          .text(function (d) {
+            return d.nodeName
+          })
+          .attr("font-size", function (d) {
+            return scalesDict.fontScale(d.nodeWeight) + "px"
+          })
+          .classed({"detail-node": true, "selected-node": function (d) {
+            return d.currentlySelected ? true : false
+          }})
+          .style("fill", groupColor)
+
+        node.append("title")
+          .text(function (d) {
+            return d.name;
+          });
+
 
         numTicks = 0;
 
@@ -1038,7 +997,7 @@ define([
           //this caused errors during testing
           if (numTicks === 40) {
 
-             zoomToFit(self)
+            zoomToFit(self)
           }
 
           node.attr("x", function (d) {
@@ -1071,6 +1030,8 @@ define([
 
           var maxX, maxY, minX, minY;
 
+          var buffer;
+
           var xList = [], yList = [];
 
           this.$(".detail-node").each(function () {
@@ -1085,7 +1046,9 @@ define([
           maxY = _.max(yList);
           minY = _.min(yList);
 
-          largestDistance = _.max([(maxX - minX), (maxY - minY)]);
+          buffer = 30;
+
+          largestDistance = _.max([(maxX - minX), (maxY - minY)]) + buffer;
 
           center = [(maxX + minX) / 2, (maxY + minY) / 2];
 
@@ -1112,6 +1075,7 @@ define([
           //now initializing all zoom behaviors, including button zoom
           //will be called after 40 ticks
           function zoomCallback() {
+
 
             var drag = d3.behavior.drag()
               .on("drag", function (d, i) {
@@ -1170,6 +1134,7 @@ define([
 
       },
 
+
       zoomOut: function () {
 
         var z = this.model.get("z");
@@ -1180,8 +1145,8 @@ define([
         var oldScale, newScale;
         oldScale = z.scale();
 
-        if (oldScale >= 1) {
-          newScale = oldScale - .5;
+        if (oldScale >= 1.5) {
+          newScale = oldScale - 1
         }
         else {
 
