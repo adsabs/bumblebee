@@ -12,10 +12,25 @@ define([
           actionsVisible: false,
           works : [],
 
-          isWorkInCollection : function(adsItem){
-            return false; // TODO
-          }
+          bulkInsertWorks: [],
+
+          isInBulkInsertMode: false
         };
+      }
+    });
+
+    _.extend(OrcidModel.prototype, {
+      addToBulkWorks: function(adsWork){
+        this.attributes.bulkInsertWorks.push(adsWork);
+
+      },
+
+      triggerBulkInsert: function(){
+
+      },
+
+      isWorkInCollection : function(adsItem){
+        return false; // TODO
       }
     });
 

@@ -6,10 +6,11 @@ define([
     'js/widgets/base/base_widget',
     'js/services/orcid_api_constants',
     'hbs!./templates/orcid_work_template',
-    'hbs!./templates/orcid_works_template'
+    'hbs!./templates/orcid_works_template',
+    'js/widgets/orcid_model_notifier/orcid_model'
 
   ],
-  function (_, $, Backbone, Marionette, BaseWidget, OrcidApiConstants, OrcidWorkTemplate, OrcidWorksTemplate) {
+  function (_, $, Backbone, Marionette, BaseWidget, OrcidApiConstants, OrcidWorkTemplate, OrcidWorksTemplate, OrcidModel) {
 
     var OrcidWorkModel = Backbone.Model.extend({
       defaults: function () {
@@ -30,8 +31,6 @@ define([
         var result = {
 
           item: undefined
-          //isLoaded: false,
-          //isLoading: false
         };
 
         return result;
@@ -143,6 +142,12 @@ define([
 
       },
 
+      events:{
+        'click button[name=doBulkInsert]': "doBulkInsertClick",
+        'click button[name=cancelBulkInsert]': "cancelBulkInsertClick",
+        'click button[name=finishBulkInsert]': "finishBulkInsertClick"
+      },
+
       template: OrcidWorksTemplate,
       itemView: OrcidWorkView,
 
@@ -150,6 +155,35 @@ define([
         if (ev == 'orchidWorksWidget:stateChanged'){
           this.stateChanged(arg1);
         }
+      },
+
+      doBulkInsertClick: function(){
+          $('button[name=doBulkInsert]').addClass('hidden');
+
+          $('button[name=cancelBulkInsert]').removeClass('hidden');
+          $('button[name=finishBulkInsert]').removeClass('hidden');
+
+          OrcidModel.set('isInBulkInsertMode', true);
+
+      },
+
+      finishBulkInsertClick: function(){
+        $('button[name=cancelBulkInsert]').addClass('hidden');
+        $('button[name=finishBulkInsert]').addClass('hidden');
+
+        $('button[name=doBulkInsert]').removeClass('hidden');
+
+        OrcidModel.triggerBulkInsert();
+        OrcidModel.set('isInBulkInsertMode', false);
+      },
+
+      cancelBulkInsertClick: function(){
+        $('button[name=cancelBulkInsert]').addClass('hidden');
+        $('button[name=finishBulkInsert]').addClass('hidden');
+        $('button[name=doBulkInsert]').removeClass('hidden');
+
+        OrcidModel.set('bulkInsertWorks', []);
+        OrcidModel.set('isInBulkInsertMode', false);
       },
 
       stateChanged : function(state){

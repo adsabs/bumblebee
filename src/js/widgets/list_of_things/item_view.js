@@ -111,6 +111,8 @@ define([
       toggleSelect: function () {
         this.$el.toggleClass("chosen");
         this.model.set('chosen', this.model.get('chosen') ? false : true);
+
+        OrcidModel.attributes.addToBulkWorks(this.model.attributes);
       },
 
       /*
@@ -202,7 +204,7 @@ define([
         $insert.addClass('hidden');
         $delete.addClass('hidden');
 
-        if (OrcidModel.attributes.isWorkInCollection(this.model)){
+        if (OrcidModel.isWorkInCollection(this.model)){
           $update.removeClass('hidden');
           $delete.removeClass('hidden');
         }
