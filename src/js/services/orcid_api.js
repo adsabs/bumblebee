@@ -250,7 +250,7 @@ define([
 
                       "work-contributors": formatContributors(adsData.author),
 
-                      "url" : adsData.doi ?  LinkGeneratorMixin.adsUrlRedirect("doi", adsData.doi) : ''
+                      "url" : adsData.doi ?  LinkGeneratorMixin.adsUrlRedirect("doi", adsData.doi) : '' // TODO : in item_view model DOI is missing
 
                     }
                   }

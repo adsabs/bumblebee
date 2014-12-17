@@ -28,7 +28,16 @@ define([
           _.defaults(options, _.pick(this, ['model', 'collectionEvents', 'modelEvents']));
         }
 
+        this.listenTo(this, "item:rendered", this.onItemRendered);
+
         return Marionette.ItemView.prototype.constructor.apply(this, arguments);
+      },
+
+      onItemRendered: function(ev, arg1, arg2) {
+        if (OrcidModel.get('actionsVisible')){
+          this.showOrcidActions();
+        }
+
       },
 
       render: function () {

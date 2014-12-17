@@ -128,9 +128,6 @@ define([
           this.view.trigger('loginwidget:stateChanged', 'waitingForProfileInfo');
 
           this.pubSub.publish(this.pubSub.ORCID_ANNOUNCEMENT, {msgType: OrcidApiConstants.Events.LoginRequested});
-
-
-          //Backbone.Events.trigger(OrcidApiConstants.Events.LoginRequested);
         }
         else if (ev === 'loginwidget:signoutRequested') {
           this.switchToLoginView();
