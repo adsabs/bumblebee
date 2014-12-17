@@ -9309,7 +9309,7 @@ define([
     }
 
     afterEach(function(){
-//     $("#test").empty();
+    $("#test").empty();
     });
 
     it("should have a help popover", function(){
