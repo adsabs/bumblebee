@@ -9,7 +9,12 @@ define([
     var OrcidModel = Backbone.Model.extend({
       defaults: function(){
         return {
-          actionsVisible: false
+          actionsVisible: false,
+          works : [],
+
+          isWorkInCollection : function(adsItem){
+            return false; // TODO
+          }
         };
       }
     });

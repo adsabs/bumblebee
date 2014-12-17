@@ -25,8 +25,7 @@ define([
     'hbs!./templates/pagination-template',
     'js/mixins/add_stable_index_to_collection',
     './model',
-    './paginated_view',
-    'js/widgets/orcid_model_notifier/orcid_model'
+    './paginated_view'
   ],
 
   function (Marionette,
@@ -40,8 +39,7 @@ define([
     PaginationTemplate,
     PaginationMixin,
     PaginatedCollection,
-    PaginatedView,
-    OrcidModel
+    PaginatedView
     ) {
 
 
@@ -297,7 +295,7 @@ define([
 
         }
         else if (ev == 'itemview:OrcidAction'){
-          this.pubsub.publish(this.pubsub.ORCID_ANNOUNCEMENT, {msgType: OrcidApiConstants.Events.OrcidAction, data: arg1});
+          this.pubsub.publish(this.pubsub.ORCID_ANNOUNCEMENT, {msgType: OrcidApiConstants.Events.OrcidAction, data: arg2});
         }
       },
 

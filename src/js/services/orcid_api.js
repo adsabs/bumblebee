@@ -182,8 +182,72 @@ define([
           .setObject("userSession", {isEmpty:true});
       },
 
-      processOrcidAction: function(data){
-      // TODO
+      processOrcidAction: function(adsData){
+        if (data.actionType == 'insert'){
+          // create the orcid works message
+
+          var orcidWorksMessage = {
+            "orcid-message": {
+              "$": {
+                "xmlns": "http://www.orcid.org/ns/orcid"
+              },
+              "message-version": "1.1",
+              "orcid-profile": {
+                "orcid-activities": {
+                  "$": {},
+                  "orcid-works": [
+                    {
+                      "$" : {"visibility" : "public"},
+                      "orcid-work": {
+                        "work-title": {
+                          "$": {},
+                          "title": adsData.title // TODO : this as array, so probably concat all items
+                        },
+
+                        "short-description" : adsData.abstract,
+                        "publication-date": {
+                          "year": adsData.year
+                        },
+
+                        "work-external-identifiers": {
+                          "$": {},
+                          "work-external-identifier": {
+                            "work-external-identifier-type": 'other-id', // TODO : look at the  http://support.orcid.org/knowledgebase/articles/118807
+                            "work-external-identifier-id": adsData.bibcode
+                          },
+                          "work-external-identifier": {
+                            "work-external-identifier-type": 'ads-identifier', // TODO : look at the  http://support.orcid.org/knowledgebase/articles/118807
+                            "work-external-identifier-id": adsData.id
+                          }
+                        },
+                        "work-type": "test", // TODO : check http://support.orcid.org/knowledgebase/articles/118795
+
+                        "work-contributors": { // TODO : do in loop over adsData.author
+                          "contributor": {
+                            "credit-name": "LastName, FirstName",
+                            "contributor-attributes": {
+                              "contributor-sequence": "first",
+                              "contributor-role": "author"
+                            }
+                          }
+                        },
+
+                        "url" : "www.orcid" // TODO: do in loop over adsData.links
+
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          };
+
+
+          //"{"abstract":"Laser active imaging systems are widespread tools used in region surveillance and threat identification. However, the photoelectric imaging detector in the imaging systems is easy to be disturbed and this leads to errors of the recognition and even the missing of the target. In this paper, a novel wavelet-weighted multi-scale structural similarity (WWMS-SSIM) algorithm is proposed. 2-D four-level wavelet decomposition is performed for the original and disturbed images. Each image can be partitioned into one low-frequency subband (LL) and a series of octave high-frequency subbands (HL, LH and HH). Luminance, contrast and structure comparison are computed in different subbands with different weighting factors. Based on the results of the above, we can construct a modified WWMS-SSIM. Cross-distorted image quality assessment experiments show that the WWMS-SSIM algorithm is more suitable for the subjective visual feeling comparing with NMSE and SSIM. In the laser-dazzling image quality assessment experiments, the WWMS-SSIM gives more reasonable evaluations to the images with different power and laser spot positions, which can be useful to give the guidance of the laser active imaging system defense and application.","pub":"Optics Laser Technology","volume":"67","email":["-","-","-","-"],"bibcode":"2015OptLT..67..183Q","year":"2015","id":"10666236","keyword":["Image quality assessment","Laser-dazzling effect","Wavelet decomposition"],"author":["Qian, Fang","Guo, Jin","Sun, Tao","Wang, Tingfeng"],"aff":["State Key Laboratory of Laser Interaction with Matter, Changchun Institute of Optics, Fine Mechanics and Physics Chinese Academy of Sciences, Changchun 130033, Jilin, China","State Key Laboratory of Laser Interaction with Matter, Changchun Institute of Optics, Fine Mechanics and Physics Chinese Academy of Sciences, Changchun 130033, Jilin, China","State Key Laboratory of Laser Interaction with Matter, Changchun Institute of Optics, Fine Mechanics and Physics Chinese Academy of Sciences, Changchun 130033, Jilin, China","State Key Laboratory of Laser Interaction with Matter, Changchun Institute of Optics, Fine Mechanics and Physics Chinese Academy of Sciences, Changchun 130033, Jilin, China"],"title":["Quantitative assessment of laser-dazzling effects through wavelet-weighted multi-scale SSIM measurements"],"[citations]":{"num_citations":0,"num_references":2},"identifier":"2015OptLT..67..183Q","resultsIndex":0,"details":{"highlights":["-frequency subband <em>(LL)</em> and a series of octave high-frequency subbands (HL, LH and HH). Luminance, contrast"]},"num_citations":0,"links":{"text":[],"list":[{"letter":"R","title":"References (2)","link":"/#abs/2015OptLT..67..183Q/references"}],"data":[]},"emptyPlaceholder":false,"visible":true,"actionsVisible":true,"orcidActionsVisible":false}"
+
+
+        }
+
       },
 
       refreshUserProfile: function() {
@@ -323,6 +387,8 @@ define([
       },
 
       getHardenedInstance: function () {
+        // TODO : expose just necassary functions
+
         return this;
       }
     });

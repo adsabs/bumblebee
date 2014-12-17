@@ -183,15 +183,27 @@ define([
       },
 
       showOrcidActions: function(){
-        $orcidActions = this.$('.orcid-actions');
+        var $orcidActions = this.$('.orcid-actions');
         $orcidActions.removeClass('hidden');
-        // TODO : show just relevant actions
+        var $update = $orcidActions.find('.orcid-action-update');
+        var $insert = $orcidActions.find('.orcid-action-insert');
+        var $delete = $orcidActions.find('.orcid-action-delete');
 
+        $update.addClass('hidden');
+        $insert.addClass('hidden');
+        $delete.addClass('hidden');
 
+        if (OrcidModel.attributes.isWorkInCollection(this.model)){
+          $update.removeClass('hidden');
+          $delete.removeClass('hidden');
+        }
+        else {
+          $insert.removeClass('hidden');
+        }
       },
 
       hideOrcidActions: function(){
-        $orcidActions = this.$('.orcid-actions');
+        var $orcidActions = this.$('.orcid-actions');
         $orcidActions.addClass('hidden');
       },
 
@@ -212,8 +224,6 @@ define([
           actionType : actionType,
           model: this.model.attributes
         };
-
-        //Backbone.Events.trigger(OrcidApiConstants.Events.OrcidAction, data);
 
         this.trigger('OrcidAction', msg);
 
