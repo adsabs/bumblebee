@@ -29,7 +29,7 @@ define([
 
         var result = {
 
-          item: undefined,
+          item: undefined
           //isLoaded: false,
           //isLoading: false
         };
@@ -40,11 +40,6 @@ define([
 
     var OrcidWorkView = Marionette.ItemView.extend({
       template: OrcidWorkTemplate,
-
-      modelEvents: {
-        //"change:isLoaded": 'render',
-        //"change:isLoading": 'render'
-      },
 
       events: {
         'mouseenter .letter-icon': "showLinks",
@@ -236,8 +231,8 @@ define([
             workExternalIdentifiers: [],
             workTitle: work['work-title']['title'],
             workType: work['work-type'],
-            workSourceUri: work['work-source']['uri'],
-            workSourceHost: work['work-source']['host']
+            workSourceUri: work['work-source'] ? work['work-source']['uri'] : '',
+            workSourceHost: work['work-source'] ? work['work-source']['host'] : ''
           };
 
           works.push(item);
