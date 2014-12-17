@@ -231,25 +231,36 @@ define([
         var works = [];
 
         _.each(orcidWorks, function (work) {
+
+          var publicationData = work['publication-date'] != undefined ? work['publication-date']['year'] : "";
+          var workTitle = work['work-title'] != undefined ? work['work-title']['title'] : "";
+          var workSourceUri = work['work-source'] != undefined ? work['work-source']['uri'] : "";
+          var workSourceHost = work['work-source'] != undefined ? work['work-source']['host'] : "";
+
           var item = {
-            publicationData: work['publication-date']['year'],
+            publicationData: publicationData,
             workExternalIdentifiers: [],
-            workTitle: work['work-title']['title'],
+            workTitle: workTitle,
             workType: work['work-type'],
-            workSourceUri: work['work-source']['uri'],
-            workSourceHost: work['work-source']['host']
+            workSourceUri: workSourceUri,
+            workSourceHost: workSourceHost
           };
 
           works.push(item);
 
-          var workIdentifierNode = work['work-external-identifiers']['work-external-identifier'];
+          var workExternalIdentifiers = work['work-external-identifiers'];
+          if (workExternalIdentifiers) {
 
-          var identifier = {
-            id: workIdentifierNode['work-external-identifier-id'],
-            type: workIdentifierNode['work-external-identifier-type']
-          };
+            var workIdentifierNode = workExternalIdentifiers['work-external-identifier'];
+            if (workIdentifierNode) {
 
-          item.workExternalIdentifiers.push(identifier);
+              var identifier = {
+                id: workIdentifierNode['work-external-identifier-id'],
+                type: workIdentifierNode['work-external-identifier-type']
+              };
+              item.workExternalIdentifiers.push(identifier);
+            }
+          }
 
           //_.each(work['work-external-identifiers'], function(workIdentifier){
           //  var workIdentifierNode = workIdentifier['work-external-identifier'];
