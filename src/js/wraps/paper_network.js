@@ -27,18 +27,19 @@ define([
     " word clouds based on the words from the titles of the papers in the group.</p>";
 
   //these defaults won't typically change
-  options.summaryMixin = {};
+  options.graphMixin = {};
 
-  options.summaryMixin.labelSpaceMultiplier = 1.5;
+  options.graphMixin.labelSpaceMultiplier = 1.5;
 
-   options.summaryMixin.returnMoreDataTemplate = function(data){
+
+   options.summaryMixin.graphMixin = function(data){
 
     return DataTemplate(data);
 
     };
 
 
-    options.summaryMixin.addLabels = function(options){
+  options.graphMixin.addLabels = function(options){
 
     var nodes = options.nodes;
     var ticks = options.ticks;
@@ -93,9 +94,7 @@ define([
     return text;
   };
 
-  options.detailMixin = {};
-
-  options.detailMixin.renderNodes = function(options){
+  options.graphMixin.renderNodes = function(options){
 
    var g2 = options.g2;
 

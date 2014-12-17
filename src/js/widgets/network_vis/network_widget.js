@@ -115,27 +115,8 @@ define([
     });
 
 
-    var NetworkModel = Backbone.Model.extend({
-
-      defaults: function () {
-        return  {
-          //the summary graph data
-          summaryData: {},
-          //the full graph data
-          fullGraph: {},
-          nodes: [],
-          links: [],
-          currentGroup: undefined,
-          svg: undefined,
-          scales : {}
-
-        }
-      }
-
-    });
 
     //this stuff changes
-
 
     var ContainerView = Marionette.ItemView.extend({
 
@@ -258,39 +239,32 @@ define([
 
       onRender: function () {
 
+        self = this;
+
         var newGraphView = false;
 
-        //it's a big graph with summary nodes
-        if (!_.isEmpty(this.model.get("summaryData"))) {
-
-          this.graphView = new SummaryGraphView({model: this.model, chosenNamesCollection: this.chosenNamesCollection, detailMixin: Marionette.getOption(this, "detailMixin")})
-
-          _.extend(this.graphView, Marionette.getOption(this, "summaryMixin"));
-
-          this.ui.selectedContainer.append(this.chosenNamesView.render().el);
-
-          this.$(".graph-region").append(this.graphView.render().el);
-
-          newGraphView = true;
-
-        }
+        var data = this.model.get("data");
 
         //not enough data to make a graph
-        else if (_.isEmpty(this.model.get("fullGraph")) || !this.model.get("fullGraph").nodes.length) {
+        if (_.isEmpty(data.fullGraph) || !data.fullGraph.nodes.length) {
 
           this.$el.empty().append(notEnoughDataTemplate())
 
         }
 
-        //enough data just for a basic network graph
+        var model = new GraphModel({
+            fullGraph : data.fullGraph,
+            summaryGraph : data.summaryGraph
 
-        else if (this.model.get("fullGraph").nodes.length > 1) {
 
-          this.model.set("nodes", this.model.get("fullGraph").nodes);
+          });
 
-          this.model.set("links", this.model.get("fullGraph").links);
+          this.graphView = new GraphView({model: this.model,
+            chosenNamesCollection: this.chosenNamesCollection,
+            summaryGraph : true
+          });
 
-          this.graphView = new DetailNetworkView({model: this.model})
+          _.extend(this.graphView, Marionette.getOption(this, "graphMixin"));
 
           this.ui.selectedContainer.append(this.chosenNamesView.render().el);
 
@@ -300,7 +274,7 @@ define([
 
         }
 
-        that = this;
+
 
         if (newGraphView) {
 
@@ -322,9 +296,31 @@ define([
 
       }
 
+<<<<<<< HEAD
     })
 
     var SummaryGraphView = Marionette.ItemView.extend({
+=======
+
+    });
+
+
+    var GraphModel = Backbone.Model.extend({
+
+      defaults: function () {
+        return  {
+          //the summary graph data
+          summaryData: {},
+          //the full graph data
+          fullGraph: {}
+        }
+      }
+
+    })
+
+
+    var GraphView = Marionette.ItemView.extend({
+>>>>>>> 71c2daf... started to refactor
 
       adsColors: ["#5683e0", "#7ab889", "#ffb639", "#ed5e5b", "#ce5cff", "#1c459b", "#757575", "#b3b3b3", "#58b6d5"],
 
@@ -332,7 +328,9 @@ define([
 
         this.chosenNamesCollection = options.chosenNamesCollection;
 
-        this.listenTo(this.model, "change:currentGroup", this.showDetailNetwork);
+        this.listenTo(this.model, "change:currentGroup", function(){
+          this.trigger("groupChanged:", groupIndex)
+        });
 
         this.listenTo(this.chosenNamesCollection, "remove", function () {
           if (this.detailNetworkView) {
@@ -384,7 +382,15 @@ define([
 
       },
 
-      showDetailNetwork: function (model, targetGroupNode) {
+
+      onRender: function () {
+
+        this.initializeGraph();
+
+      },
+
+
+      showDetailView: function (model, targetGroupNode) {
 
         var node, group;
 
@@ -476,8 +482,7 @@ define([
         //tried to do this without d3 and it worked fine in the browser but made tests fail
         d3.select(Array.prototype.slice.apply(targetGroupNode.children)[0]).classed("target-group", true);
 
-        this.ui.detailContainer
-          .fadeIn();
+        this.ui.detailContainer.fadeIn();
 
       },
 
@@ -514,7 +519,7 @@ define([
       },
 
 
-      initializeGraph: function () {
+      drawSummaryGraph: function () {
 
         var d3Svg = d3.select(this.$("svg.summary-chart")[0]);
 
@@ -768,9 +773,226 @@ define([
       },
 
 
-      onRender: function () {
+      drawDetailGraph: function () {
 
-        this.initializeGraph();
+        var svg, width, height, g1, g2, z;
+
+        var scalesDict;
+
+        var node, link;
+
+        var numTicks;
+
+        var self = this;
+
+        var groupColor = this.model.get("fill");
+
+        width = this.styleModel.get("width");
+        height = this.styleModel.get("height");
+
+        scalesDict = this.model.get("scales")
+
+        svg = d3.select(this.$("svg")[0]);
+
+        this.model.set("svg", svg);
+
+        var force = d3.layout.force()
+          .size([width, height])
+          .linkDistance(this.styleModel.get("linkDistance"));
+
+        svg.attr("width", width)
+          .attr("height", height);
+
+        this.model.set("svg", svg);
+
+        //container for network
+        //need two gs because of weird panning requirement
+        g1 = svg.append("g");
+
+        g2 = g1.append("g");
+
+        g2.append("rect")
+          .attr("width", width)
+          .attr("height", height)
+          .style("fill", "none")
+          .style("pointer-events", "all")
+
+        this.model.set("g2", g2);
+
+        force.nodes(this.model.get("nodes"))
+          .links(this.model.get("links"))
+          .charge(-500)
+          .start();
+
+        this.model.set("force", force);
+
+        link = g2.selectAll(".detail-link")
+          .data(this.model.get("links"))
+          .enter().append("line")
+          .style("display", "none")
+          .classed("detail-link", true)
+          .attr("class", "detail-link")
+          .style({"stroke-width": function (d) {
+            return scalesDict.lineScale(d.weight);
+          }});
+
+
+        if (this.renderNodes){
+
+          //so paper network can render nodes its own way
+          node = this.renderNodes({g2 : g2, scalesDict : scalesDict});
+
+        }
+        else {
+
+          node = g2.selectAll(".detail-node")
+            .data(this.model.get("nodes"))
+            .enter()
+            .append("text")
+            .text(function (d) {
+              return d.nodeName
+            })
+            .attr("font-size", function (d) {
+              return scalesDict.fontScale(d.nodeWeight) + "px"
+            })
+            .classed({"detail-node": true, "selected-node": function (d) {
+              return d.currentlySelected ? true : false
+            }});
+
+        }
+
+        node.on("mouseover", function(node){
+
+
+          g2.selectAll(".detail-link").each(function(link,linkIndex){
+
+            if (link.target == node || link.source == node){
+              d3.select(this)
+                .style({display : "block", stroke: groupColor});
+            }
+
+          })
+
+        })
+          .on("mouseout", function(node){
+
+
+            g2.selectAll(".detail-link").each(function(link,linkIndex){
+
+              if (link.target == node || link.source == node){
+                d3.select(this)
+                  .style({display : "none"});
+                ;
+              }
+            })
+
+          });
+
+        numTicks = 0;
+
+        force.on("tick", function () {
+
+          numTicks++;
+
+          //check to make sure we are still in the dom
+          //this caused errors during testing
+          if (numTicks === 40) {
+
+            zoomToFit(self)
+          }
+
+          node.attr("x", function (d) {
+            return d.x
+          })
+            .attr("y", function (d) {
+              return d.y
+            });
+
+          link.attr("x1", function (d) {
+            return d.source.x;
+          })
+            .attr("y1", function (d) {
+              return d.source.y;
+            })
+            .attr("x2", function (d) {
+              return d.target.x;
+            })
+            .attr("y2", function (d) {
+              return d.target.y;
+            });
+
+        });
+
+        function zoomToFit(self) {
+
+          z = d3.behavior.zoom().on("zoom", null);
+
+          var center, largestDistance;
+
+          var maxX, maxY, minX, minY;
+
+          var xList = [], yList = [];
+
+          this.$(".detail-node").each(function () {
+
+            xList.push(this.__data__.x);
+            yList.push(this.__data__.y);
+          })
+
+          maxX = _.max(xList);
+          minX = _.min(xList);
+
+          maxY = _.max(yList);
+          minY = _.min(yList);
+
+          largestDistance = _.max([(maxX - minX), (maxY - minY)]);
+
+          center = [(maxX + minX) / 2, (maxY + minY) / 2];
+
+          var newScale = 100 / largestDistance;
+
+          var oldScale = z.scale();
+
+          var translateX = -newScale * ((center[0]) / oldScale) + width / 2;
+          var translateY = -newScale * ((center[1]) / oldScale) + height / 2;
+
+          z.scale(newScale);
+          z.translate([translateX, translateY]);
+
+          g2.transition().duration(3000)
+            .attr('transform', 'translate(' + translateX + ', ' + translateY + ')' + 'scale(' + z.scale() + ')')
+
+          self.model.set("z", z);
+          self.model.set("g2", g2);
+
+          setTimeout(zoomCallback, 3000)
+
+
+          //finally, dealing with zoom in an iife
+          //now initializing all zoom behaviors, including button zoom
+          //will be called after 40 ticks
+          function zoomCallback() {
+
+            var drag = d3.behavior.drag()
+              .on("drag", function (d, i) {
+                var x = this.transform.animVal[0].matrix.e + d3.event.dx;
+                var y = this.transform.animVal[0].matrix.f + d3.event.dy;
+                d3.select(this).attr("transform", function (d, i) {
+                  return "translate(" + [ x, y ] + ")"
+                    + " scale(" + z.scale() + ")";
+
+                });
+
+                z.translate([x, y]);
+
+
+              });
+
+            g2.call(drag);
+
+          }
+
+        }
 
       }
 
@@ -954,228 +1176,6 @@ define([
 
       },
 
-      drawGraph: function () {
-
-        var svg, width, height, g1, g2, z;
-
-        var scalesDict;
-
-        var node, link;
-
-        var numTicks;
-
-        var self = this;
-
-        var groupColor = this.model.get("fill");
-
-        width = this.styleModel.get("width");
-        height = this.styleModel.get("height");
-
-        scalesDict = this.model.get("scales")
-
-        svg = d3.select(this.$("svg")[0]);
-
-        this.model.set("svg", svg);
-
-        var force = d3.layout.force()
-          .size([width, height])
-          .linkDistance(this.styleModel.get("linkDistance"));
-
-        svg.attr("width", width)
-          .attr("height", height);
-
-        this.model.set("svg", svg);
-
-        //container for network
-        //need two gs because of weird panning requirement
-        g1 = svg.append("g");
-
-        g2 = g1.append("g");
-
-        g2.append("rect")
-          .attr("width", width)
-          .attr("height", height)
-          .style("fill", "none")
-          .style("pointer-events", "all")
-
-        this.model.set("g2", g2);
-
-        force.nodes(this.model.get("nodes"))
-          .links(this.model.get("links"))
-          .charge(-500)
-          .start();
-
-        this.model.set("force", force);
-
-        link = g2.selectAll(".detail-link")
-          .data(this.model.get("links"))
-          .enter().append("line")
-          .style("display", "none")
-          .classed("detail-link", true)
-          .attr("class", "detail-link")
-          .style({"stroke-width": function (d) {
-            return scalesDict.lineScale(d.weight);
-          }});
-
-
-        if (this.renderNodes){
-
-          //so paper network can render nodes its own way
-          node = this.renderNodes({g2 : g2, scalesDict : scalesDict});
-
-        }
-        else {
-
-          node = g2.selectAll(".detail-node")
-            .data(this.model.get("nodes"))
-            .enter()
-            .append("text")
-            .text(function (d) {
-              return d.nodeName
-            })
-            .attr("font-size", function (d) {
-              return scalesDict.fontScale(d.nodeWeight) + "px"
-            })
-            .classed({"detail-node": true, "selected-node": function (d) {
-              return d.currentlySelected ? true : false
-            }});
-
-        }
-
-        node.on("mouseover", function(node){
-
-
-          g2.selectAll(".detail-link").each(function(link,linkIndex){
-
-            if (link.target == node || link.source == node){
-              d3.select(this)
-                .style({display : "block", stroke: groupColor});
-            }
-
-          })
-
-        })
-          .on("mouseout", function(node){
-
-
-            g2.selectAll(".detail-link").each(function(link,linkIndex){
-
-              if (link.target == node || link.source == node){
-                d3.select(this)
-                  .style({display : "none"});
-                ;
-              }
-            })
-
-          });
-
-        numTicks = 0;
-
-        force.on("tick", function () {
-
-          numTicks++;
-
-          //check to make sure we are still in the dom
-          //this caused errors during testing
-          if (numTicks === 40) {
-
-             zoomToFit(self)
-          }
-
-          node.attr("x", function (d) {
-            return d.x
-          })
-            .attr("y", function (d) {
-              return d.y
-            });
-
-          link.attr("x1", function (d) {
-            return d.source.x;
-          })
-            .attr("y1", function (d) {
-              return d.source.y;
-            })
-            .attr("x2", function (d) {
-              return d.target.x;
-            })
-            .attr("y2", function (d) {
-              return d.target.y;
-            });
-
-        });
-
-        function zoomToFit(self) {
-
-          z = d3.behavior.zoom().on("zoom", null);
-
-          var center, largestDistance;
-
-          var maxX, maxY, minX, minY;
-
-          var xList = [], yList = [];
-
-          this.$(".detail-node").each(function () {
-
-            xList.push(this.__data__.x);
-            yList.push(this.__data__.y);
-          })
-
-          maxX = _.max(xList);
-          minX = _.min(xList);
-
-          maxY = _.max(yList);
-          minY = _.min(yList);
-
-          largestDistance = _.max([(maxX - minX), (maxY - minY)]);
-
-          center = [(maxX + minX) / 2, (maxY + minY) / 2];
-
-          var newScale = 100 / largestDistance;
-
-          var oldScale = z.scale();
-
-          var translateX = -newScale * ((center[0]) / oldScale) + width / 2;
-          var translateY = -newScale * ((center[1]) / oldScale) + height / 2;
-
-          z.scale(newScale);
-          z.translate([translateX, translateY]);
-
-          g2.transition().duration(3000)
-            .attr('transform', 'translate(' + translateX + ', ' + translateY + ')' + 'scale(' + z.scale() + ')')
-
-          self.model.set("z", z);
-          self.model.set("g2", g2);
-
-          setTimeout(zoomCallback, 3000)
-
-
-          //finally, dealing with zoom in an iife
-          //now initializing all zoom behaviors, including button zoom
-          //will be called after 40 ticks
-          function zoomCallback() {
-
-            var drag = d3.behavior.drag()
-              .on("drag", function (d, i) {
-                var x = this.transform.animVal[0].matrix.e + d3.event.dx;
-                var y = this.transform.animVal[0].matrix.f + d3.event.dy;
-                d3.select(this).attr("transform", function (d, i) {
-                  return "translate(" + [ x, y ] + ")"
-                    + " scale(" + z.scale() + ")";
-
-                });
-
-                z.translate([x, y]);
-
-
-              });
-
-            g2.call(drag);
-
-          }
-
-        }
-
-      },
 
       zoomIn: function () {
 
@@ -1259,6 +1259,19 @@ define([
     });
 
 
+    var NetworkModel = Backbone.Model.extend({
+
+      defaults: function () {
+        return  {
+          currentGroup : undefined,
+          data : undefined
+
+        }
+      }
+
+    });
+
+
     var NetworkWidget = BaseWidget.extend({
 
 
@@ -1280,8 +1293,7 @@ define([
           model: this.model,
           networkType: Marionette.getOption(this, "networkType"),
           helpText: Marionette.getOption(this, "helpText"),
-          summaryMixin: options.summaryMixin,
-          detailMixin: options.detailMixin
+          graphMixin: options.graphMixin,
 
         });
 
@@ -1354,8 +1366,7 @@ define([
 
         data = data.toJSON();
 
-        this.model.set({fullGraph: data["fullGraph"], summaryData: data["summaryGraph"]});
-
+        this.model.set({data : data});
       },
 
 
