@@ -2,12 +2,14 @@ define([
    'underscore',
   'js/widgets/network_vis/network_widget',
   'js/components/api_query_updater',
+  'hbs!./templates/paper-network-data',
   'bootstrap'
 ],
   function(
    _,
   NetworkWidget,
-  ApiQueryUpdater
+  ApiQueryUpdater,
+  DataTemplate
   ) {
 
   var options = {};
@@ -29,7 +31,14 @@ define([
 
   options.summaryMixin.labelSpaceMultiplier = 1.5;
 
-  options.summaryMixin.addLabels = function(options){
+   options.summaryMixin.returnMoreDataTemplate = function(data){
+
+    return DataTemplate(data);
+
+    };
+
+
+    options.summaryMixin.addLabels = function(options){
 
     var nodes = options.nodes;
     var ticks = options.ticks;

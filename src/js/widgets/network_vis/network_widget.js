@@ -242,6 +242,19 @@ define([
 
       },
 
+      showDetailTemplate : function(renderedTemplate){
+
+        this.$(".more-data").empty();
+
+        this.$(".more-data").append(renderedTemplate);
+
+      },
+
+      hideDetailTemplate : function(){
+
+        this.$(".more-data").empty();
+
+      },
 
       onRender: function () {
 
@@ -291,6 +304,10 @@ define([
 
         if (newGraphView) {
 
+          this.listenTo(this.graphView, "show:detailData", this.showDetailTemplate);
+
+          this.listenTo(this.graphView, "hide:detailData", this.hideDetailTemplate);
+
           this.listenTo(this.graphView, "name:toggle", this.updateSingleName);
           this.listenTo(this.graphView, "names:toggle", this.updateGroupOfNames)
 
@@ -305,9 +322,7 @@ define([
 
       }
 
-
     })
-
 
     var SummaryGraphView = Marionette.ItemView.extend({
 
@@ -325,8 +340,23 @@ define([
           }
         })
 
+        this.on("summaryNode:mouseenter", this.showMoreData);
+
+
         this.detailViews = new Backbone.ChildViewContainer();
 
+
+      },
+
+      showMoreData : function(data){
+
+        if (this.returnMoreDataTemplate){
+
+          var template = this.returnMoreDataTemplate(data);
+
+        }
+
+        this.trigger("show:detailData", template);
 
       },
 
@@ -580,8 +610,8 @@ define([
           })
           .classed("summary-node-group", true)
           .attr("d", d3.svg.arc().innerRadius(innerRadius).outerRadius(calculateOuterRadius))
-          .on("mouseover", fade(.1))
-          .on("mouseout", fade(1));
+          .on("mouseover", fade("mouseenter"))
+          .on("mouseout", fade("mouseleave"));
 
 
         var ticks = svg.append("g").selectAll("g")
@@ -590,9 +620,9 @@ define([
           .data(groupTicks)
           .enter().append("g")
           .classed("groupLabel", true)
-          .attr("transform", function (d, i) {
+          .attr("transform", function (d, i, j) {
             return "rotate(" + (d.angle * 180 / Math.PI - 90) + ")" + "translate(" + calculateLabelPosition(_.extend(d, {
-              index: i
+              index: j
             })) + ",0)";
           });
 
@@ -653,8 +683,9 @@ define([
         }
 
         //show and fade labels
-        text.on("mouseover", fadeText(.1))
-          .on("mouseout", fadeText(1));
+        text.on("mouseover", fadeText("mouseenter"))
+          .on("mouseout", fadeText("mouseleave"));
+
 
 
         svg.append("g")
@@ -678,10 +709,15 @@ define([
         }
 
         // Returns an event handler for fading a given chord group.
-        function fade(opacity) {
+        function fade(event) {
           return function (g, i) {
 
-            var textOpacity = opacity == .1 ? 1 : .25;
+            var data = graphData.nodes[g.index];
+
+            var textOpacity = event == "mouseenter" ? 1 : .25;
+            var otherChordsOpacity = event == "mouseenter" ? .1 : 1;
+
+            self.trigger("summaryNode:" + event, data );
 
             //fade the text
             d3.selectAll(self.$(".summary-label-container"))
@@ -698,16 +734,22 @@ define([
                 return d.source.index != i && d.target.index != i;
               })
               .transition()
-              .style("opacity", opacity);
+              .style("opacity", otherChordsOpacity);
           };
         }
 
         // Returns an event handler for fading a given chord group.
         //have to add this to the text or else it interferes with mouseover
-        function fadeText(opacity) {
+        function fadeText(event) {
           return function (g, j, i) {
 
-            var textOpacity = opacity == .1 ? 1 : .25;
+            var data = graphData.nodes[this.parentNode.__data__.index];
+
+            var textOpacity = event == "mouseenter" ? 1 : .25;
+
+            var otherChordsOpacity = event == "mouseenter" ? .1 : 1;
+
+            self.trigger("summaryNode:" + event, data );
 
             //fade the text
             d3.select(this.parentNode)
@@ -715,13 +757,12 @@ define([
               .transition()
               .style("opacity", textOpacity);
 
-
             svg.selectAll(".chord path")
               .filter(function (d) {
                 return d.source.index != i && d.target.index != i;
               })
               .transition()
-              .style("opacity", opacity);
+              .style("opacity", otherChordsOpacity);
           };
         }
       },
