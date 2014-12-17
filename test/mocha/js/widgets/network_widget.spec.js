@@ -17948,12 +17948,11 @@ define([
 
       var q =  new ApiQuery({q: 'star'});
 
-
       networkWidget.activate(minsub.beehive.getHardenedInstance());
 
       minsub.publish(minsub.START_SEARCH, q);
 
-      expect(networkWidget.getCurrentQuery()).to.eql(q);
+      expect(networkWidget.getCurrentQuery().get("q")).to.eql(q.get("q"));
 
       networkWidget.pubsub.publish = sinon.stub()
 
