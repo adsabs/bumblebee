@@ -232,6 +232,7 @@ define([
       routeOrcidPubSub : function(msg){
 
         switch (msg.msgType){
+          case OrcidApiConstants.Events.UserProfileRefreshed:
           case OrcidApiConstants.Events.LoginSuccess:
             this.showWorks(msg.data);
             break;
