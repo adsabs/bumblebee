@@ -207,6 +207,64 @@ define([
           return result;
         };
 
+        var formatWork = function (adsWork) {
+          var result =
+          {
+            "orcid-work": {
+              "work-title": {
+                "$": {},
+                "title": adsWork.title.join(' ')
+              },
+
+              "short-description": adsWork.abstract,
+              "publication-date": {
+                "year": adsWork.year
+              },
+
+              "work-external-identifiers": [
+                {
+                  "work-external-identifier": {
+                    "work-external-identifier-type": 'bibcode', // TODO : look at the  http://support.orcid.org/knowledgebase/articles/118807
+                    "work-external-identifier-id": adsWork.bibcode
+                  }
+                },
+                {
+                  "work-external-identifier": {
+                    "work-external-identifier-type": 'other-id',
+                    "work-external-identifier-id": 'ads:' + adsWork.id
+                  }
+                }
+
+                // TODO : add DOI, if available
+              ],
+
+              "work-type": "book",
+
+              "work-contributors": formatContributors(adsWork.author),
+
+              "url": adsWork.doi ? LinkGeneratorMixin.adsUrlRedirect("doi", adsWork.doi) : '' // TODO : in item_view model DOI is missing
+
+            }
+          }
+
+          return result;
+        };
+
+        var formatWorks = function(adsWorks){
+
+          var result = [];
+
+          _.each(adsWorks,
+            function(adsWork){
+              result.push(formatWork(adsWork));
+            }
+          );
+
+          return result;
+
+        };
+
+
         var orcidWorksMessage = {
           "orcid-message": {
             "$": {
@@ -216,45 +274,7 @@ define([
             "orcid-profile": {
               "orcid-activities": {
                 "$": {},
-                "orcid-works": [
-                  {
-                    "orcid-work": {
-                      "work-title": {
-                        "$": {},
-                        "title": adsData.title.join(' ')
-                      },
-
-                      "short-description" : adsData.abstract,
-                      "publication-date": {
-                        "year": adsData.year
-                      },
-
-                      "work-external-identifiers": [
-                        {
-                          "work-external-identifier": {
-                            "work-external-identifier-type": 'bibcode', // TODO : look at the  http://support.orcid.org/knowledgebase/articles/118807
-                            "work-external-identifier-id": adsData.bibcode
-                          }
-                        },
-                        {
-                          "work-external-identifier": {
-                            "work-external-identifier-type": 'other-id',
-                            "work-external-identifier-id": 'ads:' + adsData.id
-                          }
-                        }
-
-                        // TODO : add DOI, if available
-                      ],
-
-                      "work-type": "book",
-
-                      "work-contributors": formatContributors(adsData.author),
-
-                      "url" : adsData.doi ?  LinkGeneratorMixin.adsUrlRedirect("doi", adsData.doi) : '' // TODO : in item_view model DOI is missing
-
-                    }
-                  }
-                ]
+                "orcid-works": formatWorks(adsData)
               }
             }
           }
@@ -266,6 +286,11 @@ define([
 
       processOrcidAction: function(data){
         if (data.actionType == 'insert'){
+          var orcidWorksMessage = this.fillOrcidWorks([data.model]);
+
+          this.addWorks(orcidWorksMessage);
+        }
+        else if (data.actionType == 'bulkInsert'){
           var orcidWorksMessage = this.fillOrcidWorks(data.model);
 
           this.addWorks(orcidWorksMessage);

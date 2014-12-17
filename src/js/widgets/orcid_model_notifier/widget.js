@@ -23,6 +23,21 @@ define([
         this.pubsub.subscribe(this.pubsub.ORCID_ANNOUNCEMENT, this.routeOrcidPubSub);
       },
 
+      initialize: function(options){
+        _.bindAll(this, 'bulkInsert');
+        OrcidModel.on('bulkInsert', this.bulkInsert);
+      },
+
+      bulkInsert : function(adsWorks){
+        this.pubsub.publish(this.pubsub.ORCID_ANNOUNCEMENT,
+          {
+            msgType:OrcidApiConstants.Events.OrcidAction,
+            data: {
+              actionType:'bulkInsert', model: adsWorks
+            }
+          });
+      },
+
       routeOrcidPubSub : function(msg){
         switch (msg.msgType){
           case OrcidApiConstants.Events.LoginSuccess:

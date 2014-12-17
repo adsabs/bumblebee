@@ -30,6 +30,10 @@ define([
 
         this.listenTo(this, "item:rendered", this.onItemRendered);
 
+        _.bindAll(this, 'resetToggle');
+
+        OrcidModel.on('change:isInBulkInsertMode', this.resetToggle);
+
         return Marionette.ItemView.prototype.constructor.apply(this, arguments);
       },
 
@@ -109,10 +113,38 @@ define([
       },
 
       toggleSelect: function () {
+
+        if (OrcidModel.get('isInBulkInsertMode')) {
+          if (this.model.get('chosen')) {
+            OrcidModel.removeFromBulkWorks(this.model.attributes);
+          }
+          else {
+            OrcidModel.addToBulkWorks(this.model.attributes);
+          }
+        }
+
         this.$el.toggleClass("chosen");
         this.model.set('chosen', this.model.get('chosen') ? false : true);
+      },
 
-        OrcidModel.attributes.addToBulkWorks(this.model.attributes);
+      resetToggle: function(){
+        this.setToggleTo(false);
+      },
+
+      setToggleTo : function(to){
+
+        var $checkbox = $('input[name=identifier]');
+        if (to) {
+          this.$el.addClass("chosen");
+          this.model.set('chosen', true);
+          $checkbox.prop('checked', true);
+        }
+        else
+        {
+          this.$el.removeClass("chosen");
+          this.model.set('chosen', false);
+          $checkbox.prop('checked', false);
+        }
       },
 
       /*

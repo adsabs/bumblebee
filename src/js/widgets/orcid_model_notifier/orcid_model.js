@@ -21,12 +21,27 @@ define([
 
     _.extend(OrcidModel.prototype, {
       addToBulkWorks: function(adsWork){
-        this.attributes.bulkInsertWorks.push(adsWork);
+        if (this.isWorkInCollection(adsWork))
+        {
+          return;
+        }
 
+        this.attributes.bulkInsertWorks.push(adsWork);
+      },
+
+      removeFromBulkWorks: function(adsWork){
+        // TODO :
+      },
+
+      cancelBulkInsert: function(){
+        this.set('isInBulkInsertMode', false);
+        this.set('bulkInsertWorks', []);
       },
 
       triggerBulkInsert: function(){
-
+        this.trigger('bulkInsert', this.attributes.bulkInsertWorks);
+        this.set('isInBulkInsertMode', false);
+        this.set('bulkInsertWorks', []);
       },
 
       isWorkInCollection : function(adsItem){

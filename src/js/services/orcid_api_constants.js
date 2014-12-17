@@ -9,6 +9,7 @@ define(
         SignOut: 'Orcid-Sign-Out',
         OrcidAction: 'Orcid-Action',
         UserProfileRefreshed: 'Orcid-User-Profile-Refreshed'
+
       }
     };
 

@@ -143,7 +143,7 @@ define([
       },
 
       events:{
-        'click button[name=doBulkInsert]': "doBulkInsertClick",
+        'click button[name=doBulkInsert]': "startBulkInsertClick",
         'click button[name=cancelBulkInsert]': "cancelBulkInsertClick",
         'click button[name=finishBulkInsert]': "finishBulkInsertClick"
       },
@@ -157,7 +157,7 @@ define([
         }
       },
 
-      doBulkInsertClick: function(){
+      startBulkInsertClick: function(){
           $('button[name=doBulkInsert]').addClass('hidden');
 
           $('button[name=cancelBulkInsert]').removeClass('hidden');
@@ -174,7 +174,6 @@ define([
         $('button[name=doBulkInsert]').removeClass('hidden');
 
         OrcidModel.triggerBulkInsert();
-        OrcidModel.set('isInBulkInsertMode', false);
       },
 
       cancelBulkInsertClick: function(){
@@ -182,8 +181,7 @@ define([
         $('button[name=finishBulkInsert]').addClass('hidden');
         $('button[name=doBulkInsert]').removeClass('hidden');
 
-        OrcidModel.set('bulkInsertWorks', []);
-        OrcidModel.set('isInBulkInsertMode', false);
+        OrcidModel.cancelBulkInsert();
       },
 
       stateChanged : function(state){
