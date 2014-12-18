@@ -422,6 +422,50 @@ define([
 
       },
 
+      updateWorks: function(orcidWorksToUpdate) {
+
+        var putCodesToUpdate = orcidWorksToUpdate.map(function(item) {
+          return item.$["put-code"];
+        });
+
+        var _that = this;
+
+        var deferred = $.Deferred();
+
+        this.getUserProfile()
+          .done(function(data) {
+            var xml = $.xml2json(data);
+            var message = xml['#document'];
+            var orcidWorks = message['orcid-message']['orcid-profile']["orcid-activities"]["orcid-works"];
+
+            // Exclude works not comming from ADS and works to update
+            orcidWorks["orcid-work"] = orcidWorks["orcid-work"].filter(function(orcidWork) {
+              return _that.isWorkFromAds(orcidWork)
+                && putCodesToUpdate.indexOf(orcidWork.$["put-code"]) == -1;
+            });
+
+            orcidWorks["orcid-work"].push(orcidWorksToUpdate);
+
+            if (orcidWorks["orcid-work"].length == 0) {
+              delete orcidWorks["orcid-work"];
+            }
+
+            _that.replaceAllWorks(message)
+              .done(function() {
+                deferred.resolve();
+              })
+              .fail(function(err) {
+                deferred.reject(err);
+              });
+          })
+          .fail(function(err) {
+            deferred.reject(err);
+          });
+
+        return deferred.promise();
+
+      },
+
       replaceAllWorks: function(orcidWorks) {
         var beeHive = this.getBeeHive();
         var LocalStorage = beeHive.getService("LocalStorage");
