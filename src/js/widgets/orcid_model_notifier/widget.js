@@ -48,6 +48,10 @@ define([
           case OrcidApiConstants.Events.SignOut:
             OrcidModel.set('actionsVisible', false);
             break;
+
+          case OrcidApiConstants.Events.UserProfileRefreshed:
+            OrcidModel.set('works', msg.data);
+            break;
         }
       }
 

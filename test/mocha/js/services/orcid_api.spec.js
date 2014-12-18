@@ -63,42 +63,42 @@ define([
         done();
       });
 
-      it('should trigger success over backbone.events', function(done){
+      it('should trigger success over pubsub events', function(done){
         var orcidApi = new OrcidApi();
-      
 
+        var pubSub = beeHive.getService('PubSub');
+        var pubSubKey = pubSub.getPubSubKey();
 
-        var callback = function(e){
-          expect(e.dummy == 'dummy').to.be.true;
+        pubSub.subscribeOnce(pubSubKey, PubSubEvents.ORCID_ANNOUNCEMENT, function(msg) {
+          if (msg.msgType == OrcidApiConstants.Events.LoginSuccess) {
+            expect(msg.dummy == 'dummy').to.be.true;
+            done();
+          }
+        });
 
-          Backbone.Events.off(OrcidApiConstants.Events.LoginSuccess, callback);
-
-          done();
-        };
-
-        Backbone.Events.on(OrcidApiConstants.Events.LoginSuccess, callback);
-
-        orcidApi.triggerLoginSuccess({dummy:'dummy'});
-
+        pubSub.publish(pubSubKey, pubSub.ORCID_ANNOUNCEMENT, {msgType: OrcidApiConstants.Events.LoginSuccess, dummy:'dummy'});
       });
 
       it('function should be called on event trigger', function(done){
         var orcidApi = new OrcidApi();
         orcidApi.activate(beeHive);
 
+        var pubSub = beeHive.getService('PubSub');
+        var pubSubKey = pubSub.getPubSubKey();
+
         orcidApi.signOut = function(){};
         var spy = sinon.spy(orcidApi, "signOut");
-        Backbone.Events.trigger(OrcidApiConstants.Events.SignOut);
+        pubSub.publish(pubSubKey, PubSubEvents.ORCID_ANNOUNCEMENT, { msgType: OrcidApiConstants.Events.SignOut });
         expect(spy.called).to.be.ok;
 
         orcidApi.showLoginDialog = function(){};
         var spy = sinon.spy(orcidApi, "showLoginDialog");
-        Backbone.Events.trigger(OrcidApiConstants.Events.LoginRequested);
+        pubSub.publish(pubSubKey, PubSubEvents.ORCID_ANNOUNCEMENT, { msgType: OrcidApiConstants.Events.LoginRequested });
         expect(spy.called).to.be.ok;
 
         orcidApi.processOrcidAction = function(){};
         var spy = sinon.spy(orcidApi, "processOrcidAction");
-        Backbone.Events.trigger(OrcidApiConstants.Events.OrcidAction, {dummy:'dummy'});
+        pubSub.publish(pubSubKey, PubSubEvents.ORCID_ANNOUNCEMENT, { msgType: OrcidApiConstants.Events.OrcidAction, dummy:'dummy'});
         expect(spy.called).to.be.ok;
 
         done();
@@ -143,19 +143,21 @@ define([
         orcidApi.activate(beeHive);
         orcidApi.showLoginDialog();
 
-        var successCallback = function() {
-          Backbone.Events.off(OrcidApiConstants.Events.LoginSuccess, successCallback);
+        var pubSub = beeHive.getService('PubSub');
+        var pubSubKey = pubSub.getPubSubKey();
 
-          var LocalStorage = beeHive.getService("LocalStorage");
-          var userSession = LocalStorage.getObject("userSession");
+        pubSub.subscribe(pubSubKey, PubSubEvents.ORCID_ANNOUNCEMENT, function(msg) {
+          if (msg.msgType == OrcidApiConstants.Events.LoginSuccess) {
 
-          expect(userSession.orcidProfile).to.be.an('object');
-          expect(userSession.authData).to.be.an('object');
+            var LocalStorage = beeHive.getService("LocalStorage");
+            var userSession = LocalStorage.getObject("userSession");
 
-          done();
-        };
+            expect(userSession.orcidProfile).to.be.an('object');
+            expect(userSession.authData).to.be.an('object');
 
-        Backbone.Events.on(OrcidApiConstants.Events.LoginSuccess, successCallback);
+            done();
+          }
+        });
       });
 
       it('should cancel login', function (done) {
@@ -163,12 +165,14 @@ define([
         orcidApi.activate(beeHive);
         orcidApi.showLoginDialog();
 
-        var callback = function() {
-          done();
-          Backbone.Events.off(OrcidApiConstants.Events.LoginCancelled, callback);
-        };
+        var pubSub = beeHive.getService('PubSub');
+        var pubSubKey = pubSub.getPubSubKey();
 
-        Backbone.Events.on(OrcidApiConstants.Events.LoginCancelled, callback);
+        pubSub.subscribeOnce(pubSubKey, PubSubEvents.ORCID_ANNOUNCEMENT, function(msg) {
+          if (msg.msgType == OrcidApiConstants.Events.LoginCancelled) {
+            done();
+          }
+        });
       });
 
       it('add orcid works', function (done) {
@@ -227,13 +231,14 @@ define([
             }
           });
 
-        var callback = function() {
-          done();
-          Backbone.Events.off(OrcidApiConstants.Events.UserProfileRefreshed, callback);
-        };
+        var pubSub = beeHive.getService('PubSub');
+        var pubSubKey = pubSub.getPubSubKey();
 
-        Backbone.Events.on(OrcidApiConstants.Events.UserProfileRefreshed, callback);
-
+        pubSub.subscribeOnce(pubSubKey, PubSubEvents.ORCID_ANNOUNCEMENT, function(msg) {
+          if (msg.msgType == OrcidApiConstants.Events.UserProfileRefreshed) {
+            done();
+          }
+        });
       });
 
       it('replace all orcid works', function (done) {
@@ -274,7 +279,15 @@ define([
                           "$": {},
                           "title": "Testing publication 14"
                         },
-                        "work-type": "test"
+                        "work-type": "test",
+                        "work-external-identifiers": [
+                          {
+                            "work-external-identifier": {
+                              "work-external-identifier-type": 'other-id',
+                              "work-external-identifier-id": 'ads:6789'
+                            }
+                          }
+                        ]
                       }
                     },
                     {
@@ -283,7 +296,15 @@ define([
                           "$": {},
                           "title": "Testing publication 15"
                         },
-                        "work-type": "test"
+                        "work-type": "test",
+                        "work-external-identifiers": [
+                          {
+                            "work-external-identifier": {
+                              "work-external-identifier-type": 'other-id',
+                              "work-external-identifier-id": 'ads:12345'
+                            }
+                          }
+                        ]
                       }
                     }
                   ]
@@ -292,12 +313,50 @@ define([
             }
           });
 
-        var callback = function() {
-          done();
-          Backbone.Events.off(OrcidApiConstants.Events.UserProfileRefreshed, callback);
-        };
+        var pubSub = beeHive.getService('PubSub');
+        var pubSubKey = pubSub.getPubSubKey();
 
-        Backbone.Events.on(OrcidApiConstants.Events.UserProfileRefreshed, callback);
+        pubSub.subscribeOnce(pubSubKey, PubSubEvents.ORCID_ANNOUNCEMENT, function(msg) {
+          if (msg.msgType == OrcidApiConstants.Events.UserProfileRefreshed) {
+            done();
+          }
+        });
+      });
+
+      it('delete orcid works', function (done) {
+        var orcidApi = new OrcidApi();
+        orcidApi.activate(beeHive);
+
+
+        orcidApi.getUserProfile()
+          .done(function(data) {
+
+            var orcidWorks = $.xml2json(data)['#document']['orcid-message']['orcid-profile']["orcid-activities"]["orcid-works"]["orcid-work"];
+
+            var lastOrcidWorks = orcidWorks[orcidWorks.length - 1];
+
+            orcidApi.deleteWorks([lastOrcidWorks["$"]["put-code"]]);
+
+            var pubSub = beeHive.getService('PubSub');
+            var pubSubKey = pubSub.getPubSubKey();
+
+            pubSub.subscribeOnce(pubSubKey, PubSubEvents.ORCID_ANNOUNCEMENT, function(msg) {
+              if (msg.msgType == OrcidApiConstants.Events.UserProfileRefreshed) {
+
+                var orcidWorks = msg.data["orcid-activities"]["orcid-works"]["orcid-work"];
+
+                var orcidWorks = orcidWorks.filter(function(item) {
+                  return orcidApi.isWorkFromAds(item);
+                });
+
+                var adsId = orcidWorks[0]["work-external-identifiers"]["work-external-identifier"]["work-external-identifier-id"];
+
+                expect(adsId == "ads:6789").to.be.true;
+
+                done();
+              }
+            });
+          });
       });
     });
   }

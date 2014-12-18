@@ -1,10 +1,12 @@
 define([
     'backbone',
-    'underscore'
+    'underscore',
+    'js/mixins/array_extensions',
   ],
   function(
     Backbone,
-    _
+    _,
+    ArrayExtensions
   ) {
     var OrcidModel = Backbone.Model.extend({
       defaults: function(){
@@ -45,9 +47,24 @@ define([
       },
 
       isWorkInCollection : function(adsItem){
-        return false; // TODO
+
+        var orcidWorks = this.get("works")["orcid-activities"]["orcid-works"];
+
+        var workExternalIds = orcidWorks["orcid-work"]
+          .flatMap(function(orcidWork) {
+            return orcidWork["work-external-identifiers"]
+              ? orcidWork["work-external-identifiers"]["work-external-identifier"]
+              : [];
+          })
+          .map(function(workExtIdentifier) {
+            return workExtIdentifier["work-external-identifier-id"];
+          });
+
+        return workExternalIds.indexOf("ads:" + adsItem.attributes.id) != -1;
       }
     });
+
+    _.extend(Array.prototype, ArrayExtensions);
 
     return new OrcidModel();
 

@@ -80,6 +80,9 @@ define([
           case OrcidApiConstants.Events.OrcidAction:
             this.processOrcidAction(msg.data);
             break;
+          case OrcidApiConstants.Events.RedirectToLogin:
+            this.redirectToLogin();
+            break;
         }
       },
 
@@ -91,28 +94,12 @@ define([
         var _that = this;
 
         window.oauthAuthCodeReceived = _.bind(this.oauthAuthCodeReceived, this);
-        this.pubSub.subscribe(this.pubSubKey, PubSubEvents.BOOTSTRAP_CONFIGURED, function(page) {
+        this.pubSub.subscribe(PubSubEvents.BOOTSTRAP_CONFIGURED, function(page) {
           var code = getParameterByName("code");
           _that.oauthAuthCodeReceived(code, window.location.origin, _that);
         });
 
         this.pubSub.subscribe(this.pubSub.ORCID_ANNOUNCEMENT, _.bind(this.routeOrcidPubSub, this));
-
-        Backbone.Events.on(OrcidApiConstants.Events.RedirectToLogin, function(){
-          _that.redirectToLogin();
-        });
-
-        Backbone.Events.on(OrcidApiConstants.Events.LoginRequested, function(){
-          _that.showLoginDialog();
-        });
-
-        Backbone.Events.on(OrcidApiConstants.Events.SignOut, function(){
-          _that.signOut();
-        });
-
-        Backbone.Events.on(OrcidApiConstants.Events.OrcidAction, function(){
-          _that.processOrcidAction();
-        });
       },
       initialize: function (options) {
 
@@ -150,7 +137,7 @@ define([
         })
           .done(function (authData) {
             var beeHive = _that.getBeeHive();
-                var LocalStorage = beeHive.getService("LocalStorage");
+            var LocalStorage = beeHive.getService("LocalStorage");
             LocalStorage.setObject("userSession", {
               authData: authData
             });
@@ -183,6 +170,26 @@ define([
         this.getBeeHive()
           .getService('LocalStorage')
           .setObject("userSession", {isEmpty:true});
+      },
+
+      isWorkFromAds: function(orcidWork) {
+        var extIdentifiersObj = orcidWork["work-external-identifiers"];
+
+        if (!extIdentifiersObj) {
+          return false;
+        }
+
+        var extIdentifiers = extIdentifiersObj["work-external-identifier"] || [];
+
+        if (!(extIdentifiers instanceof Array)) {
+          extIdentifiers = [extIdentifiers];
+        }
+
+        var adsExtIdentifiers = extIdentifiers.filter(function(extIdentifier) {
+          return extIdentifier["work-external-identifier-id"].indexOf("ads:") != -1;
+        });
+
+        return adsExtIdentifiers.length > 0;
       },
 
       fillOrcidWorks : function(adsData){
@@ -311,9 +318,11 @@ define([
 
             LocalStorage.setObject("userSession", userSession);
 
-            Backbone.Events.trigger(
-              OrcidApiConstants.Events.UserProfileRefreshed,
-              userSession.orcidProfile['#document']['orcid-message']['orcid-profile']['orcid-bio']['personal-details']);
+            _that.pubSub.publish(_that.pubSub.ORCID_ANNOUNCEMENT,
+              {
+                msgType: OrcidApiConstants.Events.UserProfileRefreshed,
+                data: userSession.orcidProfile['#document']['orcid-message']['orcid-profile']
+              });
           })
       },
 
@@ -346,7 +355,10 @@ define([
         this.loginWindow = window.open(url, "ORCID Login", 'width=' + WIDTH + ', height=' + HEIGHT + ', top=' + top + ', left=' + left);
         this.loginWindow.onbeforeunload = _.bind(function(e) {
           this.cleanLoginWindow();
-          Backbone.Events.trigger(OrcidApiConstants.Events.LoginCancelled);
+          this.pubSub.publish(this.pubSub.ORCID_ANNOUNCEMENT,
+            {
+              msgType: OrcidApiConstants.Events.LoginCancelled
+            });
         }, this);
       },
 
@@ -371,6 +383,43 @@ define([
           .done(function() {
             _that.refreshUserProfile();
           });
+      },
+
+      deleteWorks: function(putCodes) {
+        var _that = this;
+
+        var deferred = $.Deferred();
+
+        this.getUserProfile()
+          .done(function(data) {
+            var xml = $.xml2json(data);
+            var message = xml['#document'];
+            var orcidWorks = message['orcid-message']['orcid-profile']["orcid-activities"]["orcid-works"];
+
+            // Exclude works not comming from ADS and works to delete
+            orcidWorks["orcid-work"] = orcidWorks["orcid-work"].filter(function(orcidWork) {
+              return _that.isWorkFromAds(orcidWork)
+                && putCodes.indexOf(orcidWork.$["put-code"]) == -1;
+            });
+
+            if (orcidWorks["orcid-work"].length == 0) {
+              delete orcidWorks["orcid-work"];
+            }
+
+            _that.replaceAllWorks(message)
+              .done(function() {
+                deferred.resolve();
+              })
+              .fail(function(err) {
+                deferred.reject(err);
+              });
+          })
+          .fail(function(err) {
+            deferred.reject(err);
+          });
+
+        return deferred.promise();
+
       },
 
       replaceAllWorks: function(orcidWorks) {
