@@ -8,7 +8,9 @@ define([
     'js/mixins/dependon',
     'js/services/orcid_api_constants',
     'js/components/pubsub_events',
-    'js/mixins/link_generator_mixin'
+    'js/mixins/link_generator_mixin',
+    'js/widgets/orcid_model_notifier/orcid_model'
+
   ],
   function (_,
             Bootstrap,
@@ -19,7 +21,8 @@ define([
             Mixins,
             OrcidApiConstants,
 			      PubSubEvents,
-            LinkGeneratorMixin
+            LinkGeneratorMixin,
+            OrcidModel
   ) {
     function addXmlHeadersToOrcidMessage(message) {
       var messageCopy = $.extend(true, {}, message);
@@ -231,7 +234,7 @@ define([
               "work-external-identifiers": [
                 {
                   "work-external-identifier": {
-                    "work-external-identifier-type": 'bibcode', // TODO : look at the  http://support.orcid.org/knowledgebase/articles/118807
+                    "work-external-identifier-type": 'bibcode',
                     "work-external-identifier-id": adsWork.bibcode
                   }
                 },
@@ -302,7 +305,23 @@ define([
 
           this.addWorks(orcidWorksMessage);
         }
+        else if (data.actionType == 'delete'){
+          var adsIdsWithPutCodeList = OrcidModel.get('adsIdsWithPutCodeList');
+          var formattedAdsId = "ads:" + data.model.id;
 
+          // find putcode
+
+          var putCodes = adsIdsWithPutCodeList.filter(function(e){
+            return e.adsId == formattedAdsId
+          });
+
+          if (putCodes.length < 1)
+          {
+            return;
+          }
+
+          this.deleteWorks([putCodes[0].putCode]);
+        }
       },
 
       refreshUserProfile: function() {
