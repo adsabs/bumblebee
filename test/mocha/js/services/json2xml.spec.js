@@ -152,6 +152,22 @@ define([
 
         done();
       });
+
+      it('more complex xml2json', function (done) {
+
+        var json2Xml = beeHive.getService("Json2Xml");
+
+        var originalXml = '<orcid-work put-code="456255" visibility="public"><work-title><title>Simultaneous laser oscillation at R&lt;SUB&gt;1&lt;/SUB&gt;and R&lt;SUB&gt;2&lt;/SUB&gt;wavelengths in ruby</title></work-title><work-type>book</work-type><publication-date><year>1965</year></publication-date><work-external-identifiers><work-external-identifier><work-external-identifier-type>bibcode</work-external-identifier-type><work-external-identifier-id>1965IJQE....1..132C</work-external-identifier-id></work-external-identifier><work-external-identifier><work-external-identifier-type>other-id</work-external-identifier-type><work-external-identifier-id>ads:2468360</work-external-identifier-id></work-external-identifier></work-external-identifiers><work-contributors><contributor><credit-name visibility="public">Calviello, J.</credit-name><contributor-attributes><contributor-role>author</contributor-role></contributor-attributes></contributor><contributor><credit-name visibility="public">Fisher, E.</credit-name><contributor-attributes><contributor-role>author</contributor-role></contributor-attributes></contributor><contributor><credit-name visibility="public">Heller, Z.</credit-name><contributor-attributes><contributor-role>author</contributor-role></contributor-attributes></contributor></work-contributors></orcid-work>';
+
+        var json = $.xml2json(originalXml);
+
+        var xml = json2Xml.xml(json , { attributes_key: '$' });
+
+        expect(originalXml === xml).to.be.true;
+
+        done();
+
+      });
     });
   }
 );

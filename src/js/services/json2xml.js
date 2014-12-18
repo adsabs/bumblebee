@@ -42,8 +42,9 @@ define([
 
       if(type==='Array'){
 
+        result = [];
         json.forEach(function(node){
-          result += xml(node, opts);
+          result.push(xml(node, opts));
         });
 
       } else if(type ==='Object' && typeof json === "object") {
@@ -61,7 +62,18 @@ define([
             var inner = xml(node,opts);
 
             if(inner){
-              result += "<{0}{1}>{2}</{3}>".format(key, attributes, xml(node,opts), key);
+              if (key == "_") {
+                result += node;
+              }
+              else {
+                var next = xml(node, opts);
+
+                next = Array.isArray(next) ? next : [next];
+
+                next.forEach(function(item) {
+                  result += "<{0}{1}>{2}</{3}>".format(key, attributes, item, key);
+                });
+              }
             } else {
               result += "<{0}{1}/>".format(key, attributes);
             }
