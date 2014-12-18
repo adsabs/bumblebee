@@ -345,11 +345,53 @@ define([
 
                 var orcidWorks = msg.data["orcid-activities"]["orcid-works"]["orcid-work"];
 
-                var orcidWorks = orcidWorks.filter(function(item) {
+                orcidWorks = orcidWorks.filter(function(item) {
                   return orcidApi.isWorkFromAds(item);
                 });
 
                 var adsId = orcidWorks[0]["work-external-identifiers"]["work-external-identifier"]["work-external-identifier-id"];
+
+                expect(adsId == "ads:6789").to.be.true;
+
+                done();
+              }
+            });
+          });
+      });
+
+      it('update orcid works', function (done) {
+        var orcidApi = new OrcidApi();
+        orcidApi.activate(beeHive);
+
+
+        orcidApi.getUserProfile()
+          .done(function(data) {
+
+            var orcidWorks = $.xml2json(data)['#document']['orcid-message']['orcid-profile']["orcid-activities"]["orcid-works"]["orcid-work"];
+
+            var orcidWorkToUpdate = orcidWorks.filter(function(item) {
+              return item["work-title"].title == "Testing publication 14";
+            })[0];
+
+            orcidWorkToUpdate["work-title"].title = "Testing publication 14X";
+
+            orcidApi.updateWorks([orcidWorkToUpdate]);
+
+            var pubSub = beeHive.getService('PubSub');
+            var pubSubKey = pubSub.getPubSubKey();
+
+            pubSub.subscribeOnce(pubSubKey, PubSubEvents.ORCID_ANNOUNCEMENT, function(msg) {
+              if (msg.msgType == OrcidApiConstants.Events.UserProfileRefreshed) {
+
+                var orcidWorks = msg.data["orcid-activities"]["orcid-works"]["orcid-work"];
+
+                var updatedOrcidWorks = orcidWorks.filter(function(item) {
+                  return item["work-title"].title == "Testing publication 14X";
+                });
+
+                expect(updatedOrcidWorks.length == 1).to.be.true;
+
+                var adsId = updatedOrcidWorks[0]["work-external-identifiers"]["work-external-identifier"]["work-external-identifier-id"];
 
                 expect(adsId == "ads:6789").to.be.true;
 
