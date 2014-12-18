@@ -236,7 +236,7 @@ define([
         $insert.addClass('hidden');
         $delete.addClass('hidden');
 
-        if (OrcidModel.isWorkInCollection(this.model)){
+        if (OrcidModel.isWorkInCollection(this.model.attributes)){
           $update.removeClass('hidden');
           $delete.removeClass('hidden');
         }
@@ -251,7 +251,7 @@ define([
       },
 
       orcidAction: function(e){
-        $c = $(e.currentTarget);
+        var $c = $(e.currentTarget);
 
         var actionType = '';
 

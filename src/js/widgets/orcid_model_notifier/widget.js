@@ -25,6 +25,7 @@ define([
 
       initialize: function(options){
         _.bindAll(this, 'bulkInsert');
+
         OrcidModel.on('bulkInsert', this.bulkInsert);
       },
 
@@ -50,7 +51,7 @@ define([
             break;
 
           case OrcidApiConstants.Events.UserProfileRefreshed:
-            OrcidModel.set('works', msg.data);
+            OrcidModel.set('orcidProfile', msg.data);
             break;
         }
       }

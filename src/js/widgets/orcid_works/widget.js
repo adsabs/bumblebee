@@ -103,8 +103,24 @@ define([
       },
 
       orcidAction: function (e) {
-        // notify on orcid action on orcid items
-        // data should be picked from model
+        var $c = $(e.currentTarget);
+
+        var actionType = '';
+
+        if ($c.hasClass('orcid-action-insert')){
+          actionType = 'insert';
+        } else if ($c.hasClass('orcid-action-update')){
+          actionType = 'update';
+        } else if ($c.hasClass('orcid-action-delete')){
+          actionType = 'delete';
+        }
+
+        var msg = {
+          actionType : actionType,
+          model: this.model.attributes
+        };
+
+        this.trigger('OrcidAction', msg);
       }
     });
 
@@ -309,11 +325,9 @@ define([
         this.view.trigger('orchidWorksWidget:stateChanged', 'loaded');
       },
       onAllInternalEvents: function (ev, arg1, arg2) {
-        // TODO actions on works will be routed here
-
-        //if (ev === 'orchidWorksWidget:update') {
-        //  // trigger update on passed data
-        //}
+        if (ev == 'itemview:OrcidAction'){
+          this.pubSub.publish(this.pubSub.ORCID_ANNOUNCEMENT, {msgType: OrcidApiConstants.Events.OrcidAction, data: arg2});
+        }
       }
     });
 
