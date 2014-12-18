@@ -1,0 +1,10 @@
+#!/bin/bash
+
+SESSION="Vagrant"
+tmux -2 new-session -d -s $SESSION
+tmux split-window -v
+tmux select-pane -t 1
+tmux resize-pane -U 15
+tmux split-window -h
+
+tmux -2 attach -t $SESSION
