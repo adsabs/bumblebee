@@ -68,6 +68,10 @@ define([
         //$insert.addClass('hidden');
         $delete.addClass('hidden');
 
+        $update.parent().removeClass('orcid-wait');
+        //$insert.parent().removeClass('orcid-wait');
+        $delete.parent().removeClass('orcid-wait');
+
         if (OrcidModel.isOrcidItemAdsItem(this.model.attributes)){
           $update.removeClass('hidden');
           $delete.removeClass('hidden');
@@ -132,6 +136,7 @@ define([
 
       orcidAction: function (e) {
         var $c = $(e.currentTarget);
+        $c.parent().addClass('orcid-wait');
 
         var actionType = '';
 
