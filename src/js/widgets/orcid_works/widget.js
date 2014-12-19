@@ -47,7 +47,34 @@ define([
       },
       constructor: function (options) {
         this.model = new OrcidWorkModel();
+
+        this.listenTo(this, "item:rendered", this.onItemRendered);
+
         return Marionette.ItemView.prototype.constructor.apply(this, arguments);
+      },
+
+      onItemRendered: function(ev, arg1, arg2) {
+          this.showOrcidActions();
+      },
+
+      showOrcidActions: function(){
+        var $orcidActions = this.$('.orcid-actions');
+        $orcidActions.removeClass('hidden');
+        var $update = $orcidActions.find('.orcid-action-update');
+        //var $insert = $orcidActions.find('.orcid-action-insert');
+        var $delete = $orcidActions.find('.orcid-action-delete');
+
+        $update.addClass('hidden');
+        //$insert.addClass('hidden');
+        $delete.addClass('hidden');
+
+        if (OrcidModel.isOrcidItemAdsItem(this.model.attributes)){
+          $update.removeClass('hidden');
+          $delete.removeClass('hidden');
+        }
+        else {
+          //$insert.removeClass('hidden');
+        }
       },
 
       showLinks: function (e) {
@@ -117,7 +144,8 @@ define([
 
         var msg = {
           actionType : actionType,
-          model: this.model.attributes
+          model: this.model.attributes,
+          modelType: 'orcidData'
         };
 
         this.trigger('OrcidAction', msg);
@@ -150,6 +178,12 @@ define([
 
         this.listenTo(this, "all", this.onAllInternalEvents);
 
+        //OrcidModel.on('change:orcidProfile',
+        //  _.bind(function(){
+        //    this.children.call('showOrcidActions');
+        //  }, this));
+
+
         return Marionette.CompositeView.prototype.constructor.apply(this, arguments);
 
       },
@@ -157,6 +191,7 @@ define([
       initialize: function (options) {
 
       },
+
 
       events:{
         'click button[name=doBulkInsert]': "startBulkInsertClick",
@@ -282,6 +317,7 @@ define([
           var workSourceHost = work['work-source'] != undefined ? work['work-source']['host'] : "";
 
           var item = {
+            putCode: work['$']['put-code'],
             publicationData: publicationData,
             workExternalIdentifiers: [],
             workTitle: workTitle,
@@ -292,19 +328,34 @@ define([
 
           works.push(item);
 
+          var addExternalIdentifier = function(workIdentifierNode) {
+            //var workExternalIdentifiers = work['work-external-identifiers'];
+            //if (workExternalIdentifiers) {
+            //
+            //  var workIdentifierNode = workExternalIdentifiers['work-external-identifier'];
+              if (workIdentifierNode) {
+
+                var identifier = {
+                  id: workIdentifierNode['work-external-identifier-id'],
+                  type: workIdentifierNode['work-external-identifier-type']
+                };
+                item.workExternalIdentifiers.push(identifier);
+              }
+            //}
+          };
+
           var workExternalIdentifiers = work['work-external-identifiers'];
           if (workExternalIdentifiers) {
-
             var workIdentifierNode = workExternalIdentifiers['work-external-identifier'];
-            if (workIdentifierNode) {
 
-          var identifier = {
-            id: workIdentifierNode['work-external-identifier-id'],
-            type: workIdentifierNode['work-external-identifier-type']
-          };
-          item.workExternalIdentifiers.push(identifier);
+            if (workIdentifierNode instanceof Array){
+              _.each(workIdentifierNode, addExternalIdentifier)
+            }
+            else{
+              addExternalIdentifier(workIdentifierNode);
             }
           }
+
 
           //_.each(work['work-external-identifiers'], function(workIdentifier){
           //  var workIdentifierNode = workIdentifier['work-external-identifier'];
@@ -320,9 +371,12 @@ define([
         });
 
         this.view.collection = new OrcidWorksCollection(works);
-        this.view.model.set('items', works);
 
         this.view.trigger('orchidWorksWidget:stateChanged', 'loaded');
+
+        this.view.model.set('items', works);
+
+
       },
       onAllInternalEvents: function (ev, arg1, arg2) {
         if (ev == 'itemview:OrcidAction'){
