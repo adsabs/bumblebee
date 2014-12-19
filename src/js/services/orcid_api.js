@@ -258,7 +258,7 @@ define([
 
 
         if (putCode){
-          result["orcid-work"]["$"] = {"put-code": putCode};
+          result["$"] = {"put-code": putCode};
         }
 
         return result;
@@ -364,7 +364,7 @@ define([
 
             var newOrcidWork = this.formatOrcidWork(data.model, putCode);
 
-            this.updateWorks([newOrcidWork['orcid-work']]);
+            this.updateWorks([newOrcidWork]);
 
           }
           else if (data.model.modelType == 'orcidData'){

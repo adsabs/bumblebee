@@ -98,8 +98,9 @@ define([
         'change input[name=identifier]': 'toggleSelect',
         'mouseenter .letter-icon': "showLinks",
         'mouseleave .letter-icon': "hideLinks",
-        'click .letter-icon': "pinLinks",
-        'click .orcid-action': "orcidAction"
+        'click .orcid-action': "orcidAction",
+        'click .letter-icon': "pinLinks"
+
       },
 
       modelEvents: {
@@ -227,6 +228,7 @@ define([
       showOrcidActions: function(){
         var $orcidActions = this.$('.orcid-actions');
         $orcidActions.removeClass('hidden');
+        $orcidActions.removeClass('orcid-wait');
         var $update = $orcidActions.find('.orcid-action-update');
         var $insert = $orcidActions.find('.orcid-action-insert');
         var $delete = $orcidActions.find('.orcid-action-delete');
@@ -234,10 +236,6 @@ define([
         $update.addClass('hidden');
         $insert.addClass('hidden');
         $delete.addClass('hidden');
-
-        $update.parent().removeClass('orcid-wait');
-        $insert.parent().removeClass('orcid-wait');
-        $delete.parent().removeClass('orcid-wait');
 
         if (OrcidModel.isWorkInCollection(this.model.attributes)){
           $update.removeClass('hidden');
@@ -254,8 +252,11 @@ define([
       },
 
       orcidAction: function(e){
+        e.preventDefault();
+        e.stopPropagation();
         var $c = $(e.currentTarget);
-        $c.parent().addClass('orcid-wait');
+        var $orcidActions = this.$('.orcid-actions');
+        $orcidActions.addClass('orcid-wait');
 
         var actionType = '';
 

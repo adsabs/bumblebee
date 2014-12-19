@@ -82,7 +82,12 @@ define([
       },
 
       removeFromBulkWorks: function(adsWork){
-        // TODO :
+        var toRemove =
+          this.attributes.bulkInsertWorks.filter(function (item) {
+            return item.id == adsWork.id;
+          })[0];
+
+        this.attributes.bulkInsertWorks.splice(toRemove, 1);
       },
 
       cancelBulkInsert: function(){
