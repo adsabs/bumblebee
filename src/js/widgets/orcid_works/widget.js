@@ -74,6 +74,7 @@ define([
         }
         else {
           //$insert.removeClass('hidden');
+          $orcidActions.addClass('hidden');
         }
       },
 
