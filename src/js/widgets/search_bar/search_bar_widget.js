@@ -285,7 +285,7 @@ define(['marionette',
               var givenNames = personalDetails["given-names"];
               var familyName = personalDetails["family-name"];
 
-              var newQuery = 'author:"' + familyName + ', ' + givenNames + '" ' + this.view.getFormVal();
+              var newQuery = 'author:"' + familyName + ', ' + givenNames + '"';
               this.view.setFormVal(newQuery);
 
               this.view.startSearch();
