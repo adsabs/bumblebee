@@ -41,7 +41,6 @@ define([
         if (OrcidModel.get('actionsVisible')){
           this.showOrcidActions();
         }
-
       },
 
       render: function () {
@@ -265,7 +264,9 @@ define([
 
         var msg = {
           actionType : actionType,
-          model: this.model.attributes
+          model: this.model.attributes,
+          modelType: 'adsData'
+
         };
 
         this.trigger('OrcidAction', msg);

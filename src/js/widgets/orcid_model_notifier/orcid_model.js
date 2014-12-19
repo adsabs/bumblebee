@@ -105,6 +105,11 @@ define([
             return e.adsId == formattedAdsId;
           })
           .length > 0;
+      },
+      isOrcidItemAdsItem: function (orcidItem) {
+        return orcidItem.workExternalIdentifiers.filter(function (e) {
+            return e.type == 'other-id' && e.id.startsWith('ads:');
+          }).length > 0;
       }
     });
 

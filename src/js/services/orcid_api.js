@@ -175,11 +175,12 @@ define([
           .setObject("userSession", {isEmpty:true});
       },
 
-      isWorkFromAds: function(orcidWork) {
+
+      getAdsIds: function(orcidWork){
         var extIdentifiersObj = orcidWork["work-external-identifiers"];
 
         if (!extIdentifiersObj) {
-          return false;
+          return undefined;
         }
 
         var extIdentifiers = extIdentifiersObj["work-external-identifier"] || [];
@@ -192,13 +193,14 @@ define([
           return extIdentifier["work-external-identifier-id"].indexOf("ads:") != -1;
         });
 
-        return adsExtIdentifiers.length > 0;
+        return adsExtIdentifiers;
+      },
+      isWorkFromAds: function(orcidWork) {
+
+        return this.getAdsIds(orcidWork).length > 0;
       },
 
-      fillOrcidWorks : function(adsData){
-
-        //"{"abstract":"Laser active imaging systems are widespread tools used in region surveillance and threat identification. However, the photoelectric imaging detector in the imaging systems is easy to be disturbed and this leads to errors of the recognition and even the missing of the target. In this paper, a novel wavelet-weighted multi-scale structural similarity (WWMS-SSIM) algorithm is proposed. 2-D four-level wavelet decomposition is performed for the original and disturbed images. Each image can be partitioned into one low-frequency subband (LL) and a series of octave high-frequency subbands (HL, LH and HH). Luminance, contrast and structure comparison are computed in different subbands with different weighting factors. Based on the results of the above, we can construct a modified WWMS-SSIM. Cross-distorted image quality assessment experiments show that the WWMS-SSIM algorithm is more suitable for the subjective visual feeling comparing with NMSE and SSIM. In the laser-dazzling image quality assessment experiments, the WWMS-SSIM gives more reasonable evaluations to the images with different power and laser spot positions, which can be useful to give the guidance of the laser active imaging system defense and application.","pub":"Optics Laser Technology","volume":"67","email":["-","-","-","-"],"bibcode":"2015OptLT..67..183Q","year":"2015","id":"10666236","keyword":["Image quality assessment","Laser-dazzling effect","Wavelet decomposition"],"author":["Qian, Fang","Guo, Jin","Sun, Tao","Wang, Tingfeng"],"aff":["State Key Laboratory of Laser Interaction with Matter, Changchun Institute of Optics, Fine Mechanics and Physics Chinese Academy of Sciences, Changchun 130033, Jilin, China","State Key Laboratory of Laser Interaction with Matter, Changchun Institute of Optics, Fine Mechanics and Physics Chinese Academy of Sciences, Changchun 130033, Jilin, China","State Key Laboratory of Laser Interaction with Matter, Changchun Institute of Optics, Fine Mechanics and Physics Chinese Academy of Sciences, Changchun 130033, Jilin, China","State Key Laboratory of Laser Interaction with Matter, Changchun Institute of Optics, Fine Mechanics and Physics Chinese Academy of Sciences, Changchun 130033, Jilin, China"],"title":["Quantitative assessment of laser-dazzling effects through wavelet-weighted multi-scale SSIM measurements"],"[citations]":{"num_citations":0,"num_references":2},"identifier":"2015OptLT..67..183Q","resultsIndex":0,"details":{"highlights":["-frequency subband <em>(LL)</em> and a series of octave high-frequency subbands (HL, LH and HH). Luminance, contrast"]},"num_citations":0,"links":{"text":[],"list":[{"letter":"R","title":"References (2)","link":"/#abs/2015OptLT..67..183Q/references"}],"data":[]},"emptyPlaceholder":false,"visible":true,"actionsVisible":true,"orcidActionsVisible":false}"
-
+      formatOrcidWork: function(adsWork, putCode){
         var formatContributors = function(adsAuthors){
 
           var result = [];
@@ -217,56 +219,68 @@ define([
           return result;
         };
 
-        var formatWork = function (adsWork) {
-          var result =
-          {
-            "orcid-work": {
-              "work-title": {
-                "$": {},
-                "title": adsWork.title.join(' ')
-              },
+        var result =
+        {
+          "orcid-work": {
+            "work-title": {
+              "$": {},
+              "title": adsWork.title.join(' ')
+            },
 
-              "short-description": adsWork.abstract,
-              "publication-date": {
-                "year": adsWork.year
-              },
+            "short-description": adsWork.abstract,
+            "publication-date": {
+              "year": adsWork.year
+            },
 
-              "work-external-identifiers": [
-                {
-                  "work-external-identifier": {
-                    "work-external-identifier-type": 'bibcode',
-                    "work-external-identifier-id": adsWork.bibcode
-                  }
-                },
-                {
-                  "work-external-identifier": {
-                    "work-external-identifier-type": 'other-id',
-                    "work-external-identifier-id": 'ads:' + adsWork.id
-                  }
+            "work-external-identifiers": [
+              {
+                "work-external-identifier": {
+                  "work-external-identifier-type": 'bibcode',
+                  "work-external-identifier-id": adsWork.bibcode
                 }
+              },
+              {
+                "work-external-identifier": {
+                  "work-external-identifier-type": 'other-id',
+                  "work-external-identifier-id": 'ads:' + adsWork.id
+                }
+              }
 
-                // TODO : add DOI, if available
-              ],
+              // TODO : add DOI, if available
+            ],
 
-              "work-type": "book",
+            "work-type": "book",
 
-              "work-contributors": formatContributors(adsWork.author),
+            "work-contributors": formatContributors(adsWork.author),
 
-              "url": adsWork.doi ? LinkGeneratorMixin.adsUrlRedirect("doi", adsWork.doi) : '' // TODO : in item_view model DOI is missing
+            "url": adsWork.doi ? LinkGeneratorMixin.adsUrlRedirect("doi", adsWork.doi) : '' // TODO : in item_view model DOI is missing
 
-            }
           }
-
-          return result;
         };
+
+
+        if (putCode){
+          result["orcid-work"]["$"] = {"put-code": putCode};
+        }
+
+        return result;
+      },
+
+      fillOrcidWorks : function(adsData){
+
+        //"{"abstract":"Laser active imaging systems are widespread tools used in region surveillance and threat identification. However, the photoelectric imaging detector in the imaging systems is easy to be disturbed and this leads to errors of the recognition and even the missing of the target. In this paper, a novel wavelet-weighted multi-scale structural similarity (WWMS-SSIM) algorithm is proposed. 2-D four-level wavelet decomposition is performed for the original and disturbed images. Each image can be partitioned into one low-frequency subband (LL) and a series of octave high-frequency subbands (HL, LH and HH). Luminance, contrast and structure comparison are computed in different subbands with different weighting factors. Based on the results of the above, we can construct a modified WWMS-SSIM. Cross-distorted image quality assessment experiments show that the WWMS-SSIM algorithm is more suitable for the subjective visual feeling comparing with NMSE and SSIM. In the laser-dazzling image quality assessment experiments, the WWMS-SSIM gives more reasonable evaluations to the images with different power and laser spot positions, which can be useful to give the guidance of the laser active imaging system defense and application.","pub":"Optics Laser Technology","volume":"67","email":["-","-","-","-"],"bibcode":"2015OptLT..67..183Q","year":"2015","id":"10666236","keyword":["Image quality assessment","Laser-dazzling effect","Wavelet decomposition"],"author":["Qian, Fang","Guo, Jin","Sun, Tao","Wang, Tingfeng"],"aff":["State Key Laboratory of Laser Interaction with Matter, Changchun Institute of Optics, Fine Mechanics and Physics Chinese Academy of Sciences, Changchun 130033, Jilin, China","State Key Laboratory of Laser Interaction with Matter, Changchun Institute of Optics, Fine Mechanics and Physics Chinese Academy of Sciences, Changchun 130033, Jilin, China","State Key Laboratory of Laser Interaction with Matter, Changchun Institute of Optics, Fine Mechanics and Physics Chinese Academy of Sciences, Changchun 130033, Jilin, China","State Key Laboratory of Laser Interaction with Matter, Changchun Institute of Optics, Fine Mechanics and Physics Chinese Academy of Sciences, Changchun 130033, Jilin, China"],"title":["Quantitative assessment of laser-dazzling effects through wavelet-weighted multi-scale SSIM measurements"],"[citations]":{"num_citations":0,"num_references":2},"identifier":"2015OptLT..67..183Q","resultsIndex":0,"details":{"highlights":["-frequency subband <em>(LL)</em> and a series of octave high-frequency subbands (HL, LH and HH). Luminance, contrast"]},"num_citations":0,"links":{"text":[],"list":[{"letter":"R","title":"References (2)","link":"/#abs/2015OptLT..67..183Q/references"}],"data":[]},"emptyPlaceholder":false,"visible":true,"actionsVisible":true,"orcidActionsVisible":false}"
+
+
 
         var formatWorks = function(adsWorks){
 
           var result = [];
 
+          var that = this;
+
           _.each(adsWorks,
             function(adsWork){
-              result.push(formatWork(adsWork));
+              result.push(that.formatOrcidWork(adsWork));
             }
           );
 
@@ -305,22 +319,66 @@ define([
 
           this.addWorks(orcidWorksMessage);
         }
-        else if (data.actionType == 'delete'){
-          var adsIdsWithPutCodeList = OrcidModel.get('adsIdsWithPutCodeList');
-          var formattedAdsId = "ads:" + data.model.id;
+        else if (data.actionType == 'delete') {
 
-          // find putcode
+          if (data.modelType == 'adsData') {
+            var adsIdsWithPutCodeList = OrcidModel.get('adsIdsWithPutCodeList');
+            var formattedAdsId = "ads:" + data.model.id;
 
-          var putCodes = adsIdsWithPutCodeList.filter(function(e){
-            return e.adsId == formattedAdsId
-          });
+            // find putcode
 
-          if (putCodes.length < 1)
-          {
-            return;
+            var putCodes = adsIdsWithPutCodeList.filter(function (e) {
+              return e.adsId == formattedAdsId
+            });
+
+            if (putCodes.length < 1) {
+              return;
+            }
+
+            this.deleteWorks([putCodes[0].putCode]);
+          } else if (data.modelType == 'orcidData') {
+            this.deleteWorks([data.model.putCode]);
           }
+        }
+        else if (data.actionType == 'update'){
+          if (data.modelType == 'adsData'){
+            // fill orcid message with putCode
 
-          this.deleteWorks([putCodes[0].putCode]);
+            var that = this;
+            var beeHive = this.getBeeHive();
+            var LocalStorage = beeHive.getService("LocalStorage");
+            var userSession = LocalStorage.getObject("userSession");
+
+            var orcidWorks = userSession.orcidProfile['#document']['orcid-message']['orcid-profile']['orcid-activities']['orcid-works']['orcid-work'];
+
+            var formattedAdsId = "ads:" + data.model.id;
+
+            var foundOrcidWork =
+            orcidWorks.filter(function (orcidWork) {
+              var adsIds = that.getAdsIds(orcidWork);
+              if (!adsIds || adsIds.length < 1)
+                return false;
+              return adsIds.filter(function (adsId) {
+                  return adsId["work-external-identifier-id"] == formattedAdsId;
+                }).length > 0;
+            });
+
+            if (foundOrcidWork.length < 1){
+              return;
+            }
+
+            var putCode = foundOrcidWork[0].$['put-code'];
+
+            var newOrcidWork = this.formatOrcidWork(data.model, putCode);
+
+            this.updateWorks([newOrcidWork['orcid-work']]);
+
+          }
+          else if (data.model.modelType == 'orcidData'){
+            // probably ignore
+            // should do the fetch of fresh ads data based on adsId
+            // and create orcidData based on this
+          }
         }
       },
 
@@ -444,7 +502,7 @@ define([
       updateWorks: function(orcidWorksToUpdate) {
 
         var putCodesToUpdate = orcidWorksToUpdate.map(function(item) {
-          return item.$["put-code"];
+          return item['$']["put-code"];
         });
 
         var _that = this;
@@ -463,7 +521,7 @@ define([
                 && putCodesToUpdate.indexOf(orcidWork.$["put-code"]) == -1;
             });
 
-            orcidWorks["orcid-work"].push(orcidWorksToUpdate);
+            orcidWorks["orcid-work"] = orcidWorks["orcid-work"].concat(orcidWorksToUpdate);
 
             if (orcidWorks["orcid-work"].length == 0) {
               delete orcidWorks["orcid-work"];
