@@ -8,7 +8,9 @@ require.config({
   // as a test, then load the test unittests
   deps: window.mocha
     ? [window.mocha.testLoader ? window.mocha.testLoader : '../test/test-loader']
-    : ['js/apps/discovery/main'],
+    : [ 'js/apps/discovery/main'],
+
+  waitSeconds: 15,
 
   // Configuration we want to make available to modules of ths application
   // see: http://requirejs.org/docs/api.html#config-moduleconfig
@@ -17,6 +19,7 @@ require.config({
       'LandingPageManager': {}
     },
     'js/apps/discovery/main': {
+
       core: {
         controllers: {
           FeedbackMediator: 'js/wraps/discovery_mediator'
@@ -53,6 +56,10 @@ require.config({
         Sort: 'js/widgets/sort/widget',
         VisualizationDropdown: 'js/wraps/visualization_dropdown',
         AuthorNetwork: 'js/wraps/author_network',
+        PaperNetwork : 'js/wraps/paper_network',
+
+        MetricsDropdown : 'js/wraps/metrics_dropdown',
+        Metrics :  'js/widgets/metrics/widget',
 
         OrcidLogin: 'js/widgets/orcid_login/widget',
         OrcidWorks: 'js/widgets/orcid_works/widget',
@@ -76,6 +83,7 @@ require.config({
         ShowTableOfContents: 'js/wraps/table_of_contents',
         ShowSimilar: 'js/widgets/similar/widget',
         ShowResources: 'js/widgets/resources/widget',
+        ShowRecommender : 'js/widgets/recommender/widget',
 
         TOCWidget: 'js/page_managers/toc_widget'
       },
@@ -125,6 +133,7 @@ require.config({
     'cache': 'libs/dsjslib/lib/Cache',
     'jquery-querybuilder': 'libs/jQuery-QueryBuilder/query-builder',
     'd3-cloud': 'libs/d3-cloud/d3.layout.cloud',
+    'nvd3' :  'libs/nvd3/nv.d3',
     'xml2json': 'libs/jquery-xml2json/xml2json',
     'localstorage': 'libs/backbone.localStorage/backbone.localStorage',
 
@@ -140,6 +149,7 @@ require.config({
   },
 
   shim: {
+
 
     'bootstrap': {
       deps: ['jquery']
@@ -172,6 +182,11 @@ require.config({
       deps: ['d3']
     },
 
+    'nvd3' : {
+      deps : ['d3']
+
+    },
+
     'jquery-ui': {
       deps: ['jquery']
     },
@@ -179,5 +194,43 @@ require.config({
     xml2json: {
       deps: ['jquery']
     }
+  },
+
+  callback: function() {
+    require(['hbs/handlebars'], function(Handlebars) {
+      // register system-wide helper for handlebars
+      // http://doginthehat.com.au/2012/02/comparison-block-helper-for-handlebars-templates/#comment-44
+      Handlebars.registerHelper('compare', function (lvalue, operator, rvalue, options) {
+        var operators, result;
+        if (arguments.length < 3) {
+          throw new Error("Handlerbars Helper 'compare' needs 2 parameters");
+  }
+        if (options === undefined) {
+          options = rvalue;
+          rvalue = operator;
+          operator = "===";
+        }
+        operators = {
+          '==': function (l, r) { return l == r; },
+          '===': function (l, r) { return l === r; },
+          '!=': function (l, r) { return l != r; },
+          '!==': function (l, r) { return l !== r; },
+          '<': function (l, r) { return l < r; },
+          '>': function (l, r) { return l > r; },
+          '<=': function (l, r) { return l <= r; },
+          '>=': function (l, r) { return l >= r; },
+          'typeof': function (l, r) { return typeof l == r; }
+        };
+        if (!operators[operator]) {
+          throw new Error("Handlerbars Helper 'compare' doesn't know the operator " + operator);
+        }
+        result = operators[operator](lvalue, rvalue);
+        if (result) {
+          return options.fn(this);
+        } else {
+          return options.inverse(this);
+        }
+});
+    });
   }
 });

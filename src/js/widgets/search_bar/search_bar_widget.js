@@ -257,8 +257,7 @@ define(['marionette',
             q: query
           });
 
-          this.changeDefaultSort(newQuery)
-
+          this.changeDefaultSort(newQuery);
           this.storeQuery(newQuery);
           this.navigate(newQuery);
         });
@@ -268,7 +267,7 @@ define(['marionette',
           if (query) {
             this.view.setQueryBox(query)
           }
-        })
+        });
 
         BaseWidget.prototype.initialize.call(this, options)
       },
@@ -342,7 +341,7 @@ define(['marionette',
         this.pubsub.publish(this.pubsub.START_SEARCH, newQuery);
 
       }
-    })
+    });
 
 
     return SearchBarWidget;

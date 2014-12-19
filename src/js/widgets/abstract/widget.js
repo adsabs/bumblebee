@@ -10,7 +10,10 @@ define([
     'js/widgets/base/base_widget',
     'hbs!./templates/abstract_template',
     'js/components/api_query',
-    'js/mixins/link_generator_mixin'],
+    'js/mixins/link_generator_mixin',
+    'js/mixins/papers_utils',
+    'bootstrap'
+  ],
   function (
     Marionette,
     Backbone,
@@ -20,7 +23,9 @@ define([
     BaseWidget,
     abstractTemplate,
     ApiQuery,
-    LinkGeneratorMixin) {
+    LinkGeneratorMixin,
+    PapersUtils
+    ) {
 
     var AbstractModel = Backbone.Model.extend({
       defaults: function () {
@@ -38,16 +43,33 @@ define([
         }
       },
 
-      parse: function (doc) {
-        var authorAff, hasAffiliation, title;
+      parse: function (doc, maxAuthors) {
+        var authorAff, hasAffiliation, title, authorAffExtra;
+        maxAuthors = maxAuthors || 20;
 
-       doc.aff = doc.aff || [];
+        authorAff = [], authorAffExtra = [];
+
+        doc.aff = doc.aff || [];
         if (doc.aff.length) {
-          hasAffiliation = true;
+          hasAffiliation = _.without(doc.aff, '-').length;
           // joining author and aff
           authorAff = _.zip(doc.author, doc.aff);
         }
+        else if (doc.author) {
+          hasAffiliation = false;
+          authorAff = _.zip(doc.author, _.range(doc.author.length));
+        }
 
+        _.each(authorAff, function(el, index){
+          authorAff[index][2] = encodeURIComponent('"' +  el[0] + '"');
+        });
+
+        if (authorAff.length > maxAuthors) {
+          authorAffExtra = authorAff.slice(maxAuthors, authorAff.length);
+          authorAff = authorAff.slice(0, maxAuthors);
+        }
+
+        doc.pubdate = PapersUtils.formatDate(doc.pubdate);
 
         title = $.isArray(doc.title)? doc.title[0] : undefined;
 
@@ -56,6 +78,8 @@ define([
           abstract: doc.abstract,
           title: title,
           authorAff: authorAff,
+          authorAffExtra: authorAffExtra,
+          hasMoreAuthors: authorAffExtra.length,
           pub: doc.pub,
           pubdate: doc.pubdate,
           keyword: doc.keyword,
@@ -69,6 +93,10 @@ define([
 
     var AbstractView = Marionette.ItemView.extend({
 
+      tagName : "article",
+
+      className : "s-abstract-metadata",
+
       initialize: function () {
         this.listenTo(this.model, "change", this.render)
       },
@@ -76,18 +104,37 @@ define([
       template: abstractTemplate,
       events: {
         "click #toggle-aff": "toggleAffiliation",
+        "click #toggle-more-authors": "toggleMoreAuthors",
+        'click a[data-target="more-authors"]': 'toggleMoreAuthors',
         'click a[target="prev"]': 'onClick',
         'click a[target="next"]': 'onClick'
       },
 
-      toggleAffiliation: function () {
+      toggleMoreAuthors: function (ev) {
+
+        if (ev) ev.stopPropagation();
+
+        this.$(".author.extra").toggleClass("hide");
+        this.$(".author.extra-dots").toggleClass("hide");
+        if (this.$(".author.extra").hasClass("hide")){
+          this.$("#toggle-more-authors").text("Show all authors");
+        }
+        else {
+          this.$("#toggle-more-authors").text("Hide authors");
+        }
+
+      },
+
+      toggleAffiliation: function (ev) {
+
+        if (ev) ev.preventDefault();
 
         this.$(".affiliation").toggleClass("hide");
         if (this.$(".affiliation").hasClass("hide")){
-          this.$("#toggle-aff").text("(Show author affiliations)")
+          this.$("#toggle-aff").text("Show affiliations")
         }
         else {
-          this.$("#toggle-aff").text("(Hide author affiliations)")
+          this.$("#toggle-aff").text("Hide affiliations")
         }
 
       },
@@ -95,6 +142,10 @@ define([
       onClick: function(ev) {
         ev.preventDefault();
         this.trigger($(ev.target).attr('target'));
+      },
+
+      onRender : function(){
+        this.$(".icon-help").popover({trigger : "hover", placement : "right", html :true});
       }
 
     });
@@ -109,6 +160,7 @@ define([
 
         BaseWidget.prototype.initialize.apply(this, arguments);
         this._docs = {};
+        this.maxAuthors = 20;
       },
 
       activate: function (beehive) {
@@ -122,18 +174,9 @@ define([
       },
 
       defaultQueryArguments: {
-        fl: 'title,abstract,bibcode,author,keyword,id,citation_count,pub,aff,volume,year,doi,pub_raw'
+        fl: 'title,abstract,bibcode,author,keyword,id,citation_count,pub,aff,volume,pubdate,doi,pub_raw'
       },
 
-      loadBibcodeData : function (bibcode) {
-        if (this._docs[bibcode]) {
-          this._current = bibcode;
-          this.model.set(this._docs[bibcode]);
-        }
-        else {
-          this.dispatchRequest(new ApiQuery({'q': 'bibcode:' + bibcode, '__show': bibcode}));
-        }
-      },
 
       onNewQuery: function () {
         this._docs = {};
@@ -148,8 +191,12 @@ define([
         if (this._docs[bibcode]) { // we have already loaded it
           this._current = bibcode;
           this.model.set(this._docs[bibcode]);
+          // let other widgets know details
+          this.trigger('page-manager-event', 'broadcast-payload', {title: this._docs[bibcode].title} );
         }
         else {
+          if (q.has('__show')) return; // cycle protection
+
           q.set('__show', bibcode);
           this.dispatchRequest(q);
         }
@@ -183,9 +230,9 @@ define([
             if (doc.doi){
               doc.doi = {doi: doc.doi,  href: self.adsUrlRedirect("doi", doc.doi)}
             }
-            d = self.model.parse(doc);
+            d = self.model.parse(doc, this.maxAuthors);
             self._docs[d.bibcode] = d;
-          });
+          }, this);
 
           if (apiResponse.has('responseHeader.params.__show')) {
             this.onDisplayDocuments(apiResponse.getApiQuery());
@@ -194,6 +241,7 @@ define([
 
         this.trigger('page-manager-event', 'widget-ready',
           {numFound: apiResponse.get("response.numFound"), widget: this});
+
       }
 
     });

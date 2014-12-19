@@ -9,7 +9,8 @@ define(['marionette',
     'js/widgets/list_of_things/model',
     'js/widgets/list_of_things/widget',
     'js/widgets/base/base_widget',
-    'js/bugutils/minimal_pubsub'
+    'js/bugutils/minimal_pubsub',
+    'js/widgets/list_of_things/item_view'
   ],
   function (Marionette,
             Backbone,
@@ -22,7 +23,8 @@ define(['marionette',
             PaginatedCollection,
             ListOfThings,
             BaseWidget,
-            MinPubSub
+            MinPubSub,
+            ItemView
     ) {
 
     describe("ListOfThings (list_of_things_widget.spec.js)", function () {
@@ -136,10 +138,17 @@ define(['marionette',
         $('#test').append($w);
         expect($w.find("label").length).to.equal(10);
 
-        view.model.set("showDetailsButton", true);
-        expect(view.model.get('showDetailsButton')).to.be.true;
-        $w.find('button.show-details').click();
-        expect(view.model.get('showDetailsButton')).to.be.false;
+        view.toggleDetails();
+
+        expect($w.find('.details:first').hasClass("hide")).to.be.false;
+        expect($w.find('.details:last').hasClass("hide")).to.be.false;
+
+
+        view.toggleDetails();
+
+        expect($w.find('.details:first').hasClass("hide")).to.be.true;
+        expect($w.find('.details:last').hasClass("hide")).to.be.true;
+
 
         view.close();
 
@@ -199,7 +208,7 @@ define(['marionette',
         });
 
         var $w = widget.render().$el;
-        //$('#test').append($w);
+        $('#test').append($w);
 
         widget.updatePagination({numFound: 100, page : 1, perPage : 5});
         //console.log(widget.model.attributes);
@@ -207,16 +216,22 @@ define(['marionette',
         expect($w.find(".pagination li").filter(function(n){return $(n).text().trim() === "«"}).length).to.eql(0);
         expect($w.find(".pagination li:first").text().trim()).to.eql("1");
         expect($w.find(".pagination li:last").text().trim()).to.eql("5");
+        expect(widget.collection.models[0].get('resultsIndex')).to.eql(5);
+        expect(widget.collection.models[4].get('resultsIndex')).to.eql(9);
 
         widget.updatePagination({numFound: 100, page : 4, perPage : 5});
         expect($w.find(".pagination li:first").text().trim()).to.eql("«");
         expect($w.find(".pagination li:last").text().trim()).to.eql("7");
         expect($w.find(".pagination li").length).to.eql(6);
+        expect(widget.collection.models[0].get('resultsIndex')).to.eql(20);
+        expect(widget.collection.models[4].get('resultsIndex')).to.eql(24);
 
-        widget.updatePagination(({numFound: 15, page : 1, perPage : 5}));
+        widget.updatePagination(({numFound: 15, page : 0, perPage : 5}));
         expect($w.find(".pagination li").length).to.eql(3);
         expect($w.find(".pagination li:first").text().trim()).to.eql("1");
         expect($w.find(".pagination li:last").text().trim()).to.eql("3");
+        expect(widget.collection.models[0].get('resultsIndex')).to.eql(0);
+        expect(widget.collection.models[4].get('resultsIndex')).to.eql(4);
       });
 
       it("has a mechanism to prevent infinite requests", function(done){
@@ -245,6 +260,48 @@ define(['marionette',
         //XXX:TODO finish
 
         done();
+      });
+
+      it("the ItemView has user interacting parts", function() {
+        var model = new Backbone.Model({visible: true, identifier: 'foo',
+          orderNum: 1, title: 'test',
+          details: {
+            highlights: ['one high', 'two high'],
+            shortAbstract: 'silly short'
+          },
+          links: {
+            text: {title: 'foo', link: 'link'},
+            list: [
+              {link: 'link1', title: 'title1'},
+              {link: 'link2', title: 'title2'}
+            ]
+        }});
+        var M = ItemView.extend({});
+        sinon.spy(M.prototype, 'toggleSelect');
+        sinon.spy(M.prototype, 'toggleDetails');
+        sinon.spy(M.prototype, 'showLinks');
+        sinon.spy(M.prototype, 'hideLinks');
+        var view = new M({model: model});
+        var $w = view.render().$el;
+        //$('#test').append($w);
+
+
+        $w.find('input[name=identifier]').trigger('change');
+        expect(view.toggleSelect.callCount).to.be.eql(1);
+        $w.find('.details-control').click();
+        expect(view.toggleDetails.callCount).to.be.eql(1);
+        expect($w.find('.details').hasClass('hide')).to.be.false;
+        $w.find('.details-control').click();
+        expect(view.toggleDetails.callCount).to.be.eql(2);
+        expect($w.find('.details').hasClass('hide')).to.be.true;
+
+        view.showLinks.reset();
+        view.hideLinks.reset();
+
+        $w.find('.letter-icon').trigger('mouseenter');
+        expect(view.showLinks.called).to.be.true;
+        $w.find('.letter-icon').trigger('mouseleave');
+        expect(view.hideLinks.called).to.be.true;
       });
     })
 

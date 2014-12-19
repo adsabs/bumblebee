@@ -25,23 +25,12 @@ define([
         });
       },
 
-      /**
-       * broadcast the event to all other managed widgets
-       */
-      broadcast: function(){
-        var args = arguments;
-        var self = this;
-        _.each(_.keys(self.widgets), function(w) {
-          var widget = self.widgets[w];
-          widget.trigger.apply(widget, args);
-        });
-      },
-
 
       /**
        * Listens to and receives signals from managed widgets.
        * It will discover their 'widgetId' and broadcasts the
-       * data to all widgets int he collection.
+       * data via a page-manager-message to all widgets in the
+       * collection.
        *
        * @param event
        * @param data
@@ -68,6 +57,9 @@ define([
         else if (event == 'widget-selected') {
           widgetId = data;
           this.pubsub.publish(this.pubsub.NAVIGATE, this.widgetId ? this.widgetId + ':' + widgetId : widgetId);
+        }
+        else if (event == 'broadcast-payload'){
+          self.broadcast('page-manager-message', event, data);
         }
 
       },

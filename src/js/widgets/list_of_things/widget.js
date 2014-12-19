@@ -49,7 +49,7 @@ define([
         options = options || {};
 
 
-        _.defaults(options, _.pick(this, ['view', 'collection', 'pagination', 'model']));
+        _.defaults(options, _.pick(this, ['view', 'collection', 'pagination', 'model', 'description']));
 
         var defaultPagination = {
           pagination: true,
@@ -73,6 +73,12 @@ define([
         }
         options.model = options.view.model;
         options.model.set(options.pagination, {silent: true});
+
+
+        if (options.description){
+          //allow the widget to describe itself at the top of its view
+          options.model.set("description", options.description);
+        }
 
         _.extend(this, _.pick(options, ['model', 'view']));
 
@@ -123,7 +129,6 @@ define([
             this.model.set(pagination);
             this.hiddenCollection.showRange(pagination.showRange[0], pagination.showRange[1]);
           }
-
           this.view.collection.reset(this.hiddenCollection.getVisibleModels());
         }
 
@@ -206,10 +211,12 @@ define([
         return pageData;
       },
 
+
       processDocs: function(apiResponse, docs, paginationInfo) {
         var params = apiResponse.get("response");
         var start = params.start || (paginationInfo.start || 0);
-        return PaginationMixin.addPaginationToDocs(docs, start);
+        docs = PaginationMixin.addPaginationToDocs(docs, start);
+        return docs
       },
 
 
@@ -222,15 +229,18 @@ define([
 
       updatePagination: function(options) {
         var perPage = options.perPage || this.model.get('perPage');
-        var page = options.page || this.model.get('start');
+        var page = _.isNumber(options.page) ? options.page : null;
         var numFound = options.numFound || this.model.get('numFound');
         var numAround = options.numAround || this.model.get('numAround') || 2;
         var currentQuery = options.currentQuery || this.model.get('currentQuery');
 
         // click to go to another 'page' will skip this
-        if (!options.page && this.collection.length) {
+        if (page === null && this.collection.length) {
           var resIdx = this.collection.models[0].get('resultsIndex');
           page = PaginationMixin.getPageVal(resIdx, perPage);
+        }
+        if (page === null) {
+          page = PaginationMixin.getPageVal(this.model.get('start'), perPage);
         }
 
         var pageData = this._getPageDataDatastruct(currentQuery, page, numAround, perPage, numFound);
@@ -255,19 +265,10 @@ define([
 
       onAllInternalEvents: function(ev, arg1, arg2) {
         if (ev === "pagination:change"){
-          this.updatePagination({page: arg1});
+          this.updatePagination({perPage: arg1});
         }
         else if (ev === "pagination:select") {
-          console.log('need to request data', arg1);
-          var pageData = _.findWhere(this.model.attributes.pageData, {p: arg1});
-          if (pageData) {
-            var start = pageData.start;
-            var perPage = pageData.perPage;
-            this.hiddenCollection.showRange(start, start+perPage);
-          }
-          else {
-            this.updatePagination({page: arg1});
-          }
+          return this.updatePagination({page: arg1-1});
         }
         else if (ev === 'show:missing') {
 
@@ -289,7 +290,7 @@ define([
             //console.log('we have to retrieve new data', arg1);
 
             if (req) {
-              this.pubsub.publish(this.pubsub.DELIVERING_REQUEST, req);
+              this.pubsub.publish(this.pubsub.EXECUTE_REQUEST, req);
             }
           }, this);
 
@@ -303,10 +304,11 @@ define([
         this.collection.reset();
         this.hiddenCollection.reset();
         this.model.set({
-          showDetailsButton: false,
+          showDetails : false,
           pageData: {}
         })
       }
+
     });
 
     _.extend(ListOfThingsWidget.prototype, PaginationMixin);

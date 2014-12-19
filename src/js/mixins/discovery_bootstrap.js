@@ -7,14 +7,16 @@ define([
     'backbone',
     'js/components/api_query',
     'js/components/api_request',
-    'js/components/pubsub_events'
+    'js/components/pubsub_events',
+    'hbs'
     ],
   function(
     _,
     Backbone,
     ApiQuery,
     ApiRequest,
-    PubSubEvents) {
+    PubSubEvents,
+    HandleBars) {
 
   var Mixin = {
 
@@ -56,11 +58,18 @@ define([
         var pubSubKey = pubSub.getPubSubKey();
         pubSub.publish(pubSubKey, PubSubEvents.BOOTSTRAP_CONFIGURED);
       }
-
-
     },
 
     bootstrap: function() {
+      // XXX:rca - solve this better, through config
+      var beehive = this.getBeeHive();
+      var results = this.getWidget('Results');
+      var runtime = {};
+      beehive.addObject('RuntimeConfig', runtime);
+      if (results) {
+        runtime.pskToExecuteFirst = results.pubsub.getCurrentPubSubKey().getId(); // TODO: get psk from the app (do not look inside widget)
+      }
+
 
       var defer = $.Deferred();
 
@@ -219,10 +228,13 @@ define([
         }
         //navbar is currently 40 px height
         if ($(window).scrollTop() > 50) {
+          $(".s-quick-add").addClass("hidden");
           $(".s-search-bar-full-width-container").addClass("s-search-bar-motion");
         }
         else {
-          $(".s-search-bar-full-width-container").removeClass("s-search-bar-motion")
+          $(".s-search-bar-full-width-container").removeClass("s-search-bar-motion");
+          $(".s-quick-add").removeClass("hidden");
+
         }
       });
 

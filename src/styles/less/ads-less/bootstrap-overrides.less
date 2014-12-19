@@ -1,4 +1,5 @@
 
+
 /*
 
 For all changes that can't be made by altering the ads-variables file
@@ -108,12 +109,6 @@ select:focus {
 }
 
 
-.btn-info-faded {
-  background-color : @brand-info-faded;
-  border :1px solid darken(@brand-info-faded, 5%);
-  color : #fff;
-}
-
 .btn-default{
 
   .lh-transition(all, 1s)
@@ -123,6 +118,22 @@ select:focus {
 .btn-default:hover {
   background-color: #fff;
   .button-hover-shadow;
+}
+
+.btn-default:focus {
+  background-color: white;
+}
+
+.btn-default-flat {
+  .btn-default;
+}
+
+.btn-default-flat:hover{
+  background-color: white;
+}
+
+.btn-default-flat:focus{
+  background-color: white;
 }
 
 .btn-success:hover {
@@ -135,4 +146,13 @@ select:focus {
 
 .dropdown-menu li {
   padding : 2%;
+}
+
+.dropdown-menu {
+  min-width: 200px;
+}
+
+.popover {
+  max-width : 600px;
+  min-width: 200px;
 }

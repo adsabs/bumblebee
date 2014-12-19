@@ -2,8 +2,11 @@ define([
     'jquery',
     'backbone',
     'js/components/api_query',
-    'js/mixins/dependon'],
-  function ($, Backbone, ApiQuery, Dependon) {
+    'js/mixins/dependon',
+    'hbs!404'
+
+  ],
+  function ($, Backbone, ApiQuery, Dependon, ErrorTemplate) {
 
     "use strict";
 
@@ -27,11 +30,18 @@ define([
         "": "index",
         "search/(:query)": 'search',
         'abs/:bibcode(/)(:subView)': 'view',
+        "(:query)": 'index',
         '*invalidRoute': 'noPageFound'
       },
 
 
-      index: function () {
+      index: function (query) {
+        //XXX:rca - hack, to remove!
+        if (query) {
+          if (query.indexOf('citations-facet') > -1 || query.indexOf('reads-facet') > -1 || query.indexOf('year-facet') > -1) {
+            return;
+          }
+        }
         this.pubsub.publish(this.pubsub.NAVIGATE, 'index-page');
       },
 
@@ -51,7 +61,9 @@ define([
             return this.pubsub.publish(this.pubsub.NAVIGATE, 'abstract-page', bibcode);
           }
           else {
-            return this.pubsub.publish(this.pubsub.NAVIGATE, 'abstract-page:' + subPage, bibcode);
+
+            var navigateString = "Show"+ subPage[0].toUpperCase() + subPage.slice(1);
+            return this.pubsub.publish(this.pubsub.NAVIGATE, navigateString, bibcode);
           }
         }
         this.pubsub.publish(this.pubsub.NAVIGATE, 'abstract-page');
@@ -59,7 +71,7 @@ define([
 
       noPageFound : function() {
         //i will fix this later
-        $("#body-template-container").html("<div>You have broken bumblebee. (404)</div><img src=\"http://imgur.com/EMJhzmL.png\" alt=\"sad-bee\">")
+        $("#body-template-container").html(ErrorTemplate())
       }
 
 
