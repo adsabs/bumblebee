@@ -188,44 +188,24 @@ define([
               "orcid-profile": {
                 "orcid-activities": {
                   "$": {},
-                  "orcid-works": [
-                    {
-                      "orcid-work": {
+                  "orcid-works": {
+                    "orcid-work": [
+                      {
+                        "work-title": {
+                          "$": {},
+                          "title": "Testing publication 1"
+                        },
+                        "work-type": "test"
+                      },
+                      {
                         "work-title": {
                           "$": {},
                           "title": "Testing publication 2"
                         },
                         "work-type": "test"
                       }
-                    },
-                    {
-                      "orcid-work": {
-                        "work-title": {
-                          "$": {},
-                          "title": "Testing publication 3"
-                        },
-                        "work-type": "test"
-                      }
-                    },
-                    {
-                      "orcid-work": {
-                        "work-title": {
-                          "$": {},
-                          "title": "Testing publication 4"
-                        },
-                        "work-type": "test"
-                      }
-                    },
-                    {
-                      "orcid-work": {
-                        "work-title": {
-                          "$": {},
-                          "title": "Testing publication 5"
-                        },
-                        "work-type": "test"
-                      }
-                    }
-                  ]
+                    ]
+                  }
                 }
               }
             }
@@ -254,27 +234,23 @@ define([
               "orcid-profile": {
                 "orcid-activities": {
                   "$": {},
-                  "orcid-works": [
-                    {
-                      "orcid-work": {
+                  "orcid-works": {
+                    "orcid-work": [
+                      {
                         "work-title": {
                           "$": {},
                           "title": "Testing publication 2"
                         },
                         "work-type": "test"
-                      }
-                    },
-                    {
-                      "orcid-work": {
+                      },
+                      {
                         "work-title": {
                           "$": {},
                           "title": "Testing publication 13"
                         },
                         "work-type": "test"
-                      }
-                    },
-                    {
-                      "orcid-work": {
+                      },
+                      {
                         "work-title": {
                           "$": {},
                           "title": "Testing publication 14"
@@ -288,10 +264,8 @@ define([
                             }
                           }
                         ]
-                      }
-                    },
-                    {
-                      "orcid-work": {
+                      },
+                      {
                         "work-title": {
                           "$": {},
                           "title": "Testing publication 15"
@@ -306,8 +280,8 @@ define([
                           }
                         ]
                       }
-                    }
-                  ]
+                    ]
+                  }
                 }
               }
             }
@@ -333,9 +307,11 @@ define([
 
             var orcidWorks = $.xml2json(data)['#document']['orcid-message']['orcid-profile']["orcid-activities"]["orcid-works"]["orcid-work"];
 
-            var lastOrcidWorks = orcidWorks[orcidWorks.length - 1];
+            var orcidWorkToDelete = orcidWorks.filter(function(item) {
+              return item["work-title"].title == "Testing publication 15";
+            })[0];
 
-            orcidApi.deleteWorks([lastOrcidWorks["$"]["put-code"]]);
+            orcidApi.deleteWorks([orcidWorkToDelete["$"]["put-code"]]);
 
             var pubSub = beeHive.getService('PubSub');
             var pubSubKey = pubSub.getPubSubKey();
@@ -344,6 +320,8 @@ define([
               if (msg.msgType == OrcidApiConstants.Events.UserProfileRefreshed) {
 
                 var orcidWorks = msg.data["orcid-activities"]["orcid-works"]["orcid-work"];
+
+                orcidWorks = Array.isArray(orcidWorks) ? orcidWorks : [orcidWorks];
 
                 orcidWorks = orcidWorks.filter(function(item) {
                   return orcidApi.isWorkFromAds(item);
