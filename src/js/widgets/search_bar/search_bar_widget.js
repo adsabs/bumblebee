@@ -1,14 +1,15 @@
+//noinspection Annotator
 define(['marionette',
     'js/components/api_query',
     'js/widgets/base/base_widget',
     'hbs!./templates/search_bar_template',
     'hbs!./templates/search_form_template',
     'js/components/query_builder/plugin',
+    'js/services/orcid_api_constants',
     'bootstrap',
-    'hoverIntent',
-
+    'hoverIntent'
   ],
-  function (Marionette, ApiQuery, BaseWidget, SearchBarTemplate, SearchFormTemplate, QueryBuilderPlugin) {
+  function (Marionette, ApiQuery, BaseWidget, SearchBarTemplate, SearchFormTemplate, QueryBuilderPlugin, OrcidApiConstants) {
 
 
     $.fn.selectRange = function (start, end) {
@@ -120,7 +121,7 @@ define(['marionette',
                 "input": "text",
                 "operator": "contains",
                 "value": ""
-              },
+              }
             ]
           });
         }
@@ -208,9 +209,12 @@ define(['marionette',
         e.preventDefault();
         e.stopPropagation();
 
+        this.startSearch();
+      },
+
+      startSearch: function() {
         var query = (this.$(".q").val());
         this.trigger("start_search", query);
-
       },
 
       setQueryBox: function (val) {
@@ -229,6 +233,8 @@ define(['marionette',
 
         //custom handleResponse function goes here
         this.pubsub.subscribe(this.pubsub.DELIVERING_RESPONSE, this.processResponse);
+
+        this.pubsub.subscribe(this.pubsub.ORCID_ANNOUNCEMENT, _.bind(this.loginSuccess, this));
 
         this.view.activate(beehive);
       },
@@ -264,6 +270,27 @@ define(['marionette',
         });
 
         BaseWidget.prototype.initialize.call(this, options)
+      },
+
+      loginSuccess: function (e) {
+        if(e.msgType == OrcidApiConstants.Events.LoginSuccess) {
+          var orcidProfile = e.data;
+
+          var orcidBio = orcidProfile["orcid-bio"];
+          if(orcidBio) {
+            var personalDetails = orcidBio["personal-details"];
+            if (personalDetails) {
+
+              var givenNames = personalDetails["given-names"];
+              var familyName = personalDetails["family-name"];
+
+              var newQuery = 'author:"' + familyName + ', ' + givenNames + '"';
+              this.view.setFormVal(newQuery);
+
+              this.view.startSearch();
+            }
+          }
+        }
       },
 
       processResponse: function (apiResponse) {
