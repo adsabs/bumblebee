@@ -20,6 +20,8 @@ define([
   WordCloudTemplate,
   SelectedListTemplate) {
 
+  //max numbers of records to request
+  var MAX_ROWS = 150;
 
   var helpText = "<p>This word cloud allows you to view interesting words from the titles and abstracts of your search results.</p>"+
     "<p> Move the slider towards <strong> Frequent</strong> to view a word cloud that is simply composed of the words that appeared most"+
@@ -443,10 +445,19 @@ define([
         //fetch data
         onShow: function () {
 
-          var request = new ApiRequest({
+          var query = this.getCurrentQuery();
 
-            target: Marionette.getOption(this, "endpoint") || "services/vis/word-cloud",
-            query: this.getCurrentQuery()
+          //limit to max records
+          if (!query.get("rows") || query.get("rows") > MAX_ROWS){
+
+            query.unlock();
+            query.set("rows", MAX_ROWS);
+
+          }
+
+          var request = new ApiRequest({
+        target: Marionette.getOption(this, "endpoint") || "services/vis/word-cloud",
+            query: query
           });
 
           this.pubsub.publish(this.pubsub.DELIVERING_REQUEST, request);
