@@ -1,0 +1,8 @@
+<b>Metrics for query:</b>
+<ul class="list-inline">
+    {{#each queryData}}
+    {{#if this}}
+    <li>{{@key}}:{{this}}</li>
+    {{/if}}
+    {{/each}}
+</ul>

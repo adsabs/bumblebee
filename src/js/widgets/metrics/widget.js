@@ -14,6 +14,7 @@ define([
   'hbs!./templates/citations_table',
   'hbs!./templates/indices_table',
   'hbs!./templates/reads_table',
+  'hbs!./templates/query_template',
   'bootstrap',
   'js/components/api_feedback'
 ], function (
@@ -32,6 +33,7 @@ define([
   CitationsTableTemplate,
   IndicesTableTemplate,
   ReadsTableTemplate,
+  QueryTemplate,
   bs,
   ApiFeedback
   ) {
@@ -296,6 +298,7 @@ define([
 
     onRender : function(){
       this.renderMetadata();
+      this.renderPrintData();
     },
 
     //function to just re-render the metadata part at the bottom
@@ -306,8 +309,23 @@ define([
       this.$(".metrics-metadata").html(this.metadataTemplate(data))
     },
 
+    //this will show when the metrics is printed
+    renderPrintData : function(){
+     if (this.model.get("query")){
+       var data = {};
+       data.q = this.model.get("query").q;
+       data.fq = this.model.get("query").fq;
+       data.sort = this.model.get("query").sort;
+       data.rows = this.model.get("query").rows;
+
+       this.$(".s-print-show").html(this.queryTemplate({queryData: data}));
+
+     }
+    },
+
     template: MetricsContainer,
     metadataTemplate : MetricsMetadataTemplate,
+    queryTemplate :  QueryTemplate,
     events : {
       "click .submit-rows" : "changeRows",
       "click .close-widget": "signalCloseWidget"
@@ -394,9 +412,10 @@ define([
           options : options
         });
 
-        // let container view know how many bibcodes we have
+        // let container view know how many bibcodes we have and what the query was (for print)
         this.view.model.set({"numFound": parseInt(response.get("response.numFound")),
-                              "rows":  parseInt(response.get("responseHeader.params.rows"))});
+                              "rows":  parseInt(response.get("responseHeader.params.rows")),
+                              "query": response.get("responseHeader.params")});
         this.pubsub.publish(this.pubsub.EXECUTE_REQUEST, request);
       }
       //it's from the metrics endpoint
