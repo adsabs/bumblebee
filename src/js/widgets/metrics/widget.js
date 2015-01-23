@@ -14,7 +14,6 @@ define([
   'hbs!./templates/citations_table',
   'hbs!./templates/indices_table',
   'hbs!./templates/reads_table',
-  'hbs!./templates/query_template',
   'bootstrap',
   'js/components/api_feedback'
 ], function (
@@ -33,7 +32,6 @@ define([
   CitationsTableTemplate,
   IndicesTableTemplate,
   ReadsTableTemplate,
-  QueryTemplate,
   bs,
   ApiFeedback
   ) {
@@ -296,40 +294,30 @@ define([
 
   var ContainerView = Marionette.Layout.extend({
 
-    onRender : function(){
-      this.renderMetadata();
-      this.renderPrintData();
-    },
-
-    //function to just re-render the metadata part at the bottom
-    renderMetadata : function(){
+    serializeData : function(){
       var data = {};
+      //for 'print data'
+      var query = this.model.get("query");
+      if (query) {
+        data.queryData = {}
+        data.queryData.q = query.q;
+        data.queryData.fq = query.fq;
+        data.queryData.sort = query.sort;
+        data.queryData.rows = query.rows;
+      }
+      //for 'metrics metadata'
       data.max = this.model.get("max");
       data.current = this.model.get("current");
-      this.$(".metrics-metadata").html(this.metadataTemplate(data))
-    },
-
-    //this will show when the metrics is printed
-    renderPrintData : function(){
-     if (this.model.get("query")){
-       var data = {};
-       data.q = this.model.get("query").q;
-       data.fq = this.model.get("query").fq;
-       data.sort = this.model.get("query").sort;
-       data.rows = this.model.get("query").rows;
-
-       this.$(".s-print-show").html(this.queryTemplate({queryData: data}));
-
-     }
+      return data;
     },
 
     template: MetricsContainer,
     metadataTemplate : MetricsMetadataTemplate,
-    queryTemplate :  QueryTemplate,
     events : {
       "click .submit-rows" : "changeRows",
       "click .close-widget": "signalCloseWidget"
     },
+
 
     changeRows : function(e) {
       var num = parseInt(this.$(".metrics-rows").val());
@@ -416,6 +404,11 @@ define([
         this.view.model.set({"numFound": parseInt(response.get("response.numFound")),
                               "rows":  parseInt(response.get("responseHeader.params.rows")),
                               "query": response.get("responseHeader.params")});
+
+        //calling it once so that it doesn't have to re-render 3 times in event all three
+        //things above have changed
+        this.view.render();
+
         this.pubsub.publish(this.pubsub.EXECUTE_REQUEST, request);
       }
       //it's from the metrics endpoint
