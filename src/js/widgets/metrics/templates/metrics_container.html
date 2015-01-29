@@ -1,6 +1,20 @@
 <span class="s-large-close close-widget">x</span>
 <div class="metrics-metadata s-metrics-metadata">
+    You are viewing metrics for {{current}} paper(s).
+    {{#if max}}Change to first <input type="text" class="metrics-rows"/> paper(s) (max is {{max}}).
+    <button class="submit-rows btn btn-sm btn-info"> Submit </button>
+    {{/if}}
 </div>
+  <div class="s-print-show">
+      <b>Metrics for query:</b>
+      <ul class="list-inline">
+          {{#each queryData}}
+          {{#if this}}
+          <li>{{@key}}:{{this}}</li>
+          {{/if}}
+          {{/each}}
+      </ul>
+  </div>
 <div class="s-metrics-section" id="citations">
     <div class="s-metrics-title">
         <h3>Citations</h3>

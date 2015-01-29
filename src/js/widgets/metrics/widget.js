@@ -296,16 +296,21 @@ define([
 
   var ContainerView = Marionette.Layout.extend({
 
-    onRender : function(){
-      this.renderMetadata();
-    },
-
-    //function to just re-render the metadata part at the bottom
-    renderMetadata : function(){
+    serializeData : function(){
       var data = {};
+      //for 'print data'
+      var query = this.model.get("query");
+      if (query) {
+        data.queryData = {}
+        data.queryData.q = query.q;
+        data.queryData.fq = query.fq;
+        data.queryData.sort = query.sort;
+        data.queryData.rows = query.rows;
+      }
+      //for 'metrics metadata'
       data.max = this.model.get("max");
       data.current = this.model.get("current");
-      this.$(".metrics-metadata").html(this.metadataTemplate(data))
+      return data;
     },
 
     template: MetricsContainer,
@@ -314,6 +319,7 @@ define([
       "click .submit-rows" : "changeRows",
       "click .close-widget": "signalCloseWidget"
     },
+
 
     changeRows : function(e) {
       var num = parseInt(this.$(".metrics-rows").val());
@@ -396,9 +402,15 @@ define([
           options : options
         });
 
-        // let container view know how many bibcodes we have
+        // let container view know how many bibcodes we have and what the query was (for print)
         this.view.model.set({"numFound": parseInt(response.get("response.numFound")),
-                              "rows":  parseInt(response.get("responseHeader.params.rows"))});
+                              "rows":  parseInt(response.get("responseHeader.params.rows")),
+                              "query": response.get("responseHeader.params")});
+
+        //calling it once so that it doesn't have to re-render 3 times in event all three
+        //things above have changed
+        this.view.render();
+
         this.pubsub.publish(this.pubsub.EXECUTE_REQUEST, request);
       }
       //it's from the metrics endpoint
