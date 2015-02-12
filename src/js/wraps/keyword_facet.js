@@ -4,7 +4,7 @@ define(['js/widgets/facet/factory' ], function ( FacetFactory) {
     var widget = FacetFactory.makeBasicCheckboxFacet({
       facetField: "keyword_facet",
       facetTitle: "Keywords",
-      openByDefault: false,
+      openByDefault: true,
       logicOptions: {single: ['limit to', 'exclude'], 'multiple': ['and', 'or', 'exclude']}
     });
     return widget;

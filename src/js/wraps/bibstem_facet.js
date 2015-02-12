@@ -4,7 +4,7 @@ define(['js/widgets/facet/factory' ], function ( FacetFactory) {
     var widget = FacetFactory.makeBasicCheckboxFacet({
       facetField: "bibstem_facet",
       facetTitle: "Publications",
-      openByDefault: false,
+      openByDefault: true,
       logicOptions: {single: ['limit to', 'exclude'], multiple: ["or", "exclude"]}
     });
     return widget;

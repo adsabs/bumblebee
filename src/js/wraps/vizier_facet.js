@@ -4,7 +4,7 @@ define(['js/widgets/facet/factory' ], function ( FacetFactory) {
     var widget = FacetFactory.makeBasicCheckboxFacet({
       facetField: "vizier_facet",
       facetTitle: "Vizier Tables",
-      openByDefault: false,
+      openByDefault: true,
       logicOptions: {single: ['limit to', 'exclude'], 'multiple': ['and', 'or', 'exclude']}
 
     });
