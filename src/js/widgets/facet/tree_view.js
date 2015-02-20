@@ -23,6 +23,13 @@ define(['underscore',
       }
     },
 
+    serializeData : function(){
+      var data = this.model.toJSON();
+      data.count = this.formatNum(this.model.get("count"));
+      data.title = data.title.slice(0, 17);
+      return data;
+    },
+
     onRender: function(view) {
       //      top-level
       if (!Marionette.getOption(this, "parentCount")){
@@ -39,26 +46,8 @@ define(['underscore',
     events: {
       'click .widget-item': "onClick",
       'click .item-caret ': "toggleChildren",
-      'click .show-more': 'onShowMore',
-      'mouseenter label' : "onMouseEnter",
-      'mouseleave label' : "onMouseLeave"
+      'click .show-more': 'onShowMore'
     },
-
-    onMouseEnter: function(e){
-      e.stopPropagation();
-      var val;
-      val = this.model.get("count")
-      this.$(".facet-amount:first").html("&nbsp;(" + this.formatNum(val) + ")" );
-      this.$(".item-caret").addClass("draw-attention-text")
-
-    },
-
-    onMouseLeave: function(e){
-      e.stopPropagation();
-      this.$(".facet-amount").empty();
-      this.$("i.item-caret").removeClass("draw-attention-text")
-    },
-
 
     onClick: function (ev) {
       ev.stopPropagation();
