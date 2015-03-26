@@ -46,7 +46,7 @@ define([
       n.activate(minsub.beehive.getHardenedInstance());
       $("#test").append(n.render().el);
 
-      expect($(".s-orcid-button-container").hasClass("s-active")).to.be.true;
+      expect($(".orcid-dropdown li:first span").text().trim()).to.eql('You are signed in to ORCID and able to add papers from to your ORCID profile.');
 
     });
 
@@ -72,7 +72,9 @@ define([
 
       $("#test").append(n.view.render().el);
       var $w = n.view.$el;
-      $w.find('.orcid-mode').click();
+      $w.find('.orcid-sign-in').click();
+
+      debugger;
 
       expect(signInStub.callCount).to.eql(1);
       expect(setOrcidModeStub.callCount).to.eql(1);

@@ -16,8 +16,7 @@ define([
     defaults : function(){
       return {
         orcidModeOn : false,
-        orcidLoggedIn : false,
-        adsLoggedIn  : false
+        orcidLoggedIn : false
       }
     }
   });
@@ -27,28 +26,39 @@ define([
 
     template : NavBarTemplate,
 
-
+    triggers : {
+      "click a.orcid-link" : "navigate-to-orcid-link"
+    },
 
     events : {
+      "click .orcid-dropdown ul" : function(e){e.stopPropagation()},
+      "click button.orcid-sign-in" : "orcidSignIn",
       "change .orcid-mode" : "changeOrcidMode",
       'click li.ads button.sign-out': 'adsSignout'
     },
 
     modelEvents: {
-      'change:adsLoggedIn': 'render'
+      'change': 'render'
+    },
+
+    orcidSignIn : function(){
+
+      this.model.set("uiOrcidModeOn", true);
+
     },
 
     changeOrcidMode : function() {
       var that = this;
-
-      if (this.$(".orcid-mode").is(":checked")){
-        this.model.set("uiOrcidModeOn", true);
-      }
-      else {
-        this.model.set("uiOrcidModeOn", false);
-      }
       //allow animation to run before rerendering
       setTimeout(function(){
+
+        if (that.$(".orcid-mode").is(":checked")){
+          that.model.set("uiOrcidModeOn", true);
+        }
+        else {
+          that.model.set("uiOrcidModeOn", false);
+        }
+
         that.render();
       }, 400);
     },
@@ -79,29 +89,20 @@ define([
     setInitialVals : function(){
       var user = this.getBeeHive().getObject("User");
       var orcidApi = this.getBeeHive().getService("OrcidApi");
-      var val = false;
-      if (user.isOrcidModeOn() && orcidApi.hasAccess()){
-        val = true;
-      }
-      this.model.set({orcidModeOn : val, adsLoggedIn: val}, {silent : true});
+      this.model.set({orcidModeOn : user.isOrcidModeOn(), orcidLoggedIn:  orcidApi.hasAccess()}, {silent : true});
     },
 
     handleUserAnnouncement : function(key, val){
+      var user = this.getBeeHive().getObject("User");
       if (key == 'orcidUIChange') {
         var orcidApi = this.getBeeHive().getService("OrcidApi");
-        this.model.set('orcidModeOn', val && orcidApi.hasAccess());
-        if (val && orcidApi.hasAccess()) {
-          this.model.set('adsLoggedIn', true);
-        }
-        else {
-          this.model.set('adsLoggedIn', false);
-        }
+        this.model.set({orcidModeOn : user.isOrcidModeOn(), orcidLoggedIn:  orcidApi.hasAccess()}, {silent : true});
       }
     },
 
     viewEvents : {
-      "ads-toggle-state" : "triggerADSAction",
-      'ads-signout': 'signOut'
+      'ads-signout': 'signOut',
+      "navigate-to-orcid-link" : "navigateToOrcidLink"
     },
 
     modelEvents : {
@@ -133,8 +134,11 @@ define([
       user.setOrcidMode(false);
     },
 
-    triggerADSAction : function(){
+    navigateToOrcidLink : function(){
+      var pubsub = this.getBeeHive().getService('PubSub');
+      pubsub.publish(pubsub.NAVIGATE, "orcid-page")
     }
+
   });
 
   return NavWidget;
