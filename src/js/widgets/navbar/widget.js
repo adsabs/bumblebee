@@ -16,7 +16,7 @@ define([
     defaults : function(){
       return {
         orcidModeOn : false,
-        orcidLoggedIn : false,
+        orcidLoggedIn : false
       }
     }
   });
@@ -26,14 +26,25 @@ define([
 
     template : NavBarTemplate,
 
+    triggers : {
+      "click a.orcid-link" : "navigate-to-orcid-link"
+    },
+
     events : {
       "click .orcid-dropdown ul" : function(e){e.stopPropagation()},
+      "click button.orcid-sign-in" : "orcidSignIn",
       "change .orcid-mode" : "changeOrcidMode",
       'click li.ads button.sign-out': 'adsSignout'
     },
 
     modelEvents: {
       'change': 'render'
+    },
+
+    orcidSignIn : function(){
+
+      this.model.set("uiOrcidModeOn", true);
+
     },
 
     changeOrcidMode : function() {
@@ -89,8 +100,8 @@ define([
     },
 
     viewEvents : {
-      "ads-toggle-state" : "triggerADSAction",
-      'ads-signout': 'signOut'
+      'ads-signout': 'signOut',
+      "navigate-to-orcid-link" : "navigateToOrcidLink"
     },
 
     modelEvents : {
@@ -122,8 +133,11 @@ define([
       user.setOrcidMode(false);
     },
 
-    triggerADSAction : function(){
+    navigateToOrcidLink : function(){
+      var pubsub = this.getBeeHive().getService('PubSub');
+      pubsub.publish(pubsub.NAVIGATE, "orcid-page")
     }
+
   });
 
   return NavWidget;

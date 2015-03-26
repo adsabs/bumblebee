@@ -88,7 +88,7 @@
 }
 
 .s-orcid-title img {
-  height: 33px;
+  height: 30px;
   width: auto;
 }
 
@@ -101,9 +101,10 @@
 
   .btn-link {
     color: @brand-primary;
-    &:hover{
-      text-decoration: underline;
-    }
+  }
+
+  li:hover .btn-link {
+   text-decoration:underline !important;
   }
 }
 
@@ -183,4 +184,6 @@ input.cmn-toggle-round:checked + label:after {
   height: 54px;
   position: relative;
   top: -15px;
+  left: 6px;
+  padding-right: 10px;
 }
