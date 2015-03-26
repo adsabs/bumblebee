@@ -17,7 +17,10 @@
 
             <ul class="nav navbar-nav navbar-right">
 
-                {{#if orcidModeOn}}
+                {{#if orcidLoggedIn}}
+
+                    {{#if orcidModeOn}}
+
                 <li class="dropdown orcid-dropdown s-orcid-dropdown">
                     <button class="dropdown-toggle btn-link" data-toggle="dropdown" aria-expanded="false">
                         <span class="s-orcid-title"> <img src="../../styles/img/orcid-active.svg"
@@ -35,16 +38,23 @@
                                 on
                             </div>
                         </li>
+                        <li class="divider"></li>
+                        <li>
+
+                        </li>
                     </ul>
                 </li>
-                {{else}}
+
+                    {{else}}
+
                 <li class="dropdown orcid-dropdown s-orcid-dropdown">
                     <button class="dropdown-toggle btn-link" data-toggle="dropdown" aria-expanded="false">
                         <span class="s-orcid-title"> <img src="../../styles/img/orcid-inactive.svg"
                                                           alt="orcid symbol"/>   ORCID Claims <span class="caret"></span></button>
                     <ul class="dropdown-menu" role="menu">
-                        Sign in to ORCID.
                         <li>
+                            You have turned off the ORCID view in ADS, but are still logged in to ORCID.
+
                             <div class="s-orcid-label-container">
                                 off
                                 <div class="switch">
@@ -54,9 +64,32 @@
                                 on
                             </div>
                         </li>
+                        <li class="divider"></li>
+                        <li>
+
+                        </li>
                     </ul>
                 </li>
-                {{/if }}
+
+                    {{/if}}
+                <!--end "if/else orcidModeOn"-->
+
+                {{else}}
+
+                <li class="dropdown orcid-dropdown s-orcid-dropdown">
+                    <button class="dropdown-toggle btn-link" data-toggle="dropdown" aria-expanded="false">
+                        <span class="s-orcid-title"> <img src="../../styles/img/orcid-inactive.svg"
+                                                          alt="orcid symbol"/>   ORCID Claims <span class="caret"></span></button>
+                    <ul class="dropdown-menu" role="menu">
+                        <li>
+                            <button class="btn-link"> Sign in to ORCID. </button>
+                        </li>
+                    </ul>
+                </li>
+
+                <!--end "if/else orcidLoggedIn"-->
+
+                {{/if}}
 
                 <li><a href="http://adsabs.github.io/help/"  target="_blank">Help</a></li>
 

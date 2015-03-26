@@ -17,7 +17,6 @@ define([
       return {
         orcidModeOn : false,
         orcidLoggedIn : false,
-        adsLoggedIn  : false
       }
     }
   });
@@ -34,7 +33,7 @@ define([
     },
 
     modelEvents: {
-      'change:adsLoggedIn': 'render'
+      'change': 'render'
     },
 
     changeOrcidMode : function() {
@@ -79,23 +78,13 @@ define([
     setInitialVals : function(){
       var user = this.getBeeHive().getObject("User");
       var orcidApi = this.getBeeHive().getService("OrcidApi");
-      var val = false;
-      if (user.isOrcidModeOn() && orcidApi.hasAccess()){
-        val = true;
-      }
-      this.model.set({orcidModeOn : val, adsLoggedIn: val}, {silent : true});
+      this.model.set({orcidModeOn : user.isOrcidModeOn(), orcidLoggedIn:  orcidApi.hasAccess()}, {silent : true});
     },
 
     handleUserAnnouncement : function(key, val){
       if (key == 'orcidUIChange') {
         var orcidApi = this.getBeeHive().getService("OrcidApi");
-        this.model.set('orcidModeOn', val && orcidApi.hasAccess());
-        if (val && orcidApi.hasAccess()) {
-          this.model.set('adsLoggedIn', true);
-        }
-        else {
-          this.model.set('adsLoggedIn', false);
-        }
+        this.model.set({orcidModeOn : user.isOrcidModeOn(), orcidLoggedIn:  orcidApi.hasAccess()}, {silent : true});
       }
     },
 
