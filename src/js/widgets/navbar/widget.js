@@ -93,6 +93,7 @@ define([
     },
 
     handleUserAnnouncement : function(key, val){
+      var user = this.getBeeHive().getObject("User");
       if (key == 'orcidUIChange') {
         var orcidApi = this.getBeeHive().getService("OrcidApi");
         this.model.set({orcidModeOn : user.isOrcidModeOn(), orcidLoggedIn:  orcidApi.hasAccess()}, {silent : true});
