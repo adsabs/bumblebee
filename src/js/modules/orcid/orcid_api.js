@@ -121,7 +121,7 @@ define([
               ret.resolve(res);
             },
             headers: {
-              "Orcid-Authorization": "Bearer " + authData.access_token
+              "Orcid-Authorization": "Bearer " + authData.access_token,
             }
           });
         return ret.promise();
@@ -988,6 +988,7 @@ define([
 
       hardenedInterface: {
         hasAccess: 'boolean indicating access to ORCID Api',
+        getUserProfile : 'get user profile',
         signIn: 'login',
         signOut: 'logout',
         getRecordInfo: 'provides info about a document',
