@@ -573,7 +573,7 @@ define([
             return "Citation Count";
           }
           else if (that.model.get("yValue") === "read_count") {
-            return "90 Day Read Count";
+            return "Recent Reads";
           }
         })
         .classed("axis-title", true);
