@@ -192,10 +192,10 @@ define(['js/widgets/tabs/tabs_widget',
           "facet.limit": "-1"
         },
         graphViewOptions : {
-          yAxisTitle :  "reads",
+          yAxisTitle :  "recent views",
           xAxisTitle : "number of records",
-          graphTitle: "Reads",
-          pastTenseTitle : "read"
+          graphTitle: "Recent Views",
+          pastTenseTitle : "viewed"
         },
         processResponse      : function (apiResponse) {
           this.setCurrentQuery(apiResponse.getApiQuery());
@@ -263,7 +263,7 @@ define(['js/widgets/tabs/tabs_widget',
       return new TabsWidget({tabs: [
         {title: "Years", widget: yearGraphWidget, id: "year-facet", default: true},
         {title: "Citations", widget: citationGraphWidget, id: "citations-facet"},
-        {title: "Reads", widget: readsGraphWidget, id: "reads-facet"}
+        {title: "Views", widget: readsGraphWidget, id: "reads-facet"}
       ]
       });
     }
