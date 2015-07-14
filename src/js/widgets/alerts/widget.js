@@ -33,10 +33,7 @@ define([
         msg: undefined,
         title: undefined,
         events: undefined,
-        modal: false,
-        //for non-modal alerts so they will
-        //only show for ~5 seconds
-        fade: true
+        modal: false
       }
     });
 
@@ -133,14 +130,7 @@ define([
         if (this.model.get('modal')) {
           this.showModal();
         }
-        if (this.model.get('fade')){
 
-           setTimeout(function(){
-          //cant use css transitions becase we need display:none afterwards
-          this.$(".alert").fadeOut(2000);
-          },3000);
-
-        }
       },
 
       showModal: function() {
