@@ -174,8 +174,8 @@ require.config({
     'sinon': '../bower_components/sinon/index',
     'zeroclipboard' : 'libs/zeroclipboard/ZeroClipboard',
     'filesaver' : 'libs/FileSaver/FileSaver',
-    'select2' : 'libs/select2/select2'
-
+    'select2' : 'libs/select2/select2',
+    'bootstrap-hover' : 'libs/bootstrap-hover-dropdown/bootstrap-hover-dropdown'
   },
 
   hbs : {
@@ -185,6 +185,9 @@ require.config({
 
   shim: {
 
+    'bootstrap-hover' : {
+      deps : ["bootstrap", "jquery"]
+    },
     'backbone.stickit' : {
       deps : ['backbone']
     },

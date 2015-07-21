@@ -5,7 +5,8 @@ define([
   'hbs!./template/feedback',
   'js/components/api_query_updater',
   'js/components/api_query',
-  'bootstrap'
+  'bootstrap',
+  'bootstrap-hover'
 
 ], function(
   Marionette,
@@ -14,7 +15,8 @@ define([
   FeedbackTemplate,
   ApiQueryUpdater,
   ApiQuery,
-  Bootstrap
+  Bootstrap,
+  BootstrapHover
   ){
 
   var NavView, NavModel, NavWidget;
@@ -156,6 +158,8 @@ define([
 
           this.formAttached = true;
       }
+
+      this.$('.dropdown-toggle').dropdownHover({hoverDelay: 100, delay: 200});
     }
 
   });
