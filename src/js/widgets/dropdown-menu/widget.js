@@ -2,9 +2,15 @@ define([
     'marionette',
     'js/widgets/base/base_widget',
     'hbs!./templates/dropdown',
-    'hbs!./templates/dropdown-item'
+    'hbs!./templates/dropdown-item',
+    "bootstrap-hover"
   ],
-  function (Marionette, BaseWidget, dropdownTemplate, dropdownItemTemplate) {
+  function (Marionette,
+            BaseWidget,
+            dropdownTemplate,
+            dropdownItemTemplate,
+            BootstrapHover
+    ) {
 
     /*
      *
@@ -122,7 +128,11 @@ define([
         "click .dropdown-menu label": function(e){
          e.stopPropagation();
         }
-    }
+    },
+
+      onRender : function(){
+        this.$('.dropdown-toggle').dropdownHover({hoverDelay: 100, delay: 200});
+      }
 
     });
 

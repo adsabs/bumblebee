@@ -7,14 +7,17 @@ define(['marionette',
   'js/widgets/base/base_widget',
   'hbs!./templates/sort_template',
   'bootstrap',
-  'js/components/api_feedback'
-], function (Marionette,
+  'js/components/api_feedback',
+  'bootstrap-hover'
+],
+  function (Marionette,
   Backbone,
   $,
   BaseWidget,
   SortTemplate,
   bootstrap,
-  ApiFeedback
+  ApiFeedback,
+  BootstrapHover
   ) {
 
     var SortModel = Backbone.Model.extend({
@@ -135,6 +138,10 @@ define(['marionette',
         if (newVal !== current) {
           this.trigger("sortChange", newVal)
         }
+      },
+
+      onRender : function(){
+          this.$('.dropdown-toggle').dropdownHover({hoverDelay: 100, delay: 200});
       }
     });
 
