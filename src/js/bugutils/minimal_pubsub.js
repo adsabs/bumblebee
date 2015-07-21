@@ -69,8 +69,8 @@ define(['underscore', 'backbone',
       this.pubsub.debug = true;
       this.beehive.addService('PubSub', this.pubsub);
       var self = this;
-      this.beehive.addService('Api', options.Api || {
-        request: function(req, context) {
+      var Api = {
+        request: function (req, context) {
           self.requestCounter += 1;
           if (!context) {
             context = req.get('options');
@@ -80,12 +80,15 @@ define(['underscore', 'backbone',
             console.log('[MinSub]', 'request', self.requestCounter, response);
           }
           var defer = $.Deferred();
-          defer.done(function() {
-              context.done.call(context.context, response);
+          defer.done(function () {
+            context.done.call(context.context, response);
           });
           defer.resolve(response);
           return defer.promise();
-        }});
+        }
+      };
+      this.beehive.addService("Api", options.Api || Api);
+
       this.beehive.addObject('QueryMediator', new QueryMediator({
         recoveryDelayInMs: 0,
         shortDelayInMs: 0,
