@@ -7,6 +7,7 @@ define([
   'js/components/json_response',
   'js/components/api_request',
   'js/components/api_query',
+  'js/mixins/dependon',
   'js/mixins/user_change_rows',
   'hbs!./templates/metrics_metadata',
   'hbs!./templates/metrics_container',
@@ -28,6 +29,7 @@ define([
   JsonResponse,
   ApiRequest,
   ApiQuery,
+  Dependon,
   UserChangeMixin,
   MetricsMetadataTemplate,
   MetricsContainer,
@@ -41,7 +43,6 @@ define([
   ApiTargets,
   loadingTemplate
   ) {
-
 
 
   var TableModel = Backbone.Model.extend({
@@ -205,14 +206,11 @@ define([
     },
 
     drawLineGraph: function () {
-      var data, d3SVG, options;
-      var that = this;
+      var data, d3SVG, options, that = this;
 
       d3SVG = d3.select(this.ui.svg[0]);
-
       //get data
       data = this.model.get("normalized") ? this.model.get("normalizedGraphData") : this.model.get("graphData");
-
       //make a copy
       data =  $.extend(true, [], data);
 
@@ -264,6 +262,7 @@ define([
     },
 
     template: GraphTemplate,
+
     onRender: function () {
       this.drawGraph();
     }
@@ -337,6 +336,15 @@ define([
       Marionette.bindEntityEvents(this, this.view, Marionette.getOption(this, "viewEvents"));
     },
 
+    activate : function(beehive){
+      _.bindAll(this, "setCurrentQuery", "processResponse");
+      var pubsub = beehive.getService("PubSub");
+      //this will have to be changed later
+      this.pubsub = pubsub;
+      pubsub.subscribe(pubsub.INVITING_REQUEST, this.setCurrentQuery);
+      pubsub.subscribe(pubsub.DELIVERING_RESPONSE, this.processResponse);
+    },
+
     closeWidget: function () {
       this.resetWidget();
       this.pubsub.publish(this.pubsub.NAVIGATE, "results-page");
@@ -367,36 +375,9 @@ define([
       this.pubsub.publish(this.pubsub.EXECUTE_REQUEST, request);
     },
 
-    processResponse: function (response) {
-
-      //it's bibcodes from the search endpoint
-      if (response instanceof ApiResponse){
-        var bibcodes = _.map(response.get("response.docs"), function(d){return d.bibcode});
-        var options = {
-          type : "POST",
-          contentType : "application/json"
-        };
-
-        var request =  new ApiRequest({
-          target: ApiTargets.SERVICE_METRICS,
-          query: new ApiQuery({"bibcodes" : bibcodes}),
-          options : options
-        });
-
-        // let container view know how many bibcodes we have
-        this.view.model.set({"numFound": parseInt(response.get("response.numFound")),
-                              "rows":  parseInt(response.get("responseHeader.params.rows"))});
-        this.pubsub.publish(this.pubsub.EXECUTE_REQUEST, request);
-      }
-      //it's from the metrics endpoint
-      else if (response instanceof JsonResponse ) {
-
-        //is it a response with bibcodes from solr or a response with metrics?
-        response = response.toJSON();
-
+    processMetrics : function (response){
         //how is the json response formed? need to figure out why attributes is there
         response = response.attributes ? response.attributes : response;
-
         // for now, metrics api returns errors as 200 messages, so we have to detect it
         if ((response.msg && response.msg.indexOf('Unable to get results') > -1) || (response.status == 500)) {
           this.closeWidget();
@@ -407,11 +388,54 @@ define([
           }));
           return;
         }
-
         this.createTableViews(response);
         this.createGraphViews(response);
         this.insertViews();
+    },
+
+    getMetrics : function(bibcodes){
+
+      var d = $.Deferred(),
+          pubsub = this.pubsub,
+          options = {
+              type : "POST",
+              contentType : "application/json"
+           };
+
+      var request =  new ApiRequest({
+        target: ApiTargets.SERVICE_METRICS,
+        query: new ApiQuery({"bibcodes" : bibcodes}),
+        options : options
+      });
+      // so promise can be resolved
+
+      pubsub.subscribeOnce(pubsub.DELIVERING_RESPONSE, function(response){
+        d.resolve(response.toJSON());
+      });
+
+      pubsub.publish(pubsub.EXECUTE_REQUEST, request);
+
+      return d.promise();
+
+    },
+
+    processResponse: function (response) {
+
+      //it's bibcodes from the search endpoint
+      if (response instanceof ApiResponse){
+        var bibcodes = _.map(response.get("response.docs"), function(d){return d.bibcode})
+
+        // let container view know how many bibcodes we have
+        this.view.model.set({"numFound": parseInt(response.get("response.numFound")),
+          "rows":  parseInt(response.get("responseHeader.params.rows"))});
+
+        this.getMetrics(bibcodes);
+
       }
+      //it's from the metrics endpoint
+      else if (response instanceof JsonResponse ) {
+          this.processMetrics(response);
+        }
     },
 
     createTableData : function(response){
@@ -530,7 +554,7 @@ define([
       this.childViews.readsGraphView.model.set("normalizedGraphData", DataExtractor.plot_readshist({norm: true, readshist_data: hist["reads"]}));
     },
 
-    insertViews: function () {
+    insertViews: function (views) {
 
       //render the container view
       this.view.render();
@@ -542,7 +566,6 @@ define([
       this.view.readsTable.show(this.childViews.readsTableView);
 
       //attach graph views
-
       this.view.papersGraph.show(this.childViews.papersGraphView);
       this.view.citationsGraph.show(this.childViews.citationsGraphView);
       this.view.indicesGraph.show(this.childViews.indicesGraphView);
@@ -551,7 +574,6 @@ define([
 
     //so I can test these individually
     components: {
-
       TableModel: TableModel,
       TableView: TableView,
       GraphView: GraphView,
@@ -564,20 +586,13 @@ define([
       rows : 1000
     },
 
-    activate : function(beehive){
-      _.bindAll(this, "setCurrentQuery", "processResponse");
-      this.pubsub = beehive.Services.get('PubSub');
-      this.pubsub.subscribe(this.pubsub.INVITING_REQUEST, this.setCurrentQuery);
-      this.pubsub.subscribe(this.pubsub.DELIVERING_RESPONSE, this.processResponse);
-    },
-
     showMetricsForCurrentQuery : function(){
       this.resetWidget();
       this.containerModel.set("requestRowsAllowed", true);
-
       this.dispatchRequest(this.getCurrentQuery());
     },
 
+    //used by library widget
     showMetricsForListOfBibcodes : function(bibcodes){
       this.resetWidget();
 
@@ -596,6 +611,8 @@ define([
 
 
   });
+
+  _.extend(MetricsWidget.prototype, Dependon.BeeHive);
 
   return MetricsWidget;
 });

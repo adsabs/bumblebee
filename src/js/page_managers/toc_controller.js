@@ -73,11 +73,9 @@ define([
         else if (event == 'broadcast-payload'){
           this.broadcast('page-manager-message', event, data);
         }
-
         else if (event == "navigate"){
           this.pubsub.publish(this.pubsub.NAVIGATE, data.navCommand, data.sub);
         }
-
         else if (event == "apply-function"){
           data.func.apply(this);
         }
