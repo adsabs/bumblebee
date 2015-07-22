@@ -193,7 +193,11 @@ define(['backbone', 'underscore', 'jquery'], function(Backbone, _, $) {
       if (!resp.trim()) {
         return attrs;
       }
-      var hashes = resp.slice(resp.indexOf('?') + 1).split('&');
+      //there can be ampersands in the q parameter
+      //now using a positive lookahead that expects an = before any " characters,
+      //ex: "q=bibstem:"a&a"&sort=date+desc" will now be split into ["q=bibstem:"a&a"", "sort=date+desc"]
+
+      var hashes = resp.slice(resp.indexOf('?') + 1).split(/&(?=[^"]+\=)/);
 
       //resp = decodeURIComponent(resp);
       var key,value;
