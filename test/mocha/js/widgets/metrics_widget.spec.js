@@ -300,7 +300,7 @@ define([
 
       $("#test").empty();
 
-    })
+    });
 
     //first, test Edwin's functions
 
@@ -850,8 +850,8 @@ define([
 
     it("should have a function that empties the main view", function(){
 
-      metricsWidget = new MetricsWidget();
-      metricsWidget.processMetrics(testData);
+      var metricsWidget = new MetricsWidget();
+      metricsWidget.processMetrics(JSON.parse(JSON.stringify(testData)));
       $("#test").append(metricsWidget.view.el);
       metricsWidget.resetWidget();
 
@@ -916,7 +916,7 @@ define([
 
       var metricsWidget = new MetricsWidget();
 
-      metricsWidget.processMetrics(testData);
+      metricsWidget.processMetrics(JSON.parse(JSON.stringify(testData)));
       //checking a single row from each template
       //would there be a way to check the entire rendered html in a non-messy way?
       expect(metricsWidget.childViews.papersTableView.render().$("td:contains(Number of papers)~td").eq(1).text().trim()).to.eql("30");
@@ -937,7 +937,7 @@ define([
 
       var metricsWidget = new MetricsWidget();
 
-      metricsWidget.createGraphViews(testData);
+      metricsWidget.createGraphViews(JSON.parse(JSON.stringify(testData)));
 
       //should have 4 graph views
       expect(_.keys(metricsWidget.childViews)).to.eql(["papersGraphView", "citationsGraphView", "indicesGraphView", "readsGraphView"]);
@@ -955,7 +955,7 @@ define([
 
       var metricsWidget = new MetricsWidget();
 
-      metricsWidget.processMetrics(testData);
+      metricsWidget.processMetrics(JSON.parse(JSON.stringify(testData)));
 
       //check to see that the rendered views are inserted
 
@@ -995,9 +995,9 @@ define([
               }};
           }
           else if (apiRequest.toJSON().target == ApiTargets.SERVICE_METRICS) {
-            return testData;
+            return JSON.parse(JSON.stringify(testData));
           }
-        }}))({verbose: false, hardenedApi : true});
+        }}))({verbose: false});
 
       metricsWidget.activate(minsub.beehive.getHardenedInstance());
 
@@ -1064,10 +1064,10 @@ define([
           //just to be explicit
           else if (apiRequest.toJSON().target == ApiTargets.SERVICE_METRICS ) {
             this.counter++;
-            return testData;
+            return JSON.parse(JSON.stringify(testData));
           }
         }
-      }))({verbose: false, hardenedApi : true});
+      }))({verbose: false});
 
       var metricsWidget = new MetricsWidget();
 
