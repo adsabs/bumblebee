@@ -16,7 +16,6 @@ define([
     'jquery-ui',
     'module',
     'js/components/api_targets',
-    "zeroclipboard",
      "filesaver"
   ],
   function(
@@ -31,7 +30,6 @@ define([
     $ui,
     WidgetConfig,
     ApiTargets,
-    ZeroClipboard,
     FileSaver
     ){
 
@@ -86,7 +84,6 @@ define([
       className : "s-export",
 
       ui :  {
-        "triggerCopy" : ".btn-clipboard",
         "triggerDownload" : ".btn-download"
       },
 
@@ -135,26 +132,6 @@ define([
 
       signalCloseWidget: function(ev) {
         this.trigger('close-widget');
-      },
-
-      onRender : function(){
-
-        //set up copy/paste functionality here
-        var that = this;
-        var client = new ZeroClipboard(that.ui.triggerCopy);
-
-        client.on("copy", function (event) {
-          var clipboard = event.clipboardData;
-          clipboard.setData( "text/plain", that.model.get("export"));
-        });
-
-        client.on("aftercopy", function(event){
-          that.ui.triggerCopy.html('<i class="fa fa-lg fa-clipboard"></i> Copied!');
-          setTimeout(function(){
-            that.ui.triggerCopy.html('<i class="fa fa-lg fa-clipboard"></i> Copy to clipboard')
-          }, 1000);
-
-        });
       }
 
     });
