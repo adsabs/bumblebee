@@ -21,17 +21,16 @@ define([
 
       activate: function(beehive) {
         this.setBeeHive(beehive);
-        _.bindAll(this, "onPaperSelection", "onBulkPaperSelection");
+        _.bindAll(this, "onPaperSelection", "onBulkPaperAction");
         var pubsub = beehive.getService('PubSub');
         this.key = pubsub.getPubSubKey();
         pubsub.subscribe(this.key, pubsub.PAPER_SELECTION, this.onPaperSelection);
-        pubsub.subscribe(this.key, pubsub.BULK_PAPER_SELECTION, this.onBulkPaperSelection);
+        pubsub.subscribe(this.key, pubsub.BULK_PAPER_SELECTION, this.onBulkPaperAction);
 
         this.pubsub = pubsub;
       },
 
       initialize: function() {
-        var that = this;
         this.on('change:selectedPapers', function(model) {
           this._updateNumSelected();
           if (this.pubsub)
@@ -146,8 +145,13 @@ define([
         }
       },
 
-      onBulkPaperSelection : function(bibs){
-        this.addSelectedPapers(bibs);
+      onBulkPaperAction : function(flag, bibs){
+        if (flag == "add"){
+          this.addSelectedPapers(bibs);
+        }
+        else if (flag == "remove"){
+          this.removeSelectedPapers(bibs);
+        }
       },
 
       //this is used by the auth and user settings widgets

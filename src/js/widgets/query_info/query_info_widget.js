@@ -57,12 +57,10 @@ define(['marionette',
       },
 
       triggers : {
-        "click .clear-selected" : "clear-selected",
-        "click .page-bulk-add" : "page-bulk-add"
+        "click .clear-selected" : "clear-selected"
       },
 
       events : {
-
         "click .library-add-title" : "toggleLibraryDrawer",
         "click .submit-add-to-library" : "libraryAdd",
         "click .submit-create-library" : "libraryCreate"
@@ -123,7 +121,6 @@ define(['marionette',
 
       viewEvents : {
         "clear-selected" : "clearSelected",
-        "page-bulk-add" : "triggerBulkAdd",
         "library-add" : "libraryAddSubmit",
         "library-create" : "libraryCreateSubmit"
       },
@@ -157,10 +154,6 @@ define(['marionette',
 
       clearSelected : function(){
         this.beehive.getObject("AppStorage").clearSelectedPapers();
-      },
-
-      triggerBulkAdd : function(){
-        this.pubsub.publish(this.pubsub.CUSTOM_EVENT, "add-all-on-page");
       },
 
       libraryAddSubmit : function(data){
