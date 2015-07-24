@@ -74,8 +74,13 @@ define(['marionette',
       template: SortTemplate,
 
       events: {
+        "change input[name=order-options]": "showInfo",
         "click button.sort-options": "changeSort",
         "click .dropdown-menu label": "preventClose"
+      },
+
+      showInfo : function(){
+        this.$(".instructions").removeClass("hidden");
       },
 
       preventClose : function(e){

@@ -37,21 +37,75 @@
   width: 100%;
 }
 
+.s-sort-widget .dropdown-menu, .s-dropdown-widget .dropdown-menu {
+
+  padding: 10px;
+  font-weight: 300;
+  font-size:15px;
+
+  li {
+    &:hover {
+      background-color: darken(@gray-lightest, 2%);
+      cursor: pointer;
+    }
+    a {
+      color: @brand-primary;
+    }
+    a:hover {
+      text-decoration: none;
+    }
+    .btn-link {
+      color: @brand-primary;
+      font-weight: 300;
+    }
+    .btn-link:hover {
+      text-decoration: none;
+    }
+  }
+  label {
+    font-weight: 300;
+  }
+  .dropdown-menu {
+    padding: 10%;
+  }
+
+}
+
+.s-sort-widget {
+  
+  li:first-of-type:hover {
+    background-color: white;
+  }
+
+  .lh-box-shadow(2px 2px 2px lighten(@gray-lightest, 5%));
+
+  #sort-button {
+    color: @text-color !important;
+  }
+
+  .btn-link {
+    padding: 3px 5px;
+    display: block;
+  }
+
+  .s-instructions {
+    margin-top: 5px;
+    padding: 2%;
+    color: lighten(@brand-info, 5%);
+  }
+}
+
 
 .s-dropdown-widget {
   .dropdown-menu  {
-    padding: 10%;
     ul {
       .list-unstyled;
-    }
-    li {
-      padding: 6px;
-    }
-    label {
-      font-weight: 300;
+
+      li {
+        padding: 6px;
+      }
     }
   }
-}
 
 .export-start-val {
   .form-control;
