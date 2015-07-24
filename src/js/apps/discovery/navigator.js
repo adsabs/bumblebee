@@ -473,7 +473,6 @@ define([
         });
         this.set('ShowPaperMetrics', function() {
 
-          app.getWidget("ShowPaperMetrics").renderGraphs();
           //set left hand nav panel correctly
           app.getWidget("DetailsPage").setActive("ShowPaperMetrics");
           app.getObject('MasterPageManager').show('DetailsPage',

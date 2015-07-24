@@ -2,13 +2,13 @@
 define([
 
     'js/widgets/metrics/widget',
-    'js/components/api_query',
+    'js/components/api_feedback'
 
   ],
 
   function (
     MetricsWidget,
-    ApiQuery
+    ApiFeedback
     ) {
 
     var Widget = MetricsWidget.extend({
@@ -95,12 +95,13 @@ define([
         this.containerModel.set("data", response);
       },
 
-      renderGraphs : function(){
+      onShow : function(){
         var data = this.containerModel.get("data");
         this.createTableViews(data);
         this.createGraphViews(data);
         this.insertViews(data);
       }
+
 
     });
 
