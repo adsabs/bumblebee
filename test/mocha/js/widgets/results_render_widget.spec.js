@@ -352,6 +352,7 @@ define([
         minsub.beehive.addObject('AppStorage', s);
 
         var widget  = _getWidget();
+        var $w = widget.render().$el;
 
         s.addSelectedPapers('2013arXiv1305.3460H');
         minsub.publish(minsub.START_SEARCH, new ApiQuery({'q': 'foo:bar'}));
@@ -364,9 +365,7 @@ define([
         $w.find('input[value="1993sfgi.conf..324C"]').click();
         expect(s.isPaperSelected('1993sfgi.conf..324C')).to.eql(true);
 
-        // but unselecting through the storage is not propagated back to the model
-        // that happens only on fresh re-render (and I guess we are fine with
-        // that for now)
+
 
       });
     })
