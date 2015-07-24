@@ -472,6 +472,7 @@ define([
           this.route = data.href;
         });
         this.set('ShowPaperMetrics', function() {
+
           //set left hand nav panel correctly
           app.getWidget("DetailsPage").setActive("ShowPaperMetrics");
           app.getObject('MasterPageManager').show('DetailsPage',
