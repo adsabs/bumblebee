@@ -119,7 +119,7 @@ define([
         return false;
       }
       //it's active
-      else if (idAttribute !== this.$(".s-nav-active").attr("data-widget-id")) {
+      else if (idAttribute !== this.$(".s-nav-selected").attr("data-widget-id")) {
         data.href = $t.attr("href");
 
         var splitName = idAttribute.indexOf("__") > -1 ? idAttribute.split("__") : undefined;
@@ -159,6 +159,10 @@ define([
      */
     resetActiveStates : function(){
       this.collection.each(function(model){
+
+        //nothing is selected at the moment
+        model.set("isSelected", false);
+
         //abstract and all export options
         //reset only widgets that aren't there 100% of the time
         if (!model.get("alwaysThere")){
@@ -169,6 +173,7 @@ define([
           model.set("isActive", true);
         }
       });
+
     },
 
     onPageManagerMessage: function(event, data) {
