@@ -334,6 +334,11 @@ define([
       this.view = new ContainerView({model : this.containerModel});
       this.childViews = {};
       Marionette.bindEntityEvents(this, this.view, Marionette.getOption(this, "viewEvents"));
+
+      //for widgets that extend the base MetricsWidget
+      this.dataExtractor = DataExtractor;
+      this.GraphModel = GraphModel;
+      this.GraphView = GraphView;
     },
 
     activate : function(beehive){
@@ -471,16 +476,17 @@ define([
         normalizedRefereedCitations: [citationData.total["normalized number of refereed citations"], citationData.refereed["normalized number of refereed citations"]]
       };
 
-      data.indicesModelData = {
-        hIndex: [indicesData.total["h"], indicesData.refereed["h"]],
-        mIndex: [indicesData.total["m"], indicesData.refereed["m"]],
-        gIndex: [indicesData.total["g"], indicesData.refereed["g"]],
-        i10Index: [indicesData.total["i10"], indicesData.refereed["i10"]],
-        i100Index: [indicesData.total["i100"], indicesData.refereed["i100"]],
-        toriIndex: [indicesData.total["tori"], indicesData.refereed["tori"]],
-        riqIndex: [indicesData.total["riq"], indicesData.refereed["riq"]],
-        read10Index: [indicesData.total["read10"], indicesData.refereed["read10"]]
-      };
+        data.indicesModelData = {
+          hIndex: [indicesData.total["h"], indicesData.refereed["h"]],
+          mIndex: [indicesData.total["m"], indicesData.refereed["m"]],
+          gIndex: [indicesData.total["g"], indicesData.refereed["g"]],
+          i10Index: [indicesData.total["i10"], indicesData.refereed["i10"]],
+          i100Index: [indicesData.total["i100"], indicesData.refereed["i100"]],
+          toriIndex: [indicesData.total["tori"], indicesData.refereed["tori"]],
+          riqIndex: [indicesData.total["riq"], indicesData.refereed["riq"]],
+          read10Index: [indicesData.total["read10"], indicesData.refereed["read10"]]
+      }
+
 
       function limitPlaces(n){
         var stringNum = n.toString();
@@ -532,26 +538,26 @@ define([
       //papers graph
       var papersModel = new GraphModel();
       this.childViews.papersGraphView = new GraphView({model: papersModel });
-      this.childViews.papersGraphView.model.set("graphData", DataExtractor.plot_paperhist({norm: false, paperhist_data: hist["publications"]}));
-      this.childViews.papersGraphView.model.set("normalizedGraphData", DataExtractor.plot_paperhist({norm: true, paperhist_data: hist["publications"]}));
+      this.childViews.papersGraphView.model.set("graphData", this.dataExtractor.plot_paperhist({norm: false, paperhist_data: hist["publications"]}));
+      this.childViews.papersGraphView.model.set("normalizedGraphData", this.dataExtractor.plot_paperhist({norm: true, paperhist_data: hist["publications"]}));
 
       //citations graph
       var citationsModel = new GraphModel();
       this.childViews.citationsGraphView = new GraphView({model: citationsModel });
-      this.childViews.citationsGraphView.model.set("graphData", DataExtractor.plot_citshist({norm: false, citshist_data: hist["citations"]}));
-      this.childViews.citationsGraphView.model.set("normalizedGraphData", DataExtractor.plot_citshist({norm: true, citshist_data: hist["citations"]}));
+      this.childViews.citationsGraphView.model.set("graphData", this.dataExtractor.plot_citshist({norm: false, citshist_data: hist["citations"]}));
+      this.childViews.citationsGraphView.model.set("normalizedGraphData", this.dataExtractor.plot_citshist({norm: true, citshist_data: hist["citations"]}));
 
       //indices graph
       var indicesModel = new GraphModel({graphType: "line"});
       this.childViews.indicesGraphView = new GraphView({model: indicesModel });
       //this isnt in histograms array
-      this.childViews.indicesGraphView.model.set("graphData", DataExtractor.plot_series({series_data: response["time series"]}));
+      this.childViews.indicesGraphView.model.set("graphData", this.dataExtractor.plot_series({series_data: response["time series"]}));
 
       //reads graph
       var readsModel = new GraphModel();
       this.childViews.readsGraphView = new GraphView({model: readsModel });
-      this.childViews.readsGraphView.model.set("graphData", DataExtractor.plot_readshist({norm: false, readshist_data: hist["reads"]}));
-      this.childViews.readsGraphView.model.set("normalizedGraphData", DataExtractor.plot_readshist({norm: true, readshist_data: hist["reads"]}));
+      this.childViews.readsGraphView.model.set("graphData", this.dataExtractor.plot_readshist({norm: false, readshist_data: hist["reads"]}));
+      this.childViews.readsGraphView.model.set("normalizedGraphData", this.dataExtractor.plot_readshist({norm: true, readshist_data: hist["reads"]}));
     },
 
     insertViews: function (views) {
