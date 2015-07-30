@@ -597,6 +597,10 @@ define([
        *
        */
       isDirty: function(queryToCompare) {
+
+        if (!this.$el.data('queryBuilder'))
+          return false;
+
         try {
           var formQ = this.getQuery();
 
@@ -647,6 +651,13 @@ define([
         this.$el.on('keypress.input', function(ev) {
           throttled();
         });
+      },
+
+      destroy: function() {
+
+        this.$el.off('change.queryBuilder');
+        this.$el.off('click.queryBuilder');
+        this.$el.off('keypress.input');
       }
 
     });
