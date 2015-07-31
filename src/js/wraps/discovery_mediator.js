@@ -367,19 +367,11 @@ define([
         activate: function() {
           FeedbackMediator.prototype.activate.apply(this, arguments);
           this.pubsub.subscribe(this.pubSubKey, this.pubsub.INVITING_REQUEST, _.bind(this.onNewCycle, this));
-          this.pubsub.subscribe(this.pubSubKey, this.pubsub.ARIA_ANNOUNCEMENT, _.bind(this.onPageChange, this));
           this.pubsub.subscribe(this.pubSubKey, this.pubsub.APP_EXIT, _.bind(this.onAppExit, this));
         },
 
         onNewCycle: function() {
           this.reset();
-        },
-
-        onPageChange: function(msg) {
-          msg = msg.replace('Switching to: ', '');
-          analytics('send', 'pageview', {
-            page: msg
-          });
         },
 
         onAppExit: function(data) {
