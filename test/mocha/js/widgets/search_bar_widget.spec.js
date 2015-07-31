@@ -90,19 +90,6 @@ define([
       expect($w.find(".s-num-found").html().trim()).to.eql('<span class="s-light-font description">Your search returned</span> <b><span class="num-found-container">841,359</span></b><span class="s-light-font"> results</span>');
     });
 
-    it("should allow the user to open and close a dropdown menu from the search bar", function(done){
-      var widget = _widget();
-      var $w = widget.render().$el;
-      $('#test').append($w);
-
-      expect( widget.view.$(".input-group-btn").hasClass("open")).to.equal(false);
-      widget.view.$(".show-form").click();
-      expect( widget.view.$(".input-group-btn").hasClass("open")).to.equal(true);
-      widget.view.$(".show-form").click();
-      expect( widget.view.$(".input-group-btn").hasClass("open")).to.equal(false);
-      done();
-    });
-
 
     it("should allow the user to click to add fielded search words to search bar", function(done) {
       var widget = _widget();
@@ -253,8 +240,17 @@ define([
 
 
 
-    it("shows the query builder form on clicking 'Search Form' ", function() {
+    it("shows the query builder form on clicking 'Search Form' ", function(done) {
+      var widget = _widget();
+      var $w = widget.render().$el;
+      $('#test').append($w);
 
+      expect( widget.view.$(".input-group-btn").hasClass("open")).to.equal(false);
+      widget.view.$(".show-form").click();
+      expect( widget.view.$(".input-group-btn").hasClass("open")).to.equal(true);
+      widget.view.$(".show-form").click();
+      expect( widget.view.$(".input-group-btn").hasClass("open")).to.equal(false);
+      done();
     });
 
     it("in QB form: when rule is removed, the form stays open", function() {
@@ -265,7 +261,51 @@ define([
 
     });
 
-    it("changing operator updates the search input", function() {
+    it("changing function updates the search input", function() {
+      var widget = _widget();
+      var $w = widget.render().$el;
+      $('#test').append($w);
+
+      widget.view.$(".show-form").click();
+
+      // test functions
+      $w.find('.rule-container:first select:nth(0)').val('pos()').trigger('change');
+      expect($w.find('.rule-value-container:first input[name=query]').is(':visible')).to.eql(true);
+      expect($w.find('.rule-value-container:first input[name=start]').is(':visible')).to.eql(true);
+      expect($w.find('.rule-value-container:first input[name=end]').is(':visible')).to.eql(true);
+
+      $w.find('.rule-value-container:first input[name=query]').val('foo').trigger('change');
+      $w.find('.rule-value-container:first input[name=start]').val(10).trigger('change');
+      expect($w.find('.rule-value-container:first input[name$=_value]').val()).to.eql('foo|10');
+
+
+      $w.find('.rule-container:first select:nth(0)').val('citations()').trigger('change');
+      expect($w.find('.rule-value-container:first input[name=query]').is(':visible')).to.eql(true);
+      $w.find('.rule-value-container:first input[name=query]').val('citations').trigger('change');
+      expect($w.find('.rule-value-container:first input[name$=_value]').val()).to.eql('citations');
+
+      $w.find('.rule-container:first select:nth(0)').val('references()').trigger('change');
+      expect($w.find('.rule-value-container:first input[name=query]').is(':visible')).to.eql(true);
+      $w.find('.rule-value-container:first input[name=query]').val('references').trigger('change');
+      expect($w.find('.rule-value-container:first input[name$=_value]').val()).to.eql('references');
+
+      $w.find('.rule-container:first select:nth(0)').val('trending()').trigger('change');
+      expect($w.find('.rule-value-container:first input[name=query]').is(':visible')).to.eql(true);
+      $w.find('.rule-value-container:first input[name=query]').val('trending').trigger('change');
+      expect($w.find('.rule-value-container:first input[name$=_value]').val()).to.eql('trending');
+
+      $w.find('.rule-container:first select:nth(0)').val('reviews()').trigger('change');
+      expect($w.find('.rule-value-container:first input[name=query]').is(':visible')).to.eql(true);
+      $w.find('.rule-value-container:first input[name=query]').val('reviews').trigger('change');
+      expect($w.find('.rule-value-container:first input[name$=_value]').val()).to.eql('reviews');
+
+      $w.find('.rule-container:first select:nth(0)').val('topn()').trigger('change');
+      expect($w.find('.rule-value-container:first input[name=query]').is(':visible')).to.eql(true);
+      expect($w.find('.rule-value-container:first input[name=number]').is(':visible')).to.eql(true);
+      expect($w.find('.rule-value-container:first select[name=sorting]').is(':visible')).to.eql(true);
+      $w.find('.rule-value-container:first input[name=query]').val('foo').trigger('change');
+      $w.find('.rule-value-container:first input[name=number]').val(10).trigger('change');
+      expect($w.find('.rule-value-container:first input[name$=_value]').val()).to.eql('foo|10');
 
     });
 
