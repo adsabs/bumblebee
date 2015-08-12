@@ -9,24 +9,24 @@
  */
 
 define([
-  'underscore',
-  'bootstrap',
-  'jquery',
-  'jquery-querybuilder',
-  'js/components/generic_module',
-  'js/components/query_builder/rules_translator',
-  'js/components/api_query'
+    'underscore',
+    'bootstrap',
+    'jquery',
+    'jquery-querybuilder',
+    'js/components/generic_module',
+    'js/components/query_builder/rules_translator',
+    'js/components/api_query'
   ],
 
   function(
-  _,
-  Bootstrap,
-  $,
-  jQueryQueryBuilderPlugin,
-  GenericModule,
-  RulesTranslator,
-  ApiQuery
-  ) {
+    _,
+    Bootstrap,
+    $,
+    jQueryQueryBuilderPlugin,
+    GenericModule,
+    RulesTranslator,
+    ApiQuery
+    ) {
 
     var QueryBuilder = GenericModule.extend({
 
@@ -572,16 +572,16 @@ define([
 
       _checkRulesConstraints: function(uiRules) {
         /*if (uiRules.field) {
-          var m;
-          if (m = this.operatorMap[uiRules.field]) {
-            if (m[uiRules.operator]) {
-              uiRules.operator = m[uiRules.operator];
-            }
-            else {
-              throw new Error("Operator mapping is missing a value for:" + JSON.stringify(uiRules) + ' we have: ' + JSON.stringify(m));
-            }
-          }
-        }*/
+         var m;
+         if (m = this.operatorMap[uiRules.field]) {
+         if (m[uiRules.operator]) {
+         uiRules.operator = m[uiRules.operator];
+         }
+         else {
+         throw new Error("Operator mapping is missing a value for:" + JSON.stringify(uiRules) + ' we have: ' + JSON.stringify(m));
+         }
+         }
+         }*/
 
         if (uiRules.rules) {
           _.each(uiRules.rules, function(r) {

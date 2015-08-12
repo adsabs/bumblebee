@@ -54,7 +54,7 @@ define([
   module,
   BeeHive,
   ApiAccess
-  ) {
+) {
 
 
   var Application = function(options) {
@@ -99,13 +99,15 @@ define([
     },
 
     /*
-    * code that accounts for browser deficiencies
-    */
+     * code that accounts for browser deficiencies
+     */
 
-    shim : function(){
+    shim: function() {
 
       if (!window.location.origin) {
-        window.location.origin = window.location.protocol + "//" + window.location.hostname + (window.location.port ? ':' + window.location.port: '');
+        window.location.origin = window.location.protocol + "//" +
+          window.location.hostname + (window.location.port ? ':' +
+            window.location.port : '');
       }
     },
 
@@ -135,13 +137,14 @@ define([
 
       var core = config['core'];
       if (core) {
-        _.each(['controllers', 'modules', 'services', 'objects'], function(name) {
-          if (core[name]) {
-            promise = self._loadModules(name, core[name]);
-            if (promise)
-              promises.push(promise);
-          }
-        });
+        _.each(['controllers', 'modules', 'services', 'objects'],
+          function(name) {
+            if (core[name]) {
+              promise = self._loadModules(name, core[name]);
+              if (promise)
+                promises.push(promise);
+            }
+          });
       }
 
       var plugins = config['plugins'];
@@ -159,25 +162,29 @@ define([
       }
 
       var bigPromise = $.when.apply($, promises)
-        .then(function () {
-          _.each(arguments, function (promisedValues, idx) {
+        .then(function() {
+          _.each(arguments, function(promisedValues, idx) {
             if (_.isArray(promisedValues)) {
               if (self.debug) {
-                console.log('application: registering ' + promisedValues[0]);
+                console.log('application: registering ' +
+                  promisedValues[0]);
               }
-              self._registerLoadedModules.apply(self, promisedValues);
+              self._registerLoadedModules.apply(self,
+                promisedValues);
             }
           })
         })
-        .fail(function () {
-          console.error("Generic error - we were not successul in loading all modules for config", config);
+        .fail(function() {
+          console.error(
+            "Generic error - we were not successul in loading all modules for config",
+            config);
           if (arguments.length)
             console.error(arguments);
           //throw new Error("We are screwed!"); do not throw errors because then .fail() callbacks cannot be used
         });
-        //.done(function() {
-        //  console.log('DONE loading', this, config);
-        //});
+      //.done(function() {
+      //  console.log('DONE loading', this, config);
+      //});
 
       return bigPromise;
     },
@@ -195,7 +202,8 @@ define([
 
       createInstance = function(key, module) {
         if (!module) {
-          console.warn('Object ' + key + ' is empty, cannot instantiate it!');
+          console.warn('Object ' + key +
+            ' is empty, cannot instantiate it!');
           return;
         }
         if (self.debug) {
@@ -214,48 +222,62 @@ define([
 
       if (section == "controllers") {
         hasKey = _.bind(this.hasController, this);
-        removeKey = _.bind(function(key) {this.__controllers.remove(key)}, this);
-        addKey = _.bind(function(key, module) {this.__controllers.add(key, module)}, this);
-      }
-      else if (section == "services") {
+        removeKey = _.bind(function(key) {
+          this.__controllers.remove(key)
+        }, this);
+        addKey = _.bind(function(key, module) {
+          this.__controllers.add(key, module)
+        }, this);
+      } else if (section == "services") {
         hasKey = _.bind(beehive.hasService, beehive);
         removeKey = _.bind(beehive.removeService, beehive);
         addKey = _.bind(beehive.addService, beehive);
-      }
-      else if (section == 'objects') {
+      } else if (section == 'objects') {
         hasKey = _.bind(beehive.hasObject, beehive);
         removeKey = _.bind(beehive.removeObject, beehive);
         addKey = _.bind(beehive.addObject, beehive);
-      }
-      else if (section == 'modules') {
-        createInstance = function(key, module) {return module};
+      } else if (section == 'modules') {
+        createInstance = function(key, module) {
+          return module
+        };
         hasKey = _.bind(this.hasModule, this);
-        removeKey = _.bind(function(key) {this.__modules.remove(key)}, this);
-        addKey = _.bind(function(key, module) {this.__modules.add(key, module)}, this);
-      }
-      else if (section == 'widgets') {
+        removeKey = _.bind(function(key) {
+          this.__modules.remove(key)
+        }, this);
+        addKey = _.bind(function(key, module) {
+          this.__modules.add(key, module)
+        }, this);
+      } else if (section == 'widgets') {
         hasKey = _.bind(this.hasWidget, this);
-        removeKey = _.bind(function(key) {this.__widgets.remove(key)}, this);
-        addKey = _.bind(function(key, module) {this.__widgets.add(key, module)}, this);
-      }
-      else if (section == 'plugins') {
+        removeKey = _.bind(function(key) {
+          this.__widgets.remove(key)
+        }, this);
+        addKey = _.bind(function(key, module) {
+          this.__widgets.add(key, module)
+        }, this);
+      } else if (section == 'plugins') {
         hasKey = _.bind(this.hasPlugin, this);
-        removeKey = _.bind(function(key) {this.__plugins.remove(key)}, this);
-        addKey = _.bind(function(key, module) {this.__plugins.add(key, module)}, this);
-      }
-      else {
+        removeKey = _.bind(function(key) {
+          this.__plugins.remove(key)
+        }, this);
+        addKey = _.bind(function(key, module) {
+          this.__plugins.add(key, module)
+        }, this);
+      } else {
         throw new Error("Unknown section: " + section);
       }
 
       _.each(_.pairs(modules), function(m) {
         key = m[0], module = m[1];
         if (hasKey(key)) {
-          console.warn("Removing (existing) object into [" + section + "]: " + key);
+          console.warn("Removing (existing) object into [" +
+            section + "]: " + key);
           removeKey(key);
         }
         var inst = createInstance(key, module);
         if (!inst) {
-          console.warn('Removing ' + key + '(because it is null!)');
+          console.warn('Removing ' + key +
+            '(because it is null!)');
           return;
         }
         addKey(key, inst);
@@ -269,7 +291,9 @@ define([
         var impl = module[1];
 
         if (!_.isString(symbolicName) || !_.isString(impl))
-          throw new Error("You are kidding me, the key/implementation must be string values");
+          throw new Error(
+            "You are kidding me, the key/implementation must be string values"
+          );
 
       });
     },
@@ -288,13 +312,15 @@ define([
      * @param modulePrescription
      * @private
      */
-    _loadModules: function(sectionName, modulePrescription, ignoreErrors) {
+    _loadModules: function(sectionName, modulePrescription,
+      ignoreErrors) {
 
       var self = this;
       this._checkPrescription(modulePrescription);
 
       if (this.debug) {
-        console.log('application: loading ' + sectionName, modulePrescription);
+        console.log('application: loading ' + sectionName,
+          modulePrescription);
       }
 
       var ret = {};
@@ -304,20 +330,22 @@ define([
       var impls = _.values(modulePrescription);
       var defer = $.Deferred();
 
-      var callback = function () {
-        console.timeEnd("startLoading"+sectionName)
+      var callback = function() {
+        console.timeEnd("startLoading" + sectionName)
         var modules = arguments;
-        _.each(implNames, function (name, idx, implList) {
+        _.each(implNames, function(name, idx, implList) {
           ret[name] = modules[idx];
         });
         defer.resolve(sectionName, ret);
         if (self.debug) {
-          console.log('Loaded: type=' + sectionName + ' state=' + defer.state(), ret);
+          console.log('Loaded: type=' + sectionName + ' state=' +
+            defer.state(), ret);
         }
       };
 
-      var errback = function (err) {
-        var symbolicName = err.requireModules && err.requireModules[0];
+      var errback = function(err) {
+        var symbolicName = err.requireModules && err.requireModules[
+          0];
         console.warn("Error loading impl=" + symbolicName, err.requireMap);
         if (ignoreErrors) {
           console.warn("Ignoring error");
@@ -326,7 +354,7 @@ define([
         defer.reject();
       };
 
-      console.time("startLoading"+sectionName)
+      console.time("startLoading" + sectionName)
 
       // start loading the modules
       //console.log('loading', implNames, impls)
@@ -336,15 +364,16 @@ define([
     },
 
     _setTimeout: function(deferred) {
-      setTimeout(function () {
+      setTimeout(function() {
         if (deferred.state() != 'resolved') {
-          deferred.reject('Timeout, application is loading too long');
+          deferred.reject(
+            'Timeout, application is loading too long');
         }
       }, this.timeout || 30000);
       return deferred;
     },
 
-    destroy : function() {
+    destroy: function() {
       this.getBeeHive().destroy();
     },
     activate: function(options) {
@@ -352,13 +381,18 @@ define([
       var self = this;
 
       // services are activated by beehive itself
-      if (self.debug) {console.log('application: beehive.activate()')};
+      if (self.debug) {
+        console.log('application: beehive.activate()')
+      };
       beehive.activate(beehive);
 
       // controllers receive application itself and elevated beehive object
       // all of the must succeed; we don't catch errors
       _.each(this.getAllControllers(), function(el) {
-        if (self.debug) {console.log('application: controllers: ' + el[0] + '.activate(beehive, app)')};
+        if (self.debug) {
+          console.log('application: controllers: ' + el[0] +
+            '.activate(beehive, app)')
+        };
         var plugin = el[1];
         if ('activate' in plugin) {
           plugin.activate(beehive, self);
@@ -369,15 +403,15 @@ define([
       _.each(this.getAllModules(), function(el) {
         try {
           if (self.debug) {
-            console.log('application: modules: ' + el[0] + '.activate(beehive)');
+            console.log('application: modules: ' + el[0] +
+              '.activate(beehive)');
           }
           var plugin = el[1];
           if ('activate' in plugin) {
             plugin.activate(beehive);
           }
-        }
-        catch (e) {
-          console.error('Error activating:' +el[0]);
+        } catch (e) {
+          console.error('Error activating:' + el[0]);
           console.error(e);
         }
       });
@@ -385,37 +419,47 @@ define([
       // all the rest receive hardened beehive
       var hardenedBee;
       _.each(this.getAllPlugins(), function(el) {
-        if (self.debug) {console.log('application: plugins: ' + el[0] + '.activate(beehive)')}
+        if (self.debug) {
+          console.log('application: plugins: ' + el[0] +
+            '.activate(beehive)')
+        }
         try {
           var plugin = el[1];
           if ('activate' in plugin) {
             var children = plugin.activate(hardenedBee = beehive.getHardenedInstance());
-            self.__barbarianRegistry[hardenedBee.getService('PubSub').getCurrentPubSubKey().getId()] = 'plugin:' + el[0];
+            self.__barbarianRegistry[hardenedBee.getService(
+                'PubSub').getCurrentPubSubKey().getId()] =
+              'plugin:' + el[0];
             if (children) {
-              self._registerBarbarianChildren('plugin', el[0], children);
+              self._registerBarbarianChildren('plugin', el[0],
+                children);
             }
           }
-        }
-        catch (e) {
-          console.error('Error activating:' +el[0]);
+        } catch (e) {
+          console.error('Error activating:' + el[0]);
           console.error(e);
         }
       });
       _.each(this.getAllWidgets(), function(el) {
-        if (self.debug) {console.log('application: widget: ' + el[0] + '.activate(beehive)')}
+        if (self.debug) {
+          console.log('application: widget: ' + el[0] +
+            '.activate(beehive)')
+        }
         try {
           var plugin = el[1];
           var children;
           if ('activate' in plugin) {
             children = plugin.activate(hardenedBee = beehive.getHardenedInstance());
-            self.__barbarianRegistry[hardenedBee.getService('PubSub').getCurrentPubSubKey().getId()] = 'widget:' + el[0];
+            self.__barbarianRegistry[hardenedBee.getService(
+                'PubSub').getCurrentPubSubKey().getId()] =
+              'widget:' + el[0];
             if (children) {
-              self._registerBarbarianChildren('widget', el[0], children);
+              self._registerBarbarianChildren('widget', el[0],
+                children);
             }
           }
-        }
-        catch (e) {
-          console.error('Error activating:' +el[0]);
+        } catch (e) {
+          console.error('Error activating:' + el[0]);
           console.error(e);
         }
       });
@@ -437,13 +481,16 @@ define([
         var name = prefix + '-' + (child.name || key);
         if (this.debug)
           console.log('adding child object to registry: ' + name);
-        this.__barbarianRegistry[child.beehive.getService('PubSub').getCurrentPubSubKey().getId()] = category + ':' + name;
+        this.__barbarianRegistry[child.beehive.getService(
+            'PubSub').getCurrentPubSubKey().getId()] = category +
+          ':' + name;
         if (category == 'widget') {
-          if (this.hasWidget(name)) throw new Error('There already exists a widget with name: ' + name);
+          if (this.hasWidget(name)) throw new Error(
+            'There already exists a widget with name: ' + name);
           this.__widgets.add(name, child.object);
-        }
-        else {
-          if (this.hasPlugin(name)) throw new Error('There already exists a plugin with name: ' + name);
+        } else {
+          if (this.hasPlugin(name)) throw new Error(
+            'There already exists a plugin with name: ' + name);
           this.__plugins.add(name, child.object);
         }
       }, this);
@@ -464,8 +511,7 @@ define([
       var k;
       if (this.__barbarianRegistry[psk]) {
         k = this.__barbarianRegistry[psk];
-      }
-      else {
+      } else {
         return undefined;
       }
       return k;
@@ -479,12 +525,13 @@ define([
 
       if (this.__widgets.has(key[1])) {
         return this.__widgets.get(key[1]);
-      }
-      else if (this.__plugins.has(key[1])) {
+      } else if (this.__plugins.has(key[1])) {
         return this.__plugins.get(key[1]);
       }
 
-      throw new Error('Eeeek, thisis unexpectEED bEhAvjor! Cant find barbarian with ID: ' + psk);
+      throw new Error(
+        'Eeeek, thisis unexpectEED bEhAvjor! Cant find barbarian with ID: ' +
+        psk);
     },
 
     isActivated: function() {
@@ -560,12 +607,18 @@ define([
      * @param options
      */
     triggerMethodOnAll: function(funcName, options) {
-      this.triggerMethod(this.getAllControllers(), 'controllers', funcName, options);
-      this.triggerMethod(this.getAllModules(), 'modules', funcName, options);
-      this.triggerMethod(this.getAllPlugins(), 'plugins', funcName, options);
-      this.triggerMethod(this.getAllWidgets(), 'widgets', funcName, options);
-      this.triggerMethod(this.getBeeHive().getAllServices(), 'BeeHive:services', funcName, options);
-      this.triggerMethod(this.getBeeHive().getAllObjects(), 'BeeHive:objects', funcName, options);
+      this.triggerMethod(this.getAllControllers(), 'controllers',
+        funcName, options);
+      this.triggerMethod(this.getAllModules(), 'modules', funcName,
+        options);
+      this.triggerMethod(this.getAllPlugins(), 'plugins', funcName,
+        options);
+      this.triggerMethod(this.getAllWidgets(), 'widgets', funcName,
+        options);
+      this.triggerMethod(this.getBeeHive().getAllServices(),
+        'BeeHive:services', funcName, options);
+      this.triggerMethod(this.getBeeHive().getAllObjects(),
+        'BeeHive:objects', funcName, options);
     },
 
     triggerMethod: function(objects, msg, funcName, options) {
@@ -573,7 +626,10 @@ define([
       var rets = _.map(objects, function(el) {
         var obj = el[1];
         if (funcName in obj) {
-          if (self.debug) {console.log('application.triggerMethod: ' + msg + ": " + el[0] + '.' + funcName + '()')};
+          if (self.debug) {
+            console.log('application.triggerMethod: ' + msg +
+              ": " + el[0] + '.' + funcName + '()')
+          };
           obj[funcName].call(obj, options);
         }
       });
