@@ -85,7 +85,7 @@ module.exports = function(grunt) {
     // copied over to the 'dist' folder
     requirejs: {
       baseUrl: 'dist/js', // this is needed just for the 'stupid' list task
-      release: {
+      release_individual: {
         options: {
           baseUrl: 'dist/js',
           allowSourceOverwrites: true,
@@ -97,6 +97,55 @@ module.exports = function(grunt) {
           wrap: true,
           preserveLicenseComments: false,
           dir: 'dist/js',
+          uglify2: {
+            output: {
+              beautify: false
+            },
+            warnings: true,
+            mangle: false
+          }
+        }
+      },
+      release_concatenated : {
+        options: {
+          baseUrl: 'dist/',
+          wrapShim: true,
+          include : (function(){
+
+            var s = grunt.file.read("src/discovery.config.js"),
+                require = {config : function(s){return s}},
+                bumblebeeConfig = eval(s).config['js/apps/discovery/main'];
+
+            function getPaths(obj) {
+              var paths = [];
+
+              function pushPaths(config_obj) {
+               for (var k in config_obj) {
+                 var v = config_obj[k];
+                 if (v instanceof Object) {
+                   pushPaths(v);
+                 } else {
+                   paths.push(v);
+                 }
+               }
+              };
+
+              pushPaths(obj);
+              return paths;
+            }
+
+            return getPaths(bumblebeeConfig);
+
+          }()),
+          allowSourceOverwrites: true,
+          out: "dist/concatenated_bumblebee.js",
+          name: "js/apps/discovery/main",
+          keepBuildDir: true,
+          mainConfigFile : "dist/discovery.config.js",
+          generateSourceMaps: false,
+          findNestedDependencies: true,
+          wrap: true,
+          preserveLicenseComments: false,
           uglify2: {
             output: {
               beautify: false
@@ -444,6 +493,24 @@ module.exports = function(grunt) {
       }
     },
 
+    /* for changing the name of the data-main file in dist/index */
+
+    'string-replace': {
+      dist: {
+        files: [{
+          src: 'dist/index.html',
+          dest: 'dist/index.html'
+        }],
+        options: {
+          replacements: [{
+            pattern: 'data-main="./discovery.config"',
+            replacement: 'data-main="./concatenated_bumblebee.js"'
+          }]
+        }
+      }
+    },
+
+
     less: {
       development: {
         options : {
@@ -694,6 +761,8 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-hash-required');
   grunt.loadNpmTasks('grunt-saucelabs');
   grunt.loadNpmTasks('grunt-curl');
+  grunt.loadNpmTasks('grunt-string-replace');
+
 
   // Create an aliased test task.
   grunt.registerTask('setup', 'Sets up the development environment',
@@ -845,7 +914,8 @@ module.exports = function(grunt) {
   grunt.registerTask('release',
     [ 'setup',
       'clean:release', 'copy:release',
-      'requirejs:release', 'requirejs:release_css',
+      'string-replace:dist',
+      'requirejs:release_individual', 'requirejs:release_concatenated','requirejs:release_css',
       'hash_require:js', 'hash_require:css',
       'exec:git_describe', 'copy:keep_original',
       'assemble',

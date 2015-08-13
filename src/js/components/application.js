@@ -323,7 +323,7 @@ define([
           console.warn("Ignoring error");
           return;
         }
-        defer.reject();
+        defer.resolve();
       };
 
       console.time("startLoading"+sectionName)
