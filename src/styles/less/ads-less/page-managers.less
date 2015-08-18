@@ -6,6 +6,33 @@ s-search-bar-motion is applied */
 }
 
 
+.loading-screen {
+  height: 100vh;
+  padding-top: 30vh;
+  text-align:center;
+  font-size: 3em;
+  font-weight: 300;
+}
+
+.logo__astrophysics {
+  font-weight: 500;
+  letter-spacing: .03em;
+  color: @gray-light;
+}
+
+.logo__data-system {
+  letter-spacing: 0.09em;
+  position: relative;
+  top: -20px;
+  color: lighten(@gray-light, 12%);
+
+}
+
+.loading-screen__loading {
+  position: relative;
+  top: -40px;
+  font-size: .5em;
+}
 
 .hidden-col{
   width: 0 ;
@@ -77,7 +104,7 @@ s-search-bar-motion is applied */
 
   .clearfix;
 
-  .s-content-container;
+  .s-ads-card;
   min-height: 600px;
   padding-bottom: 20px;
   position: relative;
@@ -98,7 +125,7 @@ s-search-bar-motion is applied */
 }
 
 .s-dynamic-page-body {
-  background-color:  @results-page-background;
+  background-color:  @darker-background;
   padding-bottom: 30px;
   min-height: 500px;
   position: relative;
@@ -123,7 +150,7 @@ s-search-bar-motion is applied */
     .lh-transition(width .5s ease-out, padding .5s ease-out)
   }
   .s-left-col-container {
-    .s-content-container;
+    .s-ads-card;
     padding: 10px;
     padding-bottom: 15px;
     min-height: 500px;
@@ -192,7 +219,7 @@ s-search-bar-motion is applied */
 Styles for Abstract Page
 */
 .s-right-col-widget-container {
-  .s-content-container;
+  .s-ads-card;
   padding: 5%;
   margin-bottom: 10px;
 
