@@ -467,9 +467,12 @@ module.exports = function(grunt) {
       bumblebee_app : {
         files : [{
           src: ["dist/bumblebee_app.js"],
-          dest : (function(){
+          dest: "dist/bumblebee_app.js",
+          rename : function(dest, src){
 
             var gitDescribe = grunt.file.read('git-describe').trim();
+
+            console.log(gitDescribe, dest, src)
 
             // find out what version of bbb we are going to assemble
             var tagInfo = gitDescribe.split('-');
@@ -483,7 +486,7 @@ module.exports = function(grunt) {
               return "dist/bumblebee_app." + version + ".js";
             }
 
-          })()
+          }
 
         }]
         }
@@ -941,10 +944,11 @@ module.exports = function(grunt) {
   grunt.registerTask('release',
     [ 'setup',
       'clean:release', 'copy:release',
+      'exec:git_describe',
       'string-replace:dist',
       'requirejs:release_individual', 'requirejs:release_concatenated','requirejs:release_css',
       'hash_require:js', 'hash_require:css',
-      'exec:git_describe', 'copy:keep_original', 'copy:bumblebee_app',
+      'copy:keep_original', 'copy:bumblebee_app',
       'assemble',
       'uglify'
   ]);
