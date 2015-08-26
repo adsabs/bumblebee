@@ -58,6 +58,8 @@ define([
 
       routes: {
         "": "index",
+        'classic-form' : 'classicForm',
+        'paper-form' : 'paperForm',
         'index/(:query)': 'index',
         'search/(:query)': 'search',
         'execute-query/(:query)': 'executeQuery',
@@ -70,13 +72,20 @@ define([
 
         'user/libraries(/)(:id)(/)(:subView)(/)(:subData)(/)' : 'librariesPage',
         'user/home' : 'homePage',
-
-        //"(:query)": 'index',
         '*invalidRoute': 'noPageFound'
       },
 
       index: function (query) {
         this.routerNavigate('index-page');
+      },
+
+      classicForm : function(){
+        this.routerNavigate('ClassicSearchForm');
+      },
+
+      paperForm : function(){
+        this.routerNavigate('PaperSearchForm');
+
       },
 
       search: function (query) {
@@ -285,7 +294,7 @@ define([
 
       noPageFound : function() {
         //i will fix this later
-        $("#body-template-container").html(ErrorTemplate())
+//        $("#body-template-container").html(ErrorTemplate())
       },
 
       // backbone default behaviour is to automatically decodeuri parameters
