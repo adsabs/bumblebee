@@ -72,6 +72,7 @@ define([
         });
 
         it("assembles the page view", function(done) {
+          this.timeout(5000)
           var app = new Application({debug: false});
           delete config.core.objects.Navigator;
           config.widgets.PageManager = 'js/wraps/abstract_page_manager/abstract_page_manager';
@@ -163,7 +164,7 @@ define([
           var app = new Application({debug: false});
           delete config.widgets.PageManager;
           config.widgets.FirstPageManager = 'js/page_managers/controller';
-          config.widgets.SecondPageManager = 'js/page_managers/toc_controller';
+          config.widgets.SecondPageManager = 'js/wraps/abstract_page_manager/abstract_page_manager';
 
           app.loadModules(config).done(function() {
 
@@ -217,7 +218,7 @@ define([
           delete config.widgets.PageManager;
           config.core.objects.PageManager = 'js/page_managers/master';
           config.widgets.FirstPageManager = 'js/page_managers/controller';
-          config.widgets.SecondPageManager = 'js/page_managers/toc_controller';
+          config.widgets.SecondPageManager = 'js/wraps/abstract_page_manager/abstract_page_manager';
 
           app.loadModules(config).done(function() {
 

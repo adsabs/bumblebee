@@ -10,26 +10,31 @@
 
 }
 
-.s-landing-section-1 {
+.s-starry-background-wrapper {
+  background-image: linear-gradient(to bottom, rgba(0, 0, 0, 0.1), rgba(0, 0, 0, .7)), url("../img/background.jpg");
+  margin: 0 -15px;
 
-  background-image: url("/styles/img/starry_background.jpg");
+}
+
+.s-logo-header {
+
+  background-attachment: fixed;
+
   .row;
-  border-bottom: 1px solid @gray-lighter;
-  padding-top: 35px;
-  padding-bottom: 25px;
+  padding-top: 25px;
+  padding-bottom: 15px;
   text-align: center;
 
 
 .ads-logo {
-  width: 40%;
-  max-width: 500px;
-  min-width: 300px;
+  width: 20%;
+  max-width: 380px;
+  min-width: 200px;
 
   @media(max-width: @screen-xs-max){
     width:80%;
     float:none !important;
   }
-
 }
 
   .bumblebee {
@@ -55,40 +60,94 @@
     padding: 10px 0 0 0;
   }
 
-  .s-tabs {
-    margin-left: 13.7%;
-    margin-bottom: 0;
-  }
 
-  .s-tab {
-    width: 230px;
-    font-size: 24px;
-    text-align: left;
-    border-bottom: 6px solid @transparent;
+}
 
-    &.active {
-      border-bottom: 6px solid @brand-primary-faded;
+.s-landing-nav-container {
 
-    }
-
-    &:hover {
-      border-bottom: 6px solid lighten(@brand-primary-faded, 25%)
-    }
-
-    &.active:hover{
-      border-bottom: 6px solid @brand-primary-faded;
-
-    }
-  }
-
-  .s-tab {
-
-  }
+  .lh-box-shadow(0 3px 3px @gray-light);
+  margin: 0 -15px;
+  position: relative;
 
 
 }
 
+.s-landing-tabs {
+
+  .s-tab {
+    font-size: 20px;
+    a {
+      letter-spacing: .15em;
+    }
+  }
+
+  .s-tab:not(.active){
+    a {
+      color: @gray-lighter;
+    }
+  }
+
+  svg {
+    max-height: 90px;
+    position: relative;
+    top: 8px;
+    .lh-transition(transform .5s, fill .5s);
+  }
+
+  .active {
+    font-weight: bold;
+    color: lighten(@brand-primary-faded, 10%);
+    svg {
+      .lh-transform(scale(1.3))
+    }
+  }
+
+  z-index: 2;
+  text-align: center;
+  height: 117px;
+  position: relative;
+  top: -34px;
+
+  .modern-search {
+    position: relative;
+    top: -18px;
+    width: 111px;
+    left: 40px;
+  }
+  .svg-needs-stroke {
+    stroke: @gray-lighter;
+  }
+
+  .svg-needs-fill {
+    fill: @gray-lighter;
+  }
+
+  .active {
+    .svg-needs-stroke {
+      stroke: lighten(@brand-primary-faded, 10%);
+    }
+
+    .svg-needs-fill {
+      fill:lighten(@brand-primary-faded, 10%);
+    }
+
+  }
+
+  &::after {
+    position:absolute;
+    bottom: 1px;
+    background-color: black;
+    width: 100%;
+    height:20px;
+    z-index: @z-index-1;
+  }
+
+}
+
 .s-search-bar-rows-container {
+
+  margin: auto;
+  max-width: 750px;
 
   // for the quick add buttons
 
@@ -97,7 +156,9 @@
   }
 }
 
-.s-landing-section-2 {
+
+
+.s-landing-main {
   min-height: 700px;
   background: @darker-background;
 
@@ -110,7 +171,7 @@
 
 }
 
-.s-landing-section-3 {
+.s-bumblebee-info {
 
   font-size: 1.2em;
   margin: 0 -15px;
@@ -175,16 +236,6 @@
 
 
 
-
-.s-landing-section-4 {
-  color: @text-color;
-  background-color: white;
-  min-height: 730px;
-  font-size: 24px;
-  text-align: center;
-  margin: 0 -15px;
-}
-
 .s-description {
   font-size: 1.6em;
   padding: 15px;
@@ -232,3 +283,63 @@
 
 
 }
+
+.paper-search-form {
+  width: 400px;
+  margin: auto;
+}
+
+//classic form widget
+
+.classic-form__logic-group {
+
+  label {
+    font-variant: small-caps;
+    font-weight: 400;
+    font-size: 17px;
+    margin-right: 3px;
+  }
+}
+
+div[data-field=date] {
+
+  input {
+    width: 90px !important;
+    display: inline-block !important;
+    margin: 0 6px;
+  }
+  input:first-of-type{
+    margin: 0 6px 0 0;
+  }
+}
+
+.classic-form {
+
+  label {
+    color: @gray;
+  }
+
+  font-size: 16px;
+  max-width: 640px;
+  margin: auto;
+
+  div[data-field] {
+    margin-bottom: 15px;
+  }
+
+  .col-sm-6 {
+    padding: 0;
+
+    .classic-author-label, .classic-object-label {
+    position: absolute;
+    top: 2px;
+    }
+
+   .classic-form__logic-group {
+     position: relative;
+     left: 93px;
+    }
+  }
+}
+
+
