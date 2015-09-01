@@ -18,20 +18,49 @@
 //icons for links
 
 .s-icon-draw-attention {
-  color: darken(@brand-info, 5%) !important;
+  color: lighten(@brand-primary-faded, 10%) !important;
 
 }
 
 .s-link-details {
   position: absolute;
-  top: 23px;
+  top: 18px;
   background-color: white;
   .s-ads-card;
-  padding: 8px 10px;
+  .lh-box-shadow(1px 1px 2px @gray-darker);
+  padding: 12px 14px;
   z-index: @z-index-4;
-  margin-left: -8%;
-  min-width: 140px;
+  margin-left: -70%;
+  min-width: 180px;
   font-weight:normal;
+
+//  &:before, &:after {
+//    content: ' ';
+//    height: 0;
+//    position: absolute;
+//    width: 0;
+//    border: 7px solid transparent; /* arrow size */
+//  }
+//
+//  &:before {
+//    border-bottom-color: #fff;  /* arrow color */
+//
+//    /* positioning */
+//    position: absolute;
+//    top: -14px;
+//    left: 9px;
+//    z-index: 2;
+//  }
+//
+//  /* arrow which acts as a background shadow */
+//  &:after {
+//    border-bottom-color: #333;  /* arrow color */
+//    /* positioning */
+//    position: absolute;
+//    top: -14px;
+//    left: 9px;
+//    z-index: 1;
+//  }
 
 }
 
@@ -39,19 +68,13 @@
 
   display: inline-block;
   position:relative;
-  margin-top: 0px;
-  margin-bottom: -4px;
-  font-size : 1.05em;
-
-
-  //confused why this is necessary
-  @media (min-width: @screen-sm-min){
-    margin-right: 4%;
-  }
+  margin: 0 12% -4px 0;
+  font-size: 16px;
 
   i {
     color : darken(@gray-lighter, 2%);
     cursor: default;
+    font-size : 17px;
   }
 
   .s-active-link {
@@ -59,9 +82,7 @@
     i {
       cursor: pointer !important;
       color : @brand-primary;
-
     }
-
   }
 }
 
@@ -99,7 +120,11 @@
 
 .s-top-row {
   font-weight: 300;
-  font-size : 14px;
+  margin-bottom: 6px;
+
+  .s-citation-link {
+    color: @brand-primary;
+  }
 }
 
 .s-show-details-container {
@@ -120,7 +145,8 @@
 
 .s-results-authors {
   padding-left: .5%;
-  font-weight: 500;
+  font-size:16px;
+
 }
 
 
@@ -208,17 +234,13 @@
 
 .s-results-list {
 
-  .icon-more-info {
-    font-size: 1.1em;
-  }
-
   label {
     font-weight: initial
   }
 
   //represents an individual entry
   .s-display-block {
-    padding-bottom: 1em;
+    padding-bottom: 1.1em;
     border-left: 5px solid #fff;
   }
 
@@ -252,6 +274,7 @@ li.article-author {
   padding-left: 2px;
   padding-right: 2px;
   font-weight: 400;
+  font-size: 16px;
 }
 
 
@@ -311,9 +334,6 @@ li.article-author {
     font-size: 16px;
   }
 
-  .s-top-row {
-    font-size  : 14px;
-  }
 
   .s-results-authors{
     font-size: 14px;
