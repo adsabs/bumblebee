@@ -1079,7 +1079,7 @@ define([
       minsub.publish(minsub.START_SEARCH, new ApiQuery({q : "star"}));
 
       metricsWidget.showMetricsForCurrentQuery();
-      expect($("#test").find(".metrics-metadata").text().trim()).to.eql('Currently viewing metrics for 2\n    \n     papers.\n    \n \nChange to first  paper(s) (max is 2).\n Submit');
+      expect($("#test").find(".metrics-metadata").text().trim()).to.eql('Currently viewing metrics for 2\n            \n            papers.\n            \n        \n        Change to first  paper(s) (max is 2).\n         Submit \n\n    \n    \n           Generate PDF');
 
 
         sinon.spy(metricsWidget.getPubSub(), "publish");
