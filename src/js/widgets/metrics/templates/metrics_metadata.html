@@ -1,9 +1,17 @@
-<h5>Currently viewing metrics for {{current}}
-    {{#compare current 1 operator = ">"}}
-     papers.
-    {{else}}
-    paper.
-    {{/compare}}
- </h5>
-Change to first <input type="text" class="metrics-rows form-control s-display-inline input-sm"/> paper(s) (max is {{max}}).
-<button class="submit-rows btn btn-sm btn-info"> Submit </button>
+<div class="row">
+    <div class="col-sm-6">
+        <h5>Currently viewing metrics for {{current}}
+            {{#compare current 1 operator = ">"}}
+            papers.
+            {{else}}
+            paper.
+            {{/compare}}
+        </h5>
+        Change to first <input type="text" class="metrics-rows form-control s-display-inline input-sm"/> paper(s) (max is {{max}}).
+        <button class="submit-rows btn btn-sm btn-info"> Submit </button>
+
+    </div>
+    <div class="col-sm-6">
+          <button class="btn btn-primary generatePDF"><i class="fa fa-image"></i> Generate PDF</button>
+    </div>
+</div>

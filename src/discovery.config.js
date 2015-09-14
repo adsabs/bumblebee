@@ -178,8 +178,9 @@ require.config({
     'zeroclipboard' : 'libs/zeroclipboard/ZeroClipboard',
     'filesaver' : 'libs/FileSaver/FileSaver',
     'select2' : 'libs/select2/select2',
-    'squire': '../bower_components/squire/src/Squire'
-
+    'squire': '../bower_components/squire/src/Squire',
+    'canvg' : 'libs/canvg/canvg.bundle',
+    'html2canvas' : 'libs/html2canvas/html2canvas'
   },
 
   hbs : {
