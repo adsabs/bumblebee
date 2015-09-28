@@ -15,22 +15,33 @@ define([
     var PageManagerController = BasicPageManagerController.extend({
 
       assemble: function(app) {
+
+        if (!this.navConfig){
+        throw new Error("TOC widget is being assembled without navigation configuration (navConfig)");
+        }
+
         if (this.assembled)
           return;
 
         BasicPageManagerController.prototype.assemble.apply(this, arguments);
 
+        var tocTemplate = Marionette.getOption(this, "TOCTemplate");
 
         if (this.TOCEvents){
           //initiate the TOC view
           this.widgets.tocWidget = new TOCWidget(
-            {template : Marionette.getOption(this, "TOCTemplate"),
-            events : Marionette.getOption(this, "TOCEvents") });
+            {
+              template : tocTemplate,
+              events : Marionette.getOption(this, "TOCEvents") ,
+              navConfig : Marionette.getOption(this, "navConfig")
+            }
+          );
         }
         else {
           //initiate the TOC view
           this.widgets.tocWidget = new TOCWidget({
-            template : Marionette.getOption(this, "TOCTemplate")
+            template : tocTemplate,
+            navConfig : Marionette.getOption(this, "navConfig")
           });
         }
 
