@@ -79,14 +79,15 @@ define([
     onAppStarted : function(){
 
       var that = this;
-      this.beehive.getObject("User").getOpenURLConfig().done(function(config){
+      var user = this.beehive.getObject("User");
 
-        that.openURLCollection.reset(config);
-
-      }).fail(function(){
+      if (user) {
+        user.getOpenURLConfig().done(function(config){
+          that.openURLCollection.reset(config);
+        }).fail(function(){
 
         });
-
+      }
     },
 
     handleViewEvents : function(event, arg1, arg2){

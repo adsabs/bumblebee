@@ -2,7 +2,8 @@ define([
   './core-suite',
   './ui-suite',
   './qb-suite',
-  './orcid-suite'
+  './orcid-suite',
+  './wraps-suite'
 ], function(
   core,
   ui,
