@@ -85,12 +85,13 @@ define([
 
               // display the site-wide message
               self.alert(new ApiFeedback({
-                  msg: val + ' (<a id="dismissSiteWideMsg" href="foo">dismiss</a>)',
+                  msg: val,
                   events: {
-                    'click a#dismissSiteWideMsg': 'dismissed'
+                    'click button.close': 'dismissed'
                   }
                 }))
                 .done(function (v) {
+                  debugger
                   if (v == 'dismissed') {
                     if (user && user.isLoggedIn())
                       user.setMyADSData({'last_seen_message': val});
