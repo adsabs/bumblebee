@@ -25,22 +25,19 @@ define([
       activate: function(beehive, app) {
         AlertsMediator.prototype.activate.apply(this, arguments);
         var pubsub = this.getPubSub();
-        pubsub.subscribe(pubsub.APP_STARTED, _.bind(this.onAppStart, this));
+        pubsub.subscribe(pubsub.APP_STARTED, _.bind(this.displaySiteMessage, this));
+        pubsub.subscribe(pubsub.ARIA_ANNOUNCEMENT, _.bind(this.displaySiteMessage, this));
       },
 
       onAlert: function(apiFeedback, psk) {
         this._dirty = true;
-        AlertsMediator.prototype.onAlert.call(this, arguments);
+        AlertsMediator.prototype.onAlert.apply(this, arguments);
       },
 
-      onAppStart: function() {
+      displaySiteMessage : function() {
         var self = this;
         setTimeout(function() {
           self.checkAndDisplaySiteMessage();
-          self.timerId = setInterval(function() {
-            self.checkAndDisplaySiteMessage();
-          }, 3600 * 1000);
-
         }, 1000);
       },
 
@@ -91,7 +88,6 @@ define([
                   }
                 }))
                 .done(function (v) {
-                  debugger
                   if (v == 'dismissed') {
                     if (user && user.isLoggedIn())
                       user.setMyADSData({'last_seen_message': val});

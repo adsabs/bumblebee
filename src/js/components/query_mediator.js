@@ -370,7 +370,7 @@ define(['underscore',
        */
       executeRequest: function(apiRequest, senderKey) {
         if (!(apiRequest instanceof ApiRequest)) {
-          throw new Error('Sir, I belive you forgot to send me a valid ApiRequest!');
+          throw new Error('Sir or Madam, I believe you forgot to send me a valid ApiRequest!');
         }
         else if (!senderKey){
           throw new Error("Request executed, but no widget id provided!");

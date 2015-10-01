@@ -66,7 +66,7 @@ define([
         app.getObject('AppStorage').setCurrentQuery(null);
       }
 
-      app.getService('Navigator').navigate('results-page');
+           app.getService('Navigator').navigate('results-page');
 
       if (feedback.request && feedback.request.get('target').indexOf('search') > -1 && feedback.query && !feedback.numFound) {
         var q = feedback.query;
