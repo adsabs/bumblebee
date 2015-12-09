@@ -61,7 +61,7 @@ define([
 
         var searchPageAlwaysVisible = [
           'Results', 'QueryInfo','AuthorFacet', 'DatabaseFacet', 'RefereedFacet',
-          'KeywordFacet', 'BibstemFacet', 'BibgroupFacet', 'DataFacet',
+          'KeywordFacet', 'BibstemFacet', 'BibgroupFacet', 'DataFacet', 'ObjectFacet',
           'VizierFacet', 'GrantsFacet', 'GraphTabs', 'QueryDebugInfo',
           'ExportDropdown', 'VisualizationDropdown', 'SearchWidget',
           'Sort', 'BreadcrumbsWidget'
