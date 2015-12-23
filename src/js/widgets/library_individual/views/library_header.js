@@ -35,7 +35,9 @@ define([
         num_users : 0,
         permission : "read",
         owner : undefined,
-        public : false
+        public : false,
+        //orcid var
+        orcidSignedIn : false
 
       }
     },
@@ -66,7 +68,8 @@ define([
     },
 
     modelEvents : {
-      "change:active" : "highlightTab"
+      "change:active" : "highlightTab",
+      "change:orcidSignedIn" : "render"
     },
 
 

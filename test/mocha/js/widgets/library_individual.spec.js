@@ -9,7 +9,6 @@ define([
 
   ){
 
-
   describe("Library Widget (library_individual.spec.js)", function(){
 
     var stubLibraryMetadata =   [
@@ -344,6 +343,13 @@ define([
 
     };
 
+    var fakeOrcidApi = function(){
+      return {
+        getHardenedInstance : function() { return this },
+        hasAccess : function(){ return true }
+      }
+    }
+
     afterEach(function(){
       $("#test").empty();
     });
@@ -360,6 +366,8 @@ define([
       }))({verbose: false});
 
       minsub.beehive.addObject("LibraryController", fakeLibraryController);
+      minsub.beehive.addService("OrcidApi", fakeOrcidApi());
+
       w.activate(minsub.beehive.getHardenedInstance());
 
       var spy = sinon.spy();
@@ -419,6 +427,7 @@ define([
       }))({verbose: false});
 
       minsub.beehive.addObject("LibraryController", fakeLibraryController);
+      minsub.beehive.addService("OrcidApi", fakeOrcidApi());
 
       w.activate(minsub.beehive.getHardenedInstance());
 
@@ -452,6 +461,7 @@ define([
       }))({verbose: false});
 
       minsub.beehive.addObject("LibraryController", fakeLibraryController);
+      minsub.beehive.addService("OrcidApi", fakeOrcidApi());
 
       w.activate(minsub.beehive.getHardenedInstance());
 
@@ -577,6 +587,8 @@ define([
       }))({verbose: false});
 
       minsub.beehive.addObject("LibraryController", fakeLibraryController);
+      minsub.beehive.addService("OrcidApi", fakeOrcidApi());
+
 
       w.activate(minsub.beehive.getHardenedInstance());
 
@@ -624,6 +636,7 @@ define([
       }))({verbose: false});
 
       minsub.beehive.addObject("LibraryController", fakeLibraryController);
+      minsub.beehive.addService("OrcidApi", fakeOrcidApi());
 
       w.activate(minsub.beehive.getHardenedInstance());
 
@@ -660,6 +673,8 @@ define([
       }))({verbose: false});
 
       minsub.beehive.addObject("LibraryController", fakeLibraryController);
+      minsub.beehive.addService("OrcidApi", fakeOrcidApi());
+
 
       w.activate(minsub.beehive.getHardenedInstance());
 
@@ -705,12 +720,14 @@ define([
       }))({verbose: false});
 
       minsub.beehive.addObject("LibraryController", fakeLibraryController);
+      minsub.beehive.addService("OrcidApi", fakeOrcidApi());
 
       w.activate(minsub.beehive.getHardenedInstance());
 
       $("#test").append(w.getEl());
 
       w.setSubView({ subView :"admin", id : "1", publicView : false });
+
 
       $("#test .public-button").click();
 
@@ -720,6 +737,7 @@ define([
           "public": true
         }
       ]);
+
 
     });
 

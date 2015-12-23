@@ -153,7 +153,6 @@ define([
             (targetRoute || '/#/user/orcid'))
         });
         //make sure to redirect to the proper page after sign in
-        this.getPubSub().publish(this.getPubSub().ORCID_ANNOUNCEMENT, "login");
         var currentPage = this.getBeeHive().getService("HistoryManager").getCurrentNav();
         this.getBeeHive().getObject("AppStorage").setStashedNav(currentPage);
 
@@ -220,7 +219,8 @@ define([
        */
       signOut: function () {
         this.saveAccessData(null);
-        this.getPubSub().publish(this.getPubSub().ORCID_ANNOUNCEMENT, "logout");
+        //we just authenticated. inform other widgets:
+        this.getPubSub().publish(this.getPubSub().ORCID_ANNOUNCEMENT, this.ORCID_SIGNED_OUT);
       },
 
       hasExchangeCode: function (searchString) {
@@ -919,7 +919,7 @@ define([
 
         if (profile && profile['orcid-profile'])
           profile = profile['orcid-profile'];
-        
+
         var self = this;
 
         var whenDone = $.Deferred();
@@ -1073,6 +1073,109 @@ define([
         this.dirtyThrottle(this);
 
         return this.dirty;
+      },
+
+      /*
+      * widgets can request a bulk update/add of orcid records
+      * */
+
+      batchUpdateOrcid : function(records){
+
+        if (!records instanceof Array) throw new Error('You are supposed to send a list of records');
+
+        var toAdd = [], toUpdate = [], that = this;
+        var updateDeferred = $.Deferred(), addDeferred = $.Deferred(), finalDeferred = $.Deferred();
+
+        //detect which records are already in ORCID profile
+        records.forEach(function(record){
+          that.getRecordInfo(record).done(function(recInfo){
+            if (!recInfo.isCreatedByUs && !recInfo.isCreatedByOthers){
+              //add it
+              toAdd.push(record);
+              checkDone();
+            }
+            else {
+              //update it
+              toUpdate.push(record);
+              checkDone();
+            }
+          })
+        });
+
+        //attempt to bulk add then bulk update
+        //fall back on adding one-by-one if there is an error
+        function checkDone (){
+          //check if data has been received about every record
+          if (toAdd.length + toUpdate.length === records.length){
+
+            that.addWorks(toAdd)
+                .done(function() {
+                  //all records were successfully added
+                  addDeferred.resolve({ success : _.pluck(toAdd, "bibcode"), fail : [] });
+                })
+                .fail(function() {
+                  var successfullyAdded = [], failAdded = [];
+                  //fall back to adding one-by-one
+                  toAdd.forEach(function(record){
+                    that.updateOrcid("add", record)
+                        .done(function(){
+                          successfullyAdded.push(record.bibcode);
+                          checkAddDone();
+                        })
+                        .fail(function(){
+                          failAdded.push({ bibcode: record.bibcode, title : record.title[0] });
+                          checkAddDone();
+                        });
+                  });
+
+                  function checkAddDone(){
+                    if (successfullyAdded.length + failAdded.length === toAdd.length){
+                      addDeferred.resolve({ success : successfullyAdded , fail: failAdded });
+                    }
+                  }
+                });
+
+            that.updateWorks(toUpdate)
+                .done(function() {
+                  //all records were successfully added
+                  updateDeferred.resolve({ success : _.pluck(toUpdate, "bibcode"), fail : [] });
+                })
+                .fail(function() {
+                  var successfullyUpdated = [], failUpdated = [];
+                  //fall back to adding one-by-one
+                  toUpdate.forEach(function(record){
+                    that.updateOrcid("update", record)
+                        .done(function(){
+                          successfullyUpdated.push(record.bibcode);
+                          checkUpdateDone();
+                        })
+                        .fail(function(){
+                          failUpdated.push({ bibcode: record.bibcode, title : record.title[0] });
+                          checkUpdateDone();
+                        });
+                  });
+
+                  function checkUpdateDone(){
+                    if (successfullyUpdated.length + failUpdated.length === toUpdate.length){
+                      updateDeferred.resolve({ success : successfullyUpdated , fail : failUpdated });
+                    }
+                  }
+                });
+          }
+        }
+
+        //wait for toAdd and toUpdate to finish, then resolve the returned promise
+        $.when(updateDeferred, addDeferred).done(function(updateData, addData){
+          finalDeferred.resolve({
+            update : updateData.success,
+            add : addData.success,
+            //instead of just a list of bibcodes, this list is in the form [{bibcode: x, title : y}]
+            fail : updateData.fail.concat(addData.fail)
+          })
+        });
+
+        return finalDeferred.promise();
+
       },
 
       /**
@@ -1285,13 +1388,21 @@ define([
         setADSUserData : '',
         getRecordInfo: 'provides info about a document',
         updateOrcid: 'the main access point for widgets',
+        batchUpdateOrcid : 'widgets can add/update a list of records at 1 time',
         getOrcidProfileInAdsFormat: 'retrieves the Orcid profile in ADS format',
-        getOrcidVal: 'value getter'
+        getOrcidVal: 'value getter',
+        ORCID_SIGNED_IN : 'constant',
+        ORCID_SIGNED_OUT : 'constant'
       }
     });
 
     _.extend(OrcidApi.prototype, Mixins.BeeHive);
     _.extend(OrcidApi.prototype, HardenedMixin);
+
+    _.extend(OrcidApi.prototype, {
+      ORCID_SIGNED_IN: 'orcid_signed_in',
+      ORCID_SIGNED_OUT: 'orcid_signed_out',
+    });
 
     return OrcidApi;
   });

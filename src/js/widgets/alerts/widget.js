@@ -98,6 +98,7 @@ define([
         var self = this;
         var events = this.model.get('events');
 
+
         // attach functions to events; copied from backbone
         // when 'event' is fired, it will call/resolve the
         // promise object with the name of the event
@@ -142,6 +143,8 @@ define([
       },
 
       showModal: function() {
+        //remove previous backdrop
+        $(".modal-backdrop").remove();
         this.$el.find('#alertBox').modal('show');
       }
     });
@@ -168,7 +171,6 @@ define([
         //to prevent re-rendering in inopportune moments
         //WARNING: because this is subscribing to pubsub.navigate, it might be called
         //right after another recently shown widget triggers an alert
-        
         this.view.destroy();
       },
 

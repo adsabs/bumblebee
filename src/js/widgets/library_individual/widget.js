@@ -1,19 +1,23 @@
+
 define([
 
     "marionette",
     "js/components/api_query",
     "js/widgets/base/base_widget",
+    "js/components/api_feedback",
     "./views/library_header",
     "./views/manage_permissions",
     "./views/view_library",
     "hbs!./templates/layout-container",
-    "hbs!./templates/loading-library",
+    "hbs!./templates/loading-library"
+
   ],
   function(
 
     Marionette,
     ApiQuery,
     BaseWidget,
+    ApiFeedback,
     HeaderView,
     AdminView,
     LibraryView,
@@ -69,6 +73,26 @@ define([
         _.bindAll(this);
         var pubsub = beehive.getService('PubSub');
         pubsub.subscribe(pubsub.LIBRARY_CHANGE, this.onLibraryChange);
+        pubsub.subscribe(pubsub.ORCID_ANNOUNCEMENT, this.onOrcidAnnouncement);
+
+        //set initial orcidSignedIn status
+        var orcidLoggedIn = this.getBeeHive().getService("OrcidApi").hasAccess();
+        this.headerModel.set("orcidSignedIn", orcidLoggedIn);
+        //views need to be updated manually, they do not listen to change events
+        this.syncHeader(this.libraryCollection.toJSON());
+      },
+
+      onOrcidAnnouncement : function(msg){
+        //headerview automatically listens to change event on orcidSignedIn
+
+        var orcidApi = this.getBeeHive().getService("OrcidApi");
+        if (msg === orcidApi.ORCID_SIGNED_OUT){
+          this.headerModel.set("orcidSignedIn", false);
+        }
+        else if (msg === orcidApi.ORCID_SIGNED_IN){
+          this.headerModel.set("orcidSignedIn", true);
+        }
+
       },
 
       onLibraryChange : function(collectionJSON, info){
@@ -301,13 +325,20 @@ define([
             var other = ["export", "metrics", "visualization"];
             var publicView = this.model.get("publicView");
             if (_.contains(other, arg1)){
+
+              //special handle of ORCID export
+              if (arg1 === "export" && arg2 === "orcid"){
+                this.exportLibToOrcid(this.libraryCollection.toJSON());
+                return
+              }
+
               var command =  "library-" + arg1;
               pubsub.publish(pubsub.NAVIGATE, command, {bibcodes : this.libraryCollection.pluck("bibcode"), subView : arg2, id : id, publicView : publicView});
             }
             else {
               pubsub.publish(pubsub.NAVIGATE, "IndividualLibraryWidget", { subView : arg1, id : id, publicView : publicView });
             }
-            break
+            break;
 
           case "delete-library":
             this.getBeeHive().getObject("LibraryController").deleteLibrary(id, this.headerModel.get("name"));
@@ -320,8 +351,72 @@ define([
 
             pubsub.publish(pubsub.START_SEARCH, query);
         }
-      }
+      },
 
+      exportLibToOrcid : function(library) {
+
+        var pubsub = this.getPubSub();
+        var feedback;
+
+        //loading overlay so user knows something is happening
+        pubsub.publish(pubsub.ALERT, new ApiFeedback({
+          code: ApiFeedback.CODES.ALERT,
+          msg: "<i class='icon-loading'></i> working...",
+          title: "Please Wait, Sending Records To ORCID...",
+          modal : true
+        }));
+
+        this.getBeeHive()
+            .getService("OrcidApi")
+            .batchUpdateOrcid(library)
+            .done(function(data){
+
+              if (data.fail.length){
+
+                var failedRecords = data.fail.map(function(record){
+                  return "<li>" + record.title + "</li>"
+                });
+
+                var msg = "Partial Success " + data.add.length + " record(s) added to ORCID, " +
+                          data.update.length + " pre-existing record(s) updated " +
+                          "and the following records caused an error and were not proccessed: <ul>" + failedRecords + "</ul>";
+
+                feedback = new ApiFeedback({
+                  code: ApiFeedback.CODES.ALERT,
+                  msg:  msg,
+                  modal : true,
+                  type : "success"
+                });
+
+              }
+              else {
+                //all records were successfully added or updated, no failures
+                feedback = new ApiFeedback({
+                  code: ApiFeedback.CODES.ALERT,
+                  msg: "If you add papers to this library in the future, you must export this library to ORCID again.",
+                  title: "Success! " + data.add.length + " record(s) added to ORCID and " + data.update.length + " record(s) updated",
+                  type: "success",
+                  modal : true
+                });
+              }
+              pubsub.publish(pubsub.ALERT, feedback);
+
+            })
+        .fail(function(){
+          //this shouldn't happen, a resolved promise should always be returned by orcid api
+          // (which should have caught the errors in the "fail" param returned by the resolved promise)
+          feedback = new ApiFeedback({
+            code: ApiFeedback.CODES.ALERT,
+            msg: "Please try again later.",
+            title: "There was an error adding papers to ORCID",
+            type: "danger",
+            modal : true
+          })
+
+          pubsub.publish(pubsub.ALERT, feedback);
+
+        });
+      }
     });
 
     return Library

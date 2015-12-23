@@ -36,6 +36,9 @@
                     <li data-tab="export-aastex">AASTeX</li>
                     <li data-tab="export-endnote">EndNote</li>
                     <li data-tab="export-classic">ADS Classic</li>
+                    {{#if orcidSignedIn}}
+                        <li data-tab="export-orcid"><img src="styles/img/orcid-inactive.svg" alt="orcid logo" style="max-width:20px;margin-right:5px;">ORCID</li>
+                    {{/if}}
                 </ul>
             </li>
             <li class="tab s-tab  {{#compare active 'metrics'}} active {{/compare}}" data-tab="metrics"><i class="icon-explore"></i> Metrics </li>
@@ -174,6 +177,9 @@
                 <li data-tab="export-aastex">AASTex</li>
                 <li data-tab="export-endnote">EndNote</li>
                 <li data-tab="export-classic">ADS Classic</li>
+                {{#if orcidSignedIn}}
+                    <li data-tab="export-orcid"><img src="styles/img/orcid-inactive.svg" alt="orcid logo" style="max-width:20px;margin-right:5px;">ORCID</li>
+                {{/if}}
             </ul>
         </li>
         <li class="tab s-tab  {{#compare active 'metrics'}} active {{/compare}}" data-tab="metrics"><i class="icon-explore"></i> Metrics </li>
@@ -205,8 +211,4 @@
     </ul>
     {{/compare}}
 
-
 {{/if}}
-
-
-
