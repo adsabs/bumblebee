@@ -898,9 +898,34 @@ define([
             });
         });
 
+
+        it("allows for bulk updating of orcid", function(done) {
+
+          var oApi = getOrcidApi();
+
+          //first, it attempts to bulk update or add tje bibcodes
+          oApi.batchUpdateOrcid([{title: 'foo', bibcode: 'test-bibcode'}, {title: 'boo', bibcode: 'a brand new bibcode'}])
+              .done(function(d){
+                expect(JSON.stringify(d)).to.eql('{"update":["test-bibcode"],"add":["a brand new bibcode"],"fail":[]}')
+              });
+
+          // if falls back to adding one-by-one if the bulk update causes an error
+          oApi.addWorks = function(doc){
+            //raise an error
+            if (JSON.stringify(doc) === '[{"title":"boo","bibcode":"a brand new bibcode"}]'){
+              var d = $.Deferred();
+              d.reject();
+              return d.promise();
+            }
+          };
+
+          oApi.batchUpdateOrcid([{title: 'foo', bibcode: 'test-bibcode'}, {title: 'boo', bibcode: 'a brand new bibcode'}])
+              .done(function(d){
+                expect(JSON.stringify(d)).to.eql('{"update":["test-bibcode"],"add":[],"fail":[{"bibcode":"a brand new bibcode","title":"b"}]}');
+                done();
+              });
+        });
       });
-
-
 
     });
   });

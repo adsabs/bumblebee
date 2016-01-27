@@ -546,6 +546,7 @@ define([
           var orcidApi = app.getService('OrcidApi');
           var persistentStorage  = app.getService('PersistentStorage');
           var appStorage = app.getObject('AppStorage');
+          var pubsub = app.getService('PubSub');
 
           // traffic from Orcid - user has authorized our access
           if (!orcidApi.hasAccess() && orcidApi.hasExchangeCode()) {
@@ -580,6 +581,9 @@ define([
           if (orcidApi.hasAccess()) {
 
             if (persistentStorage.get("orcidAuthenticating")){
+
+              //we just authenticated. inform other widgets:
+              self.getPubSub().publish(self.getPubSub().ORCID_ANNOUNCEMENT, orcidApi.ORCID_SIGNED_IN);
 
               persistentStorage.remove("orcidAuthenticating");
               // check if we need to trigger modal alert to ask user to fill in necessary data

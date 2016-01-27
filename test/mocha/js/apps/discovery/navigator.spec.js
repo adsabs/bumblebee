@@ -28,7 +28,8 @@ define([
           //pretending user hasnt filled in data yet
           d.resolve({});
           return d.promise();
-        }
+        },
+        ORCID_SIGNED_IN :  'orcid_signed_in'
       };
       var storage = {
         get : function(val){
@@ -102,7 +103,7 @@ define([
         }
       };
 
-
+      n.activate(minsub.beehive.getHardenedInstance())
       n.start(app);
 
       //1. dont show the modal
@@ -131,6 +132,7 @@ define([
           if (a == "stashedNav") return undefined;
         }
       };
+
 
       n.catalog.get("orcid-page").execute();
 
