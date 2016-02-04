@@ -22,11 +22,13 @@ define(['config', 'module'], function(config, module) {
       'js/mixins/api_access',
       'es5-shim'
     ],
-    function(Router,
+    function(
+      Router,
       Application,
       DiscoveryBootstrap,
       ApiAccess
-      ) {
+    ) {
+
       Application.prototype.shim();
 
       // at the beginning, we don't know anything about ourselves...
@@ -71,9 +73,6 @@ define(['config', 'module'], function(config, module) {
           //accessibility: skip to main content
           $("body").on("click", "#skip-to-main-content", function(e){
             e.preventDefault();
-
-            $("#main-content").focus();
-
           });
 
           var dynConf = app.getObject('DynamicConfig');
