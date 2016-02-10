@@ -1,7 +1,7 @@
 /**
- * Discovery application: main bootstrapping routine
+ * Bumblebox application: main bootstrapping routine
  *
- * Here we will bring up to life the discovery application,
+ * Here we will bring up to life the bumblebox application,
  * all configuration is provided through the discovery.config.js
  *
  * Inside the config, there are sections for:
@@ -13,36 +13,38 @@
  *
  */
 
-define(['config', 'module'], function(config, module) {
-
-  require([
+define([
+  'config',
+  'module'
+],
+  function(
+    config,
+    module
+  ) {
+    require([
       'router',
       'js/components/application',
-      'js/mixins/discovery_bootstrap',
-      'js/mixins/api_access',
+      'js/apps/bumblebox/bootstrap',
       'es5-shim'
     ],
     function(
       Router,
       Application,
-      DiscoveryBootstrap,
-      ApiAccess
+      AppBootstrap
     ) {
-
       Application.prototype.shim();
 
       // at the beginning, we don't know anything about ourselves...
-      var debug = window.location.href.indexOf('debug=true') > -1 ? true : false;
+      var debug = window.location.href.indexOf('debug=true') > -1;
 
       // app object will load everything
-      var app = new (Application.extend(DiscoveryBootstrap))({'debug': debug, timeout: 30000});
+      var app = new (Application.extend(AppBootstrap))({debug: debug, timeout: 30000});
 
       // load the objects/widgets/modules (using discovery.config.js)
       var defer = app.loadModules(module.config());
 
       // after they are loaded; we'll kick off the application
       defer.done(function() {
-
         // this will activate all loaded modules
         app.activate();
 
@@ -52,51 +54,38 @@ define(['config', 'module'], function(config, module) {
         // set some important urls, parameters before doing anything
         app.configure();
 
-        app.bootstrap().done(function (data) {
-
+        app.bootstrap().done(function(data) {
           app.onBootstrap(data);
-          pubsub.publish(pubsub.getCurrentPubSubKey(), pubsub.APP_BOOTSTRAPPED);
 
-          pubsub.publish(pubsub.getCurrentPubSubKey(), pubsub.APP_STARTING);
-          app.start(Router);
-          pubsub.publish(pubsub.getCurrentPubSubKey(), pubsub.APP_STARTED);
+          var conf = app.getObject('DynamicConfig');
+          app.loadModules({widgets: {TargetWidget: conf.mainWidget}})
+            .done(function() {
+              pubsub.publish(pubsub.getCurrentPubSubKey(), pubsub.APP_BOOTSTRAPPED);
 
-          //some global event handlers, not sure if right place
-          $("body").on("click", "button.toggle-menu", function(e){
-                        var $button = $(e.target),
-                             $sidebar =  $button.parents().eq(1).find(".nav-container");
+              pubsub.publish(pubsub.getCurrentPubSubKey(), pubsub.APP_STARTING);
+              app.start(Router);
+              pubsub.publish(pubsub.getCurrentPubSubKey(), pubsub.APP_STARTED);
 
-                        $sidebar.toggleClass("show");
-                        var text = $sidebar.hasClass("show") ? '  <i class="fa fa-close"></i> Close Menu' : ' <i class="fa fa-bars"></i> Show Menu';
-                        $button.html(text);
-                     });
-          //accessibility: skip to main content
-          $("body").on("click", "#skip-to-main-content", function(e){
-            e.preventDefault();
-          });
-
-          var dynConf = app.getObject('DynamicConfig');
-          if (dynConf && dynConf.debugExportBBB) {
-            console.log('Exposing Bumblebee as global object: window.bbb');
-            window.bbb = app;
-          }
-
-        }).fail(function () {
-          app.redirect('/500.html');
+              var dynConf = app.getObject('DynamicConfig');
+              if (dynConf && dynConf.debugExportBBB) {
+                console.log('Exposing Bumblebee as global object: window.bbb');
+                window.bbb = app;
+              }
+            })
+            .fail(function(err) {
+              console.error('Failed to load the application (stage: loading-widget)', err);
+            });
+        })
+        .fail(function() {
+          console.error('Failed to load the application (stage: bootstrap-config)');
         });
-
-      }).fail(function() {
-        if (debug){
-          //so error messages remain in the console
-          return
+      })
+      .fail(function() {
+        if (debug) {
+          // so error messages remain in the console
+          return;
         }
-        // if we failed loading, retry *once again* (and give up eventually)
-        app.reload('/404.html');
+        console.error('Failed to load the application (stage: loading modules)');
       });
-
     });
-
-
-
-
-});
+  });

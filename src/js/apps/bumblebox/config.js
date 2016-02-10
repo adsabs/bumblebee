@@ -5,13 +5,12 @@ require.config({
   // as a test, then load the test unittests
   deps: (function(){
     if (typeof window !== "undefined" && window.bbbTest){
-      return  [window.bbbTest.testLoader ? window.bbbTest.testLoader : '../test/test-loader' ];
+      return [window.bbbTest.testLoader ? window.bbbTest.testLoader : '../test/test-loader'];
     }
     else {
-      return [ 'js/apps/discovery/main'];
+      return ['js/apps/bumblebox/main'];
     }
   }()),
-
 
   waitSeconds: 30,
 
@@ -28,21 +27,21 @@ require.config({
     'js/apps/bumblebox/main': {
       core: {
         controllers: {
-          FeedbackMediator: 'js/wraps/discovery_mediator',
+          FeedbackMediator: 'js/components/feedback_mediator',
           QueryMediator: 'js/components/query_mediator',
           Diagnostics: 'js/bugutils/diagnostics',
-          AlertsController: 'js/wraps/alerts_mediator',
+          AlertsController: 'js/components/alerts_mediator'
         },
         services: {
           Api: 'js/services/api',
           PubSub: 'js/services/pubsub',
-          Navigator: 'js/apps/discovery/navigator',
-          PersistentStorage: 'js/services/storage',
+          Navigator: 'js/apps/bumblebox/navigator',
+          PersistentStorage: 'js/services/storage'
         },
         objects: {
-          DynamicConfig: 'discovery.vars',
+          DynamicConfig: 'embed.vars',
           MasterPageManager: 'js/page_managers/master',
-          AppStorage: 'js/components/app_storage',
+          AppStorage: 'js/components/app_storage'
         },
         modules: {
           FacetFactory: 'js/widgets/facet/factory'
@@ -50,9 +49,10 @@ require.config({
       },
       widgets: {
         AlertsWidget: 'js/widgets/alerts/widget',
+        LandingPage: 'js/wraps/landing_page_manager/landing_page_manager'
       },
       plugins: {}
-      }
+    }
   },
 
   // Configuration for the facades (you can pick specific implementation, just for your
@@ -60,6 +60,7 @@ require.config({
   map: {
     '*': {
       'pubsub_service_impl': 'js/services/default_pubsub',
+      'analytics_config': 'embed.vars'
     }
   },
 
@@ -71,37 +72,38 @@ require.config({
     'config': 'js/apps/bumblebox/config',
     'main': 'js/apps/bumblebox/main',
     'router': 'js/apps/bumblebox/router',
+    'bootstrap': 'js/apps/bumblebox/bootstrap',
 
     // the rest is libraries that are provided by BBB (and if you use BBB components
     // they can import js libraries using symbolic names)
     'analytics': 'js/components/analytics',
-    "underscore": "libs/lodash/lodash.compat",
+    'underscore': 'libs/lodash/lodash.compat',
     'jquery': 'libs/jquery/jquery',
     'backbone': 'libs/backbone/backbone',
     'hbs': 'libs/require-handlebars-plugin/hbs',
     'async': 'libs/requirejs-plugins/async',
-    'marionette' : 'libs/marionette/backbone.marionette',
-    'backbone.wreqr' : 'libs/backbone.wreqr/lib/backbone.wreqr',
-    'backbone.eventbinder' : 'libs/backbone.eventbinder/backbone.eventbinder',
-    'backbone.babysitter' : 'libs/backbone.babysitter/backbone.babysitter',
+    'marionette': 'libs/marionette/backbone.marionette',
+    'backbone.wreqr': 'libs/backbone.wreqr/lib/backbone.wreqr',
+    'backbone.eventbinder': 'libs/backbone.eventbinder/backbone.eventbinder',
+    'backbone.babysitter': 'libs/backbone.babysitter/backbone.babysitter',
     'bootstrap': 'libs/bootstrap/bootstrap',
-    'jquery-ui' : 'libs/jqueryui/jquery-ui',
-    'd3':'libs/d3/d3',
-    'd3-cloud' : 'libs/d3-cloud/d3.layout.cloud',
+    'jquery-ui': 'libs/jqueryui/jquery-ui',
+    'd3': 'libs/d3/d3',
+    'd3-cloud': 'libs/d3-cloud/d3.layout.cloud',
     'hoverIntent': 'libs/jquery-hoverIntent/jquery.hoverIntent',
     'cache': 'libs/dsjslib/lib/Cache',
     'jquery-querybuilder': 'libs/jQuery-QueryBuilder/query-builder',
-    'nvd3' :  'libs/nvd3/nv.d3',
-    'filesaver' : 'libs/FileSaver/FileSaver',
-    'select2' : 'libs/select2/select2',
+    'nvd3': 'libs/nvd3/nv.d3',
+    'filesaver': 'libs/FileSaver/FileSaver',
+    'select2': 'libs/select2/select2',
     'squire': '../bower_components/squire/src/Squire',
     'clipboard': 'libs/clipboard/clipboard',
-    'es5-shim' : 'libs/es5-shim/es5-shim',
-    'mathjax' : '//cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS_HTML&amp;delayStartupUntil=configured'
+    'es5-shim': 'libs/es5-shim/es5-shim',
+    'mathjax': '//cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS_HTML&amp;delayStartupUntil=configured',
 
     // for development use
-    //'google-analytics': "//www.google-analytics.com/analytics_debug",
-    'google-analytics': "//www.google-analytics.com/analytics",
+    // 'google-analytics': "//www.google-analytics.com/analytics_debug",
+    'google-analytics': '//www.google-analytics.com/analytics',
     'google-recaptcha' : '//www.google.com/recaptcha/api.js?&render=explicit&onload=onRecaptchaLoad',
     'persist-js': 'libs/persist-js/src/persist',
     'backbone-validation': 'libs/backbone-validation/backbone-validation',
@@ -110,11 +112,11 @@ require.config({
     // only for diagnostics/debugging/testing - wont get loaded otherwise
     'sprintf': 'libs/sprintf/sprintf',
     'chai': '../bower_components/chai/chai',
-    'sinon': '../bower_components/sinon/index',
+    'sinon': '../bower_components/sinon/index'
   },
 
-  hbs : {
-    'templateExtension' : 'html',
+  hbs: {
+    templateExtension: 'html',
     helpers: false
   },
 
@@ -164,28 +166,27 @@ require.config({
       exports: 'Persist'
     },
     mathjax: {
-        exports: "MathJax",
-        init: function () {
-          MathJax.Hub.Config({
-            HTML: ["input/TeX","output/HTML-CSS"],
-            TeX: { extensions: ["AMSmath.js","AMSsymbols.js"],
-              equationNumbers: { autoNumber: "AMS" } },
-            extensions: ["tex2jax.js"],
-            jax: ["input/TeX","output/HTML-CSS"],
-            tex2jax: { inlineMath: [ ['$','$'], ["\\(","\\)"] ],
-              displayMath: [ ['$$','$$'], ["\\[","\\]"] ],
-              processEscapes: true },
-            "HTML-CSS": { availableFonts: ["TeX"],
-              linebreaks: { automatic: true } }
-          });
-          MathJax.Hub.Startup.onload();
-          return MathJax;
-        }
+      exports: "MathJax",
+      init: function() {
+        MathJax.Hub.Config({
+          HTML: ["input/TeX","output/HTML-CSS"],
+          TeX: { extensions: ["AMSmath.js","AMSsymbols.js"],
+            equationNumbers: { autoNumber: "AMS" } },
+          extensions: ["tex2jax.js"],
+          jax: ["input/TeX","output/HTML-CSS"],
+          tex2jax: { inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+            displayMath: [ ['$$','$$'], ["\\[","\\]"] ],
+            processEscapes: true },
+          "HTML-CSS": { availableFonts: ["TeX"],
+            linebreaks: { automatic: true } }
+        });
+        MathJax.Hub.Startup.onload();
+        return MathJax;
+      }
     }
   },
 
   callback: function() {
-
     require(['hbs/handlebars'], function(Handlebars) {
       // register helpers
       // http://doginthehat.com.au/2012/02/comparison-block-helper-for-handlebars-templates/#comment-44
@@ -204,15 +205,15 @@ require.config({
         }
 
         operators = {
-          '==': function (l, r) { return l == r; },
-          '===': function (l, r) { return l === r; },
-          '!=': function (l, r) { return l != r; },
-          '!==': function (l, r) { return l !== r; },
-          '<': function (l, r) { return l < r; },
-          '>': function (l, r) { return l > r; },
-          '<=': function (l, r) { return l <= r; },
-          '>=': function (l, r) { return l >= r; },
-          'typeof': function (l, r) { return typeof l == r; }
+          '==': function(l, r) { return l == r; },
+          '===': function(l, r) { return l === r; },
+          '!=': function(l, r) { return l != r; },
+          '!==': function(l, r) { return l !== r; },
+          '<': function(l, r) { return l < r; },
+          '>': function(l, r) { return l > r; },
+          '<=': function(l, r) { return l <= r; },
+          '>=': function(l, r) { return l >= r; },
+          'typeof': function(l, r) { return typeof l == r; }
         };
         if (!operators[operator]) {
           throw new Error("Handlerbars Helper 'compare' doesn't know the operator " + operator);
