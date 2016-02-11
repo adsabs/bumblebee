@@ -22,7 +22,7 @@ define([
       configure: function(loadedConfig) {
         var conf = this.getObject('DynamicConfig') || {};
         conf = _.extend(loadedConfig, conf);
-        
+
         if (conf) {
           var beehive = this.getBeeHive();
           var api = beehive.getService('Api');

@@ -20,13 +20,16 @@ define([
 
       start: function(app) {
         this.set('index-page', function() {
-          app.getObject('MasterPageManager').show('LandingPage', ['TargetWidget']);
+          app.getObject('MasterPageManager').show('PageManager', ['TargetWidget']);
           this.route = '';
         });
-
         this.set('404', function() {
           app.getObject('MasterPageManager').show(['ErrorWidget']);
           this.route = '#404';
+        });
+        this.set('505', function() {
+          app.getObject('MasterPageManager').show(['ErrorWidget']);
+          this.route = '#505';
         });
       }
     });

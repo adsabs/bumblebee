@@ -49,7 +49,7 @@ require.config({
       },
       widgets: {
         AlertsWidget: 'js/widgets/alerts/widget',
-        LandingPage: 'js/wraps/landing_page_manager/landing_page_manager'
+        PageManager: 'js/apps/bumblebox/page_manager'
       },
       plugins: {}
     }
