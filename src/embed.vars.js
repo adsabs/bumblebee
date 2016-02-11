@@ -3,6 +3,10 @@ define([], function() {
   var config = {
 
     /**
+     * You can change the application
+     */
+
+    /**
      * Where to insert the application
      */
     targetElement: 'div#embed',
@@ -32,7 +36,7 @@ define([], function() {
      * the default config)
      * this can be absolute url; or url relative to the api path
      */
-    bootstrapUrls: [''],
+    bootstrapUrls: ['http://localhost:8000/embed.dyn.js'],
 
     /**
      *  pushState: when true, urls are without hashtag '#'

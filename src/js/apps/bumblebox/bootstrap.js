@@ -19,8 +19,10 @@ define([
     PubSubEvents
   ) {
     var Mixin = {
-      configure: function() {
-        var conf = this.getObject('DynamicConfig');
+      configure: function(loadedConfig) {
+        var conf = this.getObject('DynamicConfig') || {};
+        conf = _.extend(loadedConfig, conf);
+        
         if (conf) {
           var beehive = this.getBeeHive();
           var api = beehive.getService('Api');
@@ -39,63 +41,122 @@ define([
           }
           this.bootstrapUrls = conf.bootstrapUrls;
         }
+
+        // set the API key and other data from bootstrap
+        if (conf.access_token) {
+          this.getBeeHive().getService('Api').setVals({
+            access_token : conf.token_type + ':' + conf.access_token,
+            refresh_token : conf.refresh_token,
+            expires_in : conf.expires_in
+          });
+          console.warn('Redefining access_token: ' + conf.access_token);
+        }
+        else {
+          console.warn("bootstrap didn't provide access_token!");
+        }
       },
 
-      bootstrap: function() {
+      bootstrap: function(conf) {
+        conf = conf || {};
         var defer = $.Deferred();
-        var api = this.getBeeHive().getService('Api');
 
         // load configuration from remote endpoints
-        if (this.bootstrapUrls) {
-          var pendingReqs = this.bootstrapUrls.length;
+        if (conf.bootstrapUrls) {
+          var pendingReqs = conf.bootstrapUrls.length;
           var retVal = {};
 
           // harvest information from the remote urls and merge it into one object
-          var opts = {
-            done: function(data) {
-              pendingReqs--;
-              _.extend(retVal, data);
-              if (pendingReqs <= 0) defer.resolve(retVal);
-            },
-            fail: function () {
-              pendingReqs--;
-              if (pendingReqs <= 0) defer.resolve(retVal);
-            },
-            type: 'GET'
-          };
-          var redirectUri = location.origin + location.pathname;
-
-          _.each(this.bootstrapUrls, function(url) {
-            if (url.indexOf('http') > -1) {
-              opts.u = url;
-              api.request(new ApiRequest({
-                query: new ApiQuery({redirect_uri: redirectUri}),
-                target: ''}),
-              opts);
+          var reqs = [];
+          _.each(conf.bootstrapUrls, function(url) {
+            if (! url) return;
+            if (url.indexOf('.json') > -1) {
+              var jqXhr = $.ajax({
+                type: 'GET',
+                url: url,
+                dataType: url.indexOf('json') > -1 ? 'json' : 'script',
+                contentType: 'application/x-www-form-urlencoded',
+                cache: false,
+                timeout: 3000,
+                success: function (data) {
+                  if (_.isString(data)) {
+                    var v = eval(data);
+                    if (_.isFunction(v)) {
+                      data = v();
+                    }
+                    else {
+                      data = v;
+                    }
+                  }
+                  _.extend(retVal, data);
+                }});
             }
             else {
-              delete opts.u;
-              api.request(new ApiRequest({
-                query: new ApiQuery({redirect_uri: redirectUri}),
-                target: url}),
-              opts);
+              jqXhr = $.Deferred();
+              require([url],
+                function(data) {
+                  _.extend(retVal, data);
+                  jqXhr.resolve();
+                },
+                function() {
+                  jqXhr.resolve();
+                }
+              )
             }
+            reqs.push(jqXhr);
           });
+          if (reqs.length > 0 ) {
+            $.when.apply($, reqs).then(
+              function () {
+                defer.resolve(retVal)
+              },
+              function () {
+                defer.reject(arguments)
+              }
+            );
+          }
+          else {
+            defer.resolve({});
+          }
 
-          setTimeout(function() {
-            if (defer.state() == 'resolved')
-              return;
-            defer.reject();
-          },
-          3000);
         }
         else {
-          setTimeout(function() {
-            defer.resolve({}),
-            1
-          });
+          defer.resolve({});
         }
-        return defer;
+        return defer.promise();
+      },
+
+      onBootstrap: function (app_config, dynamic_config) {
+        // this is little bit of a (necessary) hack, we'll
+        // update the configuration of the requirejs's
+        var rConfig = null;
+        for (var k in requirejs.s.contexts) {
+          var kontext = requirejs.s.contexts[k];
+          if (kontext.config && kontext.config.config && kontext.config.config['js/apps/bumblebox/main']) {
+            // ignore this context if it's used by some other app already
+            if (kontext.config.config['js/apps/bumblebox/main']['bootstrap'])
+              return;
+            kontext.config.config['js/apps/bumblebox/main']['bootstrap'] = 'placeholder';
+            rConfig = kontext.config;
+          }
+        }
+        var enhanceConfig = function(targetConfig, dynamic_config) {
+          _.each(dynamic_config, function(value, key, obj) {
+            if (targetConfig[key]) {
+              var target = rConfig[key];
+              _.each(value, function(value, key, obj) {
+                target[key] = _.extend(value, target[key]); // use the new values as defaults
+              });
+            }
+          })
+        }
+        if (rConfig) {
+          enhanceConfig(rConfig, dynamic_config);
+        }
+
+        if (dynamic_config.TargetWidget) {
+          app_config.widgets.TargetWidget = dynamic_config.TargetWidget;
+        }
+        return app_config;
       },
 
       reload: function(endPage) {

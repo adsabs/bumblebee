@@ -14,23 +14,23 @@
  */
 
 define([
-  'config',
-  'module'
+  'module',
 ],
   function(
-    config,
     module
   ) {
     require([
       'router',
       'js/components/application',
       'js/apps/bumblebox/bootstrap',
+      'dynamic_config',
       'es5-shim'
     ],
     function(
       Router,
       Application,
-      AppBootstrap
+      AppBootstrap,
+      DynamicConfig
     ) {
       Application.prototype.shim();
 
@@ -40,26 +40,21 @@ define([
       // app object will load everything
       var app = new (Application.extend(AppBootstrap))({debug: debug, timeout: 30000});
 
-      // load the objects/widgets/modules (using discovery.config.js)
-      var defer = app.loadModules(module.config());
+      app.bootstrap(DynamicConfig)
+        .done(function(loadedConfig) {
+          var config = app.onBootstrap(module.config(), loadedConfig);
 
-      // after they are loaded; we'll kick off the application
-      defer.done(function() {
-        // this will activate all loaded modules
-        app.activate();
-
-        var pubsub = app.getService('PubSub');
-        pubsub.publish(pubsub.getCurrentPubSubKey(), pubsub.APP_LOADED);
-
-        // set some important urls, parameters before doing anything
-        app.configure();
-
-        app.bootstrap().done(function(data) {
-          app.onBootstrap(data);
-
-          var conf = app.getObject('DynamicConfig');
-          app.loadModules({widgets: {TargetWidget: conf.mainWidget}})
+          // load the objects/widgets/modules
+          app.loadModules(config)
             .done(function() {
+              // this will activate all loaded modules
+              app.activate();
+
+              var pubsub = app.getService('PubSub');
+              pubsub.publish(pubsub.getCurrentPubSubKey(), pubsub.APP_LOADED);
+
+              // set some important urls, parameters before doing anything
+              app.configure(loadedConfig);
               pubsub.publish(pubsub.getCurrentPubSubKey(), pubsub.APP_BOOTSTRAPPED);
 
               pubsub.publish(pubsub.getCurrentPubSubKey(), pubsub.APP_STARTING);
@@ -73,19 +68,16 @@ define([
               }
             })
             .fail(function(err) {
-              console.error('Failed to load the application (stage: loading-widget)', err);
+              if (debug) {
+                // so error messages remain in the console
+                return;
+              }
+              console.error('Failed to load the application (stage: loading modules)', err);
             });
         })
-        .fail(function() {
-          console.error('Failed to load the application (stage: bootstrap-config)');
+        .fail(function(err) {
+          console.error('Failed to load the application (stage: bootstrap-config)', err);
         });
-      })
-      .fail(function() {
-        if (debug) {
-          // so error messages remain in the console
-          return;
-        }
-        console.error('Failed to load the application (stage: loading modules)');
-      });
+
     });
   });
