@@ -9,7 +9,7 @@ define([], function() {
      * Where to insert the application
      */
     targetElement: 'div#embed',
-    TargetWidget: 'js/widgets/hello_world/widget',
+    TargetWidget: 'js/widgets/green_button/widget',
 
     map: {
       '*': {
