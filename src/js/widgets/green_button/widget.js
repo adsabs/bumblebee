@@ -12,6 +12,8 @@ define([
     'js/components/api_query',
     'js/components/api_request',
     'js/components/api_response',
+    'js/components/api_feedback',
+    'js/components/alerts',
 
     'js/widgets/base/base_widget',
     'hbs!./templates/widget-view',
@@ -27,6 +29,8 @@ define([
     ApiQuery,
     ApiRequest,
     ApiResponse,
+    ApiFeedback,
+    Alerts,
     BaseWidget,
     WidgetTemplate,
     ItemTemplate,
@@ -60,21 +64,19 @@ define([
       className : "s-service",
       template: ItemTemplate,
       events: {
-        'click button': 'onButtonClick'
+        'click a[data-value]': 'onAction',
+        'enter a[data-value]': 'onAction'
       },
       modelEvents: {
         "change" : 'render'
       },
 
-      onButtonClick: function(ev) {
-        if (ev) {
-          ev.stopPropagation();
+      onAction: function(ev) {
+        var v = ev.target.getAttribute('data-value');
+        if (v) {
+          // send the data back to the controller, which will decide what to do with it
+          this.triggerMethod('user:action', v, this.model);
         }
-        // send the data back to the controller, which will decide what to do with it
-        this.trigger('service-action', this.$el.find('input').val());
-      },
-      onRender: function() {
-        console.log('onRender', arguments)
       }
 
     });
@@ -112,6 +114,10 @@ define([
             collectionView.$("tbody tr:last").append(td);
           }
         }
+      },
+
+      onChildviewUserAction: function(childView, action, model) {
+        this.trigger('user:action', action, model);
       }
     });
 
@@ -119,15 +125,21 @@ define([
     var Controller = BaseWidget.extend({
 
       viewEvents: {
-         'service-action': 'onServiceAction'
+         'user:action': 'onUserAction',
+         'render': 'onRender'
       },
 
       initialize : function(options){
         this.model = new Environment({});
         this.collection = new EnvironmentCollection();
         this.view = new WidgetView({model: this.model, collection: this.collection});
-
         BaseWidget.prototype.initialize.apply(this, arguments);
+      },
+
+      onRender: function() {
+        if (this.collection.models.length <= 0) {
+          this.onRequest(new ApiQuery({command: 'update'}));
+        }
       },
 
       activate: function (beehive) {
@@ -135,6 +147,7 @@ define([
         var pubsub = beehive.getService('PubSub');
         pubsub.subscribe(pubsub.INVITING_REQUEST, _.bind(this.onRequest, this));
         pubsub.subscribe(pubsub.DELIVERING_RESPONSE, _.bind(this.onResponse, this));
+        pubsub.subscribe('confirmation', _.bind(this.onUserConfirmation, this));
       },
 
       onRequest: function(apiQuery) {
@@ -150,16 +163,6 @@ define([
       onResponse: function(apiResponse) {
         var data = apiResponse.toJSON();
         this.update(data);
-        console.log(data);
-      },
-
-      onServiceAction: function(name) {
-        if (name.toLowerCase() == 'bumblebee') {
-          this.model.set('name', 'wonderful ' + name);
-        }
-        else {
-          this.model.set('name', name);
-        }
       },
 
       /**
@@ -170,6 +173,105 @@ define([
         var coll = this._transform(data);
         this.model.set('cols', coll.cols, {silent: true});
         this.collection.reset(coll.models);
+      },
+
+      showAlert: function(msg, modal, events) {
+        modal = modal || false;
+        var pubsub = this.getPubSub();
+        pubsub.publish(pubsub.FEEDBACK, new ApiFeedback({
+          code: ApiFeedback.CODES.ALERT,
+          msg: msg,
+          modal: modal,
+          events: events
+        }));
+      },
+
+      onUserConfirmation: function(data) {
+        console.log('user:confirmed', data);
+        data = data || {};
+        var app = data.application;
+        var env = data.environment;
+        var command = data.command;
+        switch(command) {
+          case 'restart':
+            // TODO: make request to restart
+            break;
+          case 'revert':
+            break;
+        }
+      },
+
+      onUserAction: function(action, model, events) {
+        var app = model.get('application');
+        var env = model.get('environment');
+        var action_arg = null;
+
+        if (action.indexOf(':') > -1) {
+          var parts = action.split(':');
+          action = parts[0];
+          action_arg = parts.splice(1, parts.length()).join(':');
+        }
+
+        switch(action) {
+          case 'show-in-aws':
+            //TODO: must discover environment id
+            var url = 'https://console.aws.amazon.com/elasticbeanstalk/home?region=us-east-1#/environment/dashboard?applicationName=__app__&environmentId=__eid__';
+            url = url.replace('__app__', app);
+            url = url.replace('__eid__', env);
+            window.open(url, 'AWS ADSDeploy Window');
+            break;
+          case 'show-details':
+            this.showAlert('Not implemented yet', true);
+            break;
+          case 'restart':
+            this.showAlert('Are you sure you want to restart ' + env + ' (application: ' + app + ')? <a href="#">Yes!</a>',
+              true,
+              {
+                'click a': {
+                  signal: 'confirmation',
+                  action: Alerts.ACTION.CALL_PUBSUB,
+                    arguments: {application: app, environment: env, action: action}
+                }
+              }
+            );
+            break;
+          case 'revert':
+            if (action_arg) {
+              this.showAlert('Are you sure you want to revert ' + env + ' (' + app + '). To version: ' + action_arg + '? <a href="#">Yes!</a>',
+                true,
+                {
+                  'click a': {
+                    signal: 'confirmation',
+                    action: Alerts.ACTION.CALL_PUBSUB,
+                    arguments: {application: app, environment: env, action: action, version: action_arg}
+                  }
+                }
+              );
+            }
+            else {
+              var msg = ['Please choose the version you want to deploy for ' + env + ' (' + app + ').</br>'];
+              var events = {};
+              var i = 0;
+              _.each(model.get('previous_versions'), function(ver) {
+                msg.push('<a id="v' + i + '" href="#">' + ver + '</a>');
+                events['click a#v' + i] = {
+                  signal: 'confirmation',
+                  action: Alerts.ACTION.CALL_PUBSUB,
+                  arguments: {application: app, environment: env, action: action, version: ver}
+                }
+                i = i + 1;
+              });
+              this.showAlert(msg.join('<br/>'),
+                true,
+                events
+              );
+            }
+            break;
+
+          default:
+            this.showAlert('Unknown action: ' + action, true);
+
+        }
       },
 
       /*
@@ -265,16 +367,18 @@ define([
         }, data);
         var options = [
           {title: 'Show details', command: 'show-details'},
-          {title: 'Show in AWS', commmand: 'show-in-aws'},
-          {title: 'Restart', commmand: 'restart'},
+          {title: 'Show in AWS', command: 'show-in-aws'},
+          {title: 'Restart', command: 'restart'},
         ]
-        if (data.previous_version) {
-          options.push({title: 'Revert to (' + data.previous_version + ')', command: 'revert:' + data.previous_version})
+        if (data.previous_versions) {
+          options.push({title: 'Revert to (' + data.previous_versions[0] + ')', command: 'revert:' + data.previous_versions[0]})
         }
         data.options = options;
-        data.extra_options = [
-          {title: 'Deploy version...', command:'deploy-version'}
-        ]
+        if (data.previous_versions && data.previous_versions.length > 1) {
+          data.extra_options = [
+            {title: 'Revert to version...', command: 'revert'}
+          ]
+        }
         return new Environment(data);
       },
 
