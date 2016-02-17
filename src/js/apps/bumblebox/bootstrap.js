@@ -21,7 +21,7 @@ define([
     var Mixin = {
       configure: function(loadedConfig) {
         var conf = this.getObject('DynamicConfig') || {};
-        conf = _.extend(loadedConfig, conf);
+        conf = _.extend(conf, loadedConfig);
 
         if (conf) {
           var beehive = this.getBeeHive();
@@ -144,7 +144,7 @@ define([
             if (targetConfig[key]) {
               var target = rConfig[key];
               _.each(value, function(value, key, obj) {
-                target[key] = _.extend(value, target[key]); // use the new values as defaults
+                target[key] = _.defaults(value, target[key]); // use the new values as defaults
               });
             }
           })

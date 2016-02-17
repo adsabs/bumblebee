@@ -138,7 +138,7 @@ define([
 
       onRender: function() {
         if (this.collection.models.length <= 0) {
-          this.onRequest(new ApiQuery({command: 'update'}));
+          this.onRequest(new ApiQuery({action: 'update'}));
         }
       },
 
@@ -155,8 +155,15 @@ define([
           throw new Error('You are kidding me!');
         var q = apiQuery.clone();
         q.unlock();
-        q.set('command', 'update');
         this.dispatchRequest(q); // calling out parent's method
+      },
+
+      composeRequest: function (apiQuery) {
+        var target = apiQuery.has('command') ? 'command' : 'status';
+        return new ApiRequest({
+          target: target,
+          query: apiQuery
+        });
       },
 
       // triggered externally, by a query-mediator, when it receives data for our query
