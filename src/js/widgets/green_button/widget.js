@@ -142,6 +142,11 @@ define([
         }
       },
 
+      changeState: function() {
+        // hack, to avoid the spinning wheel
+        // see: https://github.com/adsabs/bumblebee/issues/425
+      },
+
       activate: function (beehive) {
         this.setBeeHive(beehive);
         var pubsub = beehive.getService('PubSub');
