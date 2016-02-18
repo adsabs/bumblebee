@@ -10,7 +10,7 @@ define([], function() {
      */
     targetElement: 'div#embed',
     TargetWidget: 'js/widgets/green_button/widget',
-    apiRoot: '//localhost:8000/',
+    apiRoot: '//localhost:9002/',
 
     map: {
       '*': {

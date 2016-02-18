@@ -122,14 +122,14 @@ define([
         dataType: 'json',
         data: data,
         contentType: 'application/x-www-form-urlencoded',
-        headers: {"X-BB-Api-Client-Version": this.clientVersion},
+        //headers: {"X-BB-Api-Client-Version": this.clientVersion},
         context: {request: request, api: self },
         timeout: this.defaultTimeoutInMs,
         cache: true, // do not generate _ parameters (let browser cache responses),
         //need this so that cross domain cookies will work!
-        xhrFields: {
-          withCredentials: true // TODO: remove this (must be used only by certain widgets!!!)
-        }
+        //xhrFields: {
+        //  withCredentials: true // TODO: remove this (must be used only by certain widgets!!!)
+        //}
       };
 
       if (this.access_token) {
