@@ -78,7 +78,8 @@ define([
                 default:
                   throw new Exception('Unknow action type:' + result);
               }
-              self.getWidget().clearView();
+              var w = self.getWidget()
+              if (w) w.clearView();
             }
           });
         return promise;
