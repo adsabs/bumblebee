@@ -10,6 +10,7 @@
 
 var express = require('express');
 var http = require('http');
+var path = require('path');
 var url = require('url');
 var needle = require('needle');
 var querystring = require('querystring');
@@ -153,57 +154,50 @@ app.use('/api', function (req, res, next) {
   console.log('final query', end.hostname + ':' + end.port + end.pathname, options, req.headers);
 
   var n = needle.post(end.hostname + ':' + end.port + end.pathname,
-    options.data,
-    {parse: false, headers: req.headers, timeout:0},
-    function (err, apiResponse, body) {
-      if (err) {
-        console.log("Got error: " + err.message);
-        res.send(err.status || 500, {error: err.message});
-      }
-      else {
-        res.writeHead(apiResponse.statusCode, {'Content-Type': apiResponse.headers['content-type']});
-        res.write(body);
-        res.end();
-      }
-    });
+      options.data,
+      {parse: false, headers: req.headers, timeout:0},
+      function (err, apiResponse, body) {
+        if (err) {
+          console.log("Got error: " + err.message);
+          res.send(err.status || 500, {error: err.message});
+        }
+        else {
+          res.writeHead(apiResponse.statusCode, {'Content-Type': apiResponse.headers['content-type']});
+          res.write(body);
+          res.end();
+        }
+      });
 
 
 });
-
-
-
 
 
 // serve the static files & folders
-home = process.env.HOMEDIR || 'src';
 
-app.use("/", express.static(__dirname + '/' + home));
-app.use('/', express.directory(__dirname + '/' + home));
+home = process.env.HOMEDIR|| 'src';
+
+app.use('/assets', express.static(path.join(__dirname, home, "assets")));
 
 // map test dependencies so that we can run tests too
 app.use('/test', express.static(__dirname + '/test'));
-app.use('/test', express.directory(__dirname + '/test'));
 app.use('/bower_components', express.static(__dirname + '/bower_components'));
-app.use('/bower_components', express.directory(__dirname + '/bower_components'));
 app.use('/node_modules', express.static(__dirname + '/node_modules'));
-app.use('/node_modules', express.directory(__dirname + '/node_modules'));
 
 port = process.env.PORT || 3000;
 
+app.get(/^\/(?!assets\/.*)(?!test\/.*).*$/, function(req, res) {
 
-app.get( /\/index\.html\/.*$/, function(req, res) {
+  console.log("non asset file requested:serving index.html", req.url);
 
-  // Prepare the context
-  res.sendfile( home + '/index.html');
+  res.sendfile(path.join(__dirname, home, "index.html"));
 
 });
 
-
 app.listen(port);
 
-
 console.log('listening on port ' + port);
-console.log('HOMEDIR', home, process.env.HOMEDIR);
+//console.log('HOMEDIR', home, process.env.HOMEDIR);
 console.log('API_ENDPOINT', API_ENDPOINT, process.env.API_ENDPOINT);
 console.log('SOLR_ENDPOINT', SOLR_ENDPOINT, process.env.SOLR_ENDPOINT);
-//console.log(process.env);
+
+console.log("current environment", process.env);

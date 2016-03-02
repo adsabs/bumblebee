@@ -24,14 +24,14 @@ module.exports = function(grunt) {
         options: {
           // config: 'bower.json',
           cleanTargetDir: true,
-          targetDir: './src/libs'
+          targetDir: './src/assets/libs'
         }
       }
     },
 
     // Run your source code through JSHint's defaults.
     jshint: {
-      uses_defaults: ['src/js/**/*.js', 'test/mocha/**/*.js'],
+      uses_defaults: ['src/assets/js/**/*.js', 'test/mocha/**/*.js'],
 
       // config used by watch tasks, the src gets set by 'watch'
       individual: {
@@ -45,7 +45,7 @@ module.exports = function(grunt) {
           '-W033': true
         },
         files: {
-          src: ['src/js/**/*.js', 'test/mocha/**/*.js']
+          src: ['src/assets/js/**/*.js', 'test/mocha/**/*.js']
         }
       }
 
@@ -55,7 +55,7 @@ module.exports = function(grunt) {
     exec: {
       // this is necessary to make the library AMD compatible
       convert_dsjslib: {
-        cmd: 'node node_modules/requirejs/bin/r.js -convert src/libs/dsjslib src/libs/dsjslib'
+        cmd: 'node node_modules/requirejs/bin/r.js -convert src/assets/libs/dsjslib src/assets/libs/dsjslib'
       },
       latest_commit: {
         cmd: 'git rev-parse --short=7 --verify HEAD | cat > git-latest-commit'
@@ -73,7 +73,7 @@ module.exports = function(grunt) {
     curl: {
       'google-analytics': {
         src: 'http://www.google-analytics.com/analytics.js',
-        dest: 'src/libs/g.js'
+        dest: 'src/assets/libs/g.js'
       }
     },
 
@@ -112,7 +112,7 @@ module.exports = function(grunt) {
           wrapShim: true,
           include : (function(){
 
-            var s = grunt.file.read("src/discovery.config.js"),
+            var s = grunt.file.read("src/assets/discovery.config.js"),
                 require = {config : function(s){return s}},
                 bumblebeeConfig = eval(s).config['js/apps/discovery/main'];
 
@@ -208,7 +208,7 @@ module.exports = function(grunt) {
         },
         files: {
           //cwd: 'dist',
-          'dist/css/style.min.css': ['src/css/*.css', 'src/js/apps/**/css/*.css']
+          'dist/css/style.min.css': ['src/assets/css/*.css', 'src/assets/js/apps/**/css/*.css']
         }
       },
       minify: {
@@ -217,7 +217,7 @@ module.exports = function(grunt) {
           report: 'min'
         },
         files: {
-          'dist/foo': ['./dist/src/**/*.css', '!./dist/src/**/*.min.css']
+          'dist/foo': ['./dist/src/assets/**/*.css', '!./dist/src/assets/**/*.min.css']
         }
       },
       test: {
@@ -286,7 +286,7 @@ module.exports = function(grunt) {
       },
 
       server: {
-        files: ['./Gruntfile', './src/js/**/*.js', './src/*.js', './src/*.html', './server.js', './src/styles/css/*.css'],
+        files: ['./Gruntfile', './src/assets/js/**/*.js', './src/assets/*.js', './src/assets/*.html', './server.js', './src/assets/styles/css/*.css'],
         tasks: ['env:dev', 'express:dev']
       },
 
@@ -296,22 +296,22 @@ module.exports = function(grunt) {
       },
 
       local_testing: {
-        files: ['./Gruntfile', './src/js/**/*.js', './test/mocha/**/*.js', './src/*.js', './src/*.html'],
+        files: ['./Gruntfile', './src/assets/js/**/*.js', './test/mocha/**/*.js', './src/assets/*.js', './src/assets/*.html'],
         tasks: ['mocha_phantomjs:local_testing', 'watch:local_testing']
       },
 
       web_testing: {
-        files: ['./Gruntfile', './src/js/**/*.js', './test/mocha/**/*.js', './src/*.js', './src/*.html'],
+        files: ['./Gruntfile', './src/assets/js/**/*.js', './test/mocha/**/*.js', './src/assets/*.js', './src/assets/*.html'],
         tasks: ['express:dev', 'mocha_phantomjs:web_testing', 'watch:web_testing']
       },
 
       sandbox_testing: {
-        files: ['./Gruntfile', './src/js/**/*.js', './test/mocha/**/*.js', './src/*.js', './src/*.html'],
+        files: ['./Gruntfile', './src/assets/js/**/*.js', './test/mocha/**/*.js', './src/assets/*.js', './src/assets/*.html'],
         tasks: ['express:dev', 'mocha_phantomjs:sandbox_testing', 'watch:sandbox_testing']
       },
 
       styles: {
-        files: ['./src/styles/sass/ads-sass/*.scss'], // which files to watch
+        files: ['./src/assets/styles/sass/ads-sass/*.scss'], // which files to watch
         tasks: ['sass', 'autoprefixer', 'express:dev', 'watch:styles'],
         options: {
           livereload: {
@@ -389,62 +389,62 @@ module.exports = function(grunt) {
         files: [
           {
             src: 'bower_components/lodash/dist/*',
-            dest: 'src/libs/lodash/',
+            dest: 'src/assets/libs/lodash/',
             expand: true,
             flatten: true
           },
           {
             src: 'bower_components/marionette/lib/*',
-            dest: 'src/libs/marionette/',
+            dest: 'src/assets/libs/marionette/',
             expand: true,
             flatten: true
           },
           {
             src: 'bower_components/backbone.babysitter/lib/*',
-            dest: 'src/libs/backbone.babysitter/',
+            dest: 'src/assets/libs/backbone.babysitter/',
             expand: true,
             flatten: true
           },
           {
             src: ['bower_components/bootstrap/dist/css/*', 'bower_components/bootstrap/dist/fonts/*', 'bower_components/bootstrap/dist/js/*'],
-            dest: 'src/libs/bootstrap/',
+            dest: 'src/assets/libs/bootstrap/',
             expand: true,
             flatten: true
           },
           {
             src: ['bower_components/d3/*.js'],
-            dest: 'src/libs/d3/',
+            dest: 'src/assets/libs/d3/',
             expand: true,
             flatten: true
           },
           {
             src: ['bower_components/nvd3/*.js'],
-            dest: 'src/libs/nvd3/',
+            dest: 'src/assets/libs/nvd3/',
             expand: true,
             flatten: true
           },
           {
-            src: ['bower_components/requirejs-plugins/src/*.js'],
-            dest: 'src/libs/requirejs-plugins/',
+            src: ['bower_components/requirejs-plugins/src/assets/*.js'],
+            dest: 'src/assets/libs/requirejs-plugins/',
             expand: true,
             flatten: true
           },
 
           {
             src: ['bower_components/fontawesome/scss/*'],
-            dest: 'src/libs/fontawesome/scss/',
+            dest: 'src/assets/libs/fontawesome/scss/',
             expand: true,
             flatten: true
           },
           {
             src: ['bower_components/fontawesome/fonts/*'],
-            dest: 'src/libs/fontawesome/fonts',
+            dest: 'src/assets/libs/fontawesome/fonts',
             expand: true,
             flatten: true
           },
           {
             src: ['bower_components/jqueryui/themes/smoothness/jquery-ui.min.css'],
-            dest: 'src/libs/jqueryui/',
+            dest: 'src/assets/libs/jqueryui/',
             expand: true,
             flatten: true
           },
@@ -461,17 +461,17 @@ module.exports = function(grunt) {
       release: {
         files: [{
           expand: true,
-          src: ['./src/**'],
+          src: ['./src/assets/**'],
           dest: 'dist/',
           rename: function(dest, src) {
             //grunt.verbose.writeln('src' + src);
-            return dest + src.replace('/src/', '/');
+            return dest + src.replace('/src/assets/', '/');
           }
         }]
       },
       discovery_vars: {
-          src: 'src/discovery.vars.js.default',
-          dest: 'src/discovery.vars.js'
+          src: 'src/assets/discovery.vars.js.default',
+          dest: 'src/assets/discovery.vars.js'
       },
       keep_original: {
         files: [{
@@ -486,11 +486,11 @@ module.exports = function(grunt) {
       },
       foo: {
         files: [{
-          src: ['./src/js/components/**/*.js'],
+          src: ['./src/assets/js/components/**/*.js'],
           dest: 'dist/',
           expand: true,
           rename: function(dest, src) {
-            return dest + src.replace('/src/', '/');
+            return dest + src.replace('/src/assets/', '/');
           }
         }]
       },
@@ -539,7 +539,7 @@ module.exports = function(grunt) {
 
     coveralls: {
       options: {
-        src: ['src/js/**/*.js'],
+        src: ['src/assets/js/**/*.js'],
         coverage_dir: 'test/coverage/PhantomJS 1.9.2 (Linux)/'
       }
     },
@@ -557,7 +557,7 @@ module.exports = function(grunt) {
         },
         dist: {
           files: {
-            'src/styles/css/styles.css' : 'src/styles/sass/manifest.scss'
+            'src/assets/styles/css/styles.css' : 'src/assets/styles/sass/manifest.scss'
           }
         }
       },
@@ -582,7 +582,7 @@ module.exports = function(grunt) {
     autoprefixer:{
       dist:{
         files:{
-          'src/styles/css/styles.css' : 'src/styles/css/styles.css'
+          'src/assets/styles/css/styles.css' : 'src/assets/styles/css/styles.css'
         }
       }
     },
@@ -659,7 +659,7 @@ module.exports = function(grunt) {
           log : true,
           logErrors: true,
           moduleThreshold : 0,
-          modulePattern : "../../src/js/(.*)",
+          modulePattern : "../../src/assets/js/(.*)",
           customThreshold: {
 
           }
@@ -825,9 +825,9 @@ module.exports = function(grunt) {
     ]);
 
   grunt.registerTask('_conditional_copy', function() {
-    if (!grunt.file.exists('src/discovery.vars.js')) {
+    if (!grunt.file.exists('src/assets/discovery.vars.js')) {
       grunt.task.run(['copy:discovery_vars']);
-      grunt.log.write('Please modify src/discovery.vars.js if necessary...').ok();
+      grunt.log.write('Please modify src/assets/discovery.vars.js if necessary...').ok();
     }
   });
 
