@@ -1,0 +1,19 @@
+{
+  "name": "bootstrap-js-components",
+  "homepage": "http://getbootstrap.com",
+  "description": "Just the Boostrap js components",
+  "version": "3.1.1",
+  "keywords": [
+    "bootstrap"
+  ],
+  "license": "MIT",
+  "ignore": [
+    "node_modules",
+    "bootstrap",
+    "bin",
+    "Gruntfile.js",
+    "package.json",
+    ".gitignore",
+    ".gitmodules"
+  ]
+}
