@@ -180,7 +180,7 @@ define([
       },
 
       defaultQueryArguments: {
-        fl: 'title,abstract,bibcode,author,keyword,id,citation_count,[citations],pub,aff,volume,pubdate,doi,pub_raw',
+        fl: 'title,abstract,bibcode,author,keyword,id,citation_count,[citations],pub,aff,volume,pubdate,doi,pub_raw,comment',
         rows: 40
       },
 
@@ -261,6 +261,7 @@ define([
       },
 
       processResponse: function (apiResponse) {
+
         var r = apiResponse.toJSON();
         var d, bibcode;
         if (r.response && r.response.docs) {

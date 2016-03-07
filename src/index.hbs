@@ -1,0 +1,66 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>ADS Search</title>
+    <link rel="stylesheet" href="/assets/styles/css/styles.css" />
+    <link rel="icon" type="image/png" sizes="32x32" href="/assets/styles/img/favicon.ico">
+    {{#if metadataHeaders}}
+        {{#each metadataHeaders}}
+            <meta name="citation_{{@key}}" content="{{this}}" data-highwire="true">
+        {{/each}}
+    {{/if}}
+
+</head>
+
+<body>
+<!--items for announcement of new page, and optional skip to main content link go here (inserted by master.js)-->
+
+
+
+<div class="container-fluid" id="app-container">
+    <!--this is where bbb discovery gets inserted -->
+
+    <div id="body-template-container">
+        <!--metadata from the server-->
+        <div style="visibility:hidden;height:0px;">
+            <!--will be wiped out when bbb renders-->
+            <h1>{{metadata.title}}</h1>
+            {{#if metadata}}
+                <dl>
+                    {{#each metadata}}
+                        <dd>{{@key}}</dd>
+                        <dt>{{this}}</dt>
+                    {{/each}}
+                </dl>
+            {{/if}}
+        </div>
+
+        <noscript>
+            <p></p>
+            <p>Welcome hardcode user. Your client does not speak JavaScript,
+                please follow this link to access a non-JavaScript version of this
+                website:
+                <a href="http://labs.adsabs.harvard.edu/adsabs/">http://labs.adsabs.harvard.edu/adsabs/</a></p>
+        </noscript>
+
+        <div class="loading-screen">
+            <div>
+                <div class="logo__astrophysics">astrophysics</div>
+                <div class="logo__data-system">data system</div>
+            </div>
+            <span class="loading-screen__loading">loading...</span>
+        </div>
+    </div>
+
+
+    <!--&lt;!&ndash; start the discovery application &ndash;&gt;-->
+    <script data-main="/assets/discovery.config"  src="/assets/libs/requirejs/require.js"></script>
+
+
+</body>
+
+</html>

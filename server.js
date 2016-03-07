@@ -183,7 +183,7 @@ app.use('/test', express.static(__dirname + '/test'));
 app.use('/bower_components', express.static(__dirname + '/bower_components'));
 app.use('/node_modules', express.static(__dirname + '/node_modules'));
 
-port = process.env.PORT || 3000;
+port = process.env.PORT || 8000;
 
 app.get(/^\/(?!assets\/.*)(?!test\/.*).*$/, function(req, res) {
 
