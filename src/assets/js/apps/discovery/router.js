@@ -1,6 +1,7 @@
 define([
     'jquery',
     'backbone',
+    'js/apps/discovery/routes',
     'js/components/api_query',
     'js/mixins/dependon',
     'js/components/api_feedback',
@@ -13,6 +14,7 @@ define([
   function (
     $,
     Backbone,
+    Routes,
     ApiQuery,
     Dependon,
     ApiFeedback,
@@ -54,31 +56,7 @@ define([
 
       },
 
-      routes: {
-        "": "index",
-        'classic-form' : 'classicForm',
-        'paper-form' : 'paperForm',
-        'index/(:query)': 'index',
-        'search/(:query)(/)(:widgetName)': 'search',
-        'execute-query/(:query)': 'executeQuery',
-        'abs/:bibcode(/)(:subView)': 'view',
-        /*
-        * user endpoints require user to be logged in, either
-        * to orcid or to ads
-        * */
-        'user/orcid*(:subView)' : 'orcidPage',
-        'user/account(/)(:subView)' : 'authenticationPage',
-        'user/account/verify/(:subView)/(:token)' : 'routeToVerifyPage',
-        'user/settings(/)(:subView)(/)' : 'settingsPage',
-        'user/libraries(/)(:id)(/)(:subView)(/)(:subData)(/)' : 'librariesPage',
-        'user/home' : 'homePage',
-        /*end user routes*/
-
-        'orcid-instructions' : 'orcidInstructions',
-
-        'public-libraries/(:id)(/)' : 'publicLibraryPage',
-        '*invalidRoute': 'noPageFound'
-      },
+      routes: Routes,
 
       index: function (query) {
         this.routerNavigate('index-page');

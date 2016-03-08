@@ -7,6 +7,12 @@
  *
  * @type {exports}
  */
+
+require("amd-loader");
+
+var routes = require('./src/assets/js/apps/discovery/routes');
+var Backbone = require('backbone');
+
 var _ = require('underscore');
 var express = require('express');
 var exphbs = require('express-handlebars');
@@ -22,12 +28,11 @@ var queryEndpoint = 'http://api.adsabs.harvard.edu/v1/search/query';
 
 var app = express();
 // log requests
-app.use(express.logger('dev'));
+//app.use(express.logger('dev'));
 
 
 app.engine('.hbs', exphbs({extname: '.hbs'}));
 app.set('view engine', '.hbs');
-
 app.set('views', __dirname + '/src');
 
 
@@ -50,6 +55,47 @@ app.use('/assets', express.static(path.join(__dirname, home, "assets")));
 app.use('/test', express.static(__dirname + '/test'));
 app.use('/bower_components', express.static(__dirname + '/bower_components'));
 app.use('/node_modules', express.static(__dirname + '/node_modules'));
+
+
+
+//import all routes from bbb
+var router = new Backbone.Router();
+delete routes['*invalidRoute'];
+var route_regex  = _.pairs(routes).map(function(r){return router._routeToRegExp(r[0])});
+
+//for some reason you need to exclude assets folder even though
+//from what I understand it should be caught by the app.use('assets')
+//above (??)
+app.get(/^\/(?!assets).*/, function(req, res){
+
+  console.log('non asset')
+
+    var route = req.url.replace(/^\//, "");
+    var matches = false;
+
+    for (var i = 0; i < route_regex.length; i ++) {
+
+      if (route_regex[i].test(route)){
+        matches = true;
+        break
+      }
+    }
+
+    if (matches){
+
+      console.log("route matched: " +  route_regex[i] + " serving index.html", req.url);
+      res.render('index', {
+        metadata: {},
+        metadataHeaders: {}
+      });
+
+    }
+    else {
+      res.status(404).send('This page cannot be found');
+    }
+
+});
+
 
 
 app.get(/^\/abs\/.*/, function (req, res) {
@@ -138,17 +184,6 @@ app.get(/^\/abs\/.*/, function (req, res) {
 
 });
 
-app.get(/^\/(?!assets\/.*)(?!test\/.*).*$/, function (req, res) {
-
-  console.log("non asset file requested: serving index.html", req.url);
-
-  res.render('index', {
-    metadata: {},
-    metadataHeaders: {}
-  });
-
-
-});
 
 port = process.env.PORT || 8000;
 app.listen(port);
