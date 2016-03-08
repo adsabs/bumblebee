@@ -1,0 +1,53 @@
+{
+  "name": "dsjslib",
+  "version": "0.6.5",
+  "description": "Implementation of commonly used datastructures and utilities in Javascript.",
+  "main": "index.js",
+  "directories": {
+    "test": "tests"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/monmohan/dsjs.git"
+  },
+  "keywords": [
+    "ds",
+    "sort map",
+    "datastructures",
+    "javascript",
+    "AVL",
+    "AVLTree",
+    "Trie",
+    "TernarySearchTrie",
+    "MultiWayTrie",
+    "SkipList",
+    "BTree",
+    "BinarySearch",
+    "BinarySearchTree",
+    "SortedMap",
+    "LRU",
+    "cache",
+    "eviction",
+    "maxsize",
+    "least recently used",
+    "loading",
+    "guava",
+    "async",
+     "Delay Queue",
+     "DelayQueue",
+     "PriorityQueue",
+     "Heap",
+     "BinaryHeap"
+  ],
+  "author": "monmohan@gmail.com",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/monmohan/dsjs/issues"
+  },
+  "engines": {
+    "node": ">= 0.4.0"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  }
+}

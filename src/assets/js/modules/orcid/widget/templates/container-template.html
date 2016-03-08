@@ -1,0 +1,64 @@
+
+<div class="row s-results-control-row-container">
+
+
+    <div class="col-sm-10 col-sm-offset-1" style="padding:0 9%" >
+        <h2>
+            My ORCID Papers {{#if totalPapers}} (<b>{{ totalPapers }}</b>) {{/if}}
+        </h2>
+        <!--loading user data-->
+        {{#if loading}}
+            <p><i class="icon-loading"></i> Loading ORCID data...</p>
+        {{else}}
+        <div style="margin-bottom: 10px;">
+            <span style="width: 40%;">ORCID Username:&nbsp;<b>{{ orcidUserName }}</b></span>
+            &nbsp;&nbsp;&nbsp;
+            <span>ORCID ID:&nbsp;<b>{{orcidID}}</b></span>
+        </div>
+
+         <p><i class="fa fa-info-circle"></i> To share this list of your ORCID papers:
+                    <ul>
+                      <li>
+                          Search for your ORCID ID in ADS (orcid:{{orcidID}})
+                      </li>
+                    <li>
+                        You can then share the url of your results:<br>  <a href="https://ui.adsabs.harvard.edu/#search/q=orcid%3A{{orcidID}}&sort=date+desc">https://ui.adsabs.harvard.edu/#search/q=orcid%3A{{orcidID}}&sort=date+desc</a>
+                    </li>
+                    <li>
+                        Please note that claims take up to 24 hours to be indexed in ADS.
+                    </li>
+
+                    </ul>
+          </p>
+          <p> <i class="fa fa-info-circle"></i>
+               To claim papers in ORCID and add to this list <br>
+              <div style="padding-left:5%;">
+                {{#if orcidUserName}}
+                <button class="btn btn-sm btn-default search-author-name"><i class="fa fa-search"></i> click here to search your name in ADS</button>
+                {{else}}
+                search your name in ADS</button>
+                {{/if}}
+            </div>
+
+           </p>
+        <br>
+        <p> <a href="/orcid-instructions"> <i class="fa fa-arrow-circle-o-right"></i> Learn more about using ORCID with ADS</a></p>
+        <br>
+
+        {{/if}}
+
+    </div>
+</div>
+<div class="row s-darker-background">
+    <div class="col-sm-10 s-main-content-container" style="margin-top:20px;padding-top: 20px; float:none">
+        <div class="row">
+            <ul class="col-sm-12 results-list  s-results-list list-unstyled s-display-block" aria-label="list of results">
+            </ul>
+        </div>
+        {{#if pagination}}
+            {{> js/widgets/list_of_things/templates/pagination-partial}}
+        {{/if}}
+
+
+    </div>
+</div>
