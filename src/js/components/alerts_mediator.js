@@ -44,10 +44,12 @@ define([
         pubsub.subscribe(pubsub.ALERT, _.bind(this.onAlert, this));
         pubsub.subscribe(pubsub.FEEDBACK, _.bind(this.onStartSearch, this));
 
-        var widget = this.getWidget();
-        if (!widget) {
-          throw new Error('If you want to use AlertController, you also need to have a Widget capable of displaying the messages (default: AlertsWidget)');
-        }
+        this.getWidget().done(function(widget){
+          if (!widget) {
+            throw new Error('If you want to use AlertController, you also need to have a Widget capable of displaying the messages (default: AlertsWidget)');
+          }
+        });
+
       },
 
       onStartSearch: function(apiFeedback) {
@@ -80,30 +82,47 @@ define([
               }
 
               // close the widget immediately
-              var w = self.getWidget()
-              if (w && w.clearView) w.clearView();
+              var w = self.getWidget().done(function(w){
+                if (w && w.clearView) w.clearView();
+
+              });
             }
           });
         return promise;
       },
 
       getWidget: function() {
-        if (this._widget)
-          return this._widget;
-        this._widget = this.getApp()._getWidget(this.widgetName || 'AlertsWidget');
-        return this._widget;
+        var d = $.Deferred();
+        if (this._widget) d.resolve(this._widget);
+
+        this.getApp()
+            .getWidget(this.widgetName || 'AlertsWidget')
+            .done(function(widget){
+                   this._widget = widget;
+                   d.resolve(widget);
+            });
+
+        return d.promise();
       },
 
       alert: function(apiFeedback) {
-        var w = this.getWidget();
-        if (!w) {
-          console.warn('"AlertsWidget" has disappered, we cant display messages to the user');
-          var defer = $.Deferred();
-          defer.reject('AlertsWidget has disappeared');
-          return defer.promise();
-        }
-        // return promise
-        return w.alert(apiFeedback);
+
+        var defer = $.Deferred();
+
+        this.getWidget().done(function(w){
+          if (!w) {
+            console.warn('"AlertsWidget" has disappered, we cant display messages to the user');
+            defer.reject('AlertsWidget has disappeared');
+            return
+          }
+          w.alert(apiFeedback).done(function(data){
+            defer.resolve(data);
+          })
+
+        });
+
+        return defer.promise();
+
       },
 
       hardenedInterface:  {

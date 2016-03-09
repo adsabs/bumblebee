@@ -93,6 +93,7 @@ define([
 
 
       it("communicates with pubsub", function(done) {
+
         var widget = new FacetWidget({
           defaultQueryArguments: {
             "facet": "true",

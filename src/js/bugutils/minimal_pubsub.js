@@ -64,7 +64,9 @@ define(['underscore', 'backbone',
         console.log('[MinSub]', 'starting');
       }
       this.requestCounter = 0;
-      this.fakeApp = {getPskOfPluginOrWidget: sinon.stub().returns(null)};
+      this.fakeApp = {
+        getPskOfPluginOrWidget: sinon.stub().returns(null)
+      };
       this.beehive = new BeeHive();
       this.pubsub = new PubSub();
       this.pubsub.debug = true;

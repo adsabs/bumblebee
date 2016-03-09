@@ -38,6 +38,20 @@ define([
 
     var NavigatorService = Navigator.extend({
 
+      searchPageAlwaysVisible : [
+        'Results', 'QueryInfo','AuthorFacet', 'DatabaseFacet', 'RefereedFacet',
+        'KeywordFacet', 'BibstemFacet', 'BibgroupFacet', 'DataFacet',
+        'VizierFacet', 'GrantsFacet', 'GraphTabs', 'QueryDebugInfo',
+        'ExportDropdown', 'VisualizationDropdown', 'SearchWidget',
+        'Sort', 'BreadcrumbsWidget'
+      ],
+
+      detailsPageAlwaysVisible : [
+           'SearchWidget', 'ShowResources', 'ShowRecommender',
+          'ShowGraphicsSidebar', 'ShowLibraryAdd'
+      ],
+
+
       start: function(app) {
         /**
          * These 'transitions' are what happens inside 'discovery' application
@@ -50,7 +64,11 @@ define([
          */
 
         var self = this;
+
         var queryUpdater = new ApiQueryUpdater('navigator');
+
+        var detailsPageAlwaysVisible = this.detailsPageAlwaysVisible,
+            searchPageAlwaysVisible = this.searchPageAlwaysVisible;
 
         var publishFeedback = function(data) {
           self.getPubSub().publish(self.getPubSub().FEEDBACK, new ApiFeedback(data))
@@ -88,11 +106,22 @@ define([
         this.set('index-page', function() {
 
           app.getObject('MasterPageManager').show('LandingPage', ["SearchWidget"]);
-          app.getWidget("LandingPage").done(function(widget) {
+          app.getWidget("LandingPage").done(function (widget) {
             widget.setActive("SearchWidget");
           });
           this.route = "";
-        });
+
+          //lazily load the results page widgets
+          function loadResultsWidgets() {
+            app.getWidget("SearchPage").done(function(w){
+              w.requireAndInstantiateWidgets(app, { stagger : true });
+            });
+          }
+
+          setTimeout(loadResultsWidgets, 4000);
+
+        })
+
 
         this.set('SearchWidget', function() {
           //you must set a route within the function, even if you are calling
@@ -173,12 +202,16 @@ define([
           var subView = subView || "libraries";
           app.getObject('MasterPageManager').show("LibrariesPage",
             ["AllLibrariesWidget", "UserNavbarWidget"]);
-          app.getWidget("AllLibrariesWidget").done(function(widget) {
-            widget.setSubView({view : subView});
-          });
 
-          this.route = "#user/libraries/";
-          publishPageChange("libraries-page");
+          app.getWidget('LibrariesPage').done(function(w){
+            w.widgetsInstantiated.done(function(){
+              app.getWidget("AllLibrariesWidget").done(function(widget) {
+                widget.setSubView({view : subView});
+              });
+              this.route = "#user/libraries/";
+              publishPageChange("libraries-page");
+            });
+          });
 
         });
 
@@ -335,6 +368,16 @@ define([
 
           this.route = route;
           publishFeedback({code: ApiFeedback.CODES.UNMAKE_SPACE});
+
+          //lazily load the results page widgets
+          function loadDetailsWidgets() {
+            app.getWidget("DetailsPage").done(function(w){
+              w.requireAndInstantiateWidgets(app);
+            });
+          }
+
+          setTimeout(loadDetailsWidgets, 1000);
+
         });
 
         this.set('export', function(nav, options) {
@@ -590,42 +633,58 @@ define([
         * Below are functions for abstract pages
         */
 
-        var showDetail = function(pages, toActivate) {
+        var showDetail = function(widgets, toActivate, bibcode) {
+
+          //show details page
           app.getObject('MasterPageManager').show('DetailsPage',
-            pages);
+              widgets);
+
+          ///trigger display documents after you can be sure all widgets exist (if bibcode provided)
+          if (bibcode) {
+            app.getWidget('DetailsPage').done(function(w){
+              w.widgetsInstantiated.done(
+                  function(){
+                    self.getPubSub().publish(self.getPubSub().DISPLAY_DOCUMENTS, new ApiQuery({'q': 'bibcode:' + bibcode}));
+                  });
+            });
+          }
+
+          //have the page manager show the proper widget
           app.getWidget("DetailsPage").done(function(w) {
             w.setActive(toActivate);
           });
+
         };
 
         this.set('ShowAbstract', function(id, data){
-          showDetail([id].concat(detailsPageAlwaysVisible), id);
+          showDetail([id].concat(detailsPageAlwaysVisible), id, data.bibcode);
           this.route = data.href;
         });
         this.set('ShowCitations', function(id, data) {
-          showDetail([id].concat(detailsPageAlwaysVisible), id);
+          showDetail([id].concat(detailsPageAlwaysVisible), id, data.bibcode);
           this.route = data.href;
         });
         this.set('ShowReferences', function(id, data ) {
-          showDetail([id].concat(detailsPageAlwaysVisible), id);
+          showDetail([id].concat(detailsPageAlwaysVisible), id, data.bibcode);
           this.route = data.href;
         });
         this.set('ShowCoreads', function(id, data) {
-          showDetail([id].concat(detailsPageAlwaysVisible), id);
+          showDetail([id].concat(detailsPageAlwaysVisible), id, data.bibcode);
           this.route = data.href;
         });
         this.set('ShowTableOfContents', function(id, data) {
-          showDetail([id].concat(detailsPageAlwaysVisible), id);
+          showDetail([id].concat(detailsPageAlwaysVisible), id, data.bibcode);
           this.route = data.href;
         });
         this.set('ShowSimilar', function(id, data) {
-          showDetail([id].concat(detailsPageAlwaysVisible), id);
+          showDetail([id].concat(detailsPageAlwaysVisible), id, data.bibcode);
           this.route = data.href;
         });
         this.set('ShowMetrics', function(id, data) {
-          showDetail([id].concat(detailsPageAlwaysVisible), id);
+          showDetail([id].concat(detailsPageAlwaysVisible), id, data.bibcode);
           this.route = data.href;
         });
+
         this.set("ShowPaperExport", function(id, data){
           var format = data.subView;
           app.getObject('MasterPageManager').show('DetailsPage',
@@ -634,8 +693,9 @@ define([
             w.setActive(id, format);
           });
         });
+
         this.set('ShowGraphics', function(id, data) {
-          showDetail([id].concat(detailsPageAlwaysVisible), id);
+          showDetail([id].concat(detailsPageAlwaysVisible), id, data.bibcode);
           this.route = data.href;
 
         });

@@ -101,8 +101,7 @@ define([
 
     App: {
       setApp: function(app) {
-        if (_.isUndefined(app))
-          throw new Error('App object cannot be empty');
+        if (_.isUndefined(app)) console.error('App object cannot be empty');
         this.__app = app;
       },
       getApp: function() {

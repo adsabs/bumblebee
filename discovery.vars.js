@@ -1,0 +1,104 @@
+define([], function() {
+  "use strict";
+  var config = {
+
+    /**
+     * When present, the version is sent with every ajax request
+     * to the api.
+     */
+    clientVersion: '',
+
+    /**
+     * The url to the API services, if you develop locally,
+     * (and have created tunnel to the API) you can set this
+     * to //localhost:5000/v1 - but since our API allows for
+     * limited number of cross-site requests (from origin
+     * of 'http://localhost:8000' you can also use the production
+     * API of //api.adsabs.harvard.edu/v1/
+     */
+    apiRoot: '//api.adsabs.harvard.edu/v1/',
+    //apiRoot: '//devapi.adsabs.harvard.edu/v1/',
+    /**
+     * The url for orcid proxy, which adds the application token and
+     * secret on the server side
+     */
+    orcidProxy: '/oauth/',
+
+    /**
+     * to let bumblebee discover oauth access_token at boot time
+     * and load dynamic configuration (which will be merged with
+     * the default config)
+     * this can be absolute url; or url relative to the api path
+     */
+    bootstrapUrls: ['/accounts/bootstrap'],
+
+    /**
+     *  pushState: when true, urls are without hashtag '#'
+     *  root is the url, under which your application is
+     *  deployed, eg. /foo/bar if the main page lives at
+     *  http://somewhere.org/foo/bar/index.html
+     */
+    routerConf: {
+      pushState: false,
+      root: '/',
+    },
+
+    /**
+     * When set to true, window.app will contain reference to
+     * to the application object
+     */
+    debugExportBBB: false,
+
+    /**
+     * To get debugging output in console
+     */
+    debug: false,
+
+    /**
+     * When a component has method 'activateCache' - we'll call it;
+     * this is e.g. useful for Query Mediator which controls traffic
+     * between widgets and API (and doesn't bother issuing another
+     * request when the query can be served from the application cache)
+     */
+    useCache: false,
+
+
+    /**
+     * Google analytics tracking info, your main config should have
+     * info how to load 'analytics_config', see config.map section
+     *
+     * For testing, the following will work from localhost (your GA
+     * instance must be configured to accept domain localhost)
+     *
+     * googleTrackingCode: 'UA-37369750-7',
+     * googleTrackingOptions: {
+     *   'cookieDomain': 'none'
+     * }
+     *
+     * For more, see:
+     * https://developers.google.com/analytics/devguides/collection/analyticsjs/advanced
+     */
+     googleTrackingCode: 'UA-XXXXXXXX-X',
+     googleTrackingOptions: 'auto',
+
+
+     /**
+      * If you have activated Orcid module, these settings
+      * are necessary (showing sandbox/testing values):
+     */
+       orcidClientId: 'APP-P5ANJTQRRTMA6GXZ',
+       orcidLoginEndpoint: 'http://sandbox.orcid.org/oauth/authorize',
+       orcidApiEndpoint: '//ecs-staging-elb-2044121877.us-east-1.elb.amazonaws.com/v1/orcid',
+
+
+
+     // google recaptcha
+     recaptchaKey : "6LfE6AITAAAAALdSy2qxVW4TBqy5RdmREiv-AwlJ",
+
+     //this is for bbb to know to show the hourly flag on devui.adsabs.harvard.edu,
+     hourly : false
+
+  }
+
+  return config
+});

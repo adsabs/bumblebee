@@ -40,9 +40,11 @@ define([
       sinon.spy(m, 'alert');
       sinon.spy(m, 'onAlert');
       var app = {
-        _getWidget: function(name) {
+        getWidget: function(name) {
+          var d = $.Deferred();
           if (name == 'AlertsWidget')
-            return widget;
+            d.resolve(widget);
+          return d.promise();
         },
         getController: function(name) {
           if (name == 'AlertsController')
@@ -63,7 +65,10 @@ define([
       var x = _getM();
       var m = x.m;
 
-      expect(m.getWidget()).to.equal(x.widget);
+      var widget;
+      m.getWidget().done(function(w){widget = w});
+
+      expect(widget).to.eql(x.widget);
 
       minsub.publish(minsub.ALERT, new ApiFeedback({code: 0, msg: 'foo'}));
       expect(m.onAlert.called).to.be.true;
@@ -74,8 +79,8 @@ define([
 
     it("fails when message cannot be displayed", function() {
       var x = _getM();
-      x.app._getWidget = function() {};
-      x.m._widget = null;
+      x.app.getWidget = function() {var d = $.Deferred(); return d.resolve(null)};
+      debugger
       var promise = x.m.alert(new ApiFeedback({msg: 'foo'}));
       expect(promise.state()).to.be.eql('rejected');
     });

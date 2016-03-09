@@ -28,7 +28,6 @@ define([
     var Router = Backbone.Router.extend({
 
       initialize : function(options){
-        options = options || {};
         this.queryUpdater = new ApiQueryUpdater('Router');
       },
 
@@ -140,7 +139,13 @@ define([
         q = new ApiQuery({'q': 'identifier:' + this.queryUpdater.quoteIfNecessary(bibcode), 'fl': 'bibcode'});
         req = new ApiRequest({query: q, target: ApiTargets.SEARCH, options: {
           done: function(resp) {
-            var navigateString, href;
+            var navigateString, href, bibcode;
+
+            if (resp.response && resp.response.docs && resp.response.docs[0]) {
+              bibcode = resp.response.docs[0].bibcode;
+            } else  {
+              console.error("the query  " + q.get("q")[0] + "  did not return any bibcodes");
+            }
 
             if (!subPage) {
               navigateString = 'ShowAbstract';
@@ -149,15 +154,8 @@ define([
               navigateString = "Show"+ subPage[0].toUpperCase() + subPage.slice(1);
               href =  "#abs/" + bibcode + "/" + subPage;
             }
-            self.routerNavigate(navigateString, {href : href});
+            self.routerNavigate(navigateString, {href : href, bibcode : bibcode });
 
-            if (resp.response && resp.response.docs && resp.response.docs[0]) {
-              bibcode = resp.response.docs[0].bibcode;
-              self.getPubSub().publish(self.getPubSub().DISPLAY_DOCUMENTS, new ApiQuery({'q': 'bibcode:' + bibcode}));
-            }
-            else if (resp.response && resp.response.docs && !resp.response.docs.length) {
-              console.error("the query  " + q.get("q")[0] + "  did not return any bibcodes");
-            }
           },
           fail: function() {
             console.log('Cannot identify page to load, bibcode: ' + bibcode);

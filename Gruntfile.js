@@ -1,5 +1,4 @@
 module.exports = function(grunt) {
-  'use strict';
 
   grunt.initConfig({
     pkg: grunt.file.readJSON('package.json'),
@@ -90,7 +89,8 @@ module.exports = function(grunt) {
           generateSourceMaps: false,
           removeCombined: true,
           optimize: 'uglify2',
-          findNestedDependencies: true,
+          inlineText : true,
+          findNestedDependencies: false,
           wrap: true,
           preserveLicenseComments: false,
           dir: 'dist/js',
@@ -111,31 +111,21 @@ module.exports = function(grunt) {
         options: {
           baseUrl: 'dist/',
           wrapShim: true,
-          include : (function(){
+          include : (function() {
 
             var s = grunt.file.read("src/discovery.config.js"),
                 require = {config : function(s){return s}},
-                bumblebeeConfig = eval(s).config['js/apps/discovery/main'];
+                bumblebeeConfig = eval(s).config['js/apps/discovery/main'],
+                preLoadUI = eval(s).config['preLoadUI'];
 
-            function getPaths(obj) {
-              var paths = [];
-
-              function pushPaths(config_obj) {
-               for (var k in config_obj) {
-                 var v = config_obj[k];
-                 if (v instanceof Object) {
-                   pushPaths(v);
-                 } else {
-                   paths.push(v);
-                 }
-               }
-              };
-
-              pushPaths(obj);
-              return paths;
-            }
-
-            return getPaths(bumblebeeConfig);
+            var paths = [];
+            for (var k in bumblebeeConfig.core){
+              for (var k2 in bumblebeeConfig.core[k]){
+                paths.push(bumblebeeConfig.core[k][k2])
+              }
+            };
+            paths = paths.concat(preLoadUI);
+            return paths;
 
           }()),
           allowSourceOverwrites: true,
@@ -143,7 +133,7 @@ module.exports = function(grunt) {
           name: "js/apps/discovery/main",
           keepBuildDir: true,
           mainConfigFile : "dist/discovery.config.js",
-          findNestedDependencies: true,
+          findNestedDependencies: false,
           wrap: true,
           preserveLicenseComments: false,
           generateSourceMaps: false,
@@ -328,7 +318,7 @@ module.exports = function(grunt) {
     },
 
     concurrent: {
-        serverTasks: ['watch:server', 'watch:styles']
+      serverTasks: ['watch:server', 'watch:styles']
     },
     //**
     //* PhantomJS is a headless browser that runs our tests, by default it runs core-suite
@@ -345,7 +335,7 @@ module.exports = function(grunt) {
       web_testing: {
         options: {
           urls: [
-              'http://localhost:<%= local.port || 8000 %>/test/' + (grunt.option('testname') || 'mocha/tests.html?bbbSuite=discovery-suite')
+            'http://localhost:<%= local.port || 8000 %>/test/' + (grunt.option('testname') || 'mocha/tests.html?bbbSuite=discovery-suite')
           ]
         }
       },
@@ -476,8 +466,8 @@ module.exports = function(grunt) {
         }]
       },
       discovery_vars: {
-          src: 'src/discovery.vars.js.default',
-          dest: 'src/discovery.vars.js'
+        src: 'src/discovery.vars.js.default',
+        dest: 'src/discovery.vars.js'
       },
       keep_original: {
         files: [{
@@ -525,8 +515,8 @@ module.exports = function(grunt) {
           }
 
         }]
-        }
-      },
+      }
+    },
 
     // compress whatever we have in the dist and
     // store it along-side with it (nginx can serve
@@ -550,23 +540,16 @@ module.exports = function(grunt) {
       }
     },
 
-    // minifying files we need to minify ourselves
-    uglify: {
-      bumblebee_minify_files : {
-        files : {"dist/libs/backbone/backbone-min.js": "dist/libs/backbone/backbone.js"}
+    sass: {
+      options: {
+        sourceMap: true
+      },
+      dist: {
+        files: {
+          'src/styles/css/styles.css' : 'src/styles/sass/manifest.scss'
+        }
       }
     },
-
-    sass: {
-        options: {
-          sourceMap: true
-        },
-        dist: {
-          files: {
-            'src/styles/css/styles.css' : 'src/styles/sass/manifest.scss'
-          }
-        }
-      },
 
     /* for changing the name of the data-main file in dist/index */
 
@@ -608,6 +591,9 @@ module.exports = function(grunt) {
           customModuleThreshold: {
 
             "widgets/facet/widget.js" : 78,
+            "page_managers/toc_widget.js" : 75,
+            "page_managers/toc_controller.js" : 74,
+
             "apps/discovery/navigator.js": 30,
             "apps/discovery/router.js": 37,
             "widgets/facet/graph-facet/h_index_graph.js":2,
@@ -623,7 +609,6 @@ module.exports = function(grunt) {
             "components/query_builder/rules_translator.js":45,
             "components/csrf_manager.js": 25,
             "widgets/base/tree_view.js":50,
-            "widgets/facet/factory.js":50,
             "widgets/list_of_things/item_view.js":50,
             "widgets/base/base_widget.js":51,
             "widgets/breadcrumb/widget.js":55,
@@ -648,9 +633,15 @@ module.exports = function(grunt) {
             "widgets/navbar/widget.js": 53,
             "widgets/success/view.js": 60,
             "components/library_controller.js" : 74,
+            "components/application.js" : 77,
             "widgets/wordcloud/widget.js": 78,
             "components/analytics.js": 71,
             "wraps/landing_page_manager/landing_page_manager" : 48,
+            "page_managers/toc_controller": 74,
+            "page_managers/toc_widget" : 75,
+            "widgets/facet/factory.js" : 23,
+            "widgets/tabs/tabs_widget.js" : 65,
+            "wraps/paper_metrics.js" : 42
           }
         }
       },
@@ -671,7 +662,7 @@ module.exports = function(grunt) {
           }
           //reporter: 'JSONCov',
           //dest: './coverage/output'
-          }
+        }
       }
     },
 
@@ -800,6 +791,80 @@ module.exports = function(grunt) {
   });
 
 
+  //builds widget bundles + then calls all requirejs tasks
+  grunt.registerTask('build-app-bundles', 'build requirejs widget bundles', function() {
+
+    console.log("building bbb bundles....");
+
+    var s = grunt.file.read("src/discovery.config.js"),
+        require = {config : function(s){return s}},
+        bumblebeeConfig = eval(s).config['js/apps/discovery/main'];
+
+    var requireTasks = [
+      "requirejs:release_css",
+      "requirejs:release_individual",
+      "requirejs:release_concatenated",
+    ];
+
+    //add a task for each widget/wrap
+    for (var widgetName in bumblebeeConfig.widgets) {
+
+      (function(widgetName){
+        var widgetPath = bumblebeeConfig.widgets[widgetName];
+
+        requireTasks.push("requirejs:release_" + widgetName);
+
+        grunt.config.data.requirejs["release_" + widgetName] = {
+          options : {
+            baseUrl: 'dist/',
+            wrapShim: true,
+            allowSourceOverwrites: true,
+            //this is specific for the widget
+            out: "dist/" + widgetPath + ".js",
+            name : widgetPath,
+            exclude : ["hbs"],
+            onBuildWrite: function (name, path, contents) {
+              //only return contents if it's internal to widget directory
+              var widgetDirPath = widgetPath.replace(/\/[^\/]*$/, "");
+              if ( path.match(widgetDirPath) || path.match("hbs") ){
+                return contents;
+              }
+              else {
+                return "";
+              }
+            },
+
+            //end specific for the widget
+            keepBuildDir: false,
+            mainConfigFile: "dist/discovery.config.js",
+            findNestedDependencies: false,
+            wrap: true,
+            preserveLicenseComments: false,
+            uglify2: {
+              output: {
+                beautify: false
+              },
+              warnings: true,
+              mangle: false,
+              compress: {
+                drop_console: true,
+                drop_debugger: true
+              }
+            }
+          }
+        };
+
+      })(widgetName);
+
+    }
+
+    //now run all require tasks
+    grunt.task.run(requireTasks);
+
+  });
+
+
+
   // on watch events configure jshint to only run on changed file
   grunt.event.on('watch', function(action, filepath) {
     console.log("Linting ", filepath);
@@ -823,13 +888,13 @@ module.exports = function(grunt) {
 
   // Create an aliased test task.
   grunt.registerTask('setup', 'Sets up the development environment',
-    ['install-dependencies',
-      'bower-setup',
-      '_conditional_copy',
-      'copy:libraries',
-      'sass',
-      'curl:google-analytics'
-    ]);
+      ['install-dependencies',
+        'bower-setup',
+        '_conditional_copy',
+        'copy:libraries',
+        'sass',
+        'curl:google-analytics'
+      ]);
 
   grunt.registerTask('_conditional_copy', function() {
     if (!grunt.file.exists('src/discovery.vars.js')) {
@@ -939,13 +1004,13 @@ module.exports = function(grunt) {
     grunt.file.write('dist/index.html', newHtml);
 
     console.log(chalk.green(
-    "=====================================================================\n" +
-    "OK, done! Your release is ready for deployment. But I recommend that\n"  +
-    "you test it, first make sure the development web server is not running\n" +
-    "then execute: grunt test:release (or 'grunt server:release' and look)\n" +
-    "\n" +
-    "Also make sure that you deploy correct values with dist/discovery.vars.js\n" +
-    "=====================================================================\n"))
+        "=====================================================================\n" +
+        "OK, done! Your release is ready for deployment. But I recommend that\n"  +
+        "you test it, first make sure the development web server is not running\n" +
+        "then execute: grunt test:release (or 'grunt server:release' and look)\n" +
+        "\n" +
+        "Also make sure that you deploy correct values with dist/discovery.vars.js\n" +
+        "=====================================================================\n"))
 
   });
 
@@ -975,16 +1040,18 @@ module.exports = function(grunt) {
   grunt.registerTask('coverage', ['env:dev', 'express:dev', 'blanket_mocha:full']);
 
   grunt.registerTask('release',
-    [ 'setup',
-      'clean:release', 'copy:release',
-      'exec:git_describe',
-      'string-replace:dist',
-      'requirejs:release_individual', 'requirejs:release_concatenated','requirejs:release_css',
-      'hash_require:js', 'hash_require:css',
-      'copy:keep_original', 'copy:bumblebee_app',
-      'assemble',
-      'uglify'
-  ]);
+
+      [
+        'setup',
+        'clean:release', 'copy:release',
+        'exec:git_describe',
+        'string-replace:dist',
+        //requirejs tasks including bundled widgets
+        "build-app-bundles",
+        'hash_require:js', 'hash_require:css',
+        'copy:keep_original', 'copy:bumblebee_app',
+        'assemble',
+      ]);
 
   grunt.registerTask("sauce", ['env:dev',  "sass", "autoprefixer", "exec:git_describe", 'express:dev', "saucelabs-mocha"]);
 

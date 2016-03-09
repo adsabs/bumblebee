@@ -34,7 +34,7 @@ define([
         pubsub.subscribe(pubsub.DISPLAY_DOCUMENTS, this.onDisplayDocuments);
 
         //check if user is signed in (because widget was just instantiated, but app might have been running for a while
-        if (this.getBeeHive().getObject("User").isLoggedIn()) {
+        if (this.getBeeHive().getObject("User") && this.getBeeHive().getObject("User").isLoggedIn()) {
           // know whether to show library panel
           this.model.set("loggedIn", true);
           //fetch list of libraries

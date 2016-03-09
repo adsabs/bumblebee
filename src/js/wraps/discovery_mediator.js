@@ -27,7 +27,7 @@ define([
       var mpm = this.getApp().getObject('MasterPageManager');
       if (mpm) {
         var child = mpm.getCurrentActiveChild();
-        if (child.view && child.view.showCols) {
+        if (child && child.view && child.view.showCols) {
           child.view.showCols({right: false, left: false});
           // open the view again
           this.getBeeHive().getService('PubSub').once(this.getPubSub().START_SEARCH,
@@ -47,7 +47,7 @@ define([
       var mpm = this.getApp().getObject('MasterPageManager');
       if (mpm) {
         var child = mpm.getCurrentActiveChild();
-        if (child.view && child.view.showCols) {
+        if (child && child.view && child.view.showCols) {
           child.view.showCols({right: true, left: true});
         }
       }
@@ -405,10 +405,7 @@ define([
 
             //ignore repeated queries (if the widgets are loaded with data)
             if (storage && storage.hasCurrentQuery() &&
-              apiQuery.url() == storage.getCurrentQuery().url() &&
-              app.getPluginOrWidgetName(senderKey.getId()) != "widget:SearchWidget" &&
-              app.getWidgetRefCount('Results') >= 1
-              ) {
+              apiQuery.url() == storage.getCurrentQuery().url() && app.getPluginOrWidgetName(senderKey.getId()) != "widget:SearchWidget") {
               //simply navigate to search results page, widgets are already stocked with data
               if (app.hasService('Navigator')) {
                 app.getService('Navigator').navigate('results-page', {replace: true});
@@ -416,7 +413,7 @@ define([
               }
             }
 
-            if (this.getCurrentPage() !== 'SearchPage' && app.getWidgetRefCount('Results') <= 0) {
+            if (this.getCurrentPage() !== 'SearchPage') {
               // switch immediately to the results page -make widgets listen to the START_SEARCH
               app.getService('Navigator').navigate('results-page', {replace: false});
 
