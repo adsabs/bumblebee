@@ -42,6 +42,10 @@ define(['underscore',
       'click .show-more': 'onShowMore'
     },
 
+    modelEvents : {
+      'change' : 'render'
+    },
+
     onClick: function (ev) {
       ev.stopPropagation();
 
