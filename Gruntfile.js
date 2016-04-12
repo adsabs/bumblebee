@@ -1045,11 +1045,11 @@ module.exports = function(grunt) {
         'setup',
         'clean:release', 'copy:release',
         'exec:git_describe',
-        'string-replace:dist',
         //requirejs tasks including bundled widgets
         "build-app-bundles",
         'hash_require:js', 'hash_require:css',
-        'copy:keep_original', 'copy:bumblebee_app',
+        'string-replace:dist',
+        'copy:keep_original',
         'assemble',
       ]);
 
