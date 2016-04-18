@@ -60,10 +60,10 @@ module.exports = function(grunt) {
         cmd: 'git rev-parse --short=7 --verify HEAD | cat > git-latest-commit'
       },
       latest_tag: {
-        cmd: 'git describe --abbrev=0 | cat > git-latest-release-tag'
+        cmd: 'git describe --always --abbrev=0 | cat > git-latest-release-tag'
       },
       git_describe: {
-        cmd: 'git describe | cat > git-describe'
+        cmd: 'git describe --always| cat > git-describe'
       }
     },
 
@@ -493,17 +493,9 @@ module.exports = function(grunt) {
 
             // find out what version of bbb we are going to assemble
             var tagInfo = gitDescribe.split('-');
-            var version;
-            if (tagInfo.length == 1) {
-              version = tagInfo[0]; // the latest tag is also the latest commit (we'll use tagname v1.x.x)
-            }
-            else {
-              version = tagInfo[2]; // use commit number instead of a tag
-              return "dist/bumblebee_app." + version + ".js";
-            }
-
+            var version = (tagInfo.length === 1) ? tagInfo[0] : tagInfo[2];
+            return "dist/bumblebee_app." + version + ".js";
           }
-
         }]
       }
     },
