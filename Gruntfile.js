@@ -1049,7 +1049,7 @@ module.exports = function(grunt) {
         "build-app-bundles",
         'hash_require:js', 'hash_require:css',
         'string-replace:dist',
-        'copy:keep_original',
+        'copy:keep_original', 'copy:bumblebee_app',
         'assemble',
       ]);
 
