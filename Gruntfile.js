@@ -162,16 +162,6 @@ module.exports = function(grunt) {
       }
     },
 
-    //remove unused css rules
-    purifycss: {
-      options: {},
-      target: {
-        src: ['dist/bumblebee_app.js'],
-        css: ['dist/styles/css/styles.css'],
-        dest: 'dist/styles/css/styles.css',
-      },
-    },
-
     // add md5 checksums to the distribution files
     'hash_require': {
       /* find js/css files, and add hash (md5 checksum) to them
@@ -1045,12 +1035,13 @@ module.exports = function(grunt) {
         'setup',
         'clean:release', 'copy:release',
         'exec:git_describe',
-        //requirejs tasks including bundled widgets
-        "build-app-bundles",
-        'hash_require:js', 'hash_require:css',
         'string-replace:dist',
-        'copy:keep_original', 'copy:bumblebee_app',
-        'assemble',
+        'build-app-bundles',
+        'hash_require:js',
+        'hash_require:css',
+        'copy:keep_original',
+        'copy:bumblebee_app',
+        'assemble'
       ]);
 
   grunt.registerTask("sauce", ['env:dev',  "sass", "autoprefixer", "exec:git_describe", 'express:dev', "saucelabs-mocha"]);
