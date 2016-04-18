@@ -87,7 +87,7 @@ module.exports = function(grunt) {
           allowSourceOverwrites: true,
           keepBuildDir: true,
           generateSourceMaps: false,
-          removeCombined: true,
+          removeCombined: false,
           optimize: 'uglify2',
           inlineText : true,
           findNestedDependencies: false,
@@ -133,7 +133,7 @@ module.exports = function(grunt) {
           name: "js/apps/discovery/main",
           keepBuildDir: true,
           mainConfigFile : "dist/discovery.config.js",
-          findNestedDependencies: false,
+          findNestedDependencies: true,
           wrap: true,
           preserveLicenseComments: false,
           generateSourceMaps: false,
@@ -794,7 +794,7 @@ module.exports = function(grunt) {
       (function(widgetName){
         var widgetPath = bumblebeeConfig.widgets[widgetName];
 
-        requireTasks.push("requirejs:release_" + widgetName);
+        requireTasks.unshift("requirejs:release_" + widgetName);
 
         grunt.config.data.requirejs["release_" + widgetName] = {
           options : {
