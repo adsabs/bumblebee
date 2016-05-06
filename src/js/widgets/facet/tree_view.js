@@ -43,7 +43,7 @@ define(['underscore',
     },
 
     modelEvents : {
-      'change' : 'render'
+      'change:title' :  'render'
     },
 
     onClick: function (ev) {

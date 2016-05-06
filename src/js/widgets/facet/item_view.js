@@ -17,7 +17,7 @@ define(['underscore', 'js/widgets/base/item_view',
     },
 
     modelEvents : {
-      'change' : 'render'
+      'change:title' : 'render'
     },
 
     onClick: function(ev) {
