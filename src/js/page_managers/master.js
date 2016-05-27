@@ -19,14 +19,14 @@ define([
   'js/mixins/dependon'
 
 ], function(
-  BaseWidget,
-  GenericModule,
-  PageManagerController,
-  AriaAnnouncementTemplate,
-  MasterPageManagerTemplate,
-  Marionette,
-  Dependon
-  ){
+    BaseWidget,
+    GenericModule,
+    PageManagerController,
+    AriaAnnouncementTemplate,
+    MasterPageManagerTemplate,
+    Marionette,
+    Dependon
+){
 
   var WidgetData = Backbone.Model.extend({
     defaults : function(){
@@ -51,7 +51,6 @@ define([
           m.set("isSelected", false, {silent: true});
         }
       });
-
       s.set("isSelected", true);
     }
   });
@@ -68,63 +67,44 @@ define([
 
   var MasterView = Marionette.ItemView.extend({
 
-      className : "s-master-page-manager",
+        className : "s-master-page-manager",
 
-      constructor: function(options) {
-        options = options || {};
-        if (!options.collection)
-          options.collection = new WidgetCollection();
+        constructor: function(options) {
+          options = options || {};
+          if (!options.collection)
+            options.collection = new WidgetCollection();
 
-        if (!options.model)
-          options.model = new WidgetModel();
-        options.template = MasterPageManagerTemplate;
-        Marionette.ItemView.prototype.constructor.call(this, options);
-      },
+          if (!options.model)
+            options.model = new WidgetModel();
+          options.template = MasterPageManagerTemplate;
+          Marionette.ItemView.prototype.constructor.call(this, options);
+        },
 
-      //transition between page managers
-      changeManager: function() {
-
-        var model = this.collection.findWhere({ isSelected : true });
-        // call the subordinate page-manager
-        var res = model.attributes.object.show.apply(model.attributes.object, model.attributes.options);
-
-        //detach previous controller
-        this.$(".dynamic-container").children().detach();
-        this.$(".dynamic-container").append(res.$el);
-        model.attributes.numAttach += 1;
-
-        //scroll to top
-        document.body.scrollTop = document.documentElement.scrollTop = 0;
-        //and fix the search bar back in its default spot
-        $(".s-search-bar-full-width-container").removeClass("s-search-bar-motion");
-        $(".s-quick-add").removeClass("hidden");
-
-        if (model.attributes.isSelected) {
+        //transition between page managers
+        changeManager: function() {
+          var model = this.collection.findWhere({ isSelected : true });
           // call the subordinate page-manager
           var res = model.attributes.object.show.apply(model.attributes.object, model.attributes.options);
-          this.$(".dynamic-container").append(res.el);
 
+          //detach previous controller
+          this.$(".dynamic-container").children().detach();
+          this.$(".dynamic-container").append(res.$el);
+          model.attributes.numAttach += 1;
+
+          //scroll to top
+          document.body.scrollTop = document.documentElement.scrollTop = 0;
           //and fix the search bar back in its default spot
           $(".s-search-bar-full-width-container").removeClass("s-search-bar-motion");
           $(".s-quick-add").removeClass("hidden");
+        },
+
+        //transition widgets within a manager
+        changeWithinManager : function(){
+          var model = this.collection.findWhere({ isSelected : true });
+          model.attributes.object.show.apply(model.attributes.object, model.attributes.options);
+          model.attributes.numAttach += 1;
         }
-        else {
-          if (model.attributes.object && model.attributes.object.view.$el.parent().length > 0) {
-            model.attributes.object.view.$el.detach();
-          }
-        }
-        console.timeEnd("waiting for first render");
-
-      },
-
-      //transition widgets within a manager
-      changeWithinManager : function(){
-
-        var model = this.collection.findWhere({ isSelected : true });
-        model.attributes.object.show.apply(model.attributes.object, model.attributes.options);
-        model.attributes.numAttach += 1;
       }
-    }
   );
 
   var MasterPageManager = PageManagerController.extend({
@@ -153,47 +133,39 @@ define([
 
       var app = this.getApp();
 
+      //to be called once getWidget has completed
+      var assembleManager = function (pageManagerWidget) {
+
+        if (pageManagerWidget.assemble) {
+          pageManagerWidget.assemble(app);
+        }
+        else  console.error('eeeek, ' + pageManager + ' has no assemble() method!');
+
+        // it's a new page
+        if (!pageManagerModel.get('isSelected')){
+          pageManagerModel.set({options: options, object : pageManagerWidget});
+          this.collection.selectOne(pageManagerName);
+          this.view.changeManager();
+        }
+        else {
+          //it's within a page
+          pageManagerModel.set({options : options, object : pageManagerWidget});
+          //it's already selected, trigger a change within the manager
+          this.view.changeWithinManager();
+        }
+
+        this.getPubSub().publish(this.getPubSub().ARIA_ANNOUNCEMENT, pageManagerName);
+        //figure out which pages should be cached/destroyed
+        this.manageHistoryQueue(pageManagerName);
+
+      }.bind(this);
+
+
       if (!this.collection.find({'id': pageManagerName})) {
         this.collection.add({'id': pageManagerName});
       }
 
       var pageManagerModel = this.collection.find({id: pageManagerName});
-      //to be called once getWidget has completed
-      var assembleManager = function (pageManagerWidget) {
-
-        if (pageManagerWidget.assemble) {
-          // assemble the new page manager (while the old one is still in place)
-          pageManagerWidget.assemble(app);
-        }
-        else {
-          console.error('eeeek, ' + pageManager + ' has no assemble() method!');
-        }
-
-        if (!pageManagerModel.attributes.isSelected) {
-          //hide other managers
-          this.hideAll();
-        }
-
-        // activate the new pageManagerWidget
-        if (!pageManagerModel.get('isSelected')){
-          //'changeWithinManager' also gets triggered if options are changed, leading to
-          //a wasteful re-render!
-          pageManagerModel.set({options: options, object : pageManagerWidget}, {silent : true});
-          //this triggers 'changeManager'
-          pageManagerModel.set({'isSelected': true});
-        }
-        else {
-          //it's already selected, trigger a change within the manager
-          pageManagerModel.set({options : options, object : pageManagerWidget})
-        }
-
-        // send notification
-        this.getPubSub().publish(this.getPubSub().ARIA_ANNOUNCEMENT, pageManagerName);
-
-        //figure out which pages should be cached/destroyed
-        this.manageHistoryQueue(pageManagerName);
-
-      }.bind(this);
 
       //if the model does not already reference the actual manager widget, add it now
       var pageManagerWidget;
@@ -212,17 +184,6 @@ define([
 
     manageHistoryQueue : function(pageManagerName){
 
-      // it's a new page
-      if (!pageManagerModel.get('isSelected')){
-        pageManagerModel.set({options: options, object : pageManagerWidget});
-        this.collection.selectOne(pageManagerName);
-        this.view.changeManager();
-      }
-      else {
-        //it's within a page
-        pageManagerModel.set({options : options, object : pageManagerWidget});
-        //it's already selected, trigger a change within the manager
-        this.view.changeWithinManager();
       // check whether to disassemble an old page manager in the historyQueue
       if (this.currentChild === pageManagerName ) return;
 
@@ -246,25 +207,29 @@ define([
 
       var oldPM = this.collection.find({id: twoManagersAgo});
       if (oldPM && oldPM.get('object')){
-          console.log('disassembling ' + twoManagersAgo);
-          this.disAssemble.call(oldPM.get('object'), this.getApp());
-        }
-
-        this.getPubSub().publish(this.getPubSub().ARIA_ANNOUNCEMENT, pageManagerName);
-
+        console.log('disassembling ' + twoManagersAgo);
+        this.disAssemble.call(oldPM.get('object'), this.getApp());
+      }
     },
 
-    //used by discovery mediator
     getCurrentActiveChild: function() {
       if ( this.collection.get(this.currentChild) ){
         return this.collection.get(this.currentChild).get('object'); // brittle?
       }
     },
 
+    hideAll: function() {
+      _.each(this.collection.models, function(model) {
+        if (model.attributes.isSelected) {
+          model.set('isSelected', false);
+        }
+      });
+    },
+
     /**
      * only disassemble the manager before the previous manager
      * this ensures smooth back button navigation
-    * **/
+     * **/
     historyQueue : [],
 
     /**
@@ -289,9 +254,9 @@ define([
       }, this);
       this.assembled = false;
       /*
-      * for the page controllers, this will force widgets to be
-      * re-instantiated on next assemble
-      * */
+       * for the page controllers, this will force widgets to be
+       * re-instantiated on next assemble
+       * */
       delete this.widgetsInstantiated;
 
     },
@@ -303,10 +268,24 @@ define([
       $("a#skip-to-main-content").remove();
       $("div#aria-announcement-container").remove();
       $("#app-container").before(AriaAnnouncementTemplate({page : msg}));
+
+
+    },
+
+    /**
+     * Will find and insert any widget that is still not filled on the page
+     * @param app
+     */
+    insertMasterWidgets: function(app){
+      //for header and footer
+      //var nav = app.getWidget("NavbarWidget");
+      //$("#navbar-container").append(nav.render().el);
+
     }
 
   });
 
   _.extend(MasterPageManager.prototype, Dependon.App);
   return MasterPageManager;
+
 });

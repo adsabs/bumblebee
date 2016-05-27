@@ -56,13 +56,11 @@ require.config({
           DynamicConfig: 'discovery.vars',
           MasterPageManager: 'js/page_managers/master',
           AppStorage: 'js/components/app_storage',
-          RecaptchaManager : 'js/components/recaptcha_manager',
-          CSRFManager : "js/components/csrf_manager",
-          LibraryController : 'js/components/library_controller',
-          DocStashController : 'js/components/doc_stash_controller'
-        },
-        modules: {
-          FacetFactory: 'js/widgets/facet/factory'
+          RecaptchaManager: 'js/components/recaptcha_manager',
+          CSRFManager: "js/components/csrf_manager",
+          LibraryController: 'js/components/library_controller',
+          DocStashController: 'js/components/doc_stash_controller'
+
         }
       },
 
@@ -143,7 +141,7 @@ require.config({
 
     },
 
-  preLoadUI : [
+    preLoadUI : [
       //additional widgets or files that should be concatenated to the base file in production
       // (if they are very widely used)
       'js/widgets/base/base_widget',
@@ -279,23 +277,23 @@ require.config({
     },
 
     mathjax: {
-        exports: "MathJax",
-        init: function () {
-          MathJax.Hub.Config({
-            HTML: ["input/TeX","output/HTML-CSS"],
-            TeX: { extensions: ["AMSmath.js","AMSsymbols.js"],
-              equationNumbers: { autoNumber: "AMS" } },
-            extensions: ["tex2jax.js"],
-            jax: ["input/TeX","output/HTML-CSS"],
-            tex2jax: { inlineMath: [ ['$','$'], ["\\(","\\)"] ],
-              displayMath: [ ['$$','$$'], ["\\[","\\]"] ],
-              processEscapes: true },
-            "HTML-CSS": { availableFonts: ["TeX"],
-              linebreaks: { automatic: true } }
-          });
-          MathJax.Hub.Startup.onload();
-          return MathJax;
-        }
+      exports: "MathJax",
+      init: function () {
+        MathJax.Hub.Config({
+          HTML: ["input/TeX","output/HTML-CSS"],
+          TeX: { extensions: ["AMSmath.js","AMSsymbols.js"],
+            equationNumbers: { autoNumber: "AMS" } },
+          extensions: ["tex2jax.js"],
+          jax: ["input/TeX","output/HTML-CSS"],
+          tex2jax: { inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+            displayMath: [ ['$$','$$'], ["\\[","\\]"] ],
+            processEscapes: true },
+          "HTML-CSS": { availableFonts: ["TeX"],
+            linebreaks: { automatic: true } }
+        });
+        MathJax.Hub.Startup.onload();
+        return MathJax;
+      }
     }
   },
 
@@ -303,7 +301,7 @@ require.config({
 
     require([
       'hbs/handlebars'
-              ], function(
+    ], function(
         Handlebars
     ) {
 
@@ -356,7 +354,7 @@ require.config({
         valid: function (view, attr, selector) {
           var $el = view.$('input[name=' + attr + ']');
 
-           $el.closest('.form-group')
+          $el.closest('.form-group')
               .removeClass('has-error')
               .find('.help-block')
               .html('')
