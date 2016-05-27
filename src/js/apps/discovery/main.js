@@ -22,11 +22,15 @@ define(['config', 'module'], function(config, module) {
       'js/mixins/api_access',
       'es5-shim'
     ],
-    function(Router,
+    function(
+        Router,
       Application,
       DiscoveryBootstrap,
       ApiAccess
       ) {
+
+      console.time("waiting for first render");
+
       Application.prototype.shim();
 
       // at the beginning, we don't know anything about ourselves...
@@ -35,11 +39,14 @@ define(['config', 'module'], function(config, module) {
       // app object will load everything
       var app = new (Application.extend(DiscoveryBootstrap))({'debug': debug, timeout: 30000});
 
+      console.time("modules loading")
       // load the objects/widgets/modules (using discovery.config.js)
       var defer = app.loadModules(module.config());
 
       // after they are loaded; we'll kick off the application
       defer.done(function() {
+
+        console.timeEnd("modules loading");
 
         // this will activate all loaded modules
         app.activate();
@@ -50,12 +57,17 @@ define(['config', 'module'], function(config, module) {
         // set some important urls, parameters before doing anything
         app.configure();
 
+        console.time("bootstrap");
+
         app.bootstrap().done(function (data) {
 
           app.onBootstrap(data);
-          pubsub.publish(pubsub.getCurrentPubSubKey(), pubsub.APP_BOOTSTRAPPED);
 
+          console.timeEnd("bootstrap");
+
+          pubsub.publish(pubsub.getCurrentPubSubKey(), pubsub.APP_BOOTSTRAPPED);
           pubsub.publish(pubsub.getCurrentPubSubKey(), pubsub.APP_STARTING);
+
           app.start(Router);
           pubsub.publish(pubsub.getCurrentPubSubKey(), pubsub.APP_STARTED);
 

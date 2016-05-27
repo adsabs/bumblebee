@@ -1,4 +1,5 @@
 define([
+    'jquery',
     'underscore',
     "marionette",
     "hbs!./templates/results-page-layout",
@@ -8,7 +9,9 @@ define([
     './view_mixin',
     'js/mixins/dependon'
   ],
-  function (_,
+  function (
+            $,
+            _,
             Marionette,
             pageTemplate,
             controlRowTemplate,
@@ -43,11 +46,6 @@ define([
         this.view = this.createView({debug : this.debug, widgets: this.widgets});
       },
 
-
-      setWidgetId: function(n) {
-        this.widgetId = n;
-      },
-
       /**
        * Creates the view: the pagemanger view (from the template
        * that references widgets)
@@ -59,35 +57,83 @@ define([
         return new ThreeColumnView(options);
       },
 
+      /* this will load and instantiate an instance of every
+         widget necessary for the page manager
+       */
+
+      requireAndInstantiateWidgets : function(app, options) {
+
+        options = options || {};
+        var that = this;
+
+        //widgets have already been loaded, just return the promise
+        if (this.widgetsInstantiated) return this.widgetsInstantiated;
+
+        if (!app) console.error("requireAndInstantiateWidgets function wasn't provided with an app object");
+
+        _.extend(this.widgetDoms, this.getWidgetsFromTemplate(this.view.render().$el));
+
+        var promises = [],
+            delay = 0;
+
+        _.each(this.widgetDoms, function(widgetDom, widgetName) {
+
+          //this option should be provided if widgets are being loaded in the background
+          if (options.stagger){
+
+            var d = $.Deferred();
+            promises.push(d);
+
+            setTimeout(
+                function() {
+                  app._getWidget(widgetName).then(function(w){
+                    d.resolve.apply($, arguments);
+                  });
+                }, delay);
+            delay +=70;
+
+          }
+          else {
+            var p = app._getWidget(widgetName);
+            promises.push(p);
+          }
+
+        }, this);
+
+
+        this.widgetsInstantiated = $.when.apply($, promises).then(function(){
+          var widgets = [].slice.apply(arguments);
+          return _.object(_.zip(_.keys(that.widgetDoms), widgets));
+        });
+
+        return this.widgetsInstantiated;
+
+      },
+
       /**
        * Render the widgets and append them inside the appropriate places inside the
        * template. This happens only 1x during the lifetime of the page manager
        *
        * @param app
        */
+
+      /**
+      * the disassemble function is applied from the master.js
+      **/
       assemble: function(app) {
-        if (this.assembled)
-          return this.view.el;
+
+        var d = $.Deferred();
+
+        if (this.assembled) return d.resolve().promise();
 
         this.assembled = true;
-        this.view.render();
 
         var that = this, el;
-        _.extend(that.widgetDoms, that.getWidgetsFromTemplate(that.view.$el));
 
-        _.each(that.widgetDoms, function(widgetDom, widgetName) {
-          if (!app.hasWidget(widgetName)) {
-            delete that.widgetDoms[widgetName];
-            delete that.widgets[widgetName];
-            return;
-          }
+        var numberWidgetsToBeInserted;
 
-          var widget = app._getWidget(widgetName);
-          if (this.persistentWidgets && this.persistentWidgets.indexOf(widgetName) > -1){
-            // this increments the counter so the widget won't be de-referenced when this
-            // page manager is disassembled
-            app._getWidget(widgetName);
-          }
+        //this gets called after each widget is fetched
+        function onWidgetLoad (widgetName, widget) {
 
           if (widget) {
             // maybe it is a page-manager (this is a security hole though!)
@@ -95,7 +141,7 @@ define([
               widget.assemble(app);
             }
 
-            //reducing unneccessary rendering
+            //reducing unnecessary rendering
             if (widget.getEl){
               el = widget.getEl()
             }
@@ -104,27 +150,27 @@ define([
             }
             $(that.widgetDoms[widgetName]).empty().append(el);
             that.widgets[widgetName] = widget;
-          }
-        }, this);
-      },
 
-      disAssemble: function(app) {
+            numberWidgetsToBeInserted-=1;
+            if (numberWidgetsToBeInserted === 0){
+              //so that callers of this function can know when everything is inserted!!
+              //just added for tests
+              d.resolve();
+            }
+          }
 
-        _.each(_.keys(this.widgets), function(widgetName) {
-          var widget = this.widgets[widgetName];
-          if (widget.disAssemble)
-            widget.disAssemble();
-          app.returnWidget(widgetName);
-          if (!app._isBarbarianAlive("widget:" + widgetName)){
-            $(this.widgetDoms[widgetName]).empty();
-          }
-          else {
-            $(this.widgetDoms[widgetName]).detach();
-          }
-          delete this.widgets[widgetName];
-          delete this.widgetDoms[widgetName];
-        }, this);
-        this.assembled = false;
+        };
+
+
+      this.requireAndInstantiateWidgets(app).done(function(widgets){
+        numberWidgetsToBeInserted = _.keys(widgets).length;
+        _.each(widgets,  function(widget, widgetName){
+          onWidgetLoad(widgetName, widget);
+        });
+      });
+
+        return d.promise();
+
       },
 
       /**
@@ -135,8 +181,18 @@ define([
        */
       show: function(pageName){
 
-        var self = this;
+        var args = [].slice.apply(arguments);
 
+        var self = this;
+        if (!this.widgetsInstantiated){ console.error("page controller wasn't activated in time")}
+        else if (this.widgetsInstantiated.state() !== "resolved"){
+          this.widgetsInstantiated.done(function(){
+            self.show.apply(self, args);
+          });
+          //it can be returned anyway to the 'master controller' that
+          //is trying to show it
+          return this.view;
+        }
         if (!pageName) {
           this.showAll();
         }
@@ -182,6 +238,7 @@ define([
       },
 
       hideAll: function() {
+
         // hide all widgets that are under our control
         _.each(this.widgets, function(w) {
           if (w.noDetach)

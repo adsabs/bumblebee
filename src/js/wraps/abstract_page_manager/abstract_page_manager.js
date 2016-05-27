@@ -12,8 +12,6 @@ define([
 
   var PageManager = PageManagerController.extend({
 
-    persistentWidgets : ["SearchWidget", "ShowAbstract", "ShowCitations", "ShowReferences", "tocWidget"],
-
     TOCTemplate : TOCTemplate,
 
     createView: function(options) {
@@ -32,10 +30,11 @@ define([
     },
 
     assemble: function(app) {
-      PageManagerController.prototype.assemble.apply(this, arguments);
       var storage = app.getObject('AppStorage');
       if (storage && storage.hasCurrentQuery())
         this.addQuery(storage.getCurrentQuery());
+      //returning the promise just for tests at the moment
+     return  PageManagerController.prototype.assemble.apply(this, arguments);
     },
 
     addQuery: function(apiQuery) {
@@ -52,11 +51,14 @@ define([
     },
 
     onDisplayDocuments : function(apiQuery){
-      var bibcode = apiQuery.get('q');
-      if (bibcode.length > 0 && bibcode[0].indexOf('bibcode:') > -1) {
-        bibcode = bibcode[0].replace('bibcode:', '');
-        this.widgets.tocWidget.model.set("bibcode", bibcode);
-      };
+      var onDisplay = function(){
+        var bibcode = apiQuery.get('q');
+        if (bibcode.length > 0 && bibcode[0].indexOf('bibcode:') > -1) {
+          bibcode = bibcode[0].replace('bibcode:', '');
+          if (this.widgets.tocWidget) this.widgets.tocWidget.model.set("bibcode", bibcode);
+        };
+      }.bind(this);
+      this.widgetsInstantiated.done(onDisplay);
     },
     
     navConfig : {

@@ -90,7 +90,19 @@ define([
         var pubsub = beehive.Services.get('PubSub');
 
         sinon.stub(pubsub, 'subscribe');
-        qm.activate(beehive, {getPskOfPluginOrWidget: function() {}});
+        qm.activate(beehive, {
+          getPskOfPluginOrWidget: function() {},
+          getWidget : function(pageName){
+          var d = $.Deferred();
+            if (pageName === "SearchPage")
+          d.resolve({loadWidgets : function(){
+            var d = $.Deferred();
+            d.resolve();
+            return d.promise();
+          }});
+          return d.promise();
+
+        }});
 
         expect(qm.hasBeeHive()).to.be.true;
         expect(qm.getBeeHive()).to.be.equal(beehive);
@@ -109,7 +121,19 @@ define([
       it("should be able to get query ids for bigqueries", function(done){
 
         var qm = new QueryMediator();
-        qm.activate(beehive, {getPskOfPluginOrWidget: function() {}});
+        qm.activate(beehive, {
+          getPskOfPluginOrWidget: function() {},
+          getWidget : function(pageName){
+            var d = $.Deferred();
+            if (pageName === "SearchPage")
+              d.resolve({loadWidgets : function(){
+                var d = $.Deferred();
+                d.resolve();
+                return d.promise();
+              }});
+            return d.promise();
+
+          }});
         var api = beehive.Services.get('Api');
         api.request.restore();
         sinon.stub(api, "request", function(request){
@@ -148,7 +172,19 @@ define([
       it("should be able to take a qid from url-supplied apiQuery and start the search cycle", function(){
 
         var qm = new QueryMediator();
-        qm.activate(beehive, {getPskOfPluginOrWidget: function() {}});
+        qm.activate(beehive, {
+          getPskOfPluginOrWidget: function() {},
+          getWidget : function(pageName){
+            var d = $.Deferred();
+            if (pageName === "SearchPage")
+              d.resolve({loadWidgets : function(){
+                var d = $.Deferred();
+                d.resolve();
+                return d.promise();
+              }});
+            return d.promise();
+
+          }});
 
         var q = new ApiQuery({
           __qid : "fakeQID",
@@ -177,7 +213,18 @@ define([
 
       it("should mediate between modules; passing data back and forth", function(done) {
         var qm = new QueryMediator({'debug': debug});
-        qm.activate(beehive, {getPskOfPluginOrWidget: function() {}});
+        qm.activate(beehive, {
+          getPskOfPluginOrWidget: function() {},
+          getWidget : function(pageName){
+            var d = $.Deferred();
+            if (pageName === "SearchPage")
+              d.resolve({requireAndInstantiateWidgets : function(){
+                var d = $.Deferred();
+                d.resolve();
+                return d.promise();
+              }});
+            return d.promise();
+          }});
 
         this.server.autoRespond = true;
         // install spies into pubsub and api
@@ -333,6 +380,10 @@ define([
         expect(qm.__searchCycle.waiting[key.getId()]).to.be.defined;
         expect(pubSpy.lastCall.args[0]).to.be.eql(PubSubEvents.INVITING_REQUEST);
 
+        //should preload search page widgets
+        expect(qm.getApp().getWidget.args[0][0]).to.eql("SearchPage");
+
+
         expect(qm.monitorExecution.called).to.be.false;
         setTimeout(function() {
           expect(qm.startExecutingQueries.called).to.be.true;
@@ -344,6 +395,17 @@ define([
 
         //if the queries match, the mediator checks to see if the query came from the search widget
         qm.setApp({
+          getWidget : function(pageName){
+            var d = $.Deferred();
+            if (pageName === "SearchPage")
+              d.resolve({requireAndInstantiateWidgets: function(){
+                var d = $.Deferred();
+                d.resolve();
+                return d.promise();
+              }});
+            return d.promise();
+
+          },
           getPskOfPluginOrWidget: function(){},
           getPluginOrWidgetName : function(){return false},
           hasService: function() {return true;},
@@ -443,7 +505,20 @@ define([
         sinon.spy(qm, 'tryToRecover');
         sinon.spy(qm, 'getQTree');
 
-        qm.activate(beehive, {getPskOfPluginOrWidget: function() {}, hasService: function(){}});
+        qm.activate(beehive, {
+          getPskOfPluginOrWidget: function() {},
+          hasService : function(){},
+          getWidget : sinon.spy(function(pageName){
+            var d = $.Deferred();
+            if (pageName === "SearchPage")
+              d.resolve({ requireAndInstantiateWidgets : function(){
+                var d = $.Deferred();
+                d.resolve();
+                return d.promise();
+              }});
+            return d.promise();
+
+          })});
         return {qm: qm, key1: key1, key2:key2, req1: req1, req2:req2, q1:q1, q2:q2,
           pubsub:pubsub, api:api}
       };

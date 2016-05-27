@@ -43,8 +43,10 @@ define([
 
       var app = {
         getWidget: function(name) {
+          var d = $.Deferred();
           if (name == 'AlertsWidget')
-            return widget;
+            d.resolve(widget);
+          return d.promise();
         },
         getController: function(name) {
           if (name == 'AlertsController')

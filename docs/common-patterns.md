@@ -36,3 +36,17 @@ this pattern is used in libraries and for the page number preferences
 2.  renderWidgetForListOfBibcodes(bibcodeArray, data)
 @param {array} bibcodeArray
 @param {object} data
+
+
+## to preload all widgets for a specific page
+//from query_mediator.js
+ this.getApp()
+            .getWidget("SearchPage")
+            .done(function(widget){
+              widget.assemble();
+              widget.widgetsLoaded.done(function(){
+                  //now all widgets have been loaded
+                  inviteRequests();
+              });
+            });
+

@@ -41,14 +41,14 @@ require.config({
           QueryMediator: 'js/components/query_mediator',
           Diagnostics: 'js/bugutils/diagnostics',
           AlertsController: 'js/wraps/alerts_mediator',
-          Orcid: 'js/modules/orcid/module',
+          Orcid: 'js/modules/orcid/module'
         },
         services: {
           Api: 'js/services/api',
           PubSub: 'js/services/pubsub',
           Navigator: 'js/apps/discovery/navigator',
           PersistentStorage: 'js/services/storage',
-          HistoryManager: 'js/components/history_manager',
+
         },
         objects: {
           User: 'js/components/user',
@@ -56,23 +56,24 @@ require.config({
           DynamicConfig: 'discovery.vars',
           MasterPageManager: 'js/page_managers/master',
           AppStorage: 'js/components/app_storage',
-          RecaptchaManager : 'js/components/recaptcha_manager',
-          CSRFManager : "js/components/csrf_manager",
-          LibraryController : 'js/components/library_controller',
-          DocStashController : 'js/components/doc_stash_controller'
-        },
-        modules: {
-          FacetFactory: 'js/widgets/facet/factory'
+          RecaptchaManager: 'js/components/recaptcha_manager',
+          CSRFManager: "js/components/csrf_manager",
+          LibraryController: 'js/components/library_controller',
+          DocStashController: 'js/components/doc_stash_controller'
+
         }
       },
+
       widgets: {
+
+        FacetFactory: 'js/widgets/facet/factory',
         LandingPage: 'js/wraps/landing_page_manager/landing_page_manager',
         SearchPage: 'js/wraps/results_page_manager',
         DetailsPage: 'js/wraps/abstract_page_manager/abstract_page_manager',
         AuthenticationPage: 'js/wraps/authentication_page_manager',
         SettingsPage: 'js/wraps/user_settings_page_manager/user_page_manager',
         OrcidPage: 'js/wraps/orcid_page_manager/orcid_page_manager',
-        OrcidInstructionsPage : 'js/wraps/orcid-instructions-page-manager/manager',
+        OrcidInstructionsPage: 'js/wraps/orcid-instructions-page-manager/manager',
 
         LibrariesPage: 'js/wraps/libraries_page_manager/libraries_page_manager',
         HomePage: 'js/wraps/home_page_manager/home_page_manager',
@@ -89,20 +90,20 @@ require.config({
         AlertsWidget: 'js/widgets/alerts/widget',
         ClassicSearchForm: 'js/widgets/classic_form/widget',
         SearchWidget: 'js/widgets/search_bar/search_bar_widget',
-        PaperSearchForm:'js/widgets/paper_search_form/widget',
+        PaperSearchForm: 'js/widgets/paper_search_form/widget',
         Results: 'js/widgets/results/widget',
         QueryInfo: 'js/widgets/query_info/query_info_widget',
         QueryDebugInfo: 'js/widgets/api_query/widget',
-        ExportWidget  : 'js/widgets/export/widget',
-        Sort : 'js/widgets/sort/widget',
-        ExportDropdown : 'js/wraps/export_dropdown',
-        VisualizationDropdown : 'js/wraps/visualization_dropdown',
-        AuthorNetwork : 'js/wraps/author_network',
-        PaperNetwork : 'js/wraps/paper_network',
-        ConceptCloud : 'js/widgets/wordcloud/widget',
-        BubbleChart : 'js/widgets/bubble_chart/widget',
+        ExportWidget: 'js/widgets/export/widget',
+        Sort: 'js/widgets/sort/widget',
+        ExportDropdown: 'js/wraps/export_dropdown',
+        VisualizationDropdown: 'js/wraps/visualization_dropdown',
+        AuthorNetwork: 'js/wraps/author_network',
+        PaperNetwork: 'js/wraps/paper_network',
+        ConceptCloud: 'js/widgets/wordcloud/widget',
+        BubbleChart: 'js/widgets/bubble_chart/widget',
 
-        Metrics :  'js/widgets/metrics/widget',
+        Metrics: 'js/widgets/metrics/widget',
         OrcidBigWidget: 'js/modules/orcid/widget/widget',
 
         AuthorFacet: 'js/wraps/author_facet',
@@ -112,33 +113,43 @@ require.config({
         DatabaseFacet: 'js/wraps/database_facet',
         GrantsFacet: 'js/wraps/grants_facet',
         KeywordFacet: 'js/wraps/keyword_facet',
-		ObjectFacet: 'js/wraps/object_facet',
+        ObjectFacet: 'js/wraps/object_facet',
         RefereedFacet: 'js/wraps/refereed_facet',
         VizierFacet: 'js/wraps/vizier_facet',
-        GraphTabs : 'js/wraps/graph_tabs',
-        FooterWidget : 'js/widgets/footer/widget',
+        GraphTabs: 'js/wraps/graph_tabs',
+        FooterWidget: 'js/widgets/footer/widget',
 
         ShowAbstract: 'js/widgets/abstract/widget',
         ShowGraphics: 'js/widgets/graphics/widget',
         ShowGraphicsSidebar: 'js/wraps/sidebar-graphics-widget',
         ShowReferences: 'js/wraps/references',
-        ShowCitations : 'js/wraps/citations',
-        ShowCoreads : 'js/wraps/coreads',
+        ShowCitations: 'js/wraps/citations',
+        ShowCoreads: 'js/wraps/coreads',
         //can't camel case because router only capitalizes first letter
-        ShowTableofcontents : 'js/wraps/table_of_contents',
-        ShowResources : 'js/widgets/resources/widget',
-        ShowRecommender : 'js/widgets/recommender/widget',
+        ShowTableofcontents: 'js/wraps/table_of_contents',
+        ShowResources: 'js/widgets/resources/widget',
+        ShowRecommender: 'js/widgets/recommender/widget',
         ShowMetrics: 'js/wraps/paper_metrics',
         ShowPaperExport : 'js/wraps/paper_export',
         ShowLibraryAdd : 'js/wraps/abstract_page_library_add/widget',
-
         IndividualLibraryWidget : 'js/widgets/library_individual/widget',
         AllLibrariesWidget : 'js/widgets/libraries_all/widget',
-        LibraryListWidget : 'js/widgets/library_list/widget'
-      },
-      plugins: {}
+        LibraryListWidget : 'js/widgets/library_list/widget',
+        LibraryImport : 'js/widgets/library_import/widget'
+
       }
+
+    },
+
+    preLoadUI : [
+      //additional widgets or files that should be concatenated to the base file in production
+      // (if they are very widely used)
+      'js/widgets/base/base_widget',
+      'jquery-querybuilder'
+    ]
+
   },
+
 
   // Configuration for the facades (you can pick specific implementation, just for your
   // application) see http://requirejs.org/docs/api.html#config-map
@@ -266,23 +277,23 @@ require.config({
     },
 
     mathjax: {
-        exports: "MathJax",
-        init: function () {
-          MathJax.Hub.Config({
-            HTML: ["input/TeX","output/HTML-CSS"],
-            TeX: { extensions: ["AMSmath.js","AMSsymbols.js"],
-              equationNumbers: { autoNumber: "AMS" } },
-            extensions: ["tex2jax.js"],
-            jax: ["input/TeX","output/HTML-CSS"],
-            tex2jax: { inlineMath: [ ['$','$'], ["\\(","\\)"] ],
-              displayMath: [ ['$$','$$'], ["\\[","\\]"] ],
-              processEscapes: true },
-            "HTML-CSS": { availableFonts: ["TeX"],
-              linebreaks: { automatic: true } }
-          });
-          MathJax.Hub.Startup.onload();
-          return MathJax;
-        }
+      exports: "MathJax",
+      init: function () {
+        MathJax.Hub.Config({
+          HTML: ["input/TeX","output/HTML-CSS"],
+          TeX: { extensions: ["AMSmath.js","AMSsymbols.js"],
+            equationNumbers: { autoNumber: "AMS" } },
+          extensions: ["tex2jax.js"],
+          jax: ["input/TeX","output/HTML-CSS"],
+          tex2jax: { inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+            displayMath: [ ['$$','$$'], ["\\[","\\]"] ],
+            processEscapes: true },
+          "HTML-CSS": { availableFonts: ["TeX"],
+            linebreaks: { automatic: true } }
+        });
+        MathJax.Hub.Startup.onload();
+        return MathJax;
+      }
     }
   },
 
@@ -290,7 +301,7 @@ require.config({
 
     require([
       'hbs/handlebars'
-              ], function(
+    ], function(
         Handlebars
     ) {
 
@@ -343,7 +354,7 @@ require.config({
         valid: function (view, attr, selector) {
           var $el = view.$('input[name=' + attr + ']');
 
-           $el.closest('.form-group')
+          $el.closest('.form-group')
               .removeClass('has-error')
               .find('.help-block')
               .html('')

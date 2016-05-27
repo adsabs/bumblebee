@@ -1,11 +1,15 @@
 define([
   'js/components/application',
   'module',
-  'js/services/api'
+  'js/services/api',
+  'js/services/pubsub',
+   'js/widgets/api_response/widget'
 ], function(
   Application,
   module,
-  Api
+  Api,
+  PubSub,
+  ApiResponseWidget
   ) {
   describe("Application Scaffolding (application.spec.js)", function () {
 
@@ -14,7 +18,8 @@ define([
       config = {
         core: {
           controllers: {
-            FeedbackMediator: 'js/wraps/discovery_mediator'
+            FeedbackMediator: 'js/wraps/discovery_mediator',
+            QM: 'js/components/query_mediator'
           },
           services: {
             'Api': 'js/services/api',
@@ -23,17 +28,13 @@ define([
           objects: {
             User: 'js/components/user'
           },
-          modules: {
-            QM: 'js/components/query_mediator'
-          }
+
         },
         widgets: {
           ApiResponse: 'js/widgets/api_response/widget',
           ApiResponse2: 'js/widgets/api_response/widget'
-        },
-        plugins: {
-          Test: 'js/widgets/api_response/widget'
         }
+
       };
       done();
     });
@@ -42,7 +43,16 @@ define([
     it("should create application object", function(done) {
       expect(new Application()).to.be.instanceof(Application);
       var app = new Application();
-      expect(app.getBeeHive()).to.be.defined;
+
+      expect(app.__beehive).to.eql(app.getBeeHive()).and.to.not.eql(undefined);
+      expect(app.__plugins).to.not.eql(undefined);
+      expect(app.__modules).to.not.eql(undefined);
+      expect(app.__controllers).to.not.eql(undefined);
+      expect(app.__widgets).to.not.eql(undefined);
+      expect(app.__barbarianRegistry).to.not.eql(undefined);
+      expect(app.__barbarianInstances).to.not.eql(undefined);
+
+
       var beehive = app.getBeeHive();
       sinon.spy(beehive, 'destroy');
       app.destroy();
@@ -72,10 +82,38 @@ define([
 
         expect(app.getWidget('ApiResponse')).to.be.defined;
         expect(app.getWidget('ApiResponse')).to.not.be.equal(app.getWidget('ApiResponse2'));
-        expect(app.getPlugin('Test')).to.be.defined;
 
         done();
       });
+
+    });
+
+    it("lazily loads widgets, always returning a promise", function(done){
+      var app = new Application();
+      app.activate();
+
+      app.__beehive.addService("PubSub", new PubSub())
+
+      var defer = app.loadModules(config);
+
+      var widgetPromise = app.getWidget('ApiResponse2');
+
+      expect(widgetPromise.state()).to.eql("pending");
+
+      expect(app.pendingWidgets.ApiResponse2.state()).to.eql("pending");
+
+      //can't figure out how to do this more reliably
+      setTimeout(function(){
+        var w;
+        expect(widgetPromise.state()).to.eql('resolved');
+        expect(_.keys(app.pendingWidgets).length).to.eql(0);
+        widgetPromise.done(function(widg){
+          w = widg;
+        });
+        expect(w).to.be.instanceOf(ApiResponseWidget);
+        done()
+      },500);
+
 
     });
 
@@ -95,7 +133,6 @@ define([
         expect(beehive.getObject('User')).to.be.undefined;
 
         expect(app.getWidget('ApiResponse')).to.be.undefined;
-        expect(app.getPlugin('Test')).to.be.defined;
         done();
       });
     });
@@ -105,34 +142,25 @@ define([
       var defer = app.loadModules(config);
 
       defer.done(function() {
-        app._getWidget('ApiResponse');
-        app._getWidget('ApiResponse2');
-        app._getPlugin('Test');
+        app.getWidget('ApiResponse');
+        app.getWidget('ApiResponse2');
 
-        app.getAllWidgets().done(function(w) {
-          expect(w.length).to.be.eql(2);
-        });
-        app.getAllPlugins().done(function(w) {
-          expect(w.length).to.be.eql(1);
-        });
+        setTimeout(function(){
+          expect(app.getAllWidgets().length).to.eql(2);
+          done();
+        }, 500);
 
         expect(app.isActivated()).to.be.equal(false);
         app.activate();
         expect(app.isActivated()).to.be.equal(true);
 
-        app.getWidget('ApiResponse', 'ApiResponse2').done(
+        app.getWidget('ApiResponse').done(
           function(w) {
-            var w1 = w.ApiResponse;
-            var w2 = w.ApiResponse2;
-
-            expect(app.getPluginOrWidgetByPubSubKey(w1.getPubSub().getCurrentPubSubKey().getId())).to.be.eql(w1);
-            expect(app.getPluginOrWidgetByPubSubKey(w2.getPubSub().getCurrentPubSubKey().getId())).to.be.eql(w2);
-
+            expect(app.getPluginOrWidgetByPubSubKey(w.getPubSub().getCurrentPubSubKey().getId())).to.be.eql(w);
             expect(app.getPluginOrWidgetByPubSubKey('foo')).to.be.undefined;
-            delete app.__barbarianRegistry[w1.getPubSub().getCurrentPubSubKey()];
+            delete app.__barbarianRegistry[w.getPubSub().getCurrentPubSubKey()];
             expect(function() {app.getPluginOrWidgetByPubSubKey('foo')}).to.throw.Error;
 
-            done();
         });
       });
     });
@@ -151,7 +179,7 @@ define([
           }
         });
 
-        app._getWidget('ApiResponse').foox = function(options) {
+        app.getWidget('ApiResponse').foox = function(options) {
           counter += 1;
           args.push(options);
         };
@@ -208,14 +236,13 @@ define([
             expect(widget.getBeeHive).to.be.defined;
             expect(widget.getPubSub).to.be.defined;
             expect(app.getWidgetRefCount('ApiResponse')).to.eql(1);
-            expect(app.getPluginRefCount('ApiResponse')).to.eql(-1);
-          });
 
+          });
 
         setTimeout(function() {
           expect(app.__barbarianInstances['widget:' + 'ApiResponse']).to.be.undefined;
           done();
-        }, 10)
+        }, 100)
 
       });
     });

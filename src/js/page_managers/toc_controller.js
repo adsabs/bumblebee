@@ -14,7 +14,6 @@ define([
 
     var PageManagerController = BasicPageManagerController.extend({
 
-
       createView: function(options) {
 
         if (this.pageConfig){
@@ -32,38 +31,43 @@ define([
         throw new Error("TOC widget is being assembled without navigation configuration (navConfig)");
         }
 
-        if (this.assembled)
-          return;
+        if (this.assembled)  return;
 
         BasicPageManagerController.prototype.assemble.apply(this, arguments);
 
-        var tocTemplate = Marionette.getOption(this, "TOCTemplate");
+        var TOCSetup = function (){
+          var tocTemplate = Marionette.getOption(this, "TOCTemplate");
 
-        if (this.TOCEvents){
-          //initiate the TOC view
-          this.widgets.tocWidget = new TOCWidget(
-            {
+          if (this.TOCEvents){
+            //initiate the TOC view
+            this.widgets.tocWidget = new TOCWidget(
+                {
+                  template : tocTemplate,
+                  events : Marionette.getOption(this, "TOCEvents") ,
+                  navConfig : Marionette.getOption(this, "navConfig")
+                }
+            );
+          }
+          else {
+            //initiate the TOC view
+            this.widgets.tocWidget = new TOCWidget({
               template : tocTemplate,
-              events : Marionette.getOption(this, "TOCEvents") ,
               navConfig : Marionette.getOption(this, "navConfig")
-            }
-          );
-        }
-        else {
-          //initiate the TOC view
-          this.widgets.tocWidget = new TOCWidget({
-            template : tocTemplate,
-            navConfig : Marionette.getOption(this, "navConfig")
-          });
-        }
+            });
+          }
 
-        //insert the TOC nav view into its slot
-        this.view.$(".nav-container").append(this.widgets.tocWidget.render().el);
+          //insert the TOC nav view into its slot
+          this.view.$(".nav-container").empty().append(this.widgets.tocWidget.render().el);
 
-        _.each(_.keys(this.widgets), function(w) {
-          this.listenTo(this.widgets[w], "page-manager-event", _.bind(this.onPageManagerEvent, this, this.widgets[w]));
-          this.broadcast('page-manager-message', 'new-widget', w);
-        }, this);
+          _.each(_.keys(this.widgets), function(w) {
+            this.listenTo(this.widgets[w], "page-manager-event", _.bind(this.onPageManagerEvent, this, this.widgets[w]));
+            this.broadcast('page-manager-message', 'new-widget', w);
+          }, this);
+
+
+        }.bind(this);
+
+        return this.widgetsInstantiated.then(TOCSetup);
 
       },
 
@@ -110,15 +114,21 @@ define([
 
       },
 
-      setActive : function(widgetName, subView){
-        //now inform the widget of the subView to show
-        if (subView && this.widgets[widgetName].setSubView instanceof Function){
-          this.widgets[widgetName].setSubView(subView);
-        }
-        if (subView){
-          widgetName = widgetName + "__" + subView;
-        }
-        this.widgets.tocWidget.collection.selectOne(widgetName);
+      setActive : function(widgetName, subView) {
+        var that = this;
+
+        this.widgetsInstantiated.done(function () {
+
+          var fullName = subView ? widgetName + "__" + subView : widgetName;
+
+          that.widgets.tocWidget.collection.selectOne( fullName );
+
+          if (that.widgets[widgetName].setSubView instanceof Function){
+            that.widgets[widgetName].setSubView(subView);
+          }
+
+        });
+
       },
 
       onDestroy: function () {

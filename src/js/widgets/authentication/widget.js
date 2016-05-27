@@ -423,6 +423,7 @@ define([
 
 
     setSubView : function(subView){
+      this.view.render();
       this.stateModel.set("subView", subView);
     },
 

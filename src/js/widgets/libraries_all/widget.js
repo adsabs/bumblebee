@@ -127,6 +127,7 @@ define([
         this.libraryCollection = new LibraryCollection();
       },
 
+
       activate: function(beehive) {
         var that = this;
         this.setBeeHive(beehive);

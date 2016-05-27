@@ -9,8 +9,6 @@ define([
 
   var PageManager = PageManagerController.extend({
 
-    persistentWidgets : ["SearchWidget", "BreadcrumbsWidget", "Sort", "ExportDropdown", "VisualizationDropdown", "AuthorFacet", "DatabaseFacet", "RefereedFacet", "KeywordFacet", "BibstemFacet", "BibgroupFacet", "DataFacet", "VizierFacet", "GrantsFacet", "Results", "OrcidBigWidget", "QueryInfo", "GraphTabs"],
-
     createView: function(options) {
       options = options || {};
       options.template = options.template || PageManagerTemplate;

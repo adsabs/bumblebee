@@ -197,10 +197,9 @@ define([
       // attach the master page to the body
       $('div#body-template-container').empty().append(masterPageManager.view.el);
 
-
       // kick off routing
       app.router = new Router();
-      app.router.activate(beehive.getHardenedInstance());
+      app.router.activate(beehive);
 
       // get ready to handle navigation signals
       navigator.start(this);

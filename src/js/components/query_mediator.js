@@ -53,7 +53,6 @@ define(['underscore',
         this.shortDelayInMs = _.isNumber(options.shortDelayInMs) ? options.shortDelayInMs : 10;
         this.longDelayInMs = _.isNumber(options.longDelayInMs) ? options.longDelayInMs: 100;
         this.monitoringDelayInMs = _.isNumber(options.monitoringDelayInMs) ? options.monitoringDelayInMs : 200;
-        this.mostRecentQuery = new ApiQuery();
       },
 
       activateCache: function(options) {
@@ -151,12 +150,12 @@ define(['underscore',
        */
       startSearchCycle: function(apiQuery, senderKey) {
 
+        var app = this.getApp();
+
         //we have to clear selected records in app storage here too
         if ( this.getBeeHive().getObject("AppStorage")){
           this.getBeeHive().getObject("AppStorage").clearSelectedPapers();
         }
-
-        this.mostRecentQuery = apiQuery;
 
         if (this.debug) {
           console.log('[QM]: received query:',
@@ -190,29 +189,45 @@ define(['underscore',
         q.unset('fl');
 
         q.lock();
-        ps.publish(ps.INVITING_REQUEST, q);
 
-        // give widgets some time to submit their requests
         var self = this;
 
-        if (this.shortDelayInMs) {
-          setTimeout(function() {
-            self.__searchCycle.collectingRequests = false;
-            if (self.startExecutingQueries()) {
-              self.monitorExecution();
-            }
-          }, this.shortDelayInMs);
-        }
-        else {
-          this.__searchCycle.collectingRequests = false;
-          if (self.startExecutingQueries()) {
-            setTimeout(function() {
-              self.monitorExecution();
+        var inviteRequests = function() {
+
+          ps.publish(ps.INVITING_REQUEST, q);
+
+          // give widgets some time to submit their requests
+          if (this.shortDelayInMs) {
+            setTimeout(function () {
+              self.__searchCycle.collectingRequests = false;
+              if (self.startExecutingQueries()) {
+                self.monitorExecution();
+              }
             }, this.shortDelayInMs);
           }
-        }
-      },
+          else {
+            this.__searchCycle.collectingRequests = false;
+            if (self.startExecutingQueries()) {
+              setTimeout(function () {
+                self.monitorExecution();
+              }, this.shortDelayInMs);
+            }
+          }
+        }.bind(this);
 
+        //instantiate widgets if they don't already exist
+        //for testing purposes, if getWidget hasn't been mocked,
+        // just go directly to inviting requests
+        if (!app.getWidget) {
+          inviteRequests();
+          return;
+        }
+
+        app.getWidget("SearchPage")
+            .done(function(pageManager){
+              pageManager.requireAndInstantiateWidgets(app).done(inviteRequests);
+            });
+      },
 
       /**
        * Starts executing queries from the search cycle
@@ -241,6 +256,7 @@ define(['underscore',
 
         var app = this.getApp();
         var pskToExecuteFirst;
+
         if (pskToExecuteFirst = app.getPskOfPluginOrWidget('widget:Results')) { // pick a request that will be executed first
           if (cycle.waiting[pskToExecuteFirst]) {
             data = cycle.waiting[pskToExecuteFirst];

@@ -23,7 +23,6 @@ define([], function() {
       '/components/api_query_updater.spec.js',
       '/components/api_feedback.spec.js',
       '/components/feedback_mediator.spec.js',
-      '/components/history_manager.spec.js',
       '/components/user.spec.js',
       '/components/session.spec.js',
       '/components/library_controller.spec.js',
