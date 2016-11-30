@@ -78,11 +78,10 @@ define([
               app.start(Router);
               pubsub.publish(pubsub.getCurrentPubSubKey(), pubsub.APP_STARTED);
 
-              var dynConf = app.getObject('DynamicConfig');
-              if (dynConf && dynConf.debugExportBBB) {
+              if (debug) {
                 console.log('Exposing Bumblebee as global object: window.bbb');
                 window.bbb = app;
-              }
+		}
             })
             .fail(function(err) {
               if (debug) {
