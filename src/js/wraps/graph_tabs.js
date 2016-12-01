@@ -21,8 +21,7 @@ define([
         defaultQueryArguments: {
           "facet.pivot"   : "property,year",
           "facet"         : "true",
-          "facet.minCount": "1",
-		  "facet.limit"   : "-1"
+          "facet.minCount": "1"
 
         },
 
