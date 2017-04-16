@@ -51,3 +51,15 @@ exec {
     timeout => 900,
     require => Exec['npm_install_grunt'];
 }
+
+class {"benchmark":
+  pip_requirements => "/tmp/requirements.txt",
+  require => Class['initial_apt_update'],
+}
+
+class {"varnish":
+  default_vcl => "/etc/varnish/default.vcl",
+  default_varnish => "/etc/default/varnish",
+  varnish_storage => "/var/lib/varnish/varnish_storage.bin",
+  require => Class['initial_apt_update'],
+}
