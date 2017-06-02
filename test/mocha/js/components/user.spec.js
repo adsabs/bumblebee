@@ -1,6 +1,7 @@
 define([
   'underscore',
   'js/components/user',
+  'js/components/history_manager',
   'js/components/api_targets',
   'js/bugutils/minimal_pubsub',
   'js/components/api_request',
@@ -12,6 +13,7 @@ define([
 ], function(
   _,
   User,
+  HistoryManager,
   ApiTargets,
   MinSub,
   ApiRequest,
@@ -94,6 +96,51 @@ define([
      fetchStub.restore();
    });
 
+   it('login redirect does not fail because of empty navigation history', function (done) {
+     var u = new User();
+     var minsub = new (MinSub.extend({
+       request: function (apiRequest) {
+       }
+     }))({verbose: false});
+
+     minsub.publish = sinon.spy();
+
+     var historyManager = new HistoryManager();
+     minsub.beehive.addService('HistoryManager', historyManager);
+     minsub.beehive.addObject('MasterPageManager', {
+       currentChild: 'AuthenticationPage'
+     });
+
+     var getNavigationEntries = function () {
+       return _.filter(minsub.publish.args, function (entry) {
+         return entry[0].match(/^\[Router]/);
+       });
+     };
+
+     var getBeeHiveStub = sinon.stub(u, 'getBeeHive', function () {
+       return minsub.beehive;
+     });
+
+     var pubSubStub = sinon.stub(u, 'getPubSub', function () {
+       return minsub;
+     });
+
+     u.setUser('foo');
+     setTimeout(function () {
+       // should redirect to the index page
+       expect(_.last(getNavigationEntries())[1]).to.eql('index-page');
+
+       u.completeLogOut();
+
+       // should redirect to previous page otherwise
+       historyManager._history = ['results-page', 'authentication-page'];
+       u.setUser('foo');
+       setTimeout(function () {
+         expect(_.last(getNavigationEntries())[1]).to.eql('results-page');
+         done();
+       }, 100);
+     }, 100);
+   });
 
    it("allows widgets to save + query local storage vals", function(){
 
