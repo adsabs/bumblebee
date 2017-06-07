@@ -96,50 +96,42 @@ define([
      fetchStub.restore();
    });
 
-   it('login redirect does not fail because of empty navigation history', function (done) {
-     var u = new User();
-     var minsub = new (MinSub.extend({
-       request: function (apiRequest) {
-       }
-     }))({verbose: false});
+   it('login redirect does not fail because of empty navigation history', function () {
+     var user = new User();
+     var api = new Api();
+     var minsub = new MinSub({
+       verbose: true,
+       Api: api
+     });
 
      minsub.publish = sinon.spy();
 
      var historyManager = new HistoryManager();
+
+     // create mock services/objects
      minsub.beehive.addService('HistoryManager', historyManager);
      minsub.beehive.addObject('MasterPageManager', {
        currentChild: 'AuthenticationPage'
      });
 
-     var getNavigationEntries = function () {
-       return _.filter(minsub.publish.args, function (entry) {
-         return entry[0].match(/^\[Router]/);
-       });
-     };
+     sinon.stub(user, 'getBeeHive', _.identity(minsub.beehive));
+     sinon.stub(user, 'getPubSub', _.identity(minsub));
+     sinon.stub(user, 'isLoggedIn', _.identity(true));
 
-     var getBeeHiveStub = sinon.stub(u, 'getBeeHive', function () {
-       return minsub.beehive;
-     });
+     console.log('lkjkj', user.redirectIfNecessary, minsub.publish.args);
 
-     var pubSubStub = sinon.stub(u, 'getPubSub', function () {
-       return minsub;
-     });
+     user.redirectIfNecessary();
 
-     u.setUser('foo');
-     setTimeout(function () {
-       // should redirect to the index page
-       expect(_.last(getNavigationEntries())[1]).to.eql('index-page');
+     console.log(minsub.publish.args);
 
-       u.completeLogOut();
-
-       // should redirect to previous page otherwise
-       historyManager._history = ['results-page', 'authentication-page'];
-       u.setUser('foo');
-       setTimeout(function () {
-         expect(_.last(getNavigationEntries())[1]).to.eql('results-page');
-         done();
-       }, 100);
-     }, 100);
+     // should redirect to the index page
+     expect(minsub.publish.args[0][1]).to.eql('index-page');
+     // u.completeLogOut();
+     // // should redirect to previous page otherwise
+     // historyManager._history = ['results-page', 'authentication-page'];
+     // u.setUser('buzz');
+     // expect(_.last(getNavigationEntries())[1]).to.eql('results-page');
+     minsub.destroy();
    });
 
    it("allows widgets to save + query local storage vals", function(){
