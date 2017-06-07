@@ -114,9 +114,9 @@ define([
        currentChild: 'AuthenticationPage'
      });
 
-     sinon.stub(user, 'getBeeHive', _.identity(minsub.beehive));
-     sinon.stub(user, 'getPubSub', _.identity(minsub));
-     sinon.stub(user, 'isLoggedIn', _.identity(true));
+     sinon.stub(user, 'getBeeHive', _.constant(minsub.beehive));
+     sinon.stub(user, 'getPubSub', _.constant(minsub));
+     sinon.stub(user, 'isLoggedIn', _.constant(true));
 
      console.log('lkjkj', user.redirectIfNecessary, minsub.publish.args);
 
