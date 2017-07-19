@@ -124,7 +124,7 @@ require.config({
         FooterWidget : 'js/widgets/footer/widget',
         PubtypeFacet: 'js/wraps/pubtype_facet',
 
-        ShowAbstract: 'js/widgets/abstract/widget',
+        ShowAbstract: 'es6!js/widgets/abstract/widget.jsx',
         ShowGraphics: 'js/widgets/graphics/widget',
         ShowGraphicsSidebar: 'js/wraps/sidebar-graphics-widget',
         ShowReferences: 'js/wraps/references',
