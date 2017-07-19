@@ -4,15 +4,15 @@ define([
   'react-redux',
   'es6!./fullTextSources.jsx',
   'es6!./dataProducts.jsx',
-  'es6!./loading.jsx'
+  'es6!js/mixins/common_components.jsx'
 ], function (
-  actions, React, ReactRedux, FullTextSources, DataProducts, LoadingIcon) {
+  actions, React, ReactRedux, FullTextSources, DataProducts, common) {
 
   var App = React.createClass({
     render: function () {
       return (
         <div className="s-right-col-widget-container">
-          <LoadingIcon show={this.props.isLoading}/>
+          <common.LoadingIcon show={this.props.isLoading}/>
           <FullTextSources
             sources={this.props.fullTextSources}
             onLinkClick={this.props.onLinkClick}
