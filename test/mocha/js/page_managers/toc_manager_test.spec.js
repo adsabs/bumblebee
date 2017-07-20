@@ -47,7 +47,7 @@ define([
             GraphTabs: 'js/wraps/graph_tabs',
 
             TOCWidget: 'js/page_managers/toc_widget',
-            ShowAbstract: 'js/widgets/abstract/widget',
+            ShowAbstract: 'es6!js/widgets/abstract/widget.jsx',
             ShowReferences: 'js/wraps/references',
             ShowPaperExport: 'js/wraps/paper_export',
 
