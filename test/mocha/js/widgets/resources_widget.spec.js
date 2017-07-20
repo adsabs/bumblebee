@@ -132,7 +132,6 @@ define([
       var query = dispatchRequestStub.args[0][0];
       expect(dispatchRequestStub.called).to.be.true;
       expect(query.get('q')[0]).to.equal('bibcode:2017MNRAS.467.4015H');
-      expect(query.get('fl')[0]).to.equal('links_data');
     });
 
     it('display documents correctly updates query and parses', function (done) {
@@ -208,7 +207,6 @@ define([
       expect(dispatchRequestStub.calledOnce).to.be.true;
       var query = dispatchRequestStub.args[0][0];
       expect(query.get('q')[0]).to.equal('bibcode:2017MNRAS.467.4015H');
-      expect(query.get('fl')[0]).to.equal('links_data');
     });
 
     it('loadBibcodeData triggers widget-ready', function () {
