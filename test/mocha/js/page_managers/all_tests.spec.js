@@ -62,7 +62,7 @@ define([
             Results: 'js/widgets/results/widget',
             AuthorFacet: 'js/wraps/author_facet',
             GraphTabs : 'js/wraps/graph_tabs',
-            ShowAbstract: 'js/widgets/abstract/widget',
+            ShowAbstract: 'es6!js/widgets/abstract/widget.jsx',
             ShowReferences: 'js/wraps/references',
 
             PageManager: 'js/page_managers/controller'

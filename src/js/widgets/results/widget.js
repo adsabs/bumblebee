@@ -6,7 +6,7 @@
 
 define([
     'js/widgets/list_of_things/widget',
-    'js/widgets/abstract/widget',
+    'es6!js/widgets/abstract/widget.jsx',
     'js/mixins/add_stable_index_to_collection',
     'js/mixins/link_generator_mixin',
     'js/mixins/formatter',

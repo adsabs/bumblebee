@@ -6,12 +6,11 @@ define([
     'es6!js/widgets/resources/widget.jsx',
     'es6!js/widgets/resources/components/fullTextSources.jsx',
     'es6!js/widgets/resources/components/dataProducts.jsx',
-    'es6!js/widgets/resources/components/loading.jsx',
     'js/widgets/resources/actions',
     'js/widgets/base/base_widget',
     'js/bugutils/minimal_pubsub'
   ],
-  function ($, React, Enzyme, ResourcesWidget, FullTextSources, DataProducts, LoadingIcon, actions, BaseWidget, MinPubSub) {
+  function ($, React, Enzyme, ResourcesWidget, FullTextSources, DataProducts, actions, BaseWidget, MinPubSub) {
 
   var mockResponse = {
     get: function () {
@@ -133,7 +132,6 @@ define([
       var query = dispatchRequestStub.args[0][0];
       expect(dispatchRequestStub.called).to.be.true;
       expect(query.get('q')[0]).to.equal('bibcode:2017MNRAS.467.4015H');
-      expect(query.get('fl')[0]).to.equal('links_data');
     });
 
     it('display documents correctly updates query and parses', function (done) {
@@ -209,7 +207,6 @@ define([
       expect(dispatchRequestStub.calledOnce).to.be.true;
       var query = dispatchRequestStub.args[0][0];
       expect(query.get('q')[0]).to.equal('bibcode:2017MNRAS.467.4015H');
-      expect(query.get('fl')[0]).to.equal('links_data');
     });
 
     it('loadBibcodeData triggers widget-ready', function () {
@@ -393,24 +390,6 @@ define([
         var source = mockLinksParsedData.dataProducts[idx];
         expect(arg[0]).to.equal(source.title);
       });
-    });
-
-    it('renders Loading component correctly', function () {
-      widget.activate(beehive);
-
-      var wrapNoShow = Enzyme.shallow(React.createElement(LoadingIcon, {
-        show: false 
-      }));
-      var wrapWithShow = Enzyme.shallow(React.createElement(LoadingIcon, { 
-        show: true 
-      }));
-      
-      // No output
-      expect(wrapNoShow.find('span').exists()).to.be.false;
-
-      // should return the proper output
-      expect(wrapWithShow.find('span').exists()).to.be.true;
-      expect(wrapWithShow.find('i').exists()).to.be.true;
     });
   });
 });
