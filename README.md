@@ -54,7 +54,8 @@ dev setup - mac OS X
 If you have mac port:
 
 ```bash
-  $ sudo port install nodejs npm phantomjs
+  $ sudo port install nodejs4 npm2
+  $ sudo npm install -g phantomjs
   $ sudo npm install -g grunt-cli
   $ npm install
   $ grunt setup

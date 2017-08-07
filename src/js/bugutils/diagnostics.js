@@ -1,9 +1,11 @@
 /**
  * Set of utilities for debugging BBB and Api in general
  *
- * To compare two Api endpoints (but you must have access to the solr instance):
+ * To compare two Api endpoints add ?debug=true to url (and have access to the solr instance):
  *
- *    d = bbb.getController('Diagnostics');u1='http://54.174.175.209:8983';u2='http://54.173.87.140:8983'
+ *    d = bbb.getController('Diagnostics');
+ *    u1='http://54.174.175.209:8983/solr/coreName';
+ *    u2='http://54.173.87.140:8983/solr/coreName';
  *    d.compareTwoSearchInstances(u1,u2).done(d.printComparison)
  */
 
@@ -171,7 +173,7 @@ define([
     getListOfFields: function(url) {
       var defer = $.Deferred();
       this.jsonp({
-        url: url + '/solr/collection1/admin/luke?numTerms=0&wt=json&indent=true',
+        url: url + '/admin/luke?numTerms=0&wt=json&indent=true',
         timeout: 60000
       })
       .done(function(data) {
@@ -189,7 +191,7 @@ define([
     /**
      * Get the count of numDocs and numFound for every field in the index
      * this requires either a list of fields, or it can discovery fields
-     * (if /solr/collection1/admin/luke is available
+     * (if the core has /admin/luke is available
      *
      * @returns {
    *   index: {data about index},
@@ -218,7 +220,7 @@ define([
         console.log('Getting num docs for: ' + q);
 
         var c = self.jsonp({
-          url: url + '/solr/collection1/select?q=' + q + '&fl=id&wt=json&indent=true',
+          url: url + '/select?q=' + q + '&fl=id&wt=json&indent=true',
           context: {field: fname, finalResult:finalResult, cycleR: cycleR},
           timeout: 300000 // 5mins
         })

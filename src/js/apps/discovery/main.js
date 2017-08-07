@@ -74,11 +74,10 @@ define(['config', 'module'], function(config, module) {
             e.preventDefault();
           });
 
-          var dynConf = app.getObject('DynamicConfig');
-          if (dynConf && dynConf.debugExportBBB) {
+          if (debug) {
             console.log('Exposing Bumblebee as global object: window.bbb');
             window.bbb = app;
-          }
+	    }
 
         }).fail(function () {
           app.redirect('500.html');
