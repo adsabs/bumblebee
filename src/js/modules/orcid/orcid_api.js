@@ -38,7 +38,6 @@
  *
  */
 
-'use strict';
 define([
     'underscore',
     'bootstrap',
@@ -53,9 +52,7 @@ define([
     'js/mixins/hardened',
     'js/components/api_targets',
     'js/components/api_query_updater',
-    'js/components/api_feedback',
-    'js/modules/orcid/work',
-    'js/modules/orcid/profile'
+    'js/components/api_feedback'
   ],
   function (
     _,
@@ -71,31 +68,24 @@ define([
     HardenedMixin,
     ApiTargets,
     ApiQueryUpdater,
-    ApiFeedback,
-    Work,
-    Profile
+    ApiFeedback
     ) {
 
-    var ADD_WAIT = 3000;
-    var PROFILE_WAIT = 500;
+
 
     var OrcidApi = GenericModule.extend({
 
       initialize: function() {
         this.orcidProxyUri = '';
         this.userData = {};
-        this.addCache = [];
-        this.getUserProfileCache = [];
         this.authData = null;
         this.db = {};
         this.profile = {};
         this.checkInterval = 3600 * 1000;
-        this.clearDBWait = 30 * 1000;
-        this.dbUpdatePromise = null;
+        this.virgin = true;
         this.maxQuerySize = 100;
         this.queryUpdater = new ApiQueryUpdater('orcid_api');
         this.orcidApiTimeout = 30000; //30seconds
-        this.dirty = true; // initialize as dirty, so it updates
       },
 
       activate: function (beehive) {
@@ -115,21 +105,40 @@ define([
         }
       },
 
+
       /**
        * Checks access to ORCID api by making request for a user profile
        * returns a promise; done() means success, fail() no access
        * @param authData
        */
-      checkAccessOrcidApiAccess: function() {
-        return this.getUserProfile();
+      checkAccessOrcidApiAccess: function(authData) {
+        authData = authData || this.authData;
+        //check the access_token works (by loading profile)
+        var ret = $.Deferred();
+        this.sendData(this.config.apiEndpoint + '/' + authData.orcid + '/orcid-profile',
+          null,
+          {
+            fail: function() {
+              ret.reject(arguments);
+            },
+            done: function(res) {
+              ret.resolve(res);
+            },
+            headers: {
+              "Orcid-Authorization": "Bearer " + authData.access_token
+            }
+          });
+        return ret.promise();
       },
 
       hasAccess: function() {
-        var expires = this.authData && this.authData.expires;
-        if (expires) {
-          return expires > new Date().getTime();
+        if (this.authData) {
+          if (this.authData.expires && this.authData.expires <= new Date().getTime()) {
+            return false;
+          }
+          return true;
         }
-        return !!(this.authData);
+        return false;
       },
 
       /**
@@ -151,28 +160,56 @@ define([
       * set ADS data on endpoint /preferences[orcid id]
       * */
       setADSUserData : function(data){
-        var url = this.getBeeHive().getService("Api").url +
-          ApiTargets.ORCID_PREFERENCES + "/" + this.authData.orcid;
-        var request = this.createRequest(url, {}, data);
-        request.fail(function () {
-          var msg = 'ADS ORCiD preferences could not be set';
-          console.error.apply(console, [msg].concat(arguments));
-        });
-        return request;
+
+        var that = this;
+        var d = $.Deferred();
+
+        this.sendData(this.getBeeHive().getService("Api").url + ApiTargets.ORCID_PREFERENCES + "/" + this.authData.orcid,
+            data,
+            {
+              type: "POST",
+              fail: function(error) {
+                //feedback
+                var message = "ADS ORCID preferences could not be set";
+                that.getPubSub().publish(that.getPubSub().ALERT, new ApiFeedback({code: 0, msg: message, type : "danger", fade : true}));
+                d.reject(error);
+              },
+              done: function(res) {
+                d.resolve(res);
+              }
+            });
+
+        return d.promise();
+
       },
 
       /*
        * get ADS data from endpoint /preferences[orcid id]
        * */
-      getADSUserData : function() {
-        var url = this.getBeeHive().getService("Api").url +
-          ApiTargets.ORCID_PREFERENCES + "/" + this.authData.orcid;
-        var request = this.createRequest(url);
-        request.fail(function () {
-          var msg = 'ADS ORCiD preferences could not be retrieved';
-          console.error.apply(console, [msg].concat(arguments));
-        });
-        return request;
+      getADSUserData : function(){
+
+        var d = $.Deferred();
+        var that = this;
+
+        this.sendData(this.getBeeHive().getService("Api").url + ApiTargets.ORCID_PREFERENCES + "/" + this.authData.orcid,
+            null,
+            {
+              fail: function(error) {
+                //publish api feedback
+                var message = "ADS ORCID preferences could not be retrieved";
+                that.getPubSub().publish(that.getPubSub().ALERT, new ApiFeedback({code: 0, msg: message, type : "danger", fade : true}));
+                d.reject(error)
+              },
+              done: function(res) {
+                d.resolve(res);
+              },
+              headers: {
+                "Orcid-Authorization": "Bearer " + this.authData.access_token
+              }
+            });
+
+        return d.promise();
+
       },
 
       /**
@@ -184,7 +221,9 @@ define([
       },
 
       hasExchangeCode: function (searchString) {
-        return !!this.getExchangeCode(searchString);
+        var code = this.getUrlParameter('code', searchString || window.location.search);
+        if (code)
+          return true;
       },
 
       getExchangeCode: function (searchString) {
@@ -194,16 +233,15 @@ define([
       /**
        * Extract values from the URL (used to get code from redirects)
        *
-       * @param {String} sParam - parameter to find
-       * @param {String} searchString - string to search
-       * @returns {String|Undefined} - value of param, if found
+       * @param sParam
+       * @returns {string}
        */
       getUrlParameter: function (sParam, searchString) {
         var sPageURL = searchString.substring(1);
         var sURLVariables = sPageURL.split('&');
         for (var i = 0; i < sURLVariables.length; i++) {
           var sParameterName = sURLVariables[i].split('=');
-          if (sParameterName[0] === sParam) {
+          if (sParameterName[0] == sParam) {
             return decodeURIComponent(sParameterName[1]);
           }
         }
@@ -223,12 +261,11 @@ define([
       getAccessData: function (oAuthCode) {
         var api = this.getBeeHive().getService('Api');
         var promise = $.Deferred();
-
         var r = api.request(
           new ApiRequest({target: this.config.exchangeTokenUrl, query: new ApiQuery({code: oAuthCode})}),
           {
             url: this.config.exchangeTokenUrl,
-            done: function (data) {
+            done: function (data, textStatus, jqXHR) {
               promise.resolve(data);
             },
             headers: {
@@ -238,7 +275,7 @@ define([
           }
         );
         r.fail(function (jqXHR, textStatus, errorThrown) {
-          promise.reject.apply(promise, arguments);
+          promise.reject(jqXHR);
         });
         return promise.promise();
       },
@@ -288,255 +325,404 @@ define([
        */
 
       /**
-       * Convenience method for converting target short name into the full url
-       * @param {String} name - short name for endpoint
-       * @param {Array|Number} [putCodes] putCodes - putcodes to append to end of url
-       * @returns {string} - the url
-       */
-      getUrl: function (name, putCodes) {
-        var targets = {
-          'profile': '/orcid-profile',
-          'works': '/orcid-works',
-          'work': '/orcid-work'
-        };
-        var url = this.config.apiEndpoint + '/' +
-          this.authData.orcid + targets[name];
-
-        var end = (_.isArray(putCodes)) ? putCodes.join(',') : putCodes;
-
-        if (end) {
-          url += '/' + end;
-        }
-        return url;
-      },
-
-      /**
-       * Create a new request and filter success/fail always to appropriate methods
-       * @param {String} url - url to send request to
-       * @param {Object} [options={}] options - options for request
-       * @param {Object} [data] data - payload of message
-       * @returns {jQuery.Promise} promise object for request
-       */
-      createRequest: function (url, options, data) {
-        if (_.isUndefined(url)) {
-          throw new Error('Url must be defined');
-        }
-        var $dd = $.Deferred();
-        var prom = this.sendData(url, data, options || {});
-        prom.done(function () {
-          $dd.resolve.apply($dd, arguments);
-        });
-        prom.fail(function () {
-          $dd.reject.apply($dd, arguments);
-        });
-        return $dd.promise();
-      },
-
-      _getUserProfile: _.debounce(function () {
-        var self = this;
-        var request = this.createRequest(this.getUrl('profile'));
-
-        request.done(function (profile) {
-          _.forEach(self.getUserProfileCache, function (promise) {
-            promise.resolve(new Profile(profile));
-          });
-        });
-
-        request.fail(function () {
-          _.forEach(self.getUserProfileCache, function (promise) {
-            promise.resolve(new Profile(profile));
-          });
-        });
-
-        request.always(function () {
-          self.getUserProfileCache = [];
-        });
-      }, PROFILE_WAIT),
-
-      /**
-       * Retrieves user profile
+       * Retrieve user profile
+       *
+       *  curl -H 'Authorization: Bearer bd25a79d-eb7d-4341-aab9-c17e17f5fd21' 'http://api.sandbox.orcid.org/v1.2/0000-0001-8178-9506/orcid-profile' -L -i -H 'Accept: application/json'
+       *
        * Must have scope: /orcid-profile/read-limited
        *
-       * @returns {jQuery.Promise<Profile>} - Promise that resolves with profile
+       * @returns {*}
        */
       getUserProfile: function () {
-        var $dd = $.Deferred();
-
-        this.getUserProfileCache.push($dd);
-        this._getUserProfile.call(this);
-        return $dd.promise();
-      },
-
-      /**
-       * Retrieve an entire work entry from ORCiD
-       * This is different than the summary, it includes all information they
-       * have in their system for the entry.
-       *
-       * This is necessary to get the author information
-       *
-       * @param {Number} putCode - putcode to be retrieved
-       * @returns {jQuery.Promise<Work>} - promise that resolves with the work
-       */
-      getWork: function (putCode) {
-        var $dd = $.Deferred();
-        this.createRequest(this.getUrl('works', putCode)).done(function (work) {
-          $dd.resolve(new Work(work));
-        }).fail(function () {
-          $dd.reject.apply($dd, arguments);
-        });
-        return $dd.promise();
-      },
-
-      /**
-       * Retrieve the full works as an array,
-       * this can take any number of putcodes, it will chunk the requests and
-       * return a deferred that will resolve with an array of works
-       *
-       * @param {Array} putCodes - putcodes to be retrieved
-       * @returns {jQuery.Promise<Work[]>}
-       */
-      getWorks: function (putCodes) {
-        if (!_.isArray(putCodes)) {
-          throw new TypeError('putcodes must be an Array');
-        }
-        var $dd = $.Deferred();
-        var chunkSize = 50;
-        var proms = [];
-        for (var i = 0, j = putCodes.length; i < j; i += chunkSize) {
-          var chunk = putCodes.slice(i, i + chunkSize);
-          var url = this.getUrl('works') + '/' + chunk.join(',');
-          proms.push(_.partial(this.createRequest, url));
-        }
-
-        var reqs = $.when.apply($, proms);
-        reqs.done(function () {
-          $dd.resolve(arguments);
-        });
-        reqs.fail(function () {
-
-          // we are passed an array for EACH argument, so passing the whole thing
-          $dd.reject(arguments);
-        });
-        return $dd.promise();
-      },
-
-      /**
-       * Update an existing ORCiD work.  This method requires that the putcode
-       * for the work be present in the update object.
-       *
-       * @param {Object} work - object containing updated orcid information
-       * @param {Number} work["put-code"] - putcode to update
-       * @returns {jQuery.Promise} - promise for the request
-       */
-      updateWork: function (work) {
-        if (!_.isPlainObject(work)) {
-          throw new TypeError('Work should be a simple object');
-        }
-
-        var putcode = work['put-code'];
-        if (!putcode) {
-          return $.Deferred().reject().promise();
-        }
-
-        var url = this.getUrl('works', putcode);
-        return this.createRequest(url, { method: 'PUT' }, work);
-      },
-
-      /**
-       * Delete a single work from ORCiD
-       *
-       * @param {Number} putCode - putcode of work to be deleted
-       * @returns {jQuery.Promise} - promise for the request
-       */
-      deleteWork: function (putCode) {
-        var url = this.getUrl('works', putCode);
-        var prom = this.createRequest(url, { method: 'DELETE' });
-        prom.done(_.bind(this.setDirty, this));
-        return prom;
-      },
-
-      _addWork: _.debounce(function () {
-        var self = this;
-        var prom = self.addWorks(_.map(self.addCache, 'work'));
-        prom.done(function (res) {
-          var works = res && res[0] && res[0].bulk || res && res.bulk;
-          works = _.map(works, function (w) {
-            return (w.error) ? w : new Work(w);
+        this.checkAccess();
+        var ret = $.Deferred();
+        this.sendData(this.config.apiEndpoint + '/' + this.authData.orcid + '/orcid-profile')
+          .done(function(res) {
+            ret.resolve(res['orcid-profile']);
+          })
+          .fail(function() {
+            ret.reject(arguments);
           });
+        return ret.promise();
+      },
 
-          _.forEach(works, function (w) {
-            var entry = self.addCache.pop();
-            if (entry) {
-              var oldWork = new Work(entry.work);
 
-              if (w && w.error) {
+      /**
+       * Retrieve User's documents
+       *
+       *  curl -H 'Authorization: Bearer bd25a79d-eb7d-4341-aab9-c17e17f5fd21' 'http://api.sandbox.orcid.org/v1.2/0000-0001-8178-9506/orcid-works' -L -i -H 'Accept: application/json'
+       *
+       * Must have scope: /orcid-works/....
+       */
+      getWorks: function() {
+        this.checkAccess();
+        var ret = $.Deferred();
+        this.sendData(this.config.apiEndpoint + '/' + this.authData.orcid + '/orcid-works')
+          .done(function(res) {
+            ret.resolve(res['orcid-profile']['orcid-activities'] ? res['orcid-profile']['orcid-activities']['orcid-works'] : {});
+          })
+          .fail(function() {
+            ret.reject(arguments);
+          });
+        return ret.promise();
+      },
 
-                // Conflict, resolve with the old one
-                if (w.error['response-code'] === 409) {
-                  entry.promise.resolve(oldWork);
-                }
-              } else if (w) {
-                entry.promise.resolve(new Work(w));
-              } else {
-                entry.promise.reject();
+
+      /**
+       * From the ORCID response extract all external IDs
+       *
+       * @param orcidWorks
+       * @returns {*}
+       */
+      getExternalIds: function (orcidWorks) {
+        var ret = {};
+        if (!orcidWorks) return ret;
+
+        if (orcidWorks && orcidWorks['orcid-work']) {
+          orcidWorks = orcidWorks['orcid-work']
+        }
+        else if(!_.isArray(orcidWorks)) {
+          orcidWorks = [orcidWorks];
+        }
+        _.each(orcidWorks, function(w, idx) {
+          if (w['work-external-identifiers'] && w['work-external-identifiers']['work-external-identifier']) {
+            _.each(w['work-external-identifiers']['work-external-identifier'], function(el) {
+              if (el['work-external-identifier-id'] && el['work-external-identifier-id']['value']) {
+                ret[el['work-external-identifier-id']['value']] = {idx: idx, type: el['work-external-identifier-type'], "put-code": w['put-code']};
               }
-            } else {
-              console.error('no cache entry', self);
-            }
-          });
-
-          prom.fail(function () {
-            var entry = self.addCache.pop();
-            entry.promise.reject.apply(entry.promise, arguments);
-          });
+            });
+          }
         });
-      }, ADD_WAIT),
-
-      /**
-       * Add new ORCiD work
-       *
-       * @param {Object} orcidWork
-       */
-      addWork: function (orcidWork) {
-        var $dd = $.Deferred();
-        this.addCache.push({
-          work: orcidWork,
-          promise: $dd
-        });
-        this._addWork.call(this);
-        return $dd.promise();
+        return ret;
       },
 
       /**
-       * Add multiple works to ORCiD
+       * Orcid stores application id inside the source field when the OAuth app
+       * created the record. We can identify resources by matching the ID.
        *
-       * @param {Object[]} orcidWorks
+       * "source": {
+       *       "source-client-id": {
+       *         "path": "APP-P5ANJTQRRTMA6GXZ",
+       *         "host": "sandbox.orcid.org",
+       *         "uri": "http://sandbox.orcid.org/client/APP-P5ANJTQRRTMA6GXZ",
+       *         "value": null
+       *       },
+       *       "source-name": {
+       *         "value": "nasa ads"
+       *       },
+       *       "source-date": {
+       *         "value": 1424194783005
+       *       }
+       *     },
+       * @param orcidWork
+       * @returns {boolean}
        */
-      addWorks: function (orcidWorks) {
-        if (!_.isArray(orcidWorks)) {
-          throw new TypeError('works must be an Array');
+      isWorkCreatedByUs: function (orcidWork) {
+        if (orcidWork['source']
+          && orcidWork['source']['source-client-id']
+          && orcidWork['source']['source-client-id']['path']
+          && orcidWork['source']['source-client-id']['path'] == this.config.clientId) {
+          return true;
+        }
+        return false;
+      },
+
+      /**
+       *  Formats the datastructure of one paper - to be sent to the Orcid API
+       *
+       * @param adsWork
+       * @param putCode
+       * @returns {{work-title: {$: {}, title: *}, short-description: (.response.abstract|*|ItemModel.defaults.abstract|AbstractModel.defaults.abstract|AbstractModel.parse.abstract|responseWithHighlights.highlighting.abstract), work-external-identifiers: *[], work-type: string, work-contributors, url: *}}
+       */
+      formatOrcidWork: function (adsWork, putCode) {
+        var self = this;
+        var formatContributors = function (adsAuthors) {
+          var result = [];
+          _.each(adsAuthors, function (author) {
+            result.push({
+              "credit-name": author,
+              "contributor-attributes": {
+                "contributor-role": "AUTHOR"
+              }
+            });
+          });
+          return {
+            contributor: result
+          };
+        };
+
+        var out = {
+          "work-type": self._getOrcidWorkType(adsWork),
+          "url": LinkGeneratorMixin.adsUrlRedirect("webrecord", adsWork.bibcode)
+        };
+        var ids = ['bibcode', 'id', 'doi'];
+        _.each(ids, function(fldName) {
+          if (adsWork[fldName]) {
+            if (!out["work-external-identifiers"]) out["work-external-identifiers"] = {"work-external-identifier": []};
+
+            if (_.isArray(adsWork[fldName])) {
+              _.each(adsWork[fldName], function(value) {
+                out["work-external-identifiers"]['work-external-identifier'].push({
+                    "work-external-identifier-type": self._getOrcidIdentifierType(fldName),
+                    "work-external-identifier-id": {
+                      value: value
+                    }
+                  }
+                );
+              })
+            }
+            else {
+              out["work-external-identifiers"]['work-external-identifier'].push({
+                  "work-external-identifier-type": self._getOrcidIdentifierType(fldName),
+                  "work-external-identifier-id": {
+                    value: adsWork[fldName]
+                  }
+                }
+              );
+            }
+          }
+        });
+
+        if (adsWork.title) {
+          out["work-title"] = {
+            "title": _.isArray(adsWork.title) ? adsWork.title.join(' ') : adsWork.title
+          };
+        }
+        if (adsWork.abstract && _.isString(adsWork.abstract)) {
+          out["short-description"] = adsWork.abstract.substring(0, 5000); // orcid has 5000 max limit
+        }
+        if (adsWork.author) {
+          out["work-contributors"] = formatContributors(adsWork.author);
         }
 
-        // create bulk object
-        var bulkWorks = { bulk: [] };
-        _.each(orcidWorks, function (w) {
-          bulkWorks.bulk.push({ work: w });
-        });
+        if (adsWork.pubdate && adsWork.pubdate.length > 3) {
+          var pts = adsWork.pubdate.split(/\s|-/), _year, _month;
+          _year = parseInt(pts[0]); _month = parseInt(pts[1]);
+          if (_year > 999 && _year < 2050) { // orcid checks \d{4}; and the hi limit? well...(shrug ;))
+            out['publication-date'] = {
+              "year": _year
+            };
+            if (_month > 0 && _month <= 12) {
+              out['publication-date']['month'] = _month;
+            }
+          }
+        }
 
-        var url = this.getUrl('works');
-        var prom = this.createRequest(url, { method: 'POST' }, bulkWorks);
-        prom.done(_.bind(this.setDirty, this));
-        return prom;
+        if (putCode) {
+          out["put-code"] = putCode;
+        }
+        return out;
       },
 
-      // #############################################################################
+      /**
+       * Get the appropriate type, accepted values:
+       * http://support.orcid.org/knowledgebase/articles/118795-supported-work-types
+       */
+      _getOrcidWorkType: function(adsWork) {
+        //TODO: rca enhance this
+        return 'JOURNAL_ARTICLE'
+      },
+
+      _getOrcidIdentifierType: function(fldName) {
+        var f = fldName.toLowerCase();
+        switch (f) {
+          case 'doi':
+            return 'DOI';
+          case 'bibcode':
+            return 'BIBCODE';
+          default:
+            return 'OTHER_ID';
+        }
+      },
+
+      /**
+       * Original method as developed by blocshop
+       *
+       * It formats a list of papers into orcid-message
+       *
+       * @param adsData
+       * @returns {{orcid-message: {$: {xmlns: string}, message-version: string, orcid-profile: {orcid-activities: {$: {}, orcid-works}}}}}
+       */
+      formatOrcidWorks: function (adsData) {
+
+        if (!_.isArray(adsData))
+          throw new Exception('Input to formatOrcidWorks must be an array of objects');
+
+        var self = this;
+        var result = [];
+        _.each(adsData, function (adsWork) {
+            result.push(self.formatOrcidWork(adsWork));
+          }
+        );
+        return this._createOrcidMessage(result);
+      },
+
+      _createOrcidMessage: function(orcidWorks) {
+        return {
+          "message-version": "1.2",
+          "orcid-profile": {
+            "orcid-activities": {
+              "orcid-works": {
+                'orcid-work': orcidWorks
+              }
+            }
+          }
+        };
+      },
+
+      /**
+       * Posts (appends) new papers to Orcid;
+       *
+       * @param adsRecords
+       * @returns {*}
+       */
+      addWorks: function (adsRecs) {
+        this.dirty = true; // will need to synchronize
+        return this.sendData(this.config.apiEndpoint + '/' + this.authData.orcid + '/orcid-works',
+          this.formatOrcidWorks(adsRecs),
+          {
+            type: "POST"
+          });
+      },
+
+      /**
+       * Updates the profile - by removing works from the profile, and re-adding
+       * them using new call to formatOrcidWork
+       *
+       * @param identifiers
+       * @returns {*}
+       */
+      updateWorks: function(adsRecs) {
+        return this.deleteWorks(this._extractIdentifiers(adsRecs), adsRecs);
+      },
+
+      _extractIdentifiers: function(adsRecs) {
+        var ids = [];
+        _.each(adsRecs, function(r) {
+          if (r.bibcode) ids.push(r.bibcode);
+          if (r.doi) ids.push(r.doi);
+          if (r.alternate_bibcode) {
+            for (var bb in r.alternate_bibcode) {
+              ids.push(bb);
+            }
+          }
+        });
+        return ids;
+      },
+
+      /**
+       * Deletes certain records from Orcid database. This operation is three-step
+       *
+       *  1. retrieve works from the user profile
+       *  2. filter them and remove the un-wanted put-codes
+       *  3. update the profile (sending the new datastructure)
+       *
+       *
+       * @param identifiers
+       * @returns {*}
+       */
+      deleteWorks: function (identifiers, recsToAdd) {
+        var self = this;
+        var deferred = $.Deferred();
+
+        this.getWorks()
+          .done(function (orcidWorks) {
+
+            // Exclude works not coming from ADS (since we can only modify
+            // records created by us)
+            var adsWorks = orcidWorks["orcid-work"].filter(function (orcidWork) {
+              return self.isWorkCreatedByUs(orcidWork);
+            });
+
+            if (adsWorks.length == 0) {
+              deferred.resolve({
+                deleted: 0,
+                added: 0,
+                msg: 'No ADS records found',
+                totalRecs: orcidWorks["orcid-work"].length,
+                adsTotal: 0
+              });
+              return;
+            }
+
+            var toRemove = [];
+            var extIds = self.getExternalIds(adsWorks);
+            _.each(identifiers, function(id) {
+              if (extIds[id]) {
+                toRemove.push(extIds[id].idx);
+              }
+            });
+
+            var newWorks = [];
+            if (recsToAdd) {
+              _.each(recsToAdd, function(rec) {
+                newWorks.push(self.formatOrcidWork(rec));
+              })
+            }
+
+            if (toRemove.length == 0 && newWorks.length == 0) {
+              deferred.resolve({
+                deleted: 0,
+                added: 0,
+                msg: 'No ADS rec found that could be deleted/added',
+                totalRecs: orcidWorks["orcid-work"].length,
+                adsTotal: adsWorks.length
+              });
+              return;
+            }
+
+            // include the remaining recs from the profile
+            _.each(adsWorks, function (work, idx, l) {
+              if (toRemove.indexOf(idx) == -1)
+                newWorks.push(work);
+            });
+
+            var report = {
+              deleted: toRemove.length,
+              added: 0,
+              msg: 'Attempting removal',
+              adsTotal: newWorks.length,
+              totalRecs: orcidWorks["orcid-work"].length
+            };
+
+            self.sendData(self.config.apiEndpoint + '/' + self.authData.orcid + '/orcid-works',
+              self._createOrcidMessage(newWorks),
+              {type: "PUT"}
+              )
+              .done(function (res) {
+                self.dirty = true; // will need to synchronize
+                report['response'] = res;
+                deferred.resolve(report);
+              });
+          })
+          .fail(function (err) {
+            deferred.reject({msg: 'Error getting list of Orcid records (we cant delete anything)'});
+          });
+
+        return deferred.promise();
+
+      },
+
+
+      /**
+       * Replaces orcid-works with a new set of works (PUT operation)
+       *
+       * @param adsRecs
+       * @returns {*}
+       */
+      setWorks: function (adsRecs, skipFormatting) {
+        return this.sendData(this.config.apiEndpoint + '/' + this.authData.orcid + '/orcid-works',
+          skipFormatting ? adsRecs : this.formatOrcidWorks(adsRecs),
+          {type: "PUT"}
+        );
+      },
 
       /**
        * Use Api service to make a request to the ORCID api
        *
-       * @param {string} url - request url
-       * @param {Object} [data={}] data - request payload
-       * @param {Object} [opts={}] opts - request options
+       * @param url - remote endpoint
+       * @param data - JSON object
+       * @param opts
        * @returns {*}
        */
       sendData: function (url, data, opts) {
@@ -547,7 +733,7 @@ define([
         var options = {
           type: 'GET',
           url: url,
-          cache: !!this.dbUpdatePromise, // true = do not generate _ parameters (let browser cache responses)
+          cache: this.updateDatabasePromise ? true : false, // true = do not generate _ parameters (let browser cache responses)
           timeout: this.orcidApiTimeout,
           done: function(data) {
             result.resolve(data);
@@ -587,348 +773,511 @@ define([
         if (!options.headers["Accept"])
           options.headers["Accept"] = "application/json";
 
+
         api.request(new ApiRequest({target: url, query: new ApiQuery(), options: options}))
           .fail(function() {
-            result.reject.apply(result, arguments);
+            result.reject(arguments);
           });
         return result.promise();
       },
 
       /**
-       * Takes in a query containing all identifiers to check against what is in
-       * ADS.  Query will return all known (to ADS) records, but in the following
-       * format:
-       *
-       * "IDENTIFIER_TYPE:IDENTIFIER_VALUE": "BIBCODE"
-       *
-       * @example
-       * q = ['bibcode:2018CNSNS..56..270Q OR alternate_bibcode:2018CNSNS..56..270Q']
-       * // returns:
-       * {
-       *  "bibcode:2018CNSNS..56..270Q": "2018CNSNS..56..270Q"
-       *  "doi:10.1016/j.cnsns.2017.08.014": "2018CNSNS..56..270Q"
-       * }
-       *
-       * @param {ApiQuery} apiQuery - query to check
-       * @returns {jQuery.Promise<Object>} - request promise
+       * Queries ADS Api using orcid identifiers; returns a map that maps
+       * known records, ie
+       *    {
+       *      'doi:1234.5566': '2015aas...34.4',
+       *      'bibcode:2015aas...34.4': '2015aas...34.4'
+       *    }
+       * @param apiQuery
+       * @returns {*}
        * @private
        */
-      _checkIdsInADS: function (apiQuery) {
+      _checkOrcidIdsInAds: function(apiQuery) {
         var api = this.getBeeHive().getService('Api');
-        var dd = $.Deferred();
+        var defer = new $.Deferred();
 
-        apiQuery.set('fl', 'bibcode, doi, alternate_bibcode');
-        apiQuery.set('rows', '5000');
-
-        var onDone = function (data) {
-
-          if (!data || !data.response || !data.response.docs) {
-            return dd.resolve({});
-          }
-
-          var ret = _.reduce(data.response.docs, function (res, doc) {
-            var bibcode = doc.bibcode.toLowerCase();
-            var key = 'bibcode:' + bibcode;
-            res[key] = bibcode;
-            _.each(doc.doi, function (doi) {
-              var key = 'doi:' + doi.toLowerCase().replace('doi:', '');
-              res[key] = bibcode;
-            });
-            _.each(doc.alternate_bibcode, function (ab) {
-              var key = 'bibcode:' + ab.toLowerCase();
-              res[key] = bibcode;
-            });
-            return res;
-          }, {});
-
-          dd.resolve(ret);
-        };
-
-        var onFail = function () {
-          dd.resolve({});
-        };
-
-        api.request(new ApiRequest({
-          target: ApiTargets.SEARCH,
-          query: apiQuery,
-          options: {
-            done: onDone,
-            fail: onFail
-          }
-        })).fail(onFail);
-
-        return dd.promise();
-      },
-
-      /**
-       * Check if the work was sourced by ADS
-       * @param {Work} work
-       */
-      isSourcedByADS: function isSourcedByADS(work) {
-        return this.config.clientId === work.getSourceClientIdPath();
-      },
-
-      /**
-       * Generate a query string by doing custom joins on the array.  Each entry
-       * in the passed in query gets checked and added to the generated string
-       * by "OR"-ing them together.
-       *
-       * @example
-       * _buildQuery({
-       *  bibcode: ['2018CNSNS..56..270Q'],
-       *  alternate_bibcode: ['2018CNSNS..56..270Q']
-       * });
-       * // returns:
-       * { "q": [
-       *  "bibcode:(2018CNSNS..56..270Q) OR alternate_bibcode:(2018CNSNS..56..270Q)"
-       * ]}
-       *
-       * @param {Object} query - query object used to build new ApiQuery
-       * @param {string[]} [query.bibcode] query.bibcode
-       * @param {string[]} [query.alternate_bibcode] query.alternate_bibcode
-       * @param {string[]} [query.doi] query.doi
-       * @returns {ApiQuery} - a new api query to use in a request
-       * @private
-       */
-      _buildQuery: function (query) {
-        var formatString = function (values, field) {
-          if (values.length === 0) {
-            return '';
-          }
-
-          if (field === 'doi') {
-            var str = '(';
-            str += _.map(values, function (p) {
-              return 'doi:' + p;
-            }).join(' OR ');
-            str += ')';
-            return str;
-          } else {
-            return field + ':(' + values.join(' OR ') + ')';
-          }
-        };
-
-        var q = _(query)
-          .map(formatString)
-          .filter('length')
-          .value()
-          .join(' OR ');
-        return new ApiQuery({ q: q });
-      },
-
-      /**
-       * Updates our current knowledge of ORCID Data
-       * This will typically be only summaries of works
-       *
-       * @param {Profile} [profile] profile
-       */
-      updateDatabase: function updateDatabase(profile) {
-        var self = this;
-        if (this.dbUpdatePromise && this.dbUpdatePromise.state() === 'pending') {
-          return this.dbUpdatePromise.promise();
+        if (!api) {
+          var p = defer.promise();
+          defer.resolve({});
+          return p;
         }
-        this.dbUpdatePromise = $.Deferred();
 
-        // set the database object and resolve the promise
-        var finishUpdate = function (db) {
-          var dbPromise = self.dbUpdatePromise;
-          self.setClean();
-          self.db = db;
-          self.profile = profile;
-          if (dbPromise) {
-            dbPromise.resolve();
+        apiQuery.set('fl', 'bibcode,doi,alternate_bibcode');
+        apiQuery.set('rows', '5000'); // unrealistic, but that's fine
+
+        api.request(new ApiRequest({target: ApiTargets.SEARCH, query: apiQuery, options: {
+          done: function(data, textStatus, jqXHR) {
+            var ret = {}, key, value, bibcode;
+            if (!data || !data.response || !data.response.docs)
+              return defer.resolve(ret);
+
+            _.each(data.response.docs, function(doc) {
+              bibcode = doc.bibcode.toLowerCase();
+              key = 'bibcode:' + bibcode;
+              ret[key] = bibcode;
+              _.each(doc.doi, function(doi) {
+                ret['doi:' + doi.toLowerCase().replace('doi:', '')] = bibcode;
+              });
+              _.each(doc.alternate_bibcode, function(ab) {
+                ret['bibcode:' + ab.toLowerCase()] = bibcode;
+              });
+            });
+            defer.resolve(ret);
+          },
+          fail: function() {
+            defer.resolve({});
           }
-          setTimeout(function () {
-            if (dbPromise && dbPromise.state() !== 'pending') {
-              dbPromise = null;
-              self.setDirty();
-            }
-          }, self.clearDBWait);
+        }}));
+
+        return defer.promise();
+      },
+
+
+      /**
+       * Returns a promise with information about an ORCID document, it accepts an object with
+       *  - bibcode
+       *  - doi
+       *  - id
+       *  - alternate_bibcode
+       *
+       * It will automatically update orcid-database if necessary
+       *
+       * @param data
+       * @returns Promise
+       *  {{isCreatedByUs: boolean, isCreatedByOthers: boolean, provenance: null}}
+       */
+      getRecordInfo: function(data) {
+
+        if (!data) {
+          throw new Error("Empty input");
+        }
+        var result = $.Deferred();
+        var self = this;
+
+        if (
+            this.needsUpdate() ||
+            (this.updateDatabasePromise && this.updateDatabasePromise.state() !== "resolved")
+        )
+        {  this.updateDatabase()
+            .done(function() {
+              result.resolve(self._getRecInfo(data));
+            })
+            .fail(function() {
+              result.reject(arguments);
+            });
+        }
+        else {
+          result.resolve(self._getRecInfo(data));
+        }
+
+        return result.promise();
+      },
+
+      _getRecInfo: function(data) {
+        var out = {
+          isCreatedByUs: false,
+          isCreatedByOthers: false,
+          isKnownToAds: false,
+          provenance: null
         };
-
-        // apply the update to the database
-        var update = function update(profile) {
-          // get the works and all external IDs for them
-          var works = profile.getWorks();
-          var query = [];
-          var db = {};
-          _.forEach(works, function addIdsToDatabase(w, i) {
-            var key;
-            var ids = w.getExternalIds();
-            if (ids.bibcode) {
-              key = 'bibcode:' + ids.bibcode;
-              query.push('alternate_bibcode:' + ids.bibcode);
-            } else if (ids.doi) {
-              key = 'doi:' + ids.doi;
+        var self = this;
+        _.each(_.pick(data, 'bibcode', 'doi', 'alternate_bibcode'), function(value, key, obj) {
+          if (_.isArray(value)) {
+            for (var v in value) {
+              self._updateRec(key + ':' + v, out)
             }
+          }
+          else {
+            self._updateRec(key + ':' + value, out);
+          }
+        });
+        return out;
+      },
 
-            if (key) {
+      _updateRec: function(k, out) {
+        k = k.toLowerCase();
+        if (this.db[k]) {
+          var v = this.db[k];
+          if (v.isAds) {
+            out.isCreatedByUs = true;
+          }
+          else {
+            out.isCreatedByOthers = true;
+          }
+          if (v.idx > -1) {
+            out.isKnownToAds = true;
+          }
+          out.putcode = v.putcode;
+          out.bibcode = v.bibcode;
+        }
+      },
+
+      /**
+       * Updates our knowledge about ORCID by
+       *  - fetching fresh profile (unless one is supplied)
+       *  - extracting info into fast-lookup format
+       */
+      updateDatabase: function(profile) {
+
+        if (profile && profile['orcid-profile'])
+          profile = profile['orcid-profile'];
+        
+        var self = this;
+        var whenDone = $.Deferred();
+
+        //update is currently in progress
+        if (this.updateDatabasePromise){
+          return this.updateDatabasePromise.promise();
+        }
+
+        //otherwise, have to run the update and set this.updateDatabasePromise
+        this.updateDatabasePromise = whenDone;
+
+        //this function will clear the resolved whendone promise after 30 seconds,
+        //so if new requests are made, they will have to update database again
+        function clearWhenDoneAfterDelay(){
+          setTimeout(function(){
+            self.updateDatebasePromise = null;
+          }, 1000 * 30);
+        }
+
+        self.virgin = false;
+
+        var defer;
+        if (profile && profile.orcid) {
+          defer = $.Deferred();
+          defer.resolve(profile);
+        }
+        else {
+          defer = this.getUserProfile();
+        }
+
+        defer.done(function(profile) {
+
+          self.dirty = false;
+
+          var works = profile['orcid-activities'] ? profile['orcid-activities']['orcid-works'] : [];
+          var ids = self.getExternalIds(works);
+          var db = {}, key, isOurs, query = [], field, fValue;
+          _.each(ids, function(value, key, obj) {
+            field = value.type.toLowerCase().trim();
+            fValue = key.toLowerCase().trim();
+            key =  field + ':' + fValue;
+
+            if (field == 'bibcode') {
               query.push(key);
-              db[key.toLowerCase()] = {
-                sourcedByADS: self.isSourcedByADS(w),
-                putcode: w.getPutCode(),
-                idx: i
-              };
+              query.push('alternate_bibcode:' + fValue);
             }
+            else if(field == 'doi') {
+              query.push(key);
+            }
+
+            isOurs = self.isWorkCreatedByUs(works['orcid-work'][value.idx]);
+            //TODO:rca - what if there are mutliple ids, one created by us, one by others?
+            db[key] = {isAds: isOurs, idx: value.idx, putcode: value['put-code']};
           });
 
+          // query our API to find out which records ADS has
           if (query.length && self.maxQuerySize > 0) {
             var whereClauses = [];
             query = query.sort();
             var steps = _.range(0, query.length, self.maxQuerySize);
-            for (var i = 0; i < steps.length; i++) {
+            for(var i=0; i<steps.length; i++) {
               var q = {};
-              for (var j = steps[i]; j < steps[i] + self.maxQuerySize; j++) {
+              for (var j=steps[i]; j<steps[i]+self.maxQuerySize; j++) {
                 if (j >= query.length) break;
                 var ps = query[j].split(':');
                 if (!q[ps[0]])
                   q[ps[0]] = [];
                 q[ps[0]].push(self.queryUpdater.quoteIfNecessary(ps[1]));
               }
-              var newQuery = self._buildQuery(q);
-              whereClauses.push(self._checkIdsInADS(newQuery));
+              whereClauses.push(self._checkOrcidIdsInAds(self._buildQuery(q)));
             }
-          } else {
-            finishUpdate(db);
-          }
 
-          var querySuccess = function () {
-            _.each(arguments, function (bibcodes) {
+            $.when.apply($, whereClauses)
+              .then(function() {
+                _.each(arguments, function (adsResponse, idx) {
+                  _.each(adsResponse, function(bibcode, key) {
+                    var orcidRec = db['bibcode:' + bibcode];
+                    if (!orcidRec) {
+                      orcidRec = {idx: -1, putcode: -1}; // create an empty rec
+                    }
+                    if (orcidRec.idx == -1 && db[key] && db[key].idx > -1) {
+                      _.extend(orcidRec, db[key]); // update empty rec with real data
+                    }
+                    orcidRec.bibcode = bibcode;
+                    db[key] = orcidRec;
+                  });
+                });
 
-              // Update each orcid record with identifier info gained from ADS
-              _.each(db, function (v, key) {
-
-                var bibcode = bibcodes[key];
-
-                // ADS did not find a record for this identifier
-                if (!bibcode) {
-                  db[key].idx = -1;
-                } else {
-                  db[key].bibcode = bibcode;
-                }
+                self.db = db;
+                self.profile = profile;
+                whenDone.resolve();
+              }, function() {
+                console.error('Error processing response from ADS', arguments);
+                self.db = db;
+                self.profile = profile;
+                whenDone.resolve();
+                clearWhenDoneAfterDelay();
               });
-            });
-            finishUpdate(db);
-          };
-
-          var queryFailure = function () {
-            console.error.apply(console, [
-              'Error processing response from ADS'].concat(arguments));
-            finishUpdate(db);
-          };
-
-          $.when.apply($, whereClauses).then(querySuccess, queryFailure);
-        };
-
-        if (profile) {
-          update(profile);
-        } else {
-
-          // if we aren't passed a profile, get the current one
-          this.getUserProfile().done(update).fail(function () {
-            self.dbUpdatePromise.reject.apply(self.dbUpdatePromise, arguments);
+          }
+          else {
+            self.db = db;
+            self.profile = profile;
+            whenDone.resolve();
+            clearWhenDoneAfterDelay();
+          }
+          })
+          .fail(function() {
+            whenDone.reject(arguments);
+            clearWhenDoneAfterDelay();
           });
-        }
 
-        return self.dbUpdatePromise.promise();
+        return whenDone;
+
+      },
+
+      _buildQuery: function(query) {
+        var parts = _.map(query, function(values, field) {
+          if (values.length == 0)
+            return '';
+          if (field == 'doi') {
+            return '(' + _.map(values, function(x) {return 'doi:'+x}).join(' OR ') + ')';
+          }
+          else {
+            return field + ':(' + values.join(' OR ') + ')';
+          }
+        }).filter(function(x) {return x.length});
+        return new ApiQuery({'q': parts.join(' OR ')});
       },
 
       /**
-       * Creates a metadata object based on the work that is passed in that
-       * helps with understanding the record's relationship with ADS.  Figures
-       * out if the record is sourced by ADS, whether it is known, and whether
-       * ADS has the rights to update/delete it.
-       *
-       * @param {Work} work
+       * Returns true when the OrcidApi needs to update its own database (synchronize
+       * with the remote API); this happens either because we have updated something
+       * or when a predefined time-interval passed
        */
-      getRecordInfo: function (work) {
-        var self = this;
-        var dd = $.Deferred();
+      needsUpdate: function() {
 
-        /**
-         * Creates a metadata object based on the record data passed in.
-         *
-         * @param {Object} data - record to gather metadata on
-         * @returns {{
-         *  isCreatedByADS: boolean,
-         *  isCreatedByOthers: boolean,
-         *  isKnownToADS: boolean,
-         *  provenance: null
-         * }}
-         */
-        var getInfo = function getInfo (data) {
-          var out = {
-            isCreatedByADS: false,
-            isCreatedByOthers: false,
-            isKnownToADS: false,
-            provenance: null
-          };
+        if (this.virgin)
+          return true;
 
-          var updateRecord = function (k, v, out) {
-            var key = (k + ':' + v).toLowerCase();
-            var rec = self.db[key];
+        if (!this.dirtyThrottle) {
+          this.dirtyThrottle = _.throttle(function(orcidApi) {
+            orcidApi.checkAccessOrcidApiAccess()
+              .done(function(profile) {
+                orcidApi.updateDatabase(profile);
+              })
+              .fail(function() {
+                console.log('We have lost access to ORCID Api (maybe the user revoked the token?)');
+                orcidApi.authData = {};
+              })
 
-            if (rec) {
-              if (rec.sourcedByADS) {
-                out.isCreatedByADS = true;
-              } else {
-                out.isCreatedByOthers = true;
-              }
-
-              if (rec.idx > -1) {
-                out.isKnownToADS = true;
-              }
-              out.putcode = rec.putcode;
-              out.bibcode = rec.bibcode;
-            }
-          };
-
-          var ids = _.pick(data, 'bibcode', 'doi', 'alternate_bibcode');
-
-          _.each(ids, function (value, key) {
-            if (_.isArray(value)) {
-              _.each(value, updateRecord);
-            } else {
-              updateRecord(key, value, out);
-            }
-          });
-
-          return out;
-        };
-
-        var fail = function () {
-          dd.reject.apply(dd, arguments);
-        };
-
-        if (this.needsUpdate()) {
-          this.updateDatabase()
-            .done(function () {
-              dd.resolve(getInfo(work));
-            })
-            .fail(fail);
-        } else {
-          dd.resolve(getInfo(work));
+          }, this.checkInterval || (3600 * 1000), this); // check every hour (or sooner?)
         }
+        this.dirtyThrottle(this);
 
-        return dd.promise();
-      },
-
-      /**
-       * Determines if the database needs to be updated.  It may, if there have
-       * been updates/deletes or if the internal timeout fired.
-       *
-       * @returns {boolean}
-       */
-      needsUpdate: function () {
         return this.dirty;
       },
 
-      setDirty: function () {
-        this.dirty = true;
+      /**
+       * Updates ORCID - this method is made available to widgets
+       *
+       * Returns a promise, with recordInfo
+       */
+      updateOrcid: function(action, adsDoc) {
+        if (!_.isObject(adsDoc)) throw new Error('You are supposed to send simple object');
+
+        var result = $.Deferred();
+        var self = this;
+
+        if (action == 'update') {
+          this.updateWorks([adsDoc])
+            .done(function(resp) {
+              self.getRecordInfo(adsDoc)
+                .done(function(recInfo) {
+                  result.resolve(recInfo);
+                })
+                .fail(function() {
+                  result.reject(arguments);
+                })
+            })
+            .fail(function() {
+              result.reject(arguments);
+            });
+        }
+        else if (action == 'delete') {
+          this.deleteWorks(this._extractIdentifiers([adsDoc]))
+            .done(function(resp) {
+              self.getRecordInfo(adsDoc)
+                .done(function(recInfo) {
+                  result.resolve(recInfo);
+                })
+                .fail(function() {
+                  result.reject(arguments);
+                })
+            })
+            .fail(function() {
+              result.reject(arguments);
+            });
+        }
+        else if (action == 'add') {
+          this.getRecordInfo(adsDoc)
+            .done(function(recInfo) {
+              if (!recInfo.isCreatedByUs && !recInfo.isCreatedByOthers) {
+                self.addWorks([adsDoc])
+                  .done(function() {
+                    recInfo.isCreatedByUs = true;
+                    result.resolve(recInfo);
+                  })
+                  .fail(function() {
+                    result.reject(arguments);
+                  });
+              }
+              else {
+                return self.updateOrcid('update', adsDoc); // not safe to just add
+              }
+            })
+            .fail(function() {
+              result.fail(arguments);
+            })
+        }
+        else {
+          throw new Error('Unknown action: ' + action);
+        }
+
+        return result.promise();
       },
 
-      setClean: function () {
-        this.dirty = false;
+      /**
+       * Reads a value from the orcid profile
+       *
+       * @param profile
+       * @param key - str, of 'foo/bar/value'
+       * @param defaultVal - what to return if the value is not found
+       * @returns {*}
+       */
+      getOrcidVal: function(profile, key, defaultVal) {
+        var parts = key.split('/');
+        var pointer = profile;
+        for (var i=0; i<parts.length; i++) {
+          if (pointer[parts[i]]) {
+            pointer = pointer[parts[i]]
+          }
+          else {
+            return defaultVal;
+          }
+        }
+        return pointer;
+      },
+      /**
+       * Transfroms ORCID profile into ADS format (ApiResponse) which is easy to
+       * ingest for the widgets
+       *
+       * @param orcidProfile
+       */
+      transformOrcidProfile: function(orcidProfile) {
+        var docs = [], works, self = this;
+
+        works = this.getOrcidVal(orcidProfile, 'orcid-activities/orcid-works/orcid-work', []);
+
+        var orcidId = orcidProfile['orcid-identifier']['path'];
+        var firstName = this.getOrcidVal(orcidProfile, "orcid-bio/personal-details/given-names/value", null);
+        var lastName = this.getOrcidVal(orcidProfile, "orcid-bio/personal-details/family-name/value", null);
+
+        function extr(el) {
+          if (!el) return null;
+          if (el.value)
+            return el.value;
+          return el;
+        }
+
+        function formatDate(el) {
+          if (!el) return null;
+          var yr = extr(el['year']) || '????';
+          var mn = extr(el['month']) || '??';
+          return yr + '/' + mn;
+        }
+
+        function pickIdentifier(d, ids) {
+          if (d.bibcode) return d.bibcode;
+          if (d.doi) return d.doi;
+          if (ids.length) return ids[0];
+          return 'unknown';
+        }
+
+        function extractAuthors(el) {
+          if (!el) return [];
+          var res = [];
+          if (el.contributor) {
+            _.each(el.contributor, function(x) {
+              if (x['credit-name'])
+                res.push(extr(x['credit-name']));
+            });
+          }
+          return res;
+        }
+
+        _.each(works, function(w) {
+          var d = {};
+          var ids = self.getExternalIds(w);
+          _.each(ids, function(value, key, obj) {
+            d[value.type.toLowerCase()] = key;
+          });
+          d['putcode'] = extr(w['put-code']);
+          d['title'] = extr(w['work-title'] ? w['work-title']['title'] : null);
+          d['visibility'] = extr(w['visibility']);
+          d['formattedDate'] = formatDate(w['publication-date']);
+          d['pub'] = extr(w['journal-title']);
+          d['abstract'] = extr(w['short-description']);
+          d.author = extractAuthors(w["work-contributors"]);
+          d.identifier = pickIdentifier(d, ids);
+          d['source_name'] = extr(w['source'] ? w['source']['source-name'] : 'unknown');
+          d['source_date'] = extr(w['source'] ? w['source']['source-date'] : 0);
+          //d.orcid = self.getRecordInfo(d);
+          docs.push(d);
+        });
+
+        // stable order, always by the date (descending)
+        // it is confusing because of the merged duplicates
+        //docs = docs.sort(function(a, b) {
+        //  return b.source_date - a.source_date}
+        //);
+        docs = _.sortBy(docs, function(x) {return x.title});
+
+        return {
+          responseHeader: {
+            params: {
+              orcid: orcidId,
+              firstName: firstName,
+              lastName: lastName
+            }
+          },
+          response:{
+            numFound:docs.length,
+            start: 0,
+            docs: docs
+          }
+        }
+
+      },
+
+      getOrcidProfileInAdsFormat: function() {
+        var d = $.Deferred();
+        var self = this;
+        this.getUserProfile()
+          .done(function(profile) {
+            self.updateDatabase(profile)
+              .done(function() {
+                d.resolve(self.transformOrcidProfile(profile));
+              })
+              .fail(function() {
+                d.reject(arguments);
+              })
+          })
+          .fail(function() {
+            d.reject(arguments);
+          });
+        return d.promise();
       },
 
       hardenedInterface: {
@@ -939,12 +1288,9 @@ define([
         getADSUserData : '',
         setADSUserData : '',
         getRecordInfo: 'provides info about a document',
-        addWork: 'add a new orcid work',
-        addWorks: 'add an array of orcid works',
-        deleteWork: 'remove an entry from orcid',
-        updateWork: 'update an orcid work',
-        getWork: 'get an orcid work',
-        getWorks: 'get an array of orcid works'
+        updateOrcid: 'the main access point for widgets',
+        getOrcidProfileInAdsFormat: 'retrieves the Orcid profile in ADS format',
+        getOrcidVal: 'value getter'
       }
     });
 
