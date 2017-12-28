@@ -226,6 +226,8 @@ define([
 
           var update = function(action, model) {
 
+            $('.s-results-orcid-container button').attr('disabled', 'disabled');
+
             self.mergeADSAndOrcidData(model)
               .done(function(model) {
                 var oldOrcidInfo = _.clone(model.get('orcid') || {});
@@ -259,6 +261,9 @@ define([
                 o.error = 'Failed merging ORCID data with ADS data';
                 delete o.pending;
                 model.set('orcid', o);
+              })
+              .always(function () {
+                $('.s-results-orcid-container button').removeAttr('disabled');
               });
           };
 

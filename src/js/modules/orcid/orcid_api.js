@@ -725,7 +725,7 @@ define([
        * @param opts
        * @returns {*}
        */
-      sendData: function (url, data, opts) {
+      sendData: _.debounce(function (url, data, opts) {
 
         var result = $.Deferred();
         opts = opts || {};
@@ -779,7 +779,7 @@ define([
             result.reject(arguments);
           });
         return result.promise();
-      },
+      }, 300, { leading: true }),
 
       /**
        * Queries ADS Api using orcid identifiers; returns a map that maps
