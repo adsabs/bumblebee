@@ -7,17 +7,16 @@
  *
  *  - all communication with ORCID happens in JSON
  *  - there are multiple access points
- *    addWork()
- *    updateWork()
- *    deleteWork()
+ *    addWorks()
+ *    setWorks()
+ *    deleteWorks()
  *
- *    But in reality, the ORCID API allows the following
+ *    But in reality, the ORCID API allows three
  *    operations:
  *
  *      reading (GET)
  *      adding (POST)
- *      updating (PUT)
- *      deleting (DELETE)
+ *      re-writing (PUT)
  *
  * This module will be contacting a web-service, such
  * a service needs to allows CORS requests (since we
@@ -34,6 +33,8 @@
  * TODO:
  *  - error handling (discover more error situations and
  *    take care of them; such as duplicated put-codes)
+ *  - wrap write operations into throttling mode? (it is
+ *    more efficient to do updates in bulk)
  *
  */
 
@@ -75,34 +76,29 @@ define([
     Profile
     ) {
 
+    var ADD_WAIT = 3000;
+    var PROFILE_WAIT = 500;
+    var ORCID_ADD_MAX = 100;
+
     var OrcidApi = GenericModule.extend({
 
-      /**
-       * Initialize the service
-       */
       initialize: function() {
+        this.orcidProxyUri = '';
         this.userData = {};
         this.addCache = [];
         this.getUserProfileCache = [];
         this.authData = null;
-        this.addWait = 3000;
-        this.profileWait = 500;
-        this.maxAddChunkSize = 100;
         this.db = {};
-        this.clearDBWait = 30000;
+        this.profile = {};
+        this.checkInterval = 3600 * 1000;
+        this.clearDBWait = 30 * 1000;
         this.dbUpdatePromise = null;
         this.maxQuerySize = 100;
         this.queryUpdater = new ApiQueryUpdater('orcid_api');
-        this.orcidApiTimeout = 30000; // 30 seconds
+        this.orcidApiTimeout = 30000; //30seconds
         this.dirty = true; // initialize as dirty, so it updates
       },
 
-      /**
-       * Activate the service.  Setup the configuration and
-       * save the current ORCID preferences.
-       *
-       * @param {BeeHive} beehive
-       */
       activate: function (beehive) {
         this.setBeeHive(beehive);
 
@@ -118,8 +114,6 @@ define([
             this.saveAccessData(orcid.authData);
           }
         }
-        this._addWork = _.debounce(this._addWork, this.addWait);
-        this._getUserProfile = _.debounce(this._getUserProfile, this.profileWait);
       },
 
       /**
@@ -128,7 +122,7 @@ define([
        *
        * @returns {jQuery.Promise}
        */
-      checkAccessOrcidApiAccess: function () {
+      checkAccessOrcidApiAccess: function() {
         if (this.hasAccess()) {
           return this.getUserProfile();
         }
@@ -140,7 +134,7 @@ define([
        * from ORCiD, and if that information has expired or not
        * @returns {boolean}
        */
-      hasAccess: function () {
+      hasAccess: function() {
         if (this.authData && this.authData.expires) {
           return this.authData.expires > new Date().getTime();
         }
@@ -150,8 +144,6 @@ define([
       /**
        * Redirects to ORCID where the user logs in and ORCID will forward
        * user back to us
-       *
-       * @param {String} [targetRoute='/#/user/orcid'] targetRoute
        */
       signIn: function (targetRoute) {
         this.getPubSub().publish(this.getPubSub().APP_EXIT, {
@@ -164,16 +156,13 @@ define([
         this.getPubSub().publish(this.getPubSub().ORCID_ANNOUNCEMENT, "login");
       },
 
-      /**
-       * Set the preferences for the user
-       *
-       * @param {Object} userData - user data to update
-       * @returns {*|jQuery.Promise}
-       */
-      setADSUserData : function (userData) {
+      /*
+      * set ADS data on endpoint /preferences[orcid id]
+      * */
+      setADSUserData : function(data){
         var url = this.getBeeHive().getService("Api").url +
           ApiTargets.ORCID_PREFERENCES + "/" + this.authData.orcid;
-        var request = this.createRequest(url, {}, userData);
+        var request = this.createRequest(url, {}, data);
         request.fail(function () {
           var msg = 'ADS ORCiD preferences could not be set';
           console.error.apply(console, [msg].concat(arguments));
@@ -181,13 +170,10 @@ define([
         return request;
       },
 
-      /**
-       * Uses the ADS ORCID preferences endpoint to grab the preferences
-       * for this user
-       *
-       * @returns {*|jQuery.Promise}
-       */
-      getADSUserData : function () {
+      /*
+       * get ADS data from endpoint /preferences[orcid id]
+       * */
+      getADSUserData : function() {
         var url = this.getBeeHive().getService("Api").url +
           ApiTargets.ORCID_PREFERENCES + "/" + this.authData.orcid;
         var request = this.createRequest(url);
@@ -206,21 +192,10 @@ define([
         this.getPubSub().publish(this.getPubSub().ORCID_ANNOUNCEMENT, "logout");
       },
 
-      /**
-       * Checks if the exchange code is present on the string
-       *
-       * @param {String} searchString
-       * @returns {boolean}
-       */
       hasExchangeCode: function (searchString) {
         return !!this.getExchangeCode(searchString);
       },
 
-      /**
-       * Get the exchange token from the location string or one specified
-       * @param {String} [searchString=window.location.search] searchString
-       * @returns {*|String|Undefined}
-       */
       getExchangeCode: function (searchString) {
         return this.getUrlParameter('code', searchString || window.location.search);
       },
@@ -251,8 +226,8 @@ define([
        *  pires_in":3599,"scope":"/orcid-works/create /orcid-profile/read-limited /orcid-w
        *  orks/update","orcid":"0000-0001-8178-9506","name":"Roman Chyla"}
        *
-       * @param {String} oAuthCode
-       * @returns {jQuery.Promise}
+       * @param oAuthCode
+       * @returns {*}
        */
       getAccessData: function (oAuthCode) {
         var api = this.getBeeHive().getService('Api');
@@ -277,13 +252,7 @@ define([
         return promise.promise();
       },
 
-      /**
-       * Save the passed in authentication data from orcid
-       * into user persistent storage for safe keeping.
-       *
-       * @param {object} authData - the authentication data
-       */
-      saveAccessData: function (authData) {
+      saveAccessData: function(authData) {
         var beehive = this.getBeeHive();
 
         if (authData && !authData.expires && authData.expires_in) {
@@ -349,41 +318,30 @@ define([
         return $dd.promise();
       },
 
-      /**
-       * Debounced method for keeping lots of request for the profile at bay.
-       * This method will resolve all awaiting promises when there has been an
-       * idle period following the initial request.
-       *
-       * Different from getWorks, because with profile we are only concerned
-       * with the most up-to-date response.  So a single response to resolve them
-       * all is good enough.
-       */
-      _getUserProfile: function () {
+      _getUserProfile: _.debounce(function () {
         var self = this;
         var request = this.createRequest(this.getUrl('profile'));
 
-        // get everything so far in the cache
-        var cache = self.getUserProfileCache.slice(0);
-
         request.done(function (profile) {
-          _.forEach(cache, function (promise) {
+          _.forEach(self.getUserProfileCache, function (promise) {
             promise.resolve(new Profile(profile));
           });
         });
 
         request.fail(function () {
-          var args = arguments;
-          _.forEach(cache, function (promise) {
-            promise.reject.apply(promise, args);
+          _.forEach(self.getUserProfileCache, function (promise) {
+            promise.resolve(new Profile(profile));
           });
         });
-      },
+
+        request.always(function () {
+          self.getUserProfileCache = [];
+        });
+      }, PROFILE_WAIT),
 
       /**
        * Retrieves user profile
        * Must have scope: /orcid-profile/read-limited
-       *
-       * Adds to the internal profile cache, which
        *
        * @returns {jQuery.Promise<Profile>} - Promise that resolves with profile
        */
@@ -483,37 +441,7 @@ define([
         return prom;
       },
 
-      /**
-       * Add new ORCiD work
-       * This will add an entry to an internal cache which will be used when
-       * the requests finally run.  Here we provide the old work, id and promise
-       * to the cache.
-       *
-       * @param {Object} orcidWork
-       */
-      addWork: function (orcidWork) {
-        var $dd = $.Deferred();
-        this.addCache.push({
-
-          // create unique request id to ride along with request
-          id: _.uniqueId(),
-          work: orcidWork,
-          promise: $dd
-        });
-        this._addWork.call(this);
-        return $dd.promise();
-      },
-
-      /**
-       * Debounced method for adding works
-       * This method will run iif it has been called once and then an
-       * idle period has passed without another call.  At that point it will
-       * get the current cache and make a request.
-       *
-       * Cached entries are checked against ids that ride along the request on
-       * the xhr object.
-       */
-      _addWork: function () {
+      _addWork: _.debounce(function () {
         var self = this;
         var cachedWorks = _.map(self.addCache, 'work');
         var cachedIds = _.map(self.addCache, 'id');
@@ -571,15 +499,27 @@ define([
             });
           });
         });
+      }, ADD_WAIT),
+
+      /**
+       * Add new ORCiD work
+       *
+       * @param {Object} orcidWork
+       */
+      addWork: function (orcidWork) {
+        var $dd = $.Deferred();
+        this.addCache.push({
+          id: _.uniqueId(),
+          work: orcidWork,
+          promise: $dd
+        });
+        this._addWork.call(this);
+        return $dd.promise();
       },
 
       /**
        * Add multiple works to ORCiD
-       * This method will chunk the incoming works by a maximum chunk size
-       * and send a separate request for each.  When all requests complete, it
-       * will aggregate and index them using unique request ids
        *
-       * @private
        * @param {Object[]} orcidWorks
        * @param {Number[]} ids
        */
@@ -593,9 +533,9 @@ define([
         var promises = [];
         var chunk;
         var chunkIds;
-        for (var i = 0; i < orcidWorks.length; i += this.maxAddChunkSize) {
-          chunk = orcidWorks.slice(i, i + this.maxAddChunkSize);
-          chunkIds = ids.slice(i, i + this.maxAddChunkSize);
+        for (var i = 0; i < orcidWorks.length; i += ORCID_ADD_MAX) {
+          chunk = orcidWorks.slice(i, i + ORCID_ADD_MAX);
+          chunkIds = ids.slice(i, i + ORCID_ADD_MAX);
 
           // create bulk object
           var bulkWorks = { bulk: [] };
