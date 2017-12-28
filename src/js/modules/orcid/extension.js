@@ -269,9 +269,8 @@ define([
           var works = profile.getWorks();
           var matchedWork = _.find(works, function (w) {
             var wIds = w.getExternalIds();
-            var doi = _.any(exIds.doi, wIds.doi);
-
-            return exIds.bibcode === wIds.bibcode || doi;
+            return exIds.bibcode === wIds.bibcode ||
+              exIds.doi === wIds.doi || exIds.doi[0] === wIds.doi;
           });
           if (matchedWork) {
             $dd.resolve(matchedWork);

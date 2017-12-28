@@ -119,26 +119,18 @@ define([
       /**
        * Checks access to ORCID api by making request for a user profile
        * returns a promise; done() means success, fail() no access
-       *
-       * @returns {jQuery.Promise}
+       * @param authData
        */
       checkAccessOrcidApiAccess: function() {
-        if (this.hasAccess()) {
-          return this.getUserProfile();
-        }
-        return $.Deferred().reject().promise();
+        return this.getUserProfile();
       },
 
-      /**
-       * Checks to see if the api has been given authentication information
-       * from ORCiD, and if that information has expired or not
-       * @returns {boolean}
-       */
       hasAccess: function() {
-        if (this.authData && this.authData.expires) {
-          return this.authData.expires > new Date().getTime();
+        var expires = this.authData && this.authData.expires;
+        if (expires) {
+          return expires > new Date().getTime();
         }
-        return false;
+        return !!(this.authData);
       },
 
       /**
@@ -264,6 +256,29 @@ define([
           var orcid = storage.get('Orcid') || {};
           orcid.authData = authData;
           storage.set('Orcid', orcid);
+        }
+      },
+
+      checkAccess: function() {
+
+        var pubsub = this.getPubSub();
+        if (!this.hasAccess()){
+          pubsub.publish(pubsub.ALERT, new ApiFeedback({
+            code: ApiFeedback.CODES.ALERT,
+            msg: " No access_token found",
+            type: "danger",
+            title: "Unable to contact ORCID API",
+            modal : true
+          }));
+        }
+        if (!this.config.apiEndpoint){
+          pubsub.publish(pubsub.ALERT, new ApiFeedback({
+            code: ApiFeedback.CODES.ALERT,
+            msg: "The config variable apiEndpoint is missing",
+            type: "danger",
+            title: "Unable to contact ORCID API",
+            modal : true
+          }));
         }
       },
 
@@ -725,11 +740,12 @@ define([
        *
        * @example
        * _buildQuery({
-       *  identifier: ['2018CNSNS..56..270Q']
+       *  bibcode: ['2018CNSNS..56..270Q'],
+       *  alternate_bibcode: ['2018CNSNS..56..270Q']
        * });
        * // returns:
        * { "q": [
-       *  "identifier:2018CNSNS..56..270Q OR identifier:2018CNSNS..56..270Q"
+       *  "bibcode:(2018CNSNS..56..270Q) OR alternate_bibcode:(2018CNSNS..56..270Q)"
        * ]}
        *
        * @param {Object} query - query object used to build new ApiQuery
@@ -740,25 +756,29 @@ define([
        * @private
        */
       _buildQuery: function (query) {
-        if (_.isEmpty(query)) {
-          return null;
-        }
-
         var formatString = function (values, field) {
           if (values.length === 0) {
             return '';
           }
-          return field + ':' + values.join(' OR ');
+
+          if (field === 'doi') {
+            var str = '(';
+            str += _.map(values, function (p) {
+              return 'doi:' + p;
+            }).join(' OR ');
+            str += ')';
+            return str;
+          } else {
+            return field + ':(' + values.join(' OR ') + ')';
+          }
         };
 
-        var q = _(query).map(formatString).filter('length').value();
-
-        // don't let an empty query string through
-        if (_.isEmpty(q)) {
-          return null;
-        }
-
-        return new ApiQuery({ q: q.join(' OR ') });
+        var q = _(query)
+          .map(formatString)
+          .filter('length')
+          .value()
+          .join(' OR ');
+        return new ApiQuery({ q: q });
       },
 
       /**
@@ -798,12 +818,13 @@ define([
           var query = [];
           var db = {};
           _.forEach(works, function addIdsToDatabase(w, i) {
-            var key = 'identifier:';
+            var key;
             var ids = w.getExternalIds();
             if (ids.bibcode) {
-              key += ids.bibcode;
+              key = 'bibcode:' + ids.bibcode;
+              query.push('alternate_bibcode:' + ids.bibcode);
             } else if (ids.doi) {
-              key += ids.doi;
+              key = 'doi:' + ids.doi;
             }
 
             if (key) {
@@ -829,11 +850,8 @@ define([
                   q[ps[0]] = [];
                 q[ps[0]].push(self.queryUpdater.quoteIfNecessary(ps[1]));
               }
-
               var newQuery = self._buildQuery(q);
-              if (newQuery) {
-                whereClauses.push(self._checkIdsInADS(newQuery));
-              }
+              whereClauses.push(self._checkIdsInADS(newQuery));
             }
           } else {
             finishUpdate(db);
