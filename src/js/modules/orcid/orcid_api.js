@@ -78,7 +78,6 @@ define([
 
     var ADD_WAIT = 3000;
     var PROFILE_WAIT = 500;
-    var ORCID_ADD_MAX = 100;
 
     var OrcidApi = GenericModule.extend({
 
@@ -229,8 +228,8 @@ define([
           new ApiRequest({target: this.config.exchangeTokenUrl, query: new ApiQuery({code: oAuthCode})}),
           {
             url: this.config.exchangeTokenUrl,
-            done: function () {
-              promise.resolve.apply(promise, arguments);
+            done: function (data) {
+              promise.resolve(data);
             },
             headers: {
               Accept: 'application/json',
@@ -458,60 +457,37 @@ define([
 
       _addWork: _.debounce(function () {
         var self = this;
-        var cachedWorks = _.map(self.addCache, 'work');
-        var cachedIds = _.map(self.addCache, 'id');
-        var prom = self._addWorks(cachedWorks, cachedIds);
-
-        // On success, create a new work and remove the entry from the cache
-        prom.done(function (workResponse) {
-
-          // workResponse will be in ID:WORK format
-          _.forEach(workResponse, function (work, id) {
-            var cacheEntry = _.find(self.addCache, function (e) {
-              return e.id = id;
-            });
-
-            if (!cacheEntry) {
-              return console.error('No cache entry found', self);
-            }
-
-            var promise = cacheEntry.promise;
-            var oldWork = cacheEntry.work;
-
-            // check to see if the work is an error message
-            if (work.error) {
-
-              // check to see if it's just a conflict
-              if (work.error['response-code'] === 409) {
-                promise.resolve(oldWork);
-              } else {
-                promise.reject();
-              }
-            } else {
-
-              // no errors, resole with the new work
-              promise.resolve(new Work(work));
-            }
-            _.remove(self.addCache, cacheEntry);
+        var prom = self.addWorks(_.map(self.addCache, 'work'));
+        prom.done(function (res) {
+          var works = res && res[0] && res[0].bulk || res && res.bulk;
+          works = _.map(works, function (w) {
+            return (w.error) ? w : new Work(w);
           });
 
-          // on fail, reject the promises
-          prom.fail(function (res, status, xhr) {
-            var responseIds = xhr.orcidAddWorkIds;
-            if (!responseIds || responseIds.length !== works.length) {
-              return console.error('Response ids do not match payload length');
-            }
-            var args = arguments;
-            var indexedIds = _.indexBy(self.addCache, 'id');
-            _.forEach(responseIds, function (id) {
-              var entry = indexedIds[id];
-              if (entry) {
-                _.remove(self.addCache, entry);
-                entry.promise.reject.apply(entry.promise, args);
+          _.forEach(works, function (w) {
+            var entry = self.addCache.pop();
+            if (entry) {
+              var oldWork = new Work(entry.work);
+
+              if (w && w.error) {
+
+                // Conflict, resolve with the old one
+                if (w.error['response-code'] === 409) {
+                  entry.promise.resolve(oldWork);
+                }
+              } else if (w) {
+                entry.promise.resolve(new Work(w));
               } else {
-                console.error('no cache entry', self);
+                entry.promise.reject();
               }
-            });
+            } else {
+              console.error('no cache entry', self);
+            }
+          });
+
+          prom.fail(function () {
+            var entry = self.addCache.pop();
+            entry.promise.reject.apply(entry.promise, arguments);
           });
         });
       }, ADD_WAIT),
@@ -524,7 +500,6 @@ define([
       addWork: function (orcidWork) {
         var $dd = $.Deferred();
         this.addCache.push({
-          id: _.uniqueId(),
           work: orcidWork,
           promise: $dd
         });
@@ -536,62 +511,22 @@ define([
        * Add multiple works to ORCiD
        *
        * @param {Object[]} orcidWorks
-       * @param {Number[]} ids
        */
-      _addWorks: function (orcidWorks, ids) {
-        var self = this;
+      addWorks: function (orcidWorks) {
         if (!_.isArray(orcidWorks)) {
           throw new TypeError('works must be an Array');
         }
 
-        var $dd = $.Deferred();
-        var promises = [];
-        var chunk;
-        var chunkIds;
-        for (var i = 0; i < orcidWorks.length; i += ORCID_ADD_MAX) {
-          chunk = orcidWorks.slice(i, i + ORCID_ADD_MAX);
-          chunkIds = ids.slice(i, i + ORCID_ADD_MAX);
-
-          // create bulk object
-          var bulkWorks = { bulk: [] };
-          _.each(chunk, function (w) {
-            bulkWorks.bulk.push({ work: w });
-          });
-
-          var url = this.getUrl('works');
-          promises.push(this.createRequest(url, {
-            beforeSend: function (xhr) {
-              xhr.cacheIds = chunkIds;
-            },
-            method: 'POST'
-          }, bulkWorks));
-        }
-
-        // when all the promises finish, aggregate the result and index by id
-        $.when.apply($, promises).then(function () {
-
-          // make sure arguments is an 2d array
-          var doneArgs = _.isArray(arguments[0]) ? arguments : [arguments];
-
-          var obj = _.reduce(doneArgs, function (res, args) {
-            var works = args && args[0] && args[0].bulk;
-            var ids = args && args[2] && args[2].cacheIds;
-
-            // build response object, indexed by ids
-            _.forEach(ids, function (id, idx) {
-              res[id] = works[idx].work;
-            });
-
-            return res;
-          }, {});
-
-          $dd.resolve(obj);
-        }, function () {
-          self.setDirty();
-          $dd.reject.apply($dd, arguments);
+        // create bulk object
+        var bulkWorks = { bulk: [] };
+        _.each(orcidWorks, function (w) {
+          bulkWorks.bulk.push({ work: w });
         });
 
-        return $dd.promise();
+        var url = this.getUrl('works');
+        var prom = this.createRequest(url, { method: 'POST' }, bulkWorks);
+        prom.done(_.bind(this.setDirty, this));
+        return prom;
       },
 
       // #############################################################################
@@ -614,8 +549,8 @@ define([
           url: url,
           cache: !!this.dbUpdatePromise, // true = do not generate _ parameters (let browser cache responses)
           timeout: this.orcidApiTimeout,
-          done: function () {
-            result.resolve.apply(result, arguments);
+          done: function(data) {
+            result.resolve(data);
           }
         };
 
@@ -1005,6 +940,7 @@ define([
         setADSUserData : '',
         getRecordInfo: 'provides info about a document',
         addWork: 'add a new orcid work',
+        addWorks: 'add an array of orcid works',
         deleteWork: 'remove an entry from orcid',
         updateWork: 'update an orcid work',
         getWork: 'get an orcid work',
