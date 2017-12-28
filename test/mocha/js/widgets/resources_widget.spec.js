@@ -440,8 +440,7 @@ define([
       expect(widget.view.render().$el.text()).to.be.equal('No Sources Found');
     });
 
-    //TODO: re-enable this test, skipping for now
-    it.skip('dies when there is an error', function (done) {
+    it('dies when there is an error', function (done) {
       widget.activate(beehive);
       var fb = actions.handleFeedback({
         request: {

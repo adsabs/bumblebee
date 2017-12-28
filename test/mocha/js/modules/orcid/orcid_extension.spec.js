@@ -163,10 +163,8 @@ define([
 
         var check = function (idx, prop, exp) {
           var len = get(idx, prop).length;
-          expect(len === 1).to.eql(exp, prop + ' on element ' + idx + ' is correct');
+          expect(len === 1).to.eql(exp);
         };
-
-        // this is checking for presence of this option on each record
 
         check(0, 'add', false);
         check(0, 'update', true);
@@ -188,6 +186,12 @@ define([
         check(3, 'delete', false);
         check(3, 'view', true);
 
+        get(0, 'update').click();
+        get(1, 'delete').click();
+        get(2, 'add').click();
+
+        expect(w.widget.mergeADSAndOrcidData.calledOnce).to.eql(true);
+        
         done();
       });
 
