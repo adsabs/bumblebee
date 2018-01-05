@@ -87,6 +87,12 @@ module.exports = function (grunt) {
       }
     }
 
+    var timeout;
+    var moveOnAfterWait = function (next) {
+      clearTimeout(timeout);
+      timeout = setTimeout(next, 60000); // 1 min
+    };
+
     // no errors to begin with
     var errors = 0;
 
@@ -117,6 +123,9 @@ module.exports = function (grunt) {
         errors += code;
         next();
       });
+
+      // force tests to finish in reasonable time
+      moveOnAfterWait(next);
     };
 
     // spawn a new test for each url, output total failures
