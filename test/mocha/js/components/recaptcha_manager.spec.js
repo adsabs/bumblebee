@@ -6,66 +6,69 @@ define([
   MinSub
   ){
 
-  describe("Recaptcha Manager", function(){
+  var test = function () {
+    describe("Recaptcha Manager", function(){
 
 
 
-  it("should have a deferred that is resolved when the sitekey is obtained and the google recaptcha global is loaded", function(done){
+      it("should have a deferred that is resolved when the sitekey is obtained and the google recaptcha global is loaded", function(done){
 
-      var r = new RecaptchaManager();
+        var r = new RecaptchaManager();
 
-      r.renderRecaptcha = sinon.spy();
-      
-      var testView = new Backbone.View();
+        r.renderRecaptcha = sinon.spy();
 
-      r.activateRecaptcha(testView);
+        var testView = new Backbone.View();
 
-      expect(r.renderRecaptcha.callCount).to.eql(0);
-      r.siteKeyDeferred.resolve("siteKey");
+        r.activateRecaptcha(testView);
+
+        expect(r.renderRecaptcha.callCount).to.eql(0);
+        r.siteKeyDeferred.resolve("siteKey");
 //      expect(r.renderRecaptcha.callCount).to.eql(0);
-      r.grecaptchaDeferred.resolve();
+        r.grecaptchaDeferred.resolve();
 
-      expect(r.renderRecaptcha.callCount).to.eql(1);
+        expect(r.renderRecaptcha.callCount).to.eql(1);
 
-    done();
+        done();
 
-    });
-
-    it("listens to APP_STARTED and requests the recaptcha key", function(){
-
-      var r = new RecaptchaManager();
-
-      var key;
-
-      var minsub = new (MinSub.extend({
-        request: function(apiRequest) {
-        }
-
-      }))({verbose: false});
-
-      var fakeAppStorage = {getConfigCopy : function(){return {recaptchaKey : "here_is_a_fake_key"}}};
-
-      minsub.beehive.addObject("AppStorage", fakeAppStorage);
-
-      r.activate(minsub.beehive);
-
-      r.siteKeyDeferred.done(function(data){
-
-        key = data;
       });
 
-      minsub.publish(minsub.APP_STARTED);
+      it("listens to APP_STARTED and requests the recaptcha key", function(){
 
-      //evidence that recaptcha manager successfully retrieved config variable recaptcha key
+        var r = new RecaptchaManager();
 
-      expect(key).to.eql("here_is_a_fake_key");
+        var key;
+
+        var minsub = new (MinSub.extend({
+          request: function(apiRequest) {
+          }
+
+        }))({verbose: false});
+
+        var fakeAppStorage = {getConfigCopy : function(){return {recaptchaKey : "here_is_a_fake_key"}}};
+
+        minsub.beehive.addObject("AppStorage", fakeAppStorage);
+
+        r.activate(minsub.beehive);
+
+        r.siteKeyDeferred.done(function(data){
+
+          key = data;
+        });
+
+        minsub.publish(minsub.APP_STARTED);
+
+        //evidence that recaptcha manager successfully retrieved config variable recaptcha key
+
+        expect(key).to.eql("here_is_a_fake_key");
 
 
 
 
 
-    })
+      })
 
-  })
+    });
+  };
 
-})
+  sinon.test(test)();
+});

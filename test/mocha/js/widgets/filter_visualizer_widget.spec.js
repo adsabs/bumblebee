@@ -16,6 +16,8 @@ define([
     $,
     MinSub
   ) {
+
+  var test = function () {
     describe("FilterVisualizer Widget (filter_visualizer_widget.spec.js)", function () {
 
       var minsub;
@@ -93,7 +95,7 @@ define([
         expect($w.find('#filter-visualizer').text().indexOf('Wang, J')).to.be.gt(-1);
 
         minsub.subscribeOnce(minsub.START_SEARCH, function() {
-            done()}
+          done()}
         ); // if this fires, query was issued
 
         // click on the first
@@ -192,8 +194,8 @@ define([
         expect(gui_data).to.eql([
           {
             elements: [{type: 'category', display: 'Author', value: 'fq_author|category|Author'},
-            {type: 'operand', display: 'Wang, J', value: 'fq_author|operand|author_facet_hier:"0/Wang, J"'},
-            {type: 'control', display: '', value: 'fq_author|control|x'}
+              {type: 'operand', display: 'Wang, J', value: 'fq_author|operand|author_facet_hier:"0/Wang, J"'},
+              {type: 'control', display: '', value: 'fq_author|control|x'}
             ]
           }
         ]);
@@ -548,4 +550,7 @@ define([
 
 
     });
+  };
+
+  sinon.test(test)();
   });

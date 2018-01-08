@@ -1,4 +1,5 @@
 define([
+    "underscore",
     "marionette",
     "js/components/api_query",
     "js/widgets/base/base_widget",
@@ -8,6 +9,7 @@ define([
     "hbs!js/widgets/library_individual/templates/loading-library"
   ],
   function(
+    _,
     Marionette,
     ApiQuery,
     BaseWidget,
@@ -77,7 +79,7 @@ define([
 
       updateHeader : function(){
 
-        var done = function done(metadata){
+        var done = _.bind(function done(metadata){
           //updating header
           var loggedIn = this.getBeeHive().getObject("User").isLoggedIn();
           this.headerModel.set(_.extend(metadata,
@@ -87,7 +89,7 @@ define([
               }
           ));
 
-        }.bind(this);
+        }, this);
 
         this.getBeeHive()
             .getObject("LibraryController")

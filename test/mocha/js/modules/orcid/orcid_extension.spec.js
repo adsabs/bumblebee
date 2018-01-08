@@ -17,7 +17,9 @@ define([
     OrcidExtension,
     helpers
     ) {
-    describe("Orcid Extension (orcid_extension.spec.js)", function() {
+
+    var test = function () {
+      describe("Orcid Extension (orcid_extension.spec.js)", function() {
       var minsub;
       beforeEach(function (done) {
         minsub = new (MinimalPubsub.extend({
@@ -314,6 +316,9 @@ define([
 
         done();
       });
-    })
+    });
+    };
+
+    sinon.test(test)();
   }
 );

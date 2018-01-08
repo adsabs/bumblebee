@@ -9,72 +9,14 @@ define([
     User
     ){
 
-  describe("Preferences Widget (UI Widget)", function(){
+  var test = function () {
+    describe("Preferences Widget (UI Widget)", function(){
 
-    afterEach(function(){
-      $("#test").empty();
-    });
+      afterEach(function(){
+        $("#test").empty();
+      });
 
-    var fakeURLConfig = [
-      {
-        "name": "ohio wesleyan",
-        "link": "ohio_wesleyan.edu"
-      },
-      {
-        "name": "virginia wesleyan",
-        "link": "virginia_wesleyan.edu"
-      },
-      {
-        "name": "wesleyan university",
-        "link": "wesleyan.edu"
-      }
-    ];
-
-    var fakeMyADS = {
-      link_server : "wesleyan.edu",
-      anotherVal : "foo",
-      user : "alberto"
-      };
-
-
-
-    it("should initialize with correct user vals + should listen to user change events", function(){
-
-      var p = new PreferencesWidget();
-
-      var minsub = new (MinSub.extend({
-        request: function(apiRequest) {
-          return {some: 'foo'}
-        }
-      }))({verbose: false});
-
-      var fakeUser = {
-        getHardenedInstance : function(){return this},
-        getUserData : function() {
-          return  {
-            link_server : "minnesota_state.edu"
-          };
-        },
-        getOpenURLConfig : function(){
-          var d = $.Deferred();
-          d.resolve(fakeURLConfig);
-          return d;
-
-        },
-        USER_INFO_CHANGE: User.prototype.USER_INFO_CHANGE,
-      };
-
-      var fakeOrcid = {
-        getHardenedInstance : function(){return this},
-        hasAccess : function(){return true}
-      };
-      minsub.beehive.addService("OrcidApi", fakeOrcid);
-
-      minsub.beehive.addObject("User", fakeUser);
-
-      p.activate(minsub.beehive.getHardenedInstance());
-
-      expect(p.model.get("openURLConfig")).to.eql([
+      var fakeURLConfig = [
         {
           "name": "ohio wesleyan",
           "link": "ohio_wesleyan.edu"
@@ -87,317 +29,378 @@ define([
           "name": "wesleyan university",
           "link": "wesleyan.edu"
         }
-      ]);
+      ];
 
-      expect(p.model.get("link_server")).to.eql("minnesota_state.edu");
-
-      //send new link server info in change event
-      minsub.publish(minsub.USER_ANNOUNCEMENT, User.prototype.USER_INFO_CHANGE, fakeMyADS);
-
-      expect(p.model.get("link_server")).to.eql("wesleyan.edu");
-
-      expect(JSON.stringify(p.model.toJSON())).to.eql('{"openURLConfig":[{"name":"ohio wesleyan","link":"ohio_wesleyan.edu"},{"name":"virginia wesleyan","link":"virginia_wesleyan.edu"},{"name":"wesleyan university","link":"wesleyan.edu"}],"link_server":"wesleyan.edu","anotherVal":"foo","user":"alberto"}');
-
-
-    });
-
-    it("should show a view that allows user to set open url link server", function(){
-
-      var p = new PreferencesWidget();
-
-      var minsub = new (MinSub.extend({
-        request: function(apiRequest) {
-          return {some: 'foo'}
-        }
-      }))({verbose: false});
-
-      var fakeUser = {getHardenedInstance : function(){return this},
-        getMyADSData : function() {
-          return  fakeMyADS;
-        },
-        getOpenURLConfig : function(){
-          var d = $.Deferred();
-          d.resolve(fakeURLConfig);
-          return d;
-
-        },
-        setUserData : sinon.spy(function(){
-          var d = $.Deferred();
-          d.resolve({});
-          return d.promise();
-        }),
-        USER_INFO_CHANGE: User.prototype.USER_INFO_CHANGE,
-        getUserData : function() {return {}}
-
+      var fakeMyADS = {
+        link_server : "wesleyan.edu",
+        anotherVal : "foo",
+        user : "alberto"
       };
 
-      minsub.beehive.addObject("User", fakeUser);
 
-      var fakeOrcid = {
-        getHardenedInstance : function(){return this},
-        hasAccess : function(){return true}
-      };
-      minsub.beehive.addService("OrcidApi", fakeOrcid);
 
-      p.activate(minsub.beehive.getHardenedInstance());
+      it("should initialize with correct user vals + should listen to user change events", function(){
 
-      minsub.publish(minsub.APP_STARTED);
+        var p = new PreferencesWidget();
 
-      $("#test").append(p.getEl());
-      p.setSubView("librarylink");
+        var minsub = new (MinSub.extend({
+          request: function(apiRequest) {
+            return {some: 'foo'}
+          }
+        }))({verbose: false});
 
-      expect($("div.panel-body").text().trim()).to.eql("Loading...");
+        var fakeUser = {
+          getHardenedInstance : function(){return this},
+          getUserData : function() {
+            return  {
+              link_server : "minnesota_state.edu"
+            };
+          },
+          getOpenURLConfig : function(){
+            var d = $.Deferred();
+            d.resolve(fakeURLConfig);
+            return d;
 
-      minsub.publish(minsub.USER_ANNOUNCEMENT, User.prototype.USER_INFO_CHANGE, fakeMyADS);
+          },
+          USER_INFO_CHANGE: User.prototype.USER_INFO_CHANGE,
+        };
 
-      expect($("#test .current-link-server").length).to.eql(1);
+        var fakeOrcid = {
+          getHardenedInstance : function(){return this},
+          hasAccess : function(){return true}
+        };
+        minsub.beehive.addService("OrcidApi", fakeOrcid);
 
-      expect($(".preferences-widget  p:first").text().trim()).to.eql("Your Library Link Server is set to wesleyan university.");
+        minsub.beehive.addObject("User", fakeUser);
 
-      expect($(".preferences-widget  select").val()).to.eql('wesleyan.edu');
+        p.activate(minsub.beehive.getHardenedInstance());
 
-      $(".preferences-widget button.submit").click();
+        expect(p.model.get("openURLConfig")).to.eql([
+          {
+            "name": "ohio wesleyan",
+            "link": "ohio_wesleyan.edu"
+          },
+          {
+            "name": "virginia wesleyan",
+            "link": "virginia_wesleyan.edu"
+          },
+          {
+            "name": "wesleyan university",
+            "link": "wesleyan.edu"
+          }
+        ]);
 
-      //submits the currently selected institution's url
-      expect(fakeUser.setUserData.callCount).to.eql(0);
+        expect(p.model.get("link_server")).to.eql("minnesota_state.edu");
 
-      $(".preferences-widget select").val("ohio_wesleyan.edu");
+        //send new link server info in change event
+        minsub.publish(minsub.USER_ANNOUNCEMENT, User.prototype.USER_INFO_CHANGE, fakeMyADS);
 
-      $(".preferences-widget button.submit").click();
+        expect(p.model.get("link_server")).to.eql("wesleyan.edu");
 
-      expect(fakeUser.setUserData.callCount).to.eql(1);
+        expect(JSON.stringify(p.model.toJSON())).to.eql('{"openURLConfig":[{"name":"ohio wesleyan","link":"ohio_wesleyan.edu"},{"name":"virginia wesleyan","link":"virginia_wesleyan.edu"},{"name":"wesleyan university","link":"wesleyan.edu"}],"link_server":"wesleyan.edu","anotherVal":"foo","user":"alberto"}');
 
-      expect(fakeUser.setUserData.args[0][0]).to.eql( {link_server: "ohio_wesleyan.edu"});
 
-    });
+      });
 
-    it("should show a view that allows the user to update ORCID information ", function(){
+      it("should show a view that allows user to set open url link server", function(){
 
-      var p = new PreferencesWidget();
+        var p = new PreferencesWidget();
 
-      var minsub = new (MinSub.extend({
-        request: function(apiRequest) {
-          return {some: 'foo'}
-        }
-      }))({verbose: false});
+        var minsub = new (MinSub.extend({
+          request: function(apiRequest) {
+            return {some: 'foo'}
+          }
+        }))({verbose: false});
 
-      var fakeUser = {
-        getHardenedInstance : function(){return this},
-        getMyADSData : function() {
-          return  fakeMyADS;
-        },
-        getOpenURLConfig : function(){
-          var d = $.Deferred();
-          d.resolve(fakeURLConfig);
-          return d;
+        var fakeUser = {getHardenedInstance : function(){return this},
+          getMyADSData : function() {
+            return  fakeMyADS;
+          },
+          getOpenURLConfig : function(){
+            var d = $.Deferred();
+            d.resolve(fakeURLConfig);
+            return d;
 
-        },
-        USER_INFO_CHANGE: User.prototype.USER_INFO_CHANGE,
-        getUserData : function() {return {}}
-      };
+          },
+          setUserData : sinon.spy(function(){
+            var d = $.Deferred();
+            d.resolve({});
+            return d.promise();
+          }),
+          USER_INFO_CHANGE: User.prototype.USER_INFO_CHANGE,
+          getUserData : function() {return {}}
 
-      var fakeOrcid = {
-        getHardenedInstance : function(){return this},
-        hasAccess : function(){return true},
-        getUserProfile : function(){
-          var d = $.Deferred();
-          //before this returns, a loading view is shown
-          expect($(".panel-body").text().trim()).to.eql("Loading...")
-          d.resolve({
-            getFirstName: _.constant('Alex'),
-            getLastName: _.constant('Holachek'),
-            getOrcid: _.constant('')
-          });
-          return d.promise();
-        },
-        setADSUserData : sinon.spy(function(){
-          var d = $.Deferred();
-          d.resolve({});
-          return d.promise();
-        }),
-        getADSUserData : function(){
-          var d = $.Deferred();
-          d.resolve({});
-          return d.promise();
-        }
-      };
-      minsub.beehive.addService("OrcidApi", fakeOrcid);
+        };
 
-      minsub.beehive.addObject("User", fakeUser);
+        minsub.beehive.addObject("User", fakeUser);
 
-      p.activate(minsub.beehive.getHardenedInstance());
+        var fakeOrcid = {
+          getHardenedInstance : function(){return this},
+          hasAccess : function(){return true}
+        };
+        minsub.beehive.addService("OrcidApi", fakeOrcid);
 
-      minsub.publish(minsub.APP_STARTED);
+        p.activate(minsub.beehive.getHardenedInstance());
 
-      $("#test").append(p.getEl());
+        minsub.publish(minsub.APP_STARTED);
 
-      p.setSubView("orcid");
+        $("#test").append(p.getEl());
+        p.setSubView("librarylink");
 
-      //loading view should have been removed
+        expect($("div.panel-body").text().trim()).to.eql("Loading...");
 
-      expect(normalizeSpace($(".preferences-widget .panel-heading").text().trim())).to.eql('ORCID Settings You are signed in to ORCID as Alex Holachek Not you? Sign into ORCID as a different user')
+        minsub.publish(minsub.USER_ANNOUNCEMENT, User.prototype.USER_INFO_CHANGE, fakeMyADS);
 
-      //should be checked by default if we don't pre-fill the data for the form
-      expect($(".authorized-ads-user").is(":checked")).to.be.true;
+        expect($("#test .current-link-server").length).to.eql(1);
 
-     $("#aff-input").val("wesleyan university");
+        expect($(".preferences-widget  p:first").text().trim()).to.eql("Your Library Link Server is set to wesleyan university.");
 
-      $(".authorized-ads-user").click();
+        expect($(".preferences-widget  select").val()).to.eql('wesleyan.edu');
 
-      expect($("#original-orcid-name").val()).to.eql("Holachek, Alex");
+        $(".preferences-widget button.submit").click();
 
-      expect($(".orcid-name-row").length).to.eql(0);
+        //submits the currently selected institution's url
+        expect(fakeUser.setUserData.callCount).to.eql(0);
 
-      $(".add-another-orcid-name").click();
-      $(".add-another-orcid-name").click();
+        $(".preferences-widget select").val("ohio_wesleyan.edu");
 
-      expect($(".orcid-name-row").length).to.eql(2);
+        $(".preferences-widget button.submit").click();
 
-      $("button.remove-name:last").click();
+        expect(fakeUser.setUserData.callCount).to.eql(1);
 
-      expect($(".orcid-name-row").length).to.eql(1);
+        expect(fakeUser.setUserData.args[0][0]).to.eql( {link_server: "ohio_wesleyan.edu"});
 
-      $(".orcid-name-row input").val("Holachek, Alfred");
+      });
 
-      $(".submit").click();
+      it("should show a view that allows the user to update ORCID information ", function(){
 
-      expect(fakeOrcid.setADSUserData.args[0][0]).to.eql({
-        "currentAffiliation": "wesleyan university",
-        "authorizedUser": false,
-        "nameVariations": [
-          "Holachek, Alfred"
-        ]
+        var p = new PreferencesWidget();
+
+        var minsub = new (MinSub.extend({
+          request: function(apiRequest) {
+            return {some: 'foo'}
+          }
+        }))({verbose: false});
+
+        var fakeUser = {
+          getHardenedInstance : function(){return this},
+          getMyADSData : function() {
+            return  fakeMyADS;
+          },
+          getOpenURLConfig : function(){
+            var d = $.Deferred();
+            d.resolve(fakeURLConfig);
+            return d;
+
+          },
+          USER_INFO_CHANGE: User.prototype.USER_INFO_CHANGE,
+          getUserData : function() {return {}}
+        };
+
+        var fakeOrcid = {
+          getHardenedInstance : function(){return this},
+          hasAccess : function(){return true},
+          getUserProfile : function(){
+            var d = $.Deferred();
+            //before this returns, a loading view is shown
+            expect($(".panel-body").text().trim()).to.eql("Loading...")
+            d.resolve({
+              getFirstName: _.constant('Alex'),
+              getLastName: _.constant('Holachek'),
+              getOrcid: _.constant('')
+            });
+            return d.promise();
+          },
+          setADSUserData : sinon.spy(function(){
+            var d = $.Deferred();
+            d.resolve({});
+            return d.promise();
+          }),
+          getADSUserData : function(){
+            var d = $.Deferred();
+            d.resolve({});
+            return d.promise();
+          }
+        };
+        minsub.beehive.addService("OrcidApi", fakeOrcid);
+
+        minsub.beehive.addObject("User", fakeUser);
+
+        p.activate(minsub.beehive.getHardenedInstance());
+
+        minsub.publish(minsub.APP_STARTED);
+
+        $("#test").append(p.getEl());
+
+        p.setSubView("orcid");
+
+        //loading view should have been removed
+
+        expect(normalizeSpace($(".preferences-widget .panel-heading").text().trim())).to.eql('ORCID Settings You are signed in to ORCID as Alex Holachek Not you? Sign into ORCID as a different user')
+
+        //should be checked by default if we don't pre-fill the data for the form
+        expect($(".authorized-ads-user").is(":checked")).to.be.true;
+
+        $("#aff-input").val("wesleyan university");
+
+        $(".authorized-ads-user").click();
+
+        expect($("#original-orcid-name").val()).to.eql("Holachek, Alex");
+
+        expect($(".orcid-name-row").length).to.eql(0);
+
+        $(".add-another-orcid-name").click();
+        $(".add-another-orcid-name").click();
+
+        expect($(".orcid-name-row").length).to.eql(2);
+
+        $("button.remove-name:last").click();
+
+        expect($(".orcid-name-row").length).to.eql(1);
+
+        $(".orcid-name-row input").val("Holachek, Alfred");
+
+        $(".submit").click();
+
+        expect(fakeOrcid.setADSUserData.args[0][0]).to.eql({
+          "currentAffiliation": "wesleyan university",
+          "authorizedUser": false,
+          "nameVariations": [
+            "Holachek, Alfred"
+          ]
+        })
+
+      });
+
+      it("should prepopulate the above mentioned orcid form with user data if available", function(){
+
+        var p = new PreferencesWidget();
+
+        var minsub = new (MinSub.extend({
+          request: function(apiRequest) {
+            return {some: 'foo'}
+          }
+        }))({verbose: false});
+
+        var fakeUser = {
+          getHardenedInstance : function(){return this},
+          getMyADSData : function() {
+            return  fakeMyADS;
+          },
+          getOpenURLConfig : function(){
+            var d = $.Deferred();
+            d.resolve(fakeURLConfig);
+            return d;
+
+          },
+          USER_INFO_CHANGE: User.prototype.USER_INFO_CHANGE,
+          getUserData : function() {return {}}
+        };
+
+        var fakeOrcid = {
+          getHardenedInstance : function(){return this},
+          hasAccess : function(){return true},
+          getUserProfile : function(){
+            var d = $.Deferred();
+            d.resolve({
+              getFirstName: _.constant('Alex'),
+              getLastName: _.constant('Holachek'),
+              getOrcid: _.constant('')
+            });
+            return d.promise();
+          },
+
+          getADSUserData : function(){
+            var d = $.Deferred();
+            d.resolve({
+              "currentAffiliation": "wesleyan university",
+              "authorizedUser": false,
+              "nameVariations": [
+                "Holachek, Alfred"
+              ]
+            });
+            return d.promise();
+          }
+        };
+        minsub.beehive.addService("OrcidApi", fakeOrcid);
+
+        minsub.beehive.addObject("User", fakeUser);
+
+        p.activate(minsub.beehive.getHardenedInstance());
+
+        minsub.publish(minsub.APP_STARTED);
+
+        $("#test").append(p.getEl());
+
+        p.setSubView("orcid");
+
+        expect($("#aff-input").val()).to.eql("wesleyan university");
+        expect($("#original-orcid-name").val()).to.eql("Holachek, Alex");
+        expect($(".orcid-name-row input").val()).to.eql("Holachek, Alfred");
+        expect($(".authorized-ads-user").is(":checked")).to.be.false;
+
+
+
       })
 
-    });
+      it("should allow the user to sign into ORCID from the orcid preferences view", function(){
 
-    it("should prepopulate the above mentioned orcid form with user data if available", function(){
+        var p = new PreferencesWidget();
 
-      var p = new PreferencesWidget();
+        var minsub = new (MinSub.extend({
+          request: function(apiRequest) {
+            return {some: 'foo'}
+          }
+        }))({verbose: false});
 
-      var minsub = new (MinSub.extend({
-        request: function(apiRequest) {
-          return {some: 'foo'}
-        }
-      }))({verbose: false});
-
-      var fakeUser = {
-        getHardenedInstance : function(){return this},
-        getMyADSData : function() {
-          return  fakeMyADS;
-        },
-        getOpenURLConfig : function(){
-          var d = $.Deferred();
-          d.resolve(fakeURLConfig);
-          return d;
-
-        },
-        USER_INFO_CHANGE: User.prototype.USER_INFO_CHANGE,
-        getUserData : function() {return {}}
-      };
-
-      var fakeOrcid = {
-        getHardenedInstance : function(){return this},
-        hasAccess : function(){return true},
-        getUserProfile : function(){
-          var d = $.Deferred();
-          d.resolve({
-            getFirstName: _.constant('Alex'),
-            getLastName: _.constant('Holachek'),
-            getOrcid: _.constant('')
-          });
-          return d.promise();
-        },
-
-        getADSUserData : function(){
-          var d = $.Deferred();
-          d.resolve({
-            "currentAffiliation": "wesleyan university",
-            "authorizedUser": false,
-            "nameVariations": [
-              "Holachek, Alfred"
-            ]
-          });
-          return d.promise();
-        }
-      };
-      minsub.beehive.addService("OrcidApi", fakeOrcid);
-
-      minsub.beehive.addObject("User", fakeUser);
-
-      p.activate(minsub.beehive.getHardenedInstance());
-
-      minsub.publish(minsub.APP_STARTED);
-
-      $("#test").append(p.getEl());
-
-      p.setSubView("orcid");
-
-      expect($("#aff-input").val()).to.eql("wesleyan university");
-      expect($("#original-orcid-name").val()).to.eql("Holachek, Alex");
-      expect($(".orcid-name-row input").val()).to.eql("Holachek, Alfred");
-      expect($(".authorized-ads-user").is(":checked")).to.be.false;
-
-
-
-    })
-
-    it("should allow the user to sign into ORCID from the orcid preferences view", function(){
-
-      var p = new PreferencesWidget();
-
-      var minsub = new (MinSub.extend({
-        request: function(apiRequest) {
-          return {some: 'foo'}
-        }
-      }))({verbose: false});
-
-      var fakeAppStorage = {
-        getHardenedInstance : function(){return this},
-        setStashedNav : sinon.spy()
+        var fakeAppStorage = {
+          getHardenedInstance : function(){return this},
+          setStashedNav : sinon.spy()
         };
 
-      var fakeOrcid = {
-        getHardenedInstance : function(){return this},
-        signIn : sinon.spy(),
-        hasAccess : sinon.spy(function(){return false}),
-      };
+        var fakeOrcid = {
+          getHardenedInstance : function(){return this},
+          signIn : sinon.spy(),
+          hasAccess : sinon.spy(function(){return false}),
+        };
 
-      var fakeUser = {
-        getHardenedInstance : function(){return this},
-        getUserData : function() {
-          return  fakeMyADS
-        },
-        getOpenURLConfig : function() {
-          var d = $.Deferred();
-          d.resolve(fakeURLConfig);
-          return d;
-        }
+        var fakeUser = {
+          getHardenedInstance : function(){return this},
+          getUserData : function() {
+            return  fakeMyADS
+          },
+          getOpenURLConfig : function() {
+            var d = $.Deferred();
+            d.resolve(fakeURLConfig);
+            return d;
+          }
 
         };
 
-      minsub.beehive.addService("OrcidApi", fakeOrcid);
-      minsub.beehive.addObject("AppStorage", fakeAppStorage);
-      minsub.beehive.addObject("User", fakeUser);
+        minsub.beehive.addService("OrcidApi", fakeOrcid);
+        minsub.beehive.addObject("AppStorage", fakeAppStorage);
+        minsub.beehive.addObject("User", fakeUser);
 
-      p.activate(minsub.beehive.getHardenedInstance());
+        p.activate(minsub.beehive.getHardenedInstance());
 
-      minsub.publish(minsub.APP_STARTED);
+        minsub.publish(minsub.APP_STARTED);
 
-      $("#test").append(p.getEl());
+        $("#test").append(p.getEl());
 
-      p.setSubView("orcid");
+        p.setSubView("orcid");
 
-      expect(fakeOrcid.hasAccess.callCount).to.eql(1);
-      expect(fakeOrcid.signIn.callCount).to.eql(0);
+        expect(fakeOrcid.hasAccess.callCount).to.eql(1);
+        expect(fakeOrcid.signIn.callCount).to.eql(0);
 
-      $("button.orcid-authenticate").click();
+        $("button.orcid-authenticate").click();
 
-      expect(fakeOrcid.signIn.callCount).to.eql(1);
+        expect(fakeOrcid.signIn.callCount).to.eql(1);
 
+
+      });
 
     });
+  };
 
-  });
-
+  sinon.test(test)();
  });

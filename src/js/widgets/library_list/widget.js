@@ -1,4 +1,5 @@
 define([
+  'underscore',
   "marionette",
   "js/widgets/list_of_things/item_view",
   "js/widgets/list_of_things/widget",
@@ -19,6 +20,7 @@ define([
   'bootstrap'
 
 ], function(
+    _,
     Marionette,
     DefaultItemView,
     ListOfThingsWidget,
@@ -168,7 +170,7 @@ define([
         options : {
           context : this,
           contentType : "application/x-www-form-urlencoded",
-          done : this.createApiResponse.bind(this, apiQuery),
+          done : _.bind(this.createApiResponse, this, apiQuery),
           fail : this.handleError
         }
       });

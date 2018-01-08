@@ -3,12 +3,16 @@ define([
   'js/modules/orcid/work'
 ], function (_, Work) {
 
-  describe('Orcid Work', function () {
+  var test = function () {
+    describe('Orcid Work', function () {
 
-    describe('Instantiation', function () {
-      it('instantiates correctly', function () {
-        expect(new Work({}) instanceof Work).to.equal(true);
+      describe('Instantiation', function () {
+        it('instantiates correctly', function () {
+          expect(new Work({}) instanceof Work).to.equal(true);
+        });
       });
     });
-  });
+  };
+
+  sinon.test(test)();
 });

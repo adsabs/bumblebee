@@ -1,29 +1,26 @@
 define([
-      'js/mixins/add_secondary_sort',
-      'js/components/api_query'
-    ],
+  'js/mixins/add_secondary_sort',
+  'js/components/api_query'
+], function(SecondarySort, ApiQuery){
 
-    function(
-        SecondarySort,
-        ApiQuery
-    ){
+  var test = function () {
+    describe("SecondarySort", function () {
 
-      describe("SecondarySort", function(){
+      it("should add the appropriate secondary sort ot the apiquery sort string", function () {
 
-        it ("should add the appropriate secondary sort ot the apiquery sort string", function(){
+        var q = new ApiQuery({sort: "date desc"});
+        SecondarySort.addSecondarySort(q);
+        expect(q.get("sort")).to.eql(["date desc, bibcode desc"]);
 
-                var q = new ApiQuery({ sort  : "date desc" });
-                SecondarySort.addSecondarySort(q);
-                expect(q.get("sort")).to.eql(["date desc, bibcode desc"]);
-
-                var q = new ApiQuery({ sort  : "date asc" });
-                SecondarySort.addSecondarySort(q);
-                expect(q.get("sort")).to.eql(["date asc, bibcode asc"]);
-
-        });
-
+        var q = new ApiQuery({sort: "date asc"});
+        SecondarySort.addSecondarySort(q);
+        expect(q.get("sort")).to.eql(["date asc, bibcode asc"]);
 
       });
 
 
     });
+  };
+
+  sinon.test(test)();
+});

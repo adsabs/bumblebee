@@ -19,7 +19,7 @@ define([
     var grecaptchaDeferred = $.Deferred();
 
     // this has to be global
-    onRecaptchaLoad = function(){
+    window.onRecaptchaLoad = function(){
       grecaptchaDeferred.resolve();
     };
 

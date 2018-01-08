@@ -70,13 +70,13 @@ define([
         this.queryUpdater = new ApiQueryUpdater(config.facetField);
 
         // a hack so the this.actions object has a reference to _dispatchRequest
-        this.actions.fetch_data = function(id) {
-          return this._dispatchRequest.bind(this, id);
-        }.bind(this);
+        this.actions.fetch_data = _.bind(function(id) {
+          return _.bind(this._dispatchRequest, this, id);
+        }, this);
 
-        this.actions.submit_filter = function(logicOption) {
-          return this.submitFilter.bind(this, logicOption);
-        }.bind(this);
+        this.actions.submit_filter = _.bind(function(logicOption) {
+          return _.bind(this.submitFilter, this, logicOption);
+        }, this);
 
         this.view = new FacetContainerView();
         this.view.render = _.partial(this.view.render, this.store, this.actions);

@@ -12,64 +12,69 @@ define([
             TreeView
     ) {
 
-    describe("Tree view (nested items)", function() {
 
-      afterEach(function () {
-        var ta = $('#test');
-        if (ta) {
-          ta.empty();
-        }
-      });
+    var test = function () {
+      describe("Tree view (nested items)", function() {
 
-      it("should be able to display nested collections of items", function() {
-        var coll = new TreeView.CollectionClass();
-
-        coll.add(new TreeView.ModelClass({title: 'foo', value: 'bar' , 'children': []}));
-        coll.add(new TreeView.ModelClass({title: 'boo', value: 'bab' , 'children': []}));
-        coll.add(new TreeView.ModelClass({title: 'doo', value: 'bad' , 'children': []}));
-        coll.add(new TreeView.ModelClass({title: 'woo', value: 'baw' , 'children': []}));
-        coll.add(new TreeView.ModelClass({title: 'zoo', value: 'baz' , 'children': []}));
-        coll.add(new TreeView.ModelClass({title: 'ooo', value: 'bao' , 'children': []}));
-
-        var view = new BaseContainerView({
-          childView: TreeView,
-          model: new BaseContainerView.ContainerModelClass({title: "Widget Title"}),
-          collection: coll,
-          openByDefault:true
+        afterEach(function () {
+          var ta = $('#test');
+          if (ta) {
+            ta.empty();
+          }
         });
 
-        var spy = sinon.spy();
-        view.on('all', spy);
+        it("should be able to display nested collections of items", function() {
+          var coll = new TreeView.CollectionClass();
 
-        var $v = $(view.render().el);
-        $('#test').append($v);
+          coll.add(new TreeView.ModelClass({title: 'foo', value: 'bar' , 'children': []}));
+          coll.add(new TreeView.ModelClass({title: 'boo', value: 'bab' , 'children': []}));
+          coll.add(new TreeView.ModelClass({title: 'doo', value: 'bad' , 'children': []}));
+          coll.add(new TreeView.ModelClass({title: 'woo', value: 'baw' , 'children': []}));
+          coll.add(new TreeView.ModelClass({title: 'zoo', value: 'baz' , 'children': []}));
+          coll.add(new TreeView.ModelClass({title: 'ooo', value: 'bao' , 'children': []}));
 
-        expect($v.find('.widget-body > div.item-view').length).to.be.equal(6);
-        expect($($v.find('.widget-body > .item-view input:eq(0)')).val()).to.be.equal('bar');
-        expect($($v.find('.widget-body > .item-view input:eq(1)')).val()).to.be.equal('bab');
+          var view = new BaseContainerView({
+            childView: TreeView,
+            model: new BaseContainerView.ContainerModelClass({title: "Widget Title"}),
+            collection: coll,
+            openByDefault:true
+          });
 
-        view.collection.models[0].children.add(
-          new TreeView.ModelClass({title: 'hey', value: 'joe' , 'children': []}));
+          var spy = sinon.spy();
+          view.on('all', spy);
+
+          var $v = $(view.render().el);
+          $('#test').append($v);
+
+          expect($v.find('.widget-body > div.item-view').length).to.be.equal(6);
+          expect($($v.find('.widget-body > .item-view input:eq(0)')).val()).to.be.equal('bar');
+          expect($($v.find('.widget-body > .item-view input:eq(1)')).val()).to.be.equal('bab');
+
+          view.collection.models[0].children.add(
+            new TreeView.ModelClass({title: 'hey', value: 'joe' , 'children': []}));
 
 
-        // difficulty with the treeView is that by default, it is hidden
-        view.displayMore(5);
+          // difficulty with the treeView is that by default, it is hidden
+          view.displayMore(5);
 
-        spy.reset();
-        
-        // click on the first item
-        $v.find('.widget-item:first').click();
-        expect($($v.find('input[value="joe"]')).is(':visible')).to.be.true;
-        expect(spy.callCount).to.be.eql(1);
-        expect(spy.args[0][1].collection.models[0].get('title')).to.be.equal('hey');
-        expect(spy.args[0][1].model.get('selected')).to.be.equal(true);
+          spy.reset();
+
+          // click on the first item
+          $v.find('.widget-item:first').click();
+          expect($($v.find('input[value="joe"]')).is(':visible')).to.be.true;
+          expect(spy.callCount).to.be.eql(1);
+          expect(spy.args[0][1].collection.models[0].get('title')).to.be.equal('hey');
+          expect(spy.args[0][1].model.get('selected')).to.be.equal(true);
 
 
-        // click again
-        $v.find('.item-leaf:first').click();
-        expect($($v.find('input[value="joe"]')).is(':visible')).to.be.false;
+          // click again
+          $v.find('.item-leaf:first').click();
+          expect($($v.find('input[value="joe"]')).is(':visible')).to.be.false;
 
+        });
       });
-    });
+    };
+
+    sinon.test(test)();
 
   });

@@ -16,11 +16,15 @@ module.exports = function (grunt) {
     var options = this.options({ htmlReport: false });
 
     // get the coverage object from the collection file generated
+    grunt.log.writeln('Reading Collection File');
     var coverageObject = grunt.file.readJSON(COVERAGE_COLLECTION_FILE);
+    grunt.log.writeln('Collection File Read');
     var collector = new istanbul.Collector();
+    grunt.log.writeln('Adding Coverage to Collector');
     collector.add(coverageObject);
 
     // Generate a quick summary to be shown in the output
+    grunt.log.writeln('Summarizing Coverage');
     var finalCoverage = collector.getFinalCoverage();
     var summary = istanbul.utils.summarizeCoverage(finalCoverage);
 
@@ -38,6 +42,7 @@ module.exports = function (grunt) {
       }).writeReport(collector, true);
     }
 
+    grunt.log.writeln('creating report...');
     istanbul.Report.create('lcov', {
       dir: COVERAGE_LCOV_OUTPUT_DIR
     }).writeReport(collector, true);

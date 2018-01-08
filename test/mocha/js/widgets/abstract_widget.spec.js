@@ -1,11 +1,12 @@
 /**
  * Created by alex on 5/19/14.
  */
-define(['backbone', 'marionette', 'jquery', 'js/widgets/abstract/widget',
-    'js/widgets/base/base_widget','js/bugutils/minimal_pubsub' ],
-  function (Backbone, Marionette, $, AbstractWidget, BaseWidget, MinimalPubSub) {
+define([
+  'backbone', 'marionette', 'jquery', 'js/widgets/abstract/widget',
+    'js/widgets/base/base_widget','js/bugutils/minimal_pubsub'
+], function (Backbone, Marionette, $, AbstractWidget, BaseWidget, MinimalPubSub) {
 
-
+  var test = function () {
     describe("Abstract Renderer (abstract_widget.spec.js)", function(){
 
       var testJSON, minsub;
@@ -270,4 +271,7 @@ define(['backbone', 'marionette', 'jquery', 'js/widgets/abstract/widget',
 
       });
     });
-  });
+  };
+
+  sinon.test(test)();
+});
