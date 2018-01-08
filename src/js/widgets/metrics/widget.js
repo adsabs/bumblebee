@@ -1032,7 +1032,7 @@ define([
 
       q.set("rows", rows);
 
-      var sendRepeatingRequest = function (start){
+      var sendRepeatingRequest = _.bind(function (start){
 
         q.set({start : start});
 
@@ -1058,7 +1058,7 @@ define([
             sendRepeatingRequest(start);
           }
         });
-      }.bind(this);
+      }, this);
 
       sendRepeatingRequest(start);
 
@@ -1138,7 +1138,7 @@ define([
         this.childViews.indicesGraphView.render();
       }
 
-      onResponse = onResponse.bind(this);
+      onResponse = _.bind(onResponse, this);
 
       pubsub.subscribeOnce(pubsub.DELIVERING_RESPONSE, onResponse);
       pubsub.publish(pubsub.EXECUTE_REQUEST, request);
@@ -1190,13 +1190,13 @@ define([
         }
       }
 
-      onResponse = onResponse.bind(this);
+      onResponse = _.bind(onResponse, this);
 
       pubsub.subscribeOnce(pubsub.DELIVERING_RESPONSE, onResponse);
       pubsub.publish(pubsub.EXECUTE_REQUEST, request);
     }
 
-    _getMetrics = _getMetrics.bind(this);
+    _getMetrics = _.bind(_getMetrics, this);
 
     if (options.simple !== undefined) {
       _getMetrics(options.simple);

@@ -48,7 +48,7 @@ define([
     }
 
     var links = sources.map(function (source) {
-      var onClick = props.onLinkClick.bind(this, source.title);
+      var onClick = _.bind(props.onLinkClick, this, source.title);
       return (
         <li key={source.title}>
           <a

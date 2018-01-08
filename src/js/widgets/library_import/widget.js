@@ -1,4 +1,5 @@
 define([
+  'underscore',
   'js/widgets/base/base_widget',
   'js/components/api_request',
   'js/components/api_targets',
@@ -8,7 +9,7 @@ define([
   'hbs!js/widgets/library_import/templates/success-template',
   'bootstrap'
 
-], function (BaseWidget,
+], function (_, BaseWidget,
              ApiRequest,
              ApiTargets,
              TabContainerTemplate,
@@ -137,7 +138,7 @@ define([
             }));
       }
 
-      submitCredentials = submitCredentials.bind(this);
+      submitCredentials = _.bind(submitCredentials, this);
 
       this.view.classicView.on("submit-credentials", function (data) {
         submitCredentials(ApiTargets.LIBRARY_IMPORT_CLASSIC_AUTH, that.view.classicView, data);
@@ -192,7 +193,7 @@ define([
 
       }
 
-      importLibraries = importLibraries.bind(this);
+      importLibraries = _.bind(importLibraries, this);
 
       this.view.classicView.on("library-import", function () {
         importLibraries(CLASSIC, that.view.classicView);

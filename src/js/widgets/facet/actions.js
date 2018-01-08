@@ -26,7 +26,7 @@ define([
 
   actions.increase_visible = function(id) {
 
-    return function(dispatch, getState) {
+    return _.bind(function(dispatch, getState) {
 
       var num = 5;
       //check to see if more need to be requested
@@ -51,7 +51,7 @@ define([
         dispatch( actions.select_facet(id) )
       }
 
-    }.bind(this);
+    }, this);
 
   };
 
@@ -65,7 +65,7 @@ define([
 
   actions.toggle_facet = function(id, open) {
 
-    return function(dispatch, getState) {
+    return _.bind(function(dispatch, getState) {
 
       var currentOpen = id ? getState().facets[id].state.open : getState().state.open;
       //if open was not supplied, just toggle the facet
@@ -80,14 +80,14 @@ define([
         id: id
       });
 
-    }.bind(this);
+    }, this);
 
-  }
+  };
 
   actions.fetch_data = function(id, offset) {
     //must be overridden by widget
     throw new Error('this was supposed to be overridden!');
-  }
+  };
 
   actions.select_facet = function(id) {
     return {
@@ -118,4 +118,4 @@ define([
     return Object.create(actions);
   };
 
-})
+});

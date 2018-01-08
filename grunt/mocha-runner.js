@@ -94,7 +94,6 @@ module.exports = function (grunt) {
 
     // create and spawn a new command child process that will run the tests
     var spawnTest = function (url, next) {
-      debugger;
 
       // create array of arguments to be passed to the runner
       var args = _.flatten([

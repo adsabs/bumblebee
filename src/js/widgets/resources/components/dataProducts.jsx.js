@@ -1,7 +1,8 @@
 'use strict';
 define([
+  'underscore',
   'react'
-], function (React) {
+], function (_, React) {
 
   /**
    * Create the DataProducts Section
@@ -16,7 +17,7 @@ define([
     }
 
     var links = products.map(function (product) {
-      var onClick = props.onLinkClick.bind(this, product.title);
+      var onClick = _.bind(props.onLinkClick, this, product.title);
       return (
         <li key={product.title}>
           <a
