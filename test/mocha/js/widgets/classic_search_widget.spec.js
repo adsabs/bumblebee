@@ -7,188 +7,192 @@ define([
     MinimalPubSub
   ){
 
-  describe("Classic Form (UI Widget)", function(){
+  var test = function () {
+    describe("Classic Form (UI Widget)", function(){
 
-    afterEach(function(){
+      afterEach(function(){
 
-      $("#test").empty();
+        $("#test").empty();
 
-    })
+      })
 
-    it("should turn a classic form into an apiQuery on submit", function(){
-
-
-      var w = new ClassicForm();
-
-      var minsub = new (MinimalPubSub.extend({
-        request: function (apiRequest) {
-          return "";
-        }
-      }))({verbose: false});
-
-      var publishSpy = sinon.spy();
-
-      minsub.beehive.getService("PubSub").publish = publishSpy;
-      w.activate(minsub.beehive.getHardenedInstance());
-
-      $("#test").append(w.render().el);
-
-      w.onShow();
-
-      expect($("button[type=submit]").prop("disabled")).to.eql(true);
-
-      w.view.$("div[data-field=database]").find("input").attr("checked", true);
-      w.view.$("div[data-field=author]").find("textarea").val("Accomazzi,a\rKurtz,M");
-      w.view.$("div[data-field=author]").find("textarea").trigger("input");
-
-      w.view.$("div[data-field=date]").find("input[name=month_from]").val(10);
-      w.view.$("div[data-field=date]").find("input[name=year_from]").val(2010);
-
-      w.view.$("div[data-field=title]").find("input[type=text]").val('star planet "gliese 581"');
-
-      //setting input[value=OR] prop "checked" to true isn't working in phantomjs for some reason :(
-      w.view.$("div[data-field=title] input[name=title-logic]").val("OR")
-
-      w.view.$("div[data-field=abs]").find("input[type=text]").val('-hawaii star');
-      w.view.$("div[data-field=abs] input[name=abstract-logic]").val("BOOLEAN")
-
-      w.view.$("div[data-field=bibstem]").find("input[name=bibstem]").val("apj,mnras,");
-
-      w.view.$("div[data-field=property]").find("input[name=refereed]").click();
-      w.view.$("div[data-field=property]").find("input[name=article]").click();
-
-      expect(w.view.$("button[type=submit]").prop("disabled")).to.eql(false);
+      it("should turn a classic form into an apiQuery on submit", function(){
 
 
-      w.view.$("button[type=submit]").eq(0).click();
+        var w = new ClassicForm();
 
+        var minsub = new (MinimalPubSub.extend({
+          request: function (apiRequest) {
+            return "";
+          }
+        }))({verbose: false});
 
-      expect(publishSpy.args[0][2].toJSON()).to.eql({
-        "q": [
-          "property:refereed property:article pubdate:[2010-10 TO 9999-12] author:(\"Accomazzi,a\" AND \"Kurtz,M\") title:(star OR planet OR \"gliese 581\") abs:(-\"hawaii star\") bibstem:(apj OR mnras)"
-        ],
-        "sort": [
-          "date desc"
-        ],
-        "fq": [
-          "database:(astronomy OR physics)"
-        ]
-      });
+        var publishSpy = sinon.spy();
 
-      //one more
+        minsub.beehive.getService("PubSub").publish = publishSpy;
+        w.activate(minsub.beehive.getHardenedInstance());
 
-      w.view.render();
+        $("#test").append(w.render().el);
 
-      w.view.$("div[data-field=author]").find("textarea").val("Accomazzi,a");
-      w.view.$("div[data-field=author]").find("textarea").trigger("input");
+        w.onShow();
 
-      w.view.$("div[data-field=date]").find("input[name=month_from]").val(10);
-      w.view.$("div[data-field=date]").find("input[name=year_from]").val(2010);
-      w.view.$("div[data-field=date]").find("input[name=year_to]").val(2012);
+        expect($("button[type=submit]").prop("disabled")).to.eql(true);
 
-      w.view.$("div[data-field=title]").find("input[type=text]").val('star planet "gliese 581"');
-      //setting input[value=OR] prop "checked" to true isn't working in phantomjs for some reason :(
-      w.view.$("div[data-field=title] input[name=title-logic]").val("OR")
-
-      w.view.$("div[data-field=abs]").find("input[type=text]").val('-hawaii star');
-      w.view.$("div[data-field=abs] input[name=abstract-logic]").val("BOOLEAN")
-
-      w.view.$("div[data-field=bibstem]").find("input[name=bibstem]").val("    apj,     ");
-
-      w.view.$("div[data-field=property]").find("input[name=refereed]").click();
-
-      w.view.$("button[type=submit]").eq(0).click();
-
-      expect(publishSpy.args[1][2].toJSON()).to.eql({
-        "q": [
-          "property:refereed pubdate:[2010-10 TO 2012-12] author:(\"Accomazzi,a\") title:(star OR planet OR \"gliese 581\") abs:(-\"hawaii star\") bibstem:(apj)"
-        ],
-        "sort": [
-          "date desc"
-        ],
-        "fq": [
-          "database:astronomy"
-        ]
-      });
-
-    });
-
-    it('Boolean logic text area correctly parses the input', function () {
-      var w = new ClassicForm();
-
-      var minsub = new (MinimalPubSub.extend({
-        request: function () {
-          return "";
-        }
-      }))({verbose: false});
-
-      var publishSpy = sinon.spy();
-
-      minsub.beehive.getService("PubSub").publish = publishSpy;
-      w.activate(minsub.beehive.getHardenedInstance());
-
-      $("#test").append(w.render().el);
-
-      w.onShow();
-
-      var setLogic = function (field, logic) {
-        w.view.$("div[data-field=" + field + "] input[name=" + field + "-logic]").val(logic);
-      };
-
-      var authorInput = function (str) {
-        if (Array.isArray(str)) {
-          str = str.join('\n');
-        }
-        w.view.$("div[data-field=author]").find("textarea").val(str);
+        w.view.$("div[data-field=database]").find("input").attr("checked", true);
+        w.view.$("div[data-field=author]").find("textarea").val("Accomazzi,a\rKurtz,M");
         w.view.$("div[data-field=author]").find("textarea").trigger("input");
-      };
 
-      var submitForm = function () {
+        w.view.$("div[data-field=date]").find("input[name=month_from]").val(10);
+        w.view.$("div[data-field=date]").find("input[name=year_from]").val(2010);
+
+        w.view.$("div[data-field=title]").find("input[type=text]").val('star planet "gliese 581"');
+
+        //setting input[value=OR] prop "checked" to true isn't working in phantomjs for some reason :(
+        w.view.$("div[data-field=title] input[name=title-logic]").val("OR")
+
+        w.view.$("div[data-field=abs]").find("input[type=text]").val('-hawaii star');
+        w.view.$("div[data-field=abs] input[name=abstract-logic]").val("BOOLEAN")
+
+        w.view.$("div[data-field=bibstem]").find("input[name=bibstem]").val("apj,mnras,");
+
+        w.view.$("div[data-field=property]").find("input[name=refereed]").click();
+        w.view.$("div[data-field=property]").find("input[name=article]").click();
+
+        expect(w.view.$("button[type=submit]").prop("disabled")).to.eql(false);
+
+
         w.view.$("button[type=submit]").eq(0).click();
-      };
 
-      // try simple combination
-      authorInput("-Accomazzi, a\n+author2\n-author3\nauthor4");
-      setLogic('author', 'BOOLEAN');
-      submitForm();
 
-      expect(publishSpy.args[0][2].toJSON()).to.eql({
-        "q": [
-          "author:(-\"Accomazzi, a\" +author2 -author3 +author4)"
-        ],
-        "sort": [
-          "date desc"
-        ],
-        "fq": [
-          "database:astronomy"
-        ]
+        expect(publishSpy.args[0][2].toJSON()).to.eql({
+          "q": [
+            "property:refereed property:article pubdate:[2010-10 TO 9999-12] author:(\"Accomazzi,a\" AND \"Kurtz,M\") title:(star OR planet OR \"gliese 581\") abs:(-\"hawaii star\") bibstem:(apj OR mnras)"
+          ],
+          "sort": [
+            "date desc"
+          ],
+          "fq": [
+            "database:(astronomy OR physics)"
+          ]
+        });
+
+        //one more
+
+        w.view.render();
+
+        w.view.$("div[data-field=author]").find("textarea").val("Accomazzi,a");
+        w.view.$("div[data-field=author]").find("textarea").trigger("input");
+
+        w.view.$("div[data-field=date]").find("input[name=month_from]").val(10);
+        w.view.$("div[data-field=date]").find("input[name=year_from]").val(2010);
+        w.view.$("div[data-field=date]").find("input[name=year_to]").val(2012);
+
+        w.view.$("div[data-field=title]").find("input[type=text]").val('star planet "gliese 581"');
+        //setting input[value=OR] prop "checked" to true isn't working in phantomjs for some reason :(
+        w.view.$("div[data-field=title] input[name=title-logic]").val("OR")
+
+        w.view.$("div[data-field=abs]").find("input[type=text]").val('-hawaii star');
+        w.view.$("div[data-field=abs] input[name=abstract-logic]").val("BOOLEAN")
+
+        w.view.$("div[data-field=bibstem]").find("input[name=bibstem]").val("    apj,     ");
+
+        w.view.$("div[data-field=property]").find("input[name=refereed]").click();
+
+        w.view.$("button[type=submit]").eq(0).click();
+
+        expect(publishSpy.args[1][2].toJSON()).to.eql({
+          "q": [
+            "property:refereed pubdate:[2010-10 TO 2012-12] author:(\"Accomazzi,a\") title:(star OR planet OR \"gliese 581\") abs:(-\"hawaii star\") bibstem:(apj)"
+          ],
+          "sort": [
+            "date desc"
+          ],
+          "fq": [
+            "database:astronomy"
+          ]
+        });
+
       });
 
-      w.view.render();
+      it('Boolean logic text area correctly parses the input', function () {
+        var w = new ClassicForm();
 
-      // try some crappy input
-      authorInput([
-        't e s t',
-        '    testing    ',
-        ' - test ',
-        'test',
-        '+testing',
-        '-testing'
-      ]);
-      setLogic('author', 'BOOLEAN');
-      submitForm();
+        var minsub = new (MinimalPubSub.extend({
+          request: function () {
+            return "";
+          }
+        }))({verbose: false});
 
-      expect(publishSpy.args[1][2].toJSON()).to.eql({
-        "q": [
-          "author:(+\"t e s t\" +testing -\" test\" +test +testing -testing)"
-        ],
-        "sort": [
-          "date desc"
-        ],
-        "fq": [
-          "database:astronomy"
-        ]
+        var publishSpy = sinon.spy();
+
+        minsub.beehive.getService("PubSub").publish = publishSpy;
+        w.activate(minsub.beehive.getHardenedInstance());
+
+        $("#test").append(w.render().el);
+
+        w.onShow();
+
+        var setLogic = function (field, logic) {
+          w.view.$("div[data-field=" + field + "] input[name=" + field + "-logic]").val(logic);
+        };
+
+        var authorInput = function (str) {
+          if (Array.isArray(str)) {
+            str = str.join('\n');
+          }
+          w.view.$("div[data-field=author]").find("textarea").val(str);
+          w.view.$("div[data-field=author]").find("textarea").trigger("input");
+        };
+
+        var submitForm = function () {
+          w.view.$("button[type=submit]").eq(0).click();
+        };
+
+        // try simple combination
+        authorInput("-Accomazzi, a\n+author2\n-author3\nauthor4");
+        setLogic('author', 'BOOLEAN');
+        submitForm();
+
+        expect(publishSpy.args[0][2].toJSON()).to.eql({
+          "q": [
+            "author:(-\"Accomazzi, a\" +author2 -author3 +author4)"
+          ],
+          "sort": [
+            "date desc"
+          ],
+          "fq": [
+            "database:astronomy"
+          ]
+        });
+
+        w.view.render();
+
+        // try some crappy input
+        authorInput([
+          't e s t',
+          '    testing    ',
+          ' - test ',
+          'test',
+          '+testing',
+          '-testing'
+        ]);
+        setLogic('author', 'BOOLEAN');
+        submitForm();
+
+        expect(publishSpy.args[1][2].toJSON()).to.eql({
+          "q": [
+            "author:(+\"t e s t\" +testing -\" test\" +test +testing -testing)"
+          ],
+          "sort": [
+            "date desc"
+          ],
+          "fq": [
+            "database:astronomy"
+          ]
+        });
       });
     });
-  });
+  };
+
+  sinon.test(test)();
 });

@@ -88,16 +88,13 @@ module.exports = function (grunt) {
     }
 
     var timeout;
-    var moveOnAfterWait = function (next) {
-      clearTimeout(timeout);
-      timeout = setTimeout(next, 60000); // 1 min
-    };
 
     // no errors to begin with
     var errors = 0;
 
     // create and spawn a new command child process that will run the tests
     var spawnTest = function (url, next) {
+      debugger;
 
       // create array of arguments to be passed to the runner
       var args = _.flatten([
@@ -111,21 +108,22 @@ module.exports = function (grunt) {
       var cmd = spawn(options.pathToPhantomJsBin, args);
 
       // handle the outputting to the stdout/stderr/etc.
-      cmd.stdout.on('data', function(out) {
+      cmd.stdout.on('data', function (out) {
         grunt.log.write(out);
       });
-      cmd.stderr.on('data', function(err) {
+      cmd.stderr.on('data', function (err) {
         grunt.log.write(err);
       });
 
       // on close add the error code to keep track of number of failures
-      cmd.on('close', function(code) {
+      cmd.on('close', function (code) {
+        clearTimeout(timeout);
         errors += code;
         next();
       });
 
       // force tests to finish in reasonable time
-      moveOnAfterWait(next);
+      timeout = setTimeout(next, 60000); // 1 min
     };
 
     // spawn a new test for each url, output total failures
@@ -138,6 +136,15 @@ module.exports = function (grunt) {
       }
 
       done();
+    }, function (err) {
+      if( err ) {
+        // One of the iterations produced an error.
+        // All processing will now stop.
+        console.log('Failed to process test url');
+        console.error(err);
+      } else {
+        console.log('All test urls have been run');
+      }
     });
   });
 

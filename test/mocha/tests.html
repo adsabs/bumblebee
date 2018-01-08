@@ -84,6 +84,9 @@
 
                 // Make sure we get hold of the coverage variable, if necessary
                 global.__coverage__ = this.__coverage__;
+                mocha.suite.afterAll(function () {
+                  global.__MOCHA_IS_DONE__ = true;
+                });
               });
             };
 

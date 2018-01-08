@@ -3,20 +3,15 @@
  */
 
 define([
-    'js/widgets/breadcrumb/widget',
-    'js/components/api_query',
-    'js/services/pubsub',
-    'js/components/beehive',
-    'backbone',
-    'jquery'
-  ],
-  function (
-    BreadCrumbWidget,
-    ApiQuery,
-    PubSub,
-    BeeHive,
-    Backbone,
-    $) {
+  'js/widgets/breadcrumb/widget',
+  'js/components/api_query',
+  'js/services/pubsub',
+  'js/components/beehive',
+  'backbone',
+  'jquery'
+], function (BreadCrumbWidget, ApiQuery, PubSub, BeeHive, Backbone, $) {
+
+  var test = function () {
     describe("BreadCrumb Widget (UI)", function () {
 
       var beehive, pubsub;
@@ -62,4 +57,7 @@ define([
       });
 
     });
-  });
+  };
+
+  sinon.test(test)();
+});

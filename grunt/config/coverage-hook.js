@@ -3,6 +3,7 @@
 // phantomjs's version of `fs`
 var fs = require('fs');
 var COVERAGE_FILE = 'test/coverage/coverage.json';
+var PAGE = null;
 
 var saveCoverage = function (page) {
   var coverage = page.evaluate(function () {

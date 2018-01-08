@@ -16,117 +16,126 @@ define([
   ApiFeedback
   ) {
 
-  describe("Alerts Mediator (alerts_mediator.spec.js)", function () {
+  var test = function () {
+    describe("Alerts Mediator (alerts_mediator.spec.js)", function () {
 
-    var minsub;
-    beforeEach(function (done) {
-      minsub = new MinimalPubSub({verbose: false});
-      done();
-    });
-
-    afterEach(function (done) {
-      minsub.destroy();
-      var ta = $('#test');
-      if (ta) {
-        ta.empty();
-      }
-      done();
-    });
-
-    var _getM = function() {
-      var m = new AlertsMediator();
-      var widget = new AlertsWidget();
-      widget.activate(minsub.beehive.getHardenedInstance());
-      sinon.spy(m, 'alert');
-      sinon.spy(m, 'onAlert');
-      var app = {
-        _getWidget: function(name) {
-          if (name == 'AlertsWidget')
-            return widget;
-        },
-        getController: function(name) {
-          if (name == 'AlertsController')
-            return m;
-        }
-      };
-      m.activate(minsub.beehive, app);
-      return {m: m, app:app, widget:widget};
-    };
-
-    it("extends GenericModule", function () {
-      expect(new AlertsMediator()).to.be.instanceof(GenericModule);
-      var m = new AlertsMediator();
-      expect(function() {m.activate(minsub.beehive, {getWidget: function() {}})}).to.throw.Error;
-    });
-
-    it("works with pubsub and alone", function(done) {
-      var x = _getM();
-      var m = x.m;
-
-      expect(m.getWidget()).to.equal(x.widget);
-
-      minsub.publish(minsub.ALERT, new ApiFeedback({code: 0, msg: 'foo'}));
-      expect(m.onAlert.called).to.be.true;
-      expect(m.alert.called).to.be.true;
-
-      done();
-    });
-
-    it("fails when message cannot be displayed", function() {
-      var x = _getM();
-      x.app._getWidget = function() {};
-      x.m._widget = null;
-      var promise = x.m.alert(new ApiFeedback({msg: 'foo'}));
-      expect(promise.state()).to.be.eql('rejected');
-    });
-
-    it("accepts different payload for events", function() {
-      var x = _getM();
-      var $w = x.widget.render().$el;
-      $('#test').append($w);
-
-      var promise;
-      promise = x.m.onAlert(new ApiFeedback({
-        msg: 'this is <a href="foo">html</a> message',
-        events: {
-          'click #page-top-alert a': 'foo-bar'
-        }
-      }))
-      .done(function(x) {
-        expect(x).to.be.eql('foo-bar');
+      var minsub;
+      beforeEach(function (done) {
+        minsub = new MinimalPubSub({verbose: false});
+        done();
       });
-      $w.find('#page-top-alert a').click();
-      expect(promise.state()).to.be.eql('resolved');
 
-
-      // function
-      var spy = sinon.spy();
-      promise = x.m.onAlert(new ApiFeedback({
-        msg: 'this is <a href="foo">html</a> message',
-        events: {
-          'click #page-top-alert a': spy
+      afterEach(function (done) {
+        minsub.destroy();
+        var ta = $('#test');
+        if (ta) {
+          ta.empty();
         }
-      }));
-      $w.find('#page-top-alert a').click();
-      expect(promise.state()).to.eql('resolved');
-      expect(spy.called).to.be.true;
+        done();
+      });
 
-      // actions
-      sinon.spy(x.m.getPubSub(), 'publish');
-      promise = x.m.onAlert(new ApiFeedback({
-        msg: 'this is <a href="foo">html</a> message',
-        events: {
-          'click #page-top-alert a': {
-            action: Alerts.ACTION.TRIGGER_FEEDBACK,
-            arguments: {code: 0}
+      var _getM = function () {
+        var m = new AlertsMediator();
+        var widget = new AlertsWidget();
+        widget.activate(minsub.beehive.getHardenedInstance());
+        sinon.spy(m, 'alert');
+        sinon.spy(m, 'onAlert');
+        var app = {
+          _getWidget: function (name) {
+            if (name == 'AlertsWidget')
+              return widget;
+          },
+          getController: function (name) {
+            if (name == 'AlertsController')
+              return m;
           }
-        }
-      }));
-      $w.find('#page-top-alert a').click();
-      expect(x.m.getPubSub().publish.called).to.be.true;
+        };
+        m.activate(minsub.beehive, app);
+        return {m: m, app: app, widget: widget};
+      };
+
+      it("extends GenericModule", function () {
+        expect(new AlertsMediator()).to.be.instanceof(GenericModule);
+        var m = new AlertsMediator();
+        expect(function () {
+          m.activate(minsub.beehive, {
+            getWidget: function () {
+            }
+          })
+        }).to.throw.Error;
+      });
+
+      it("works with pubsub and alone", function (done) {
+        var x = _getM();
+        var m = x.m;
+
+        expect(m.getWidget()).to.equal(x.widget);
+
+        minsub.publish(minsub.ALERT, new ApiFeedback({code: 0, msg: 'foo'}));
+        expect(m.onAlert.called).to.be.true;
+        expect(m.alert.called).to.be.true;
+
+        done();
+      });
+
+      it("fails when message cannot be displayed", function () {
+        var x = _getM();
+        x.app._getWidget = function () {
+        };
+        x.m._widget = null;
+        var promise = x.m.alert(new ApiFeedback({msg: 'foo'}));
+        expect(promise.state()).to.be.eql('rejected');
+      });
+
+      it("accepts different payload for events", function () {
+        var x = _getM();
+        var $w = x.widget.render().$el;
+        $('#test').append($w);
+
+        var promise;
+        promise = x.m.onAlert(new ApiFeedback({
+          msg: 'this is <a href="foo">html</a> message',
+          events: {
+            'click #page-top-alert a': 'foo-bar'
+          }
+        }))
+          .done(function (x) {
+            expect(x).to.be.eql('foo-bar');
+          });
+        $w.find('#page-top-alert a').click();
+        expect(promise.state()).to.be.eql('resolved');
+
+
+        // function
+        var spy = sinon.spy();
+        promise = x.m.onAlert(new ApiFeedback({
+          msg: 'this is <a href="foo">html</a> message',
+          events: {
+            'click #page-top-alert a': spy
+          }
+        }));
+        $w.find('#page-top-alert a').click();
+        expect(promise.state()).to.eql('resolved');
+        expect(spy.called).to.be.true;
+
+        // actions
+        sinon.spy(x.m.getPubSub(), 'publish');
+        promise = x.m.onAlert(new ApiFeedback({
+          msg: 'this is <a href="foo">html</a> message',
+          events: {
+            'click #page-top-alert a': {
+              action: Alerts.ACTION.TRIGGER_FEEDBACK,
+              arguments: {code: 0}
+            }
+          }
+        }));
+        $w.find('#page-top-alert a').click();
+        expect(x.m.getPubSub().publish.called).to.be.true;
+
+      });
 
     });
+  };
 
-  })
-
+  sinon.test(test)();
 });

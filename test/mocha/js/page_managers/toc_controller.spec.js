@@ -14,49 +14,63 @@ define([
     HelloWorld
   ) {
 
-    describe("TOC Manager", function () {
+    var test = function () {
+      describe("TOC Manager", function () {
 
-      it("broadcasts messages", function(done) {
-        var minsub = new MinSub();
-        var toc = new TocController();
+        it("broadcasts messages", function (done) {
+          var minsub = new MinSub();
+          var toc = new TocController();
 
-        toc.navConfig =  { ShowGraphics : {"title": "Graphics", "path":"graphics", "showCount": false, "category":"view"}};
+          toc.navConfig = {
+            ShowGraphics: {
+              "title": "Graphics",
+              "path": "graphics",
+              "showCount": false,
+              "category": "view"
+            }
+          };
 
-        sinon.spy(toc, 'onPageManagerEvent');
-        sinon.spy(toc, 'broadcast');
-        var allSpy = sinon.spy();
-        minsub.subscribe('all', allSpy);
+          sinon.spy(toc, 'onPageManagerEvent');
+          sinon.spy(toc, 'broadcast');
+          var allSpy = sinon.spy();
+          minsub.subscribe('all', allSpy);
 
-        toc.activate(minsub.beehive);
+          toc.activate(minsub.beehive);
 
-        toc.assemble({
-          hasWidget: function(n) {
-            if (n == 'SearchWidget')
-              return true;
-          },
-          _getWidget: function(n) {
-            var w = new HelloWorld();
-            w.activate(minsub.beehive.getHardenedInstance());
-            return w;
-          }
-        });
+          toc.assemble({
+            hasWidget: function (n) {
+              if (n == 'SearchWidget')
+                return true;
+            },
+            _getWidget: function (n) {
+              var w = new HelloWorld();
+              w.activate(minsub.beehive.getHardenedInstance());
+              return w;
+            }
+          });
 
-        expect(toc.widgets.SearchWidget).to.be.defined;
+          expect(toc.widgets.SearchWidget).to.be.defined;
 
-        toc.widgets.SearchWidget.trigger('page-manager-event', 'widget-ready');
+          toc.widgets.SearchWidget.trigger('page-manager-event', 'widget-ready');
 //        console.log(JSON.stringify(toc.broadcast.lastCall.args))
-        expect(toc.broadcast.lastCall.args).to.eql(["page-manager-message","widget-ready",{"widgetId":"SearchWidget","isActive":false}]);
+          expect(toc.broadcast.lastCall.args).to.eql(["page-manager-message", "widget-ready", {
+            "widgetId": "SearchWidget",
+            "isActive": false
+          }]);
 
-        toc.widgets.SearchWidget.trigger('page-manager-event', 'widget-selected', {idAttribute: 'foo'});
-        expect(allSpy.lastCall.args.slice(0, 3)).to.eql(["[Router]-Navigate-With-Trigger","foo",{"idAttribute":"foo"}]);
+          toc.widgets.SearchWidget.trigger('page-manager-event', 'widget-selected', {idAttribute: 'foo'});
+          expect(allSpy.lastCall.args.slice(0, 3)).to.eql(["[Router]-Navigate-With-Trigger", "foo", {"idAttribute": "foo"}]);
 
-        toc.widgets.SearchWidget.trigger('page-manager-event', 'broadcast-payload', {title: 'foo'});
-        expect(toc.broadcast.lastCall.args).to.eql(["page-manager-message","broadcast-payload",{"title":"foo"}]);
+          toc.widgets.SearchWidget.trigger('page-manager-event', 'broadcast-payload', {title: 'foo'});
+          expect(toc.broadcast.lastCall.args).to.eql(["page-manager-message", "broadcast-payload", {"title": "foo"}]);
 
-        //console.log(JSON.stringify(toc.broadcast.lastCall.args))
-        //console.log(JSON.stringify(allSpy.lastCall.args))
+          //console.log(JSON.stringify(toc.broadcast.lastCall.args))
+          //console.log(JSON.stringify(allSpy.lastCall.args))
 
-        done();
+          done();
+        });
       });
-    });
+    };
+
+    sinon.test(test)();
   });

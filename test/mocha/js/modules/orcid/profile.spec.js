@@ -3,13 +3,17 @@ define([
   'js/modules/orcid/profile'
 ], function (_, Profile) {
 
-  describe('Orcid Profile', function () {
+  var test = function () {
+    describe('Orcid Profile', function () {
 
-    describe('constructor', function () {
-      it('instantiates correctly', function () {
-        expect(new Profile() instanceof Profile).to.equal(true);
+      describe('constructor', function () {
+        it('instantiates correctly', function () {
+          expect(new Profile() instanceof Profile).to.equal(true);
+        });
       });
-    });
 
-  });
+    });
+  };
+
+  sinon.test(test)();
 });

@@ -1,11 +1,10 @@
 define([
     'js/components/generic_module',
     'js/components/persistent_storage'
-  ],
-  function (
-    GenericModule,
-    PersistentStorage
-    ) {
+],
+function (GenericModule, PersistentStorage) {
+
+  var test = function () {
     describe("Persistent Storage (persistent_storage.spec.js)", function () {
 
       it('should be GenericModule', function (done) {
@@ -46,4 +45,7 @@ define([
       });
 
     });
-  });
+  };
+
+  sinon.test(test)();
+});
