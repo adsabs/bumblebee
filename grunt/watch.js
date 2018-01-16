@@ -26,7 +26,7 @@ module.exports = {
     ],
     tasks: [
       'env:dev',
-      'express:dev'
+      'exec:server:dev'
     ]
   },
 
@@ -34,7 +34,7 @@ module.exports = {
     files: ['./dist/*'],
     tasks: [
       'env:release',
-      'express:release'
+      'exec:server:release'
     ]
   },
 
@@ -61,7 +61,7 @@ module.exports = {
       './src/*.html'
     ],
     tasks: [
-      'express:dev',
+      'exec:server:dev',
       'mocha_phantomjs:web_testing',
       'watch:web_testing'
     ]
@@ -76,7 +76,7 @@ module.exports = {
       './src/*.html'
     ],
     tasks: [
-      'express:dev',
+      'exec:server:dev',
       'mocha_phantomjs:sandbox_testing',
       'watch:sandbox_testing'
     ]
@@ -87,7 +87,7 @@ module.exports = {
     tasks: [
       'sass',
       'autoprefixer',
-      'express:dev',
+      'exec:server:dev',
       'watch:styles'
     ],
   }

@@ -31,23 +31,13 @@ server:
     - 'env:dev'
     - 'sass'
     - 'autoprefixer'
-    - 'express:dev'
-    - 'concurrent:serverTasks'
-
-'server:watch':
-  description: 'Start small web server, watch for development changes'
-  tasks:
-    - 'env:dev'
-    - 'sass'
-    - 'autoprefixer'
-    - 'express:dev'
-    - 'watch:server'
+    - 'exec:server:dev'
 
 'server:release':
   description: 'Start small web server, watch for development changes'
   tasks:
     - 'env:release'
-    - 'express:release'
+    - 'exec:server:release'
     - 'watch:release'
 
 ## Testing Tasks
@@ -64,7 +54,7 @@ test: 'test:once'
   description: 'Run tests once, without watching for changes'
   tasks:
     - 'env:dev'
-    - 'express:dev'
+    - 'exec:server:dev'
     - 'mocha-runner:all'
 
 'test:sandbox':
@@ -77,14 +67,14 @@ test: 'test:once'
   description: 'Run tests in a release environment, on local web server'
   tasks:
     - 'env:release'
-    - 'express:dev'
+    - 'exec:server:release'
     - 'mocha-runner:all'
 
 'test:server':
   description: 'Runs the test server only'
   tasks:
     - 'env:dev'
-    - 'express:dev'
+    - 'exec:server:dev'
     - 'watch:server'
 
 'test:local':
@@ -109,7 +99,7 @@ sauce:
     - 'sass'
     - 'autoprefixer'
     - 'exec:git_describe'
-    - 'express:dev'
+    - 'exec:server:dev'
     - 'saucelabs-mocha'
 
 ## Building/Releases
@@ -131,23 +121,3 @@ release:
     - 'copy:keep_original'
     - 'copy:bumblebee_app'
     - 'assemble'
-
-deploy:
-  tasks:
-    - 'deploy:master'
-    - 'exec:kubernetes-build'
-    - 'release'
-    - 'deploy:kubernetes'
-    - 'exec:return-to-working-branch'
-
-'deploy:master':
-  description: 'deploy master onto build repo'
-  tasks:
-    - 'clean:deploy'
-    - 'buildcontrol:master'
-
-'deploy:kubernetes':
-  description: 'deploy kubernetes onto build repo'
-  tasks:
-    - 'clean:deploy'
-    - 'buildcontrol:kubernetes'
