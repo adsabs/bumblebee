@@ -733,6 +733,7 @@ define([
         var options = {
           type: 'GET',
           url: url,
+          contentType: 'application/json',
           cache: this.updateDatabasePromise ? true : false, // true = do not generate _ parameters (let browser cache responses)
           timeout: this.orcidApiTimeout,
           done: function(data) {
