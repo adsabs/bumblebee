@@ -35,5 +35,12 @@ module.exports = {
   },
   'return-to-working-branch': {
     cmd: 'git checkout -'
+  },
+  'server': {
+    cmd: function (env) {
+      env = env || 'dev';
+      var path = env === 'dev' ? 'src/' : 'dist/';
+      return './node_modules/.bin/http-server ' + path + ' -p 8000 -d -c-1'
+    }
   }
 };

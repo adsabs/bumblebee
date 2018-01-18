@@ -12,10 +12,13 @@ VAGRANTFILE_API_VERSION = "2"
 $script = <<SCRIPT
 export DEBIAN_FRONTEND=noninteractive 
 sudo apt-get update
-sudo apt-get install -y nodejs nodejs-legacy npm phantomjs
+sudo apt-get install -y g++
+curl -sL https://deb.nodesource.com/setup_6.x | bash -
+sudo apt-get install -y nodejs phantomjs
 sudo npm install -g grunt-cli
 cd /bumblebee
 npm install # install the dependencies from package.json
+npm rebuild node-sass # fix node-sass issues
 grunt setup # setup the project (libraries)
 sudo apt-get clean
 sudo apt-get autoremove -y
@@ -41,5 +44,4 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     # Share an additional folder to the guest VM
     bumblebee.vm.synced_folder ".", "/bumblebee/"
   end
-
 end
