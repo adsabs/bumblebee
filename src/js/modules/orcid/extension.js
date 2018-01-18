@@ -235,11 +235,13 @@ define([
                 orcidApi.updateOrcid(action, data.model.attributes)
                   .done(function(recInfo) {
                     if (action == 'delete') {
-                      var parts = model.attributes.source_name.split('; ');
-                      if (parts.indexOf('NASA ADS') > -1) {
-                        parts.splice(parts.indexOf('NASA ADS'), 1);
+                      if (model.attributes.source_name) {
+                        var parts = model.attributes.source_name.split('; ');
+                        if (parts.indexOf('NASA ADS') > -1) {
+                          parts.splice(parts.indexOf('NASA ADS'), 1);
+                        }
+                        model.attributes.source_name = parts.join('; ');
                       }
-                      model.attributes.source_name = parts.join('; ');
                     }
                     else {
                       model.set(model.attributes, {silent: true});
