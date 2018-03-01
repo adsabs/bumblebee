@@ -277,6 +277,11 @@ define([
   const actions = {
 
     /**
+     * Reset the store to initial values
+     */
+    appReset: () => dispatch => dispatch({ type: ACTIONS.appReset }),
+
+    /**
      * Reset the current data set
      */
     reset: () => (dispatch, getState) => {

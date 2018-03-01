@@ -220,8 +220,10 @@ define([
      * Close the widget
      */
     closeWidget: function () {
+      const { dispatch } = this.store;
       const pubsub = this.getPubSub();
       pubsub.publish(pubsub.NAVIGATE, "results-page");
+      dispatch(actions.appReset());
     },
 
     /**
