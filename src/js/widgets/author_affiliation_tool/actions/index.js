@@ -428,16 +428,14 @@ define([
 
       // if browser, then open a new tab and show message if it's blocked
       if (file.ext === 'browser') {
-        openInNewTab(res);
+        res.text().then(t => openInNewTab(t));
         dispatch(actions.showMessage(
           'info',
           'If new tab doesn\'t appear, you will need to allow popups'
         ));
       } else {
 
-        // otherwise, we can just create a file for download
-        let blob = new Blob([res], { type: `${file.type};charset=utf=8` });
-        saveAs(blob, `authorAffiliations.${file.ext}`);
+        res.blob().then(b => saveAs(b, `authorAffiliations.${file.ext}`));
 
         // show a message about successful download
         dispatch(actions.showMessage('success', 'Export Successful!'));
