@@ -200,21 +200,23 @@ define(['backbone', 'underscore', 'jquery'], function(Backbone, _, $) {
       if (!resp.trim()) {
         return attrs;
       }
-      var hashes = resp.slice(resp.indexOf('?') + 1).split('&');
+
+      // split response and check for encoded ampersands
+      var hashes = resp.slice(resp.indexOf('?') + 1).split(/&|%26/);
 
       //resp = decodeURIComponent(resp);
       var key,value;
       for (var i = 0; i < hashes.length; i++) {
-        hash = hashes[i].split('=');
-        key = decodeURIComponent(hash[0].split('+').join(' ')); // optimized: .replace(/\+/g, " ")
+        hash = hashes[i].split(/=|%3D/);
+        key = decodeURIComponent(hash[0].split(/\+|%2B/).join(' ')); // optimized: .replace(/\+/g, " ")
 
         var vall = hash[1];
         if (hash.length > 2) {
-          hash.shift()
+          hash.shift();
           vall = hash.join('=');
         }
 
-        value = decodeURIComponent(vall.split('+').join(' '));
+        value = decodeURIComponent(vall.split(/\+|%2B/).join(' '));
         if (attrs[key] !== undefined) {
           attrs[key].push(value);
         }
