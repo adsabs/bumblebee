@@ -105,6 +105,7 @@ require.config({
         Metrics :  'js/widgets/metrics/widget',
         CitationHelper: 'js/widgets/citation_helper/widget',
         OrcidBigWidget: 'js/modules/orcid/widget/widget',
+        OrcidSelector: 'es6!js/widgets/orcid-selector/widget.jsx',
 
         AuthorFacet: 'js/wraps/author_facet',
         BibgroupFacet: 'js/wraps/bibgroup_facet',
