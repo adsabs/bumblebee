@@ -10,7 +10,7 @@ module.exports = function (grunt) {
     libs: {
       files: [
         {
-          cwd: 'node_modules/file-saver',
+          cwd: 'node_modules/file-saver/dist',
           src: 'FileSaver.min.js',
           dest: 'src/libs/file-saver/',
           expand: true,
