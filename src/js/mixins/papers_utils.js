@@ -118,18 +118,20 @@ define([
         data.extraAuthors = data.author.length - maxAuthorNames;
         shownAuthors = data.author.slice(0, maxAuthorNames);
       } else if (data.author) {
-        shownAuthors = data.author
+        shownAuthors = data.author;
       }
 
       if (data.author) {
-        var l = shownAuthors.length - 1;
-        data.authorFormatted = _.map(shownAuthors, function (d, i) {
-          if (i == l || l == 0) {
+        var format = function (d, i, arr) {
+          var l = arr.length - 1;
+          if (i === l || l === 0) {
             return d; //last one, or only one
           } else {
             return d + ";";
           }
-        })
+        };
+        data.authorFormatted = _.map(shownAuthors, format);
+        data.allAuthorFormatted = _.map(data.author, format);
       }
 
       data.formattedDate = data.formattedDate || (data.pubdate ? this.formatDate(data.pubdate) : undefined);
