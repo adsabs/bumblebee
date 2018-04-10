@@ -195,8 +195,7 @@ define([
         return {
           ...state,
           isFetching: false,
-          progress: 0,
-
+          progress: 0
         };
       case REQUEST_CANCELLED:
         return {

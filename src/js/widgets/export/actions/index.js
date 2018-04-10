@@ -71,7 +71,6 @@ define([
     const { setHasError } = actions;
     dispatch(setHasError(true));
     dispatch({ type: 'REQUEST_FAILED' });
-    _.delay(() => dispatch(setHasError(false)), 5000);
   };
 
   /**
@@ -93,7 +92,7 @@ define([
   actions.fetchUsingQuery = () => (dispatch, getState, widget) => {
     const { exports, main } = getState();
     const { composeRequest } = widget;
-    const { requestIds, receiveIds, requestFailed, setTotalRecs } = actions;
+    const { requestIds, receiveIds, requestFailed, setTotalRecs, setHasError } = actions;
 
     // create a new query from the serialized params
     let query = new ApiQuery(main.query);
@@ -106,6 +105,8 @@ define([
       // start at the maxCount - batchSize, to get a particular window
       start: exports.maxCount - exports.batchSize
     });
+
+    dispatch(setHasError(false));
 
     // start requesting ids
     dispatch(requestIds());
@@ -136,9 +137,11 @@ define([
    * identifiers and some other information.
    */
   actions.fetchUsingIds = () => (dispatch, getState, widget) => {
-    const { requestExport, receiveExport, requestFailed, setIgnore } = actions;
+    const { requestExport, receiveExport, requestFailed, setIgnore, setHasError } = actions;
     const { composeRequest } = widget;
     const { format, exports } = getState();
+
+    dispatch(setHasError(false));
 
     // starting an export
     dispatch(requestExport());
