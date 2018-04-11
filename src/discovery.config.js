@@ -261,13 +261,16 @@ require.config({
 
     'jquery-querybuilder': {
       deps: ['jquery']
+    },
 
+    'filesaver': {
+      exports: 'saveAs'
     },
 
     'd3-cloud' : {
       deps :['d3']
     },
-    
+
     'jquery-ui' : {
       deps: ['jquery']
     },

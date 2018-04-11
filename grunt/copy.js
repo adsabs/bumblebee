@@ -11,20 +11,20 @@ module.exports = function (grunt) {
       files: [
         {
           cwd: 'node_modules/file-saver/dist',
-          src: 'FileSaver.min.js',
+          src: 'FileSaver.js',
           dest: 'src/libs/file-saver/',
           expand: true,
           rename: function (dest, src) {
-            return dest + src.replace('FileSaver.min', 'index');
+            return dest + src.replace('FileSaver', 'index');
           }
         },
         {
           cwd: 'node_modules/file-saver',
-          src: 'FileSaver.min.js',
+          src: 'FileSaver.js',
           dest: 'src/libs/file-saver/',
           expand: true,
           rename: function (dest, src) {
-            return dest + src.replace('FileSaver.min', 'index');
+            return dest + src.replace('FileSaver', 'index');
           }
         },
         {
