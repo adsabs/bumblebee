@@ -16,7 +16,8 @@ define([
   'js/components/api_targets',
   'js/mixins/add_stable_index_to_collection',
   'js/mixins/add_secondary_sort',
-  'bootstrap'
+  'bootstrap',
+  'hbs!js/wraps/widget/loading/template'
 
 ], function(
     Marionette,
@@ -36,7 +37,8 @@ define([
     ApiTargets,
     PaginationMixin,
     SecondarySort,
-    Bootstrap
+    Bootstrap,
+    loadingTemplate
 
 ){
 
@@ -61,6 +63,18 @@ define([
 
   });
 
+  var LibraryEmptyView = Marionette.ItemView.extend({
+    template: function (data) {
+      if (data.query || data.query === '') {
+        return EmptyCollectionTemplate(data);
+      }
+      return loadingTemplate(_.extend(data, {
+        widgetLoadingSize: 'big',
+        hideCloseButton: true
+      }));
+    }
+  });
+
 
   var LibraryContainerView =  ListOfThingsPaginatedContainerView.extend({
 
@@ -68,6 +82,7 @@ define([
     template : LibraryContainer,
     className : "library-detail-view",
     childViewContainer : ".library-list-container",
+    emptyView: LibraryEmptyView,
 
     events : {
       "change #sort-select" : "changeSort",
