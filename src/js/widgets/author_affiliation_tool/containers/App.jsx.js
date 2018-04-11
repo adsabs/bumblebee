@@ -34,7 +34,8 @@ define([
     doExport,
     closeWidget,
     updateYear,
-    updateAuthor
+    updateAuthor,
+    reload
   } = actions;
 
   /**
@@ -45,6 +46,13 @@ define([
    * state changes should happen here.
    */
   class App extends React.Component {
+
+    constructor (props) {
+      super(props);
+      this.state = {
+        reloadSpin: false
+      };
+    }
 
     /**
      * Start the export
@@ -78,6 +86,12 @@ define([
       }
     }
 
+    doRefresh() {
+      const { dispatch } = this.props;
+      this.setState({ reloadSpin: true });
+      dispatch(actions.reload());
+    }
+
     /**
      * Dispatch close when we want to close the widget
      */
@@ -107,10 +121,15 @@ define([
       dispatch(updateAuthor(author));
     }
 
+    componentWillReceiveProps(next) {
+      this.setState({ reloadSpin: false });
+    }
+
     render() {
       const {
-        data, formats, format, message, loading, exporting, year, author, currentYear
+        data, showReload, formats, format, message, loading, exporting, year, author, currentYear
       } = this.props;
+
       return (
         <div>
 
@@ -234,46 +253,14 @@ define([
                       {(data.length - 1 > i) && <hr className="hr"/>}
                     </div>
                   )}
-
-                </div>
-
-                {/* Repeat the message above */}
-                <div className="row">
-                  <Message {...message}/>
-                </div>
-                <div className="row">
-                  <div className="col-xs-12 col-sm-6">
-
-                    {/* Export format selector (dropdown) */}
-                    <ExportFormatControl
-                      formats={formats}
-                      format={format}
-                      onChange={val => this.onFormatSelection(val)}
-                    />
-
-                  </div>
-                  <div className="col-xs-12 col-sm-2">
-                    <button
-                      className="btn btn-primary"
-                      onClick={() => this.doExport()}
-                      disabled={!!exporting}
-                    >
-                      {/* If exporting, show a loading icon in the button */}
-                      {
-                        exporting ?
-                          <i className="fa fa-spinner fa-fw fa-spin"/>
-                          : 'Export'
-                      }
-                    </button>
-                  </div>
-                  <div className="col-xs-12 col-sm-4">
-
-                    {/* Buttons that perform actions on the whole set */}
-                    <SelectionButtons
-                      onClick={(type) => this.onSelectionClick(type)}
-                    />
-
-                  </div>
+                  {!showReload && _.isEmpty(data) && <div className="text-center">No Results</div>}
+                  {showReload &&
+                    <div className="text-center">
+                      <button onClick={() => this.doRefresh()} title="Retry" className="btn btn-default">
+                        <i className={`fa fa-refresh ${this.state.reloadSpin ? 'fa-spin' : ''}`}/> Retry
+                      </button>
+                    </div>
+                  }
                 </div>
               </div>
             }
@@ -292,7 +279,8 @@ define([
     exporting: state.exporting,
     currentYear: state.currentYear,
     year: state.year,
-    author: state.author
+    author: state.author,
+    showReload: state.showReload
   });
 
   return ReactRedux.connect(mapStateToProps)(App);

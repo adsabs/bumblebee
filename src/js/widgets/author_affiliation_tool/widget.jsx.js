@@ -237,9 +237,7 @@ define([
       const { dispatch } = this.store;
       dispatch(actions.showMessage(
         'danger',
-        'Something happened during the request, please try again',
-        10000
-      ));
+        'Something happened during the request, please try again', 0));
     }
   });
 

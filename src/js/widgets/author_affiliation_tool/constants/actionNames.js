@@ -13,7 +13,8 @@ define([], function () {
     setMessage: 'SET_MESSAGE',
     setExporting: 'SET_EXPORTING',
     setAuthor: 'SET_AUTHOR',
-    appReset: 'APP_RESET'
+    appReset: 'APP_RESET',
+    setShowReload: 'SET_SHOW_RELOAD'
   };
 
   return target;
