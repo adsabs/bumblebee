@@ -2,7 +2,7 @@ bumblebee
 =========
 
 [![Build Status](https://travis-ci.org/adsabs/bumblebee.svg?branch=master)](https://travis-ci.org/adsabs/bumblebee)
-[![Coverage Status](https://coveralls.io/repos/github/adsabs/bumblebee/badge.svg?branch=master)](https://coveralls.io/github/adsabs/bumblebee?branch=master)
+[![Coverage Status](https://coveralls.io/repos/github/adsabs/bumblebee/badge.svg)](https://coveralls.io/github/adsabs/bumblebee)
 
 Bumblebee is a platform for building UI interface(s) - it was designed for Astrophysics Data System (https://ui.adsabs.harvard.edu) and its API.
 
@@ -44,9 +44,9 @@ Now (inside the project), run:
 ```bash
   # install the dependencies from package.json
   $ npm install
-  
+
   # setup the project (libraries)
-  $ grunt setup 
+  $ grunt setup
 ```
 
 dev setup - mac OS X
@@ -69,13 +69,13 @@ Yes, you can develop even on Windows! ;-)
 1. install http://msysgit.github.io/
 2. install node.js http://nodejs.org/download/
 3. install http://phantomjs.org/download.html
-4. open Git Bash from Windows Start 
+4. open Git Bash from Windows Start
 
 ```bash
-   $ cd bumblebee 
-   $ npm install -g grunt-cli 
-   $ npm install 
-   $ grunt setup 
+   $ cd bumblebee
+   $ npm install -g grunt-cli
+   $ npm install
+   $ grunt setup
 ```
 
 Configuration
@@ -112,7 +112,7 @@ Bumblebee contains set of components alongside with (mini) applications. To depl
  grunt release
  grunt test:release # optional step - run tests against the assembled release
  cp -r dist /my/web/root # copy the release into a webserver
-``` 
+```
 
 
 
@@ -135,7 +135,7 @@ When you want to interact with the application:
 
 Take advantage of the headless testing framework! You can be editing
 code and have it automatically re-tested.
- 
+
 ```bash
   # run tests
   $ grunt test:web
@@ -223,14 +223,14 @@ To help you get started, explore these:
 
 Documentation
 =============
-       
+
 Look inside the docs folder, mainly:
-       
+
   - [How to write a widget](./docs/how-to-write-widget.md)
-  - [Architecture Overview](./docs/architecture.md) 
+  - [Architecture Overview](./docs/architecture.md)
   - [Explanation of the Search Cycle](./docs/search-cycle.md)
 
-  
+
 
 Miscellanea
 ===========
@@ -241,7 +241,7 @@ Miscellanea
   $ ssh -N -f -L 9000:adswhy.cfa.harvard.edu:9000 pogo3.cfa.harvard.edu
   $ env SOLR_ENDPOINT=http://localhost:9000/solr/select HOMEDIR=src node server.js
 ```
-  
+
 - If you want to debug/edit in place node.js code, use supervisor (you need to install it first)
 
   ```bash
@@ -249,8 +249,8 @@ Miscellanea
 ```
 
 - You can see the search being routed to the SOLR api by accessing: http://localhost:port/api/1/search, for instance:
-  http://localhost:port/api/1/search?q=kurtz 
-       
+  http://localhost:port/api/1/search?q=kurtz
+
 
 
 Bumblebee is developed by ADS, some devs use WebStorm - the open-source license was kindly provided by JetBrains.
