@@ -328,15 +328,33 @@ define([
      * @param {string} [message=''] - the message
      * @param {number} [timeout=5000] - the timeout of the alert
      */
-    showMessage: (type='success', message='', timeout=5000) => (dispatch) => {
-      _.delay(() =>
-        dispatch({ type: ACTIONS.setMessage, value: { show: false }})
-      , timeout);
+    showMessage: (type='success', message='', timeout=5000) => (dispatch, getState) => {
+      if (timeout !== 0) {
+        _.delay(() => {
+          dispatch({ type: ACTIONS.setMessage, value: { show: false }});
+          dispatch({ type: ACTIONS.setShowReload, value: false });
+        }, timeout);
+      }
+
+      // don't show the button if it's an export error
+      if (!getState().exporting) {
+        dispatch({ type: ACTIONS.setShowReload, value: type === 'danger' });
+      }
+
       dispatch({ type: ACTIONS.setMessage, value: {
         type: type,
         message: message,
         show: true
       }});
+    },
+
+    _reload: _.debounce((getState, widget) => {
+      const ids = getState().ids;
+      widget.fetchAffiliationData(ids);
+    }, 500),
+
+    reload: () => (dispatch, getState, widget) => {
+      actions._reload(getState, widget);
     },
 
     updateYear: (year) => (dispatch, getState, widget) => {
