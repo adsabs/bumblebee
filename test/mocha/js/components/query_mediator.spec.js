@@ -68,7 +68,6 @@ define([
       this.timeout(1000);
 
       beforeEach(function() {
-        console.log('starting', this.test.title)
         this.server = sinon.fakeServer.create();
         this.server.autoRespond = false;  // when true, all sorts of evil things happen
 
@@ -108,26 +107,17 @@ define([
         this.pubSpy = sinon.spy();
         ps.on('all', this.pubSpy);
         beehive.addService('PubSub', ps);
-
-        console.log(beehive.mid, ps.mid)
       });
 
       afterEach(function(done) {
-        
-
-        //console.log('wrapping', this)
         if (this.beehive) {
-          //console.log(this.server.requests)
-          //this.server.autoRespond = true;
           setTimeout(function(self, xdone) {
-            //console.log('after autorespond', self.server.requests)
             self.server.restore();
             self.server.requests = []
             self.beehive.destroy();
             self.beehive = null;
             xdone();
           }, 5, this, done)
-          
         }
       });
       
@@ -572,7 +562,6 @@ define([
       });
 
       it("executes queries (first, the one we want)", function(done) {
-        console.log(this.test.title)
         var pubSpy = this.pubSpy;
         var x = createTestQM(this.beehive);
         var qm = x.qm, key1 = x.key1, key2 = x.key2, req1 = x.req1, req2 = x.req2;
@@ -591,7 +580,6 @@ define([
       });
 
       it("when error happens on the first query, it stops execution and triggers Feedback", function(done) {
-        console.log(this.test.title)
         var pubSpy = this.pubSpy;
         var x = createTestQM(this.beehive);
         var qm = x.qm, key1 = x.key1, key2 = x.key2, req1 = x.req1, req2 = x.req2;
@@ -622,7 +610,6 @@ define([
       });
 
       it("uses cache to serve identical requests", function(done) {
-        console.log(this.test.title)
         var pubSpy = this.pubSpy;
         var x = createTestQM(this.beehive);
         var qm = x.qm, key1 = x.key1, key2 = x.key2, req1 = x.req1, req2 = x.req2;
@@ -710,7 +697,6 @@ define([
           self.server.respond();
           expect(pubSpy.lastCall.args[1]).to.be.instanceOf(ApiFeedback);
           expect(pubSpy.lastCall.args[1].code).to.be.eql(ApiFeedback.CODES.SEARCH_CYCLE_FINISHED);
-          console.log('success')
           qm.destroy();
           done();
         }, 1, this, done, pubSpy);
