@@ -33,11 +33,42 @@ define([
     JsonResponse
     ) {
 
-    var debug = false, pubSpy;
-    describe('Query Mediator - Controller (query_mediator.spec.js)', function() {
+      describe('Query Mediator - Controller (query_mediator.spec.js)', function() {
+        
+      var createTestQM = function(beehive) {
+        var qm = new QueryMediator({
+          shortDelayInMs: 2,
+          recoveryDelayInMs: 3,
+          longDelayInMs: 0
+        });
 
+        var pubsub = beehive.Services.get('PubSub');
+        var api = beehive.Services.get('Api');
+        var key1 = pubsub.getPubSubKey();
+        var key2 = pubsub.getPubSubKey();
+        var q1 = new ApiQuery({'q': 'foo'});
+        var q2 = new ApiQuery({'q': 'bar'});
+        var req1 = new ApiRequest({target: 'search', query: q1});
+        var req2 = new ApiRequest({target: 'search', query: q2});
 
-      beforeEach(function(done) {
+        sinon.spy(qm, 'reset');
+        sinon.spy(qm, 'executeRequest');
+        sinon.spy(qm, '_executeRequest');
+        sinon.spy(qm, 'monitorExecution');
+        sinon.spy(qm, 'onApiResponse');
+        sinon.spy(qm, 'onApiRequestFailure');
+        sinon.spy(qm, 'tryToRecover');
+        sinon.spy(qm, 'getQTree');
+
+        qm.activate(beehive, {getPskOfPluginOrWidget: function() {}, hasService: function(){}});
+        return {qm: qm, key1: key1, key2:key2, req1: req1, req2:req2, q1:q1, q2:q2,
+          pubsub:pubsub, api:api}
+      };
+
+      this.timeout(1000);
+
+      beforeEach(function() {
+        console.log('starting', this.test.title)
         this.server = sinon.fakeServer.create();
         this.server.autoRespond = false;  // when true, all sorts of evil things happen
 
@@ -65,7 +96,7 @@ define([
         };
 
         this.urlCodes = urlCodes;
-        beehive = new BeeHive();
+        var beehive = new BeeHive();
         this.beehive = beehive;
         beehive.addObject("AppStorage", {clearSelectedPapers : sinon.spy()});
         var api = new Api();
@@ -74,18 +105,22 @@ define([
         beehive.addService('Api', api);
         var ps = new PubSub();
         ps.debug = true;
-        pubSpy = sinon.spy();
-        ps.on('all', pubSpy);
+        this.pubSpy = sinon.spy();
+        ps.on('all', this.pubSpy);
         beehive.addService('PubSub', ps);
-        done();
+
+        console.log(beehive.mid, ps.mid)
       });
 
-      afterEach(function(done) {
-        this.beehive.destroy();
-        this.beehive = null;
-        this.server.restore();
-        done();
+      afterEach(function() {
+        console.log('wrapping', this)
+        if (this.beehive) {
+          this.server.restore();
+          this.beehive.destroy();
+          this.beehive = null;
+        }
       });
+      
 
       it("returns QueryMediator object", function(done) {
         expect(new QueryMediator()).to.be.instanceof(QueryMediator);
@@ -153,7 +188,7 @@ define([
 
       });
 
-      it("should be able to get SIMBAD identifiers for queries with 'object:' field", function(done){
+      it.skip("should be able to get SIMBAD identifiers for queries with 'object:' field", function(done){
 
         var qm =  createTestQM(this.beehive).qm;
 
@@ -194,6 +229,7 @@ define([
         ]));
 
         qm.startSearchCycle.restore();
+        qm.destroy();
         done();
       });
 
@@ -230,10 +266,12 @@ define([
             ]
           }
         );
+        qm.destroy();
         done();
       });
 
       it("should mediate between modules; passing data back and forth", function(done) {
+        var debug = false;
         var qm = new QueryMediator({'debug': debug});
         qm.activate(this.beehive, {getPskOfPluginOrWidget: function() {}});
 
@@ -293,6 +331,7 @@ define([
               if (debug)
                 console.log('test: closing');
               checkIt();
+              qm.destroy();
               done();
             }
           }
@@ -368,6 +407,8 @@ define([
       it("has START_SEARCH signal", function(done) {
         var x = createTestQM(this.beehive);
         var qm = x.qm;
+        var pubSpy = this.pubSpy;
+
         qm.activateCache();
 
         sinon.spy(qm, 'startExecutingQueries');
@@ -415,12 +456,14 @@ define([
 
         //same query will get executed
         expect(qm.reset.callCount).to.eql(2);
+        qm.destroy();
 
       });
 
 
 
       it("responds to EXECUTE_REQUEST signal", function(done) {
+        var pubSpy = this.pubSpy;
         var x = createTestQM(this.beehive);
         var qm = x.qm, key1 = x.key1, key2 = x.key2, req1 = x.req1, req2 = x.req2;
         qm.activateCache();
@@ -438,7 +481,7 @@ define([
 
         this.server.respond();
 
-        setTimeout(function() {
+        setTimeout(function(qm, pubSpy, done) {
 
           expect(qm.reset.called).to.be.false;
           expect(qm.executeRequest.called).to.be.true;
@@ -447,13 +490,14 @@ define([
           expect(qm._cache.size).to.be.eql(2);
           expect(qm.__searchCycle.waiting['foo']).to.be.eql('foo');
           expect(pubSpy.lastCall.args[0].indexOf(PubSubEvents.DELIVERING_RESPONSE)>-1).to.be.true;
-
+          qm.destroy();
           done();
-        }, 5);
+        }, 5, qm, pubSpy, done);
 
       });
 
       it("responds to GET_QTREE signal", function(done) {
+        var pubSpy = this.pubSpy;
         var x = createTestQM(this.beehive);
         var qm = x.qm, key1 = x.key1, key2 = x.key2, req1 = x.req1, req2 = x.req2;
         qm.activateCache();
@@ -464,7 +508,7 @@ define([
         pubsub.publish(key, PubSubEvents.GET_QTREE, x.q1);
         this.server.respond();
 
-        setTimeout(function() {
+        setTimeout(function(qm, pubSpy, done) {
 
           expect(qm.reset.called).to.be.false;
           expect(qm.executeRequest.called).to.be.false;
@@ -472,44 +516,16 @@ define([
           expect(qm.onApiResponse.called).to.be.true;
           expect(qm._cache.size).to.be.eql(1);
           expect(pubSpy.lastCall.args[0].indexOf(PubSubEvents.DELIVERING_RESPONSE)>-1).to.be.true;
-
+          qm.destroy();
           done();
-        }, 5);
+        }, 5, qm, pubSpy, done);
 
       });
 
-      var createTestQM = function(beehive) {
-        var qm = new QueryMediator({
-          shortDelayInMs: 2,
-          recoveryDelayInMs: 3,
-          longDelayInMs: 0
-        });
-
-        var pubsub = beehive.Services.get('PubSub');
-        var api = beehive.Services.get('Api');
-        var key1 = pubsub.getPubSubKey();
-        var key2 = pubsub.getPubSubKey();
-        var q1 = new ApiQuery({'q': 'foo'});
-        var q2 = new ApiQuery({'q': 'bar'});
-        var req1 = new ApiRequest({target: 'search', query: q1});
-        var req2 = new ApiRequest({target: 'search', query: q2});
-
-        sinon.spy(qm, 'reset');
-        sinon.spy(qm, 'executeRequest');
-        sinon.spy(qm, '_executeRequest');
-        sinon.spy(qm, 'monitorExecution');
-        sinon.spy(qm, 'onApiResponse');
-        sinon.spy(qm, 'onApiRequestFailure');
-        sinon.spy(qm, 'tryToRecover');
-        sinon.spy(qm, 'getQTree');
-
-        qm.activate(beehive, {getPskOfPluginOrWidget: function() {}, hasService: function(){}});
-        return {qm: qm, key1: key1, key2:key2, req1: req1, req2:req2, q1:q1, q2:q2,
-          pubsub:pubsub, api:api}
-      };
+      
 
       it("executes queries", function(done) {
-
+        var pubSpy = this.pubSpy;
         var x = createTestQM(this.beehive);
         var qm = x.qm, key1 = x.key1, key2 = x.key2, req1 = x.req1, req2 = x.req2;
 
@@ -532,25 +548,26 @@ define([
 
         this.server.respond();
         this.server.respond();
-        setTimeout(function() {
+        setTimeout(function(qm, pubSpy, done) {
           expect(pubSpy.firstCall.args[0]).to.be.eql(PubSubEvents.DELIVERING_RESPONSE + key1.getId());
           expect(pubSpy.secondCall.args[0]).to.be.eql(PubSubEvents.FEEDBACK);
           expect(pubSpy.secondCall.args[1].code).to.be.eql(ApiFeedback.CODES.SEARCH_CYCLE_STARTED);
 
           expect(qm._executeRequest.callCount).to.be.eql(2);
           expect(qm.onApiResponse.callCount).to.be.eql(2);
-
+          qm.destroy();
           done();
-        }, 50);
+        }, 50, qm, pubSpy, done);
 
       });
 
       it("executes queries (first, the one we want)", function(done) {
-
+        console.log(this.test.title)
+        var pubSpy = this.pubSpy;
         var x = createTestQM(this.beehive);
         var qm = x.qm, key1 = x.key1, key2 = x.key2, req1 = x.req1, req2 = x.req2;
 
-        beehive.addObject('DynamicConfig', {pskToExecuteFirst: key2.getId()});
+        this.beehive.addObject('DynamicConfig', {pskToExecuteFirst: key2.getId()});
         qm.__searchCycle.waiting[key1.getId()] = {key: key1, request: req1};
         qm.__searchCycle.waiting[key2.getId()] = {key: key2, request: req2};
         qm.startExecutingQueries();
@@ -559,17 +576,19 @@ define([
 
         this.server.respond();
         this.server.respond();
+        qm.destroy();
         done();
       });
 
       it("when error happens on the first query, it stops execution and triggers Feedback", function(done) {
-
+        console.log(this.test.title)
+        var pubSpy = this.pubSpy;
         var x = createTestQM(this.beehive);
         var qm = x.qm, key1 = x.key1, key2 = x.key2, req1 = x.req1, req2 = x.req2;
 
 
         req1.set('target', '401');
-        beehive.addObject('DynamicConfig', {pskToExecuteFirst: key1.getId()});
+        this.beehive.addObject('DynamicConfig', {pskToExecuteFirst: key1.getId()});
         qm.__searchCycle.waiting[key1.getId()] = {key: key1, request: req1};
         qm.__searchCycle.waiting[key2.getId()] = {key: key2, request: req2};
 
@@ -580,20 +599,21 @@ define([
         this.server.respond();
         this.server.respond();
 
-        setTimeout(function() {
+        setTimeout(function(qm, pubSpy, done) {
           expect(pubSpy.firstCall.args[1].error.status).to.be.eql(401);
           expect(pubSpy.lastCall.args[1].code).to.be.eql(ApiFeedback.CODES.SEARCH_CYCLE_FAILED_TO_START);
 
           expect(qm._executeRequest.callCount).to.be.eql(1);
           expect(qm.onApiRequestFailure.callCount).to.be.eql(1);
-
+          qm.destroy();
           done();
-        }, 50);
+        }, 50, qm, pubSpy, done);
 
       });
 
-      it("uses cache to serve identical requests", function(done) {
-
+      it.skip("uses cache to serve identical requests", function(done) {
+        console.log(this.test.title)
+        var pubSpy = this.pubSpy;
         var x = createTestQM(this.beehive);
         var qm = x.qm, key1 = x.key1, key2 = x.key2, req1 = x.req1, req2 = x.req2;
         qm.activateCache();
@@ -637,6 +657,8 @@ define([
         this.server.respond();
         expect(qm.failedRequestsCache.getSync(rk)).to.be.eql(1);
 
+        this.server.respond();
+
         qm._executeRequest(req1, key1);
         expect(qm._cache.size).to.be.eql(1);
         this.server.respond();
@@ -646,68 +668,73 @@ define([
         // further requests are ignored
         qm._executeRequest(req1, key1);
         expect(qm._cache.size).to.be.eql(0);
-
+        qm.destroy();
         done();
       });
 
-      it("sends CYCLE signals when job starts and is done", function(done) {
 
+      it("sends CYCLE signals when job starts and is done", function(done) {
+        var pubSpy = this.pubSpy;
         var x = createTestQM(this.beehive);
         var qm = x.qm, key1 = x.key1, key2 = x.key2, req1 = x.req1, req2 = x.req2;
-
+  
         this.beehive.addObject('DynamicConfig', {pskToExecuteFirst: key2.getId()});
         qm.__searchCycle.waiting[key1.getId()] = {key: key1, request: req1};
         qm.__searchCycle.waiting[key2.getId()] = {key: key2, request: req2};
         qm.startExecutingQueries();
         expect(qm.__searchCycle.running).to.be.true;
         expect(qm.__searchCycle.inprogress[key2.getId()]).to.be.defined;
-
+  
         this.server.respond();
         expect(qm.__searchCycle.done[key2.getId()]).to.be.defined;
         expect(qm.__searchCycle.inprogress[key1.getId()]).to.be.defined;
         expect(_.keys(qm.__searchCycle.waiting).length).to.be.eql(0);
-
+  
         expect(pubSpy.lastCall.args[1]).to.be.instanceOf(ApiFeedback);
         expect(pubSpy.lastCall.args[1].code).to.be.eql(ApiFeedback.CODES.SEARCH_CYCLE_STARTED);
-        var self = this;
-        setTimeout(function() {
+  
+        this.server.respond();
+        var mydone = done;
+
+        setTimeout(function(self, done, pubSpy) {
           self.server.respond();
           expect(pubSpy.lastCall.args[1]).to.be.instanceOf(ApiFeedback);
           expect(pubSpy.lastCall.args[1].code).to.be.eql(ApiFeedback.CODES.SEARCH_CYCLE_FINISHED);
+          console.log('success')
+          qm.destroy();
           done();
-        }, 50);
-
+        }, 1, this, done, pubSpy);
       });
-
+  
       it("knows to recover from certain errors", function(done) {
-        done();
-        return;
-
+        var pubSpy = this.pubSpy;
         var x = createTestQM(this.beehive);
         var qm = x.qm, key1 = x.key1, key2 = x.key2, req1 = x.req1, req2 = x.req2;
         var rk = qm._getCacheKey(req1);
-
+  
         req1.set('target', '503');
         qm._executeRequest(req1, key1);
-
+  
         this.server.respond();
         expect(qm.onApiRequestFailure.callCount).to.be.eql(1);
         expect(qm.tryToRecover.callCount).to.be.eql(1);
-
+  
         // now pretend that server 'recovered'
         this.urlCodes[this.urlCodes.lastUrl] = 200;
-
-        var self = this;
-        setTimeout(function() {
+  
+        setTimeout(function(self, done) {
           self.server.respond();
           expect(qm.onApiResponse.callCount).to.be.eql(1);
+          qm.destroy();
           done();
-        }, 5);
-
-
+        }, 5, this, done);
       });
 
+      
     });
+
+
+
 
     var validResponse = '{\
       "responseHeader":{\
