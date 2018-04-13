@@ -30,7 +30,10 @@ define(['marionette',
     ) {
 
     describe("ListOfThings (list_of_things_widget.spec.js)", function () {
-
+      
+      // on slower machines 20000 default is not enough
+      this.timeout(40000);
+      
       afterEach(function (done) {
         var ta = $('#test');
         if (ta) {

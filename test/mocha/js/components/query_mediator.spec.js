@@ -112,12 +112,22 @@ define([
         console.log(beehive.mid, ps.mid)
       });
 
-      afterEach(function() {
-        console.log('wrapping', this)
+      afterEach(function(done) {
+        
+
+        //console.log('wrapping', this)
         if (this.beehive) {
-          this.server.restore();
-          this.beehive.destroy();
-          this.beehive = null;
+          //console.log(this.server.requests)
+          //this.server.autoRespond = true;
+          setTimeout(function(self, xdone) {
+            //console.log('after autorespond', self.server.requests)
+            self.server.restore();
+            self.server.requests = []
+            self.beehive.destroy();
+            self.beehive = null;
+            xdone();
+          }, 5, this, done)
+          
         }
       });
       
@@ -188,7 +198,7 @@ define([
 
       });
 
-      it.skip("should be able to get SIMBAD identifiers for queries with 'object:' field", function(done){
+      it("should be able to get SIMBAD identifiers for queries with 'object:' field", function(done){
 
         var qm =  createTestQM(this.beehive).qm;
 
@@ -611,7 +621,7 @@ define([
 
       });
 
-      it.skip("uses cache to serve identical requests", function(done) {
+      it("uses cache to serve identical requests", function(done) {
         console.log(this.test.title)
         var pubSpy = this.pubSpy;
         var x = createTestQM(this.beehive);
