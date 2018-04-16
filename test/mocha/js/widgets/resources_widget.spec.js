@@ -1,487 +1,335 @@
 
 define([
-    'jquery',
-    'react',
-    'enzyme',
-    'es6!js/widgets/resources/widget.jsx',
-    'es6!js/widgets/resources/components/app.jsx',
-    'es6!js/widgets/resources/components/fullTextSources.jsx',
-    'es6!js/widgets/resources/components/dataProducts.jsx',
-    'es6!js/widgets/resources/components/loading.jsx',
-    'es6!js/widgets/resources/components/noSources.jsx',
-    'js/widgets/resources/actions',
-    'js/widgets/base/base_widget',
-    'js/bugutils/minimal_pubsub'
-  ],
-  function ($, React, Enzyme, ResourcesWidget, App, FullTextSources,
-    DataProducts, LoadingIcon, NoSources, actions, BaseWidget, MinPubSub) {
+  'jquery',
+  'es6!js/widgets/resources/widget.jsx',
+  'js/widgets/base/base_widget',
+  'js/bugutils/minimal_pubsub'
+], function ($, Widget, BaseWidget, MinPubSub) {
 
-  var mockResponse = {
-    get: function () {
-      return this.response.docs[0];
-    },
-    "responseHeader": {
-      "status": 0,
-      "QTime": 1,
-      "params": {
-        "wt": "json",
-        "q": "bibcode:2017MNRAS.467.4015H",
-        "fl": "links_data"
-      }
-    },
-    "response": {
-      "numFound": 1,
-      "start": 0,
-      "docs": [
-        {
-          "links_data": [
-            "{\"title\":\"\", \"type\":\"pdf\", \"instances\":\"\", \"access\":\"\"}",
-            "{\"title\":\"\", \"type\":\"ned\", \"instances\":\"1\", \"access\":\"\"}",
-            "{\"title\":\"\", \"type\":\"preprint\", \"instances\":\"\", \"access\":\"open\"}",
-            "{\"title\":\"\", \"type\":\"electr\", \"instances\":\"\", \"access\":\"\"}"
-          ]
-        }
-      ]
-    }
-  };
-
-  var mockResponseNoLinksData = {
-    get: function () {
-      return this.response.docs[0];
-    },
-    "responseHeader": {
-      "status": 0,
-      "QTime": 1,
-      "params": {
-        "wt": "json",
-        "q": "bibcode:2017MNRAS.467.4015H",
-        "fl": "links_data"
-      }
-    },
-    "response": {
-      "numFound": 1,
-      "start": 0,
-      "docs": [
-        {
-          "links_data": undefined
-        }
-      ]
-    }
-  };
-
-  var mockApiQuery = {
-    get: function () {
-      return ['bibcode:2017MNRAS.467.4015H'];
-    },
-    has: function () {
-      return true;
-    }
-  };
-
-  var mockLinksData = {
-    "links_data": [
-      "{\"title\":\"\", \"type\":\"pdf\", \"instances\":\"\", \"access\":\"\"}",
-      "{\"title\":\"\", \"type\":\"ned\", \"instances\":\"1\", \"access\":\"\"}",
-      "{\"title\":\"\", \"type\":\"preprint\", \"instances\":\"\", \"access\":\"open\"}",
-      "{\"title\":\"\", \"type\":\"electr\", \"instances\":\"\", \"access\":\"\"}"
-    ],
-    "link_server": "http://sfx.galib.uga.edu/sfx_git1"
-  };
-
-  var mockLinksParsedData = {
-    "links_data": [
-      "{\"title\":\"\", \"type\":\"pdf\", \"instances\":\"\", \"access\":\"\"}",
-      "{\"title\":\"\", \"type\":\"ned\", \"instances\":\"1\", \"access\":\"\"}",
-      "{\"title\":\"\", \"type\":\"preprint\", \"instances\":\"\", \"access\":\"open\"}",
-      "{\"title\":\"\", \"type\":\"electr\", \"instances\":\"\", \"access\":\"\"}"
-    ],
-    "link_server": "http://sfx.galib.uga.edu/sfx_git1",
-    "fullTextSources": [
-      {
-        "openAccess": false,
-        "title": "Publisher Article",
-        "link": "http://adsabs.harvard.edu/cgi-bin/nph-data_query?bibcode=undefined&link_type=EJOURNAL"
-      },
-      {
-        "openAccess": false,
-        "title": "Publisher PDF",
-        "link": "http://adsabs.harvard.edu/cgi-bin/nph-data_query?bibcode=undefined&link_type=ARTICLE"
-      },
-      {
-        "openAccess": true,
-        "title": "arXiv e-print",
-        "link": "http://adsabs.harvard.edu/cgi-bin/nph-data_query?bibcode=undefined&link_type=PREPRINT"
-      }
-    ],
-    "dataProducts": [
-      {
-        "title": "NED objects (1)",
-        "link": "http://adsabs.harvard.edu/cgi-bin/nph-data_query?bibcode=undefined&link_type=NED"
-      }
-    ]
-  };
-
-  var mockBeehiveUserInstance = function () {
-    return {
-      getUserData: function () {
-        return {
-          link_server: 'http://sfx.galib.uga.edu/sfx_git1'
-        };
-      }
+  const init = function () {
+    this.sb = sinon.sandbox.create();
+    this.pubsub = new (MinPubSub.extend({
+      request: this.sb.stub()
+    }))({ verbose: false });
+    this.state = function (w) {
+      return w.store.getState().get('ResourcesApp').toJS();
     };
   };
 
-  describe('Resources Widget', function () {
-    var sandbox, widget, minsub, request, responseMock,
-      apiQueryMock, beehive, getState, dispatchRequestStub;
+  const teardown = function () {
+    this.sb.restore();
+    this.pubsub.destroy();
+    this.state = null;
+    $('test-area').empty();
+  };
 
-    beforeEach(function () {
-      sandbox = sinon.sandbox.create();
-      widget = new ResourcesWidget();
-      minsub = new MinPubSub();
-      beehive = minsub.beehive.getHardenedInstance();
-      responseMock = sandbox.mock(mockResponse);
-      apiQueryMock = sandbox.mock(mockApiQuery);
-      dispatchRequestStub = sandbox.stub(widget, 'dispatchRequest', function () {
-        minsub.publish(minsub.DELIVERING_RESPONSE, mockResponse);
+  describe('Resources Widget (resources_widget.spec.js)', function () {
+    describe('Widget Essentials', function () {
+      beforeEach(init);
+      afterEach(teardown);
+      it('instance of base widget', function () {
+        expect((new Widget()) instanceof BaseWidget).to.eql(true);
       });
-      sandbox.stub(beehive, 'getObject', mockBeehiveUserInstance);
-      getState = widget.store.getState;
-    });
-
-    afterEach(function () {
-      sandbox.restore();
-    });
-
-    it('extends from baseWidget', function () {
-      expect(widget).to.be.instanceOf(BaseWidget);
-    });
-
-    //TODO: re-enable this test, skipping for now
-    it.skip('correctly sends request to api for fields', function () {
-      widget.activate(beehive);
-      minsub.publish(minsub.DISPLAY_DOCUMENTS, mockApiQuery);
-      var query = dispatchRequestStub.args[0][0];
-      expect(dispatchRequestStub.called).to.be.true;
-      expect(query.get('q')[0]).to.be.eql('bibcode:2017MNRAS.467.4015H');
-    });
-
-    //TODO: re-enable this test, skipping for now
-    it.skip('display documents correctly updates query and parses', function (done) {
-      widget.activate(beehive);
-      sandbox.stub(actions, 'loadBibcodeData', function (bibcode) {
-        return { value: bibcode }
-      });
-
-      var expectedActions = [
-        { type: 'UPDATE_QUERY', value: mockApiQuery },
-        { value: '2017MNRAS.467.4015H' },
-        { type: 'IS_LOADING', value: true }
-      ];
-
-      var dispatchMock = function (action) {
-        var expectedAction = expectedActions.shift();
-        expect(action).to.deep.equal(expectedAction);
-        if (!expectedAction.length) {
-          done();
-        }
-      };
-
-      actions.displayDocuments(mockApiQuery)(dispatchMock);
-      actions.loadBibcodeData.restore();
-    });
-
-    it('displayDocuments handles bad input correctly', function (done) {
-      widget.activate(beehive);
-
-      sandbox.stub(actions, 'handleError', function (message) {
-        return { value: message }
-      });
-
-      var mockQuery = {
-        get: function () {
-          return ['']
-        }
-      };
-
-      var expectedActions = [
-        { type: 'UPDATE_QUERY', value: mockQuery },
-        { value: 'NO_BIBCODE' }
-      ];
-
-      var dispatchMock = function (action) {
-        var expectedAction = expectedActions.shift();
-        expect(action).to.deep.equal(expectedAction);
-        if (!expectedActions.length) {
-          done();
-        }
-      };
-
-      actions.displayDocuments(mockQuery)(dispatchMock);
-    });
-
-    //TODO: re-enable this test, skipping for now
-    it.skip('loadBibcodeData dispatch request correctly', function (done) {
-      widget.activate(beehive);
-
-      var expectedActions = [
-        { type: 'UPDATE_BIBCODE', value: '2017MNRAS.467.4015H' }
-      ];
-
-      var dispatchMock = function (action) {
-        var expectedAction = expectedActions.shift();
-        expect(action).to.deep.equal(expectedAction);
-        if (!expectedAction.length) {
-          done();
-        }
-      };
-
-      actions.loadBibcodeData('2017MNRAS.467.4015H')
-        (dispatchMock, widget.store.getState, widget);
-
-      expect(dispatchRequestStub.calledOnce).to.be.true;
-      var query = dispatchRequestStub.args[0][0];
-      expect(query.get('q')[0]).to.equal('bibcode:2017MNRAS.467.4015H');
-      expect(query.get('fl')[0]).to.equal('links_data');
-    });
-
-    //TODO: re-enable this test, skipping for now
-    it.skip('loadBibcodeData triggers widget-ready', function () {
-      widget.activate(beehive);
-
-      widget.trigger = sandbox.spy();
-      widget.store.dispatch(actions.updateBibcode('2017MNRAS.467.4015H'));
-
-      actions.loadBibcodeData('2017MNRAS.467.4015H')
-      (null, widget.store.getState, widget);
-
-      expect(widget.trigger.calledOnce).to.be.true;
-      expect(widget.trigger.args[0]).to.deep.equal([
-        'page-manager-event', 'widget-ready', { 'isActive': true }
-      ]);
-    });
-
-    //TODO: re-enable this test, skipping for now
-    it.skip('processResponse correctly parses resource data', function (done) {
-      widget.activate(beehive);
-
-      sandbox.stub(actions, 'parseResources', function (data) {
-        return { value: data }
-      });
-
-      var expectedActions = [
-        { type: 'UPDATE_API_RESPONSE', value: mockResponse },
-        { value: mockLinksData }
-      ];
-
-      var dispatchMock = function (action) {
-        var expectedAction = expectedActions.shift();
-        expect(action).to.deep.equal(expectedAction);
-        if (!expectedAction.length) {
-          done();
-        }
-      };
-
-      actions.processResponse(mockResponse)
-        (dispatchMock, widget.store.getState, widget);
-    });
-
-    //TODO: re-enable this test, skipping for now
-    it.skip('processResponse handles empty response', function (done) {
-      widget.activate(beehive);
-
-      sandbox.stub(actions, 'handleError', function (message) {
-        return { value: message }
-      });
-
-      var emptyResponseMock = {
-        get: function () {
-          return [];
-        }
-      };
-
-      var expectedActions = [
-        { type: 'UPDATE_API_RESPONSE', value: emptyResponseMock },
-        { message: 'EMPTY_RESPONSE' }
-      ];
-
-      var dispatchMock = function (action) {
-        var expectedAction = expectedActions.shift();
-        expect(action).to.deep.equal(expectedAction);
-        if (!expectedAction.length) {
-          done();
-        }
-      };
-
-      actions.processResponse(emptyResponseMock)
-        (dispatchMock, widget.store.getState, widget);
-    });
-
-    //TODO: re-enable this test, skipping for now
-    it.skip('parseResources correctly updates parsed data', function (done) {
-      widget.activate(beehive);
-
-      sandbox.stub(widget, 'parseResourcesData', function () {
-        return mockLinksParsedData;
-      });
-
-      var expectedActions = [
-        {
-          type: 'UPDATE_RESOURCES',
-          fullTextSources: mockLinksParsedData.fullTextSources,
-          dataProducts: mockLinksParsedData.dataProducts
-        },
-        { type: 'IS_LOADING', value: 'false' }
-      ];
-
-      var dispatchMock = function (action) {
-        var expectedAction = expectedActions.shift();
-        expect(action).to.deep.equal(expectedAction);
-        if (!expectedAction.length) {
-          done();
-        }
-      };
-
-      actions.parseResources(mockLinksData)
-        (dispatchMock, widget.store.getState, widget);
-    });
-
-    it('renders fullTextSources component correctly', function () {
-      widget.activate(beehive);
-      var props = {
-        sources: mockLinksParsedData.fullTextSources,
-        onLinkClick: sandbox.spy()
-      };
-
-      var wrapNoProps = Enzyme.shallow(React.createElement(FullTextSources));
-      var wrapWithProps = Enzyme.shallow(React.createElement(FullTextSources, props));
-
-      // no sources, no output
-      expect(wrapNoProps.find('div').exists()).to.be.false;
-
-      // has sources, should return proper markup
-      expect(wrapWithProps.find('div').exists()).to.be.true;
-
-      // should have 3 links
-      expect(wrapWithProps.find('a').length).to.equal(props.sources.length);
-
-      wrapWithProps.find('a').forEach(function (node, idx) {
-        var source = mockLinksParsedData.fullTextSources[idx];
-
-        // check the name of the link
-        expect(node.text()).to.have.string(source.title);
-
-        // check the href of the link
-        expect(node.prop('href')).to.equal(source.link);
-
-        // check if the icons show up
-        var renderedNode = node.render();
-        if (source.openAccess || source.openUrl) {
-          expect(renderedNode.find('i').length).to.be.gte(0);
-        } else {
-          expect(renderedNode.find('i').length).to.be.equal(0);
-        }
-
-        node.simulate('click');
-      });
-
-      var args = props.onLinkClick.args;
-      expect(args.length).to.equal(props.sources.length);
-      args.forEach(function (arg, idx) {
-        var source = mockLinksParsedData.fullTextSources[idx];
-        expect(arg[0]).to.equal(source.title);
-      });
-    });
-
-    it('renders dataProducts component correctly', function () {
-      widget.activate(beehive);
-      var props = {
-        products: mockLinksParsedData.dataProducts,
-        onLinkClick: sandbox.spy()
-      };
-
-      var wrapNoProps = Enzyme.shallow(React.createElement(DataProducts));
-      var wrapWithProps = Enzyme.shallow(React.createElement(DataProducts, props));
-
-      // no products, no output
-      expect(wrapNoProps.find('div').exists()).to.be.false;
-
-      // has products, should return proper markup
-      expect(wrapWithProps.find('div').exists()).to.be.true;
-
-      // should have 3 links
-      expect(wrapWithProps.find('a').length).to.equal(props.products.length);
-
-      wrapWithProps.find('a').forEach(function (node, idx) {
-        var source = mockLinksParsedData.dataProducts[idx];
-
-        // check the name of the link
-        expect(node.text()).to.have.string(source.title);
-
-        // check the href of the link
-        expect(node.prop('href')).to.equal(source.link);
-
-        node.simulate('click');
-      });
-
-      var args = props.onLinkClick.args;
-      expect(args.length).to.equal(props.products.length);
-      args.forEach(function (arg, idx) {
-        var source = mockLinksParsedData.dataProducts[idx];
-        expect(arg[0]).to.equal(source.title);
-      });
-    });
-
-    //TODO: re-enable this test, skipping for now
-    it.skip('renders no sources correctly', function () {
-      widget.activate(beehive);
-      widget.processResponse(mockResponseNoLinksData);
-
-      expect(widget.view.render().$el.text()).to.be.equal('No Sources Found');
-    });
-
-    //TODO: re-enable this test, skipping for now
-    it.skip('dies when there is an error', function (done) {
-      widget.activate(beehive);
-      var fb = actions.handleFeedback({
-        request: {
-          get: _.constant(mockApiQuery),
-          has: _.constant(true)
-        },
-        psk: {
-          getId: function () {
-            return widget.getPubSub().getCurrentPubSubKey().getId()
-          }
-        }
-      });
-      var dispatch = sandbox.spy();
-      var store = sandbox.stub({
-        isLoading: true,
-        query: mockApiQuery
-      });
-      fb(dispatch, _.constant(store), widget);
-      setTimeout(function () {
-        expect(dispatch.calledTwice).to.be.true;
+      it('makes all necessary subscriptions', function (done) {
+        const w = new Widget();
+        const getPubSub = this.sb.stub(w, 'getPubSub');
+        // activateWidget makes an extra subscription, we won't count that
+        this.sb.stub(w, 'activateWidget');
+        this.sb.stub(w, 'attachGeneralHandler');
+        const stubs = {
+          DISPLAY_DOCUMENTS: 1,
+          DELIVERING_RESPONSE: 2,
+          subscribe: this.sb.spy()
+        };
+        getPubSub.returns(stubs);
+        w.activate(this.pubsub.beehive);
+        expect(stubs.subscribe.callCount).to.eql(2);
+        expect(stubs.subscribe.args[0][0]).to.eql(1);
+        expect(stubs.subscribe.args[1][0]).to.eql(2);
         done();
-      }, 350);
+      });
+    });
+    describe('Communicating with the API', function () {
+      beforeEach(init);
+      afterEach(teardown);
+      it('fires off request for sources after display docs', function (done) {
+        const w = new Widget();
+        w.activate(this.pubsub.beehive);
+        const mockQuery = { toJSON: _.constant({ q: ['bibcode:foo'] })};
+        this.pubsub.publish(this.pubsub.DISPLAY_DOCUMENTS, mockQuery);
+        const rSpy = this.pubsub.request;
+        expect(rSpy.calledOnce).to.eql(true);
+        expect(rSpy.args[0][0].get('target')).to.eql('search/query');
+        expect(rSpy.args[0][0].get('query').get('q')).to.eql(mockQuery.toJSON().q);
+        done();
+      });
+      it('handles not getting a query', function (done) {
+        const w = new Widget();
+        w.activate(this.pubsub.beehive);
+        const mockQuery = null;
+        this.pubsub.publish(this.pubsub.DISPLAY_DOCUMENTS, mockQuery);
+        expect(this.state(w).error).to.eql('No query');
+        done();
+      });
+      it('handles not being able to find a bibcode in query', function (done) {
+        const w = new Widget();
+        w.activate(this.pubsub.beehive);
+        const mockQuery = { toJSON: _.constant({ q: [] })};
+        this.pubsub.publish(this.pubsub.DISPLAY_DOCUMENTS, mockQuery);
+        expect(this.state(w).error).to.eql('Did not receive a bibcode');
+        done();
+      });
+      it('handles parsing issue with bibcode', function (done) {
+        const w = new Widget();
+        w.activate(this.pubsub.beehive);
+        const mockQuery = { toJSON: _.constant({ q: ['bibBAZ:foo'] })};
+        this.pubsub.publish(this.pubsub.DISPLAY_DOCUMENTS, mockQuery);
+        expect(this.state(w).error).to.eql('Could not parse bibcode');
+        done();
+      });
+      it('fully updates state after getting bibcode/query', function (done) {
+        const w = new Widget();
+        w.activate(this.pubsub.beehive);
+        const mockQuery = { toJSON: _.constant({ q: ['bibcode:foo'] })};
+        this.pubsub.publish(this.pubsub.DISPLAY_DOCUMENTS, mockQuery);
+        expect(this.state(w).identifier).to.eql('foo');
+        expect(this.state(w).fetching).to.eql(true);
+        expect(this.state(w).query).to.eql(mockQuery.toJSON());
+        done();
+      });
+    });
+    describe('Processing Api Response, parsing docs into links', function () {
+      beforeEach(init);
+      afterEach(teardown);
+      it('properly gathers information from docs, and updates state', function (done) {
+        const w = new Widget();
+        w.activate(this.pubsub.beehive);
+        w.parseResourcesData = this.sb.stub();
+        const mockResponse = {
+          toJSON: _.constant({
+            response: { docs: [{ foo: 'bar' }] }
+          })
+        };
+        w.parseResourcesData.returns({
+          fullTextSources: [{ 'test': 'foo' }],
+          dataProducts: [{}]
+        });
+        this.pubsub.publish(this.pubsub.DELIVERING_RESPONSE, mockResponse);
+        expect(this.state(w).fullTextSources).to.eql([{ 'test': 'foo' }]);
+        expect(this.state(w).dataProducts).to.eql([{}]);
+        done();
+      });
+      it('handles not getting a response', function (done) {
+        const w = new Widget();
+        w.activate(this.pubsub.beehive);
+        const mockResponse = undefined;
+        this.pubsub.publish(this.pubsub.DELIVERING_RESPONSE, mockResponse);
+        expect(this.state(w).error).to.eql('No response');
+        done();
+      });
+      it('handles not getting any docs', function (done) {
+        const w = new Widget();
+        w.activate(this.pubsub.beehive);
+        const mockResponse = { toJSON: _.constant({ response: { docs: [] }})};
+        this.pubsub.publish(this.pubsub.DELIVERING_RESPONSE, mockResponse);
+        expect(this.state(w).error).to.eql('No docs');
+        done();
+      });
+      it('handles link generator parsing error', function (done) {
+        const w = new Widget();
+        w.activate(this.pubsub.beehive);
+        w.parseResourcesData = this.sb.stub();
+        const mockResponse = { toJSON: _.constant({ response: { docs: [{ foo: 'bar' }] }})};
+        w.parseResourcesData.throws();
+        this.pubsub.publish(this.pubsub.DELIVERING_RESPONSE, mockResponse);
+        expect(this.state(w).error).to.eql('Unable to parse resource data');
+        done();
+      });
     });
 
-    it('renders Loading component correctly', function () {
-      widget.activate(beehive);
-
-      var wrapNoShow = Enzyme.shallow(React.createElement(LoadingIcon, {
-        show: false
-      }));
-      var wrapWithShow = Enzyme.shallow(React.createElement(LoadingIcon, {
-        show: true
-      }));
-
-      // No output
-      expect(wrapNoShow.find('span').exists()).to.be.false;
-
-      // should return the proper output
-      expect(wrapWithShow.find('span').exists()).to.be.true;
-      expect(wrapWithShow.find('i').exists()).to.be.true;
+    describe('Updates the link server', function () {
+      beforeEach(init);
+      afterEach(teardown);
+      it('updates the state with the link server', function (done) {
+        const w = new Widget();
+        const getBeeHive = this.sb.stub(w, 'getBeeHive');
+        getBeeHive.returns({ getObject: _.constant({ link_server: 'TEST' }) });
+        w._updateLinkServer();
+        expect(this.state(w).linkServer).to.eql('TEST');
+        done();
+      });
+      it('updates nothing, if the user beehive/user/link_server is not present', function (done) {
+        const w = new Widget();
+        const getBeeHive = this.sb.stub(w, 'getBeeHive');
+        // no User object
+        getBeeHive.returns({ getObject: _.constant({}) });
+        w._updateLinkServer();
+        expect(this.state(w).linkServer).to.eql(null);
+        // no beehive
+        getBeeHive.returns(null);
+        w._updateLinkServer();
+        expect(this.state(w).linkServer).to.eql(null);
+        done();
+      });
+    });
+    describe('UI', function () {
+      beforeEach(init);
+      afterEach(teardown);
+      it('Updates the UI with full text links', function (done) {
+        const w = new Widget();
+        const $el = $(w.view.render().$el).appendTo('#test-area');
+        w.activate(this.pubsub.beehive);
+        const mockResponse = ({
+          toJSON: _.constant({ response: { docs: [{ foo: 'bar' }] }})
+        });
+        w.parseResourcesData = this.sb.stub();
+        w.parseResourcesData.returns({
+          fullTextSources: [{ url: 'test', name: 'foo', description: 'bar', open: false }],
+          dataProducts: []
+        });
+        this.pubsub.publish(this.pubsub.DELIVERING_RESPONSE, mockResponse);
+        const link = $('a:first', $el);
+        expect(link.length).to.eql(1);
+        expect(link.attr('title')).to.eql('bar');
+        expect(link.attr('href')).to.eql('test');
+        expect(link.text()).to.eql('foo');
+        done();
+      });
+      it('Updates the UI with data products', function (done) {
+        const w = new Widget();
+        const $el = $(w.view.render().$el).appendTo('#test-area');
+        w.activate(this.pubsub.beehive);
+        const mockResponse = ({
+          toJSON: _.constant({ response: { docs: [{ foo: 'bar' }] }})
+        });
+        w.parseResourcesData = this.sb.stub();
+        w.parseResourcesData.returns({
+          fullTextSources: [],
+          dataProducts: [{ url: 'test', name: 'foo', description: 'bar', open: false }]
+        });
+        this.pubsub.publish(this.pubsub.DELIVERING_RESPONSE, mockResponse);
+        const link = $('a:first', $el);
+        expect(link.length).to.eql(1);
+        expect(link.attr('title')).to.eql('bar');
+        expect(link.attr('href')).to.eql('test');
+        expect(link.text()).to.eql('foo');
+        done();
+      });
+      it('Shows an icon if the link is open access', function (done) {
+        const w = new Widget();
+        const $el = $(w.view.render().$el).appendTo('#test-area');
+        w.activate(this.pubsub.beehive);
+        const mockResponse = ({
+          toJSON: _.constant({ response: { docs: [{ foo: 'bar' }] }})
+        });
+        w.parseResourcesData = this.sb.stub();
+        w.parseResourcesData.returns({
+          fullTextSources: [{ url: 'test', name: 'foo', description: 'bar', open: true }],
+          dataProducts: []
+        });
+        this.pubsub.publish(this.pubsub.DELIVERING_RESPONSE, mockResponse);
+        const icon = $('i.s-open-access-image', $el);
+        expect(icon.length).to.eql(1);
+        done();
+      });
+      it('Shows an icon if the link is openUrl', function (done) {
+        const w = new Widget();
+        const $el = $(w.view.render().$el).appendTo('#test-area');
+        w.activate(this.pubsub.beehive);
+        const mockResponse = ({
+          toJSON: _.constant({ response: { docs: [{ foo: 'bar' }] }})
+        });
+        w.parseResourcesData = this.sb.stub();
+        w.parseResourcesData.returns({
+          fullTextSources: [{ url: 'test', name: 'foo', description: 'bar', openUrl: true }],
+          dataProducts: []
+        });
+        this.pubsub.publish(this.pubsub.DELIVERING_RESPONSE, mockResponse);
+        const icon = $('i.fa-university', $el);
+        expect(icon.length).to.eql(1);
+        done();
+      });
+      it('Shows a "Show All" button if there are more than 3 of either kind of source', function (done) {
+        const w = new Widget();
+        const $el = $(w.view.render().$el).appendTo('#test-area');
+        w.activate(this.pubsub.beehive);
+        const mockResponse = ({
+          toJSON: _.constant({ response: { docs: [{ foo: 'bar' }] }})
+        });
+        w.parseResourcesData = this.sb.stub();
+        w.parseResourcesData.returns({
+          fullTextSources: [
+            { url: 'test', name: 'foo', description: 'bar' },
+            { url: 'test', name: 'foo', description: 'bar' },
+            { url: 'test', name: 'foo', description: 'bar' },
+            { url: 'test', name: 'foo', description: 'bar' },
+            { url: 'test', name: 'foo', description: 'bar' }
+          ],
+          dataProducts: []
+        });
+        this.pubsub.publish(this.pubsub.DELIVERING_RESPONSE, mockResponse);
+        const button = $('button', $el);
+        expect(button.length).to.eql(1);
+        expect(button.text()).to.eql('Show All');
+        done();
+      });
+      it('Clicking Show All button should display a modal with all the sources listed', function (done) {
+        const w = new Widget();
+        const $el = $(w.view.render().$el).appendTo('#test-area');
+        w.activate(this.pubsub.beehive);
+        const mockResponse = ({
+          toJSON: _.constant({ response: { docs: [{ foo: 'bar' }] }})
+        });
+        w.parseResourcesData = this.sb.stub();
+        w.parseResourcesData.returns({
+          fullTextSources: [
+            { url: 'test', name: '0', description: 'bar' },
+            { url: 'test', name: '1', description: 'bar' },
+            { url: 'test', name: '2', description: 'bar' },
+            { url: 'test', name: '3', description: 'bar' },
+            { url: 'test', name: '4', description: 'bar' },
+            { url: 'test', name: '5', description: 'bar' }
+          ],
+          dataProducts: [
+            { url: 'test', name: '6', description: 'bar' },
+            { url: 'test', name: '7', description: 'bar' },
+            { url: 'test', name: '8', description: 'bar' }
+          ]
+        });
+        this.pubsub.publish(this.pubsub.DELIVERING_RESPONSE, mockResponse);
+        const button = $('button', $el);
+        button.click();
+        const links = $('a', '.modal');
+        expect(links.length).to.eql(9);
+        links.each(function (i) {
+          const el = $(this);
+          expect(el.text()).to.eql(i + '');
+          expect(el.attr('href')).to.eql('test');
+          expect(el.attr('title')).to.eql('bar');
+        });
+        $('div[role="dialog"] .close').click();
+        done();
+      });
+      it('Clicking on a link fires an analytics event', function (done) {
+        const w = new Widget();
+        const $el = $(w.view.render().$el).appendTo('#test-area');
+        this.sb.stub(w, 'emitAnalytics');
+        w.activate(this.pubsub.beehive);
+        const mockResponse = ({
+          toJSON: _.constant({ response: { docs: [{ foo: 'bar' }] }})
+        });
+        w.parseResourcesData = this.sb.stub();
+        w.parseResourcesData.returns({
+          fullTextSources: [{ url: 'test', name: '0', description: 'bar' }],
+          dataProducts: []
+        });
+        this.pubsub.publish(this.pubsub.DELIVERING_RESPONSE, mockResponse);
+        const link = $('a', $el);
+        link.on('click', function (e) { e.preventDefault(); });
+        link[0].click();
+        expect(w.emitAnalytics.calledWith('0')).to.eql(true);
+        done();
+      });
     });
   });
 });
