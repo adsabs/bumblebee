@@ -1,241 +1,448 @@
 define(["underscore", "js/mixins/openurl_generator"], function(_, OpenURLGenerator){
+  const GATEWAY_BASE_URL = '/link_gateway/';
 
+  const DEFAULT_ORDERING = [
+    'ADS PDF', 'ADS Scanned Article', 'Find it at your Institution', 
+    'Publisher Article', 'Publisher PDF', 'arXiv PDF'
+  ];
 
-var linkGenerator = {
-
-  /*
-  * requires the following solr fields to work correctly:
-  *
-  * links_data,[citations],property,bibcode,first_author,year
-  * page,pub,pubdate,title,volume,doi,issue,issn
-  *
-  * */
-
-  //function that can turn links_data into a list of actual links
-
-  //using Giovanni's function from beer
-  adsUrlRedirect: function (type, id) {
-
-    var adsClassicBaseUrl = "http://adsabs.harvard.edu/";
-    var bumblebeeBaseUrl = 'https://ui.adsabs.harvard.edu/';
-
-    switch (type) {
-      case 'webrecord':
-        return bumblebeeBaseUrl + '#abs/' + id;
-      case "doi":
-        return adsClassicBaseUrl + "cgi-bin/nph-abs_connect?fforward=http://dx.doi.org/" + id;
-      case "data":
-        return adsClassicBaseUrl + "cgi-bin/nph-data_query?bibcode=" + id + "&link_type=DATA";
-      case "electr":
-        return adsClassicBaseUrl + "cgi-bin/nph-data_query?bibcode=" + id + "&link_type=EJOURNAL";
-      case "gif":
-        return adsClassicBaseUrl + "cgi-bin/nph-data_query?bibcode=" + id + "&link_type=GIF";
-      case "article":
-        return adsClassicBaseUrl + "cgi-bin/nph-data_query?bibcode=" + id + "&link_type=ARTICLE";
-      case "preprint":
-        return adsClassicBaseUrl + "cgi-bin/nph-data_query?bibcode=" + id + "&link_type=PREPRINT";
-      case "arXiv":
-        //in this case id should be arxivid, not bibcode
-        return adsClassicBaseUrl + "cgi-bin/nph-abs_connect?fforward=http://arxiv.org/abs/" + id;
-      case "simbad":
-        return adsClassicBaseUrl + "cgi-bin/nph-data_query?bibcode=" + id + "&link_type=SIMBAD";
-      case "ned":
-        return adsClassicBaseUrl + "cgi-bin/nph-data_query?bibcode=" + id + "&link_type=NED";
-      case "openurl":
-        return adsClassicBaseUrl + "cgi-bin/nph-data_query?bibcode=" + id + "&link_type=OPENURL";
-      default:
-        throw new Error('Unknown type: ' + type);
-
+  // set of link types and descriptions
+  const LINK_TYPES = {
+    'PUB_PDF': {
+      shortName: 'Publisher PDF',
+      description: 'Publisher PDF'
+    },
+    'EPRINT_PDF': {
+      shortName: 'arXiv PDF',
+      description: 'Arxiv eprint'
+    },
+    'AUTHOR_PDF': {
+      shortName: 'Author PDF',
+      description: 'Link to PDF page provided by author'
+    },
+    'ADS_PDF': {
+      shortName: 'ADS PDF',
+      description: 'ADS PDF'
+    },
+    'PUB_HTML': {
+      shortName: 'Publisher Article',
+      description: 'Electronic on-line publisher article (HTML)'
+    },
+    'EPRINT_HTML': {
+      shortName: 'arXiv Article',
+      description: 'Arxiv article'
+    },
+    'AUTHOR_HTML': {
+      shortName: 'Author Article',
+      description: 'Link to HTML page provided by author'
+    },
+    'ADS_SCAN': {
+      shortName: 'ADS Scanned Article',
+      description: 'ADS scanned article'
+    },
+    'ACA': {
+      shortName: 'ACA',
+      description: 'Acta Astronomica Data Files'
+    },
+    'ALMA': {
+      shortName: 'ALMA',
+      description: 'Atacama Large Millimeter/submillimeter Array'
+    },
+    'ARI': {
+      shortName: 'ARI',
+      description: 'Astronomisches Rechen-Institut'
+    },
+    'ASTROVERSE': {
+      shortName: 'ASTROVERSE',
+      description: 'CfA Dataverse'
+    },
+    'ATNF': {
+      shortName: 'ATNF',
+      description: 'Australia Telescope Online Archive'
+    },
+    'AUTHOR': {
+      shortName: 'AUTHOR',
+      description: 'Author Hosted Dataset'
+    },
+    'BICEP2': {
+      shortName: 'BICEP2',
+      description: 'BICEP/Keck Data'
+    },
+    'CADC': {
+      shortName: 'CADC',
+      description: 'Canadian Astronomy Data Center'
+    },
+    'CDS': {
+      shortName: 'CDS',
+      description: 'Strasbourg Astronomical Data Center'
+    },
+    'CXO': {
+      shortName: 'CXO',
+      description: 'Chandra X-Ray Observatory'
+    },
+    'ESA': {
+      shortName: 'ESA',
+      description: 'ESAC Science Data Center'
+    },
+    'ESO': {
+      shortName: 'ESO',
+      description: 'European Southern Observatory'
+    },
+    'GCPD': {
+      shortName: 'GCPD',
+      description: 'The General Catalogue of Photometric Data'
+    },
+    'GTC': {
+      shortName: 'GTC',
+      description: 'Gran Telescopio CANARIAS Public Archive'
+    },
+    'HEASARC': {
+      shortName: 'HEASARC',
+      description: 'NASA\'s High Energy Astrophysics Science Archive Research Center'
+    },
+    'HERSCHEL': {
+      shortName: 'HERSCHEL',
+      description: 'Herschel Science Center'
+    },
+    'IBVS': {
+      shortName: 'IBVS',
+      description: 'Information Bulletin on Variable Stars'
+    },
+    'INES': {
+      shortName: 'INES',
+      description: 'IUE Newly Extracted Spectra'
+    },
+    'ISO': {
+      shortName: 'ISO',
+      description: 'Infrared Space Observatory'
+    },
+    'KOA': {
+      shortName: 'KOA',
+      description: 'Keck Observatory Archive'
+    },
+    'MAST': {
+      shortName: 'MAST',
+      description: 'Mikulski Archive for Space Telescopes'
+    },
+    'NED': {
+      shortName: 'NED',
+      description: 'NASA/IPAC Extragalactic Database'
+    },
+    'NEXSCI': {
+      shortName: 'NEXSCI',
+      description: 'NASA Exoplanet Archive'
+    },
+    'NOAO': {
+      shortName: 'NOAO',
+      description: 'National Optical Astronomy Observatory'
+    },
+    'PASA': {
+      shortName: 'PASA',
+      description: 'Publication of the Astronomical Society of Australia Datasets'
+    },
+    'PDG': {
+      shortName: 'PDG',
+      description: 'Particle Data Group'
+    },
+    'PDS': {
+      shortName: 'PDS',
+      description: 'The NASA Planetary Data System'
+    },
+    'SIMBAD': {
+      shortName: 'SIMBAD',
+      description: 'SIMBAD Database at the CDS'
+    },
+    'SPITZER': {
+      shortName: 'SPITZER',
+      description: 'Spitzer Space Telescope'
+    },
+    'TNS': {
+      shortName: 'TNS',
+      description: 'Transient Name Server'
+    },
+    'VIZIER': {
+      shortName: 'VIZIER',
+      description: 'VizieR Catalog Service'
+    },
+    'XMM': {
+      shortName: 'XMM',
+      description: 'XMM Newton Science Archive'
+    },
+    'ZENODO': {
+      shortName: 'ZENODO',
+      description: 'Zenodo Archive'
     }
-  },
-  /*
-   *   Takes data--a json object from apiResponse--and augments it with a "links"
-   *   object. This is used for item views in the results widget. This is to be called
-   *   by the processData method of a widget.
-   *
+  };
+
+  /**
+   * Create the resolver url
+   * @param {string} bibcode - the bibcode
+   * @param {string} target - the source target (i.e. PUB_HTML)
+   * @returns {string} - the new url
    */
+  const _createGatewayUrl = function (bibcode, target) {
+    if (_.isString(bibcode) && _.isString(target)) {
+      return GATEWAY_BASE_URL + bibcode + '/' + target;
+    }
+    return '';
+  };
 
-  parseLinksData: function (data) {
-    var dataWithLinks;
+  /**
+   * process the link data
+   *
+   * Proceeds in this manner:
+   * 1. Check the property to find ESOURCE and DATA
+   * 2. If there, find the property on the parent object
+   * 3. Process by some rules
+   *  3.1. If OPENACCESS property is present, then all esourses ending with _HTML are open
+   *  3.2. If <field>_OPENACCESS property is present, then the corresponding esource field is open
+   *  3.3. If electr field is present, check if a linkServer is provided among some other things
+   *
+   * @param {object} data - the data object to process
+   * @returns {object} - the fulltext and data sources
+   */
+  const _processLinkData = _.memoize(function (data) {
+    const createGatewayUrl = this._createGatewayUrl;
+    let fullTextSources = [];
+    const dataProducts = [];
+    const property = data.property;
+    const hasHTMLOpenAccess = _.contains(property, 'OPENACCESS');
 
-    dataWithLinks = _.map(data, function (d) {
-      return this.parseLinksDataForModel(d)
-    }, this);
+    if (_.contains(property, 'ESOURCE')) {
 
-    return dataWithLinks;
+      // check the esources property
+      _.forEach(data.esources, function (el, ids, sources) {
+        const parts = el.split('_');
+        const linkInfo = LINK_TYPES[el];
+        const hasScan = _.contains(sources, 'ADS_SCAN');
+        const linkServer = data.link_server;
+        const identifier = data.doi || data.issn || data.isbn;
 
-  },
+        // Create an OpenURL
+        // Only create an openURL if the following is true:
+        //   - The article HAS an Identifier (doi, issn, isbn)
+        //   - There is NO open access available
+        //   - There is NO scan available from the ADS
+        //   - The user is authenticated
+        //   - the user HAS a library link server
+        if (identifier && linkServer && !hasHTMLOpenAccess && !hasScan) {
+          const openUrl = new OpenURLGenerator(data, linkServer);
+          openUrl.createOpenURL();
+          fullTextSources.push({
+            url: openUrl.openURL,
+            openUrl: true,
+            name: 'Find it at your Institution',
+            description: linkInfo && linkInfo.description
+          });
+        }
 
-  getTextAndDataLinks: function (links_data, bib, data) {
+        if (parts.length > 1) {
+          // if entry has _HTML then also check for OPENACCESS on property
+          if (parts[1] === 'HTML') {
+            fullTextSources.push({
+              url: createGatewayUrl(data.bibcode, el),
+              open: hasHTMLOpenAccess,
+              name: linkInfo && linkInfo.shortName,
+              description: linkInfo && linkInfo.description
+            });
 
-    var link_types, links = { text : [], data : []},
-        scan_available, article_identifier, openURL,
-        archival, single, groups, order;
-
-    link_types = _.filter(_.map(links_data, function (d) {
-      try {
-        return JSON.parse(d);
-      }
-      catch (SyntaxError) {
-        console.error("Error parsing links_data value", bib, d);
-      }
-    }));
-
-    _.each(link_types, function (l) {
-
-      var openAccess = l.access === "open" ? true : false;
-
-      switch (l.type) {
-
-        case "preprint":
-          links.text.push({openAccess: openAccess, title: "arXiv e-print", link: this.adsUrlRedirect("preprint", bib)});
-          break;
-        case "electr":
-
-          scan_available =_.where(link_types, {"type": "gif"}).length > 0;
-
-          data = data || {};
-
-          // Determine if the article has any identifiers
-          article_identifier = data.doi || data.issn || data.isbn;
-
-          // Only create an openURL if the following is true:
-          //   - The article HAS a DOI
-          //   - There is NO open access available
-          //   - There is NO scan available from the ADS
-          //   - The user is authenticated
-          //   - the user HAS a library link server
-
-          if (!l.access && !scan_available && data.link_server && article_identifier){
-            openURL = new OpenURLGenerator(data, data.link_server);
-            openURL.createOpenURL();
-            links.text.push({openAccess: openAccess, title: "Find it at your institution", link: openURL.openURL, openUrl: true});
+          // otherwise, just check for the <field>_OPENACCESS
+          } else {
+            fullTextSources.push({
+              url: createGatewayUrl(data.bibcode, el),
+              open: _.contains(property, parts[0] + '_OPENACCESS'),
+              name: linkInfo && linkInfo.shortName,
+              description: linkInfo && linkInfo.description
+            });
           }
-          //always add the electronic link article, even if there was an openurl added above
-          links.text.push({openAccess: openAccess, title: "Publisher Article", link: this.adsUrlRedirect('electr', bib)});
-          break;
-        case "pdf":
-          links.text.push({openAccess: openAccess, title: "Publisher PDF", link: this.adsUrlRedirect('article', bib)});
-          break;
-        case "article":
-          links.text.push({openAccess: openAccess, title: "ADS PDF", link: this.adsUrlRedirect('article', bib)});
-          break;
-        case "gif":
-          links.text.push({openAccess: openAccess, title: "ADS Scanned Article", link: this.adsUrlRedirect('gif', bib)});
-          break;
-        case "data":
-          var title = l.instances ? "Archival Data (" + l.instances + ")" : "Archival Data";
-          links.data.push({title: title, link: this.adsUrlRedirect('data', bib)});
-          break;
-        case "simbad":
-          var title = l.instances ? "SIMBAD objects (" + l.instances + ")" : "SIMBAD objects";
-          links.data.push({title: title, link: this.adsUrlRedirect('simbad', bib)});
-          break;
-        case "ned":
-          var title = l.instances ? "NED objects (" + l.instances + ")" : "NED objects";
-          links.data.push({title: title, link: this.adsUrlRedirect('ned', bib)});
-          break;
-      }
 
-    }, this);
-
-    //get rid of links.data duplicates for the "Archival Data" (but add a parenthesis indicating how many)
-    // since I guess the "instances" key isn't working correctly in this case
-     archival = _.where(links.data, {link :  this.adsUrlRedirect('data', bib) });
-    if (archival.length > 1 ){
-      single = {title : "Archival Data (" + archival.length + ")", link : this.adsUrlRedirect('data', bib)};
-      //remove all archival links
-      links.data = _.filter(links.data, function(d){if (!d.title.match("Archival Data")){return true }});
-      links.data.push(single);
+        // if entry cannot be split, then it will not be open access
+        } else {
+          fullTextSources.push({
+            url: createGatewayUrl(data.bibcode, el),
+            open: false,
+            name: linkInfo && linkInfo.shortName,
+            description: linkInfo && linkInfo.description
+          });
+        }
+      });
     }
 
-    //get rid of text duplicates and default to open access
-    groups = _.groupBy(links.text, "title");
-    _.each(groups, function(v,k){
-
-      var singleVersion;
-
-      if (v.length > 1){
-        //remove duplicates from links
-        links.text = _.filter(links.text, function(l){
-          return (l.title !== k);
-        });
-
-        singleVersion = _.findWhere(v, {"openAccess" : true}) || v[0];
-        links.text.push(singleVersion);
-      }
-
+    // reorder the full text sources based on our default ordering
+    fullTextSources = _.sortBy(fullTextSources, function (source) {
+      const rank = DEFAULT_ORDERING.indexOf(source.name);
+      return rank > -1 ? rank : 9999;
     });
 
-    //finally, sort the links.text
-    order = [
-      "ADS PDF",
-      "ADS Scanned Article",
-      "Find it at your institution",
-      "Publisher Article",
-      "Publisher PDF",
-      "arXiv e-print"
-    ];
-    links.text = _.sortBy(links.text, function(l){
-      return order.indexOf(l.title);
-    });
+    // check the data property
+    if (_.contains(property, 'DATA')) {
+      _.forEach(data.data, function (product) {
+        const parts = product.split(':');
+        const linkInfo = LINK_TYPES[parts[0]];
 
-    return links
-  },
-
-  // this function is used by list-of-things to add quick links to an item
-  parseLinksDataForModel: function (data) {
-
-    var links = {list : [], data : [], text : []};
-
-    if (data.links_data) {
-      _.extend(links, this.getTextAndDataLinks(data.links_data, data.bibcode, data));
+        // are there any without a count? just make them 0
+        if (parts.length > 1) {
+          dataProducts.push({
+            url: createGatewayUrl(data.bibcode, parts[0]),
+            count: parts[1],
+            name: linkInfo && linkInfo.shortName,
+            description: linkInfo && linkInfo.description
+          });
+        } else {
+          dataProducts.push({
+            url: createGatewayUrl(data.bibcode, product),
+            count: '0',
+            name: product,
+            description: linkInfo && linkInfo.description
+          });
+        }
+      });
     }
 
-    if (data["[citations]"]) {
+    return {
+      fullTextSources: fullTextSources,
+      dataProducts: dataProducts
+    };
+  }, function (data) {
+    
+    // provide a resolver string, to help with the memoizer
+    return JSON.stringify(_.pick(data, ['bibcode', 'property', 'esources', 'data']));
+  });
 
-      var nc = data["[citations]"].num_citations;
-      var nr = data["[citations]"].num_references;
-      if (nc >= 1) {
-        links.list.push({letter: "C", title: "Citations (" + nc + ")", link: "#abs/" + data.bibcode + "/citations" })
-      }
-      if (nr >= 1) {
-        links.list.push({ letter: "R", title: "References (" + nr + ")", link: "#abs/" + data.bibcode + "/references"})
-      }
+  /**
+   * Parse a data object to pull out the references/citations and table of contents
+   * it will also return a copy of the data object with a links property added
+   * @param {object} _data - the data object to parse
+   * @returns {object} - copy of the data object with links prop added
+   */
+  const _parseLinksDataForModel = function (_data, linksData) {
+    let links = { list : [], data: [], text: [] };
+    const data = _.extend({}, _data, { links: links });
+
+    // map linksData to links object
+    if (_.isPlainObject(linksData)) {
+      links = _.assign(links, {
+        data: links.data.concat(linksData.dataProducts || []),
+        text: links.text.concat(linksData.fullTextSources || [])
+      });
     }
 
-    if (data.property) {
-      if (_.contains(data.property, "TOC")) {
-        links.list.push({letter: "T", title: "Table of Contents", link: "#abs/" + data.bibcode + "/tableofcontents"})
+    if (_.isPlainObject(data)) {
+
+      // check for the citations property
+      if (_.isPlainObject(data['[citations]']) && _.isString(data.bibcode)) {
+        const citations = data['[citations]'];
+
+        // push it onto the links if the citation count is higher than 0
+        if (_.isNumber(citations.num_citations) && citations.num_citations > 0) {
+          links.list.push({
+            letter: 'C',
+            name: 'Citations (' + citations.num_citations + ')',
+            url: '#abs/' + data.bibcode + '/citations'
+          });
+        }
+
+        // push onto the links if the reference count is higher than 0
+        if (_.isNumber(citations.num_references) && citations.num_references > 0) {
+          links.list.push({
+            letter: 'R',
+            name: 'References (' + citations.num_references + ')',
+            url: '#abs/' + data.bibcode + '/references'
+          });
+        }
       }
 
-    }
-
-    data.links = links;
-
-    return data
-
-  },
-
-  //this function is used as a widget on the abstract page
-  parseResourcesData: function (data) {
-    /**
-     * Assuming the following input:
-     * data = {....,
-     *         ....,
-     *         'link_server': link_server_string}
-     */
-
-    if (data.links_data) {
-      var links = this.getTextAndDataLinks(data.links_data, data.bibcode, data);
-      data.fullTextSources = links.text;
-      data.dataProducts = links.data;
+      // check that we have property and whether table of contents is found
+      if (_.isArray(data.property) && _.isString(data.bibcode)) {
+        if (_.contains(data.property, 'TOC')) {
+          links.list.push({
+            letter: 'T',
+            name: 'Table of Contents',
+            url: '#abs/' + data.bibcode + '/tableofcontents'
+          });
+        }
+      }
+    } else {
+      throw new Error('data must be a plain object');
     }
 
     return data;
+  };
 
-  }
-}
+  /**
+   * Takes data--a json object from apiResponse--and augments it with a "links"
+   * object. This is used for item views in the results widget. This is to be called
+   * by the processData method of a widget.
+   *
+   */
+  const parseLinksData = function (data) {
+    const parseLinksDataForModel = _.bind(this._parseLinksDataForModel, this);
+    const parseResourcesData = _.bind(this.parseResourcesData, this);
+    if (_.isArray(data)) {
+      return _.map(data, (d) => {
+        const linkData = parseResourcesData(d);
+        return parseLinksDataForModel(d, linkData);
+      });
+    }
+    return [];
+  };
 
-  return linkGenerator
-})
+  /**
+   * Check that data is an object and that it has the correct properties
+   *
+   * @param {object} data - the data to parse
+   */
+  const parseResourcesData = function (data) {
+    const processLinkData = _.bind(this._processLinkData, this);
+
+    // data must have 'property' and sub-props
+    if (_.isPlainObject(data)) {
+      if (_.isArray(data.property) && _.isString(data.bibcode)) {
+
+        // make sure if property has a esource or data, we find it on data as well
+        if (_.contains(data.property, 'ESOURCE') && !_.has(data, 'esources')) {
+          throw new Error('if `property` property contains `ESOURCE`, then data must have `esources` field');
+        }
+        if (_.contains(data.property, 'DATA') && !_.has(data, 'data')) {
+          throw new Error('if `property` property contains `DATA`, then data must have `data` field');
+        }
+        return processLinkData(_.extend({}, data));
+      }
+      throw new Error('data must have `property` and `bibcode`');
+    } else {
+      throw new Error('data must be a plain object');
+    }
+  };
+
+  /**
+   * Takes in a type and an identifier and will generate a link
+   * @param {string} bibcode - the bibcode
+   * @param {string} type - the type of identifier
+   * @param {string|array} identifier - the identifier to use to build the url
+   * @returns {string}
+   */
+  const createUrlByType = function (bibcode, type, identifier) {
+    let id = identifier;
+    if (_.isArray(id)) {
+      id = id[0];
+    }
+
+    if (_.isString(bibcode) && _.isString(type) && _.isString(id)) {
+
+      // replace any forward slashes in id with underscores (requirement of gateway)
+      id = id.replace(/\//g, ',');
+      return GATEWAY_BASE_URL + bibcode + '/' + type + ':' + id;
+    }
+    return '';
+  };
+
+  return {
+    LINK_TYPES: LINK_TYPES,
+    parseLinksData: parseLinksData,
+    parseResourcesData: parseResourcesData,
+    createUrlByType: createUrlByType,
+    _createGatewayUrl: _createGatewayUrl,
+    _processLinkData: _processLinkData,
+    _parseLinksDataForModel: _parseLinksDataForModel
+  };
+});
