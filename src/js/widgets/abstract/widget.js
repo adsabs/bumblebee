@@ -28,7 +28,6 @@ define([
     PapersUtils,
     MathJax,
     Bootstrap
-
     ) {
 
     var MAX_COMMENTS = 3;
@@ -55,8 +54,8 @@ define([
         var maxAuthors = maxAuthors || 20;
 
         //add doi link
-        if (doc.doi){
-          doc.doi = { doi: doc.doi,  href: LinkGeneratorMixin.adsUrlRedirect("doi", doc.doi) }
+        if (_.isArray(doc.doi) && _.isPlainObject(LinkGeneratorMixin)) {
+          doc.doi = { doi: doc.doi,  href: LinkGeneratorMixin.createUrlByType(doc.bibcode, 'doi', doc.doi) }
         }
         //"aff" is the name of the affiliations array that comes from solr
         doc.aff = doc.aff || [];

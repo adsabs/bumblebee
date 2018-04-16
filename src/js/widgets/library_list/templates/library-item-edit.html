@@ -31,8 +31,8 @@
                     <ul class="hidden list-unstyled link-details s-link-details" role="menu">
 
                         {{#each links.text}}
-                        <li><a {{#if this.openAccess}}class="s-open-access"{{/if}} href="{{this.link}}"
-                            target="_blank">{{this.title}}</a></li>
+                        <li><a {{#if this.openAccess}}class="s-open-access"{{/if}} href="{{this.url}}"
+                            target="_blank">{{this.name}}</a></li>
                         {{/each}}
                     </ul>
                     {{/if}}
@@ -48,7 +48,7 @@
                     <ul class="hidden list-unstyled list-unstyled link-details s-link-details" role="menu">
 
                         {{#each links.list}}
-                        <li><a href="{{this.link}}">{{this.title}}</a></li>
+                        <li><a href="{{this.url}}">{{this.name}}</a></li>
                         {{/each}}
                     </ul>
                     {{/if}}
@@ -64,8 +64,8 @@
                     <ul class="hidden list-unstyled link-details s-link-details" role="menu">
 
                         {{#each links.data}}
-                        <li><a {{#if this.openAccess}}class="s-open-access"{{/if}} href="{{this.link}}" target="_blank"
-                            >{{this.title}}</a></li>
+                        <li><a {{#if this.openAccess}}class="s-open-access"{{/if}} href="{{this.url}}" target="_blank"
+                            >{{this.name}}</a></li>
                         {{/each}}
                     </ul>
                     {{/if}}
