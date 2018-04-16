@@ -73,10 +73,10 @@ define([
         'abstract', 'citations', 'references',
         'metrics', 'coreads', 'graphics'
       ], function (p) {
-        server.respondWith('/resolver/foo/' + p, function (xhr) {
+        server.respondWith('/link_gateway/foo/' + p, function (xhr) {
           var expected = {
             method: 'GET',
-            url: '/resolver/foo' + p
+            url: '/link_gateway/foo' + p
           };
           var actual = _.pick(xhr, ['method', 'url']);
 
