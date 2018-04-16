@@ -208,19 +208,19 @@ define([
 
   var mockFullTextSources = [
     {
-      "openAccess": false,
-      "title": "Publisher Article",
-      "link": "http://adsabs.harvard.edu/cgi-bin/nph-data_query?bibcode=2017MNRAS.467.4015H&link_type=EJOURNAL"
+      "open": false,
+      "name": "Publisher Article",
+      "url": "http://adsabs.harvard.edu/cgi-bin/nph-data_query?bibcode=2017MNRAS.467.4015H&link_type=EJOURNAL"
     },
     {
-      "openAccess": false,
-      "title": "Publisher PDF",
-      "link": "http://adsabs.harvard.edu/cgi-bin/nph-data_query?bibcode=2017MNRAS.467.4015H&link_type=ARTICLE"
+      "open": false,
+      "name": "Publisher PDF",
+      "url": "http://adsabs.harvard.edu/cgi-bin/nph-data_query?bibcode=2017MNRAS.467.4015H&link_type=ARTICLE"
     },
     {
-      "openAccess": true,
-      "title": "arXiv e-print",
-      "link": "http://adsabs.harvard.edu/cgi-bin/nph-data_query?bibcode=2017MNRAS.467.4015H&link_type=PREPRINT"
+      "open": true,
+      "name": "arXiv e-print",
+      "url": "http://adsabs.harvard.edu/cgi-bin/nph-data_query?bibcode=2017MNRAS.467.4015H&link_type=PREPRINT"
     }
   ];
 
@@ -270,7 +270,7 @@ define([
         })
       );
       var nullDocs = widget.getCachedDoc(mockDocs.bibcode);
-      expect(nullDocs).to.be.null;
+      expect(nullDocs).to.eql(null);
     });
 
     it('updates the page meta tags', function () {
