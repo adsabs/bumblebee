@@ -73,7 +73,12 @@
 
     {{#if doi}}
     <dt>DOI:</dt>
-    <dd><a href="{{doi.href}}" target="_blank">{{doi.doi}}</a></dd>
+    <dd>
+        <span>
+            <a href="{{doi.href}}" target="_blank">{{doi.doi}}</a>
+            <i class="fa fa-external-link"></i>
+        </span>
+    </dd>
     {{/if}}
 
     <dt>Bibcode</dt>
