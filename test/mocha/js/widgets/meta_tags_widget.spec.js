@@ -191,6 +191,12 @@ define([
     "title": [
       "Galaxy populations in massive galaxy clusters to z = 1.1: colour distribution, concentration, halo occupation number and red sequence fraction"
     ],
+    "esources": [
+      'PUB_HTML'
+    ],
+    "data": [
+      'MAST:44'
+    ],
     "property": [
       "OPENACCESS",
       "REFEREED",
