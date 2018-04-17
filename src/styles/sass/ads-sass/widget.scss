@@ -8,22 +8,11 @@ $base-loading-text-size: 1em;
   min-height: 600px;
   text-align: center;
   display: table;
-  background-color: darken(white, 2%);
 
   .loading {
     display: table-cell;
     vertical-align: middle;
     text-align: center;
-  }
-
-  .loading-text:after {
-    overflow: hidden;
-    display: inline-block;
-    vertical-align: bottom;
-    -webkit-animation: ellipsis steps(4, end) 1500ms infinite;
-    animation: ellipsis steps(4, end) 1500ms infinite;
-    content: "\2026";
-    width: 0;
   }
 
   .loading-text-big {
