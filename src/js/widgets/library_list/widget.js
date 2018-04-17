@@ -159,7 +159,7 @@ define([
     },
 
     defaultQueryArguments: {
-      fl: 'title,bibcode,author,keyword,pub,aff,volume,year,links_data,[citations],property,pubdate,abstract',
+      fl: 'title,bibcode,author,keyword,pub,aff,volume,year,links_data,[citations],property,esources,data,pubdate,abstract',
       rows : 25,
       start : 0,
       sort : "date desc"
@@ -281,8 +281,13 @@ define([
         return d;
       }, this);
 
-      return this.parseLinksData(docs);
+      try {
+        docs = this.parseLinksData(docs);
+      } catch (e) {
+        // do nothing
+      }
 
+      return docs;
     },
 
     reset : function(){

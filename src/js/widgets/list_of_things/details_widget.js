@@ -18,7 +18,7 @@ define([
     ) {
     var DetailsWidget = ListOfThings.extend({
       defaultQueryArguments: {
-        fl: 'title,bibcode,author,keyword,pub,aff,volume,year,links_data,[citations],property,pubdate,abstract',
+        fl: 'title,bibcode,author,keyword,pub,aff,volume,year,[citations],property,pubdate,abstract,esources,data',
         rows : 25,
         start : 0
       },
@@ -123,7 +123,11 @@ define([
           docs[i] = self.prepareDocForViewing(d);
         });
 
-        docs = this.parseLinksData(docs);
+        try {
+          docs = this.parseLinksData(docs);
+        } catch (e) {
+          // do nothing
+        }
         return PaginationMixin.addPaginationToDocs(docs, start);
       }
     });

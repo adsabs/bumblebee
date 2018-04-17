@@ -20,7 +20,7 @@ define([
         'abstract', 'citations', 'references',
         'metrics', 'coreads', 'graphics'
       ],
-      url: _.template('resolver/<%= bibcode %>/<%= target %>')
+      url: _.template('link_gateway/<%= bibcode %>/<%= target %>')
     }
   };
 

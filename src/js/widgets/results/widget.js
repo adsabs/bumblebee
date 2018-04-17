@@ -82,7 +82,7 @@ define([
         'hl.maxAnalyzedChars': '150000',
         'hl.requireFieldMatch': 'true',
         'hl.usePhraseHighlighter': 'true',
-        fl     : 'title,abstract,bibcode,author,keyword,id,links_data,property,citation_count,[citations],pub,aff,email,volume,pubdate,doi,doctype',
+        fl     : 'title,abstract,bibcode,author,keyword,id,links_data,property,esources,data,citation_count,[citations],pub,aff,email,volume,pubdate,doi,doctype',
         rows : 25,
         start : 0
       },
@@ -256,7 +256,11 @@ define([
           return d;
         });
 
-        docs = this.parseLinksData(docs);
+        try {
+          docs = this.parseLinksData(docs);
+        } catch (e) {
+          // doc will not have link data
+        }
 
         return docs;
       },

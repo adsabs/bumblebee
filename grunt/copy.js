@@ -10,6 +10,15 @@ module.exports = function (grunt) {
     libs: {
       files: [
         {
+          cwd: 'node_modules/react-bootstrap/dist',
+          src: 'react-bootstrap.min.js',
+          dest: 'src/libs/react-bootstrap/',
+          expand: true,
+          rename: function (dest, src) {
+            return dest + src.replace('react-bootstrap.min', 'index');
+          }
+        },
+        {
           cwd: 'node_modules/file-saver/dist',
           src: 'FileSaver.js',
           dest: 'src/libs/file-saver/',

@@ -33,7 +33,7 @@ define([
     render: function () {
       ReactDOM.render(
         <ReactRedux.Provider store={this.store}>
-          <SortContainer/>
+          <SortContainer />
         </ReactRedux.Provider>,
         this.el
       );

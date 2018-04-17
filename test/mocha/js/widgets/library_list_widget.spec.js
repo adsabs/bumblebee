@@ -404,7 +404,7 @@ define([
       expect(req.get("target")).to.eql("biblib/libraries/2");
       expect(req.get("query").toJSON()).to.eql({
         "fl": [
-          "title,bibcode,author,keyword,pub,aff,volume,year,links_data,[citations],property,pubdate,abstract"
+          "title,bibcode,author,keyword,pub,aff,volume,year,links_data,[citations],property,esources,data,pubdate,abstract"
         ],
         "rows": [
           25

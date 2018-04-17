@@ -29,14 +29,14 @@
 
                     {{#if links.text}}
 
-                        <a href="{{links.text.[0].link}}" target="_blank" class="btn-link active-link s-active-link" aria-disabled="false">
+                        <a href="{{links.text.[0].url}}" target="_blank" class="btn-link active-link s-active-link" aria-disabled="false">
                             <i class="s-text-icon" aria-label="quick access to full text links"></i>
                         </a>
                         <ul class="hidden list-unstyled link-details s-link-details" role="menu">
 
                             {{#each links.text}}
-                            <li><a {{#if this.openAccess}} class="s-open-access"{{/if}} href="{{this.link}}"
-                                target="_blank">{{this.title}}</a></li>
+                            <li><a {{#if this.openAccess}} class="s-open-access"{{/if}} href="{{this.url}}"
+                                target="_blank">{{this.name}}</a></li>
                             {{/each}}
                         </ul>
 
@@ -56,14 +56,14 @@
 
                 {{#if links.list}}
 
-                <a href="{{links.list.[0].link}}" class="btn-link active-link s-active-link" aria-disabled="false">
+                <a href="{{links.list.[0].url}}" class="btn-link active-link s-active-link" aria-disabled="false">
                     <i class="s-list-icon" aria-label="quick links to lists of references, citations and more"></i>
                 </a>
 
                 <ul class="hidden list-unstyled list-unstyled link-details s-link-details" role="menu">
 
                     {{#each links.list}}
-                    <li><a href="{{this.link}}">{{this.title}}</a></li>
+                    <li><a href="{{this.url}}">{{this.name}}</a></li>
                     {{/each}}
                 </ul>
 
@@ -82,15 +82,15 @@
 
                 {{#if links.data}}
 
-                <a href="{{links.data.[0].link}}" target="_blank"  class="btn-link active-link s-active-link" aria-disabled="false">
+                <a href="{{links.data.[0].url}}" target="_blank"  class="btn-link active-link s-active-link" aria-disabled="false">
                     <i class="s-data-icon" aria-label="quick links to data associated with this article"></i>
                 </a>
 
                 <ul class="hidden list-unstyled link-details s-link-details" role="menu">
 
                     {{#each links.data}}
-                    <li><a {{#if this.openAccess}} class="s-open-access"{{/if}} href="{{this.link}}" target="_blank"
-                        >{{this.title}}</a></li>
+                    <li><a {{#if this.openAccess}} class="s-open-access"{{/if}} href="{{this.url}}" target="_blank"
+                        >{{this.name}}</a></li>
                     {{/each}}
                 </ul>
 

@@ -80,19 +80,24 @@ define([
     updateMetaTags: function (data) {
       data.url = Backbone.history.location.href;
 
-      data = this.parseResourcesData(data);
+      var sources = {};
+      try {
+        sources = this.parseResourcesData(data);
+      } catch (e) {
+        // do nothing
+      }
 
       // Look for `PDF` in title of the source
-      if (data.fullTextSources) {
-        var found = _.find(data.fullTextSources, function (source) {
-          return /PDF/.test(source.title);
+      if (_.isArray(sources.fullTextSources) && sources.fullTextSources.length > 0) {
+        var found = _.find(sources.fullTextSources, function (source) {
+          return /PDF/.test(source.name);
         });
         if (found) {
-          data.pdfUrl = found.link;
+          data.pdfUrl = found.url;
         }
       }
 
-      if (data.doi && data.doi.length) {
+      if (_.isArray(data.doi) && data.doi.length > 0) {
         data.doi = data.doi[0];
       }
 
@@ -124,7 +129,7 @@ define([
       document.dispatchEvent(ev);
     },
     defaultQueryArguments: {
-      fl: 'links_data,[citations],keyword,property,first_author,year,issn,isbn,title,aff,abstract,bibcode,pub,volume,author,issue,pubdate,doi,page',
+      fl: 'links_data,[citations],keyword,property,first_author,year,issn,isbn,title,aff,abstract,bibcode,pub,volume,author,issue,pubdate,doi,page,esources,data',
       rows: 1
     }
   });
