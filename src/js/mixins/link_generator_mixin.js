@@ -208,65 +208,62 @@ define(["underscore", "js/mixins/openurl_generator"], function(_, OpenURLGenerat
     const property = data.property;
     const hasHTMLOpenAccess = _.contains(property, 'OPENACCESS');
 
-    if (_.contains(property, 'ESOURCE')) {
+    // check the esources property
+    _.forEach(data.esources, function (el, ids, sources) {
+      const parts = el.split('_');
+      const linkInfo = LINK_TYPES[el];
+      const hasScan = _.contains(sources, 'ADS_SCAN');
+      const linkServer = data.link_server;
+      const identifier = data.doi || data.issn || data.isbn;
 
-      // check the esources property
-      _.forEach(data.esources, function (el, ids, sources) {
-        const parts = el.split('_');
-        const linkInfo = LINK_TYPES[el];
-        const hasScan = _.contains(sources, 'ADS_SCAN');
-        const linkServer = data.link_server;
-        const identifier = data.doi || data.issn || data.isbn;
+      // Create an OpenURL
+      // Only create an openURL if the following is true:
+      //   - The article HAS an Identifier (doi, issn, isbn)
+      //   - There is NO open access available
+      //   - There is NO scan available from the ADS
+      //   - The user is authenticated
+      //   - the user HAS a library link server
+      if (identifier && linkServer && !hasHTMLOpenAccess && !hasScan) {
+        const openUrl = new OpenURLGenerator(data, linkServer);
+        openUrl.createOpenURL();
+        fullTextSources.push({
+          url: openUrl.openURL,
+          openUrl: true,
+          name: 'Find it at your Institution',
+          description: linkInfo && linkInfo.description
+        });
+      }
 
-        // Create an OpenURL
-        // Only create an openURL if the following is true:
-        //   - The article HAS an Identifier (doi, issn, isbn)
-        //   - There is NO open access available
-        //   - There is NO scan available from the ADS
-        //   - The user is authenticated
-        //   - the user HAS a library link server
-        if (identifier && linkServer && !hasHTMLOpenAccess && !hasScan) {
-          const openUrl = new OpenURLGenerator(data, linkServer);
-          openUrl.createOpenURL();
+      if (parts.length > 1) {
+        // if entry has _HTML then also check for OPENACCESS on property
+        if (parts[1] === 'HTML') {
           fullTextSources.push({
-            url: openUrl.openURL,
-            openUrl: true,
-            name: 'Find it at your Institution',
+            url: createGatewayUrl(data.bibcode, el),
+            open: hasHTMLOpenAccess,
+            name: linkInfo && linkInfo.shortName,
             description: linkInfo && linkInfo.description
           });
-        }
 
-        if (parts.length > 1) {
-          // if entry has _HTML then also check for OPENACCESS on property
-          if (parts[1] === 'HTML') {
-            fullTextSources.push({
-              url: createGatewayUrl(data.bibcode, el),
-              open: hasHTMLOpenAccess,
-              name: linkInfo && linkInfo.shortName,
-              description: linkInfo && linkInfo.description
-            });
-
-          // otherwise, just check for the <field>_OPENACCESS
-          } else {
-            fullTextSources.push({
-              url: createGatewayUrl(data.bibcode, el),
-              open: _.contains(property, parts[0] + '_OPENACCESS'),
-              name: linkInfo && linkInfo.shortName,
-              description: linkInfo && linkInfo.description
-            });
-          }
-
-        // if entry cannot be split, then it will not be open access
+        // otherwise, just check for the <field>_OPENACCESS
         } else {
           fullTextSources.push({
             url: createGatewayUrl(data.bibcode, el),
-            open: false,
+            open: _.contains(property, parts[0] + '_OPENACCESS'),
             name: linkInfo && linkInfo.shortName,
             description: linkInfo && linkInfo.description
           });
         }
-      });
-    }
+
+      // if entry cannot be split, then it will not be open access
+      } else {
+        fullTextSources.push({
+          url: createGatewayUrl(data.bibcode, el),
+          open: false,
+          name: linkInfo && linkInfo.shortName,
+          description: linkInfo && linkInfo.description
+        });
+      }
+    });
 
     // reorder the full text sources based on our default ordering
     fullTextSources = _.sortBy(fullTextSources, function (source) {
@@ -275,29 +272,27 @@ define(["underscore", "js/mixins/openurl_generator"], function(_, OpenURLGenerat
     });
 
     // check the data property
-    if (_.contains(property, 'DATA')) {
-      _.forEach(data.data, function (product) {
-        const parts = product.split(':');
-        const linkInfo = LINK_TYPES[parts[0]];
+    _.forEach(data.data, function (product) {
+      const parts = product.split(':');
+      const linkInfo = LINK_TYPES[parts[0]];
 
-        // are there any without a count? just make them 0
-        if (parts.length > 1) {
-          dataProducts.push({
-            url: createGatewayUrl(data.bibcode, parts[0]),
-            count: parts[1],
-            name: linkInfo && linkInfo.shortName,
-            description: linkInfo && linkInfo.description
-          });
-        } else {
-          dataProducts.push({
-            url: createGatewayUrl(data.bibcode, product),
-            count: '0',
-            name: product,
-            description: linkInfo && linkInfo.description
-          });
-        }
-      });
-    }
+      // are there any without a count? just make them 0
+      if (parts.length > 1) {
+        dataProducts.push({
+          url: createGatewayUrl(data.bibcode, parts[0]),
+          count: parts[1],
+          name: linkInfo && linkInfo.shortName,
+          description: linkInfo && linkInfo.description
+        });
+      } else {
+        dataProducts.push({
+          url: createGatewayUrl(data.bibcode, product),
+          count: '0',
+          name: product,
+          description: linkInfo && linkInfo.description
+        });
+      }
+    });
 
     return {
       fullTextSources: fullTextSources,
