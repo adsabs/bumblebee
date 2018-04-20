@@ -244,11 +244,16 @@ define([
           var widgetName = data.widgetName;
           //additional info that the renderWidgetForListOfBibcodes function might need (only used by export right now)
           var additional = data.additional;
+          var format = additional.format || 'bibtex';
           //tab description for library widget
           var subView = data.subView;
           //id of library being shown
           var id = data.id;
           var publicView = data.publicView;
+          // Author-affiliation has a specific widget
+          if (widgetName === "ExportWidget" && format === "authoraff") {
+            widgetName = 'AuthorAffiliationTool';
+          }
 
           //clear current data
           app.getWidget(widgetName).done(function(widget){
@@ -258,29 +263,38 @@ define([
 
           //just stick the empty views in there, otherwise the interface lags as the lib controller
           //paginates through the library bibcodes
-          if (publicView){
-            app.getObject('MasterPageManager').show("PublicLibrariesPage",
-                ["IndividualLibraryWidget", widgetName]);
-            this.route = "#/public-libraries/" + data.id ;
-          }
-          else {
-            app.getObject('MasterPageManager').show("LibrariesPage",
-                ["IndividualLibraryWidget", "UserNavbarWidget", widgetName]);
-            this.route = "#user/libraries/" + data.id;
-            publishPageChange("libraries-page");
+          if (!(widgetName === "ExportWidget" && format === "classic")) { // export to classic opens a new tab, nothing to update here
+            if (publicView){
+              app.getObject('MasterPageManager').show("PublicLibrariesPage",
+                  ["IndividualLibraryWidget", widgetName]);
+              this.route = "#/public-libraries/" + data.id ;
+            }
+            else {
+              app.getObject('MasterPageManager').show("LibrariesPage",
+                  ["IndividualLibraryWidget", "UserNavbarWidget", widgetName]);
+              this.route = "#user/libraries/" + data.id;
+              publishPageChange("libraries-page");
+            }
           }
 
           function renderLibrarySub(id){
             app.getObject("LibraryController")
                 .getLibraryBibcodes(id)
                 .done(function (bibcodes){
-                  app.getWidget(widgetName).done(function(widget){
-                    widget.renderWidgetForListOfBibcodes(bibcodes, additional);
-                  });
-                  //then, set library tab to proper field'
-                  app.getWidget("IndividualLibraryWidget").done(function(widget){
-                    widget.setSubView({ subView : subView, publicView : publicView, id : id });
-                  });
+
+                  if (widgetName === "ExportWidget" && format === "classic") {
+                    app.getWidget(widgetName).done(function(widget){
+                      widget.openClassicExports({bibcodes: bibcodes, libid: data.id});
+                    });
+                    return;
+                  } else {
+                    app.getWidget(widgetName).done(function(widget){
+                      widget.renderWidgetForListOfBibcodes(bibcodes, additional);
+                    });
+                    app.getWidget("IndividualLibraryWidget").done(function(widget){
+                      widget.setSubView({ subView : subView, publicView : publicView, id : id });
+                    });
+                  }
                 });
           }
 
