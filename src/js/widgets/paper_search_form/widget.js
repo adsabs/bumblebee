@@ -47,7 +47,35 @@ define([
           $(this).trigger('enter');
         }
       });
-      this.$("#pub-input").autocomplete({ source : AutocompleteData, minLength : 2 , autoFocus : true });
+      this.$("#pub-input").autocomplete({
+        minLength : 1,
+        autoFocus : true,
+        source: function (request, response) {
+          var matches = $.map(AutocompleteData, function (item) {
+            if (_.isString(request.term)) {
+              var term = request.term.toUpperCase();
+              var bibstem = item.value.toUpperCase();
+              var label = item.label.toUpperCase();
+              if (
+                bibstem.indexOf(term) === 0 ||
+                label.indexOf(term) === 0 ||
+                label.replace(/^THE\s/, '').indexOf(term) === 0
+              ) {
+                return item;
+              }
+            }
+          });
+          return response(matches);
+        }
+      }).data('ui-autocomplete')._renderItem = function (ul, item) {
+        var re = new RegExp('(' + this.term + ')', 'i');
+        var label = item.label.replace(re,
+          '<span class="ui-state-highlight">$1</span>'
+        );
+        var $li = $('<li/>').appendTo(ul);
+        $('<a/>').attr('href', '#').html(label).appendTo($li);
+        return $li;
+      };
     },
 
     checkPaperFormDisabled : function(){
