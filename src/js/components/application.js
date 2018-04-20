@@ -812,7 +812,7 @@ define([
       if ('setBeeHive' in b.parent)
         b.parent.setBeeHive({fake: 'one'});
 
-      delete b;
+      b = null;
 
       if (this.debug)
         console.log('Destroyed: ' + symbolicName);

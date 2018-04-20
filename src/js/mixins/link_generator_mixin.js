@@ -2,7 +2,7 @@ define(["underscore", "js/mixins/openurl_generator"], function(_, OpenURLGenerat
   const GATEWAY_BASE_URL = '/link_gateway/';
 
   const DEFAULT_ORDERING = [
-    'ADS PDF', 'ADS Scanned Article', 'Find it at your Institution', 
+    'ADS PDF', 'ADS Scanned Article', 'Find it at your Institution',
     'Publisher Article', 'Publisher PDF', 'arXiv PDF'
   ];
 
@@ -304,7 +304,7 @@ define(["underscore", "js/mixins/openurl_generator"], function(_, OpenURLGenerat
       dataProducts: dataProducts
     };
   }, function (data) {
-    
+
     // provide a resolver string, to help with the memoizer
     return JSON.stringify(_.pick(data, ['bibcode', 'property', 'esources', 'data']));
   });
@@ -379,7 +379,7 @@ define(["underscore", "js/mixins/openurl_generator"], function(_, OpenURLGenerat
     const parseLinksDataForModel = _.bind(this._parseLinksDataForModel, this);
     const parseResourcesData = _.bind(this.parseResourcesData, this);
     if (_.isArray(data)) {
-      return _.map(data, (d) => {
+      return _.map(data, function (d) {
         const linkData = parseResourcesData(d);
         return parseLinksDataForModel(d, linkData);
       });

@@ -39,8 +39,8 @@ define([
 
     togglePublicState : function(e){
 
-      var public = $(e.target).hasClass("make-public");
-      this.trigger("update-public-status", public);
+      var pub = $(e.target).hasClass("make-public");
+      this.trigger("update-public-status", pub);
 
     },
 

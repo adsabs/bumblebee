@@ -34,16 +34,16 @@ define(['underscore'], function(_) {
      *
      */
     newInstance: function(options) {
-      var private = {
+      var priv = {
         id: _.has(options, 'id') ? options.id : _.uniqueId(':psk'),
         creator: _.has(options, 'creator') ? options.creator : null
       };
       return new PubSubKey({
         getId: function() {
-          return private.id;
+          return priv.id;
         },
         getCreator: function() {
-          return private.creator;
+          return priv.creator;
         }
       });
     }
