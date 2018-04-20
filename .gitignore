@@ -34,3 +34,5 @@ src/styles/css
 
 src/discovery.vars.js
 .*
+!.babelrc
+!.travis.yml
