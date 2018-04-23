@@ -114,7 +114,7 @@ define([
         //create header
         this.updateHeader();
 
-        if (["library", "export", "metrics", "visualization", "citation_helper"].indexOf(view) > -1){
+        if (["library", "export", "authoraff", "metrics", "visualization", "citation_helper"].indexOf(view) > -1){
           that.view.main.empty();
         }
         else if (view === "admin"){
@@ -199,38 +199,38 @@ define([
                 // to figure out which tab to highlight
                 subView: arg1
               };
-                  /*
-                  * these subviews require requesting bibcode data first
-                  * */
-                if (_.contains(["export", "metrics", "visualization", "citation_helper"], data.subView )) {
+              /*
+              * these subviews require requesting bibcode data first
+              * */
+              if (_.contains(["export", "metrics", "visualization", "citation_helper"], data.subView )) {
 
-                    switch (arg1) {
-                      case "export":
-                        data.widgetName = "ExportWidget";
-                        data.additional = { format : arg2, libid: id };
-                        break;
-                      case "visualization":
-                        data.widgetName = arg2;
-                        data.additional = {};
-                        break;
-                      case "metrics":
-                        data.widgetName = "Metrics";
-                        data.additional = {};
-                        break;
-                      case "citation_helper":
-                        data.widgetName = "CitationHelper";
-                        data.additional = { libid: id,
-                          permission: this.headerModel.get('permission'),
-                          libname: this.headerModel.get('name')
-                        };
-                        break;
-                    }
-                    pubsub.publish(pubsub.NAVIGATE, "library-" + arg1, data);
-                }
+                  switch (arg1) {
+                    case "export":
+                      data.widgetName = "ExportWidget";
+                      data.additional = { format : arg2, libid: id };
+                      break;
+                    case "visualization":
+                      data.widgetName = arg2;
+                      data.additional = {};
+                      break;
+                    case "metrics":
+                      data.widgetName = "Metrics";
+                      data.additional = {};
+                      break;
+                    case "citation_helper":
+                      data.widgetName = "CitationHelper";
+                      data.additional = { libid: id,
+                        permission: this.headerModel.get('permission'),
+                        libname: this.headerModel.get('name')
+                      };
+                      break;
+                  }
+                  pubsub.publish(pubsub.NAVIGATE, "library-" + arg1, data);
+              }
 
-                else if (data.subView === "library"){
-                  pubsub.publish(pubsub.NAVIGATE, "IndividualLibraryWidget", data);
-                }
+              else if (data.subView === "library"){
+                pubsub.publish(pubsub.NAVIGATE, "IndividualLibraryWidget", data);
+              }
               else if ( data.subView ===  "admin"){
                   pubsub.publish(pubsub.NAVIGATE, "LibraryAdminView", data);
                 }
