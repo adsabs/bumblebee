@@ -16,6 +16,7 @@
 define([
     'marionette',
     'backbone',
+    'utils',
     'js/components/api_request',
     'js/components/api_query',
     'js/components/api_feedback',
@@ -29,6 +30,7 @@ define([
 
   function (Marionette,
     Backbone,
+    utils,
     ApiRequest,
     ApiQuery,
     ApiFeedback,
@@ -292,9 +294,6 @@ define([
 
         //page is zero indexed! so 0 == page 1, etc
         var page;
-        //if someone is changing the # of records per page,
-        // take them back to first page to prevent confusion
-        if (options.perPage && !options.hasOwnProperty("page")) options.page = 0;
         if (options.page !== undefined){
 
           //validate page
@@ -318,6 +317,16 @@ define([
         }
         else {
           page = null
+        }
+
+        // get the page from the url or update the current hash
+        var pageParam = utils.qs('page', location.hash);
+        if (page === null && pageParam) {
+          page = window.parseInt(pageParam);
+        } else if (page && !pageParam) {
+          location.hash += '&page=' + page;
+        } else {
+          location.hash = utils.updateHash('page', page);
         }
 
         var start = this.getPageStart(page, perPage, numFound);
