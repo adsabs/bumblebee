@@ -363,7 +363,6 @@ define([
                 }
               };
               app.getWidget('Results').then(updatePagination);
-              app.getWidget('LibraryListWidget').then(updatePagination);
             } else {
               route += '&page=0';
             }
