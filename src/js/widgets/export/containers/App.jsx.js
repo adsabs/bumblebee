@@ -3,7 +3,8 @@
 define([
   'underscore',
   'react', 'react-redux',
-  'react-prop-types', '../actions/index',
+  'react-prop-types',
+  'es6!../actions/index',
   'es6!../components/Closer.jsx',
   'es6!../components/Setup.jsx',
   'es6!../components/Export.jsx'
