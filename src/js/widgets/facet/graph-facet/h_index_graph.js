@@ -364,14 +364,28 @@ define(['./base_graph',
         this.$(".slider-data").html(sliderWindowTemplate({pastTenseTitle : this.pastTenseTitle}));
       },
 
-      triggerGraphChange: function () {
+      triggerGraphChange: function (update) {
 
-        var val;
-        val = this.$(".show-slider-data-first").val();
+       var data = _.clone(this.model.get("graphData"));
+       if (_.isArray(data)) {
+         var min = data[0].x;
+         var max = data[data.length - 1].x;
+         var $first = this.$('.show-slider-data-first');
+         var a = $first.val();
+  
+         // a < min, set to min
+         a = (a < min) ? min : a;
 
-        this.$(".slider").slider("value", val);
-
-        this.graphChange(val)
+         // a > max, set to b
+         a = (a > max) ? max : a;
+  
+         if (update) {
+           $first.val(a);
+         }
+  
+         this.$(".slider").slider("value", a);
+         this.graphChange(a);
+       }
       },
 
       submitFacet: function () {
