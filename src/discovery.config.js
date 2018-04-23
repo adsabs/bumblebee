@@ -217,7 +217,8 @@ require.config({
     'select2' : 'libs/select2/select2',
     'sinon': '../bower_components/sinon/index',
     'sprintf': 'libs/sprintf/sprintf',
-    'squire': '../bower_components/squire/src/Squire'
+    'squire': '../bower_components/squire/src/Squire',
+    'utils': 'js/utils'
   },
 
   hbs: {

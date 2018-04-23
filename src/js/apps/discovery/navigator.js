@@ -333,6 +333,25 @@ define([
             var route = '#search/' + queryUpdater.clean(q).url();
           }
 
+          // if page is found, update the pagination
+          if (q) {
+            if (_.isFunction(q.has) && q.has('page')) {
+              var page = q.get('page')[0];
+              if (_.isString(page)) {
+                page = window.parseInt(page);
+              }
+              var updatePagination = function (w) {
+                if (w && _.isFunction(w.updatePagination)) {
+                  w.updatePagination({ page: page });
+                }
+              };
+              app.getWidget('Results').then(updatePagination);
+              app.getWidget('LibraryListWidget').then(updatePagination);
+            } else {
+              route += '&page=0';
+            }
+          }
+
           //taking care of inserting bigquery key here, not sure if right place
           //clean(q) above got rid of qid key, reinsert it
           if (q && q.get("__qid")){

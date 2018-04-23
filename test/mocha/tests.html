@@ -84,6 +84,7 @@
                 mocha.suite.afterEach(function () {
                   $('body>div:not(#mocha)').empty();
                   document.title = 'Bumblebee Tests';
+                  location.hash = '';
                 });
 
                 // Make sure we get hold of the coverage variable, if necessary

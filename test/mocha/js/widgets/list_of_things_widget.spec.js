@@ -39,6 +39,7 @@ define(['marionette',
         if (ta) {
           ta.empty();
         }
+        location.hash = '';
         done();
       });
 
