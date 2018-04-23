@@ -244,6 +244,9 @@ define([
           var widgetName = data.widgetName;
           //additional info that the renderWidgetForListOfBibcodes function might need (only used by export right now)
           var additional = data.additional;
+          if (additional.format && additional.format === "other") {
+            additional.format = 'bibtex';
+          }
           var format = additional.format || 'bibtex';
           //tab description for library widget
           var subView = data.subView;
