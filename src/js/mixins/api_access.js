@@ -36,6 +36,8 @@ define([
           var userObject = this.getBeeHive().getObject("User");
           var userName = data.anonymous ? undefined : data.username;
           userObject.setUser(userName);
+          var storage = this.getBeeHive().getService('PersistentStorage');
+          storage.set('appConfig', data);
         }
 
         else {
