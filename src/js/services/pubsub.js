@@ -43,21 +43,17 @@ define(['backbone', 'underscore', 'js/mixins/hardened', 'pubsub_service_impl', '
       var self = this;
       // purpose of these functions is to expose simplified
       // api (without need to pass pubsubkey explicitly)
-      iface['publish'] = function() {
-        arguments = _.toArray(arguments); arguments.unshift(ctx.key);
-        self.publish.apply(self, arguments);
+      iface['publish'] = function () {
+        self.publish.apply(self, [ctx.key].concat(_.toArray(arguments)));
       };
-      iface['subscribe'] = function() {
-        arguments = _.toArray(arguments); arguments.unshift(ctx.key);
-        self.subscribe.apply(self, arguments);
+      iface['subscribe'] = function () {
+        self.subscribe.apply(self, [ctx.key].concat(_.toArray(arguments)));
       };
-      iface['unsubscribe'] = function() {
-        arguments = _.toArray(arguments); arguments.unshift(ctx.key);
-        self.unsubscribe.apply(self, arguments);
+      iface['unsubscribe'] = function () {
+        self.unsubscribe.apply(self, [ctx.key].concat(_.toArray(arguments)));
       };
-      iface['subscribeOnce'] = function() {
-        arguments = _.toArray(arguments); arguments.unshift(ctx.key);
-        self.subscribeOnce.apply(self, arguments);
+      iface['subscribeOnce'] = function () {
+        self.subscribeOnce.apply(self, [ctx.key].concat(_.toArray(arguments)));
       };
       iface['getCurrentPubSubKey'] = function() {
         return ctx.key;

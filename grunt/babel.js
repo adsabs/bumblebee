@@ -6,14 +6,10 @@
  */
 module.exports = {
   release: {
-    options: {
-      plugins: ['transform-react-jsx'],
-      presets: ['env', 'react']
-    },
     files: [{
       expand: true,
       cwd: 'dist/js',
-      src: '**/*.jsx.js',
+      src: '**/*.js',
       dest: 'dist/js'
     }]
   }
