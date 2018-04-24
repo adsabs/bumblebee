@@ -85,6 +85,8 @@
                   $('body>div:not(#mocha)').empty();
                   document.title = 'Bumblebee Tests';
                   location.hash = '';
+                  window.localStorage.clear();
+                  window.sessionStorage.clear();
                 });
 
                 // Make sure we get hold of the coverage variable, if necessary
