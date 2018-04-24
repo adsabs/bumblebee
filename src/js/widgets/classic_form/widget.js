@@ -171,7 +171,7 @@ define([
             }
             phrases = val.match(matcher);
 
-            //quote matches if field is author or object 
+            //quote matches if field is author or object
             phrases = (field == "author" || field == "object") ? _.map(phrases, function(p){ return '"' + p + '"'}) : phrases;
             //use parentheses always (bc of = parsing issue)
             phrases = phrases.length > 1 ? phrases.join(logic) : phrases[0];
@@ -184,21 +184,28 @@ define([
     },
 
     onRender : function(e){
-      this.$("input[name=bibstem]")
-        .on( "keydown", function( event ) {
-          if ( event.keyCode === $.ui.keyCode.TAB &&
-            $( this ).autocomplete( "instance" ).menu.active ) {
-            event.preventDefault();
-          }
-        })
-        .autocomplete({
-        source : AutocompleteData,
-        minLength : 2 ,
+      var getLastTerm = function (term) {
+        return _.last(term.split(/(,\s|;\s|[,;])/));
+      }
+      this.$("input[name=bibstem]").autocomplete({
+        minLength : 1,
         autoFocus : true,
-        source: function( request, response ) {
-          // delegate back to autocomplete, but extract the last term
-          response( $.ui.autocomplete.filter(
-            AutocompleteData, extractLast( request.term ) ) );
+        source: function (request, response) {
+          var matches = $.map(AutocompleteData, function (item) {
+            if (_.isString(request.term)) {
+              var term = getLastTerm(request.term).toUpperCase();
+              var bibstem = item.value.toUpperCase();
+              var label = item.label.toUpperCase();
+              if (
+                bibstem.indexOf(term) === 0 ||
+                label.indexOf(term) === 0 ||
+                label.replace(/^THE\s/, '').indexOf(term) === 0
+              ) {
+                return item;
+              }
+            }
+          });
+          return response(matches);
         },
         focus: function() {
           // prevent value inserted on focus
@@ -215,11 +222,23 @@ define([
           this.value = terms.join( ", " );
           return false;
         }
-      });
+      }).data('ui-autocomplete')._renderItem = function (ul, item) {
+        var term = getLastTerm(this.term).toUpperCase().trim();
+        var re = new RegExp('(' + term + ')', 'i');
+        var label = item.label;
+        if (term.length > 0) {
+          label = label.replace(re,
+            '<span class="ui-state-highlight">$1</span>'
+          );
+        }
+        var $li = $('<li/>').appendTo(ul);
+        $('<a/>').attr('href', '#').html(label).appendTo($li);
+        return $li;
+      };
     }
   });
 
-  FormWidget = BaseWidget.extend({
+  var FormWidget = BaseWidget.extend({
 
     initialize: function (options) {
       options = options || {};
@@ -264,5 +283,4 @@ define([
   });
 
   return FormWidget;
-
-})
+});
