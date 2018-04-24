@@ -31,8 +31,7 @@ define(['marionette',
 
       //for citation and reads graph
       this.currentScale = "linear";
-      this.on("facet:active", this.pulseApplyButton)
-
+      this.on("facet:active", this.pulseApplyButton);
     },
 
     bins : 12, //will be around 12, depending on remainders
@@ -68,6 +67,7 @@ define(['marionette',
     },
 
     onRender: function () {
+      var self = this;
       if (!this.model.get("graphData")) return;
       if (this.model.get("graphData").length < 2){
         this.$el.html("Too little data to make a useful graph.");
@@ -78,6 +78,17 @@ define(['marionette',
       this.addSliderWindows();
       this.buildSlider();
       if (this.addToOnRender) this.addToOnRender();
+
+      var graphUpdate = _.debounce(_.bind(this.triggerGraphChange, this), 100);
+      $('input[type="text"]', this.$el).on('keyup', function (e) {
+        graphUpdate();
+        if (e && e.which === 13) {
+
+          // make sure graph updates before submitting
+          self.triggerGraphChange.call(self, true);
+          self.submitFacet.call(self);
+        }
+      });
     }
 
   });

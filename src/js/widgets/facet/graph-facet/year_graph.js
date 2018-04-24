@@ -354,14 +354,42 @@ define([
        );
     },
 
-     triggerGraphChange: function () {
-       var val1, val2;
-       val1 = this.$(".show-slider-data-first").val();
-       val2 = this.$(".show-slider-data-second").val();
+     triggerGraphChange: function (update) {
+       var data = _.clone(this.model.get("graphData"));
+       if (_.isArray(data)) {
+         var min = data[0].x;
+         var max = data[data.length - 1].x;
+         var $first = this.$('.show-slider-data-first');
+         var $second = this.$('.show-slider-data-second');
+         var a = $first.val();
+         var b = $second.val();
+  
+         // a < min, set to min
+         a = (a < min) ? min : a;
 
-       this.$(".slider").slider("values", [val1, val2]);
+         // b > max, set to max
+         b = (b > max) ? max : b;
 
-       this.graphChange(val1, val2)
+         // a > max, set to b
+         a = (a > max) ? b : a;
+
+         // b < min, set to a
+         b = (b < min) ? a : b;
+
+         // a > b, set to b
+         a = (a > b) ? b : a;
+
+         // b < a, set to a
+         b = (b < a) ? a : b;
+  
+         if (update) {
+           $first.val(a);
+           $second.val(b);
+         }
+  
+         this.$(".slider").slider("values", [a, b]);
+         this.graphChange(a, b);
+       }
      },
 
      submitFacet: function () {
