@@ -81,8 +81,14 @@ define([
       var beehive = this.getBeeHive();
       var dynConf = this.getObject('DynamicConfig');
       var timeout = 3000;
-
       var defer = $.Deferred();
+
+      // check out the local storage to see if we have a copy
+      var storage = beehive.getService('PersistentStorage');
+      var config = storage.get('appConfig');
+      if (config && config.expire_in && new Date(config.expire_in) > new Date()) {
+        return defer.resolve(config).promise();
+      }
 
       // this is the application dynamic config
       var api = this.getBeeHive().getService('Api');
