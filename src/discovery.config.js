@@ -218,7 +218,8 @@ require.config({
     'sinon': '../bower_components/sinon/index',
     'sprintf': 'libs/sprintf/sprintf',
     'squire': '../bower_components/squire/src/Squire',
-    'utils': 'js/utils'
+    'utils': 'js/utils',
+    'reselect': 'libs/reselect'
   },
 
   hbs: {

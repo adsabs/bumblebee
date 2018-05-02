@@ -1,19 +1,23 @@
 'use strict';
 define([
   'redux',
-  'redux-thunk',
-  'es6!./modules/resources-app',
-  'redux-immutable'
-], function (Redux, ReduxThunk, ResourcesApp, ReduxImmutable) {
+  'es6!./modules/api',
+  'es6!./modules/ui',
+  'es6!./middleware/api',
+  'es6!./middleware/ui'
+], function (Redux, api, ui, apiMiddleware, uiMiddleware) {
 
-  const { createStore, applyMiddleware } = Redux;
-  const { combineReducers } = ReduxImmutable;
+  const { createStore, applyMiddleware, combineReducers } = Redux;
 
   return function configureStore(context) {
-    const middleware = applyMiddleware(ReduxThunk.default.withExtraArgument(context));
+    const middleware = applyMiddleware.apply(Redux, [
+      ...uiMiddleware,
+      ...apiMiddleware(context)
+    ]);
     const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || Redux.compose;
     const reducer = combineReducers({
-        ResourcesApp: ResourcesApp.reducer
+        api: api.reducer,
+        ui: ui.reducer
     });
     const store = createStore(reducer, composeEnhancers(middleware));
     return store;

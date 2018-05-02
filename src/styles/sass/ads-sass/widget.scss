@@ -88,3 +88,100 @@ div[data-widget="ShowPaperExport"] .close-circle {
 .custom-format-buttons {
   padding-top: 26px;
 }
+
+
+// Resources Widget
+.resources__container {
+  background-color: white;
+  position: relative;
+}
+
+.resources__content__title {
+  font-size: 1.1em;
+}
+
+.resources__header__title {
+  margin-left: 5px;
+  font-size: 0.7em;
+  display: inline-block;
+  text-transform: uppercase;
+}
+
+.resources__header__row {
+  color: #335baf;
+  font-size: 1.5em;
+  margin-left: -10px;
+  padding-left: 10px;
+  padding-right: 8px;
+}
+
+.resources__full__list {
+  & .resources__content {
+    margin-left: 7px;
+    padding-top: 3px;
+    width: 80%;
+    border-left: solid 3px grey;
+    padding-left: 5px;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+  }
+
+  & .resources__content__links {
+    font-size: 1em;
+  }
+
+  & .resources__content__link:hover {
+    text-decoration: none;
+  }
+
+  & .resources__content__link__separator {
+    display: inline-block;
+    margin-right: 5px;
+    margin-left: 5px;
+  }
+
+  & .resources__content__link {
+    position: relative;
+  }
+
+  & .resources__content__link.unlock::after {
+    background-color: lightgreen;
+    width: 7px;
+    height: 7px;
+    position: absolute;
+    left: 70%;
+    top: 70%;
+    border-radius: 50%;
+    border: solid 1px black;
+    content: '';
+  }
+
+  & .resources__content__link.lock::after {
+    background-color: red;
+    width: 7px;
+    height: 7px;
+    position: absolute;
+    left: 70%;
+    top: 70%;
+    border-radius: 50%;
+    border: solid 1px black;
+    content: '';
+  }
+}
+
+.resources__data__list {
+  & .resources__content {
+    margin-left: 7px;
+    border-left: solid 3px grey;
+    padding-left: 5px;
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+  }
+
+  & .resources__content__link {
+    font-size: 1em;
+    min-width: 50%;
+  }
+}
