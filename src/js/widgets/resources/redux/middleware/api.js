@@ -61,7 +61,7 @@ define([
             dispatch({ type: SET_HAS_ERROR, result: 'unable to parse bibcode from query' });
           }
         } else {
-          dispatch({ type: SET_HAS_ERROR, result: 'did not recieve a bibcode in query' });
+          dispatch({ type: SET_HAS_ERROR, result: 'did not receive a bibcode in query' });
         }
       } else {
         dispatch({ type: SET_HAS_ERROR, result: 'query is not a plain object' });
@@ -103,7 +103,7 @@ define([
           try {
             data = ctx.parseResourcesData(docs[0]);
           } catch (e) {
-            dispatch({ type: SET_HAS_ERROR, result: 'unable to parse resource data' });
+            return dispatch({ type: SET_HAS_ERROR, result: 'unable to parse resource data' });
           }
 
           if (data.fullTextSources.length > 0) {
@@ -121,10 +121,10 @@ define([
 
           dispatch({ type: SET_LOADING, result: false });
         } else {
-          dispatch({ type: SET_HAS_ERROR, result: 'did not recieve docs' });
+          dispatch({ type: SET_HAS_ERROR, result: 'did not receive docs' });
         }
       } else {
-        dispatch({ type: SET_HAS_ERROR, result: 'did not recieve docs' });
+        dispatch({ type: SET_HAS_ERROR, result: 'did not receive docs' });
       }
     }
   };

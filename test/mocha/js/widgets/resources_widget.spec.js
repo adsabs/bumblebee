@@ -12,7 +12,7 @@ define([
       request: this.sb.stub()
     }))({ verbose: false });
     this.state = function (w) {
-      return w.store.getState().get('ResourcesApp').toJS();
+      return w.store.getState();
     };
   };
 
@@ -68,7 +68,7 @@ define([
         w.activate(this.pubsub.beehive);
         const mockQuery = null;
         this.pubsub.publish(this.pubsub.DISPLAY_DOCUMENTS, mockQuery);
-        expect(this.state(w).error).to.eql('No query');
+        expect(this.state(w).ui.hasError).to.eql('did not receive query');
         done();
       });
       it('handles not being able to find a bibcode in query', function (done) {
@@ -76,7 +76,7 @@ define([
         w.activate(this.pubsub.beehive);
         const mockQuery = { toJSON: _.constant({ q: [] })};
         this.pubsub.publish(this.pubsub.DISPLAY_DOCUMENTS, mockQuery);
-        expect(this.state(w).error).to.eql('Did not receive a bibcode');
+        expect(this.state(w).ui.hasError).to.eql('did not receive a bibcode in query');
         done();
       });
       it('handles parsing issue with bibcode', function (done) {
@@ -84,7 +84,7 @@ define([
         w.activate(this.pubsub.beehive);
         const mockQuery = { toJSON: _.constant({ q: ['bibBAZ:foo'] })};
         this.pubsub.publish(this.pubsub.DISPLAY_DOCUMENTS, mockQuery);
-        expect(this.state(w).error).to.eql('Could not parse bibcode');
+        expect(this.state(w).ui.hasError).to.eql('unable to parse bibcode from query');
         done();
       });
       it('fully updates state after getting bibcode/query', function (done) {
@@ -92,9 +92,9 @@ define([
         w.activate(this.pubsub.beehive);
         const mockQuery = { toJSON: _.constant({ q: ['bibcode:foo'] })};
         this.pubsub.publish(this.pubsub.DISPLAY_DOCUMENTS, mockQuery);
-        expect(this.state(w).identifier).to.eql('foo');
-        expect(this.state(w).fetching).to.eql(true);
-        expect(this.state(w).query).to.eql(mockQuery.toJSON());
+        expect(this.state(w).ui.loading).to.eql(true);
+        expect(this.state(w).ui.noResults).to.eql(false);
+        expect(this.state(w).ui.hasError).to.eql(false);
         done();
       });
     });
@@ -111,12 +111,17 @@ define([
           })
         };
         w.parseResourcesData.returns({
-          fullTextSources: [{ 'test': 'foo' }],
+          fullTextSources: [{ shortName: 'blah', 'test': 'foo' }],
           dataProducts: [{}]
         });
         this.pubsub.publish(this.pubsub.DELIVERING_RESPONSE, mockResponse);
-        expect(this.state(w).fullTextSources).to.eql([{ 'test': 'foo' }]);
-        expect(this.state(w).dataProducts).to.eql([{}]);
+        expect(this.state(w).ui.fullTextSources).to.eql({
+          blah: [{
+            test: 'foo',
+            shortName: 'blah'
+          }]
+        });
+        expect(this.state(w).ui.dataProducts).to.eql([{}]);
         done();
       });
       it('handles not getting a response', function (done) {
@@ -124,7 +129,7 @@ define([
         w.activate(this.pubsub.beehive);
         const mockResponse = undefined;
         this.pubsub.publish(this.pubsub.DELIVERING_RESPONSE, mockResponse);
-        expect(this.state(w).error).to.eql('No response');
+        expect(this.state(w).ui.hasError).to.eql('did not receive response from server');
         done();
       });
       it('handles not getting any docs', function (done) {
@@ -132,7 +137,7 @@ define([
         w.activate(this.pubsub.beehive);
         const mockResponse = { toJSON: _.constant({ response: { docs: [] }})};
         this.pubsub.publish(this.pubsub.DELIVERING_RESPONSE, mockResponse);
-        expect(this.state(w).error).to.eql('No docs');
+        expect(this.state(w).ui.hasError).to.eql('did not receive docs');
         done();
       });
       it('handles link generator parsing error', function (done) {
@@ -142,7 +147,7 @@ define([
         const mockResponse = { toJSON: _.constant({ response: { docs: [{ foo: 'bar' }] }})};
         w.parseResourcesData.throws();
         this.pubsub.publish(this.pubsub.DELIVERING_RESPONSE, mockResponse);
-        expect(this.state(w).error).to.eql('Unable to parse resource data');
+        expect(this.state(w).ui.hasError).to.eql('unable to parse resource data');
         done();
       });
     });
@@ -155,7 +160,7 @@ define([
         const getBeeHive = this.sb.stub(w, 'getBeeHive');
         getBeeHive.returns({ getObject: _.constant({ link_server: 'TEST' }) });
         w._updateLinkServer();
-        expect(this.state(w).linkServer).to.eql('TEST');
+        expect(this.state(w).api.linkServer).to.eql('TEST');
         done();
       });
       it('updates nothing, if the user beehive/user/link_server is not present', function (done) {
@@ -164,11 +169,11 @@ define([
         // no User object
         getBeeHive.returns({ getObject: _.constant({}) });
         w._updateLinkServer();
-        expect(this.state(w).linkServer).to.eql(null);
+        expect(this.state(w).api.linkServer).to.eql(null);
         // no beehive
         getBeeHive.returns(null);
         w._updateLinkServer();
-        expect(this.state(w).linkServer).to.eql(null);
+        expect(this.state(w).api.linkServer).to.eql(null);
         done();
       });
     });
@@ -184,15 +189,28 @@ define([
         });
         w.parseResourcesData = this.sb.stub();
         w.parseResourcesData.returns({
-          fullTextSources: [{ url: 'test', name: 'foo', description: 'bar', open: false }],
+          fullTextSources: [{
+            url: 'test', name: 'foo', shortName: 'test',
+            description: 'bar', open: false, type: 'HTML'
+          },
+          {
+            url: 'test', name: 'foo', shortName: 'test',
+            description: 'bar', open: false, type: 'PDF'
+          },
+          {
+            url: 'test', name: 'foo', shortName: 'test',
+            description: 'bar', open: false, type: 'SCAN'
+          }],
           dataProducts: []
         });
         this.pubsub.publish(this.pubsub.DELIVERING_RESPONSE, mockResponse);
         const link = $('a:first', $el);
         expect(link.length).to.eql(1);
-        expect(link.attr('title')).to.eql('bar');
+        expect(link.attr('title')).to.eql('bar SIGN IN REQUIRED');
         expect(link.attr('href')).to.eql('test');
-        expect(link.text()).to.eql('foo');
+        expect($('i.fa.fa-file-text', $el).length).to.eql(1);
+        expect($('i.fa.fa-file-pdf-o', $el).length).to.eql(1);
+        expect($('i.fa.fa-file-image-o', $el).length).to.eql(1);
         done();
       });
       it('Updates the UI with data products', function (done) {
@@ -205,14 +223,14 @@ define([
         w.parseResourcesData = this.sb.stub();
         w.parseResourcesData.returns({
           fullTextSources: [],
-          dataProducts: [{ url: 'test', name: 'foo', description: 'bar', open: false }]
+          dataProducts: [{ url: 'test', name: 'foo', count: 8, description: 'bar', open: false }]
         });
         this.pubsub.publish(this.pubsub.DELIVERING_RESPONSE, mockResponse);
         const link = $('a:first', $el);
         expect(link.length).to.eql(1);
         expect(link.attr('title')).to.eql('bar');
         expect(link.attr('href')).to.eql('test');
-        expect(link.text()).to.eql('foo');
+        expect(link.text()).to.eql('foo (8)');
         done();
       });
       it('Shows an icon if the link is open access', function (done) {
@@ -228,8 +246,8 @@ define([
           dataProducts: []
         });
         this.pubsub.publish(this.pubsub.DELIVERING_RESPONSE, mockResponse);
-        const icon = $('i.s-open-access-image', $el);
-        expect(icon.length).to.eql(1);
+        const unlockEl = $('.resources__content__link.unlock', $el);
+        expect(unlockEl.length).to.eql(1);
         done();
       });
       it('Shows an icon if the link is openUrl', function (done) {
@@ -241,73 +259,19 @@ define([
         });
         w.parseResourcesData = this.sb.stub();
         w.parseResourcesData.returns({
-          fullTextSources: [{ url: 'test', name: 'foo', description: 'bar', openUrl: true }],
+          fullTextSources: [{
+            url: 'test',
+            name: 'foo',
+            description: 'bar',
+            type: 'INSTITUTION',
+            openUrl: true,
+            shortName: 'My Institution'
+          }],
           dataProducts: []
         });
         this.pubsub.publish(this.pubsub.DELIVERING_RESPONSE, mockResponse);
         const icon = $('i.fa-university', $el);
         expect(icon.length).to.eql(1);
-        done();
-      });
-      it('Shows a "Show All" button if there are more than 3 of either kind of source', function (done) {
-        const w = new Widget();
-        const $el = $(w.view.render().$el).appendTo('#test-area');
-        w.activate(this.pubsub.beehive);
-        const mockResponse = ({
-          toJSON: _.constant({ response: { docs: [{ foo: 'bar' }] }})
-        });
-        w.parseResourcesData = this.sb.stub();
-        w.parseResourcesData.returns({
-          fullTextSources: [
-            { url: 'test', name: 'foo', description: 'bar' },
-            { url: 'test', name: 'foo', description: 'bar' },
-            { url: 'test', name: 'foo', description: 'bar' },
-            { url: 'test', name: 'foo', description: 'bar' },
-            { url: 'test', name: 'foo', description: 'bar' }
-          ],
-          dataProducts: []
-        });
-        this.pubsub.publish(this.pubsub.DELIVERING_RESPONSE, mockResponse);
-        const button = $('button', $el);
-        expect(button.length).to.eql(1);
-        expect(button.text()).to.eql('Show All');
-        done();
-      });
-      it('Clicking Show All button should display a modal with all the sources listed', function (done) {
-        const w = new Widget();
-        const $el = $(w.view.render().$el).appendTo('#test-area');
-        w.activate(this.pubsub.beehive);
-        const mockResponse = ({
-          toJSON: _.constant({ response: { docs: [{ foo: 'bar' }] }})
-        });
-        w.parseResourcesData = this.sb.stub();
-        w.parseResourcesData.returns({
-          fullTextSources: [
-            { url: 'test', name: '0', description: 'bar' },
-            { url: 'test', name: '1', description: 'bar' },
-            { url: 'test', name: '2', description: 'bar' },
-            { url: 'test', name: '3', description: 'bar' },
-            { url: 'test', name: '4', description: 'bar' },
-            { url: 'test', name: '5', description: 'bar' }
-          ],
-          dataProducts: [
-            { url: 'test', name: '6', description: 'bar' },
-            { url: 'test', name: '7', description: 'bar' },
-            { url: 'test', name: '8', description: 'bar' }
-          ]
-        });
-        this.pubsub.publish(this.pubsub.DELIVERING_RESPONSE, mockResponse);
-        const button = $('button', $el);
-        button.click();
-        const links = $('a', '.modal');
-        expect(links.length).to.eql(9);
-        links.each(function (i) {
-          const el = $(this);
-          expect(el.text()).to.eql(i + '');
-          expect(el.attr('href')).to.eql('test');
-          expect(el.attr('title')).to.eql('bar');
-        });
-        $('div[role="dialog"] .close').click();
         done();
       });
       it('Clicking on a link fires an analytics event', function (done) {

@@ -13,7 +13,7 @@ define([
   };
 
   const initialState = {
-    linkServer: ''
+    linkServer: null
   };
 
   const reducer = (state = initialState, action) => {
