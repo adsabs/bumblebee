@@ -245,38 +245,22 @@ define(["underscore", "js/mixins/openurl_generator"], function(_, OpenURLGenerat
         fullTextSources.push({
           url: openUrl.openURL,
           openUrl: true,
-<<<<<<< HEAD
-          name: 'Find it at your Institution',
-=======
           type: 'INSTITUTION',
           shortName: 'My Institution',
           name: 'My Institution',
->>>>>>> 1cd59daa... update
           description: linkInfo && linkInfo.description
         });
       }
 
       if (parts.length > 1) {
-        // if entry has _HTML then also check for OPENACCESS on property
-        if (parts[1] === 'HTML') {
-          fullTextSources.push({
-            url: createGatewayUrl(data.bibcode, el),
-            open: hasHTMLOpenAccess,
-            name: linkInfo && linkInfo.shortName,
-            description: linkInfo && linkInfo.description
-          });
-
-        // otherwise, just check for the <field>_OPENACCESS
-        } else {
-          fullTextSources.push({
-            url: createGatewayUrl(data.bibcode, el),
-            open: _.contains(property, parts[0] + '_OPENACCESS'),
-            shortName: linkInfo && linkInfo.shortName,
-            name: linkInfo && linkInfo.name,
-            type: linkInfo && linkInfo.type,
-            description: linkInfo && linkInfo.description
-          });
-        }
+        fullTextSources.push({
+          url: createGatewayUrl(data.bibcode, el),
+          open: _.contains(property, parts[0] + '_OPENACCESS'),
+          shortName: linkInfo && linkInfo.shortName,
+          name: linkInfo && linkInfo.name,
+          type: linkInfo && linkInfo.type,
+          description: linkInfo && linkInfo.description
+        });
 
       // if entry cannot be split, then it will not be open access
       } else {
