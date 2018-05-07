@@ -568,7 +568,7 @@ define([
 
           //replace uppercased fields with lowercase
           query = query.replace(/([A-Z])\w+:/g, function(letter){return letter.toLowerCase()});
-//          // store the query in case it gets changed (which happens when there is an object query)
+          // store the query in case it gets changed (which happens when there is an object query)
           this.original_query = query;
 
           //if we're within a bigquery, translate an empty query to "*:*"
@@ -698,7 +698,7 @@ define([
 
           // search widget doesn't need to execute queries (but it needs to listen to them)
           pubsub.subscribe(pubsub.FEEDBACK, _.bind(this.handleFeedback, this));
-          pubsub.subscribe(pubsub.NAVIGATE, _.bind(this.focusInput, this));
+          pubsub.subscribe(pubsub.NAVIGATE, _.bind(this.onNavigate, this));
           this.view.activate(beehive.getHardenedInstance());
           pubsub.subscribe(pubsub.INVITING_REQUEST, _.bind(this.dispatchRequest, this));
           pubsub.subscribe(pubsub.DELIVERING_RESPONSE, this.processResponse);
@@ -756,6 +756,11 @@ define([
           }
         },
 
+        onNavigate: function (page) {
+          this.currentPage = page;
+          this.focusInput(page);
+        },
+
         handleFeedback: function(feedback) {
 
           if (feedback.code === ApiFeedback.CODES.SEARCH_CYCLE_STARTED ||
@@ -809,6 +814,16 @@ define([
         },
 
         navigate: function (newQuery) {
+          var newQ = newQuery.toJSON();
+          var oldQ = this.getCurrentQuery().toJSON();
+
+          // if we aren't on the index page, only refine the current query, don't wipe it out
+          if (this.currentPage !== 'index-page') {
+            newQuery = new ApiQuery(_.assign({}, oldQ, newQ));
+          }
+
+          this.view.setFormVal(newQuery.get('q')[0]);
+          this.setCurrentQuery(newQuery);
           this.getPubSub().publish(this.getPubSub().START_SEARCH, newQuery);
         },
 

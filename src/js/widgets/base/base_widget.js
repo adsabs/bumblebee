@@ -188,11 +188,23 @@ define([
 
     /**
      * Returns the current ApiQuery
+     * if a query hasn't been set, it will check if there is one in storage,
+     * if not, it will return an empty query
      *
      * @returns {ApiQuery|*}
      */
     getCurrentQuery: function () {
-      return this._currentQuery;
+      var currQuery, beehive;
+      if (this._currentQuery instanceof ApiQuery) {
+        currQuery = this._currentQuery;
+      } else if (_.isFunction(this.getBeeHive)) {
+        beehive = this.getBeeHive();
+        if (beehive.hasObject('AppStorage')) {
+          currQuery = beehive.getObject('AppStorage').getCurrentQuery();
+        }
+      }
+
+      return (currQuery instanceof ApiQuery) ? currQuery : new ApiQuery();
     },
 
     /**
