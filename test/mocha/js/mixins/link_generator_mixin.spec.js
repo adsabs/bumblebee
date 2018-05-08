@@ -66,7 +66,7 @@ define([
         _.forEach([
           ['/link_gateway/foo/bar:baz', 'foo', 'bar', 'baz'],
           ['/link_gateway/foo/bar:baz', 'foo', 'bar', ['baz']],
-          ['/link_gateway/foo/doi:baz,yo,hey,there', 'foo', 'doi', ['baz/yo/hey/there']]
+          ['/link_gateway/foo/doi:baz/yo/hey/there', 'foo', 'doi', ['baz/yo/hey/there']]
         ], function (input) {
           const expected = input[0];
           const args = _.rest(input);
