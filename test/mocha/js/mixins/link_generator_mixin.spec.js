@@ -142,7 +142,9 @@ define([
             {
               "url": "/link_gateway/foo/PUB_HTML",
               "open": false,
+              "shortName": "Publisher",
               "name": "Publisher Article",
+              "type": "HTML",
               "description": "Electronic on-line publisher article (HTML)"
             }
           ],
@@ -151,14 +153,16 @@ define([
         expect(this.m._processLinkData(data)).to.eql(expected);
         done();
       });
-      it('esources properly creates fullText open access html source', function (done) {
+      it('esources properly creates fullText non-open access html source', function (done) {
         const data = { property: ['ESOURCE', 'OPENACCESS'], bibcode: 'foo', esources: ['PUB_HTML'] };
         const expected = {
           "fullTextSources": [
             {
               "url": "/link_gateway/foo/PUB_HTML",
-              "open": true,
+              "open": false,
+              "shortName": "Publisher",
               "name": "Publisher Article",
+              "type": "HTML",
               "description": "Electronic on-line publisher article (HTML)"
             }
           ],
@@ -174,7 +178,9 @@ define([
             {
               "url": "/link_gateway/foo/PUB_PDF",
               "open": true,
+              "shortName": "Publisher",
               "name": "Publisher PDF",
+              "type": "PDF",
               "description": "Publisher PDF"
             }
           ],
@@ -188,15 +194,19 @@ define([
         const expected = {
           "fullTextSources": [
             {
-              "url": "bar?&url_ver=Z39.88-2004&rfr_id=info:sid/ADS&rft_val_fmt=info:ofi/fmt:kev:mtx:article&rft_id=info:doi/b&rft_id=info:bibcode/foo&id=doi:b&rft.genre=article&sid=ADS&genre=article",
-              "openUrl": true,
-              "name": "Find it at your Institution",
+              "url": "/link_gateway/foo/PUB_PDF",
+              "open": false,
+              "shortName": "Publisher",
+              "name": "Publisher PDF",
+              "type": "PDF",
               "description": "Publisher PDF"
             },
             {
-              "url": "/link_gateway/foo/PUB_PDF",
-              "open": false,
-              "name": "Publisher PDF",
+              "url": "bar?&url_ver=Z39.88-2004&rfr_id=info:sid/ADS&rft_val_fmt=info:ofi/fmt:kev:mtx:article&rft_id=info:doi/b&rft_id=info:bibcode/foo&id=doi:b&rft.genre=article&sid=ADS&genre=article",
+              "openUrl": true,
+              "type": "INSTITUTION",
+              "shortName": "My Institution",
+              "name": "My Institution",
               "description": "Publisher PDF"
             }
           ],
@@ -212,6 +222,8 @@ define([
             {
               "url": "/link_gateway/foo/BAR",
               "open": false,
+              "type": undefined,
+              "shortName": undefined,
               "name": undefined,
               "description": undefined
             }
@@ -222,7 +234,7 @@ define([
         done();
       });
 
-      it('data properly creates a record given an objet and count', function (done) {
+      it('data properly creates a record given an object and count', function (done) {
         const data = { property: ['DATA'], bibcode: 'foo', data: ['NED:22'] };
         const expected = {
           "fullTextSources": [],

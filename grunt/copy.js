@@ -154,6 +154,15 @@ module.exports = function (grunt) {
           rename: function (dest, src) {
             return dest + src.replace('immutable', 'index');
           }
+        },
+        {
+          cwd: 'node_modules/reselect/dist',
+          src: 'reselect.js',
+          dest: 'src/libs/reselect/',
+          expand: true,
+          rename: function (dest, src) {
+            return dest + src.replace('reselect', 'index');
+          }
         }
       ]
     },

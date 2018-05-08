@@ -9,36 +9,52 @@ define(["underscore", "js/mixins/openurl_generator"], function(_, OpenURLGenerat
   // set of link types and descriptions
   const LINK_TYPES = {
     'PUB_PDF': {
-      shortName: 'Publisher PDF',
-      description: 'Publisher PDF'
+      name: 'Publisher PDF',
+      shortName: 'Publisher',
+      description: 'Publisher PDF',
+      type: 'PDF'
     },
     'EPRINT_PDF': {
-      shortName: 'arXiv PDF',
-      description: 'Arxiv eprint'
+      name: 'arXiv PDF',
+      shortName: 'arXiv',
+      description: 'Arxiv eprint',
+      type: 'PDF'
     },
     'AUTHOR_PDF': {
-      shortName: 'Author PDF',
-      description: 'Link to PDF page provided by author'
+      name: 'Author PDF',
+      shortName: 'Author',
+      description: 'Link to PDF page provided by author',
+      type: 'PDF'
     },
     'ADS_PDF': {
-      shortName: 'ADS PDF',
-      description: 'ADS PDF'
+      name: 'ADS PDF',
+      shortName: 'ADS',
+      description: 'ADS PDF',
+      type: 'PDF'
     },
     'PUB_HTML': {
-      shortName: 'Publisher Article',
-      description: 'Electronic on-line publisher article (HTML)'
+      name: 'Publisher Article',
+      shortName: 'Publisher',
+      description: 'Electronic on-line publisher article (HTML)',
+      type: 'HTML'
     },
     'EPRINT_HTML': {
-      shortName: 'arXiv Article',
-      description: 'Arxiv article'
+      name: 'arXiv Article',
+      shortName: 'arXiv',
+      description: 'Arxiv article',
+      type: 'HTML'
     },
     'AUTHOR_HTML': {
-      shortName: 'Author Article',
-      description: 'Link to HTML page provided by author'
+      name: 'Author Article',
+      shortName: 'Author',
+      description: 'Link to HTML page provided by author',
+      type: 'HTML'
     },
     'ADS_SCAN': {
-      shortName: 'ADS Scanned Article',
-      description: 'ADS scanned article'
+      name: 'ADS Scanned Article',
+      description: 'ADS scanned article',
+      shortName: 'ADS',
+      type: 'SCAN'
     },
     'ACA': {
       shortName: 'ACA',
@@ -204,7 +220,7 @@ define(["underscore", "js/mixins/openurl_generator"], function(_, OpenURLGenerat
   const _processLinkData = _.memoize(function (data) {
     const createGatewayUrl = this._createGatewayUrl;
     let fullTextSources = [];
-    const dataProducts = [];
+    let dataProducts = [];
     const property = data.property;
     const hasHTMLOpenAccess = _.contains(property, 'OPENACCESS');
 
@@ -229,37 +245,31 @@ define(["underscore", "js/mixins/openurl_generator"], function(_, OpenURLGenerat
         fullTextSources.push({
           url: openUrl.openURL,
           openUrl: true,
-          name: 'Find it at your Institution',
+          type: 'INSTITUTION',
+          shortName: 'My Institution',
+          name: 'My Institution',
           description: linkInfo && linkInfo.description
         });
       }
 
       if (parts.length > 1) {
-        // if entry has _HTML then also check for OPENACCESS on property
-        if (parts[1] === 'HTML') {
-          fullTextSources.push({
-            url: createGatewayUrl(data.bibcode, el),
-            open: hasHTMLOpenAccess,
-            name: linkInfo && linkInfo.shortName,
-            description: linkInfo && linkInfo.description
-          });
-
-        // otherwise, just check for the <field>_OPENACCESS
-        } else {
-          fullTextSources.push({
-            url: createGatewayUrl(data.bibcode, el),
-            open: _.contains(property, parts[0] + '_OPENACCESS'),
-            name: linkInfo && linkInfo.shortName,
-            description: linkInfo && linkInfo.description
-          });
-        }
+        fullTextSources.push({
+          url: createGatewayUrl(data.bibcode, el),
+          open: _.contains(property, parts[0] + '_OPENACCESS'),
+          shortName: linkInfo && linkInfo.shortName,
+          name: linkInfo && linkInfo.name,
+          type: linkInfo && linkInfo.type,
+          description: linkInfo && linkInfo.description
+        });
 
       // if entry cannot be split, then it will not be open access
       } else {
         fullTextSources.push({
           url: createGatewayUrl(data.bibcode, el),
           open: false,
-          name: linkInfo && linkInfo.shortName,
+          shortName: linkInfo && linkInfo.shortName,
+          name: linkInfo && linkInfo.name,
+          type: linkInfo && linkInfo.type,
           description: linkInfo && linkInfo.description
         });
       }
@@ -293,6 +303,9 @@ define(["underscore", "js/mixins/openurl_generator"], function(_, OpenURLGenerat
         });
       }
     });
+
+    // sort the data products by descending by count
+    dataProducts = _.sortBy(dataProducts, 'count').reverse();
 
     return {
       fullTextSources: fullTextSources,
