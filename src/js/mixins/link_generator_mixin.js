@@ -436,9 +436,6 @@ define(["underscore", "js/mixins/openurl_generator"], function(_, OpenURLGenerat
     }
 
     if (_.isString(bibcode) && _.isString(type) && _.isString(id)) {
-
-      // replace any forward slashes in id with underscores (requirement of gateway)
-      id = id.replace(/\//g, ',');
       return GATEWAY_BASE_URL + bibcode + '/' + type + ':' + id;
     }
     return '';
