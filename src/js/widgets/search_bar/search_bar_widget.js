@@ -347,7 +347,8 @@ define([
           "keyup .q" : "storeCursorInfo",
           "select .q" : "storeCursorInfo",
           "click .q" : "storeCursorInfo",
-          'click .bigquery-close' : 'clearBigquery'
+          'click .bigquery-close' : 'clearBigquery',
+          'click .back-button': 'onNewSearch'
         },
 
         toggleClear : function(){
@@ -358,6 +359,10 @@ define([
           else {
             this.$(".icon-clear").addClass("hidden");
           }
+        },
+
+        onNewSearch: function () {
+          this.trigger('new-search');
         },
 
         clearInput : function(){
@@ -682,6 +687,8 @@ define([
                 query.get("__original_query")[0] : oldQueryString.join(" ");
             }
 
+            this.listenTo(this.view, 'new-search', this.newSearch);
+
             if (newQueryString) {
               this.view.setFormVal(newQueryString);
             }
@@ -689,6 +696,11 @@ define([
           });
 
           BaseWidget.prototype.initialize.call(this, options)
+        },
+
+        newSearch: function () {
+          var ps = this.getPubSub();
+          ps.publish(ps.NAVIGATE, 'index-page');
         },
 
         activate: function (beehive) {
