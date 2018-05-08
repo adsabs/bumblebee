@@ -726,6 +726,7 @@ define([
 
           if (page == "index-page"){
             this.view.$("input.q").focus();
+            this.view.$("input.q").val('');
           }
         },
 
