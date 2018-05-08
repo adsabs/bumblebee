@@ -18,8 +18,8 @@ define(['underscore',
     'js/components/api_feedback',
     'js/components/json_response',
     'js/components/api_targets',
-	'js/components/api_query',
-	    'js/components/alerts',
+    'js/components/api_query',
+    'js/components/alerts',
     'analytics'
   ],
   function(
@@ -35,8 +35,8 @@ define(['underscore',
     ApiFeedback,
     JsonResponse,
     ApiTargets,
-      ApiQuery,
-          Alerts,
+    ApiQuery,
+    Alerts,
     analytics
     ) {
 
@@ -743,30 +743,39 @@ define(['underscore',
         }
       },
 
-        getAlerter: function() {
-          return this.getApp().getController(this.alertsController || 'AlertsController');
-        },
-	
-	qs: function (key, str) {
-	    const k = key.replace(/[*+?^$.\[\]{}()|\\\/]/g, "\\$&"); // escape RegEx meta chars
-	    var match = (str || location.hash).match(new RegExp("&?"+ k +"=([^&]+)(&|$)"));
-	    return match && decodeURIComponent(match[1].replace(/\+/g, " "));
-	},
-	
-	displayTugboatMessages: function()
-	{
-	    if ((this.original_url.indexOf('error_message') > -1)
-		|| this.original_url.indexOf('warning_message') > -1)
-	    {
-		err = this.qs('error_message', this.original_url) || '';
-		warn = this.qs('warning_message', this.original_url) || '';
-		if ((err.length > 0) && (warn.length > 0))
-		    err += '<br>';  // here with both error and warn messages, add linebreak
-		this.getAlerter().alert(new ApiFeedback({
-		    type: Alerts.TYPE.INFO,
-		    msg: err + warn}));
-	    }
-	},
+      getAlerter: function() {
+        return this.getApp().getController(this.alertsController || 'AlertsController');
+      },
+
+      // this function will eventually be available in src/js/utils.js
+      qs: function (key, str) {
+	const k = key.replace(/[*+?^$.\[\]{}()|\\\/]/g, "\\$&"); // escape RegEx meta chars
+	var match = (str || location.hash).match(new RegExp("&?"+ k +"=([^&]+)(&|$)"));
+	return match && decodeURIComponent(match[1].replace(/\+/g, " "));
+      },
+
+      // display tugboat messages if they exist
+      displayTugboatMessages: function() {
+	if (!this.original_url)
+	  // without the original url there can be no messages to display
+	  return;
+	  
+	// pull out message components and merge them together    
+	messages = [];
+	err = this.qs('error_message', this.original_url);
+	if (err) messages.push(err);
+	warn = this.qs('warning_message', this.original_url);
+	if (warn) messages.push(warn);
+	unprocessed = this.qs('unprocessed_parameter', this.original_url);
+	if (unprocessed) messages.push(unprocessed);
+
+	if (messages.length > 0) {
+	  message = messages.join('<br>');
+	  this.getAlerter().alert(new ApiFeedback({
+	      type: Alerts.TYPE.INFO,
+	      msg: message}));
+	}
+      },
 
       resetFailures: function() {
         this.failedRequestsCache.invalidateAll();
