@@ -18,7 +18,8 @@ define(['underscore',
     'js/components/api_feedback',
     'js/components/json_response',
     'js/components/api_targets',
-    'js/components/api_query',
+	'js/components/api_query',
+	    'js/components/alerts',
     'analytics'
   ],
   function(
@@ -34,7 +35,8 @@ define(['underscore',
     ApiFeedback,
     JsonResponse,
     ApiTargets,
-    ApiQuery,
+      ApiQuery,
+          Alerts,
     analytics
     ) {
 
@@ -168,7 +170,7 @@ define(['underscore',
             options : {
               type : "POST",
               contentType : "application/json",
-              done : function(response){
+	       done : function(response){
 
                 var newQuery = new ApiQuery({q : apiQuery.get("q"),
                  "__qid" : response.qid,
@@ -206,6 +208,7 @@ define(['underscore',
           // first define a callback function to process the response of the micro service
           // and bind it to "this" so that we can use the trigger
           var callback = function(v){
+
             apiQuery.set({
               q : v.query
             });
@@ -304,6 +307,7 @@ define(['underscore',
             }, this.shortDelayInMs);
           }
         }
+
       },
 
 
@@ -376,6 +380,7 @@ define(['underscore',
               response: response // this is a raw response (and it is save to send, cause it was already copied by the first 'done' callback
             }));
 
+	    self.displayTugboatMessages();
             // after we are done with the first query, start executing other queries
             var f = function() {
               _.each(_.keys(cycle.waiting), function (k) {
@@ -737,6 +742,31 @@ define(['underscore',
           this._cache.invalidateAll();
         }
       },
+
+        getAlerter: function() {
+          return this.getApp().getController(this.alertsController || 'AlertsController');
+        },
+	
+	qs: function (key, str) {
+	    const k = key.replace(/[*+?^$.\[\]{}()|\\\/]/g, "\\$&"); // escape RegEx meta chars
+	    var match = (str || location.hash).match(new RegExp("&?"+ k +"=([^&]+)(&|$)"));
+	    return match && decodeURIComponent(match[1].replace(/\+/g, " "));
+	},
+	
+	displayTugboatMessages: function()
+	{
+	    if ((this.original_url.indexOf('error_message') > -1)
+		|| this.original_url.indexOf('warning_message') > -1)
+	    {
+		err = this.qs('error_message', this.original_url) || '';
+		warn = this.qs('warning_message', this.original_url) || '';
+		if ((err.length > 0) && (warn.length > 0))
+		    err += '<br>';  // here with both error and warn messages, add linebreak
+		this.getAlerter().alert(new ApiFeedback({
+		    type: Alerts.TYPE.INFO,
+		    msg: err + warn}));
+	    }
+	},
 
       resetFailures: function() {
         this.failedRequestsCache.invalidateAll();
