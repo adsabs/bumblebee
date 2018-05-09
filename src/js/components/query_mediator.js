@@ -20,6 +20,7 @@ define(['underscore',
     'js/components/api_targets',
     'js/components/api_query',
     'js/components/alerts',
+    'utils',
     'analytics'
   ],
   function(
@@ -37,6 +38,7 @@ define(['underscore',
     ApiTargets,
     ApiQuery,
     Alerts,
+    utils,
     analytics
     ) {
 
@@ -170,7 +172,7 @@ define(['underscore',
             options : {
               type : "POST",
               contentType : "application/json",
-	       done : function(response){
+              done : function(response){
 
                 var newQuery = new ApiQuery({q : apiQuery.get("q"),
                  "__qid" : response.qid,
@@ -208,7 +210,6 @@ define(['underscore',
           // first define a callback function to process the response of the micro service
           // and bind it to "this" so that we can use the trigger
           var callback = function(v){
-
             apiQuery.set({
               q : v.query
             });
@@ -307,7 +308,6 @@ define(['underscore',
             }, this.shortDelayInMs);
           }
         }
-
       },
 
 
@@ -380,7 +380,7 @@ define(['underscore',
               response: response // this is a raw response (and it is save to send, cause it was already copied by the first 'done' callback
             }));
 
-	    self.displayTugboatMessages();
+            self.displayTugboatMessages();
             // after we are done with the first query, start executing other queries
             var f = function() {
               _.each(_.keys(cycle.waiting), function (k) {
@@ -747,34 +747,37 @@ define(['underscore',
         return this.getApp().getController(this.alertsController || 'AlertsController');
       },
 
-      // this function will eventually be available in src/js/utils.js
-      qs: function (key, str) {
-	const k = key.replace(/[*+?^$.\[\]{}()|\\\/]/g, "\\$&"); // escape RegEx meta chars
-	var match = (str || location.hash).match(new RegExp("&?"+ k +"=([^&]+)(&|$)"));
-	return match && decodeURIComponent(match[1].replace(/\+/g, " "));
-      },
-
       // display tugboat messages if they exist
       displayTugboatMessages: function() {
-	if (!this.original_url)
-	  // without the original url there can be no messages to display
-	  return;
-	  
-	// pull out message components and merge them together    
-	messages = [];
-	err = this.qs('error_message', this.original_url);
-	if (err) messages.push(err);
-	warn = this.qs('warning_message', this.original_url);
-	if (warn) messages.push(warn);
-	unprocessed = this.qs('unprocessed_parameter', this.original_url);
-	if (unprocessed) messages.push(unprocessed);
+        if (!this.original_url) {
+          // without the original url there can be no messages to display
+          return;
+        }
+          
+        // pull out message components and merge them together    
+        messages = [];
+        
+        err = utils.qs('error_message', this.original_url);
+        if (err) {
+          messages.push(err);
+        }
 
-	if (messages.length > 0) {
-	  message = messages.join('<br>');
-	  this.getAlerter().alert(new ApiFeedback({
-	      type: Alerts.TYPE.INFO,
-	      msg: message}));
-	}
+        warn = utils.qs('warning_message', this.original_url);
+        if (warn) {
+          messages.push(warn);
+        }
+        
+        unprocessed = utils.qs('unprocessed_parameter', this.original_url);
+        if (unprocessed) {
+          messages.push(unprocessed);
+        }
+
+        if (messages.length > 0) {
+          message = messages.join('<br>');
+          this.getAlerter().alert(new ApiFeedback({
+              type: Alerts.TYPE.INFO,
+              msg: message}));
+        }
       },
 
       resetFailures: function() {
