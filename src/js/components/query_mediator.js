@@ -19,6 +19,8 @@ define(['underscore',
     'js/components/json_response',
     'js/components/api_targets',
     'js/components/api_query',
+    'js/components/alerts',
+    'utils',
     'analytics'
   ],
   function(
@@ -35,6 +37,8 @@ define(['underscore',
     JsonResponse,
     ApiTargets,
     ApiQuery,
+    Alerts,
+    utils,
     analytics
     ) {
 
@@ -376,6 +380,7 @@ define(['underscore',
               response: response // this is a raw response (and it is save to send, cause it was already copied by the first 'done' callback
             }));
 
+            self.displayTugboatMessages();
             // after we are done with the first query, start executing other queries
             var f = function() {
               _.each(_.keys(cycle.waiting), function (k) {
@@ -735,6 +740,43 @@ define(['underscore',
         this.__searchCycle = {waiting:{}, inprogress: {}, done:{}, failed:{}}; //reset the datastruct
         if (this._cache) {
           this._cache.invalidateAll();
+        }
+      },
+
+      getAlerter: function() {
+        return this.getApp().getController(this.alertsController || 'AlertsController');
+      },
+
+      // display tugboat messages if they exist
+      displayTugboatMessages: function() {
+        if (!this.original_url) {
+          // without the original url there can be no messages to display
+          return;
+        }
+          
+        // pull out message components and merge them together    
+        messages = [];
+        
+        err = utils.qs('error_message', this.original_url);
+        if (err) {
+          messages.push(err);
+        }
+
+        warn = utils.qs('warning_message', this.original_url);
+        if (warn) {
+          messages.push(warn);
+        }
+        
+        unprocessed = utils.qs('unprocessed_parameter', this.original_url);
+        if (unprocessed) {
+          messages.push(unprocessed);
+        }
+
+        if (messages.length > 0) {
+          message = messages.join('<br>');
+          this.getAlerter().alert(new ApiFeedback({
+              type: Alerts.TYPE.INFO,
+              msg: message}));
         }
       },
 
