@@ -384,6 +384,7 @@ define([
         serializeData : function(){
           var j = this.model.toJSON();
           j.numFound = j.numFound ?  this.formatNum(j.numFound) : 0;
+          j.citationCount = j.citationCount ? this.formatNum(j.citationCount) : false;
           if (this.model.get("bigquerySource")){
             if ( this.model.get('bigquerySource').match(/library/i) ){
               this.model.set({libraryName : this.model.get('bigquerySource').match(/library:(.*)/i)[1]});
@@ -699,23 +700,48 @@ define([
           pubsub.subscribe(pubsub.FEEDBACK, _.bind(this.handleFeedback, this));
           pubsub.subscribe(pubsub.NAVIGATE, _.bind(this.focusInput, this));
           this.view.activate(beehive.getHardenedInstance());
-          pubsub.subscribe(pubsub.INVITING_REQUEST, this.dispatchRequest);
+          pubsub.subscribe(pubsub.INVITING_REQUEST, _.bind(this.dispatchRequest, this));
           pubsub.subscribe(pubsub.DELIVERING_RESPONSE, this.processResponse);
         },
 
-        processResponse : function(apiResponse){
-          if ( apiResponse.toJSON().stats && apiResponse.get('responseHeader.params').sort ){
-            var citationCount = apiResponse.get('stats.stats_fields.citation_count.sum');
-            var citationSort = apiResponse.get('responseHeader.params.sort').match(/citation_count/) ? true : false;
-            citationCount = citationSort ? citationCount : undefined;
-            this.model.set({citationCount : citationCount });
+        processResponse : function(apiResponse) {
+          var res = apiResponse.toJSON();
+          if (res.stats) {
+            var type = _.keys(res.stats.stats_fields)[0];
+            var count = res.stats.stats_fields[type].count;
+            if (type === 'citation_count_norm') {
+              this.model.set({
+                citationCount: count,
+                citationLabel: 'normalized citations'
+              });
+            } else if (type === 'citation_count') {
+              this.model.set({
+                citationCount: count,
+                citationLabel: 'citations'
+              });
+            }
           }
         },
 
         defaultQueryArguments: {
-          'stats': 'true',
-          'stats.field' : 'citation_count',
           fl: 'id'
+        },
+
+        dispatchRequest: function (apiQuery) {
+          var sort = apiQuery.get('sort');
+          var da = this.defaultQueryArguments;
+          if (/citation_count_norm/i.test(sort)) {
+            da = _.extend(da, {
+              stats: 'true',
+              'stats.field': 'citation_count_norm'
+            });
+          } else if (/citation_count/i.test(sort)) {
+            da = _.extend(da, {
+              stats: 'true',
+              'stats.field': 'citation_count'
+            });
+          }
+          BaseWidget.prototype.dispatchRequest.call(this, apiQuery);
         },
 
         /*
@@ -783,7 +809,6 @@ define([
         },
 
         navigate: function (newQuery) {
-
           this.getPubSub().publish(this.getPubSub().START_SEARCH, newQuery);
         },
 
