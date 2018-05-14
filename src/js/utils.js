@@ -2,18 +2,18 @@ define([
   'underscore'
 ], function (_) {
 
-    const qs = function (key, str, separator) {
+  const qs = function (key, str, separator) {
     const k = key.replace(/[*+?^$.\[\]{}()|\\\/]/g, "\\$&"); // escape RegEx meta chars
     var pattern = '(^|[\\?&])' + k + '=[^&]*';
     var match = (str || location.hash).match(new RegExp(pattern, 'g'));
-    if (!match)
+    if (!match) {
       return null;
-    else {
+    } else {
       var clean = []
       // remove 'key=' from string, combine with optional separator and unquote spaces
-      for (var i = 0 ; i < match.length ; i++) 
-	clean.push(match[i].replace(new RegExp('(^|[\\?&])' +  k + '='), ''));
-	    
+      for (var i = 0 ; i < match.length ; i++) {
+        clean.push(match[i].replace(new RegExp('(^|[\\?&])' +  k + '='), ''));
+      }
       msg = clean.join(separator);  // works even if separator is undefined
       return decodeURIComponent(msg.replace(/\+/g, " "));
     }
