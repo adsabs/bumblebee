@@ -15,7 +15,7 @@ define([
    */
   var TARGETS = {
     'resolver': {
-      hooks: ['toc-link-followed'],
+      hooks: ['toc-link-followed', 'abstract-link-followed', 'citations-link-followed'],
       types: [
         'abstract', 'citations', 'references',
         'metrics', 'coreads', 'graphics'

@@ -52,17 +52,19 @@ define([
 
       events: {
         'change input[name=identifier]': 'toggleSelect',
-        'focus .letter-icon': "showLinks",
-        'mouseenter .letter-icon': "showLinks",
-        'mouseleave .letter-icon': "hideLinks",
-        'focusout .letter-icon': "hideLinks",
-        'click .letter-icon a' : "emitAnalyticsEvent",
+        'focus .letter-icon': 'showLinks',
+        'mouseenter .letter-icon': 'showLinks',
+        'mouseleave .letter-icon': 'hideLinks',
+        'focusout .letter-icon': 'hideLinks',
+        'click .letter-icon a' : 'emitAnalyticsEvent',
         'click #show-all-authors': 'showAllAuthors',
         'click #show-less-authors': 'showLessAuthors',
         //only relevant to results view for the moment
-        'click .show-full-abstract' : "showFullAbstract",
-        'click .hide-full-abstract' : "hideFullAbstract",
-        'click .orcid-action': "orcidAction"
+        'click .show-full-abstract' : 'showFullAbstract',
+        'click .hide-full-abstract' : 'hideFullAbstract',
+        'click .orcid-action': 'orcidAction',
+        'click .abs-redirect-link': 'onAbsLinkClick',
+        'click .citations-redirect-link': 'onCitationsLinkClick'
       },
 
       modelEvents: {
@@ -80,6 +82,22 @@ define([
 
       emitAnalyticsEvent : function(e){
         analytics('send', 'event', 'interaction', 'letter-link-followed', $(e.target).text());
+      },
+
+      onAbsLinkClick: function (e) {
+        var bibcode = this.model.get('bibcode');
+        analytics('send', 'event', 'interaction', 'abstract-link-followed', {
+          target: 'abstract',
+          bibcode: bibcode
+        });
+      },
+
+      onCitationsLinkClick: function (e) {
+        var bibcode = this.model.get('bibcode');
+        analytics('send', 'event', 'interaction', 'citations-link-followed', {
+          target: 'citations',
+          bibcode: bibcode
+        });
       },
 
       showAllAuthors: function (e) {
