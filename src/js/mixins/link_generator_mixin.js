@@ -2,7 +2,7 @@ define(["underscore", "js/mixins/openurl_generator"], function(_, OpenURLGenerat
   const GATEWAY_BASE_URL = '/link_gateway/';
 
   const DEFAULT_ORDERING = [
-    'ADS PDF', 'ADS Scanned Article', 'Find it at your Institution',
+    'ADS PDF', 'ADS Scanned Article', 'My Institution',
     'Publisher Article', 'Publisher PDF', 'arXiv PDF'
   ];
 
@@ -221,6 +221,7 @@ define(["underscore", "js/mixins/openurl_generator"], function(_, OpenURLGenerat
     const createGatewayUrl = this._createGatewayUrl;
     let fullTextSources = [];
     let dataProducts = [];
+    let countOpenUrls = 0;
     const property = data.property;
     const hasHTMLOpenAccess = _.contains(property, 'OPENACCESS');
 
@@ -239,7 +240,7 @@ define(["underscore", "js/mixins/openurl_generator"], function(_, OpenURLGenerat
       //   - There is NO scan available from the ADS
       //   - The user is authenticated
       //   - the user HAS a library link server
-      if (identifier && linkServer && !hasHTMLOpenAccess && !hasScan) {
+      if (identifier && linkServer && !hasHTMLOpenAccess && !hasScan && countOpenUrls < 1) {
         const openUrl = new OpenURLGenerator(data, linkServer);
         openUrl.createOpenURL();
         fullTextSources.push({
@@ -250,6 +251,7 @@ define(["underscore", "js/mixins/openurl_generator"], function(_, OpenURLGenerat
           name: 'My Institution',
           description: linkInfo && linkInfo.description
         });
+        countOpenUrls += 1;
       }
 
       if (parts.length > 1) {
@@ -314,7 +316,7 @@ define(["underscore", "js/mixins/openurl_generator"], function(_, OpenURLGenerat
   }, function (data) {
 
     // provide a resolver string, to help with the memoizer
-    return JSON.stringify(_.pick(data, ['bibcode', 'property', 'esources', 'data']));
+    return JSON.stringify(_.pick(data, ['bibcode', 'property', 'esources', 'data', 'link_server']));
   });
 
   /**
