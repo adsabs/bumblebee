@@ -757,17 +757,17 @@ define(['underscore',
         // pull out message components and merge them together    
         messages = [];
         
-        err = utils.qs('error_message', this.original_url);
+          err = utils.qs('error_message', this.original_url, '  ');
         if (err) {
           messages.push(err);
         }
 
-        warn = utils.qs('warning_message', this.original_url);
+          warn = utils.qs('warning_message', this.original_url, '  ');
         if (warn) {
           messages.push(warn);
         }
         
-        unprocessed = utils.qs('unprocessed_parameter', this.original_url);
+          unprocessed = utils.qs('unprocessed_parameter', this.original_url, '  ');
         if (unprocessed) {
           messages.push(unprocessed);
         }
