@@ -17,6 +17,7 @@ define([
     SET_QUERY: 'SET_QUERY',
     SET_FORMAT: 'SET_FORMAT',
     SET_FORMATS: 'SET_FORMATS',
+    SET_CUSTOM_FORMAT: 'SET_CUSTOM_FORMAT',
     SET_PROGRESS: 'SET_PROGRESS',
     SET_COUNT: 'SET_COUNT',
     SET_IGNORE: 'SET_IGNORE',
@@ -42,6 +43,7 @@ define([
   actions.setTab = (tab) =>               ({ type: actions.SET_TAB, tab });
   actions.setFormat = (format) =>         ({ type: actions.SET_FORMAT, format });
   actions.setFormats = (formats) =>       ({ type: actions.SET_FORMATS, formats });
+  actions.setCustomFormat = (format) =>   ({ type: actions.SET_CUSTOM_FORMAT, format });
   actions.setProgress = (progress) =>     ({ type: actions.SET_PROGRESS, progress });
   actions.setTotalRecs = (totalRecs) =>   ({ type: actions.SET_TOTAL_RECS, totalRecs });
   actions.setShowCloser = (showCloser) => ({ type: actions.SET_SHOW_CLOSER, showCloser });
@@ -155,6 +157,10 @@ define([
     // setting up a new query using our current ids
     const q = new ApiQuery();
     q.set('bibcode', ids);
+    if (format.value === 'custom' && exports.customFormatString.length > 0) {
+      q.set('format', exports.customFormatString);
+    }
+
     const req = composeRequest(q);
     req.set({
       target: ApiTargets.EXPORT + format.value,
