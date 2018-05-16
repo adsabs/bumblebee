@@ -81,6 +81,11 @@ define([
 
       var widget = new DetailsLoTWidget();
 
+      var updatePagination = widget.updatePagination;
+      widget.updatePagination = function (opts) {
+        return updatePagination.call(widget, _.assign(opts, { updateHash: false }));
+      }
+
       widget.activate(minsub.beehive.getHardenedInstance());
       $("#test").append(widget.getEl());
       minsub.publish(minsub.DISPLAY_DOCUMENTS, new ApiQuery({'q': 'bibcode:bar'}));

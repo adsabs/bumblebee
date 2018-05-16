@@ -34,12 +34,17 @@ define(['marionette',
       // on slower machines 20000 default is not enough
       this.timeout(40000);
       
+      beforeEach(function () {
+        this.sb = sinon.sandbox.create();
+      })
+
       afterEach(function (done) {
         var ta = $('#test');
         if (ta) {
           ta.empty();
         }
         location.hash = '';
+        this.sb.restore();
         done();
       });
 
@@ -221,7 +226,10 @@ define(['marionette',
 
         var widget = new DetailsWidget();
         widget.activate(minsub.beehive.getHardenedInstance());
-
+        var updatePagination = widget.updatePagination;
+        widget.updatePagination = function (opts) {
+          return updatePagination.call(widget, _.assign(opts, { updateHash: false }));
+        }
 
         var $w = widget.render().$el;
         $('#test').append($w);
@@ -269,6 +277,10 @@ define(['marionette',
         widget.model.set("perPage", 0);
         widget.activate(minsub.beehive.getHardenedInstance());
 
+        var updatePagination = widget.updatePagination;
+        widget.updatePagination = function (opts) {
+          return updatePagination.call(widget, _.assign(opts, { updateHash: false }));
+        }
 
         var data = test1();
         data.response.numFound = 100;
@@ -291,9 +303,9 @@ define(['marionette',
         //an update in perPage should trigger a call to localstorage
         expect(setStorageSpy.args[0][0]).to.eql({perPage: 50});
 
-        //but model shouldn't change, unless there's a user event, which didn't happen here
-        expect(widget.model.get("perPage")).to.eql(25);
-        expect($(".per-page--active").text().trim()).to.eql("25");
+        // model should update, and reset page back to 0
+        expect(widget.model.get("perPage")).to.eql(50);
+        expect($(".per-page--active").text().trim()).to.eql("50");
         expect($("input.page-control").val()).to.eql("1");
 
 
@@ -346,6 +358,11 @@ define(['marionette',
 
         var widget = new DetailsWidget();
         widget.activate(minsub.beehive.getHardenedInstance());
+
+        var updatePagination = widget.updatePagination;
+        widget.updatePagination = function (opts) {
+          return updatePagination.call(widget, _.assign(opts, { updateHash: false }));
+        }
 
         var data = test1();
         data.response.numFound = 100;
@@ -423,6 +440,11 @@ define(['marionette',
 
         var widget = new DetailsWidget();
         widget.activate(minsub.beehive.getHardenedInstance());
+
+        var updatePagination = widget.updatePagination;
+        widget.updatePagination = function (opts) {
+          return updatePagination.call(widget, _.assign(opts, { updateHash: false }));
+        }
 
         var data = test1();
         data.response.numFound = 32;
