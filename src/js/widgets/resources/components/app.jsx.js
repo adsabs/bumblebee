@@ -97,7 +97,7 @@ define([
 
   // Main View
   const App = props => (
-    <div className="s-right-col-widget-container" style={{ maxWidth: 300, padding: 10 }}>
+    <div className="s-right-col-widget-container" style={{ padding: 10 }}>
       { props.loading && <Loading />}
       { props.noResults && !props.loading && <NoResults /> }
       { !props.loading && !props.hasError &&
