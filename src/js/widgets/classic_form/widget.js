@@ -160,16 +160,18 @@ define([
             }, '');
 
             qDict.q.push(field + ":(" + val.trim() + ")");
-          }
-          else {
+          } else {
             logic = " " + logic + " ";
             if (matchers[field]){
               matcher = matchers[field];
-            }
-            else {
+            } else {
               matcher = matchers.default;
             }
             phrases = val.match(matcher);
+
+            phrases = _.filter(phrases, function (p) {
+              return !/^(and|or)$/i.test(p);
+            });
 
             //quote matches if field is author or object
             phrases = (field == "author" || field == "object") ? _.map(phrases, function(p){ return '"' + p + '"'}) : phrases;
