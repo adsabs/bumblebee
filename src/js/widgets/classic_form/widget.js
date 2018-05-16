@@ -89,9 +89,16 @@ define([
       }
 
       //article and prop refereed
-      this.$("div[data-field=property] input:checked").each(function(){
-        qDict.q.push("property:" + $(this).attr("name"));
+      var property = this.$("div[data-field=property] input:checked").map(function() {
+        return $(this).attr('name');
       });
+
+      if (property.length > 0) {
+        var str = property.length === 1 ? property[0] : '(refereed or notrefereed)';
+        qDict.fq.push('property: ' + str);
+        qDict.fq.push('{!type=aqp v=$fq_property}');
+        qDict.fq_property = 'property: ' + str;
+      }
 
       //date special case (it's also a filter, not a q)
       //do we need a pubdate entry in the first place?
@@ -109,6 +116,8 @@ define([
         qDict.q.push("pubdate:" + datestring);
 
       }
+
+
 
       matchers = {
         default: /=?"[^"]+"|[=\w]+/g,
@@ -187,11 +196,17 @@ define([
               }) : phrases;
 
             //use parentheses always (bc of = parsing issue)
-            phrases = phrases.length > 1 ? phrases.join(logic) : phrases[0];
 
-            qDict.q.push(field + ":(" + phrases + ")");
+            if (field === 'bibstem') {
+              qDict.fq.push('{!type=aqp v=$fq_bibstem_facet}');
+              qDict.fq_bibstem_facet = '(' + _.map(phrases, function (p) {
+                return 'bibstem_facet:"' + p + '"'
+              }).join(logic) + ')';
+            } else {
+              phrases = phrases.length > 1 ? phrases.join(logic) : phrases[0];
+              qDict.q.push(field + ":(" + phrases + ")");
+            }
           }
-
         }
       });
       return qDict;
@@ -258,7 +273,6 @@ define([
       options = options || {};
       this.view = new FormView();
       this.listenTo(this.view, "submit", this.submitForm);
-
     },
 
     activate: function (beehive) {
@@ -276,15 +290,10 @@ define([
 
     submitForm : function(queryDict){
 
-      var newQuery = {
+      var newQuery = _.assign(queryDict, {
         q: queryDict.q.join(" "),
         sort: "date desc"
-      };
-
-      if (queryDict.fq.length > 0) {
-        newQuery.fq = queryDict.fq;
-        newQuery.fq_database = queryDict.fq_database;
-      }
+      });
 
       newQuery = new ApiQuery(newQuery);
       this.getPubSub().publish(this.getPubSub().START_SEARCH, newQuery);
