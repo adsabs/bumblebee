@@ -177,10 +177,19 @@ define([
             });
 
             //quote matches if field is author or object
-            phrases = (field == "author" || field == "object") ? _.map(phrases, function(p){ return '"' + p + '"'}) : phrases;
+            phrases = (field == "author" || field == "object") ?
+              _.map(phrases, function(p){
+
+                // check for equal sign and wrap in quotes
+                return /^[=\-+]/.test(p) ?
+                  p.replace(/^([=\-+])(.*)/, '$1"$2"') :
+                  p.replace(/^(.*)$/, '"$1"')
+              }) : phrases;
+
             //use parentheses always (bc of = parsing issue)
             phrases = phrases.length > 1 ? phrases.join(logic) : phrases[0];
-            qDict.q.push(field + ":(" + phrases +")" );
+
+            qDict.q.push(field + ":(" + phrases + ")");
           }
 
         }
