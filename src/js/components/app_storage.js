@@ -51,8 +51,9 @@ define([
         }
         this.set('currentQuery', apiQuery);
         //save to storage
-        if (this.getBeeHive().getService("PersistentStorage"))
-              this.getBeeHive().getService("PersistentStorage").set("currentQuery", apiQuery.toJSON());
+        if (this.getBeeHive().hasService("PersistentStorage")) {
+          this.getBeeHive().getService("PersistentStorage").set("currentQuery", apiQuery.toJSON());
+        }
       },
 
       setCurrentNumFound : function(numFound){

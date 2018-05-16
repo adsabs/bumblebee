@@ -158,7 +158,7 @@ define([
       };
 
 
-      it("Should display records coming from ORCID and has methods to filter/sort them", function (done) {
+      it("Should display records coming from ORCID", function (done) {
 
         var orcidMode = true;
 
@@ -188,41 +188,6 @@ define([
         expect(widget.collection.models.length).to.eql(3);
         expect(widget.view.children.findByIndex(0).$el.find('div.identifier').text().trim()).to.eql('2018CNSNS..56..270Q');
         expect(widget.view.children.findByIndex(1).$el.find('div.identifier').text().trim()).to.eql('2018CNSNS..56..296S'); // found through doi, alternate_bibcode:bibcode-foo
-
-        orcidMode = true;
-
-        widget.collection.models[0].set({ title: 'Tecnologias XXX', orcid: { provenance: 'ads' }});
-        widget.collection.models[1].set({ title: 'ADS 2.0', orcid: { provenance: 'others' }});
-        widget.collection.models[2].set({ title: 'External article', orcid: { provenance: null }});
-
-        // filter by provenance
-        widget.update({filterBy: 'ads'});
-        expect(widget.collection.models.length).to.eql(1);
-        expect(widget.collection.models[0].get('title')).to.eql('Tecnologias XXX');
-
-        widget.update({filterBy: 'others'});
-        expect(widget.collection.models.length).to.eql(1);
-        expect(widget.collection.models[0].get('title')).to.eql('ADS 2.0');
-
-        widget.update({filterBy: null});
-        expect(widget.collection.models.length).to.eql(1);
-        expect(widget.collection.models[0].get('title')).to.eql('External article');
-
-        widget.update(); // show all
-        expect(widget.collection.models.length).to.eql(3);
-
-        // sort
-        widget.update({sortBy: 'identifier'});
-        expect(widget.collection.models.length).to.eql(3);
-        expect(widget.collection.models[0].get('title')).to.eql('Tecnologias XXX');
-        expect(widget.collection.models[1].get('title')).to.eql('ADS 2.0');
-        expect(widget.collection.models[2].get('title')).to.eql('External article');
-
-        // sort and filter
-        widget.update({filterBy: ['ads', 'others'], sortBy: 'title'});
-        expect(widget.collection.models[0].get('title')).to.eql('ADS 2.0');
-        expect(widget.collection.models[1].get('title')).to.eql('Tecnologias XXX');
-
         done();
       });
 

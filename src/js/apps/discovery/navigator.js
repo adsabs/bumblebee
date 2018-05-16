@@ -350,21 +350,33 @@ define([
             var route = '#search/' + queryUpdater.clean(q).url();
           }
 
-          // if page is found, update the pagination
-          if (q) {
-            if (_.isFunction(q.has) && q.has('page')) {
-              var page = q.get('page')[0];
-              if (_.isString(page)) {
-                page = window.parseInt(page);
-              }
-              var updatePagination = function (w) {
-                if (w && _.isFunction(w.updatePagination)) {
-                  w.updatePagination({ page: page });
+          // update the pagination of the results widget
+          if (q instanceof ApiQuery) {
+            var update = {};
+            var par = function (str) {
+              if (_.isString(str)) {
+                try {
+                  return parseInt(str);
+                } catch (e) {
+                  // do nothing
                 }
-              };
-              app.getWidget('Results').then(updatePagination);
+              }
+              return false;
+            }
+
+            if (q.has('p_')) {
+              var page = par(q.get('p_')[0]);
+              update.page = page;
             } else {
-              route += '&page=0';
+              route += '&p_=0';
+            }
+
+            if (!_.isEmpty(update)) {
+              app.getWidget('Results').then(function (w) {
+                if (_.isFunction(w.updatePagination)) {
+                  w.updatePagination(update);
+                }
+              });
             }
           }
 
