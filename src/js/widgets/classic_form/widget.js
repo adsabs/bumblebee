@@ -13,8 +13,7 @@ define([
   FormTemplate,
   JQueryUI,
   AutocompleteData,
-  analytics
-  ){
+  analytics){
 
   //for autocomplete
   function split( val ) {
@@ -24,7 +23,6 @@ define([
     return split( term ).pop();
   }
 
-
   var FormView = Marionette.ItemView.extend({
 
     template : FormTemplate,
@@ -32,9 +30,9 @@ define([
     className : "classic-form",
 
     events  : {
-        "click button[type=submit]" : "submitForm",
-        "input input" : "checkValid",
-        "input textarea" : "checkValid",
+      "click button[type=submit]" : "submitForm",
+      "input input" : "checkValid",
+      "input textarea" : "checkValid",
 
     },
 
@@ -43,10 +41,10 @@ define([
       var allVals = this.$("input[type=text], textarea").map(function(){return $(this).val()}).get().join("");
       if (allVals) {
         this.$("button[type=submit]").prop("disabled", false);
-       }
-        else {
-          this.$("button[type=submit]").prop("disabled", true);
-        }
+      }
+      else {
+        this.$("button[type=submit]").prop("disabled", true);
+      }
     },
 
     submitForm : function(e){
@@ -59,7 +57,12 @@ define([
       }
       this.trigger("submit", queryDict);
       this.$("button[type=submit]").each(function(){
-        $(this).html('<i class="icon-loading"/>  Loading...')
+        var $el = $(this);
+        var currHtml = $el.html();
+        $el.html('<i class="icon-loading"/>  Loading...');
+        setTimeout(function () {
+          $el.html(currHtml);
+        }, 3000);
       });
 
     },
@@ -73,37 +76,37 @@ define([
         year_to: "9999"
       };
 
-     //database filters
-     database = this.$("div[data-field=database] input:checked").map(
-       function(){return $(this).attr("name")}
-     );
+      //database filters
+      database = this.$("div[data-field=database] input:checked").map(
+        function(){return $(this).attr("name")}
+      );
 
-     if (database.length == 2) {
-       qDict.fq.push("database:" + "(astronomy OR physics)");
-     }
-      else if (database.length == 1){
-       qDict.fq.push("database:" + database[0]);
-     }
+      if (database.length > 0) {
+        var dbStr = database.length === 1 ? database[0] : '(astronomy or physics)';
+        qDict.fq.push('database: ' + dbStr);
+        qDict.fq.push('{!type=aqp v=$fq_database}');
+        qDict.fq_database = 'database: ' + dbStr;
+      }
 
-     //article and prop refereed
-     this.$("div[data-field=property] input:checked").each(function(){
-       qDict.q.push("property:" + $(this).attr("name"));
-     });
+      //article and prop refereed
+      this.$("div[data-field=property] input:checked").each(function(){
+        qDict.q.push("property:" + $(this).attr("name"));
+      });
 
-     //date special case (it's also a filter, not a q)
-     //do we need a pubdate entry in the first place?
-     pubdateVals = this.$("div[data-field=date] input")
-       .map(function(){return $(this).val()}).get().join("");
+      //date special case (it's also a filter, not a q)
+      //do we need a pubdate entry in the first place?
+      pubdateVals = this.$("div[data-field=date] input")
+      .map(function(){return $(this).val()}).get().join("");
 
-     if (pubdateVals){
-       dates = this.$("div[data-field=date] input").map(function(){
-         var $t = $(this);
-         var val = $t.val() || pubdateDefaults[$t.attr("name")];
-         return val;
-       });
+      if (pubdateVals){
+        dates = this.$("div[data-field=date] input").map(function(){
+          var $t = $(this);
+          var val = $t.val() || pubdateDefaults[$t.attr("name")];
+          return val;
+        });
 
-       datestring = "[" + dates[1] + "-" + dates[0] + " TO " + dates[3] + "-" + dates[2] + "]";
-       qDict.q.push("pubdate:" + datestring);
+        datestring = "[" + dates[1] + "-" + dates[0] + " TO " + dates[3] + "-" + dates[2] + "]";
+        qDict.q.push("pubdate:" + datestring);
 
       }
 
@@ -114,11 +117,11 @@ define([
         bibstem: /[^,^\s]+/g
       };
 
-     //all input/textarea fields other than date
+      //all input/textarea fields other than date
       this.$("div[data-textInput=true]").each(function(){
 
         var $t = $(this), logic, field, matcher, phrases,
-            val = $t.find("input[type=text], textarea").val();
+        val = $t.find("input[type=text], textarea").val();
 
         if (val !== ""){
           logic = $t.find(".logic-group input:checked").val();
@@ -137,10 +140,10 @@ define([
             lines = $.map(lines, $.trim);
 
             /*
-              transform each of the lines in a string
-              +blah -> +"blah"
-              -blah -> -"blah"
-              blah -> +"blah"
+            transform each of the lines in a string
+            +blah -> +"blah"
+            -blah -> -"blah"
+            blah -> +"blah"
             */
             val = lines.reduce(function (res, line) {
 
@@ -269,7 +272,10 @@ define([
         sort: "date desc"
       };
 
-      if (queryDict.fq.length) newQuery.fq = queryDict.fq.join(" ");
+      if (queryDict.fq.length > 0) {
+        newQuery.fq = queryDict.fq;
+        newQuery.fq_database = queryDict.fq_database;
+      }
 
       newQuery = new ApiQuery(newQuery);
       this.getPubSub().publish(this.getPubSub().START_SEARCH, newQuery);
