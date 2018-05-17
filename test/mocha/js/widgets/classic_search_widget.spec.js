@@ -13,7 +13,45 @@ define([
 
       $("#test").empty();
 
-    })
+    });
+
+    it('should move = to outside quotes for author names', function (done) {
+      var w = new ClassicForm();
+      var minsub = new (MinimalPubSub.extend({
+        request: function (apiRequest) {
+          return "";
+        }
+      }))({verbose: false});
+      var publishSpy = sinon.spy();
+
+      minsub.beehive.getService("PubSub").publish = publishSpy;
+      w.activate(minsub.beehive.getHardenedInstance());
+
+      $("#test").append(w.render().el);
+      var val = [
+        '=Accomazzi, a',
+        '=Kurtz, M'
+      ].join('\n');
+      w.view.$("div[data-field=author]").find("textarea").val(val);
+      w.view.$("div[data-field=author]").find("textarea").trigger("input");
+      w.view.$("button[type=submit]").eq(0).click();
+      expect(publishSpy.args[0][2].toJSON()).to.eql({
+        "q": [
+          "author:(=\"Accomazzi, a\" AND =\"Kurtz, M\")"
+        ],
+        "fq": [
+          "database: astronomy",
+          "{!type=aqp v=$fq_database}"
+        ],
+        "fq_database": [
+          "database: astronomy"
+        ],
+        "sort": [
+          "date desc"
+        ]
+      });
+      done();
+    });
 
     it("should turn a classic form into an apiQuery on submit", function(){
 
@@ -65,13 +103,26 @@ define([
 
       expect(publishSpy.args[0][2].toJSON()).to.eql({
         "q": [
-          "property:refereed property:article pubdate:[2010-10 TO 9999-12] author:(\"Accomazzi,a\" AND \"Kurtz,M\") title:(star OR planet OR \"gliese 581\") abs:(-\"hawaii star\") bibstem:(apj OR mnras)"
+          "pubdate:[2010-10 TO 9999-12] author:(\"Accomazzi,a\" AND \"Kurtz,M\") title:(star OR planet OR \"gliese 581\") abs:(-\"hawaii star\")"
+        ],
+        "fq": [
+          "database: (astronomy or physics)",
+          "{!type=aqp v=$fq_database}",
+          "property: (refereed or notrefereed)",
+          "{!type=aqp v=$fq_property}",
+          "{!type=aqp v=$fq_bibstem_facet}"
+        ],
+        "fq_database": [
+          "database: (astronomy or physics)"
+        ],
+        "fq_property": [
+          "property: (refereed or notrefereed)"
+        ],
+        "fq_bibstem_facet": [
+          "(bibstem_facet:\"apj\" OR bibstem_facet:\"mnras\")"
         ],
         "sort": [
           "date desc"
-        ],
-        "fq": [
-          "database:(astronomy OR physics)"
         ]
       });
 
@@ -101,13 +152,26 @@ define([
 
       expect(publishSpy.args[1][2].toJSON()).to.eql({
         "q": [
-          "property:refereed pubdate:[2010-10 TO 2012-12] author:(\"Accomazzi,a\") title:(star OR planet OR \"gliese 581\") abs:(-\"hawaii star\") bibstem:(apj)"
+          "pubdate:[2010-10 TO 2012-12] author:(\"Accomazzi,a\") title:(star OR planet OR \"gliese 581\") abs:(-\"hawaii star\")"
+        ],
+        "fq": [
+          "database: astronomy",
+          "{!type=aqp v=$fq_database}",
+          "property: refereed",
+          "{!type=aqp v=$fq_property}",
+          "{!type=aqp v=$fq_bibstem_facet}"
+        ],
+        "fq_database": [
+          "database: astronomy"
+        ],
+        "fq_property": [
+          "property: refereed"
+        ],
+        "fq_bibstem_facet": [
+          "(bibstem_facet:\"apj\")"
         ],
         "sort": [
           "date desc"
-        ],
-        "fq": [
-          "database:astronomy"
         ]
       });
 
@@ -156,11 +220,15 @@ define([
         "q": [
           "author:(-\"Accomazzi, a\" +author2 -author3 +author4)"
         ],
+        "fq": [
+          "database: astronomy",
+          "{!type=aqp v=$fq_database}"
+        ],
+        "fq_database": [
+          "database: astronomy"
+        ],
         "sort": [
           "date desc"
-        ],
-        "fq": [
-          "database:astronomy"
         ]
       });
 
@@ -182,11 +250,15 @@ define([
         "q": [
           "author:(+\"t e s t\" +testing -\" test\" +test +testing -testing)"
         ],
+        "fq": [
+          "database: astronomy",
+          "{!type=aqp v=$fq_database}"
+        ],
+        "fq_database": [
+          "database: astronomy"
+        ],
         "sort": [
           "date desc"
-        ],
-        "fq": [
-          "database:astronomy"
         ]
       });
     });
