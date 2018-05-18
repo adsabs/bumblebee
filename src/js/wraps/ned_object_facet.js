@@ -52,7 +52,16 @@ define([
         });
       }
 
-      var q = this.customizeQuery(this.getCurrentQuery());
+      var query = this.getCurrentQuery();
+      if (_.isUndefined(query)) {
+        if (beehive.hasObject('AppStorage')) {
+          var storage = beehive.getObject('AppStorage');
+          if (_.isFunction(storage.getCurrentQuery)) {
+            query = storage.getCurrentQuery();
+          }
+        }
+      }
+      var q = this.customizeQuery(query);
       var children = id ? this.store.getState().facets[id].children : this.store.getState().children;
       var offset = children.length || 0;
 

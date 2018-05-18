@@ -115,6 +115,14 @@ define([
           this.model.set(this.pagination);
         }
       }
+      this.activateWidget();
+      this.attachGeneralHandler(this.onApiFeedback);
+    },
+
+    onApiFeedback: function (feedback) {
+      if (feedback.error) {
+        this.view.model.set('error', feedback.error);
+      }
     },
 
     updatePaginationPreferences : function(event, data){
@@ -159,9 +167,9 @@ define([
     processResponse: function (apiResponse) {
 
       var docs = this.extractDocs(apiResponse);
-      var numFound = apiResponse.has('response.numFound') ? 
+      var numFound = apiResponse.has('response.numFound') ?
         apiResponse.get('response.numFound') : this.hiddenCollection.length;
-      var start = apiResponse.has('response.start') ? 
+      var start = apiResponse.has('response.start') ?
         apiResponse.get('response.start') : this.model.get('start');
       var pagination = this.getPaginationInfo(apiResponse, docs);
       docs = this.processDocs(apiResponse, docs, pagination);
@@ -283,7 +291,7 @@ define([
     },
 
     updatePagination: function (options) {
-      
+
       // update the current model based on the data passed in
       var opts = _.defaults(options, {
         silentIndexUpdate: false,
@@ -319,7 +327,7 @@ define([
 
       // check to make sure this page update is valid, and add to update
       if (_.isNumber(opts.page)) {
-        var max = currentPageData.totalPages - 1;
+        var max = (currentPageData && currentPageData.totalPages - 1) || 1;
         var min = 0;
 
         // check if page is within our set boundaries

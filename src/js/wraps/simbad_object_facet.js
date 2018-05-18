@@ -36,8 +36,9 @@ define([
 
     widget._dispatchRequest = function(id, offset) {
 
-      var pubsub = this.getPubSub(),
-          that = this;
+      var pubsub = this.getPubSub();
+      var that = this;
+      var beehive = this.getBeeHive();
 
       this.store.dispatch(this.actions.data_requested(id));
 
@@ -52,7 +53,17 @@ define([
         });
       }
 
-      var q = this.customizeQuery(this.getCurrentQuery());
+      var query = this.getCurrentQuery();
+      if (_.isUndefined(query)) {
+        if (beehive.hasObject('AppStorage')) {
+          var storage = beehive.getObject('AppStorage');
+          if (_.isFunction(storage.getCurrentQuery)) {
+            query = storage.getCurrentQuery();
+          }
+        }
+      }
+
+      var q = this.customizeQuery(query);
       var children = id ? this.store.getState().facets[id].children : this.store.getState().children;
       var offset = children.length || 0;
 
@@ -98,7 +109,7 @@ define([
             }, this)
         that.store.dispatch(that.actions.data_received(enhancedResponse, id));
       };
-      
+
       var request = new ApiRequest({
         target: ApiTargets.SERVICE_OBJECTS,
         options: {

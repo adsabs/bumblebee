@@ -334,6 +334,14 @@ define([
             }
           });
 
+          $input.popover({
+            placement: 'bottom',
+            title: 'Empty Search!',
+            content: 'Please enter a query to search.',
+            animation: true,
+            trigger: 'manual'
+          });
+
           this.$('[data-toggle="tooltip"]').tooltip();
 
         },
@@ -570,6 +578,19 @@ define([
           e.stopPropagation();
 
           query = this.getFormVal();
+
+          var $input = $('input', e.currentTarget);
+          if (_.isString(query) && _.isEmpty(query) && !this.model.get('bigquery')) {
+
+            // show a popup to tell the user to type in a query
+            $input.popover('show');
+            $input.on('input change blur', function () {
+              $(this).popover('hide');
+            });
+            return false;
+          } else {
+            $input.popover('hide');
+          }
 
           //replace uppercased fields with lowercase
           query = query.replace(/([A-Z])\w+:/g, function(letter){return letter.toLowerCase()});
