@@ -97,7 +97,6 @@ define([
         pubsub.subscribe(pubsub.USER_ANNOUNCEMENT, this.onUserAnnouncement);
         pubsub.subscribe(pubsub.STORAGE_PAPER_UPDATE, this.onStoragePaperUpdate);
         pubsub.subscribe(pubsub.CUSTOM_EVENT, this.onCustomEvent);
-
       },
 
       onUserAnnouncement: function(message, data){
