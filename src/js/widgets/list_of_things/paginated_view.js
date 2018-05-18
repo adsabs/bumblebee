@@ -14,6 +14,7 @@ define([
     'js/mixins/link_generator_mixin',
     'js/mixins/add_stable_index_to_collection',
     'hbs!js/widgets/list_of_things/templates/empty-view-template',
+    'hbs!js/widgets/list_of_things/templates/error-view-template',
     'hbs!js/widgets/list_of_things/templates/initial-view-template',
     './item_view',
     'analytics',
@@ -32,6 +33,7 @@ define([
             LinkGenerator,
             WidgetPaginationMixin,
             EmptyViewTemplate,
+            ErrorViewTemplate,
             InitialViewTemplate,
             ItemView,
             analytics,
@@ -63,6 +65,8 @@ define([
       template: function (data) {
         if (data.query) {
           return EmptyViewTemplate(data);
+        } else if (data.error) {
+          return ErrorViewTemplate(data);
         }
         return loadingTemplate(_.extend(data, {
           widgetLoadingSize: 'big',
@@ -102,13 +106,21 @@ define([
       },
 
       className: "list-of-things",
-      
+
       alreadyRendered: false,
 
       emptyViewOptions: function (model) {
         var query = this.model.get('query');
-        query = query && query[0];
-        model.set('query', query);
+        var error = this.model.get('error');
+
+        if (_.isArray(query)) {
+          model.set('query', query[0]);
+        } else if (_.has('query', query)) {
+          model.set('query', query.query[0]);
+        } else if (error) {
+          model.set('error', error);
+        }
+
         return {
           model: model
         };

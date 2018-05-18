@@ -5,6 +5,8 @@
             {{/if}}
     </div>
 </div>
+{{#unless query}}
+{{#unless error}}
 <div class="row">
     {{#if pageData}}
     <div class="col-sm-12 pagination-controls s-pagination-controls">
@@ -29,3 +31,5 @@
     </div>
     {{/if}}
 </div>
+{{/unless}}
+{{/unless}}
