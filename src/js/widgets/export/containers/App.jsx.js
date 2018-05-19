@@ -39,14 +39,19 @@ define([
         'handleDownloadFileClick',
         'onCopyText'
       ]);
+      const { dispatch } = props;
 
       /**
        * The count update is debounced, to make sure that lots of changes don't
        * send many requests.
        */
       this.updateCount = _.debounce((val) => {
-        const { dispatch } = this.props;
         dispatch(setCount(parseInt(val)));
+      }, 500);
+
+      this.onCustomFormatChange = _.debounce((val) => {
+        dispatch
+        dispatch({ type: 'SET_CUSTOM_FORMAT', format: val });
       }, 500);
 
       this.state = {
@@ -129,7 +134,7 @@ define([
       dispatch(setFormat(format));
 
       // if autoSubmit, then hit apply as the format changes
-      autoSubmit && this.handleApplyClick();
+      autoSubmit && format.value !== 'custom' && this.handleApplyClick();
     }
 
     /**
@@ -153,12 +158,15 @@ define([
       const {
         format, formats, isFetching, output, batchSize, showCloser, showReset,
         progress, maxCount, hasError, errorMsg, totalRecs, showSlider, splitCols,
-        autoSubmit
+        autoSubmit, customFormat
       } = this.props;
       const { count, hasMore, showAlert, alertMsg, remaining } = this.state;
 
-      const lower = maxCount - batchSize;
-      const upper = Number(count) + (maxCount - batchSize);
+      const low = maxCount - batchSize;
+      const lower = low === 0 ? 1 : low;
+      const upper = Number(count) + (low);
+
+      const shouldShowSlider = (totalRecs > 1) && showSlider;
 
       return (
         <div className="container-fluid export-container">
@@ -181,10 +189,12 @@ define([
                 totalRecs={totalRecs}
                 batchSize={batchSize}
                 hasMore={hasMore}
-                showSlider={showSlider}
+                showSlider={shouldShowSlider}
                 showReset={showReset}
                 autoSubmit={autoSubmit}
                 remaining={remaining}
+                customFormat={customFormat}
+                onCustomFormatChange={this.onCustomFormatChange}
                 onReset={this.handleResetClick}
                 onApply={this.handleApplyClick}
                 onCancel={this.handleCancelClick}
@@ -263,6 +273,7 @@ define([
     errorMsg: state.error.errorMsg,
     batchSize: state.exports.batchSize,
     totalRecs: state.exports.totalRecs,
+    customFormat: state.exports.customFormat,
     showCloser: state.main.showCloser,
     showSlider: state.main.showSlider,
     autoSubmit: state.main.autoSubmit,

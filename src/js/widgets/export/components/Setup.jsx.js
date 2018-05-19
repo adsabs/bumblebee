@@ -8,7 +8,7 @@ define([
   const Setup = ({
        onApply, setFormat, disabled, onCancel, batchSize, hasMore, onReset,
        format, formats, count, setCount, maxCount, onGetNext, totalRecs,
-        showSlider, showReset, remaining, autoSubmit
+        showSlider, showReset, remaining, autoSubmit, customFormat, onCustomFormatChange
     }) => (
     <div>
       <div className="row">
@@ -32,6 +32,30 @@ define([
         }
       </div>
 
+      { format.value === 'custom' &&
+        <div className="row">
+          <div className="col-sm-10">
+            <label htmlFor="ex-custom-input">
+              Enter Custom Format
+              <span style={{ marginLeft: 5 }}>
+                <a
+                  title="Get Help With ADS Custom Format Syntax"
+                  target="_blank"
+                  href="https://adsabs.github.io/help/actions/export">
+                  <i className="fa fa-info-circle fa-invert" />
+                </a>
+              </span>
+            </label>
+            <input
+              type="text"
+              className="form-control"
+              value={customFormat}
+              onChange={e => onCustomFormatChange(e.target.value)}
+            />
+          </div>
+        </div>
+      }
+
       { showSlider &&
         <div className="row">
           <div className="col-sm-10">
@@ -54,7 +78,7 @@ define([
 
       <div className="row">
         <div className="col-sm-12 btn-toolbar">
-          {!autoSubmit &&
+          {(!autoSubmit || format.value === 'custom') &&
           <button
             className="btn btn-primary"
             onClick={onApply}
@@ -79,7 +103,7 @@ define([
               Get Next {remaining} Record(s)
             </button>
           }
-          {disabled && !autoSubmit &&
+          {disabled && (!autoSubmit || format.value === 'custom') &&
             <button
               className="btn btn-warning"
               onClick={onCancel}
