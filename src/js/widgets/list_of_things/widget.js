@@ -194,9 +194,10 @@ define([
 
       var allLoaded = this.model.has('perPage') && this.model.get('perPage') === this.collection.length;
       var isLastPage = this.model.has('pageData') && this.model.get('pageData').nextPossible === false;
+      var noItems = this.view.collection.length === 0;
 
       //finally, loading view (from pagination template) can be removed or added
-      if (allLoaded || (isLastPage && numFound <= start + docs.length)) {
+      if (noItems || allLoaded || (isLastPage && numFound <= start + docs.length)) {
         this.model.set("loading", false);
       } else {
         this.model.set("loading", true);
