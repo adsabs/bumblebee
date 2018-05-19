@@ -202,7 +202,8 @@ define([
       masterPageManager.assemble(app);
 
       // attach the master page to the body
-      $('div#body-template-container').empty().append(masterPageManager.view.el);
+      var container = $('div#body-template-container').empty();
+      $(masterPageManager.view.el).hide().appendTo(container).fadeIn(600);
 
 
       // kick off routing

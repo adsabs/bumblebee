@@ -14,6 +14,7 @@ define([
     SET_QUERY,
     SET_FORMAT,
     SET_FORMATS,
+    SET_CUSTOM_FORMAT,
     SET_PROGRESS,
     SET_COUNT,
     SET_PAGE,
@@ -135,6 +136,12 @@ define([
       label: 'Solar Physics',
       help: 'LaTeX format for use in Solar Physics',
       ext: 'txt'
+    }, {
+      value: 'custom',
+      id: '14',
+      label: 'Custom Format',
+      help: 'Enter Your Own Custom Format',
+      ext: 'txt'
     }
   ], action) => {
     switch (action.type) {
@@ -172,6 +179,7 @@ define([
     batchSize: ApiTargets._limits.ExportWidget.default,
     ignore: false,
     totalRecs: 0,
+    customFormatString: '',
     snapshot: {}
   }, action) => {
     switch(action.type) {
@@ -183,6 +191,8 @@ define([
         return { ...state, totalRecs: action.totalRecs };
       case REQUEST_EXPORT:
         return { ...state, isFetching: true, progress: 0 };
+      case SET_CUSTOM_FORMAT:
+        return { ...state, customFormatString: action.format };
       case RECEIVE_EXPORT:
         return {
           ...state,
