@@ -48,6 +48,11 @@ define([
       if (this.view.model && this.view.model.has('query')) {
         ret.$el.find('.s-back-button-container').empty().html('<a href="#search/' + this.view.model.get('query') + '" class="back-button btn btn-sm btn-default"> <i class="fa fa-arrow-left"></i> Back to results</a>');
       }
+
+      // when arriving at the abstract page, scroll back to the top
+      if (pageName === 'ShowAbstract' && typeof window.scrollTo === 'function') {
+        window.scrollTo(0, 0);
+      }
       return ret;
     },
 
@@ -58,7 +63,7 @@ define([
         this.widgets.tocWidget.model.set("bibcode", bibcode);
       };
     },
-    
+
     navConfig : {
       ShowAbstract : {"title": "Abstract", "path":"abstract", "showCount": false, "isSelected":true, "category":"view","alwaysThere":"true"},
       ShowCitations : {"title": "Citations", "path":"citations", "category":"view"},
