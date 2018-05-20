@@ -1,4 +1,5 @@
 define([
+    'underscore',
     'jquery',
     'backbone',
     'js/components/api_query',
@@ -11,6 +12,7 @@ define([
 
   ],
   function (
+    _,
     $,
     Backbone,
     ApiQuery,
@@ -20,7 +22,6 @@ define([
     ApiTargets,
     ApiAccessMixin,
     ApiQueryUpdater
-
     ) {
 
     "use strict";
@@ -30,6 +31,26 @@ define([
       initialize : function(options){
         options = options || {};
         this.queryUpdater = new ApiQueryUpdater('Router');
+      },
+
+      execute: function (callback, args) {
+
+        // only perform actions if history has started
+        if (Backbone.History.started) {
+
+          var route = Backbone.history.getFragment();
+          route = route === '' ? 'index' : route;
+
+          // Workaround for issue where hitting back button from the index page
+          // goes to an empty `search/` route, so capture that here and go back 2
+          if (route === 'search/' && _.isEmpty(_.reject(args, _.isUndefined))) {
+            return Backbone.history.history.go(-2);
+          }
+        }
+
+        if (_.isFunction(callback)) {
+          callback.apply(this, args);
+        }
       },
 
       activate: function (beehive) {
