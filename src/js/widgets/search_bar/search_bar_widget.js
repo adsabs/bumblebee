@@ -848,7 +848,11 @@ define([
 
         navigate: function (newQuery) {
           var newQ = newQuery.toJSON();
-          var oldQ = this.getCurrentQuery().toJSON();
+          var oldQ = _.omit(this.getCurrentQuery().toJSON(), function (val, key) {
+
+            // omit certain fields (highlights, paging)
+            return /^hl.*/.test(key) || /^p_$/.test(key);
+          });
 
           // if we aren't on the index page, only refine the current query, don't wipe it out
           if (this.currentPage !== 'index-page') {
