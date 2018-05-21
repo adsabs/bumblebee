@@ -102,7 +102,9 @@ define([
       },
 
       onRender: function () {
-        if (MathJax) MathJax.Hub.Queue(["Typeset", MathJax.Hub, this.el]);
+        if (MathJax) {
+          MathJax.Hub.Queue(["Typeset", MathJax.Hub, this.el]);
+        }
       },
 
       className: "list-of-things",
@@ -112,6 +114,7 @@ define([
       emptyViewOptions: function (model) {
         var query = this.model.get('query');
         var error = this.model.get('error');
+        this.model.unset('error', { silent: true });
 
         if (_.isArray(query)) {
           model.set('query', query[0]);
