@@ -189,8 +189,8 @@ define([
         // and NGC_789 in this example). These should be present as keys in the cache generated in
         // the object facet widget, returning the associated (canonical) object names
         //create an array with just the user-friendly names of the facets
-        var logic = q.get('__ned_object_facet_hier_fq_ned_object_facet_hier')[0];
-        q.set('__ned_object_facet_hier_fq_ned_object_facet_hier', [logic].concat(selectedFacets));
+        var logic = q.get('filter_ned_object_facet_hier_fq_ned_object_facet_hier')[0];
+        q.set('filter_ned_object_facet_hier_fq_ned_object_facet_hier', [logic].concat(selectedFacets));
       }
 
       q.unset('facet.prefix');
