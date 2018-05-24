@@ -10,19 +10,24 @@ define([], function(){
   f.formatNum = function(num){
     var withCommas = [];
     num = num+"";
-    if (num.length < 4){
-      return num
+    var parts = num.split('.');
+    var extra = '';
+    if (parts.length === 2) {
+      num = parts[0];
+      extra = '.' + parts[1];
     }
-    else {
+    if (num.length < 4){
+      return num + extra;
+    } else {
       num  = num.split("").reverse();
       _.each(num, function(n, i){
-        withCommas.unshift(n)
-        if ((i+1) % 3 === 0 && i !== num.length -1){
-          withCommas.unshift(",")
+        withCommas.unshift(n);
+        if ((i+1) % 3 === 0 && i !== num.length -1) {
+          withCommas.unshift(",");
         }
       })
     }
-    return withCommas.join("");
+    return withCommas.join("") + extra;
   }
 
 
