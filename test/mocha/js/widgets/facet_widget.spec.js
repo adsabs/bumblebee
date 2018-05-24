@@ -591,7 +591,7 @@ define([
           'fq_author': [
                   '(author_facet_hier:"0/Accomazzi, A" OR author_facet_hier:"0/Kurtz, M")'
                 ],
-          '__author_facet_hier_fq_author': [
+          'filter_author_facet_hier_fq_author': [
                   'OR',
                   'author_facet_hier:"0/Accomazzi, A"',
                   'author_facet_hier:"0/Kurtz, M"'
@@ -717,7 +717,7 @@ define([
           'fq_author': [
               '(author_facet_hier:"0/Accomazzi, A")'
             ],
-          '__author_facet_hier_fq_author': [
+          'filter_author_facet_hier_fq_author': [
               'AND',
               'author_facet_hier:"0/Accomazzi, A"'
             ],
