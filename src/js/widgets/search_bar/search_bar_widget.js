@@ -741,15 +741,15 @@ define([
           var res = apiResponse.toJSON();
           if (res.stats) {
             var type = _.keys(res.stats.stats_fields)[0];
-            var count = res.stats.stats_fields[type].count;
+            var sum = res.stats.stats_fields[type].sum;
             if (type === 'citation_count_norm') {
               this.model.set({
-                citationCount: count,
+                citationCount: sum.toFixed(2),
                 citationLabel: 'normalized citations'
               });
             } else if (type === 'citation_count') {
               this.model.set({
-                citationCount: count,
+                citationCount: sum,
                 citationLabel: 'citations'
               });
             }
@@ -773,6 +773,9 @@ define([
               stats: 'true',
               'stats.field': 'citation_count'
             });
+          } else {
+            this.model.unset('citationCount');
+            this.model.unset('citationLabel');
           }
           BaseWidget.prototype.dispatchRequest.call(this, apiQuery);
         },
