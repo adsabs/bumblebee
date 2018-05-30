@@ -695,7 +695,7 @@ define(['underscore',
             case 502: // bad gateway
             case 503: // service unavailable
             case 504: // gateway timeout
-              analytics('send', 'event', 'introspection', 'retrying', status); 
+              analytics('send', 'event', 'introspection', 'retrying', status);
               setTimeout(function() {
                 // we can remove the entry from the cache, because
                 // if they eventually succeed, sender will receive
@@ -718,7 +718,7 @@ define(['underscore',
               break;
 
             default:
-              analytics('send', 'event', 'introspection', 'not-retrying', status); 
+              analytics('send', 'event', 'introspection', 'not-retrying', status);
           }
         }
       },
@@ -753,10 +753,10 @@ define(['underscore',
           // without the original url there can be no messages to display
           return;
         }
-          
-        // pull out message components and merge them together    
+
+        // pull out message components and merge them together
         messages = [];
-        
+
         err = utils.qs('error_message', this.original_url, '  ');
         if (err) {
           messages.push(err);
@@ -766,13 +766,14 @@ define(['underscore',
         if (warn) {
           messages.push(warn);
         }
-        
+
         unprocessed = utils.qs('unprocessed_parameter', this.original_url, '  ');
         if (unprocessed) {
           messages.push(unprocessed);
         }
 
         if (messages.length > 0) {
+          messages.push('See our <a style="text-decoration: underline; font-weight: bold" href="http://adsabs.github.io/help/faq/#classic-search-translator">docs</a> for more information');
           message = messages.join('<br>');
           this.getAlerter().alert(new ApiFeedback({
             type: Alerts.TYPE.INFO,
