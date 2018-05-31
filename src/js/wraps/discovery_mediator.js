@@ -263,6 +263,22 @@ define([
       analytics('send', 'event', 'error', 'unrecoverable-' + xhr.status, 'request=' + apiRequest.url() + ' token=...' + getAccessTokenStump);
       
       var msg;
+      var msgArr = [
+        "We are having trouble accessing: " + target + ". The ADS backend service is probably down, or else we’ve been struck by an asteroid.",
+        "We are having trouble accessing: " + target + ". A solar flare must have taken down our servers! Or else the ADS backend service is down momentarily.",
+        "Was that a supernova or are our servers just down? We are having trouble accessing: " + target + " but we should be back in a flash.",
+        "The alien mothership has arrived! Or else the ADS backend service is down momentarily. We are having trouble accessing: " + target + " but should be back up soon.",
+        "The server response seems to be highly redshifted, may require another observation to record. (The ADS backend service is down momentarily and we are having trouble accessing: " + target + " but we should be back up soon.)",
+        "A singularity has formed inside our server, and we are having trouble accessing: " + target + ".",
+        "Universal Translator Malfunction: Unable to Communicate with ADS Droids. (The ADS backend service is down momentarily and we are having trouble accessing: " + target + " but we should be back up soon.",
+        "UV catastrophe detected! (The ADS backend service is down momentarily and we are having trouble accessing: " + target + " but we should be back up soon.)",
+        "The ADS Droids got distracted by the Missing Mass Problem instead of working on: " + target + ". Be back in a minute."
+      ];
+      function newMsg() {
+	  var randomNumber = Math.floor(Math.random() * msgArr.length);
+	  var msg = msgArr[randomNumber];
+	  return msg;
+	  }
       switch(xhr.status) {
         case 504: // gateway timeout
         case 408: // proxy timeout
@@ -271,10 +287,10 @@ define([
         case 500: // server error
         case 502: // bad gateway
         case 503: // service unavailable
-          msg = "We are experiencing troubles accessing: " + target + " Probably the ADS backend service is down or is dealing with some other serious issues (terrorist attack, nuclear explosion, asteroids etc). Please be patient, our systems have been notified!"
+          msg = newMsg();
           break;
-        default:
-          msg = "Today, we are double unlucky. Not only are you experiencing 'unrecoverable' error. In addition to this, you have to read this lame default message. Sorry about that. We have been notified about the problem."
+      default:
+          msg = "Today, you are doubly unlucky. Not only are you experiencing an 'unrecoverable' error, but you have to read this default error message. Sorry about that! We have been notified about the problem."
           break;
       }
 

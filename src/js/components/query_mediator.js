@@ -242,7 +242,7 @@ define(['underscore',
          */
         if (this.mostRecentQuery.get('__qid') &&
          !apiQuery.get('__qid') &&
-         !apiQuery.get('__clearBiqQuery')
+         !apiQuery.get('__clearBigQuery')
        ){
           this.mostRecentQuery.set('q', apiQuery.get('q'));
           apiQuery = this.mostRecentQuery;
