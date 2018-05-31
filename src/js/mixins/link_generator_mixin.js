@@ -217,7 +217,7 @@ define(["underscore", "js/mixins/openurl_generator"], function(_, OpenURLGenerat
    * @param {object} data - the data object to process
    * @returns {object} - the fulltext and data sources
    */
-  const _processLinkData = _.memoize(function (data) {
+  const _processLinkData = function (data) {
     const createGatewayUrl = this._createGatewayUrl;
     let fullTextSources = [];
     let dataProducts = [];
@@ -249,7 +249,7 @@ define(["underscore", "js/mixins/openurl_generator"], function(_, OpenURLGenerat
           type: 'INSTITUTION',
           shortName: 'My Institution',
           name: 'My Institution',
-          description: linkInfo && linkInfo.description
+          description: 'Find Article At My Institution'
         });
         countOpenUrls += 1;
       }
@@ -313,11 +313,7 @@ define(["underscore", "js/mixins/openurl_generator"], function(_, OpenURLGenerat
       fullTextSources: fullTextSources,
       dataProducts: dataProducts
     };
-  }, function (data) {
-
-    // provide a resolver string, to help with the memoizer
-    return JSON.stringify(_.pick(data, ['bibcode', 'property', 'esources', 'data', 'link_server']));
-  });
+  };
 
   /**
    * Parse a data object to pull out the references/citations and table of contents
