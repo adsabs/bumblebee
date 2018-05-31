@@ -688,7 +688,10 @@ define([
             //for querymediator to do the correct thing
             query.unset('__qid');
             query.unset('__bigquerySource');
-            query.set('__clearBiqQuery', 'true');
+            query.set('__clearBigQuery', 'true');
+
+            // unload the bigquery from the model
+            this.clearBigQueryPill();
             this.navigate(query);
           });
 
@@ -787,9 +790,14 @@ define([
         focusInput : function(page){
 
           if (page == "index-page"){
-            this.view.$("input.q").focus();
-            this.view.$("input.q").val('');
+            this.clearBigQueryPill();
+            this.view.$("input.q").focus().val('');
           }
+        },
+
+        clearBigQueryPill: function () {
+          this.model.unset('bigquerySource');
+          this.model.unset('bigquery');
         },
 
         onNavigate: function (page) {
@@ -860,6 +868,11 @@ define([
           // if we aren't on the index page, only refine the current query, don't wipe it out
           if (this.currentPage !== 'index-page') {
             newQuery = new ApiQuery(_.assign({}, oldQ, newQ));
+          }
+
+          // remove the bigquery from the query if the user cleared it
+          if (newQuery.has('__clearBigQuery')) {
+            newQuery.unset('__qid');
           }
 
           this.view.setFormVal(newQuery.get('q')[0]);
