@@ -454,7 +454,7 @@ define([
           "q": [
             "star OR planet"
           ],
-          "__clearBiqQuery": [
+          "__clearBigQuery": [
             "true"
           ]
         });

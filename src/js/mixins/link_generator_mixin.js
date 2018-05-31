@@ -56,8 +56,8 @@ define(["underscore", "js/mixins/openurl_generator"], function(_, OpenURLGenerat
       shortName: 'ADS',
       type: 'SCAN'
     },
-    'ACA': {
-      shortName: 'ACA',
+    'AcA': {
+      shortName: 'AcA',
       description: 'Acta Astronomica Data Files'
     },
     'ALMA': {
@@ -68,16 +68,16 @@ define(["underscore", "js/mixins/openurl_generator"], function(_, OpenURLGenerat
       shortName: 'ARI',
       description: 'Astronomisches Rechen-Institut'
     },
-    'ASTROVERSE': {
-      shortName: 'ASTROVERSE',
+    'Astroverse': {
+      shortName: 'Astroverse',
       description: 'CfA Dataverse'
     },
     'ATNF': {
       shortName: 'ATNF',
       description: 'Australia Telescope Online Archive'
     },
-    'AUTHOR': {
-      shortName: 'AUTHOR',
+    'Author': {
+      shortName: 'Author',
       description: 'Author Hosted Dataset'
     },
     'BICEP2': {
@@ -116,8 +116,8 @@ define(["underscore", "js/mixins/openurl_generator"], function(_, OpenURLGenerat
       shortName: 'HEASARC',
       description: 'NASA\'s High Energy Astrophysics Science Archive Research Center'
     },
-    'HERSCHEL': {
-      shortName: 'HERSCHEL',
+    'Herschel': {
+      shortName: 'Herschel',
       description: 'Herschel Science Center'
     },
     'IBVS': {
@@ -144,8 +144,8 @@ define(["underscore", "js/mixins/openurl_generator"], function(_, OpenURLGenerat
       shortName: 'NED',
       description: 'NASA/IPAC Extragalactic Database'
     },
-    'NEXSCI': {
-      shortName: 'NEXSCI',
+    'NExScI': {
+      shortName: 'NExScI',
       description: 'NASA Exoplanet Archive'
     },
     'NOAO': {
@@ -168,24 +168,24 @@ define(["underscore", "js/mixins/openurl_generator"], function(_, OpenURLGenerat
       shortName: 'SIMBAD',
       description: 'SIMBAD Database at the CDS'
     },
-    'SPITZER': {
-      shortName: 'SPITZER',
+    'Spitzer': {
+      shortName: 'Spitzer',
       description: 'Spitzer Space Telescope'
     },
     'TNS': {
       shortName: 'TNS',
       description: 'Transient Name Server'
     },
-    'VIZIER': {
-      shortName: 'VIZIER',
+    'Vizier': {
+      shortName: 'VizieR',
       description: 'VizieR Catalog Service'
     },
     'XMM': {
       shortName: 'XMM',
       description: 'XMM Newton Science Archive'
     },
-    'ZENODO': {
-      shortName: 'ZENODO',
+    'Zenodo': {
+      shortName: 'Zenodo',
       description: 'Zenodo Archive'
     }
   };
@@ -258,8 +258,8 @@ define(["underscore", "js/mixins/openurl_generator"], function(_, OpenURLGenerat
         fullTextSources.push({
           url: createGatewayUrl(data.bibcode, el),
           open: _.contains(property, parts[0] + '_OPENACCESS'),
-          shortName: linkInfo && linkInfo.shortName,
-          name: linkInfo && linkInfo.name,
+          shortName: (linkInfo && linkInfo.shortName) || el,
+          name: (linkInfo && linkInfo.name) || el,
           type: linkInfo && linkInfo.type,
           description: linkInfo && linkInfo.description
         });
@@ -269,8 +269,8 @@ define(["underscore", "js/mixins/openurl_generator"], function(_, OpenURLGenerat
         fullTextSources.push({
           url: createGatewayUrl(data.bibcode, el),
           open: false,
-          shortName: linkInfo && linkInfo.shortName,
-          name: linkInfo && linkInfo.name,
+          shortName: (linkInfo && linkInfo.shortName) || el,
+          name: (linkInfo && linkInfo.name) || el,
           type: linkInfo && linkInfo.type,
           description: linkInfo && linkInfo.description
         });
