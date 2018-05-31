@@ -354,9 +354,9 @@ define([
       var perPage = _.isNumber(update.perPage) ? update.perPage : this.model.get('perPage');
       var numFound = _.isNumber(update.numFound) ? update.numFound : this.model.get('numFound');
 
-      // once the hash is updated, this is called again, return here so we don't recompute
-      if (('' + page) !== (_.isArray(pageParam) && pageParam[0]) && opts.updateHash) {
-        location.hash = utils.updateHash('p_', page);
+      // once the hash is updated, this is called again, return here so we don't recompute, and only on results page
+      if (('' + page) !== (_.isArray(pageParam) && pageParam[0]) && opts.updateHash && /search/.test(location.hash)) {
+        location.hash = utils.updateHash('p_', page, location.hash);
         return;
       }
 
