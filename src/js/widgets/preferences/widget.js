@@ -126,7 +126,9 @@ define([
 
         //doing it at once so there's no flicker of rapid rendering as different vals change
         $.when(orcidProfile, adsOrcidUserInfo).done(function(profile, ads){
-          var data = {userSubmitted : ads};
+          var data = {
+            userSubmitted: _.isArray(ads) ? ads[0] : ads
+          };
           try {
             var firstName = profile.getFirstName();
             var lastName = profile.getLastName();

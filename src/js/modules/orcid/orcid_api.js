@@ -179,7 +179,7 @@ function (
     setADSUserData : function (userData) {
       var url = this.getBeeHive().getService("Api").url +
         ApiTargets.ORCID_PREFERENCES + "/" + this.authData.orcid;
-      var request = this.createRequest(url, {}, userData);
+      var request = this.createRequest(url, { method: 'POST' }, userData);
       request.fail(function () {
         var msg = 'ADS ORCiD preferences could not be set';
         console.error.apply(console, [msg].concat(arguments));
