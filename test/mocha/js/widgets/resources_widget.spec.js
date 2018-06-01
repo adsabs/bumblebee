@@ -158,7 +158,11 @@ define([
       it('updates the state with the link server', function (done) {
         const w = new Widget();
         const getBeeHive = this.sb.stub(w, 'getBeeHive');
-        getBeeHive.returns({ getObject: _.constant({ link_server: 'TEST' }) });
+        getBeeHive.returns({
+          getObject: _.constant({
+            getUserData: _.constant({ link_server: 'TEST' })
+          })
+        });
         w._updateLinkServer();
         expect(this.state(w).api.linkServer).to.eql('TEST');
         done();
@@ -167,7 +171,11 @@ define([
         const w = new Widget();
         const getBeeHive = this.sb.stub(w, 'getBeeHive');
         // no User object
-        getBeeHive.returns({ getObject: _.constant({}) });
+        getBeeHive.returns({
+          getObject: _.constant({
+            getUserData: _.constant({})
+          })
+        });
         w._updateLinkServer();
         expect(this.state(w).api.linkServer).to.eql(null);
         // no beehive

@@ -81,8 +81,11 @@ define([
       const beehive = this.getBeeHive();
       if (_.isPlainObject(beehive)) {
         const user = beehive.getObject('User');
-        if (_.isPlainObject(user) && _.has(user, 'link_server')) {
-          dispatch(api.setLinkServer(user.link_server));
+        if (_.isPlainObject(user) && user.getUserData) {
+          const userData = user.getUserData();
+          if (_.isString(userData.link_server)) {
+            dispatch(api.setLinkServer(userData.link_server));
+          }
         }
       }
     },
