@@ -17,7 +17,7 @@ define(["underscore", "js/mixins/openurl_generator"], function(_, OpenURLGenerat
     'EPRINT_PDF': {
       name: 'arXiv PDF',
       shortName: 'arXiv',
-      description: 'Arxiv eprint',
+      description: 'ArXiv eprint',
       type: 'PDF'
     },
     'AUTHOR_PDF': {
@@ -260,7 +260,7 @@ define(["underscore", "js/mixins/openurl_generator"], function(_, OpenURLGenerat
           open: _.contains(property, parts[0] + '_OPENACCESS'),
           shortName: (linkInfo && linkInfo.shortName) || el,
           name: (linkInfo && linkInfo.name) || el,
-          type: linkInfo && linkInfo.type,
+          type: (linkInfo && linkInfo.type) || 'HTML',
           description: linkInfo && linkInfo.description
         });
 
@@ -271,11 +271,30 @@ define(["underscore", "js/mixins/openurl_generator"], function(_, OpenURLGenerat
           open: false,
           shortName: (linkInfo && linkInfo.shortName) || el,
           name: (linkInfo && linkInfo.name) || el,
-          type: linkInfo && linkInfo.type,
+          type: (linkInfo && linkInfo.type) || 'HTML',
           description: linkInfo && linkInfo.description
         });
       }
     });
+
+    // if no arxiv link is present, check links_data as well to make sure
+    const hasEprint = _.contains(fullTextSources, { name: LINK_TYPES['EPRINT_PDF'].name });
+    if (!hasEprint && _.isArray(data.links_data)) {
+      _.forEach(data.links_data, function (linkData) {
+        const link = JSON.parse(linkData);
+        if (/preprint/i.test(link.type)) {
+          const info = LINK_TYPES['EPRINT_PDF'];
+          fullTextSources.push({
+            url: link.url,
+            open: true,
+            shortName: (info && info.shortName) || link.type,
+            name: (info && info.name) || link.type,
+            type: (info && info.type) || 'HTML',
+            description: info && info.description
+          });
+        }
+      });
+    }
 
     // reorder the full text sources based on our default ordering
     fullTextSources = _.sortBy(fullTextSources, function (source) {
