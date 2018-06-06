@@ -862,7 +862,7 @@ define([
           var oldQ = _.omit(this.getCurrentQuery().toJSON(), function (val, key) {
 
             // omit certain fields (highlights, paging)
-            return /^hl.*/.test(key) || /^p_$/.test(key);
+            return /^hl.*/.test(key) || /^p_$/.test(key) || /^__original_query$/.test(key);
           });
 
           // if we aren't on the index page, only refine the current query, don't wipe it out
