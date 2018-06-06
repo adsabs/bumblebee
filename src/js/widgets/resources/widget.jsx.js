@@ -52,7 +52,7 @@ define([
       this.view = new View({ store: this.store });
     },
     defaultQueryArguments: {
-      fl: 'bibcode,data,doctype,doi,esources,first_author,genre,isbn,issn,issue,page,property,pub,title,volume,year'
+      fl: 'bibcode,data,doctype,doi,esources,first_author,genre,isbn,issn,issue,page,property,pub,title,volume,year,links_data'
     },
     activate: function (beehive) {
       const { dispatch } = this.store;
