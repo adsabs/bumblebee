@@ -278,7 +278,7 @@ define(["underscore", "js/mixins/openurl_generator"], function(_, OpenURLGenerat
     });
 
     // if no arxiv link is present, check links_data as well to make sure
-    const hasEprint = _.contains(fullTextSources, { name: LINK_TYPES['EPRINT_PDF'].name });
+    const hasEprint = _.find(fullTextSources, { name: LINK_TYPES['EPRINT_PDF'].name });
     if (!hasEprint && _.isArray(data.links_data)) {
       _.forEach(data.links_data, function (linkData) {
         const link = JSON.parse(linkData);
