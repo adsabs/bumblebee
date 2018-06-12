@@ -153,17 +153,28 @@ define([
           });
 
         if (operator == 'and' || operator == 'limit to') {
-          this.queryUpdater.updateQuery(q, fieldName, 'limit', conditions);
+          this.queryUpdater.updateQuery(q, fieldName, 'limit', conditions, { prefix: 'filter_' });
         } else if (operator == 'or') {
-          this.queryUpdater.updateQuery(q, fieldName, 'expand', conditions);
+          this.queryUpdater.updateQuery(q, fieldName, 'expand', conditions, { prefix: 'filter_' });
         } else if (operator == 'exclude' || operator == 'not') {
           if (q.get(fieldName)) {
-            this.queryUpdater.updateQuery(q, fieldName, 'exclude', conditions);
+            this.queryUpdater.updateQuery(q, fieldName, 'exclude', conditions, { prefix: 'filter_' });
           } else {
             conditions.unshift('*:*');
-            this.queryUpdater.updateQuery(q, fieldName, 'exclude', conditions);
+            this.queryUpdater.updateQuery(q, fieldName, 'exclude', conditions, { prefix: 'filter_' });
           }
         }
+
+        // go through each filter and if it's length is larger than 3, prepend with "__"
+        // to make sure it gets cleaned during the next cycle.
+        _.forEach(q.toJSON(), function (v, k) {
+          if (/^filter_/.test(k)) {
+            if (v.length > 3) {
+              q.unset(k);
+              q.set('__' + k, v);
+            }
+          }
+        });
 
         var fq = '{!type=aqp v=$' + fieldName + '}';
         var fqs = q.get('fq') || [];

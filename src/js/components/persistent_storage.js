@@ -90,13 +90,13 @@ define([
     },
 
     _setKey: function(key) {
-      var keys = this.keys();
+      var keys = this.keys() || {};
       keys[key] = 1;
       this._store.set('#keys', JSON.stringify(keys));
     },
 
     _delKey: function(key) {
-      var keys = this.keys();
+      var keys = this.keys() || {};
       delete keys[key];
       this._store.set('#keys', JSON.stringify(keys));
     },

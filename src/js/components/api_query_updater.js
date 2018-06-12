@@ -47,7 +47,11 @@ define(['underscore', 'js/components/api_query'], function (_, ApiQuery) {
      * @param operator
      *      String: this will serve as concatenator for the conditions
      */
-    updateQuery: function(apiQuery, field, mode, queryCondition) {
+    updateQuery: function(apiQuery, field, mode, queryCondition, options) {
+
+      options = _.defaults({}, options, {
+        prefix: '__'
+      });
 
       if (!field || !_.isString(field)) {
         throw new Error("You must tell us what parameter to update in the ApiQuery");
@@ -67,8 +71,8 @@ define(['underscore', 'js/components/api_query'], function (_, ApiQuery) {
         operator = 'OR';
       }
       else if (mode == 'replace') {
-        this._closeExistingVals(apiQuery, this._n(field));
-        apiQuery.set(this._n(field), ['AND', queryCondition[0]]);
+        this._closeExistingVals(apiQuery, this._n(field, options.prefix));
+        apiQuery.set(this._n(field, options.prefix), ['AND', queryCondition[0]]);
         return apiQuery.set(field, queryCondition[0]);
       }
       else {
@@ -78,7 +82,7 @@ define(['underscore', 'js/components/api_query'], function (_, ApiQuery) {
       if (!(apiQuery.has(field))) {
         var conditions = [operator].concat(queryCondition);
         apiQuery.set(field, this._buildQueryFromConditions(conditions));
-        apiQuery.set(this._n(field), conditions);
+        apiQuery.set(this._n(field, options.prefix), conditions);
         return;
       }
 
@@ -86,7 +90,7 @@ define(['underscore', 'js/components/api_query'], function (_, ApiQuery) {
       //globalOperator = this._sanitizeOperator(globalOperator);
 
       // local name
-      var n = this._n(field);
+      var n = this._n(field, options.prefix);
 
       // create copy of the field
       var q = _.clone(apiQuery.get(field));
@@ -375,11 +379,9 @@ define(['underscore', 'js/components/api_query'], function (_, ApiQuery) {
       return apiQuery[n];
     },
 
-    _n: function(name) {
-      return '__' + this.context + '_' + name;
+    _n: function(name, prefix) {
+      return (_.isString(prefix) ? prefix : '__') + this.context + '_' + name;
     },
-
-
 
     _buildQueryFromConditions: function(conditions) {
       if (conditions.length <= 1) {
