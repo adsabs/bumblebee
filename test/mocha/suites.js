@@ -104,7 +104,8 @@ define([
      '/widgets/wordcloud_widget.spec.js',
      '/widgets/year_graph_facet_widget.spec.js',
      '/widgets/hello_world_widget.spec.js',
-     '/widgets/meta_tags_widget.spec.js'
+     '/widgets/meta_tags_widget.spec.js',
+     '/widgets/associated_widget.spec.js'
     ],
     'orcid': [
      '/modules/orcid/orcid_api.spec',
