@@ -31,6 +31,7 @@ define([
       MYADS_STORAGE: 'vault',
       AUTHOR_AFFILIATION_SEARCH: 'author-affiliation/search',
       AUTHOR_AFFILIATION_EXPORT: 'author-affiliation/export',
+      RESOLVER: 'resolver',
 
       CSRF : 'accounts/csrf',
       USER: 'accounts/user',
