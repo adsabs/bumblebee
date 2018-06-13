@@ -131,7 +131,8 @@ require.config({
         MetaTagsWidget: 'js/widgets/meta_tags/widget',
         //can't camel case because router only capitalizes first letter
         ShowTableofcontents : 'js/wraps/table_of_contents',
-        ShowResources : 'es6!js/widgets/resources/widget.jsx',
+        ShowResources: 'es6!js/widgets/resources/widget.jsx',
+        ShowAssociated: 'es6!js/widgets/associated/widget.jsx',
         ShowRecommender : 'js/widgets/recommender/widget',
         ShowMetrics: 'js/wraps/paper_metrics',
         ShowPaperExport : 'js/wraps/paper_export',
