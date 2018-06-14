@@ -113,7 +113,11 @@ define([
      * @param {function} handler - handler function
      */
     attachHandler: function (code, handler) {
-      this.__widgetHandlerManager.on(code, handler);
+      try {
+        this.__widgetHandlerManager.on(code, handler);
+      } catch (e) {
+        console.error(e);
+      }
     },
 
     /**
@@ -126,7 +130,7 @@ define([
     attachGeneralHandler: function (handler) {
       _.forEach(ApiFeedback.CODES, _.bind(function (code) {
         if (code > 0 || code === ApiFeedback.CODES.API_REQUEST_ERROR) {
-          this.__widgetHandlerManager.on(code, handler);
+          this.attachHandler(code, handler);
         }
       }, this));
     },
