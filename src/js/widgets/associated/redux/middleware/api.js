@@ -73,8 +73,19 @@ define([
    * @param {array} items - The array to parse
    */
   const parseItems = (items) => {
+    const parseUrl = (url) => {
+      try {
+
+        // decode and rip the "/#abs..." part off the url
+        return decodeURIComponent(url.slice(url.indexOf(':') + 1));
+      } catch (e) {
+        return url;
+      }
+    }
+
     return _.map(items, i => ({
-      url: i.url,
+      rawUrl: i.url,
+      url: parseUrl(i.url),
       name: i.title,
       id: _.uniqueId()
     }));

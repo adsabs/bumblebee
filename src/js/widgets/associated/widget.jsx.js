@@ -80,15 +80,17 @@ define([
       BaseWidget.prototype.dispatchRequest.call(this, query);
     },
     composeRequest: function (apiQuery) {
-      const { getState } = this.store;
-      const { bibcode } = getState().api;
+      const { bibcode } = this.store.getState().api;
       return new ApiRequest({
         target: `${ApiTargets.RESOLVER}/${bibcode}/associated`,
         query: new ApiQuery()
       });
     },
     emitAnalytics: function (data) {
-      analytics('send', 'event', 'interaction', 'associated-link-followed', data);
+      analytics('send', 'event', 'interaction', 'associated-link-followed', {
+        target: 'associated',
+        url: data.rawUrl
+      });
     },
     onApiFeedback: function (feedback) {
       const { dispatch } = this.store;
