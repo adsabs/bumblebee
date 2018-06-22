@@ -169,58 +169,148 @@ require.config({
     'analytics': 'js/components/analytics',
 
     // Opt for Lo-Dash Underscore compatibility build over Underscore.
-    "underscore": "libs/lodash/lodash.compat",
+    'underscore': [
+      '//cdnjs.cloudflare.com/ajax/libs/lodash.js/2.4.2/lodash.min',
+      'libs/lodash/lodash.compat'
+    ],
 
     // 3rd party dependencies
     // I can't for the life of my figure out how to swap non-minified libs in dev
     // to minified libs in the r.js optimize task
     'async': 'libs/requirejs-plugins/async',
     'babel': 'libs/requirejs-babel-plugin/babel-5.8.34.min',
-    'backbone': 'libs/backbone/backbone',
-    'backbone-validation': 'libs/backbone-validation/backbone-validation',
-    'backbone.babysitter' : 'libs/backbone.babysitter/backbone.babysitter',
-    'backbone.eventbinder' : 'libs/backbone.eventbinder/backbone.eventbinder',
-    'backbone.stickit' : 'libs/backbone.stickit/backbone.stickit',
-    'backbone.wreqr' : 'libs/backbone.wreqr/lib/backbone.wreqr',
-    'bootstrap': 'libs/bootstrap/bootstrap',
+    'backbone': [
+      '//cdnjs.cloudflare.com/ajax/libs/backbone.js/1.1.2/backbone-min',
+      'libs/backbone/backbone'
+    ],
+    'backbone-validation': [
+      '//cdnjs.cloudflare.com/ajax/libs/backbone.validation/0.11.3/backbone-validation-amd-min',
+      'libs/backbone-validation/backbone-validation'
+    ],
+    'backbone.stickit' : [
+      '//cdnjs.cloudflare.com/ajax/libs/backbone.stickit/0.8.0/backbone.stickit.min',
+      'libs/backbone.stickit/backbone.stickit'
+    ],
+    'backbone.wreqr' : [
+      '//cdnjs.cloudflare.com/ajax/libs/backbone.wreqr/1.0.0/backbone.wreqr.min',
+      'libs/backbone.wreqr/lib/backbone.wreqr'
+    ],
+    'bootstrap': [
+      '//ajax.aspnetcdn.com/ajax/bootstrap/3.3.5/bootstrap.min',
+      'libs/bootstrap/bootstrap'
+    ],
     'cache': 'libs/dsjslib/lib/Cache',
     'chai': '../bower_components/chai/chai',
-    'classnames': '../bower_components/classnames/index',
-    'clipboard': 'libs/clipboard/clipboard',
-    'create-react-class': 'libs/create-react-class/index',
-    'd3':'libs/d3/d3',
-    'd3-cloud' : 'libs/d3-cloud/d3.layout.cloud',
+    'classnames': [
+      '//cdnjs.cloudflare.com/ajax/libs/classnames/2.2.5/index.min',
+      '../bower_components/classnames/index'
+    ],
+    'clipboard': [
+      '//cdnjs.cloudflare.com/ajax/libs/clipboard.js/1.7.1/clipboard.min',
+      'libs/clipboard/clipboard'
+    ],
+    'create-react-class': [
+      '//cdn.jsdelivr.net/npm/create-react-class@15.6.2/create-react-class.min',
+      'libs/create-react-class/index'
+    ],
+    'd3': [
+      '//cdnjs.cloudflare.com/ajax/libs/d3/3.4.6/d3.min',
+      'libs/d3/d3.min'
+    ],
+    'd3-cloud': [
+      '//cdnjs.cloudflare.com/ajax/libs/d3-cloud/1.2.5/d3.layout.cloud.min',
+      'libs/d3-cloud/d3.layout.cloud'
+    ],
     'enzyme': 'libs/enzyme/enzyme',
-    'es5-shim' : 'libs/es5-shim/es5-shim',
+    'es5-shim': [
+      '//cdnjs.cloudflare.com/ajax/libs/es5-shim/4.5.10/es5-shim.min',
+      'libs/es5-shim/es5-shim'
+    ],
     'es6': 'libs/requirejs-babel-plugin/es6',
-    'filesaver' : 'libs/file-saver/index',
-    'google-analytics': "//www.google-analytics.com/analytics",
-    'google-recaptcha' : '//www.google.com/recaptcha/api.js?&render=explicit&onload=onRecaptchaLoad',
+    'filesaver': [
+      '//cdnjs.cloudflare.com/ajax/libs/FileSaver.js/1.3.8/FileSaver.min',
+      'libs/file-saver/index'
+    ],
+    'google-analytics': '//www.google-analytics.com/analytics',
+    'google-recaptcha': '//www.google.com/recaptcha/api.js?&render=explicit&onload=onRecaptchaLoad',
     'hbs': 'libs/require-handlebars-plugin/hbs',
     'immutable': 'libs/immutable/index',
-    'jquery' : '//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min',
+    'jquery': [
+      '//ajax.aspnetcdn.com/ajax/jQuery/jquery-2.0.3.min',
+      'libs/jquery/jquery'
+    ],
     'jquery-querybuilder': 'libs/jQuery-QueryBuilder/query-builder',
-    'jquery-ui' : '//ajax.googleapis.com/ajax/libs/jqueryui/1.10.4/jquery-ui.min',
-    'jsonpath': 'libs/jsonpath/jsonpath',
-    'marionette' : 'libs/marionette/backbone.marionette',
-    'mathjax' : '//cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS_HTML&amp;delayStartupUntil=configured',
+    'jquery-ui' : [
+      '//ajax.aspnetcdn.com/ajax/jquery.ui/1.10.4/jquery-ui.min',
+      'libs/jqueryui/jquery-ui'
+    ],
+    'jsonpath': [
+      '//cdn.jsdelivr.net/npm/jsonpath@0.2.12/jsonpath.min',
+      'libs/jsonpath/jsonpath'
+    ],
+    'marionette': [
+      '//cdnjs.cloudflare.com/ajax/libs/backbone.marionette/2.4.5/backbone.marionette.min',
+      'libs/marionette/backbone.marionette'
+    ],
+    'mathjax': [
+      '//cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS_HTML&amp;delayStartupUntil=configured',
+      'libs/mathjax/index'
+    ],
     'mocha': 'libs/mocha/mocha',
-    'moment' : 'libs/momentjs/moment',
-    'persist-js': 'libs/persist-js/src/persist',
-    'react' : '//cdnjs.cloudflare.com/ajax/libs/react/15.6.1/react-with-addons.min',
-    'react-bootstrap': 'libs/react-bootstrap/index',
-    'react-dom' : '//cdnjs.cloudflare.com/ajax/libs/react/15.6.1/react-dom.min',
-    'react-prop-types': 'libs/react-prop-types/index',
-    'react-redux' : 'libs/react-redux/index',
-    'redux' : 'libs/redux/index',
+    'moment' : [
+      '//cdnjs.cloudflare.com/ajax/libs/moment.js/2.22.2/moment.min',
+      'libs/momentjs/moment'
+    ],
+    'persist-js': [
+      '//cdn.jsdelivr.net/npm/persist-js@0.3.1/src/persist.min',
+      'libs/persist-js/src/persist'
+    ],
+    'react': [
+      '//cdnjs.cloudflare.com/ajax/libs/react/15.6.1/react-with-addons.min',
+      'libs/react/index'
+    ],
+    'react-bootstrap': [
+      '//cdnjs.cloudflare.com/ajax/libs/react-bootstrap/0.32.1/react-bootstrap.min',
+      'libs/react-bootstrap/index',
+    ],
+    'react-dom': [
+      '//cdnjs.cloudflare.com/ajax/libs/react/15.6.1/react-dom.min',
+      'libs/react-dom/index'
+    ],
+    'react-prop-types': [
+      '//cdnjs.cloudflare.com/ajax/libs/prop-types/15.6.0/prop-types.min',
+      'libs/react-prop-types/index'
+    ],
+    'react-redux' : [
+      '//cdnjs.cloudflare.com/ajax/libs/react-redux/4.4.5/react-redux.min',
+      'libs/react-redux/index'
+    ],
+    'redux' : [
+      '//cdnjs.cloudflare.com/ajax/libs/redux/3.5.2/redux.min',
+      'libs/redux/index'
+    ],
     'redux-immutable': 'libs/redux-immutable/index',
-    'redux-thunk' : 'libs/redux-thunk/index',
-    'select2' : 'libs/select2/select2',
-    'sinon': '../bower_components/sinon/index',
-    'sprintf': 'libs/sprintf/sprintf',
-    'squire': '../bower_components/squire/src/Squire',
+    'redux-thunk' : [
+      '//cdnjs.cloudflare.com/ajax/libs/redux-thunk/2.1.0/redux-thunk.min',
+      'libs/redux-thunk/index'
+    ],
+    'select2' : [
+      '//cdnjs.cloudflare.com/ajax/libs/select2/4.0.3/js/select2.min',
+      'libs/select2/select2'
+    ],
+    'sinon': [
+      '//cdnjs.cloudflare.com/ajax/libs/sinon.js/1.9.0/sinon.min',
+      '../bower_components/sinon/index'
+    ],
+    'sprintf': [
+      '//cdnjs.cloudflare.com/ajax/libs/sprintf/1.0.2/sprintf.min',
+      'libs/sprintf/sprintf'
+    ],
     'utils': 'js/utils',
-    'reselect': 'libs/reselect'
+    'reselect': [
+      '//cdnjs.cloudflare.com/ajax/libs/reselect/3.0.1/reselect.min',
+      'libs/reselect'
+    ]
   },
 
   hbs: {
@@ -246,10 +336,7 @@ require.config({
     'bootstrap' : {
       deps: ['jquery', 'jquery-ui']
     },
-    // This is required to ensure Backbone works as expected within the AMD
-    // environment.
     'backbone': {
-      // These are the two hard dependencies that will be loaded first.
       deps: ['jquery', 'underscore']
     },
 
@@ -270,8 +357,12 @@ require.config({
       exports: 'saveAs'
     },
 
-    'd3-cloud' : {
-      deps :['d3']
+    'd3': {
+      exports: 'd3'
+    },
+
+    'd3-cloud': {
+      deps: ['d3']
     },
 
     'jquery-ui' : {
@@ -387,6 +478,18 @@ require.config({
           }
         }
       });
+    });
+
+    // d3/d3-cloud don't like to load normally from a CDN
+    require(['d3', 'd3-cloud'], function (d3, cloud) {
+      var g = window;
+      if (!g.d3) {
+        g.d3 = d3;
+      }
+
+      if (g.d3 && g.d3.layout && !g.d3.layout.cloud) {
+        g.d3.layout.cloud = cloud;
+      }
     });
 
   }
