@@ -83,7 +83,7 @@ module.exports = function (grunt) {
       var indexHtml = grunt.file.read('dist/index.original.html');
 
       // first the js path
-      var newHtml = indexHtml.replace(/bumblebee_app/g, 'bumblebee_app.' + version);
+      var newHtml = indexHtml.replace(/(bumblebee_app|discovery\.config)/g, 'bumblebee_app.' + version);
       // then also the css
       for (var css in cssMap) {
         var reg = new RegExp(css, 'g');
