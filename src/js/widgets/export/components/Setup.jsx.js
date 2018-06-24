@@ -41,6 +41,7 @@ define([
                 <a
                   title="Get Help With ADS Custom Format Syntax"
                   target="_blank"
+                  rel="noopener"
                   href="https://adsabs.github.io/help/actions/export">
                   <i className="fa fa-info-circle fa-invert" />
                 </a>
