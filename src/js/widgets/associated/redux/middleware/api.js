@@ -72,13 +72,28 @@ define([
    *
    * @param {array} items - The array to parse
    */
-  const parseItems = (items) => {
-    return _.map(items, i => ({
-      url: i.url,
-      name: i.title,
-      id: _.uniqueId()
-    }));
-  }
+  const parseItems = (items, bibcode) => {
+    const parseUrl = (url) => {
+      try {
+
+        // decode and rip the "/#abs..." part off the url
+        return decodeURIComponent(url.slice(url.indexOf(':') + 1));
+      } catch (e) {
+        return url;
+      }
+    }
+
+    return _.map(items, i => {
+      const url = parseUrl(i.url);
+      return {
+        rawUrl: i.url,
+        url: url,
+        circular: url.indexOf(bibcode) > -1,
+        name: i.title,
+        id: _.uniqueId()
+      };
+    });
+  };
 
   /**
    * Processes incoming response from server and sends the data off to the
@@ -88,11 +103,12 @@ define([
     next(action);
     if (action.type === RECEIVED_RESPONSE) {
       const response = action.result;
+      const { bibcode } = getState().api;
       if (_.isPlainObject(response)) {
         const docs = response.links && response.links.records;
         if (_.isArray(docs) && docs.length > 0) {
           dispatch({ type: SET_LOADING, result: false });
-          dispatch({ type: SET_ITEMS, result: parseItems(docs) })
+          dispatch({ type: SET_ITEMS, result: parseItems(docs, bibcode) })
         } else {
           dispatch({ type: SET_HAS_ERROR, result: 'did not receive docs' });
         }
