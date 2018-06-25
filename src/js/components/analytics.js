@@ -15,10 +15,15 @@ define([
    */
   var TARGETS = {
     'resolver': {
-      hooks: ['toc-link-followed', 'abstract-link-followed', 'citations-link-followed'],
+      hooks: [
+        'toc-link-followed',
+        'abstract-link-followed',
+        'citations-link-followed',
+        'associated-link-followed'
+      ],
       types: [
         'abstract', 'citations', 'references',
-        'metrics', 'coreads', 'graphics'
+        'metrics', 'coreads', 'graphics', 'associated'
       ],
       url: _.template('link_gateway/<%= bibcode %>/<%= target %>')
     }
@@ -46,11 +51,11 @@ define([
 
     // if label or data is not present, do nothing
     if (_.isString(label) || _.isPlainObject(data)) {
-      _.forEach(TARGETS, function (val, key) {
+      _.forEach(TARGETS, function (val) {
 
         // send event if we find a hook and the target is in the list of types
         if (_.contains(val.hooks, label) && _.contains(val.types, data.target)) {
-          sendEvent(val.url(data));
+          sendEvent(data.url ? data.url : val.url(data));
         }
       });
     }
