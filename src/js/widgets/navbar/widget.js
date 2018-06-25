@@ -1,4 +1,5 @@
 define([
+  'underscore',
   'marionette',
   'js/widgets/base/base_widget',
   'hbs!js/widgets/navbar/template/navbar',
@@ -9,6 +10,7 @@ define([
   'js/components/api_targets',
   'bootstrap'
 ], function (
+  _,
   Marionette,
   BaseWidget,
   NavBarTemplate,
@@ -31,7 +33,8 @@ define([
         orcidFirstName: undefined,
         orcidLastName: undefined,
         //should it show hourly banner?
-        hourly: false
+        hourly: false,
+        timeout: 600000 // 10 minutes
       }
     }
   });
@@ -90,25 +93,11 @@ define([
       this.trigger("user-change-orcid-mode");
     },
 
-    changeOrcidMode: function () {
-      var that = this;
-      //allow animation to run before rerendering
-      setTimeout(function () {
-
-        if (that.$(".orcid-mode").is(":checked")) {
-          that.model.set("orcidModeOn", true);
-        }
-        else {
-          that.model.set("orcidModeOn", false);
-        }
-
-        //need to explicitly trigger to widget that this has changed
-        //otherwise it will be ignored, since it can also be changed
-        //from outside
-        that.trigger("user-change-orcid-mode");
-
-        that.render();
-      }, 400);
+    changeOrcidMode: function (ev) {
+      var checked = _.isBoolean(ev) ? ev : ev && ev.currentTarget && ev.currentTarget.checked;
+      this.model.set('orcidModeOn', checked);
+      this.trigger('user-change-orcid-mode');
+      this.render();
     },
 
     onRender: function () {
@@ -156,12 +145,22 @@ define([
 
     activate: function (beehive) {
       this.setBeeHive(beehive);
-      _.bindAll(this, ["handleUserAnnouncement", "getOrcidUserInfo", "storeLatestPage"]);
+      _.bindAll(this, ["handleUserAnnouncement", "getOrcidUserInfo", "storeLatestPage", 'onCustomEvent']);
       var pubsub = this.getPubSub();
       pubsub.subscribe(pubsub.USER_ANNOUNCEMENT, this.handleUserAnnouncement);
       pubsub.subscribe(pubsub.APP_STARTED, this.getOrcidUserInfo);
-      pubsub.subscribe(pubsub.NAVIGATE, this.storeLatestPage)
+      pubsub.subscribe(pubsub.NAVIGATE, this.storeLatestPage);
+      pubsub.subscribe(pubsub.CUSTOM_EVENT, this.onCustomEvent);
       this.setInitialVals();
+      if (!this.model.get('timer')) {
+        this.resetOrcidTimer();
+      }
+    },
+
+    onCustomEvent: function (ev) {
+      if (ev === 'orcid-action') {
+        this.resetOrcidTimer();
+      }
     },
 
     storeLatestPage : function(page){
@@ -169,6 +168,19 @@ define([
       this._latestPage = page;
     },
 
+    resetOrcidTimer: function () {
+      var timer = this.model.get('timer');
+      var timeout = this.model.get('timeout');
+      if (timer) {
+        clearTimeout(timer);
+      }
+
+      // only start the timer if orcid mode is actually on
+      if (this.model.get('orcidModeOn')) {
+        timer = setTimeout(_.bind(this.toggleOrcidMode, this, false), timeout);
+        this.model.set('timer', timer);
+      }
+    },
 
     viewEvents: {
       //dealing with authentication/user
@@ -307,12 +319,13 @@ define([
     //we don't want to respond to changes from pubsub or user object with this,
     //only changes that the user has initiated using the navbar widget,
     //otherwise things will be toggled incorrectly
-    toggleOrcidMode: function () {
+    toggleOrcidMode: function (val) {
       var user = this.getBeeHive().getObject('User'),
         orcidApi = this.getBeeHive().getService("OrcidApi");
 
-      var newVal = this.model.get("orcidModeOn");
+      var newVal = _.isBoolean(val) ? val : this.model.get("orcidModeOn");
       user.setOrcidMode(newVal);
+      this.model.set('orcidModeOn', newVal);
 
       if (newVal) {
         //sign into orcid api if not signed in already
@@ -320,6 +333,7 @@ define([
           orcidApi.signIn();
         }
       }
+      this.resetOrcidTimer();
     },
 
     searchAuthor: function () {

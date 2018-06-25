@@ -610,6 +610,8 @@ function (
         var action = data.action;
         var orcidApi = this.getBeeHive().getService('OrcidApi');
         var oldOrcid = _.clone(data.model.get('orcid') || {});
+        var pubsub = this.getPubSub();
+        pubsub.publish(pubsub.CUSTOM_EVENT, 'orcid-action', action);
 
         var handlers = {
           'orcid-add': function (model) {
