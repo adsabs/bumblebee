@@ -308,7 +308,11 @@ define([
       }
 
       put(work, PATHS.publicationDateYear, get(ads.pubdate).split('-')[0]);
-      put(work, PATHS.publicationDateMonth, get(ads.pubdate).split('-')[1]);
+      if (get(ads.pubdate).split('-')[1] === '00') {
+        put(work, PATHS.publicationDateMonth, null);
+      } else {
+        put(work, PATHS.publicationDateMonth, get(ads.pubdate).split('-')[1]);
+      }
       put(work, PATHS.shortDescription, get(ads.abstract));
       put(work, PATHS.externalIdType, exIds.types);
       put(work, PATHS.externalIdValue, exIds.values);
