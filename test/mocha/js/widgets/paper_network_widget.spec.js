@@ -18989,9 +18989,9 @@ define([
       //summary
       expect($(".s-group-content p:first").text()).to.eql('This group consists of 60 papers, which have been cited, in total, 2904\n           times.');
       //most highly cited
-      expect(normalizeSpace($(".s-group-content .s-top-papers").find("li:first").html().trim())).to.eql('<a href="#abs/1999PASP..111..438F" data-bypass="" target="_blank"><b>The Updated Zwicky Catalog (UZC)</b></a>; <i>Falco, Emilio E.</i> (295 citations)');
+      expect(normalizeSpace($(".s-group-content .s-top-papers").find("li:first").html().trim())).to.eql('<a href="#abs/1999PASP..111..438F" data-bypass="" target="_blank" rel="noopener"><b>The Updated Zwicky Catalog (UZC)</b></a>; <i>Falco, Emilio E.</i> (295 citations)');
       //most highly referenced
-      expect(normalizeSpace($(".s-group-content ul:last li:first").html().trim())).to.eql('<i class=\"fa fa-star-o\"></i> <a href=\"#abs/2005PASP..117.1411F\" data-bypass=\"\" target=\"_blank\">2005PASP..117.1411F</a> (cited by 28% of papers in this group)');
+      expect(normalizeSpace($(".s-group-content ul:last li:first").html().trim())).to.eql('<i class=\"fa fa-star-o\"></i> <a href=\"#abs/2005PASP..117.1411F\" data-bypass=\"\" target=\"_blank\" rel=\"noopener\">2005PASP..117.1411F</a> (cited by 28% of papers in this group)');
 
     });
 

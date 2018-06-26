@@ -8,6 +8,10 @@
   <meta name="google-site-verification" content="XxQuw38lagr8-TgtCyhAMP_6ELS9dy35fgrqo9dxw3o" />
   <title>NASA/ADS Search</title>
   <meta name="description" content="A powerful, streamlined new Astrophysics Data System" />
+  <link rel="preload" href="./styles/css/styles.css" as="style">
+  <link rel="preload" href="//cdnjs.cloudflare.com/ajax/libs/require.js/2.3.5/require.min.js" as="script">
+  <link rel="preload" href="./discovery.config.js" as="script">
+
   <link rel="stylesheet" href="./styles/css/styles.css" />
   <link rel="icon" type="image/png" sizes="32x32" href="./styles/img/favicon.ico"/>
   <link rel="search"
@@ -98,6 +102,9 @@
     </script>
 
     <!-- start the discovery application -->
-    <script data-main="./discovery.config" src="./libs/requirejs/require.js"></script>
+    <script data-main="./discovery.config" src="//cdnjs.cloudflare.com/ajax/libs/require.js/2.3.5/require.min.js"></script>
+    <script>
+        !window.requirejs && document.write('<script data-main="./discovery.config.js" src="./libs/requirejs/require.js">\x3C/script>');
+    </script>
   </body>
 </html>

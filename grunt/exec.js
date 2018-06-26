@@ -12,6 +12,9 @@ module.exports = {
   convert_redux_immutable: {
     cmd: 'mkdir src/libs/redux-immutable && node_modules/.bin/browserify --standalone combineReducers node_modules/redux-immutable/dist/index.js > src/libs/redux-immutable/index.js'
   },
+  convert_requirejs: {
+    cmd: 'node_modules/.bin/uglifyjs src/libs/requirejs/require.js -c -m -o src/libs/requirejs/require.js'
+  },
   latest_commit: {
     cmd: 'git rev-parse --short=7 --verify HEAD | cat > git-latest-commit'
   },

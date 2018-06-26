@@ -38,9 +38,7 @@ define([
     <ul style={styles.list}>
       {items.map(i =>
         <li key={i.id} style={styles.link}>
-          {i.circular ? i.name :
-            <a href={i.url} onClick={e => onClick(i)}>{i.name}</a>
-          }
+          <a href={i.url} target="_blank" rel="noopener" onClick={e => onClick(i)}>{i.name}</a>
         </li>
       )}
     </ul>
@@ -77,22 +75,19 @@ define([
     }
 
     // check items length, and slice them smaller if necessary
-    componentWillReceiveProps({ items }) {
-      if (items.length > 4) {
+    componentWillReceiveProps(props) {
+      if (props.items.length > 4) {
         this.setState({
-          items: items.slice(0, 4),
+          items: props.items.slice(0, 4),
           showAllBtn: true
         });
       } else {
-        this.setState({
-          items: items,
-          showAllBtn: false
-        });
+        this.setState({ items: props.items });
       }
     }
 
     render() {
-      const { handleLinkClick } = this.props;
+      const { loading, handleLinkClick, hasError } = this.props;
       const { items, showAllBtn } = this.state;
 
       if (items.length > 0) {

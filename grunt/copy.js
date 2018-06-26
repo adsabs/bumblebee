@@ -1,8 +1,8 @@
 'use strict';
 /**
- * Options for the `jshint` grunt task
+ * Options for the `copy` grunt task
  *
- * @module grunt/jshint
+ * @module grunt/copy
  */
 module.exports = function (grunt) {
 
@@ -117,6 +117,48 @@ module.exports = function (grunt) {
           }
         },
         {
+          cwd: 'node_modules/redux/dist',
+          src: 'redux.min.js',
+          dest: 'src/libs/redux/',
+          expand: true,
+          rename: function (dest, src) {
+            return dest + src.replace('redux.min', 'index');
+          }
+        },
+        {
+          cwd: 'node_modules/react-redux/dist',
+          src: 'react-redux.min.js',
+          dest: 'src/libs/react-redux/',
+          expand: true,
+          rename: function (dest, src) {
+            return dest + src.replace('react-redux.min', 'index');
+          }
+        },
+        {
+          cwd: 'node_modules/redux-thunk/dist',
+          src: 'redux-thunk.min.js',
+          dest: 'src/libs/redux-thunk/',
+          expand: true,
+          rename: function (dest, src) {
+            return dest + src.replace('redux-thunk.min', 'index');
+          }
+        },
+        {
+          cwd: 'node_modules/mathjax/',
+          src: [
+            'MathJax.js',
+            'extensions/**/*',
+            'config/**/*',
+            'fonts/**/*',
+            'jax/**/*'
+          ],
+          dest: 'src/libs/mathjax/',
+          expand: true,
+          rename: function (dest, src) {
+            return dest + src.replace('MathJax.js', 'index.js');
+          }
+        },
+        {
           cwd: 'node_modules/prop-types',
           src: 'prop-types.js',
           dest: 'src/libs/react-prop-types/',
@@ -162,6 +204,24 @@ module.exports = function (grunt) {
           expand: true,
           rename: function (dest, src) {
             return dest + src.replace('reselect', 'index');
+          }
+        },
+        {
+          cwd: 'node_modules/react/dist',
+          src: 'react-with-addons.min.js',
+          dest: 'src/libs/react/',
+          expand: true,
+          rename: function (dest, src) {
+            return dest + src.replace('react-with-addons.min', 'index');
+          }
+        },
+        {
+          cwd: 'node_modules/react-dom/dist',
+          src: 'react-dom.min.js',
+          dest: 'src/libs/react-dom/',
+          expand: true,
+          rename: function (dest, src) {
+            return dest + src.replace('react-dom.min', 'index');
           }
         }
       ]
