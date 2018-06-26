@@ -210,7 +210,7 @@ define([
             alerts.alert(new ApiFeedback({
               msg: (msg || 'There is something wrong with the query:') +
               '<b><a href="#">&nbsp;&nbsp;Try looking at the search examples on the home page</a></b> ' +
-              ' or <b><a href="https://adsabs.github.io/help/search/search-syntax" target="_blank">reading our help page</a>.</b>',
+              ' or <b><a href="https://adsabs.github.io/help/search/search-syntax" target="_blank" rel="noopener">reading our help page</a>.</b>',
               events: {
                 'click a#query-assistant': 'query-assistant'
               }
@@ -259,9 +259,9 @@ define([
       // here we deal with a serious situation; the API is probably down or has
       // problems; and this is likely the second time we are seeing it (usually
       // query mediator has already tried to recover from these errors)
-      
+
       analytics('send', 'event', 'error', 'unrecoverable-' + xhr.status, 'request=' + apiRequest.url() + ' token=...' + getAccessTokenStump);
-      
+
       var msg;
       var msgArr = [
         "We are having trouble accessing: " + target + ". The ADS backend service is probably down, or else we’ve been struck by an asteroid.",

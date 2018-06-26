@@ -63,7 +63,6 @@ module.exports = function (grunt) {
         paths[k] = newMap[k];
       }
 
-
       // in development we use google-analytics, but for production we'll serve it
       // ourselves (because of silly Ghostery breaking Safari browsers)
       grunt.file.write('dist/libs/g.' + version + '.js', grunt.file.read('dist/libs/g.js'));
@@ -84,10 +83,11 @@ module.exports = function (grunt) {
       var indexHtml = grunt.file.read('dist/index.original.html');
 
       // first the js path
-      var newHtml = indexHtml.replace('bumblebee_app', 'bumblebee_app.' + version);
+      var newHtml = indexHtml.replace(/(bumblebee_app|discovery\.config)/g, 'bumblebee_app.' + version);
       // then also the css
       for (var css in cssMap) {
-        newHtml = newHtml.replace(css, cssMap[css]);
+        var reg = new RegExp(css, 'g');
+        newHtml = newHtml.replace(reg, cssMap[css]);
       }
 
       grunt.file.write('dist/index.' + version + '.html', newHtml);

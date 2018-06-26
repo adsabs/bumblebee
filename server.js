@@ -12,6 +12,7 @@
 
 const express = require('express');
 const path = require('path');
+const compression = require('compression');
 const proxy = require('http-proxy-middleware');
 const app = express();
 const targets = {
@@ -41,6 +42,7 @@ if (process.env.SERVER_ENV === 'release') {
 }
 
 // serve the static assets
+app.use(compression());
 app.use('/', express.static(path.join(__dirname, config.root)));
 app.use('/test', express.static(path.join(__dirname, '/test')));
 app.use('/node_modules', express.static(path.join(__dirname, '/node_modules')));
@@ -54,7 +56,3 @@ app.listen(8000, () => {
   console.log('config: ', JSON.stringify(config));
   console.log('Listening on port 8000');
 });
-
-
-
-

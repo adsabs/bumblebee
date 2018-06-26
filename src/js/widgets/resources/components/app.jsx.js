@@ -38,6 +38,7 @@ define([
                 <a
                   href={g.url}
                   target="_blank"
+                  rel="noopener"
                   onClick={() => onClick(g)}
                   title={`${g.description} ${g.open ? 'OPEN ACCESS' : 'SIGN IN REQUIRED'}`}
                   className={`resources__content__link ${g.open ? 'unlock' : ''}`}>
@@ -77,6 +78,7 @@ define([
           <a
             href={item.url}
             target="_blank"
+            rel="noopener"
             onClick={() => onClick(item)}
             title={item.description}
             className="resources__content__link">
