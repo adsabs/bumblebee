@@ -80,7 +80,7 @@ define([
       // XXX:rca - solve this better, through config
       var beehive = this.getBeeHive();
       var dynConf = this.getObject('DynamicConfig');
-      var timeout = 3000;
+      var timeout = 10000;
       var defer = $.Deferred();
 
       // check out the local storage to see if we have a copy
