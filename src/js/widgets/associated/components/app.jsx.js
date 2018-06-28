@@ -38,7 +38,9 @@ define([
     <ul style={styles.list}>
       {items.map(i =>
         <li key={i.id} style={styles.link}>
-          <a href={i.url} target="_blank" rel="noopener" onClick={e => onClick(i)}>{i.name}</a>
+        {i.circular ? i.name :
+          <a href={i.url} onClick={e => onClick(i)}>{i.name}</a>
+        }
         </li>
       )}
     </ul>
