@@ -53,7 +53,7 @@ define([
         found.unshift(optionalFields);
         found = _.merge.apply(_, found);
         var keys = Object.keys(found);
-        
+
         // check to make sure that the found doc has all of our fields
         for(var i = 0; i < fields.length; i++) {
           if (keys.indexOf(fields[i]) === -1) {
@@ -123,10 +123,24 @@ define([
         });
       });
 
-      // Let Zotero know things have updated
-      var ev = document.createEvent('HTMLEvents');
-      ev.initEvent('ZoteroItemUpdated', true, true);
-      document.dispatchEvent(ev);
+      // fire off dom events
+      this.emitDOMEvents();
+    },
+    /**
+     * Emit DOM events following render of metatags
+     * this helps third-party extensions/applications which rely on events for
+     * performing actions on the page
+     */
+    emitDOMEvents: function () {
+      _.forEach([
+        'ZoteroItemUpdated',
+        'DOMContentLoaded'
+      ], function (ev) {
+        window.document.dispatchEvent(new Event(ev), {
+          bubbles: true,
+          cancelable: true
+        });
+      });
     },
     defaultQueryArguments: {
       fl: 'links_data,[citations],keyword,property,first_author,year,issn,isbn,title,aff,abstract,bibcode,pub,volume,author,issue,pubdate,doi,page,esources,data',
