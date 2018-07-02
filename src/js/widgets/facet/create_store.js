@@ -1,17 +1,16 @@
 define(
-    [
-      'underscore',
-      'redux',
-      'redux-thunk',
-      'js/widgets/facet/reducers'
-    ],
-  function(
+  [
+    'underscore',
+    'redux',
+    'redux-thunk',
+    'js/widgets/facet/reducers'
+  ],
+  function (
     _,
     Redux,
     Thunk,
     Reducer
   ) {
-
     return function createStore(config) {
       // pass in specific default config vars (e.g. preprocessors)
       // these come from the facet widget's initialize method
@@ -23,7 +22,6 @@ define(
         store,
         Redux.applyMiddleware(Thunk.default)
       );
-    }
+    };
     return createStore;
-
   });

@@ -3,7 +3,6 @@ define([
   'es6!../modules/api',
   'es6!../modules/ui'
 ], function (_, api, ui) {
-
   const {
     QUERY_PROVIDED,
     RECEIVED_RESPONSE,
@@ -24,7 +23,7 @@ define([
    * Fires off request, delegating to the outer context for the actual
    * fetch
    */
-  const fetchData = (ctx, { dispatch }) => next => action => {
+  const fetchData = (ctx, { dispatch }) => next => (action) => {
     next(action);
     if (action.type === FETCH_DATA) {
       const query = {
@@ -40,7 +39,7 @@ define([
    * Extracts the bibcode from the incoming query and makes a new request
    * for document data.
    */
-  const displayDocuments = (ctx, { dispatch }) => next => action => {
+  const displayDocuments = (ctx, { dispatch }) => next => (action) => {
     next(action);
     if (action.type === QUERY_PROVIDED) {
       const query = action.result;
@@ -75,15 +74,14 @@ define([
   const parseItems = (items, bibcode) => {
     const parseUrl = (url) => {
       try {
-
         // decode and rip the "/#abs..." part off the url
         return decodeURIComponent(url.slice(url.indexOf(':') + 1));
       } catch (e) {
         return url;
       }
-    }
+    };
 
-    return _.map(items, i => {
+    return _.map(items, (i) => {
       const url = parseUrl(i.url);
       return {
         rawUrl: i.url,
@@ -99,7 +97,7 @@ define([
    * Processes incoming response from server and sends the data off to the
    * link generator, finally dispatching the parsed sources
    */
-  const processResponse = (ctx, { dispatch, getState }) => next => action => {
+  const processResponse = (ctx, { dispatch, getState }) => next => (action) => {
     next(action);
     if (action.type === RECEIVED_RESPONSE) {
       const response = action.result;
@@ -108,7 +106,7 @@ define([
         const docs = response.links && response.links.records;
         if (_.isArray(docs) && docs.length > 0) {
           dispatch({ type: SET_LOADING, result: false });
-          dispatch({ type: SET_ITEMS, result: parseItems(docs, bibcode) })
+          dispatch({ type: SET_ITEMS, result: parseItems(docs, bibcode) });
         } else {
           dispatch({ type: SET_HAS_ERROR, result: 'did not receive docs' });
         }
@@ -121,7 +119,7 @@ define([
   /**
    * Emit an analytics event
    */
-  const sendAnalytics = (ctx, { dispatch, getState }) => next => action => {
+  const sendAnalytics = (ctx, { dispatch, getState }) => next => (action) => {
     next(action);
     if (action.type === SEND_ANALYTICS) {
       ctx.emitAnalytics(action.result);

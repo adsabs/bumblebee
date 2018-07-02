@@ -1,62 +1,58 @@
 define([
-  "js/widgets/base/base_widget",
-  "js/components/api_query",
-  "js/components/api_query_updater",
-  "hbs!js/widgets/classic_form/form",
-  "jquery-ui",
-  "js/widgets/paper_search_form/topterms",
-  "analytics"
-], function(
+  'js/widgets/base/base_widget',
+  'js/components/api_query',
+  'js/components/api_query_updater',
+  'hbs!js/widgets/classic_form/form',
+  'jquery-ui',
+  'js/widgets/paper_search_form/topterms',
+  'analytics'
+], function (
   BaseWidget,
   ApiQuery,
   ApiQueryUpdater,
   FormTemplate,
   JQueryUI,
   AutocompleteData,
-  analytics){
-
-  //for autocomplete
-  function split( val ) {
-    return val.split( /,\s*/ );
+  analytics) {
+  // for autocomplete
+  function split(val) {
+    return val.split(/,\s*/);
   }
-  function extractLast( term ) {
-    return split( term ).pop();
+  function extractLast(term) {
+    return split(term).pop();
   }
 
   var FormView = Marionette.ItemView.extend({
 
-    template : FormTemplate,
+    template: FormTemplate,
 
-    className : "classic-form",
+    className: 'classic-form',
 
-    events  : {
-      "click button[type=submit]" : "submitForm",
-      "input input" : "checkValid",
-      "input textarea" : "checkValid",
+    events: {
+      'click button[type=submit]': 'submitForm',
+      'input input': 'checkValid',
+      'input textarea': 'checkValid',
 
     },
 
-    checkValid : function(){
-
-      var allVals = this.$("input[type=text], textarea").map(function(){return $(this).val()}).get().join("");
+    checkValid: function () {
+      var allVals = this.$('input[type=text], textarea').map(function () { return $(this).val(); }).get().join('');
       if (allVals) {
-        this.$("button[type=submit]").prop("disabled", false);
-      }
-      else {
-        this.$("button[type=submit]").prop("disabled", true);
+        this.$('button[type=submit]').prop('disabled', false);
+      } else {
+        this.$('button[type=submit]').prop('disabled', true);
       }
     },
 
-    submitForm : function(e){
-
+    submitForm: function (e) {
       e.preventDefault();
       var queryDict = this.serializeClassic();
-      if (!queryDict.q.length){
-        //allow searching of just dates (which is a filter)
-        queryDict.q.push("*");
+      if (!queryDict.q.length) {
+        // allow searching of just dates (which is a filter)
+        queryDict.q.push('*');
       }
-      this.trigger("submit", queryDict);
-      this.$("button[type=submit]").each(function(){
+      this.trigger('submit', queryDict);
+      this.$('button[type=submit]').each(function () {
         var $el = $(this);
         var currHtml = $el.html();
         $el.html('<i class="icon-loading"/>  Loading...');
@@ -64,21 +60,25 @@ define([
           $el.html(currHtml);
         }, 3000);
       });
-
     },
 
-    serializeClassic : function(){
-      var qDict = {q : [], fq: []}, database, pubdateVals, dates, datestring, matchers;
+    serializeClassic: function () {
+      var qDict = { q: [], fq: [] },
+        database,
+        pubdateVals,
+        dates,
+        datestring,
+        matchers;
       var pubdateDefaults = {
-        month_from: "01",
-        year_from: "0000",
-        month_to:  "12",
-        year_to: "9999"
+        month_from: '01',
+        year_from: '0000',
+        month_to: '12',
+        year_to: '9999'
       };
 
-      //database filters
-      database = this.$("div[data-field=database] input:checked").map(
-        function(){return $(this).attr("name")}
+      // database filters
+      database = this.$('div[data-field=database] input:checked').map(
+        function () { return $(this).attr('name'); }
       );
 
       if (database.length > 0) {
@@ -88,8 +88,8 @@ define([
         qDict.fq_database = 'database: ' + dbStr;
       }
 
-      //article and prop refereed
-      var property = this.$("div[data-field=property] input:checked").map(function() {
+      // article and prop refereed
+      var property = this.$('div[data-field=property] input:checked').map(function () {
         return $(this).attr('name');
       });
 
@@ -100,43 +100,43 @@ define([
         qDict.fq_property = 'property: ' + str;
       }
 
-      //date special case (it's also a filter, not a q)
-      //do we need a pubdate entry in the first place?
-      pubdateVals = this.$("div[data-field=date] input")
-      .map(function(){return $(this).val()}).get().join("");
+      // date special case (it's also a filter, not a q)
+      // do we need a pubdate entry in the first place?
+      pubdateVals = this.$('div[data-field=date] input')
+        .map(function () { return $(this).val(); }).get().join('');
 
-      if (pubdateVals){
-        dates = this.$("div[data-field=date] input").map(function(){
+      if (pubdateVals) {
+        dates = this.$('div[data-field=date] input').map(function () {
           var $t = $(this);
-          var val = $t.val() || pubdateDefaults[$t.attr("name")];
+          var val = $t.val() || pubdateDefaults[$t.attr('name')];
           return val;
         });
 
-        datestring = "[" + dates[1] + "-" + dates[0] + " TO " + dates[3] + "-" + dates[2] + "]";
-        qDict.q.push("pubdate:" + datestring);
-
+        datestring = '[' + dates[1] + '-' + dates[0] + ' TO ' + dates[3] + '-' + dates[2] + ']';
+        qDict.q.push('pubdate:' + datestring);
       }
 
 
-
       matchers = {
-        default: /=?"[^"]+"|[=\w]+/g,
-        author:  /.+/gm,
-        object: /.+/gm,
-        bibstem: /[^,^\s]+/g
+        'default': /=?"[^"]+"|[=\w]+/g,
+        'author': /.+/gm,
+        'object': /.+/gm,
+        'bibstem': /[^,^\s]+/g
       };
 
-      //all input/textarea fields other than date
-      this.$("div[data-textInput=true]").each(function(){
+      // all input/textarea fields other than date
+      this.$('div[data-textInput=true]').each(function () {
+        var $t = $(this),
+          logic,
+          field,
+          matcher,
+          phrases,
+          val = $t.find('input[type=text], textarea').val();
 
-        var $t = $(this), logic, field, matcher, phrases,
-        val = $t.find("input[type=text], textarea").val();
-
-        if (val !== ""){
-          logic = $t.find(".logic-group input:checked").val();
-          field = $t.data("field");
-          if (logic === "BOOLEAN"){
-
+        if (val !== '') {
+          logic = $t.find('.logic-group input:checked').val();
+          field = $t.data('field');
+          if (logic === 'BOOLEAN') {
             // create a new updater object
             var updater = new ApiQueryUpdater(' ');
 
@@ -155,14 +155,11 @@ define([
             blah -> +"blah"
             */
             val = lines.reduce(function (res, line) {
-
               // test the first character for presence of (+ or -)
               if (/[+\-]/.test(line[0])) {
-
                 // +blah -> +"blah"
                 line = line[0] + updater.quoteIfNecessary(line.slice(1)) + ' ';
               } else {
-
                 // blah -> +"blah"
                 line = '+' + updater.quoteIfNecessary(line) + ' ';
               }
@@ -171,10 +168,10 @@ define([
               return res += line;
             }, '');
 
-            qDict.q.push(field + ":(" + val.trim() + ")");
+            qDict.q.push(field + ':(' + val.trim() + ')');
           } else {
-            logic = " " + logic + " ";
-            if (matchers[field]){
+            logic = ' ' + logic + ' ';
+            if (matchers[field]) {
               matcher = matchers[field];
             } else {
               matcher = matchers.default;
@@ -185,26 +182,25 @@ define([
               return !/^(and|or)$/i.test(p);
             });
 
-            //quote matches if field is author or object
-            phrases = (field == "author" || field == "object") ?
-              _.map(phrases, function(p){
-
+            // quote matches if field is author or object
+            phrases = (field == 'author' || field == 'object')
+              ? _.map(phrases, function (p) {
                 // check for equal sign and wrap in quotes
-                return /^[=\-+]/.test(p) ?
-                  p.replace(/^([=\-+])(.*)/, '$1"$2"') :
-                  p.replace(/^(.*)$/, '"$1"')
+                return /^[=\-+]/.test(p)
+                  ? p.replace(/^([=\-+])(.*)/, '$1"$2"')
+                  : p.replace(/^(.*)$/, '"$1"');
               }) : phrases;
 
-            //use parentheses always (bc of = parsing issue)
+            // use parentheses always (bc of = parsing issue)
 
             if (field === 'bibstem') {
               qDict.fq.push('{!type=aqp v=$fq_bibstem_facet}');
               qDict.fq_bibstem_facet = '(' + _.map(phrases, function (p) {
-                return 'bibstem_facet:"' + p + '"'
+                return 'bibstem_facet:"' + p + '"';
               }).join(logic) + ')';
             } else {
               phrases = phrases.length > 1 ? phrases.join(logic) : phrases[0];
-              qDict.q.push(field + ":(" + phrases + ")");
+              qDict.q.push(field + ':(' + phrases + ')');
             }
           }
         }
@@ -212,13 +208,13 @@ define([
       return qDict;
     },
 
-    onRender : function(e){
+    onRender: function (e) {
       var getLastTerm = function (term) {
         return _.last(term.split(/(,\s|;\s|[,;])/));
-      }
-      this.$("input[name=bibstem]").autocomplete({
-        minLength : 1,
-        autoFocus : true,
+      };
+      this.$('input[name=bibstem]').autocomplete({
+        minLength: 1,
+        autoFocus: true,
         source: function (request, response) {
           var matches = $.map(AutocompleteData, function (item) {
             if (_.isString(request.term)) {
@@ -226,9 +222,9 @@ define([
               var bibstem = item.value.toUpperCase();
               var label = item.label.toUpperCase();
               if (
-                bibstem.indexOf(term) === 0 ||
-                label.indexOf(term) === 0 ||
-                label.replace(/^THE\s/, '').indexOf(term) === 0
+                bibstem.indexOf(term) === 0
+                || label.indexOf(term) === 0
+                || label.replace(/^THE\s/, '').indexOf(term) === 0
               ) {
                 return item;
               }
@@ -236,19 +232,19 @@ define([
           });
           return response(matches);
         },
-        focus: function() {
+        focus: function () {
           // prevent value inserted on focus
           return false;
         },
-        select: function( event, ui ) {
-          var terms = split( this.value );
+        select: function (event, ui) {
+          var terms = split(this.value);
           // remove the current input
           terms.pop();
           // add the selected item
-          terms.push( ui.item.value );
+          terms.push(ui.item.value);
           // add placeholder to get the comma-and-space at the end
-          terms.push( "" );
-          this.value = terms.join( ", " );
+          terms.push('');
+          this.value = terms.join(', ');
           return false;
         }
       }).data('ui-autocomplete')._renderItem = function (ul, item) {
@@ -272,39 +268,37 @@ define([
     initialize: function (options) {
       options = options || {};
       this.view = new FormView();
-      this.listenTo(this.view, "submit", this.submitForm);
+      this.listenTo(this.view, 'submit', this.submitForm);
     },
 
     activate: function (beehive) {
       this.setBeeHive(beehive);
     },
 
-    onShow : function(){
-      //clear the loading button
-      this.view.$("button[type=submit]").each(function(){
-        $(this).html('<i class="fa fa-search"></i> Search')
+    onShow: function () {
+      // clear the loading button
+      this.view.$('button[type=submit]').each(function () {
+        $(this).html('<i class="fa fa-search"></i> Search');
       });
-      //set focus to author field
-      this.view.$("#classic-author").focus();
+      // set focus to author field
+      this.view.$('#classic-author').focus();
     },
 
-    submitForm : function(queryDict){
-
+    submitForm: function (queryDict) {
       var newQuery = _.assign(queryDict, {
-        q: queryDict.q.join(" "),
-        sort: "date desc"
+        q: queryDict.q.join(' '),
+        sort: 'date desc'
       });
 
       newQuery = new ApiQuery(newQuery);
       this.getPubSub().publish(this.getPubSub().START_SEARCH, newQuery);
 
       analytics('send', 'event', 'interaction', 'classic-form-submit', JSON.stringify(queryDict));
-
     },
 
-    //notify application to keep me around in memory indefinitely
-    //this is so the form and anything the user has entered into it can stay around
-    dontKillMe : true
+    // notify application to keep me around in memory indefinitely
+    // this is so the form and anything the user has entered into it can stay around
+    dontKillMe: true
 
   });
 

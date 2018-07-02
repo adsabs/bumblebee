@@ -1,4 +1,4 @@
-'use strict';
+
 define([
   'underscore',
   'backbone',
@@ -15,7 +15,6 @@ define([
   _, Backbone, React, ReactRedux, ReactDOM, Redux, configureStore,
   OrcidSelectorApp, ApiQuery, BaseWidget, OrcidSelectorContainer
 ) {
-
   /**
    * Main App View
    *
@@ -52,7 +51,6 @@ define([
      * Initialize the widget
      */
     initialize: function () {
-
       // create the store, using the configurator
       this.store = configureStore(this);
 
@@ -82,12 +80,11 @@ define([
 
     onStoragePaperChange: function () {
       const beehive = this.getBeeHive();
-      let selected = beehive.getObject('AppStorage').getSelectedPapers();
+      const selected = beehive.getObject('AppStorage').getSelectedPapers();
       this.store.dispatch(OrcidSelectorApp.updateSelected(selected));
     },
 
     onUserAnnouncement: function (msg, data) {
-
       // watch for orcid mode change
       if (_.has(data, 'isOrcidModeOn')) {
         this.store.dispatch(OrcidSelectorApp.updateMode(data.isOrcidModeOn));

@@ -39,23 +39,21 @@ define([
   PaginatedCollection,
   PaginatedView
 ) {
-
-
   var ListOfThingsWidget = BaseWidget.extend({
     initialize: function (options) {
       options = options || {};
 
       _.defaults(options, _.pick(this, ['view', 'collection', 'pagination', 'model', 'description', 'childView']));
 
-      //widget.reset will restore these default pagination settings
-      //for now, it doesn't make sense to pass them as options
-      //since localStorage perPage will override it anyway
+      // widget.reset will restore these default pagination settings
+      // for now, it doesn't make sense to pass them as options
+      // since localStorage perPage will override it anyway
 
-      //this functions as model.defaults while allowing the inheriting
-      //widgets to provide their own models with their own defaults
+      // this functions as model.defaults while allowing the inheriting
+      // widgets to provide their own models with their own defaults
       this.pagination = {
         pagination: true,
-        //default per page : 25
+        // default per page : 25
         perPage: 25,
         numFound: undefined,
         currentQuery: undefined,
@@ -66,51 +64,48 @@ define([
       options.collection = options.collection || new PaginatedCollection();
 
       if (!options.view) {
-
-        //operator instructs view to show a link that has citations:(bibcode) or something similar
-          options.view = new PaginatedView({
-            collection: options.collection,
-            model: options.model,
-            childView : options.childView
-          });
+        // operator instructs view to show a link that has citations:(bibcode) or something similar
+        options.view = new PaginatedView({
+          collection: options.collection,
+          model: options.model,
+          childView: options.childView
+        });
       }
 
-      options.view.model.set(this.pagination, {silent: true});
+      options.view.model.set(this.pagination, { silent: true });
       options.view.model.set({
-            //for the template button that opens search in search results page
-              sortOrder : options.sortOrder,
-              removeSelf : options.removeSelf,
-              queryOperator: options.queryOperator,
-              description: options.description
-            }, {silent : true});
+        // for the template button that opens search in search results page
+        sortOrder: options.sortOrder,
+        removeSelf: options.removeSelf,
+        queryOperator: options.queryOperator,
+        description: options.description
+      }, { silent: true });
 
-      _.extend(this, {model : options.view.model, view : options.view });
+      _.extend(this, { model: options.view.model, view: options.view });
 
       // this is the hidden collection (just to hold data)
       this.hiddenCollection = new PaginatedCollection();
 
       // XXX:rca - start using modelEvents, instead of all....
-      this.listenTo(this.hiddenCollection, "all", this.onAllInternalEvents);
-      this.listenTo(this.view, "all", this.onAllInternalEvents);
-      this.on("all", this.onAllInternalEvents);
+      this.listenTo(this.hiddenCollection, 'all', this.onAllInternalEvents);
+      this.listenTo(this.view, 'all', this.onAllInternalEvents);
+      this.on('all', this.onAllInternalEvents);
 
       BaseWidget.prototype.initialize.call(this, options);
-
     },
 
-    //this must be extended by inheriting widgets to listen to display events
+    // this must be extended by inheriting widgets to listen to display events
     activate: function (beehive) {
-
       this.setBeeHive(beehive);
-      _.bindAll(this, ["updatePaginationPreferences"]);
+      _.bindAll(this, ['updatePaginationPreferences']);
 
       this.getPubSub().subscribe(this.getPubSub().USER_ANNOUNCEMENT, this.updatePaginationPreferences);
 
-      if (this.getBeeHive().getObject("User") && this.getBeeHive().getObject("User").getLocalStorage ){
-        var perPage = this.getBeeHive().getObject("User").getLocalStorage().perPage;
-        if (perPage){
-          //set the pagination perPage value to whatever is in local storage,
-          //otherwise it will be the default val from the initialize function
+      if (this.getBeeHive().getObject('User') && this.getBeeHive().getObject('User').getLocalStorage) {
+        var perPage = this.getBeeHive().getObject('User').getLocalStorage().perPage;
+        if (perPage) {
+          // set the pagination perPage value to whatever is in local storage,
+          // otherwise it will be the default val from the initialize function
           this.pagination.perPage = perPage;
           this.model.set(this.pagination);
         }
@@ -125,10 +120,10 @@ define([
       }
     },
 
-    updatePaginationPreferences : function(event, data){
-      if (event == "user_info_change" && data.perPage && data.perPage !== this.pagination.perPage ){
-        //update per-page value
-        this.updatePagination({perPage : data.perPage});
+    updatePaginationPreferences: function (event, data) {
+      if (event == 'user_info_change' && data.perPage && data.perPage !== this.pagination.perPage) {
+        // update per-page value
+        this.updatePagination({ perPage: data.perPage });
       }
     },
 
@@ -142,9 +137,7 @@ define([
      */
     _getCurrentQueryString: function (apiResponse) {
       var q = '';
-      var res = (apiResponse)
-        ? apiResponse
-        : this.getBeeHive().getObject('AppStorage').getCurrentQuery();
+      var res = (apiResponse) || this.getBeeHive().getObject('AppStorage').getCurrentQuery();
 
       // check for simbids
       if (!_.isUndefined(res)) {
@@ -154,7 +147,7 @@ define([
         if (_.isEmpty(q) || q[0].indexOf('simbid') > -1) {
           try {
             q = [res.get('responseHeader.params.__original_query')];
-          } catch(err) {
+          } catch (err) {
             // No original query present in responseHeader, this may be a biblib and not a solr request
             q = '';
           }
@@ -165,17 +158,16 @@ define([
     },
 
     processResponse: function (apiResponse) {
-
       var docs = this.extractDocs(apiResponse);
-      var numFound = apiResponse.has('response.numFound') ?
-        apiResponse.get('response.numFound') : this.hiddenCollection.length;
-      var start = apiResponse.has('response.start') ?
-        apiResponse.get('response.start') : this.model.get('start');
+      var numFound = apiResponse.has('response.numFound')
+        ? apiResponse.get('response.numFound') : this.hiddenCollection.length;
+      var start = apiResponse.has('response.start')
+        ? apiResponse.get('response.start') : this.model.get('start');
       var pagination = this.getPaginationInfo(apiResponse, docs);
       docs = this.processDocs(apiResponse, docs, pagination);
 
       if (docs && docs.length) {
-        this.hiddenCollection.add(docs, {merge: true});
+        this.hiddenCollection.add(docs, { merge: true });
 
         if (pagination.showRange) {
           // we must update the model before updating collection because the showRange
@@ -196,36 +188,36 @@ define([
       var isLastPage = this.model.has('pageData') && this.model.get('pageData').nextPossible === false;
       var noItems = this.view.collection.length === 0;
 
-      //finally, loading view (from pagination template) can be removed or added
+      // finally, loading view (from pagination template) can be removed or added
       if (noItems || allLoaded || (isLastPage && numFound <= start + docs.length)) {
-        this.model.set("loading", false);
+        this.model.set('loading', false);
       } else {
-        this.model.set("loading", true);
+        this.model.set('loading', true);
       }
     },
 
-    extractDocs: function(apiResponse) {
-      var docs = apiResponse.get("response.docs");
-      docs = _.map(docs, function(d) {
+    extractDocs: function (apiResponse) {
+      var docs = apiResponse.get('response.docs');
+      docs = _.map(docs, function (d) {
         d.identifier = d.bibcode;
         return d;
       });
       return docs;
     },
 
-    getPaginationInfo: function(apiResponse, docs) {
+    getPaginationInfo: function (apiResponse, docs) {
       var q = apiResponse.getApiQuery();
 
       // this information is important for calculation of pages
-      var numFound = apiResponse.get("response.numFound") || 0;
-      var perPage =  this.model.get('perPage') || (q.has("rows") ? q.get('rows')[0] : 10);
-      var start = this.model.get("start") || 0;
+      var numFound = apiResponse.get('response.numFound') || 0;
+      var perPage = this.model.get('perPage') || (q.has('rows') ? q.get('rows')[0] : 10);
+      var start = this.model.get('start') || 0;
 
       // compute the page number of this request
       var page = PaginationMixin.getPageVal(start, perPage);
 
       // compute which documents should be made visible
-      var showRange = [page*perPage, ((page+1)*perPage)-1];
+      var showRange = [page * perPage, ((page + 1) * perPage) - 1];
 
       // means that we were fetching the missing documents (to fill gaps in the collection)
       var fillingGaps = q.has('__fetch_missing');
@@ -233,10 +225,10 @@ define([
         return {
           start: start,
           showRange: showRange
-        }
+        };
       }
 
-      var pageData = this._getPaginationData( page, perPage, numFound);
+      var pageData = this._getPaginationData(page, perPage, numFound);
 
       return {
         numFound: numFound,
@@ -246,28 +238,27 @@ define([
         showRange: showRange,
         pageData: pageData,
         currentQuery: q
-      }
-    },
-
-  /*
-  * data for the page numbers template at the bottom
-  * */
-    _getPaginationData: function(page,  perPage, numFound) {
-
-      //page is zero indexed
-      return {
-        //copying this here for convenience
-        perPage : perPage,
-        totalPages: Math.ceil(numFound/perPage),
-        currentPage : page + 1,
-        previousPossible : page > 0,
-        nextPossible : (page + 1) * perPage < numFound
       };
     },
 
-    processDocs: function(apiResponse, docs, paginationInfo) {
+    /*
+  * data for the page numbers template at the bottom
+  * */
+    _getPaginationData: function (page, perPage, numFound) {
+      // page is zero indexed
+      return {
+        // copying this here for convenience
+        perPage: perPage,
+        totalPages: Math.ceil(numFound / perPage),
+        currentPage: page + 1,
+        previousPossible: page > 0,
+        nextPossible: (page + 1) * perPage < numFound
+      };
+    },
+
+    processDocs: function (apiResponse, docs, paginationInfo) {
       if (!apiResponse.has('response')) return [];
-      var params = apiResponse.get("response");
+      var params = apiResponse.get('response');
       var start = params.start || (paginationInfo.start || 0);
       docs = PaginationMixin.addPaginationToDocs(docs, start);
       return docs;
@@ -275,24 +266,23 @@ define([
 
     defaultQueryArguments: {
       fl: 'id',
-      start : 0
+      start: 0
     },
 
     /*
     * right now only perPage value can be updated by list of things
     * */
 
-    updateLocalStorage : function(options){
-      //if someone has selected perPage, save it in to localStorage
-      if (options.hasOwnProperty("perPage") && _.contains([25, 50, 100], options.perPage)){
-        this.getBeeHive().getObject("User").setLocalStorage({ perPage : options.perPage });
-        console.log("set user's page preferences in localStorage: " + options.perPage);
+    updateLocalStorage: function (options) {
+      // if someone has selected perPage, save it in to localStorage
+      if (options.hasOwnProperty('perPage') && _.contains([25, 50, 100], options.perPage)) {
+        this.getBeeHive().getObject('User').setLocalStorage({ perPage: options.perPage });
+        console.log('set user\'s page preferences in localStorage: ' + options.perPage);
       }
-      //updatePagination will be called after localStorage triggers an event
+      // updatePagination will be called after localStorage triggers an event
     },
 
     updatePagination: function (options) {
-
       // update the current model based on the data passed in
       var opts = _.defaults(options, {
         silentIndexUpdate: false,
@@ -340,7 +330,6 @@ define([
           update.page = opts.page;
         }
       } else {
-
         // otherwise compute the page using the start and perPage value
         if (_.isEmpty(this.collection.models) && _.isNumber(start) && _.isNumber(opts.perPage)) {
           update.page = PaginationMixin.getPageVal(start, opts.perPage);
@@ -377,54 +366,49 @@ define([
       document.body.scrollTop = document.documentElement.scrollTop = 0;
     },
 
-    onAllInternalEvents: function(ev, arg1, arg2) {
-
-      //for testing, allow widget to not have been activated
+    onAllInternalEvents: function (ev, arg1, arg2) {
+      // for testing, allow widget to not have been activated
       try {
         var pubsub = this.getPubSub();
-      } catch(e){
+      } catch (e) {
       }
 
-      if (ev === "pagination:changePerPage"){
-        this.updateLocalStorage({perPage: arg1});
+      if (ev === 'pagination:changePerPage') {
+        this.updateLocalStorage({ perPage: arg1 });
         this.updatePagination({ page: 0, perPage: arg1 });
-      } else if (ev === "pagination:select") {
-        return this.updatePagination({page: arg1});
-      }
-      else if (ev === 'show:missing') {
-        _.each(arg1, function(gap) {
+      } else if (ev === 'pagination:select') {
+        return this.updatePagination({ page: arg1 });
+      } else if (ev === 'show:missing') {
+        _.each(arg1, function (gap) {
           var numFound = this.model.get('numFound');
           var start = gap.start;
           var perPage = this.model.get('perPage');
 
-          if (start >= numFound)  return; // ignore this
+          if (start >= numFound) return; // ignore this
 
           var q = this.model.get('currentQuery').clone();
           q.set('__fetch_missing', 'true');
           q.set('start', start);
-          //larger row numbers were causing timeouts
+          // larger row numbers were causing timeouts
           q.set('rows', 25);
           var req = this.composeRequest(q);
 
-          //allows widgets to override if necessary
+          // allows widgets to override if necessary
           this.executeRequest(req);
-
         }, this);
-
-      }
-      else if (ev == "childview:toggleSelect") {
+      } else if (ev == 'childview:toggleSelect') {
         pubsub.publish(pubsub.PAPER_SELECTION, arg2.data.identifier);
       }
     },
 
-    executeRequest : function(req){
+    executeRequest: function (req) {
       this.getPubSub().publish(this.getPubSub().EXECUTE_REQUEST, req);
     },
 
-    reset: function() {
+    reset: function () {
       this.collection.reset();
       this.hiddenCollection.reset();
-      //reset the model, favoring values in this.pagination
+      // reset the model, favoring values in this.pagination
       this.model.set(_.defaults({
         currentQuery: this.getCurrentQuery(),
         query: false

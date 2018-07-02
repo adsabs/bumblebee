@@ -1,4 +1,4 @@
-'use strict';
+
 define([
   'underscore',
   'react',
@@ -16,15 +16,12 @@ define([
   _, React, Redux, ReactRedux, actions, ACTIONS,
   ExportFormatControl, SelectionButtons, Row, Message, Loading, Closer
 ) {
-
-  const makeOptions = (arr, allVal) => {
-    return _.map(arr, (i) => {
-      if (i === 'All') {
-        return (<option key={allVal} value={allVal}>All</option>);
-      }
-      return (<option key={i} value={i}>{i}</option>);
-    });
-  };
+  const makeOptions = (arr, allVal) => _.map(arr, (i) => {
+    if (i === 'All') {
+      return (<option key={allVal} value={allVal}>All</option>);
+    }
+    return (<option key={i} value={i}>{i}</option>);
+  });
 
   // actions
   const {
@@ -46,8 +43,7 @@ define([
    * state changes should happen here.
    */
   class App extends React.Component {
-
-    constructor (props) {
+    constructor(props) {
       super(props);
       this.state = {
         reloadSpin: false
@@ -79,10 +75,10 @@ define([
      */
     onSelectionClick(type) {
       const { dispatch } = this.props;
-      switch(type) {
+      switch (type) {
         case 'toggleall': return dispatch(toggleAll());
         case 'reset': return dispatch(reset());
-        default: return;
+        default:
       }
     }
 
@@ -141,8 +137,8 @@ define([
             <div className="row" style={{ marginTop: 40 }}>
 
               {/* Only show title banner if we are not loading */}
-              {!loading &&
-                <div>
+              {!loading
+                && <div>
                   <h4 className="col-xs-12 col-sm-6" style={{ marginTop: 0 }}>
                     Viewing Affiliation Data For <strong>{data.length}</strong> Authors<br/>
                     <small>
@@ -191,10 +187,10 @@ define([
             </div>
 
             {/* Loading area */}
-            {loading ?
+            {loading
 
               // show loading screen (spinning icon)
-              <Loading/>
+              ? <Loading/>
               :
 
               // if not loading, we can show the top/bottom bar
@@ -218,9 +214,9 @@ define([
                     >
                       {/* If exporting, show a loading icon in the button */}
                       {
-                        exporting ?
-                          <i className="fa fa-spinner fa-fw fa-spin"/>
-                        : 'Export'
+                        exporting
+                          ? <i className="fa fa-spinner fa-fw fa-spin"/>
+                          : 'Export'
                       }
                     </button>
                   </div>
@@ -228,7 +224,7 @@ define([
 
                     {/* Buttons that perform actions on the whole set */}
                     <SelectionButtons
-                      onClick={(type) => this.onSelectionClick(type)}
+                      onClick={type => this.onSelectionClick(type)}
                     />
 
                   </div>
@@ -247,15 +243,14 @@ define([
                   <hr className="hr"/>
 
                   {/* Map the data here into rows */}
-                  {_.map(data, (d, i) =>
-                    <div key={d.id}>
-                      <Row data={d} onChange={(el) => this.onCheckboxChange(d, el)} />
+                  {_.map(data, (d, i) => <div key={d.id}>
+                      <Row data={d} onChange={el => this.onCheckboxChange(d, el)} />
                       {(data.length - 1 > i) && <hr className="hr"/>}
                     </div>
                   )}
                   {!showReload && _.isEmpty(data) && <div className="text-center">No Results</div>}
-                  {showReload &&
-                    <div className="text-center">
+                  {showReload
+                    && <div className="text-center">
                       <button onClick={() => this.doRefresh()} title="Retry" className="btn btn-default">
                         <i className={`fa fa-refresh ${this.state.reloadSpin ? 'fa-spin' : ''}`}/> Retry
                       </button>
@@ -270,7 +265,7 @@ define([
     }
   }
 
-  const mapStateToProps = (state) => ({
+  const mapStateToProps = state => ({
     data: state.data,
     formats: state.formats,
     format: state.format,

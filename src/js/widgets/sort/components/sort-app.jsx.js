@@ -1,10 +1,8 @@
-'use strict';
+
 define([
   'react',
   'react-prop-types'
 ], function (React, PropTypes) {
-
-
   const SortApp = ({ setSort, setDirection, app }) => {
     const options = app.get('options');
     const sort = app.get('sort');
@@ -55,7 +53,7 @@ define([
                 <a
                   href="#"
                   title={o.get('desc')}
-                  onClick={(e) => onSelect(o, e)}
+                  onClick={e => onSelect(o, e)}
                 >{o.get('text')}</a>
               </li>
             ))

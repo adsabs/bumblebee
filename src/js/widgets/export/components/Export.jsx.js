@@ -1,9 +1,8 @@
-'use strict';
+
 
 define([
   'react', 'react-prop-types', 'es6!./ClipboardBtn.jsx'
 ], function (React, ReactPropTypes, ClipboardBtn) {
-
   const Export = ({
     output, isFetching, progress, onDownloadFile, onCopy
   }) => (
@@ -19,8 +18,8 @@ define([
         </div>
       </div>
 
-      { isFetching &&
-        <div className="progress export-progress">
+      { isFetching
+        && <div className="progress export-progress">
           <div
             className="progress-bar"
             role="progressbar"

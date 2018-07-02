@@ -1,4 +1,4 @@
-'use strict';
+
 define([
   'redux',
   'es6!./modules/api',
@@ -6,7 +6,6 @@ define([
   'es6!./middleware/api',
   'es6!./middleware/ui'
 ], function (Redux, api, ui, apiMiddleware, uiMiddleware) {
-
   const { createStore, applyMiddleware, combineReducers } = Redux;
 
   return function configureStore(context) {
@@ -16,8 +15,8 @@ define([
     ]);
     const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || Redux.compose;
     const reducer = combineReducers({
-        api: api.reducer,
-        ui: ui.reducer
+      api: api.reducer,
+      ui: ui.reducer
     });
     const store = createStore(reducer, composeEnhancers(middleware));
     return store;

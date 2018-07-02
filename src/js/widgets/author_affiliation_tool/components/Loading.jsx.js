@@ -1,8 +1,7 @@
-'use strict';
+
 define([
   'react'
 ], function (React) {
-
   const style = {
     icon: {
       fontSize: 120

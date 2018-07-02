@@ -1,9 +1,8 @@
-'use strict';
+
 define([
   'es6!../constants/actionNames',
   'moment'
 ], function (ACTIONS, Moment) {
-
   const currentYear = Number((new Moment()).year());
 
   // Initial state
@@ -31,11 +30,12 @@ define([
 
   // Reducers
   const reducer = (state = initialState, action) => {
-    switch(action.type) {
-
+    switch (action.type) {
       // Set the current data and stop any loading
       case ACTIONS.setData:
-        return { ...state, data: action.value, loading: false, message: { ...state.message, show: false } };
+        return {
+          ...state, data: action.value, loading: false, message: { ...state.message, show: false }
+        };
 
       // Flip the current toggle
       case ACTIONS.setToggle:
@@ -55,7 +55,9 @@ define([
 
       // Start loading
       case ACTIONS.fetchData:
-        return { ...state, loading: true, ids: action.value, message: { ...state.message, show: false }, showReload: false };
+        return {
+          ...state, loading: true, ids: action.value, message: { ...state.message, show: false }, showReload: false
+        };
 
       // set the current message
       case ACTIONS.setMessage:

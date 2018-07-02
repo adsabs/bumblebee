@@ -1,9 +1,8 @@
-'use strict';
+
 define([
   'react',
   'react-prop-types'
 ], function (React, PropTypes) {
-
   const styles = {
     button: {
       width: '50%'
@@ -43,12 +42,11 @@ define([
     }
 
     onConfirm(confirm) {
-      let cb = this.state.fire;
+      const cb = this.state.fire;
       this.setState(initialState, () => confirm && cb());
     }
 
     componentWillReceiveProps(next) {
-
       // if nothing incoming, just reset
       if (next.app.get('selected').length === 0) {
         this.setState(initialState);
@@ -56,7 +54,7 @@ define([
     }
 
     render() {
-      let len = this.props.app.get('selected').length;
+      const len = this.props.app.get('selected').length;
 
       if (this.props.app.get('mode')) {
         return (
@@ -98,8 +96,8 @@ define([
                 </div>
               </div>
             </div>
-            {this.state.showConfirm &&
-            <div className="row" style={{ marginTop: 5 }}>
+            {this.state.showConfirm
+            && <div className="row" style={{ marginTop: 5 }}>
               <div className="col-xs-12 text-center">
                 Attempt to {this.state.action} {len} paper{`${len > 1 ? 's' : ''}`}?
               </div>

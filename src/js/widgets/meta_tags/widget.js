@@ -6,7 +6,6 @@ define([
   'hbs!js/widgets/meta_tags/template/metatags',
   'js/mixins/link_generator_mixin'
 ], function ($, Backbone, _, BaseWidget, metatagsTemplate, LinkGenerator) {
-
   var View = Backbone.View.extend({
     destroy: function () {
       this.remove();
@@ -43,7 +42,6 @@ define([
       });
 
       if (found.length) {
-
         // Most will have DOIs, but account for other identifier formats
         // These are optional
         var optionalFields = {
@@ -55,7 +53,7 @@ define([
         var keys = Object.keys(found);
 
         // check to make sure that the found doc has all of our fields
-        for(var i = 0; i < fields.length; i++) {
+        for (var i = 0; i < fields.length; i++) {
           if (keys.indexOf(fields[i]) === -1) {
             return null;
           }
@@ -115,7 +113,6 @@ define([
         return $(metatagsTemplate(data)).filter(function () {
           var name = $(this).attr('name');
           if (name) {
-
             // check to see if the tag already exists
             return !$('head>meta[name="' + name + '"]').length;
           }

@@ -1,16 +1,15 @@
-'use strict';
+
 define([
   'immutable'
 ], function (Immutable) {
-
   // Action Constants
   const UPDATE_SELECTED = 'UPDATE_SELECTED';
   const UPDATE_MODE = 'UPDATE_MODE';
 
   // Action Creators
-  const updateSelected = (value) => ({ type: UPDATE_SELECTED, value });
-  const updateMode = (value) => ({ type: UPDATE_MODE, value });
-  const sendEvent = (event) => (dispatch, getState, widget) => {
+  const updateSelected = value => ({ type: UPDATE_SELECTED, value });
+  const updateMode = value => ({ type: UPDATE_MODE, value });
+  const sendEvent = event => (dispatch, getState, widget) => {
     const selected = getState().get('OrcidSelectorApp').get('selected');
     widget.fireOrcidEvent(event, selected);
   };

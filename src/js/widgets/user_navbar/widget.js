@@ -1,16 +1,15 @@
 define([
-  "marionette",
-  "hbs!js/widgets/user_navbar/nav_template",
+  'marionette',
+  'hbs!js/widgets/user_navbar/nav_template',
   'js/mixins/dependon'
 ], function (Marionette, NavTemplate, Dependon) {
-
   var NavModel = Backbone.Model.extend({
 
     defaults: function () {
       return {
-        "page": undefined,
-        "userName": undefined
-      }
+        page: undefined,
+        userName: undefined
+      };
     }
   });
 
@@ -19,7 +18,7 @@ define([
     template: NavTemplate,
 
     modelEvents: {
-      "change": "render"
+      change: 'render'
     }
 
   });
@@ -29,7 +28,7 @@ define([
     initialize: function (options) {
       options = options || {};
       this.model = new NavModel();
-      this.view = new NavView({model: this.model});
+      this.view = new NavView({ model: this.model });
     },
 
     activate: function (beehive) {
@@ -38,26 +37,25 @@ define([
 
       _.bindAll(this);
 
-      //custom dispatchRequest function goes here
+      // custom dispatchRequest function goes here
       pubsub.subscribe(pubsub.PAGE_CHANGE, this.updateCurrentView);
-      pubsub.subscribe(pubsub.USER_ANNOUNCEMENT, this.updateUser)
+      pubsub.subscribe(pubsub.USER_ANNOUNCEMENT, this.updateUser);
     },
 
     updateCurrentView: function (page) {
-      this.model.set("page", page);
+      this.model.set('page', page);
     },
 
     updateUser: function (event, arg) {
       var user = this.getBeeHive().getObject('User');
       if (event == user.USER_SIGNED_IN) {
         var userName = arg;
-        if (userName && userName.indexOf("@") > -1) {
-          userName = userName.split("@")[0];
+        if (userName && userName.indexOf('@') > -1) {
+          userName = userName.split('@')[0];
         }
-        this.model.set("user", userName);
-      }
-      else if (event == user.USER_SIGNED_OUT) {
-        this.model.set("user", undefined);
+        this.model.set('user', userName);
+      } else if (event == user.USER_SIGNED_OUT) {
+        this.model.set('user', undefined);
       }
     },
 
@@ -72,5 +70,4 @@ define([
   _.extend(NavWidget.prototype, Dependon.BeeHive);
 
   return NavWidget;
-
 });

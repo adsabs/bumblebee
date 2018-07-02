@@ -1,4 +1,4 @@
-'use strict';
+
 define([
   'jquery',
   'underscore',
@@ -20,7 +20,6 @@ define([
   $, _, Backbone, React, ReactRedux, ReactDOM, Redux, ReduxThunk,
   ApiTargets, ApiQuery, ApiRequest, BaseWidget, App, ACTIONS, actions, reducers
 ) {
-
   /**
    * Main entry point
    * this is where react will take over control of the view
@@ -49,7 +48,6 @@ define([
      * Initialize the widget
      */
     initialize: function () {
-
       // setup the thunk middleware
       var middleware = Redux.applyMiddleware(
         ReduxThunk.default.withExtraArgument(this)
@@ -100,7 +98,7 @@ define([
         req.set('options', {
 
           // extract ids
-          done: res => {
+          done: (res) => {
             const ids = _.map(res.response.docs, 'bibcode');
             this.fetchAffiliationData(ids);
           },
@@ -126,7 +124,6 @@ define([
      * @returns {*}
      */
     renderWidgetForListOfBibcodes: function (ids) {
-
       // reset on load
       this.store.dispatch(actions.appReset());
       return this.fetchAffiliationData(ids);
@@ -140,7 +137,7 @@ define([
      * @param {number} [numyears=4] numyears - the years to go back
      * @param {number} [maxauthor=4] maxauthor - max number of authors to list
      */
-    fetchAffiliationData: function (ids=[], numyears=4, maxauthor=3) {
+    fetchAffiliationData: function (ids = [], numyears = 4, maxauthor = 3) {
       const pubsub = this.getPubSub();
       const $dd = $.Deferred();
 
@@ -150,11 +147,11 @@ define([
       const req = new ApiRequest({
         target: ApiTargets.AUTHOR_AFFILIATION_SEARCH,
         query: new ApiQuery({ bibcode: ids, numyears, maxauthor }),
-        options : {
-          type : 'post',
+        options: {
+          type: 'post',
           processData: false,
           dataType: 'json',
-          contentType : 'application/json',
+          contentType: 'application/json',
           done: (...args) => $dd.resolve(...args),
           fail: (...args) => $dd.reject(...args),
           always: (...args) => $dd.always(...args)
@@ -162,7 +159,7 @@ define([
       });
 
       // when done set the data into the store
-      $dd.done(data => {
+      $dd.done((data) => {
         try {
           data = JSON.parse(data).data;
           this.store.dispatch(actions.setAffiliationData(data));
@@ -195,7 +192,7 @@ define([
       const req = new ApiRequest({
         target: ApiTargets.AUTHOR_AFFILIATION_EXPORT,
         query: new ApiQuery(),
-        options : {
+        options: {
           useFetch: true,
           fetchOptions: {
             body: JSON.stringify(data),
@@ -227,7 +224,7 @@ define([
      */
     closeWidget: function () {
       const pubsub = this.getPubSub();
-      pubsub.publish(pubsub.NAVIGATE, "results-page");
+      pubsub.publish(pubsub.NAVIGATE, 'results-page');
     },
 
     /**

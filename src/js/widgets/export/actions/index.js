@@ -1,4 +1,4 @@
-'use strict';
+
 
 /**
  * Main collection point for all the actions
@@ -10,7 +10,6 @@ define([
   'js/components/api_targets',
   'filesaver'
 ], function (_, $, ApiQuery, ApiTargets) {
-
   // set of action names
   const actions = {
     SET_TAB: 'SET_TAB',
@@ -40,29 +39,29 @@ define([
     SET_ORIGIN: 'SET_ORIGIN'
   };
 
-  actions.setTab = (tab) =>               ({ type: actions.SET_TAB, tab });
-  actions.setFormat = (format) =>         ({ type: actions.SET_FORMAT, format });
-  actions.setFormats = (formats) =>       ({ type: actions.SET_FORMATS, formats });
-  actions.setCustomFormat = (format) =>   ({ type: actions.SET_CUSTOM_FORMAT, format });
-  actions.setProgress = (progress) =>     ({ type: actions.SET_PROGRESS, progress });
-  actions.setTotalRecs = (totalRecs) =>   ({ type: actions.SET_TOTAL_RECS, totalRecs });
-  actions.setShowCloser = (showCloser) => ({ type: actions.SET_SHOW_CLOSER, showCloser });
-  actions.requestIds = () =>              ({ type: actions.REQUEST_IDS });
-  actions.receiveIds = (ids) =>           ({ type: actions.RECEIVE_IDS, ids });
-  actions.requestExport = () =>           ({ type: actions.REQUEST_EXPORT });
-  actions.receiveExport = (exports) =>    ({ type: actions.RECEIVE_EXPORT, exports });
-  actions.setBatchSize = (batchSize) =>   ({ type: actions.SET_BATCH_SIZE, batchSize });
-  actions.setQuery = (query) =>           ({ type: actions.SET_QUERY, query });
-  actions.setCount = (count) =>           ({ type: actions.SET_COUNT, count });
-  actions.setMaxCount = (maxCount) =>     ({ type: actions.SET_MAX_COUNT, maxCount });
-  actions.cancelRequest = () =>           ({ type: actions.REQUEST_CANCELLED });
-  actions.setIgnore = (ignore) =>         ({ type: actions.SET_IGNORE, ignore });
-  actions.setHasError = (hasError) =>     ({ type: actions.SET_HAS_ERROR, hasError });
-  actions.setErrorMsg = (errorMsg) =>     ({ type: actions.SET_ERROR_MSG, errorMsg });
-  actions.setPage = (page) =>             ({ type: actions.SET_PAGE, page });
-  actions.reset = () =>                   ({ type: actions.RESET });
-  actions.hardReset = () =>               ({ type: actions.HARD_RESET });
-  actions.setOrigin = (origin) =>         ({ type: actions.SET_ORIGIN, origin });
+  actions.setTab = tab => ({ type: actions.SET_TAB, tab });
+  actions.setFormat = format => ({ type: actions.SET_FORMAT, format });
+  actions.setFormats = formats => ({ type: actions.SET_FORMATS, formats });
+  actions.setCustomFormat = format => ({ type: actions.SET_CUSTOM_FORMAT, format });
+  actions.setProgress = progress => ({ type: actions.SET_PROGRESS, progress });
+  actions.setTotalRecs = totalRecs => ({ type: actions.SET_TOTAL_RECS, totalRecs });
+  actions.setShowCloser = showCloser => ({ type: actions.SET_SHOW_CLOSER, showCloser });
+  actions.requestIds = () => ({ type: actions.REQUEST_IDS });
+  actions.receiveIds = ids => ({ type: actions.RECEIVE_IDS, ids });
+  actions.requestExport = () => ({ type: actions.REQUEST_EXPORT });
+  actions.receiveExport = exports => ({ type: actions.RECEIVE_EXPORT, exports });
+  actions.setBatchSize = batchSize => ({ type: actions.SET_BATCH_SIZE, batchSize });
+  actions.setQuery = query => ({ type: actions.SET_QUERY, query });
+  actions.setCount = count => ({ type: actions.SET_COUNT, count });
+  actions.setMaxCount = maxCount => ({ type: actions.SET_MAX_COUNT, maxCount });
+  actions.cancelRequest = () => ({ type: actions.REQUEST_CANCELLED });
+  actions.setIgnore = ignore => ({ type: actions.SET_IGNORE, ignore });
+  actions.setHasError = hasError => ({ type: actions.SET_HAS_ERROR, hasError });
+  actions.setErrorMsg = errorMsg => ({ type: actions.SET_ERROR_MSG, errorMsg });
+  actions.setPage = page => ({ type: actions.SET_PAGE, page });
+  actions.reset = () => ({ type: actions.RESET });
+  actions.hardReset = () => ({ type: actions.HARD_RESET });
+  actions.setOrigin = origin => ({ type: actions.SET_ORIGIN, origin });
 
   /**
    * On request failure, we want to display a message to the user here
@@ -80,9 +79,9 @@ define([
    *
    * @param {string} format - the selected format
    */
-  actions.findAndSetFormat = (format) => (dispatch, getState) => {
+  actions.findAndSetFormat = format => (dispatch, getState) => {
     const { formats } = getState();
-    let found = _.find(formats, { value: format });
+    const found = _.find(formats, { value: format });
     dispatch(actions.setFormat(found || formats[0]));
   };
 
@@ -94,10 +93,12 @@ define([
   actions.fetchUsingQuery = () => (dispatch, getState, widget) => {
     const { exports, main } = getState();
     const { composeRequest } = widget;
-    const { requestIds, receiveIds, requestFailed, setTotalRecs, setHasError } = actions;
+    const {
+      requestIds, receiveIds, requestFailed, setTotalRecs, setHasError
+    } = actions;
 
     // create a new query from the serialized params
-    let query = new ApiQuery(main.query);
+    const query = new ApiQuery(main.query);
     query.set({
 
       // use a specific count, if it's less than the default batchSize
@@ -117,7 +118,6 @@ define([
     // execute the actual request
     const prom = widget._executeApiRequest(req);
     prom.then((res) => {
-
       // pull out only the bibcodes
       const ids = _.map(res.get('response.docs'), 'bibcode');
 
@@ -139,7 +139,9 @@ define([
    * identifiers and some other information.
    */
   actions.fetchUsingIds = () => (dispatch, getState, widget) => {
-    const { requestExport, receiveExport, requestFailed, setIgnore, setHasError } = actions;
+    const {
+      requestExport, receiveExport, requestFailed, setIgnore, setHasError
+    } = actions;
     const { composeRequest } = widget;
     const { format, exports } = getState();
 
@@ -149,10 +151,10 @@ define([
     dispatch(requestExport());
 
     // get the current count, which the user selected
-    let count = exports.count < exports.batchSize ? exports.count : exports.batchSize;
+    const count = exports.count < exports.batchSize ? exports.count : exports.batchSize;
 
     // only grab the first n records
-    let ids = _.take(exports.ids, count);
+    const ids = _.take(exports.ids, count);
 
     // setting up a new query using our current ids
     const q = new ApiQuery();
@@ -172,8 +174,7 @@ define([
 
     // send off the request
     return widget._executeApiRequest(req)
-      .done(res => {
-
+      .done((res) => {
         // if we are ignoring, then don't bother with the response
         if (!exports.ignore) {
           dispatch(receiveExport(res.get('export')));
@@ -202,13 +203,12 @@ define([
 
     // if that total is greater than the amount of records, we have to adjust it
     if (max > exports.totalRecs) {
-
       // reset the batch size to be the total records minus our max
-      let batch = exports.totalRecs - exports.maxCount;
+      const batch = exports.totalRecs - exports.maxCount;
 
       // count is the current lower value (i.e. <count> of <maxCount>)
       // the next batch will be smaller than (maxCount - count)
-      let count = exports.count < batch ? exports.count : batch;
+      const count = exports.count < batch ? exports.count : batch;
 
       // max is the current upper value + the batch value, should be same as totalRecs
       max = exports.maxCount + batch;
@@ -227,7 +227,7 @@ define([
    *
    * @param {object} snapshot - the current state
    */
-  actions.takeSnapshot = (snapshot) => (dispatch, getState) => {
+  actions.takeSnapshot = snapshot => (dispatch, getState) => {
     const snapshot = _.omit(getState().exports, 'snapshot');
     dispatch({ type: actions.TAKE_SNAPSHOT, snapshot: snapshot });
   };
@@ -246,10 +246,10 @@ define([
    */
   actions.downloadFile = () => (dispatch, getState) => {
     const state = getState();
-    let blob = new Blob([state.exports.output], {
+    const blob = new Blob([state.exports.output], {
       type: 'text/plain;charset=utf-8'
     });
-    saveAs(blob, `export-${state.format.value}.${state.format.ext}`)
+    saveAs(blob, `export-${state.format.value}.${state.format.ext}`);
   };
 
   return actions;

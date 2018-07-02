@@ -1,4 +1,4 @@
-'use strict';
+
 define([
   'underscore',
   'backbone',
@@ -18,15 +18,12 @@ define([
   _, Backbone, React, ReactDOM, ReactRedux, analytics, ApiQuery, ApiRequest, ApiTargets,
   BaseWidget, configureStore, api, ui, App
 ) {
-
   const View = Backbone.View.extend({
     initialize: function (options) {
-
       // provide this with all the options passed in
       _.assign(this, options);
     },
     render: function () {
-
       // create provider component, that passes the store to <App>
       ReactDOM.render(
         <ReactRedux.Provider store={this.store}>
@@ -37,7 +34,6 @@ define([
       return this;
     },
     destroy: function () {
-
       // on destroy, make sure the React DOM is unmounted
       ReactDOM.unmountComponentAtNode(this.el);
     }
@@ -45,7 +41,6 @@ define([
 
   const Widget = BaseWidget.extend({
     initialize: function () {
-
       // create the store, using the configurator
       this.store = configureStore(this);
 

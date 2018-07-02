@@ -1,4 +1,4 @@
-'use strict';
+
 define([
   'underscore',
   'backbone',
@@ -17,7 +17,6 @@ define([
   _, Backbone, analytics, React, ReactRedux, ReactDOM, Redux, configureStore,
   SortApp, ApiQuery, BaseWidget, ApiFeedback, SortContainer
 ) {
-
   /**
    * Main App View
    *
@@ -54,7 +53,6 @@ define([
      * Initialize the widget
      */
     initialize: function () {
-
       // create the store, using the configurator
       this.store = configureStore(this);
 
@@ -92,7 +90,7 @@ define([
       const sort = app.get('sort').get('id');
       const dir = app.get('direction');
       let query = app.get('query');
-      let newSort = sort + ' '  + dir;
+      let newSort = sort + ' ' + dir;
 
       // try local app storage if we don't have one stored
       if (_.isNull(query)) {
@@ -102,7 +100,7 @@ define([
       // play nice with the sort, don't destroy what's there
       // only replace the first entry (primary sort)
       if (!_.isUndefined(query.sort) && !_.isEmpty(query.sort)) {
-        let arr = query.sort[0].split(/,\s?/).slice(1);
+        const arr = query.sort[0].split(/,\s?/).slice(1);
 
         arr.unshift(newSort);
         newSort = arr.join(', ');
@@ -127,13 +125,15 @@ define([
      */
     handleFeedback: function (feedback) {
       const { dispatch } = this.store;
-      const { setQuery, setSort, setDirection, setLocked } = SortApp;
+      const {
+        setQuery, setSort, setDirection, setLocked
+      } = SortApp;
 
-      switch(feedback.code) {
+      switch (feedback.code) {
         case ApiFeedback.CODES.SEARCH_CYCLE_STARTED: {
-          let query = feedback && feedback.query && feedback.query.toJSON();
+          const query = feedback && feedback.query && feedback.query.toJSON();
           if (query) {
-            let sortStr = this.extractSort(query.sort[0]);
+            const sortStr = this.extractSort(query.sort[0]);
             dispatch(setQuery(query));
             dispatch(setSort(sortStr.sort, true));
             dispatch(setDirection(sortStr.direction, true));
@@ -158,7 +158,6 @@ define([
      * @returns {{sort: string, direction: string}}
      */
     extractSort: function (sort) {
-
       // grab only the first sort and break it apart
       let sortStr = sort.split(/,\s?/)[0] || 'date desc';
       sortStr = sortStr.split(' ');
