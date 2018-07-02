@@ -1,23 +1,22 @@
 define([
   'underscore',
   'js/components/persistent_storage'
-], function(
+], function (
   _,
   PersistentStorage
-  ) {
+) {
+  // TODO:rca - make sure that the service is loaded at the bootstrap and persisted
+  // before the app exits (and that nothing can change the data inbetween; we can
+  // let them do that; but we'll not care for it
 
-  //TODO:rca - make sure that the service is loaded at the bootstrap and persisted
-  //before the app exits (and that nothing can change the data inbetween; we can
-  //let them do that; but we'll not care for it
-
-  var Storage = PersistentStorage.extend( {
-    activate: function(beehive) {
-      //this.setBeeHive(beehive);
-      //var pubsub = beehive.getService('PubSub');
-      //pubsub.subscribeOnce(pubsub.getPubSubKey(), pubsub.APP_BOOTSTRAPPED, this.onAppBootstrapped);
+  var Storage = PersistentStorage.extend({
+    activate: function (beehive) {
+      // this.setBeeHive(beehive);
+      // var pubsub = beehive.getService('PubSub');
+      // pubsub.subscribeOnce(pubsub.getPubSubKey(), pubsub.APP_BOOTSTRAPPED, this.onAppBootstrapped);
     },
 
-    onAppBootstrapped: function() {
+    onAppBootstrapped: function () {
       var beehive = this.getBeeHive();
       var rconf = beehive.getObject('DynamicConfig');
       if (!rconf) {
@@ -32,7 +31,7 @@ define([
     }
   });
 
-  return function() {
-    return new Storage({name: 'storage-service'});
-  }
+  return function () {
+    return new Storage({ name: 'storage-service' });
+  };
 });
