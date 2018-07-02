@@ -1,9 +1,8 @@
-'use strict';
+
 define([
   'underscore',
   'js/components/api_feedback'
 ], function (_, ApiFeedback) {
-
   /**
    * Abstract error pubsub-like manager.  Allows for hooks to be applied that
    * match API feedback codes
@@ -177,7 +176,6 @@ define([
      */
     updateState: function (state) {
       if (!state || !_.isString(state) || state === this.__state) {
-
         // do nothing
         return;
       }
@@ -202,10 +200,10 @@ define([
      */
     __fireStateHandler: function () {
       var handlers = {};
-      handlers['ready'] = this.onReady;
-      handlers['loading'] = this.onLoading;
-      handlers['idle'] = this.onIdle;
-      handlers['errored'] = this.onErrored;
+      handlers.ready = this.onReady;
+      handlers.loading = this.onLoading;
+      handlers.idle = this.onIdle;
+      handlers.errored = this.onErrored;
       handlers[this.__state] && handlers[this.__state].call(this, this);
     }
   };

@@ -1,4 +1,4 @@
-define(["underscore", "js/mixins/openurl_generator"], function(_, OpenURLGenerator){
+define(['underscore', 'js/mixins/openurl_generator'], function (_, OpenURLGenerator) {
   const GATEWAY_BASE_URL = '/link_gateway/';
 
   const DEFAULT_ORDERING = [
@@ -8,183 +8,183 @@ define(["underscore", "js/mixins/openurl_generator"], function(_, OpenURLGenerat
 
   // set of link types and descriptions
   const LINK_TYPES = {
-    'PUB_PDF': {
+    PUB_PDF: {
       name: 'Publisher PDF',
       shortName: 'Publisher',
       description: 'Publisher PDF',
       type: 'PDF'
     },
-    'EPRINT_PDF': {
+    EPRINT_PDF: {
       name: 'arXiv PDF',
       shortName: 'arXiv',
       description: 'ArXiv eprint',
       type: 'PDF'
     },
-    'AUTHOR_PDF': {
+    AUTHOR_PDF: {
       name: 'Author PDF',
       shortName: 'Author',
       description: 'Link to PDF page provided by author',
       type: 'PDF'
     },
-    'ADS_PDF': {
+    ADS_PDF: {
       name: 'ADS PDF',
       shortName: 'ADS',
       description: 'ADS PDF',
       type: 'PDF'
     },
-    'PUB_HTML': {
+    PUB_HTML: {
       name: 'Publisher Article',
       shortName: 'Publisher',
       description: 'Electronic on-line publisher article (HTML)',
       type: 'HTML'
     },
-    'EPRINT_HTML': {
+    EPRINT_HTML: {
       name: 'arXiv Article',
       shortName: 'arXiv',
       description: 'Arxiv article',
       type: 'HTML'
     },
-    'AUTHOR_HTML': {
+    AUTHOR_HTML: {
       name: 'Author Article',
       shortName: 'Author',
       description: 'Link to HTML page provided by author',
       type: 'HTML'
     },
-    'ADS_SCAN': {
+    ADS_SCAN: {
       name: 'ADS Scanned Article',
       description: 'ADS scanned article',
       shortName: 'ADS',
       type: 'SCAN'
     },
-    'AcA': {
+    AcA: {
       shortName: 'AcA',
       description: 'Acta Astronomica Data Files'
     },
-    'ALMA': {
+    ALMA: {
       shortName: 'ALMA',
       description: 'Atacama Large Millimeter/submillimeter Array'
     },
-    'ARI': {
+    ARI: {
       shortName: 'ARI',
       description: 'Astronomisches Rechen-Institut'
     },
-    'Astroverse': {
+    Astroverse: {
       shortName: 'Astroverse',
       description: 'CfA Dataverse'
     },
-    'ATNF': {
+    ATNF: {
       shortName: 'ATNF',
       description: 'Australia Telescope Online Archive'
     },
-    'Author': {
+    Author: {
       shortName: 'Author',
       description: 'Author Hosted Dataset'
     },
-    'BICEP2': {
+    BICEP2: {
       shortName: 'BICEP2',
       description: 'BICEP/Keck Data'
     },
-    'CADC': {
+    CADC: {
       shortName: 'CADC',
       description: 'Canadian Astronomy Data Center'
     },
-    'CDS': {
+    CDS: {
       shortName: 'CDS',
       description: 'Strasbourg Astronomical Data Center'
     },
-    'CXO': {
+    CXO: {
       shortName: 'CXO',
       description: 'Chandra X-Ray Observatory'
     },
-    'ESA': {
+    ESA: {
       shortName: 'ESA',
       description: 'ESAC Science Data Center'
     },
-    'ESO': {
+    ESO: {
       shortName: 'ESO',
       description: 'European Southern Observatory'
     },
-    'GCPD': {
+    GCPD: {
       shortName: 'GCPD',
       description: 'The General Catalogue of Photometric Data'
     },
-    'GTC': {
+    GTC: {
       shortName: 'GTC',
       description: 'Gran Telescopio CANARIAS Public Archive'
     },
-    'HEASARC': {
+    HEASARC: {
       shortName: 'HEASARC',
       description: 'NASA\'s High Energy Astrophysics Science Archive Research Center'
     },
-    'Herschel': {
+    Herschel: {
       shortName: 'Herschel',
       description: 'Herschel Science Center'
     },
-    'IBVS': {
+    IBVS: {
       shortName: 'IBVS',
       description: 'Information Bulletin on Variable Stars'
     },
-    'INES': {
+    INES: {
       shortName: 'INES',
       description: 'IUE Newly Extracted Spectra'
     },
-    'ISO': {
+    ISO: {
       shortName: 'ISO',
       description: 'Infrared Space Observatory'
     },
-    'KOA': {
+    KOA: {
       shortName: 'KOA',
       description: 'Keck Observatory Archive'
     },
-    'MAST': {
+    MAST: {
       shortName: 'MAST',
       description: 'Mikulski Archive for Space Telescopes'
     },
-    'NED': {
+    NED: {
       shortName: 'NED',
       description: 'NASA/IPAC Extragalactic Database'
     },
-    'NExScI': {
+    NExScI: {
       shortName: 'NExScI',
       description: 'NASA Exoplanet Archive'
     },
-    'NOAO': {
+    NOAO: {
       shortName: 'NOAO',
       description: 'National Optical Astronomy Observatory'
     },
-    'PASA': {
+    PASA: {
       shortName: 'PASA',
       description: 'Publication of the Astronomical Society of Australia Datasets'
     },
-    'PDG': {
+    PDG: {
       shortName: 'PDG',
       description: 'Particle Data Group'
     },
-    'PDS': {
+    PDS: {
       shortName: 'PDS',
       description: 'The NASA Planetary Data System'
     },
-    'SIMBAD': {
+    SIMBAD: {
       shortName: 'SIMBAD',
       description: 'SIMBAD Database at the CDS'
     },
-    'Spitzer': {
+    Spitzer: {
       shortName: 'Spitzer',
       description: 'Spitzer Space Telescope'
     },
-    'TNS': {
+    TNS: {
       shortName: 'TNS',
       description: 'Transient Name Server'
     },
-    'Vizier': {
+    Vizier: {
       shortName: 'VizieR',
       description: 'VizieR Catalog Service'
     },
-    'XMM': {
+    XMM: {
       shortName: 'XMM',
       description: 'XMM Newton Science Archive'
     },
-    'Zenodo': {
+    Zenodo: {
       shortName: 'Zenodo',
       description: 'Zenodo Archive'
     }
@@ -278,12 +278,12 @@ define(["underscore", "js/mixins/openurl_generator"], function(_, OpenURLGenerat
     });
 
     // if no arxiv link is present, check links_data as well to make sure
-    const hasEprint = _.find(fullTextSources, { name: LINK_TYPES['EPRINT_PDF'].name });
+    const hasEprint = _.find(fullTextSources, { name: LINK_TYPES.EPRINT_PDF.name });
     if (!hasEprint && _.isArray(data.links_data)) {
       _.forEach(data.links_data, function (linkData) {
         const link = JSON.parse(linkData);
         if (/preprint/i.test(link.type)) {
-          const info = LINK_TYPES['EPRINT_PDF'];
+          const info = LINK_TYPES.EPRINT_PDF;
           fullTextSources.push({
             url: link.url,
             open: true,
@@ -341,7 +341,7 @@ define(["underscore", "js/mixins/openurl_generator"], function(_, OpenURLGenerat
    * @returns {object} - copy of the data object with links prop added
    */
   const _parseLinksDataForModel = function (_data, linksData) {
-    let links = { list : [], data: [], text: [] };
+    let links = { list: [], data: [], text: [] };
     const data = _.extend({}, _data, { links: links });
 
     // map linksData to links object
@@ -353,7 +353,6 @@ define(["underscore", "js/mixins/openurl_generator"], function(_, OpenURLGenerat
     }
 
     if (_.isPlainObject(data)) {
-
       // check for the citations property
       if (_.isPlainObject(data['[citations]']) && _.isString(data.bibcode)) {
         const citations = data['[citations]'];
@@ -423,7 +422,6 @@ define(["underscore", "js/mixins/openurl_generator"], function(_, OpenURLGenerat
     // data must have 'property' and sub-props
     if (_.isPlainObject(data)) {
       if (_.isArray(data.property) && _.isString(data.bibcode)) {
-
         // make sure if property has a esource or data, we find it on data as well
         if (_.contains(data.property, 'ESOURCE') && !_.has(data, 'esources')) {
           throw new Error('if `property` property contains `ESOURCE`, then data must have `esources` field');

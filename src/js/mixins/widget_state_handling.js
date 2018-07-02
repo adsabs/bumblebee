@@ -17,8 +17,7 @@ define([
   WidgetStates,
   LoadingTemplate,
   LoadingTemplateSmall
-  ) {
-
+) {
   /**
    * This function tries hard to grab the topmost container (view)
    * of the widget (just using some probable locations)
@@ -26,13 +25,10 @@ define([
    * @param widget
    * @returns {*}
    */
-  var getView = function(widget) {
-    if (widget.view && widget.view.itemContainerView)
-      return widget.view.itemContainerView;
-    if (_.isFunction(widget.getView))
-      return widget.getView();
-    if (widget.view)
-      return widget.view;
+  var getView = function (widget) {
+    if (widget.view && widget.view.itemContainerView) return widget.view.itemContainerView;
+    if (_.isFunction(widget.getView)) return widget.getView();
+    if (widget.view) return widget.view;
   };
 
 
@@ -45,13 +41,13 @@ define([
    * @param state
    */
   handlers[WidgetStates.ERRORED] = {
-    set: function(state) {
+    set: function (state) {
       var view = getView(this);
       if (view && view.$el) {
         view.$el.addClass('s-error'); // TODO: eventually, add an error msg
       }
     },
-    revert: function() {
+    revert: function () {
       var view = getView(this);
       if (view && view.$el) {
         view.$el.removeClass('s-error');
@@ -61,11 +57,11 @@ define([
 
 
   handlers[WidgetStates.IDLE] = {
-    set: function(state) {
-      this._getStateHandler({state: WidgetStates.WAITING}).revert.apply(this, state);
+    set: function (state) {
+      this._getStateHandler({ state: WidgetStates.WAITING }).revert.apply(this, state);
     },
-    revert: function() {
-      //pass
+    revert: function () {
+      // pass
     }
   };
 
@@ -78,13 +74,13 @@ define([
      * This is the entry point for controllers to provide
      * feedback to the user
      */
-    changeState: function(newState) {
+    changeState: function (newState) {
       this._states = this._states || [];
 
       if (newState.state == WidgetStates.RESET) {
         if (this._states.length > 0) {
           var self = this;
-          for (var i=this._states.length-1; i>=0; i--) {
+          for (var i = this._states.length - 1; i >= 0; i--) {
             var state = this._states[i];
             this._getStateHandler(state).revert.call(this, state);
           }
@@ -95,13 +91,13 @@ define([
 
       var stateHandler = this._getStateHandler(newState);
       if (!stateHandler) {
-        throw new Error("This is unknown/unhandled widget state: ", newState);
+        throw new Error('This is unknown/unhandled widget state: ', newState);
       }
       stateHandler.set.call(this, newState);
       this._saveNewState(newState);
     },
 
-    _getStateHandler: function(newState) {
+    _getStateHandler: function (newState) {
       return this.widgetStateHandlers[newState.state];
     },
 
@@ -111,8 +107,8 @@ define([
      *
      * @param newState
      */
-    _saveNewState: function(newState) {
-      var s = _.object(_.filter(_.pairs(newState), function(p) {return !_.isObject(p[1]) && !_.isArray(p[1])}));
+    _saveNewState: function (newState) {
+      var s = _.object(_.filter(_.pairs(newState), function (p) { return !_.isObject(p[1]) && !_.isArray(p[1]); }));
       this._states.push(s);
     }
 
@@ -120,5 +116,4 @@ define([
   };
 
   return Mixin;
-
 });

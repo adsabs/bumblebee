@@ -2,11 +2,10 @@
  * This mixin (only has a single function) will reset the collection if numFound doesn't exist,
  * or else add  to the collection. Make sure the model for the collection has idAttribute : "resultsIndex"
  * to allow for the collection to add records properly.
- * 
- *  
+ *
+ *
  */
 define(['underscore'], function (_) {
-
   var WidgetPaginator = {
 
     /**
@@ -15,14 +14,14 @@ define(['underscore'], function (_) {
      */
 
     getPageStart: function (page, perPage, numFound) {
-      return numFound ? Math.min(page*perPage, numFound) : page*perPage;
+      return numFound ? Math.min(page * perPage, numFound) : page * perPage;
     },
 
     /**
      * returns final row value for constructing a page (inclusive)
      */
-    getPageEnd : function(page, perPage, numFound){
-      var endVal =  this.getPageStart(page, perPage) + perPage;
+    getPageEnd: function (page, perPage, numFound) {
+      var endVal = this.getPageStart(page, perPage) + perPage;
       return (endVal > numFound) ? numFound : endVal;
     },
 
@@ -36,7 +35,7 @@ define(['underscore'], function (_) {
      * @returns {number}
      */
     getPageVal: function (start, perPage) {
-      return Math.floor(start/perPage);
+      return Math.floor(start / perPage);
     },
 
 
@@ -51,7 +50,7 @@ define(['underscore'], function (_) {
       var s = _.isArray(start) ? start[0] : parseInt(start);
       _.each(docs, function (d) {
         d.resultsIndex = s;
-        //non zero-indexed
+        // non zero-indexed
         d.indexToShow = s + 1;
         s += 1;
       });
@@ -61,5 +60,4 @@ define(['underscore'], function (_) {
   };
 
   return WidgetPaginator;
-
 });
