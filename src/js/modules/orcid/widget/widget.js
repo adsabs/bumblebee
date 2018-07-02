@@ -19,29 +19,28 @@ define([
   'hbs!js/modules/orcid/widget/templates/empty-template',
   'js/modules/orcid/extension'
 ], function (
-    _,
-    ListOfThingsWidget,
-    BaseWidget,
-    PaginationMixin,
-    LinkGenerator,
-    Formatter,
-    ContainerTemplate,
-    PapersUtilsMixin,
-    ApiQuery,
-    ApiFeedback,
-    JsonResponse,
-    EmptyViewTemplate,
-    OrcidExtension
+  _,
+  ListOfThingsWidget,
+  BaseWidget,
+  PaginationMixin,
+  LinkGenerator,
+  Formatter,
+  ContainerTemplate,
+  PapersUtilsMixin,
+  ApiQuery,
+  ApiFeedback,
+  JsonResponse,
+  EmptyViewTemplate,
+  OrcidExtension
 ) {
-
   var ResultsWidget = ListOfThingsWidget.extend({
 
-    initialize : function (options) {
+    initialize: function (options) {
       ListOfThingsWidget.prototype.initialize.apply(this, arguments);
 
       var that = this;
 
-      //now adjusting the List Model
+      // now adjusting the List Model
       this.view.getEmptyView = function () {
         return Marionette.ItemView.extend({
           template: EmptyViewTemplate
@@ -49,47 +48,46 @@ define([
       };
 
       _.extend(this.view.events, {
-        "click .search-author-name" : function(){
-          var searchTerm, viewThis = this;
-          var orcidName = this.model.get("orcidLastName") + ", " + this.model.get("orcidFirstName");
+        'click .search-author-name': function () {
+          var searchTerm,
+            viewThis = this;
+          var orcidName = this.model.get('orcidLastName') + ', ' + this.model.get('orcidFirstName');
           var oApi = that.getBeeHive().getService('OrcidApi');
 
-          var searchTerm = "author:\"" + orcidName + "\"";
+          var searchTerm = 'author:"' + orcidName + '"';
           oApi.getADSUserData()
-            .done(function(data){
-              if (data && data.nameVariations){
-               data.nameVariations.push(orcidName);
-               searchTerm = "author:(\"" + data.nameVariations.join("\" OR \"") +  "\")";
+            .done(function (data) {
+              if (data && data.nameVariations) {
+                data.nameVariations.push(orcidName);
+                searchTerm = 'author:("' + data.nameVariations.join('" OR "') + '")';
               }
-
-           }).always(function () {
-            viewThis.trigger("search-author-name", searchTerm);
-          }); //end done function
+            }).always(function () {
+              viewThis.trigger('search-author-name', searchTerm);
+            }); // end done function
         } // end click handler
       });
 
       this.view.delegateEvents();
 
       this.view.template = ContainerTemplate;
-      this.view.model.set({"mainResults": true}, {silent : true});
-      this.listenTo(this.collection, "reset", this.checkDetails);
-      this.listenTo(this.view, "search-author-name", function(searchTerm){
-        var pubsub = this.getPubSub(), query = new ApiQuery({q : searchTerm, sort: 'date desc'});
+      this.view.model.set({ mainResults: true }, { silent: true });
+      this.listenTo(this.collection, 'reset', this.checkDetails);
+      this.listenTo(this.view, 'search-author-name', function (searchTerm) {
+        var pubsub = this.getPubSub(),
+          query = new ApiQuery({ q: searchTerm, sort: 'date desc' });
         pubsub.publish(pubsub.START_SEARCH, query);
       });
     },
 
-    orcidWidget : true,
+    orcidWidget: true,
 
     activate: function (beehive) {
-
       ListOfThingsWidget.prototype.activate.apply(this, [].slice.apply(arguments));
 
       _.bindAll(this, 'processResponse');
       this.on('orcidAction:delete', function (model) {
         this.collection.remove(model);
       });
-
     },
 
     /**
@@ -101,11 +99,12 @@ define([
      * can expect to have a canonical bibcode in the 'identifier' field
      */
     mergeDuplicateRecords: function (docs) {
-
       var dmap = {};
-      var id, dupsFound, c = 0;
+      var id,
+        dupsFound,
+        c = 0;
       if (docs) {
-        _.each(docs, function(doc) {
+        _.each(docs, function (doc) {
           doc._dupIdx = c++;
           id = doc.identifier;
           if (id) {
@@ -113,15 +112,13 @@ define([
             if (dmap[id]) {
               dmap[id].push(doc);
               dupsFound = true;
-            }
-            else {
+            } else {
               dmap[id] = [doc];
             }
           }
         });
-      }
-      else {
-        this.hiddenCollection.each(function(model) {
+      } else {
+        this.hiddenCollection.each(function (model) {
           id = model.get('identifier');
           model.attributes._dupIdx = c++;
           if (id) {
@@ -129,8 +126,7 @@ define([
             if (dmap[id]) {
               dmap[id].push(model.attributes);
               dupsFound = true;
-            }
-            else {
+            } else {
               dmap[id] = [model.attributes];
             }
           }
@@ -138,15 +134,15 @@ define([
       }
 
       if (dupsFound) {
-        var toRemove = {}, toUpdate = [];
+        var toRemove = {},
+          toUpdate = [];
 
-        _.each(dmap, function(value, key) {
+        _.each(dmap, function (value, key) {
           if (value.length > 1) {
-
             // decide which record is ours (or pick the first one)
             var toPick = 0;
-            _.each(value, function(doc, idx) {
-              if (doc['source_name'] && doc['source_name'].toLowerCase() == 'nasa ads') {
+            _.each(value, function (doc, idx) {
+              if (doc.source_name && doc.source_name.toLowerCase() == 'nasa ads') {
                 toPick = idx;
               }
             });
@@ -155,20 +151,18 @@ define([
             var authoritativeRecord = value[toPick];
             value.splice(toPick, 1);
             toUpdate.push(authoritativeRecord._dupIdx);
-            authoritativeRecord['source_name'] = authoritativeRecord['source_name'] || '';
+            authoritativeRecord.source_name = authoritativeRecord.source_name || '';
 
-            _.each(value, function(doc) {
-              if (doc['source_name'])
-                authoritativeRecord['source_name'] += '; ' + doc['source_name'];
+            _.each(value, function (doc) {
+              if (doc.source_name) authoritativeRecord.source_name += '; ' + doc.source_name;
               toRemove[doc._dupIdx] = true;
             });
-
           }
         });
 
-        var recomputeIndexes = function(models) {
+        var recomputeIndexes = function (models) {
           var i = 0;
-          _.each(models, function(m) {
+          _.each(models, function (m) {
             m.resultsIndex = i++;
             m.indexToShow = i;
           });
@@ -177,35 +171,31 @@ define([
 
         if (docs) { // we are updating the data before they get displayed
           toRemove = _.keys(toRemove);
-          toRemove.sort(function(a, b){return b-a}); // reverse order
-          _.each(toRemove, function(idx) {
+          toRemove.sort(function (a, b) { return b - a; }); // reverse order
+          _.each(toRemove, function (idx) {
             docs.splice(idx, 1); // will be wasty for large collections
           });
           recomputeIndexes(docs);
-        }
-        else { // we are updating the collection (it was already displayed
-          _.each(toUpdate, function(idx) {
+        } else { // we are updating the collection (it was already displayed
+          _.each(toUpdate, function (idx) {
             var model = this.hiddenCollection.models[idx]; // force re-paint
-            model.set('source_name', model.attributes['source_name'], {silent: true});
+            model.set('source_name', model.attributes.source_name, { silent: true });
           });
           var newModels = [];
-          this.hiddenCollection.each(function(model) {
-            if (!toRemove[model.attributes._dupIdx])
-              newModels.push(model.attributes);
+          this.hiddenCollection.each(function (model) {
+            if (!toRemove[model.attributes._dupIdx]) newModels.push(model.attributes);
           });
           recomputeIndexes(newModels);
           this.hiddenCollection.reset(newModels);
-          this.updatePagination({numFound: newModels.length});
+          this.updatePagination({ numFound: newModels.length });
         }
       }
-
     },
 
     processDocs: function (jsonResponse, docs) {
       var start = 0;
       var docs = PaginationMixin.addPaginationToDocs(docs, start);
-      _.each(docs, function (d,i) {
-
+      _.each(docs, function (d, i) {
         // let each doc know if it's on the orcid widget page
         d.isOrcidWidget = true;
         docs[i] = PapersUtilsMixin.prepareDocForViewing(d);
@@ -215,17 +205,16 @@ define([
 
 
     getPaginationInfo: function (jsonResponse, docs) {
-
       // this information is important for calculation of pages
       var numFound = docs.length;
-      var perPage =  this.model.get('perPage') || 10;
+      var perPage = this.model.get('perPage') || 10;
       var start = 0;
-      var apiQuery = jsonResponse.getApiQuery() || new ApiQuery({'orcid': 'author X'});
+      var apiQuery = jsonResponse.getApiQuery() || new ApiQuery({ orcid: 'author X' });
       // compute the page number of this request
       var page = PaginationMixin.getPageVal(start, perPage);
       // compute which documents should be made visible
-      var showRange = [page*perPage, ((page+1)*perPage)-1];
-      var pageData = this._getPaginationData( page, perPage, numFound);
+      var showRange = [page * perPage, ((page + 1) * perPage) - 1];
+      var pageData = this._getPaginationData(page, perPage, numFound);
 
 
       return {
@@ -236,19 +225,18 @@ define([
         showRange: showRange,
         pageData: pageData,
         currentQuery: apiQuery
-      }
+      };
     },
 
     onShow: function () {
       var oApi = this.getBeeHive().getService('OrcidApi');
       var self = this;
       if (oApi) {
-
         if (!oApi.hasAccess()) {
-          return
+          return;
         }
 
-        self.model.set("loading", true);
+        self.model.set('loading', true);
 
         var profile = oApi.getUserProfile();
 
@@ -314,7 +302,6 @@ define([
       options = options || {};
 
       if (this.hiddenCollection && this.view.collection) {
-
         if (!this._originalCollection) {
           this._originalCollection = new this.hiddenCollection.constructor(this.hiddenCollection.models);
         }
@@ -322,19 +309,16 @@ define([
         var coll = this._originalCollection;
         var allowedVals = ['ads', 'both', 'others', null];
         if (_.has(options, 'filterBy')) {
-
           var cond = options.filterBy;
           if (!_.isArray(cond)) {
             cond = [cond];
           }
           for (var c in cond) {
-            if (!_.contains(allowedVals, cond[c]))
-              throw Error('Unknown value for the filter: ' + cond[c]);
+            if (!_.contains(allowedVals, cond[c])) throw Error('Unknown value for the filter: ' + cond[c]);
           }
 
-          var predicate = function(model) {
-            if (model.attributes.orcid && _.contains(cond, model.attributes.orcid.provenance))
-              return true;
+          var predicate = function (model) {
+            if (model.attributes.orcid && _.contains(cond, model.attributes.orcid.provenance)) return true;
           };
           coll = new this.hiddenCollection.constructor(coll.filter(predicate));
         }
@@ -342,7 +326,7 @@ define([
 
         if (_.has(options, 'sortBy') && options.sortBy) {
           var idx = 0;
-          coll = new this.hiddenCollection.constructor(_.map(coll.sortBy(options.sortBy), function(x) {
+          coll = new this.hiddenCollection.constructor(_.map(coll.sortBy(options.sortBy), function (x) {
             x.attributes.resultsIndex = idx++;
             return x;
           }));

@@ -1,49 +1,48 @@
-'use strict';
+
 define([
   'underscore',
   'jsonpath'
 ], function (_, jp) {
-
   var PATHS = {
-    createdDate:            '$["created-date"].value',
-    lastModifiedDate:       '$["last-modified-date"].value',
-    sourceOrcidIdUri:       '$.source["source-orcid"].uri',
-    sourceOrcidIdPath:      '$.source["source-orcid"].path',
-    sourceOrcidIdHost:      '$.source["source-orcid"].host',
-    sourceClientIdUri:      '$.source["source-client-id"].uri',
-    sourceClientIdPath:     '$.source["source-client-id"].path',
-    sourceClientIdHost:     '$.source["source-client-id"].host',
-    sourceName:             '$.source["source-name"].value',
-    putCode:                '$["put-code"]',
-    path:                   '$.path',
-    title:                  '$["title"].title.value',
-    subtitle:               '$["title"].subtitle.value',
-    translatedTitle:        '$["title"]["translated-title"].value',
-    translatedTitleLang:    '$["title"]["translated-title"]["language-code"]',
-    journalTitle:           '$["journal-title"].value',
-    shortDescription:       '$["short-description"]',
-    citationType:           '$.citation["citation-type"]',
-    citationValue:          '$.citation["citation-value"]',
-    type:                   '$.type',
-    publicationDateYear:    '$["publication-date"].year.value',
-    publicationDateMonth:   '$["publication-date"].month.value',
-    publicationDateDay:     '$["publication-date"].day.value',
-    publicationDateMedia:   '$["publication-date"]["media-type"]',
-    url:                    '$.url.value',
-    contributorOrcidUri:    '$["contributors"].contributor..["contributor-orcid"].uri',
-    contributorOrcidPath:   '$["contributors"].contributor..["contributor-orcid"].path',
-    contributorOrcidHost:   '$["contributors"].contributor..["contributor-orcid"].host',
-    contributorName:        '$["contributors"].contributor..["credit-name"].value',
-    contributorEmail:       '$["contributors"].contributor..["contributor-email"].value',
-    contributorAttributes:  '$["contributors"].contributor..["contributor-attributes"]',
-    contributorSequence:    '$["contributors"].contributor..["contributor-attributes"]["contributor-sequence"]',
-    contributorRole:        '$["contributors"].contributor..["contributor-attributes"]["contributor-role"]',
-    externalIdValue:        '$["external-ids"]["external-id"]..["external-id-value"]',
-    externalIdType:         '$["external-ids"]["external-id"]..["external-id-type"]',
-    externalIdUrl:          '$["external-ids"]["external-id"]..["external-id-url"]',
+    createdDate: '$["created-date"].value',
+    lastModifiedDate: '$["last-modified-date"].value',
+    sourceOrcidIdUri: '$.source["source-orcid"].uri',
+    sourceOrcidIdPath: '$.source["source-orcid"].path',
+    sourceOrcidIdHost: '$.source["source-orcid"].host',
+    sourceClientIdUri: '$.source["source-client-id"].uri',
+    sourceClientIdPath: '$.source["source-client-id"].path',
+    sourceClientIdHost: '$.source["source-client-id"].host',
+    sourceName: '$.source["source-name"].value',
+    putCode: '$["put-code"]',
+    path: '$.path',
+    title: '$["title"].title.value',
+    subtitle: '$["title"].subtitle.value',
+    translatedTitle: '$["title"]["translated-title"].value',
+    translatedTitleLang: '$["title"]["translated-title"]["language-code"]',
+    journalTitle: '$["journal-title"].value',
+    shortDescription: '$["short-description"]',
+    citationType: '$.citation["citation-type"]',
+    citationValue: '$.citation["citation-value"]',
+    type: '$.type',
+    publicationDateYear: '$["publication-date"].year.value',
+    publicationDateMonth: '$["publication-date"].month.value',
+    publicationDateDay: '$["publication-date"].day.value',
+    publicationDateMedia: '$["publication-date"]["media-type"]',
+    url: '$.url.value',
+    contributorOrcidUri: '$["contributors"].contributor..["contributor-orcid"].uri',
+    contributorOrcidPath: '$["contributors"].contributor..["contributor-orcid"].path',
+    contributorOrcidHost: '$["contributors"].contributor..["contributor-orcid"].host',
+    contributorName: '$["contributors"].contributor..["credit-name"].value',
+    contributorEmail: '$["contributors"].contributor..["contributor-email"].value',
+    contributorAttributes: '$["contributors"].contributor..["contributor-attributes"]',
+    contributorSequence: '$["contributors"].contributor..["contributor-attributes"]["contributor-sequence"]',
+    contributorRole: '$["contributors"].contributor..["contributor-attributes"]["contributor-role"]',
+    externalIdValue: '$["external-ids"]["external-id"]..["external-id-value"]',
+    externalIdType: '$["external-ids"]["external-id"]..["external-id-type"]',
+    externalIdUrl: '$["external-ids"]["external-id"]..["external-id-url"]',
     externalIdRelationship: '$["external-ids"]["external-id"]..["external-id-relationship"]',
-    country:                '$.country.value',
-    visibility:             '$.visibility.value'
+    country: '$.country.value',
+    visibility: '$.visibility.value'
   };
 
   /**
@@ -63,7 +62,7 @@ define([
     /**
      * get the sources array
      * if the array is empty, it returns an array containing the single source name
-     * 
+     *
      * @returns {Array} - the sources
      */
     this.getSources = function () {
@@ -76,7 +75,7 @@ define([
 
     /**
      * Set the sources array
-     * 
+     *
      * @param {Array} sources
      * @returns {Array} - the sources
      */
@@ -97,7 +96,7 @@ define([
       var val = jp.query(this._root, path);
       if (_.isEmpty(val)) {
         return null;
-      } else if (_.isArray(val) && val.length <= 1) {
+      } if (_.isArray(val) && val.length <= 1) {
         return val[0];
       }
       return val;
@@ -136,13 +135,13 @@ define([
         ids.doi = [ids.doi];
       }
       return _.extend({}, ids, {
-        author: this.getContributorName(),
-        title: [this.getTitle()],
-        formattedDate: this.getFormattedPubDate(),
-        abstract: this.getShortDescription(),
-        source_name: this.getSources().join('; '),
-        pub: this.getJournalTitle(),
-        _work: this
+        'author': this.getContributorName(),
+        'title': [this.getTitle()],
+        'formattedDate': this.getFormattedPubDate(),
+        'abstract': this.getShortDescription(),
+        'source_name': this.getSources().join('; '),
+        'pub': this.getJournalTitle(),
+        '_work': this
       });
     };
 
@@ -226,14 +225,14 @@ define([
    */
   Work.adsToOrcid = function (adsWork, putCode) {
     var ads = {
-      pubdate: '$.pubdate',
-      abstract: '$.abstract',
-      bibcode: '$.bibcode',
-      pub: '$.pub',
-      doi: '$.doi[0]',
-      author: '$.author[*]',
-      title: '$.title[0]',
-      type: '$.doctype'
+      'pubdate': '$.pubdate',
+      'abstract': '$.abstract',
+      'bibcode': '$.bibcode',
+      'pub': '$.pub',
+      'doi': '$.doi[0]',
+      'author': '$.author[*]',
+      'title': '$.title[0]',
+      'type': '$.doctype'
     };
 
     var put = function (obj, p, val) {
@@ -252,41 +251,40 @@ define([
       var val = jp.query(adsWork, path);
       if (_.isEmpty(val)) {
         return null;
-      } else if (_.isArray(val) && val.length <= 1) {
+      } if (_.isArray(val) && val.length <= 1) {
         return val[0];
       }
       return val;
     };
     var work = {};
-    var worktype = function(adsType) {
+    var worktype = function (adsType) {
       var oType = {
-        article: 'JOURNAL_ARTICLE',
-        inproceedings: 'CONFERENCE_PAPER',
-        abstract: 'CONFERENCE_ABSTRACT',
-        eprint: 'WORKING_PAPER',
-        phdthesis: 'DISSERTATION',
-        techreport: 'RESEARCH_TECHNIQUE',
-        inbook: 'BOOK_CHAPTER',
-        circular: 'RESEARCH_TOOL',
-        misc: 'OTHER',
-        book: 'BOOK',
-        proceedings: 'BOOK',
-        bookreview: 'BOOK_REVIEW',
-        erratum: 'JOURNAL_ARTICLE',
-        proposal: 'OTHER',
-        newsletter: 'NEWSLETTER_ARTICLE',
-        catalog: 'DATA_SET',
-        intechreport: 'RESEARCH_TECHNIQUE',
-        mastersthesis: 'DISSERTATION',
-        obituary: 'OTHER',
-        pressrelease: 'OTHER',
-        software: 'RESEARCH_TECHNIQUE',
-        talk: 'LECTURE_SPEECH'
+        'article': 'JOURNAL_ARTICLE',
+        'inproceedings': 'CONFERENCE_PAPER',
+        'abstract': 'CONFERENCE_ABSTRACT',
+        'eprint': 'WORKING_PAPER',
+        'phdthesis': 'DISSERTATION',
+        'techreport': 'RESEARCH_TECHNIQUE',
+        'inbook': 'BOOK_CHAPTER',
+        'circular': 'RESEARCH_TOOL',
+        'misc': 'OTHER',
+        'book': 'BOOK',
+        'proceedings': 'BOOK',
+        'bookreview': 'BOOK_REVIEW',
+        'erratum': 'JOURNAL_ARTICLE',
+        'proposal': 'OTHER',
+        'newsletter': 'NEWSLETTER_ARTICLE',
+        'catalog': 'DATA_SET',
+        'intechreport': 'RESEARCH_TECHNIQUE',
+        'mastersthesis': 'DISSERTATION',
+        'obituary': 'OTHER',
+        'pressrelease': 'OTHER',
+        'software': 'RESEARCH_TECHNIQUE',
+        'talk': 'LECTURE_SPEECH'
       };
       return oType[adsType] || 'JOURNAL_ARTICLE';
     };
     try {
-
       var exIds = {
         types: [],
         values: [],

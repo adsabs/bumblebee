@@ -24,7 +24,6 @@ function (
   Work,
   ApiFeedback
 ) {
-
   return function (WidgetClass) {
     var queryUpdater = new ApiQueryUpdater('OrcidExtension');
     var processDocs = WidgetClass.prototype.processDocs;
@@ -39,7 +38,6 @@ function (
     };
 
     WidgetClass.prototype.onCustomEvent = function (event, bibcodes) {
-
       /**
        * Find the models for each of the bibcodes
        * Filter out ones that can't perform the action
@@ -52,7 +50,6 @@ function (
 
         // go through each model and grab the view for triggering
         _.forEach(models, _.bind(function (m) {
-
           // only continue if the model has the action available
           var actions = _.map(m.get('orcid').actions, 'action');
 
@@ -99,14 +96,11 @@ function (
         msg.actions.delete = { title: 'delete from ORCID', caption: 'Delete ADS version from ORCID', action: 'orcid-delete' };
         msg.actions.view = { title: 'view in ORCID', caption: 'Another version exists (we don\'t have rights to update it)', action: 'orcid-view' };
       } else if (recInfo.isCreatedByOthers && !recInfo.isCreatedByADS) {
-
         if (recInfo.isKnownToADS) {
           msg.actions.add = { title: 'add ADS version ORCID', caption: 'ORCID already has a record for this article (we don\'t have rights to update it).', action: 'orcid-add' };
         }
         msg.actions.view = { title: 'view in ORCID', caption: 'Another version exists (we don\'t have rights to update it)', action: 'orcid-view' };
-
       } else if (!recInfo.isCreatedByOthers && recInfo.isCreatedByADS) {
-
         msg.actions.update = { title: 'update in ORCID', caption: 'Update ADS version with latest data', action: 'orcid-update' };
         msg.actions.delete = { title: 'delete from ORCID', caption: 'Delete ADS version from ORCID', action: 'orcid-delete' };
       } else {
@@ -124,7 +118,6 @@ function (
       }
       return msg;
     }, function (ret) {
-
       return [
         ret.isCreatedByADS, ret.isCreatedByOthers, ret.isKnownToADS, ret.provenance
       ];
@@ -164,7 +157,6 @@ function (
 
       // find all pending models, and update them with an error state
       var setPendingToError = _.debounce(function () {
-
         // go through the current models, and if something is pending
         // make it show an error
         _.forEach(self.hiddenCollection.models, function (m) {
@@ -181,7 +173,6 @@ function (
 
       // find all pending models, and update them to a default state
       var setPendingToDefaultActions = _.debounce(function () {
-
         var defaultActions = self._getOrcidInfo({});
 
         // go through the current models, and if something is pending
@@ -196,7 +187,6 @@ function (
       // attempt to find the model to update and update it's orcid actions
       var onSuccess = function (documents, count) {
         _.forEach(_.rest(arguments), function (info, i) {
-
           // since the order is maintain from the promises we can grab by index
           var work = documents[i];
 
@@ -225,7 +215,6 @@ function (
           }
 
           var model = _.find(self.hiddenCollection.models, function (m) {
-
             // do our best to find the match
             return (_.isPlainObject(work._work) && work._work === m.get('_work'))
               || (_.isString(work.bibcode) && work.bibcode === m.get('bibcode'))
@@ -258,10 +247,8 @@ function (
               source_name: _.isArray(sources) ? sources.join('; ') : model.get('source_name'),
               orcidWorkPath: orcidPath
             });
-          } else {
-            if (count < 60) {
-              _.delay(_.bind(onSuccess, self, [work], count + 1), 500);
-            }
+          } else if (count < 60) {
+            _.delay(_.bind(onSuccess, self, [work], count + 1), 500);
           }
 
           // if entry has children, remove them
@@ -283,7 +270,6 @@ function (
 
       // retry once, then just set everything still pending to errored
       var onFail = function (documents) {
-
         if (!failRetry) {
           failRetry = true;
           return getDocInfo(documents);
@@ -297,7 +283,6 @@ function (
       getDocInfo = function (documents) {
         var promises = _.map(documents, function (d) {
           return orcidApi.getRecordInfo(d).done(function (info) {
-
             // if the record was created by ADS, we can update it now
             if (info.sourcedByADS && _.isUndefined(d.source_name)) {
               d.source_name = 'NASA Astrophysics Data System';
@@ -371,10 +356,8 @@ function (
                 source_name: w.getSources().join('; '),
                 _work: w
               });
-            } else {
-              if (tries < 60) {
-                _.delay(_.bind(self._updateModelsWithOrcid, self, [m], tries + 1), 500);
-              }
+            } else if (tries < 60) {
+              _.delay(_.bind(self._updateModelsWithOrcid, self, [m], tries + 1), 500);
             }
           });
         });
@@ -426,8 +409,8 @@ function (
        * @param {object} adsResponse
        */
       var onRecieveFullADSWork = function (fullOrcidWork, adsResponse) {
-        var adsWork = adsResponse.response &&
-          adsResponse.response.docs && adsResponse.response.docs[0];
+        var adsWork = adsResponse.response
+          && adsResponse.response.docs && adsResponse.response.docs[0];
 
         var parsedOrcidWork = fullOrcidWork.toADSFormat();
 
@@ -461,8 +444,8 @@ function (
        * @param {Work} fullOrcidWork - the full orcid work record
        */
       var onRecieveFullOrcidWork = function (fullOrcidWork) {
-        var identifier = model.get('identifier') ||
-          fullOrcidWork.pickIdentifier(['bibcode', 'doi']);
+        var identifier = model.get('identifier')
+          || fullOrcidWork.pickIdentifier(['bibcode', 'doi']);
         if (!identifier) {
           throw Error('Unable to determine suitable identifier');
         }
@@ -615,13 +598,11 @@ function (
 
         var handlers = {
           'orcid-add': function (model) {
-
             model.set('orcid', { pending: true });
 
             var onAddComplete = function () {
               self._findWorkByModel(model)
                 .done(function (work) {
-
                 // we should be able to assume some record info
                   var recInfo = {
                     isCreatedByADS: true,
@@ -643,7 +624,6 @@ function (
               orcidApi.addWork(adsWork)
                 .done(onAddComplete)
                 .fail(function addFailed(xhr, error, state) {
-
                 // there is a conflicting record, update record
                   if (state === 'CONFLICT') {
                     return onAddComplete();
@@ -671,11 +651,9 @@ function (
             }
           },
           'orcid-delete': function (model) {
-
             model.set('orcid', { pending: true });
 
             var deleteSuccess = function () {
-
               // Remove entry from collection after delete
               if (self.orcidWidget) {
                 self.removeModel(model);
@@ -690,7 +668,6 @@ function (
               orcidApi.deleteWork(work.getPutCode())
                 .done(deleteSuccess)
                 .fail(function deleteFail(xhr, error, state) {
-
                 /*
                   record not found, treat like the delete worked
                   Subsequent deletes on an already deleted entity can cause
@@ -717,7 +694,6 @@ function (
             }
           },
           'orcid-update': function (model) {
-
             model.set('orcid', { pending: true });
 
             var failedUpdating = function () {
@@ -737,7 +713,6 @@ function (
 
                 var work = Work.adsToOrcid(model.attributes, putCode);
                 if (_.isNull(work)) {
-
                 // if something went wrong parsing the work, fail it here
                   return failedUpdating(work);
                 }
@@ -780,7 +755,6 @@ function (
             orcidApi.signOut();
           },
           'orcid-view': function (model) {
-
             // send them to the work on their orcid profile
             var url = model.get('orcidWorkPath');
             if (_.isString(url)) {
@@ -796,5 +770,4 @@ function (
 
     return WidgetClass;
   };
-
 });
