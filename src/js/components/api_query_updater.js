@@ -16,20 +16,18 @@
  */
 
 define(['underscore', 'js/components/api_query'], function (_, ApiQuery) {
-
-  var ApiQueryUpdater = function(contextIdentifier, options) {
+  var ApiQueryUpdater = function (contextIdentifier, options) {
     if (!contextIdentifier || !_.isString(contextIdentifier)) {
-      throw new Error("You must initialize the ApiQueryUpdater with a context (which is a string)")
+      throw new Error('You must initialize the ApiQueryUpdater with a context (which is a string)');
     }
     this.context = contextIdentifier;
     this.defaultOperator = ' ';
     this.operators = [' ', 'AND', 'OR', 'NOT', 'NEAR'];
     this.defaultMode = 'limit';
     this.operationModes = ['limit', 'exclude', 'expand', 'replace'];
-    this.impossibleString = "\uFFFC\uFFFC\uFFFC";
+    this.impossibleString = '\uFFFC\uFFFC\uFFFC';
     _.extend(this, options);
   };
-
 
 
   _.extend(ApiQueryUpdater.prototype, {
@@ -47,14 +45,13 @@ define(['underscore', 'js/components/api_query'], function (_, ApiQuery) {
      * @param operator
      *      String: this will serve as concatenator for the conditions
      */
-    updateQuery: function(apiQuery, field, mode, queryCondition, options) {
-
+    updateQuery: function (apiQuery, field, mode, queryCondition, options) {
       options = _.defaults({}, options, {
         prefix: '__'
       });
 
       if (!field || !_.isString(field)) {
-        throw new Error("You must tell us what parameter to update in the ApiQuery");
+        throw new Error('You must tell us what parameter to update in the ApiQuery');
       }
 
       queryCondition = this._sanitizeConditionAsArray(queryCondition);
@@ -63,20 +60,16 @@ define(['underscore', 'js/components/api_query'], function (_, ApiQuery) {
       var operator;
       if (mode == 'limit') {
         operator = 'AND';
-      }
-      else if (mode == 'exclude') {
+      } else if (mode == 'exclude') {
         operator = 'NOT';
-      }
-      else if (mode == 'expand') {
+      } else if (mode == 'expand') {
         operator = 'OR';
-      }
-      else if (mode == 'replace') {
+      } else if (mode == 'replace') {
         this._closeExistingVals(apiQuery, this._n(field, options.prefix));
         apiQuery.set(this._n(field, options.prefix), ['AND', queryCondition[0]]);
         return apiQuery.set(field, queryCondition[0]);
-      }
-      else {
-        throw new Error("Unsupported mode/operator:", mode);
+      } else {
+        throw new Error('Unsupported mode/operator:', mode);
       }
 
       if (!(apiQuery.has(field))) {
@@ -87,7 +80,7 @@ define(['underscore', 'js/components/api_query'], function (_, ApiQuery) {
       }
 
 
-      //globalOperator = this._sanitizeOperator(globalOperator);
+      // globalOperator = this._sanitizeOperator(globalOperator);
 
       // local name
       var n = this._n(field, options.prefix);
@@ -95,13 +88,15 @@ define(['underscore', 'js/components/api_query'], function (_, ApiQuery) {
       // create copy of the field
       var q = _.clone(apiQuery.get(field));
 
-      var oldConditionAsString, newConditionAsString, newConditions, existingConditions;
+      var oldConditionAsString,
+        newConditionAsString,
+        newConditions,
+        existingConditions;
 
       // first check if we have any existing conditions
       existingConditions = this._getExistingVals(apiQuery, n);
 
       if (existingConditions) {
-
         // if the operators differ, it means we cannot safely update the query
         // we must treat it as a new query
         if (existingConditions[0] !== operator) {
@@ -110,32 +105,25 @@ define(['underscore', 'js/components/api_query'], function (_, ApiQuery) {
         }
 
         oldConditionAsString = this._buildQueryFromConditions(existingConditions);
-      }
-      else {
+      } else {
         existingConditions = [operator]; // first value is always operator
         if (q.length == 1) { // we got a string, but that string could be a whole phrase
           if (q[0].indexOf(' ') == -1) { // simple string
             oldConditionAsString = q[0];
             existingConditions.push(q[0]);
-          }
-          else {
-
+          } else {
             oldConditionAsString = q[0];
             var sillyTest = q[0].toLowerCase();
-            if (sillyTest.indexOf(' and ') > -1 || sillyTest.indexOf(' or ') > -1 || sillyTest.indexOf(' not ') > -1 ||
-              sillyTest.indexOf(' near') > -1 || sillyTest.indexOf('(') > 2) {
+            if (sillyTest.indexOf(' and ') > -1 || sillyTest.indexOf(' or ') > -1 || sillyTest.indexOf(' not ') > -1
+              || sillyTest.indexOf(' near') > -1 || sillyTest.indexOf('(') > 2) {
               existingConditions.push('(' + q[0] + ')'); // enclose the expression in brackets, just to be safe
-            }
-            else {
+            } else {
               existingConditions.push(q[0]);
             }
           }
-
-        }
-        else {
+        } else {
           oldConditionAsString = this.impossibleString;
         }
-
       }
 
       // 'limit' means that the broader query will become 'narrower'
@@ -143,7 +131,6 @@ define(['underscore', 'js/components/api_query'], function (_, ApiQuery) {
       // 'expand' means that the query is becoming broader by gaining
       // more conditions (these are OR'ed)
       if (mode == 'limit' || mode == 'expand') {
-
         // join the old and the new conditoins (remove the duplicates)
         // we are basically trying to update the existing query
         // by adding more conditions into the same clause
@@ -154,12 +141,11 @@ define(['underscore', 'js/components/api_query'], function (_, ApiQuery) {
         var testq = _.clone(q);
         // try to find the pre-condition and replace it with a new value
         if (this._modifyArrayReplaceString(testq, oldConditionAsString, newConditionAsString)) {
-          apiQuery.set(field, testq); //success
+          apiQuery.set(field, testq); // success
           // save the values inside the query (so that we can use them if we are called next time)
           apiQuery.set(n, newConditions);
           return;
         }
-
       }
 
 
@@ -168,8 +154,6 @@ define(['underscore', 'js/components/api_query'], function (_, ApiQuery) {
       // can also be 'exclude' conditions; so if possible, we'll enlarge their number
 
       if (mode == 'exclude') {
-
-
         var modifiedExisting = _.clone(existingConditions);
         modifiedExisting[0] = 'OR';
         oldConditionAsString = ' NOT ' + this._buildQueryFromConditions(modifiedExisting);
@@ -182,7 +166,7 @@ define(['underscore', 'js/components/api_query'], function (_, ApiQuery) {
         var testq = _.clone(q);
         // try to find the pre-condition and replace it with a new value
         if (this._modifyArrayReplaceString(testq, oldConditionAsString, newConditionAsString)) {
-          apiQuery.set(field, testq); //success
+          apiQuery.set(field, testq); // success
           // save the values inside the query (so that we can use them if we are called next time)
           apiQuery.set(n, newConditions);
           return;
@@ -195,16 +179,13 @@ define(['underscore', 'js/components/api_query'], function (_, ApiQuery) {
 
       if (mode == 'limit') {
         newConditions = this._modifyArrayAddString(q, queryCondition, 'AND');
-      }
-      else if (mode == 'exclude') {
+      } else if (mode == 'exclude') {
         newConditions = this._modifyArrayAddString(q, queryCondition, 'NOT');
-      }
-      else if (mode == 'expand') {
+      } else if (mode == 'expand') {
         newConditions = this._modifyArrayAddString(q, queryCondition, 'OR');
       }
       apiQuery.set(n, newConditions);
       apiQuery.set(field, q);
-
     },
 
 
@@ -213,15 +194,16 @@ define(['underscore', 'js/components/api_query'], function (_, ApiQuery) {
      *
      * @param value
      */
-    needsEscape: function(s) {
-      var sb = [], c;
+    needsEscape: function (s) {
+      var sb = [],
+        c;
       for (var i = 0; i < s.length; i++) {
         c = s[i];
         // These characters are part of the query syntax and must be escaped
         if (c == '\\' || c == '+' || c == '-' || c == '!' || c == '(' || c == ')'
           || c == ':' || c == '^' || c == '[' || c == ']' || c == '"'
           || c == '{' || c == '}' || c == '~' || c == '*' || c == '?'
-          || c == '|' || c == '&' || c == '/' ) {
+          || c == '|' || c == '&' || c == '/') {
           return true;
         }
       }
@@ -233,8 +215,9 @@ define(['underscore', 'js/components/api_query'], function (_, ApiQuery) {
      *
      * @param value
      */
-    escape: function(s) {
-      var sb = [], c;
+    escape: function (s) {
+      var sb = [],
+        c;
       for (var i = 0; i < s.length; i++) {
         c = s[i];
         // These characters are part of the query syntax and must be escaped
@@ -250,8 +233,9 @@ define(['underscore', 'js/components/api_query'], function (_, ApiQuery) {
     },
 
 
-    escapeInclWhitespace: function(s) {
-      var sb = [], c;
+    escapeInclWhitespace: function (s) {
+      var sb = [],
+        c;
       for (var i = 0; i < s.length; i++) {
         c = s[i];
         // These characters are part of the query syntax and must be escaped
@@ -271,7 +255,7 @@ define(['underscore', 'js/components/api_query'], function (_, ApiQuery) {
      * @param s
      * @returns {string}
      */
-    quoteIfNecessary: function(s, quoteChar, quoteCharEnd) {
+    quoteIfNecessary: function (s, quoteChar, quoteCharEnd) {
       return this.quote(s, quoteChar, quoteCharEnd, true);
     },
 
@@ -280,26 +264,24 @@ define(['underscore', 'js/components/api_query'], function (_, ApiQuery) {
      * @param s
      * @returns {string}
      */
-    quote: function(s, quoteChar, quoteCharEnd, onlyIfNecessary) {
-      if (!quoteChar)
-        quoteChar = '"';
-      if (!quoteCharEnd)
-        quoteCharEnd = quoteChar;
+    quote: function (s, quoteChar, quoteCharEnd, onlyIfNecessary) {
+      if (!quoteChar) quoteChar = '"';
+      if (!quoteCharEnd) quoteCharEnd = quoteChar;
 
-      if (_.isUndefined(onlyIfNecessary))
-        onlyIfNecessary = false;
+      if (_.isUndefined(onlyIfNecessary)) onlyIfNecessary = false;
 
-      var sb = [], c;
+      var sb = [],
+        c;
       var needsQuotes = false;
       for (var i = 0; i < s.length; i++) {
         c = s[i];
         if (c == '\\' || c == '+' || c == '-' || c == '!' || c == '(' || c == ')'
           || c == ':' || c == '^' || c == '[' || c == ']' || c == '"'
-          || c == '{' || c == '}' || c == '~' //|| c == '*' || c == '?'
+          || c == '{' || c == '}' || c == '~' // || c == '*' || c == '?'
           || c == '|' || c == '&' || c == '/' || c == ' ' || c == '\t') {
           needsQuotes = true;
         }
-        if ((c == quoteChar || c == quoteCharEnd) && (i==0 || i>0 && s[i-1] !== '\\')) {
+        if ((c == quoteChar || c == quoteCharEnd) && (i == 0 || i > 0 && s[i - 1] !== '\\')) {
           sb.push('\\');
         }
         sb.push(c);
@@ -308,11 +290,11 @@ define(['underscore', 'js/components/api_query'], function (_, ApiQuery) {
       // detect presence of quotes in the original string
       if (onlyIfNecessary == true
         && sb[0] == '\\' && sb[1] == '"'
-        && sb[sb.length-2] == '\\' && sb[sb.length-1] == '"'
+        && sb[sb.length - 2] == '\\' && sb[sb.length - 1] == '"'
       ) {
-          sb[0] = '';
-          sb[sb.length-2] = '';
-          return sb.join('');
+        sb[0] = '';
+        sb[sb.length - 2] = '';
+        return sb.join('');
       }
       if (needsQuotes || onlyIfNecessary == false) {
         return quoteChar + sb.join('') + quoteCharEnd;
@@ -329,7 +311,7 @@ define(['underscore', 'js/components/api_query'], function (_, ApiQuery) {
      * @param key
      * @param value
      */
-    saveTmpEntry: function(apiQuery, key, value) {
+    saveTmpEntry: function (apiQuery, key, value) {
       var storage = this._getTmpStorage(apiQuery, true);
       var oldVal;
       if (key in storage) {
@@ -339,53 +321,50 @@ define(['underscore', 'js/components/api_query'], function (_, ApiQuery) {
       return oldVal;
     },
 
-    removeTmpEntry: function(apiQuery, key) {
+    removeTmpEntry: function (apiQuery, key) {
       var storage = this._getTmpStorage(apiQuery, true);
       var val = storage[key];
       delete storage[key];
       return val;
     },
 
-    getTmpEntry: function(apiQuery, key, defaultValue) {
+    getTmpEntry: function (apiQuery, key, defaultValue) {
       var storage;
       if (defaultValue) {
         storage = this._getTmpStorage(apiQuery, true);
-      }
-      else {
+      } else {
         storage = this._getTmpStorage(apiQuery, false);
       }
 
       if (key in storage) {
         return storage[key];
       }
-      else {
-        storage[key] = defaultValue;
-        return defaultValue;
-      }
+
+      storage[key] = defaultValue;
+      return defaultValue;
     },
 
-    hasTmpEntry: function(apiQuery, key) {
+    hasTmpEntry: function (apiQuery, key) {
       var storage = this._getTmpStorage(apiQuery);
       return key in storage;
     },
 
-    _getTmpStorage: function(apiQuery, createIfNotExists) {
+    _getTmpStorage: function (apiQuery, createIfNotExists) {
       var n = this._n('__tmpStorage');
       if (!apiQuery.hasOwnProperty(n)) {
-        if (!createIfNotExists)
-          return {};
+        if (!createIfNotExists) return {};
         apiQuery[n] = {};
       }
       return apiQuery[n];
     },
 
-    _n: function(name, prefix) {
+    _n: function (name, prefix) {
       return (_.isString(prefix) ? prefix : '__') + this.context + '_' + name;
     },
 
-    _buildQueryFromConditions: function(conditions) {
+    _buildQueryFromConditions: function (conditions) {
       if (conditions.length <= 1) {
-        throw new Error("Violation of contract: first condition is always an operator");
+        throw new Error('Violation of contract: first condition is always an operator');
       }
       var op = conditions[0];
       if (op != ' ') {
@@ -407,16 +386,15 @@ define(['underscore', 'js/components/api_query'], function (_, ApiQuery) {
      * @returns {integer}
      * @private
      */
-    _modifyArrayReplaceString: function(arr, search, replace, maxNumMod) {
+    _modifyArrayReplaceString: function (arr, search, replace, maxNumMod) {
       var numMod = 0;
-      if (!maxNumMod)
-        maxNumMod = -1;
+      if (!maxNumMod) maxNumMod = -1;
 
       if (!search) {
-        throw new Error("Your search is empty, you fool");
+        throw new Error('Your search is empty, you fool');
       }
       var modified = false;
-      _.each(arr, function(text, i) {
+      _.each(arr, function (text, i) {
         if (maxNumMod > 0 && numMod > maxNumMod) {
           return;
         }
@@ -434,15 +412,15 @@ define(['underscore', 'js/components/api_query'], function (_, ApiQuery) {
      * @param conditions
      * @private
      */
-    _modifyArrayAddString: function(arr, conditions, operator) {
+    _modifyArrayAddString: function (arr, conditions, operator) {
       // will always add to the latest string
-      if ((arr.length == 0 || arr[arr.length-1].trim() == '' )&& (operator == 'NOT' || operator == 'NEAR')) {
+      if ((arr.length == 0 || arr[arr.length - 1].trim() == '') && (operator == 'NOT' || operator == 'NEAR')) {
         throw new Error('Invalid operation; cannot apply NOT/NEAR on single clause');
       }
-      var newQ = arr[arr.length-1];
+      var newQ = arr[arr.length - 1];
 
       var newConditions = [operator, newQ].concat(conditions);
-      arr[arr.length-1] = this._buildQueryFromConditions(newConditions);
+      arr[arr.length - 1] = this._buildQueryFromConditions(newConditions);
       return newConditions;
     },
 
@@ -457,7 +435,7 @@ define(['underscore', 'js/components/api_query'], function (_, ApiQuery) {
      * @returns {*}
      * @private
      */
-    _getExistingVals: function(apiQuery, key, defaults) {
+    _getExistingVals: function (apiQuery, key, defaults) {
       if (apiQuery.has(key)) {
         return apiQuery.get(key);
       }
@@ -475,22 +453,22 @@ define(['underscore', 'js/components/api_query'], function (_, ApiQuery) {
      * @param condName
      * @private
      */
-    _closeExistingVals: function(apiQuery, condName) {
+    _closeExistingVals: function (apiQuery, condName) {
       apiQuery.unset(condName);
     },
 
-    _sanitizeMode: function(mode) {
+    _sanitizeMode: function (mode) {
       if (!mode) {
         return this.defaultMode;
       }
       var i = _.indexOf(this.operationModes, mode);
       if (i == -1) {
-        throw new Error("Unkwnown mode: " + mode);
+        throw new Error('Unkwnown mode: ' + mode);
       }
       return this.operationModes[i];
     },
 
-    _sanitizeOperator: function(operator) {
+    _sanitizeOperator: function (operator) {
       if (!operator) {
         return this.defaultOperator;
       }
@@ -498,28 +476,27 @@ define(['underscore', 'js/components/api_query'], function (_, ApiQuery) {
         if (operator.trim() == '') {
           return this.defaultOperator;
         }
-      }
-      else {
+      } else {
         throw new Error('Operator must be a string');
       }
       operator = operator.toUpperCase();
       var i = _.indexOf(this.operators, operator);
       if (i == -1) {
-        throw new Error("Unknown operator: ", operator);
+        throw new Error('Unknown operator: ', operator);
       }
       return this.operators[i];
     },
 
-    _sanitizeConditionAsArray: function(condition) {
+    _sanitizeConditionAsArray: function (condition) {
       if (!condition) {
-        throw new Error("The condition must be set (string/array of strings)");
+        throw new Error('The condition must be set (string/array of strings)');
       }
       if (_.isString(condition)) {
         return [condition];
       }
-      condition = _.without(_.flatten(condition), "", false, null, undefined, NaN);
+      condition = _.without(_.flatten(condition), '', false, null, undefined, NaN);
       if (condition.length == 0) {
-        throw new Error("After removing empty values, no condition was left");
+        throw new Error('After removing empty values, no condition was left');
       }
       return condition;
     },
@@ -530,10 +507,10 @@ define(['underscore', 'js/components/api_query'], function (_, ApiQuery) {
      *
      * @param apiQuery
      */
-    clean: function(apiQuery) {
+    clean: function (apiQuery) {
       var q = {};
       if (apiQuery && apiQuery.keys) {
-        _.each(apiQuery.keys(), function(key) {
+        _.each(apiQuery.keys(), function (key) {
           if (!(key.substring(0, 2) == '__')) {
             q[key] = apiQuery.get(key);
           }
@@ -545,5 +522,4 @@ define(['underscore', 'js/components/api_query'], function (_, ApiQuery) {
   });
 
   return ApiQueryUpdater;
-
 });

@@ -8,34 +8,32 @@
  */
 
 define([
-    'underscore',
-    'jquery',
-    'cache',
-    'js/components/generic_module',
-    'js/components/api_request',
-    'js/components/api_response',
-    'js/components/api_query_updater',
-    'js/components/api_feedback',
-    'js/components/pubsub_key',
-    'js/mixins/dependon'
-  ],
-  function(
-    _,
-    $,
-    Cache,
-    GenericModule,
-    ApiRequest,
-    ApiResponse,
-    ApiQueryUpdater,
-    ApiFeedback,
-    PubSubKey,
-    Dependon
-    ) {
-
-
+  'underscore',
+  'jquery',
+  'cache',
+  'js/components/generic_module',
+  'js/components/api_request',
+  'js/components/api_response',
+  'js/components/api_query_updater',
+  'js/components/api_feedback',
+  'js/components/pubsub_key',
+  'js/mixins/dependon'
+],
+function (
+  _,
+  $,
+  Cache,
+  GenericModule,
+  ApiRequest,
+  ApiResponse,
+  ApiQueryUpdater,
+  ApiFeedback,
+  PubSubKey,
+  Dependon
+) {
   var ErrorMediator = GenericModule.extend({
 
-    initialize: function(options) {
+    initialize: function (options) {
       this._cache = this._getNewCache(options.cache);
       this.debug = options.debug || false;
       this._handlers = {};
@@ -43,10 +41,10 @@ define([
     },
 
 
-    _getNewCache: function(options) {
+    _getNewCache: function (options) {
       return new Cache(_.extend({
-        'maximumSize': 150,
-        'expiresAfterWrite':60*30 // 30 mins
+        maximumSize: 150,
+        expiresAfterWrite: 60 * 30 // 30 mins
       }, _.isObject(options) ? options : {}));
     },
 
@@ -56,10 +54,8 @@ define([
      * @param beehive - the full access instance; we excpect PubSub to be
      *    present
      */
-    activate: function(beehive, app) {
-
-      if (!app)
-        throw new Error('This controller absolutely needs access to the app');
+    activate: function (beehive, app) {
+      if (!app) throw new Error('This controller absolutely needs access to the app');
 
       this.setBeeHive(beehive);
       this.setApp(app);
@@ -76,9 +72,8 @@ define([
      * @param senderKey - if present, identifies the widget that made
      *                    the request
      */
-    receiveFeedback: function(apiFeedback, senderKey) {
-      if (this.debug)
-        console.log('[EM]: received feedback:', apiFeedback.toJSON(), senderKey ? senderKey.getId() : null);
+    receiveFeedback: function (apiFeedback, senderKey) {
+      if (this.debug) console.log('[EM]: received feedback:', apiFeedback.toJSON(), senderKey ? senderKey.getId() : null);
 
       var componentKey = this._getCacheKey(apiFeedback, senderKey);
       var entry = this._retrieveCacheEntry(componentKey);
@@ -92,7 +87,7 @@ define([
         if (handler.execute && handler.execute(apiFeedback, entry)) {
           return;
         }
-        else if (handler.call(this, apiFeedback, entry)) {
+        if (handler.call(this, apiFeedback, entry)) {
           return;
         }
       }
@@ -100,29 +95,26 @@ define([
       this.handleFeedback(apiFeedback, entry);
     },
 
-    removeFeedbackHandler: function(name) {
-      if (name.toString() in this._handlers)
-        delete this._handlers[name.toString()];
+    removeFeedbackHandler: function (name) {
+      if (name.toString() in this._handlers) delete this._handlers[name.toString()];
     },
 
-    addFeedbackHandler: function(code, func) {
-      if (!code && !_.isNumber(code))
-        throw new Error('first argument must be code or code:string or string');
-      if (!(_.isFunction(func)))
-        throw new Error('second argument must be executable');
+    addFeedbackHandler: function (code, func) {
+      if (!code && !_.isNumber(code)) throw new Error('first argument must be code or code:string or string');
+      if (!(_.isFunction(func))) throw new Error('second argument must be executable');
       this._handlers[code.toString()] = func;
     },
 
-    getFeedbackHandler: function(apiFeedback, entry) {
+    getFeedbackHandler: function (apiFeedback, entry) {
       var keys = [apiFeedback.code + ':' + entry.id, entry.id, apiFeedback.code ? apiFeedback.code.toString() : Date.now()];
-      for (var i=0; i<keys.length; i++) {
+      for (var i = 0; i < keys.length; i++) {
         if (keys[i] in this._handlers) {
           return this._handlers[keys[i]];
         }
       }
     },
 
-    _retrieveCacheEntry: function(componentKey) {
+    _retrieveCacheEntry: function (componentKey) {
       return this._cache.getSync(componentKey);
     },
 
@@ -134,16 +126,14 @@ define([
      * @param senderKey
      *    string or instance of {PubSubKey}
      */
-    _getCacheKey: function(apiFeedback, senderKey) {
-      if (!apiFeedback)
-        throw new Error('ApiFeedback cannot be empty');
-      if (apiFeedback.getSenderKey())
-        return apiFeedback.getSenderKey();
+    _getCacheKey: function (apiFeedback, senderKey) {
+      if (!apiFeedback) throw new Error('ApiFeedback cannot be empty');
+      if (apiFeedback.getSenderKey()) return apiFeedback.getSenderKey();
       if (senderKey) {
         if (senderKey instanceof PubSubKey) {
           return senderKey.getId();
         }
-        else if (_.isString(senderKey)) {
+        if (_.isString(senderKey)) {
           return senderKey;
         }
       }
@@ -156,7 +146,7 @@ define([
     },
 
 
-    createNewCacheEntry: function(componentKey) {
+    createNewCacheEntry: function (componentKey) {
       return {
         waiting: 0,
         max: 0,
@@ -164,7 +154,7 @@ define([
         counter: 0,
         created: Date.now(),
         id: componentKey
-      }
+      };
     },
 
     /**
@@ -174,12 +164,12 @@ define([
      * @param apiFeedback
      * @param entry
      */
-    handleFeedback: function(apiFeedback, entry) {
+    handleFeedback: function (apiFeedback, entry) {
       var c = ApiFeedback.CODES;
 
       entry.counter += 1;
 
-      switch(apiFeedback.code) {
+      switch (apiFeedback.code) {
         case c.ALL_FINE:
           entry.errors = 0;
           break;

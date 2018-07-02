@@ -6,18 +6,17 @@
 define([
   'backbone',
   'js/mixins/hardened'
-], function(
+], function (
   Backbone,
   Hardened
-  ) {
-
+) {
   var Alerts = {
     TYPE: {
-      ERROR: "error",
-      INFO: "info",
-      WARNING: "warning",
-      SUCCESS: "success",
-      DANGER: "danger"
+      ERROR: 'error',
+      INFO: 'info',
+      WARNING: 'warning',
+      SUCCESS: 'success',
+      DANGER: 'danger'
     },
 
     ACTION: {

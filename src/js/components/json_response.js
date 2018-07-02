@@ -7,14 +7,12 @@
 define(['underscore',
   'backbone',
   'js/components/api_query',
-], function(
-            _,
-            Backbone,
-            ApiQuery
-  ) {
-
-
-  var JSONResponse = function(attributes, options) {
+], function (
+  _,
+  Backbone,
+  ApiQuery
+) {
+  var JSONResponse = function (attributes, options) {
     var defaults;
     var attrs = attributes || {};
     options || (options = {});
@@ -29,93 +27,92 @@ define(['underscore',
 
     this.attributes = attrs;
     this.initialize.apply(this, arguments);
-
   };
 
   _.extend(JSONResponse.prototype, {
     // Initialize is an empty function by default. Override it with your own
     // initialization logic.
-    initialize: function(){},
+    initialize: function () {},
 
-    getApiQuery: function() {
+    getApiQuery: function () {
       return this.apiQuery;
     },
-    setApiQuery: function(q) {
+    setApiQuery: function (q) {
       if (!q) {
         return;
       }
       if (!(q instanceof ApiQuery)) {
-        throw new Error("Only ApiQuery instances accepted");
+        throw new Error('Only ApiQuery instances accepted');
       }
       this.apiQuery = q;
     },
 
     // Return a copy of the model's `attributes` object.
-    toJSON: function(options) {
+    toJSON: function (options) {
       return this._clone(this.attributes);
     },
 
     // url string that identifies this object
-    url: function() {
+    url: function () {
       if (this._url) {
         return this._url;
       }
       return this.rid; // default is just to return response id
     },
 
-    set: function(key, val, options) {
+    set: function (key, val, options) {
       if (this.readOnly) {
-        throw Error("You can't change read-only response object");
+        throw Error('You can\'t change read-only response object');
       }
       var parts = this._split(key);
       if (parts.length == 1) {
         this.attributes[parts[0]] = val;
-      }
-      else {
+      } else {
         var pointer = this.get(key);
         pointer = val;
       }
     },
 
-    _split: function(key) {
+    _split: function (key) {
       var parts = [];
-      var i = 0, l=key.length, start= 0, quotes = [];
+      var i = 0,
+        l = key.length,
+        start = 0,
+        quotes = [];
       while (i < l) {
-        if (key[i] == quotes[quotes.length -1]) {
+        if (key[i] == quotes[quotes.length - 1]) {
           quotes.pop();
-        }
-        else if (key[i] == '"' || key[i] == "'") {
+        } else if (key[i] == '"' || key[i] == '\'') {
           quotes.push(key[i]);
-        }
-        else if (key[i] == '.' && quotes.length == 0) {
+        } else if (key[i] == '.' && quotes.length == 0) {
           parts.push(key.substring(start, i));
-          start = i+1;
-        }
-        else if (key[i] == '[' && quotes.length == 0) {
+          start = i + 1;
+        } else if (key[i] == '[' && quotes.length == 0) {
           parts.push(key.substring(start, i));
-          parts.push(key.substring(i, key.indexOf(']', i+1)+1));
-          start = i = key.indexOf(']', i+1)+1;
+          parts.push(key.substring(i, key.indexOf(']', i + 1) + 1));
+          start = i = key.indexOf(']', i + 1) + 1;
         }
         i += 1;
       }
       if (start < l) {
         parts.push(key.substring(start));
       }
-      //console.log(key, parts);
+      // console.log(key, parts);
       return parts;
     },
 
-    has: function(key) {
+    has: function (key) {
       return this.get(key, true);
     },
 
-    get: function(key, justCheck) {
+    get: function (key, justCheck) {
       // if key empty, return everything
       if (!key) {
         return this._clone(this.attributes);
       }
 
-      var parts = this._split(key), found = [],
+      var parts = this._split(key),
+        found = [],
         pointer = this.attributes;
 
       while (parts.length > 0) {
@@ -123,16 +120,12 @@ define(['underscore',
         if (pointer.hasOwnProperty(k)) {
           pointer = pointer[k];
           found.push(k);
-        }
-        else if (k.indexOf('[') > -1) { // foo['something'] or foo[0]
-
+        } else if (k.indexOf('[') > -1) { // foo['something'] or foo[0]
           var m = k.trim().substring(1, k.length - 1);
-          if ((m.indexOf('"') > -1 || m.indexOf("'") > -1) && pointer.hasOwnProperty(m.substring(1, m.length - 1))) { // object property access
-
+          if ((m.indexOf('"') > -1 || m.indexOf('\'') > -1) && pointer.hasOwnProperty(m.substring(1, m.length - 1))) { // object property access
             pointer = pointer[m.substring(1, m.length - 1)];
             found.push(m);
-          }
-          else if (_.isArray(pointer)) {
+          } else if (_.isArray(pointer)) {
             var ix = null;
             try {
               ix = parseInt(m);
@@ -144,27 +137,23 @@ define(['underscore',
               }
               pointer = pointer[ix];
               found.push(m);
-            }
-            catch (e) {
+            } catch (e) {
               if (justCheck) {
                 return false;
               }
-              throw new Error("Can't find: " + key + (found.length > 0 ? " (worked up to: " + found.join('.') + ")" : ""));
+              throw new Error('Can\'t find: ' + key + (found.length > 0 ? ' (worked up to: ' + found.join('.') + ')' : ''));
             }
-
-          }
-          else {
+          } else {
             if (justCheck) {
               return false;
             }
-            throw new Error("Can't find: " + key + (found.length > 0 ? " (worked up to: " + found.join('.') + ")" : ""));
+            throw new Error('Can\'t find: ' + key + (found.length > 0 ? ' (worked up to: ' + found.join('.') + ')' : ''));
           }
-        }
-        else {
+        } else {
           if (justCheck) {
             return false;
           }
-          throw new Error("Can't find: " + key + (found.length > 0 ? " (worked up to: " + found.join('.') + ")" : ""));
+          throw new Error('Can\'t find: ' + key + (found.length > 0 ? ' (worked up to: ' + found.join('.') + ')' : ''));
         }
       }
 
@@ -172,37 +161,35 @@ define(['underscore',
         return true;
       }
       return this._clone(pointer);
-
     },
 
-    clone: function() {
+    clone: function () {
       return new this.constructor(this.attributes);
     },
 
 
     // creates a copy of the requested elements
-    _clone: function(elem) {
+    _clone: function (elem) {
       if (!this.readOnly || !_.isObject(elem)) {
         return elem;
       }
-      
+
       if (_.cloneDeep) { // lodash
         return _.cloneDeep(elem);
       }
-      else {
-        return JSON.parse(JSON.stringify(elem));
-      }
+
+      return JSON.parse(JSON.stringify(elem));
     },
 
-    isLocked: function() {
+    isLocked: function () {
       return this.readOnly;
     },
 
-    lock: function() {
+    lock: function () {
       return this.readOnly = true;
     },
 
-    unlock: function() {
+    unlock: function () {
       return this.readOnly = false;
     }
 
@@ -212,7 +199,6 @@ define(['underscore',
   JSONResponse.extend = Backbone.Model.extend;
 
   return JSONResponse;
-
 });
 /**
  * Created by rchyla on 3/3/14.

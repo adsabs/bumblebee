@@ -1,7 +1,6 @@
 define([
-'underscore'
+  'underscore'
 ], function (_) {
-
   /**
    * Validator object
    * provides value checking
@@ -9,10 +8,10 @@ define([
    * @param opts
    * @constructor
    */
-  function Validator (match, opts) {
+  function Validator(match, opts) {
     var matcher = new RegExp(match, opts);
 
-    return function test (str) {
+    return function test(str) {
       return (matcher.test(str)) ? null : str;
     };
   }
@@ -24,7 +23,7 @@ define([
    * @param token
    * @constructor
    */
-  function QueryToken (field, value, token) {
+  function QueryToken(field, value, token) {
     this.field = field;
     this.value = value;
     this.token = token;
@@ -34,8 +33,7 @@ define([
    * Parse and validate queries
    * @constructor
    */
-  function QueryValidator () {
-
+  function QueryValidator() {
     /**
      * Parse the query into new validator objects
      * @param q
@@ -49,7 +47,6 @@ define([
         var subTokens = tokens[j].split(splitter);
 
         if (subTokens.length !== 2) {
-
           // Unable to split or nested fields, either way continue on
           continue;
         }
@@ -103,26 +100,24 @@ define([
       // any confirmed match will make query invalid
       var validators = [
         completeValidation,
-        new Validator(/^$/),          // matches -> ``
-        new Validator(/^""$/),        // matches -> `foo:""`
-        new Validator(/^\(\)$/),      // matches -> `foo:()`
-        new Validator(/^\(\^\)$/),    // matches -> `foo:(^)`
-        new Validator(/^\(""\)$/),    // matches -> `foo:("^")`
-        new Validator(/^\("\^"\)$/),  // matches -> `foo:("^")`
-        new Validator(/^"\^"$/),      // matches -> `foo:"^"`
+        new Validator(/^$/), // matches -> ``
+        new Validator(/^""$/), // matches -> `foo:""`
+        new Validator(/^\(\)$/), // matches -> `foo:()`
+        new Validator(/^\(\^\)$/), // matches -> `foo:(^)`
+        new Validator(/^\(""\)$/), // matches -> `foo:("^")`
+        new Validator(/^\("\^"\)$/), // matches -> `foo:("^")`
+        new Validator(/^"\^"$/), // matches -> `foo:"^"`
       ];
 
       // Attempt to parse the query string to tokens
       try {
         var q = apiQuery.get('q').join(' ').trim();
         if (!q.length) {
-
           // query is empty string, continue on
           return output;
         }
         var parsedTokens = parseTokens(q);
       } catch (e) {
-
         // parsing error, allow it to continue on
         return output;
       }
@@ -133,7 +128,7 @@ define([
         output.tests = tests;
       }
 
-      return output
+      return output;
     };
   }
 
