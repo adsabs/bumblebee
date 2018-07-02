@@ -6,13 +6,12 @@ define([
   PageManagerController,
   PageManagerView,
   PageManagerTemplate) {
-
   var PageManager = PageManagerController.extend({
 
-    createView: function(options) {
+    createView: function (options) {
       options = options || {};
       options.template = options.template || PageManagerTemplate;
-      return new PageManagerView({template: PageManagerTemplate, className :  "s-authentication-page-layout s-100-height",  id : "user-page-layout"  })
+      return new PageManagerView({ template: PageManagerTemplate, className: 's-authentication-page-layout s-100-height', id: 'user-page-layout' });
     }
   });
   return PageManager;

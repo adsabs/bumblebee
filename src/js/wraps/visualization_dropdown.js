@@ -1,44 +1,39 @@
 define([
   'js/widgets/dropdown-menu/widget'
 
-], function(
+], function (
 
   DropdownWidget
 
-  ){
-
-  //config
+) {
+  // config
 
   var links = [
-    { description : 'Citation Metrics' , navEvent: 'show-metrics' },
-    { description : 'Author Network' , navEvent: 'show-author-network' },
-    { description : 'Paper Network' , navEvent: 'show-paper-network' },
-    { description : 'Concept Cloud', navEvent: 'show-concept-cloud' },
-    { description : 'Results Graph', navEvent: 'show-bubble-chart' }
+    { description: 'Citation Metrics', navEvent: 'show-metrics' },
+    { description: 'Author Network', navEvent: 'show-author-network' },
+    { description: 'Paper Network', navEvent: 'show-paper-network' },
+    { description: 'Concept Cloud', navEvent: 'show-concept-cloud' },
+    { description: 'Results Graph', navEvent: 'show-bubble-chart' }
   ];
 
-  var btnType = "btn-primary-faded";
-  var dropdownTitle = "Explore";
-  var iconClass = "icon-explore";
+  var btnType = 'btn-primary-faded';
+  var dropdownTitle = 'Explore';
+  var iconClass = 'icon-explore';
   var rightAlign = true;
   var selectedOption = true;
 
 
-  return function(){
-
+  return function () {
     var VisDropdown = new DropdownWidget({
-      links : links,
+      links: links,
       btnType: btnType,
-      dropdownTitle : dropdownTitle,
+      dropdownTitle: dropdownTitle,
       iconClass: iconClass,
-      rightAlign : rightAlign,
-      selectedOption : selectedOption
+      rightAlign: rightAlign,
+      selectedOption: selectedOption
 
     });
 
     return VisDropdown;
-
-  }
-
-
+  };
 });

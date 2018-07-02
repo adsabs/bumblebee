@@ -1,15 +1,13 @@
 define([
   'js/widgets/graphics/widget'
 
-],function(
+], function (
   GraphicsWidget
 
-  ) {
+) {
+  var options = { sidebar: true };
 
-  var options = {sidebar : true };
-
-  return function(){
+  return function () {
     return new GraphicsWidget(options);
-  }
-
-})
+  };
+});

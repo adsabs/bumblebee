@@ -10,41 +10,39 @@ define([
   PageManagerView,
   PageManagerTemplate,
   TOCTemplate
-  ) {
-
+) {
   var PageManager = TOCController.extend({
 
-    TOCTemplate : TOCTemplate,
+    TOCTemplate: TOCTemplate,
 
-    TOCEvents :   {
+    TOCEvents: {
 
-      "click button.create-library" : function(){
-        function createLib(){
+      'click button.create-library': function () {
+        function createLib() {
           var that = this;
-          this.getBeeHive().getObject("LibraryController")
+          this.getBeeHive().getObject('LibraryController')
             .createLibrary()
-            .done(function(data){
-              that.getPubSub().publish(that.getPubSub().NAVIGATE, "IndividualLibraryWidget", {sub: "library", id : data.id});
+            .done(function (data) {
+              that.getPubSub().publish(that.getPubSub().NAVIGATE, 'IndividualLibraryWidget', { sub: 'library', id: data.id });
             });
         }
-        this.trigger("page-manager-event", "apply-function", {func : createLib});
+        this.trigger('page-manager-event', 'apply-function', { func: createLib });
       }
 
     },
 
-    createView: function(options) {
+    createView: function (options) {
       options = options || {};
       options.template = options.template || PageManagerTemplate;
 
       return new PageManagerView({
         template: PageManagerTemplate,
-        className :  "s-libraries-layout s-100-height",
-        id : "libraries-layout"
+        className: 's-libraries-layout s-100-height',
+        id: 'libraries-layout'
       });
-
     },
 
-    navConfig : []
+    navConfig: []
 
   });
   return PageManager;
