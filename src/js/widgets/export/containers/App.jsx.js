@@ -1,4 +1,4 @@
-'use strict';
+
 
 define([
   'underscore',
@@ -12,7 +12,6 @@ define([
   _, React, ReactRedux, ReactPropTypes,
   actions, Closer, Setup, Export
 ) {
-
   const {
     closeComponent,
     setFormat,
@@ -50,7 +49,7 @@ define([
       }, 500);
 
       this.onCustomFormatChange = _.debounce((val) => {
-        dispatch
+        dispatch;
         dispatch({ type: 'SET_CUSTOM_FORMAT', format: val });
       }, 500);
 
@@ -63,7 +62,7 @@ define([
     /**
      * On file download click, dispatch the download file action
      */
-    handleDownloadFileClick () {
+    handleDownloadFileClick() {
       this.props.dispatch(downloadFile());
     }
 
@@ -130,7 +129,7 @@ define([
      */
     handleFormatChange(id) {
       const { dispatch, formats, autoSubmit } = this.props;
-      let format = _.find(formats, { id: id });
+      const format = _.find(formats, { id: id });
       dispatch(setFormat(format));
 
       // if autoSubmit, then hit apply as the format changes
@@ -145,8 +144,8 @@ define([
       dispatch(getNextBatch());
     }
 
-    componentWillReceiveProps (next) {
-      let remaining = next.totalRecs - next.maxCount;
+    componentWillReceiveProps(next) {
+      const remaining = next.totalRecs - next.maxCount;
       this.setState({
         count: '' + next.count,
         hasMore: remaining > 0,
@@ -160,7 +159,9 @@ define([
         progress, maxCount, hasError, errorMsg, totalRecs, showSlider, splitCols,
         autoSubmit, customFormat
       } = this.props;
-      const { count, hasMore, showAlert, alertMsg, remaining } = this.state;
+      const {
+        count, hasMore, showAlert, alertMsg, remaining
+      } = this.state;
 
       const low = maxCount - batchSize;
       const lower = low === 0 ? 1 : low;
@@ -171,8 +172,8 @@ define([
       return (
         <div className="container-fluid export-container">
           <span>
-            {showCloser &&
-              <Closer onClick={this.handleCloseClick}/>
+            {showCloser
+              && <Closer onClick={this.handleCloseClick}/>
             }
             <div className="h4">
               Exporting record(s) <strong>{lower}</strong> to <strong>{upper}</strong> <small>(total: {totalRecs})</small>
@@ -202,16 +203,16 @@ define([
                 onGetNext={this.handleGetNextClick}
                 setCount={this.handleCountChange}
               />
-              {hasError &&
-              <div className="row">
+              {hasError
+              && <div className="row">
                 <div className="col-sm-10">
                   <div className="alert alert-danger">{errorMsg}</div>
                 </div>
               </div>
               }
 
-              {showAlert &&
-              <div className="row">
+              {showAlert
+              && <div className="row">
                 <div className="col-sm-10">
                   <div className="alert alert-info">{alertMsg}</div>
                 </div>
@@ -230,7 +231,7 @@ define([
           </div>
         </div>
       );
-    };
+    }
   }
 
   App.propTypes = {

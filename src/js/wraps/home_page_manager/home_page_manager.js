@@ -8,19 +8,18 @@ define([
   PageManagerView,
   PageManagerTemplate,
   TOCTemplate
-  ) {
-
+) {
   var PageManager = PageManagerController.extend({
 
-    TOCTemplate : TOCTemplate,
+    TOCTemplate: TOCTemplate,
 
-    createView: function(options) {
+    createView: function (options) {
       options = options || {};
       options.template = options.template || PageManagerTemplate;
-      return new PageManagerView({template: PageManagerTemplate, className :  "s-home-layout s-100-height",  id : "home-layout"  })
+      return new PageManagerView({ template: PageManagerTemplate, className: 's-home-layout s-100-height', id: 'home-layout' });
     },
 
-    navConfig : [],
+    navConfig: [],
 
 
   });

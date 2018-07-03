@@ -1,4 +1,4 @@
-'use strict';
+
 
 /**
  * Collects and combines all reducers
@@ -9,7 +9,6 @@ define([
   'es6!../actions/index',
   'redux'
 ], function (_, ApiTargets, actions, Redux) {
-
   const {
     SET_QUERY,
     SET_FORMAT,
@@ -53,114 +52,114 @@ define([
 
   // format collection reducer
   const formats = (state = [{
-      value: 'bibtex',
-      id: '0',
-      label: 'BibTeX',
-      help: 'BibTeX format',
-      ext: 'bbl'
-    }, {
-      value: 'ads',
-      id: '1',
-      label: 'ADS',
-      help: 'ADS format',
-      ext: 'txt'
-    }, {
-      value: 'bibtexabs',
-      id: '2',
-      label: 'BibTeX ABS',
-      help: 'BibTeX with abstracts',
-      ext: 'bbl'
-    }, {
-      value: 'endnote',
-      id: '3',
-      label: 'EndNote',
-      help: 'EndNote format',
-      ext: 'enw'
-    }, {
-      value: 'procite',
-      id: '4',
-      label: 'ProCite',
-      help: 'ProCite format',
-      ext: 'txt'
-    }, {
-      value: 'ris',
-      id: '5',
-      label: 'RIS',
-      help: 'Research Information Systems (RIS) format',
-      ext: 'txt'
-    }, {
-      value: 'refworks',
-      id: '6',
-      label: 'RefWorks',
-      help: 'RefWorks format',
-      ext: 'txt'
-    }, {
-      value: 'rss',
-      id: '7',
-      label: 'RSS',
-      help: 'RSS format',
-      ext: 'rss'
-    }, {
-      value: 'medlars',
-      id: '8',
-      label: 'MEDLARS',
-      help: 'Medical Literature Analysis and Retrieval System (MEDLARS) format',
-      ext: 'txt'
-    }, {
-      value: 'dcxml',
-      id: '9',
-      label: 'DC-XML',
-      help: 'Dublin Core XML format',
-      ext: 'xml'
-    }, {
-      value: 'refxml',
-      id: '10',
-      label: 'REF-XML',
-      help: 'ADS link data in XML format',
-      ext: 'xml'
-    }, {
-      value: 'refabsxml',
-      id: '11',
-      label: 'REFABS-XML',
-      help: 'ADS records in XML format',
-      ext: 'xml'
-    }, {
-      value: 'aastex',
-      id: '12',
-      label: 'AASTeX',
-      help: 'LaTeX format for AAS journals',
-      ext: 'txt'
-    }, {
-      value: 'icarus',
-      id: '13',
-      label: 'Icarus',
-      help: 'LaTeX format for use in Icarus',
-      ext: 'txt'
-    }, {
-      value: 'mnras',
-      id: '14',
-      label: 'MNRAS',
-      help: 'LaTeX format for use in MNRAS',
-      ext: 'txt'
-    }, {
-      value: 'soph',
-      id: '15',
-      label: 'Solar Physics',
-      help: 'LaTeX format for use in Solar Physics',
-      ext: 'txt'
-    }, {
-      value: 'votable',
-      id: '16',
-      label: 'VOTable',
-      help: 'VOTable XML format',
-      ext: 'xml'
-    }, {
-      value: 'custom',
-      id: '17',
-      label: 'Custom Format',
-      help: 'Enter Your Own Custom Format',
-      ext: 'txt'
-    }
+    value: 'bibtex',
+    id: '0',
+    label: 'BibTeX',
+    help: 'BibTeX format',
+    ext: 'bbl'
+  }, {
+    value: 'ads',
+    id: '1',
+    label: 'ADS',
+    help: 'ADS format',
+    ext: 'txt'
+  }, {
+    value: 'bibtexabs',
+    id: '2',
+    label: 'BibTeX ABS',
+    help: 'BibTeX with abstracts',
+    ext: 'bbl'
+  }, {
+    value: 'endnote',
+    id: '3',
+    label: 'EndNote',
+    help: 'EndNote format',
+    ext: 'enw'
+  }, {
+    value: 'procite',
+    id: '4',
+    label: 'ProCite',
+    help: 'ProCite format',
+    ext: 'txt'
+  }, {
+    value: 'ris',
+    id: '5',
+    label: 'RIS',
+    help: 'Research Information Systems (RIS) format',
+    ext: 'txt'
+  }, {
+    value: 'refworks',
+    id: '6',
+    label: 'RefWorks',
+    help: 'RefWorks format',
+    ext: 'txt'
+  }, {
+    value: 'rss',
+    id: '7',
+    label: 'RSS',
+    help: 'RSS format',
+    ext: 'rss'
+  }, {
+    value: 'medlars',
+    id: '8',
+    label: 'MEDLARS',
+    help: 'Medical Literature Analysis and Retrieval System (MEDLARS) format',
+    ext: 'txt'
+  }, {
+    value: 'dcxml',
+    id: '9',
+    label: 'DC-XML',
+    help: 'Dublin Core XML format',
+    ext: 'xml'
+  }, {
+    value: 'refxml',
+    id: '10',
+    label: 'REF-XML',
+    help: 'ADS link data in XML format',
+    ext: 'xml'
+  }, {
+    value: 'refabsxml',
+    id: '11',
+    label: 'REFABS-XML',
+    help: 'ADS records in XML format',
+    ext: 'xml'
+  }, {
+    value: 'aastex',
+    id: '12',
+    label: 'AASTeX',
+    help: 'LaTeX format for AAS journals',
+    ext: 'txt'
+  }, {
+    value: 'icarus',
+    id: '13',
+    label: 'Icarus',
+    help: 'LaTeX format for use in Icarus',
+    ext: 'txt'
+  }, {
+    value: 'mnras',
+    id: '14',
+    label: 'MNRAS',
+    help: 'LaTeX format for use in MNRAS',
+    ext: 'txt'
+  }, {
+    value: 'soph',
+    id: '15',
+    label: 'Solar Physics',
+    help: 'LaTeX format for use in Solar Physics',
+    ext: 'txt'
+  }, {
+    value: 'votable',
+    id: '16',
+    label: 'VOTable',
+    help: 'VOTable XML format',
+    ext: 'xml'
+  }, {
+    value: 'custom',
+    id: '17',
+    label: 'Custom Format',
+    help: 'Enter Your Own Custom Format',
+    ext: 'txt'
+  }
   ], action) => {
     switch (action.type) {
       case SET_FORMATS:
@@ -171,7 +170,7 @@ define([
   };
 
   // error messages reducer
-  const error = ( state = {
+  const error = (state = {
     hasError: false,
     errorMsg: 'Sorry, something happened during the request. Please try again'
   }, action) => {
@@ -200,11 +199,13 @@ define([
     customFormatString: '',
     snapshot: {}
   }, action) => {
-    switch(action.type) {
+    switch (action.type) {
       case REQUEST_IDS:
         return { ...state, isFetching: true, progress: 0 };
       case RECEIVE_IDS:
-        return { ...state, isFetching: false, progress: 100, ids: action.ids };
+        return {
+          ...state, isFetching: false, progress: 100, ids: action.ids
+        };
       case SET_TOTAL_RECS:
         return { ...state, totalRecs: action.totalRecs };
       case REQUEST_EXPORT:
@@ -254,7 +255,7 @@ define([
       case TAKE_SNAPSHOT:
         return { ...state, snapshot: action.snapshot };
       case RESET: {
-        return { ...state.snapshot, output: '', snapshot: state.snapshot }
+        return { ...state.snapshot, output: '', snapshot: state.snapshot };
       }
       default:
         return state;

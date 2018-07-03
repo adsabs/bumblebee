@@ -3,7 +3,6 @@ define([
   'es6!../modules/api',
   'es6!../modules/ui'
 ], function (_, api, ui) {
-
   const {
     QUERY_PROVIDED,
     RECEIVED_RESPONSE,
@@ -26,7 +25,7 @@ define([
    * Fires off request, delegating to the outer context for the actual
    * fetch
    */
-  const fetchData = (ctx, { dispatch }) => next => action => {
+  const fetchData = (ctx, { dispatch }) => next => (action) => {
     next(action);
     if (action.type === FETCH_DATA) {
       const query = {
@@ -42,7 +41,7 @@ define([
    * Extracts the bibcode from the incoming query and makes a new request
    * for document data.
    */
-  const displayDocuments = (ctx, { dispatch }) => next => action => {
+  const displayDocuments = (ctx, { dispatch }) => next => (action) => {
     next(action);
     if (action.type === QUERY_PROVIDED) {
       const query = action.result;
@@ -74,11 +73,11 @@ define([
    * @param {Array} sources sources to reformat
    * @param {object} object keyed by the source shortnames
    */
-  const reformatSources = sources => {
+  const reformatSources = (sources) => {
     const typeOrder = ['PDF', 'HTML', 'SCAN'];
 
     return _(sources)
-      .sortBy((s) => typeOrder.indexOf(s.type))
+      .sortBy(s => typeOrder.indexOf(s.type))
       .groupBy('shortName')
       .value();
   };
@@ -87,7 +86,7 @@ define([
    * Processes incoming response from server and sends the data off to the
    * link generator, finally dispatching the parsed sources
    */
-  const processResponse = (ctx, { dispatch, getState }) => next => action => {
+  const processResponse = (ctx, { dispatch, getState }) => next => (action) => {
     next(action);
     if (action.type === RECEIVED_RESPONSE) {
       const { linkServer } = getState().api;
@@ -95,7 +94,6 @@ define([
       if (_.isPlainObject(response)) {
         const docs = response.response && response.response.docs;
         if (_.isArray(docs) && docs.length > 0) {
-
           if (_.isString(linkServer)) {
             docs[0].link_server = linkServer;
           }
@@ -132,7 +130,7 @@ define([
   /**
    * Emit an analytics event
    */
-  const sendAnalytics = (ctx, { dispatch, getState }) => next => action => {
+  const sendAnalytics = (ctx, { dispatch, getState }) => next => (action) => {
     next(action);
     if (action.type === SEND_ANALYTICS) {
       ctx.emitAnalytics(action.result);

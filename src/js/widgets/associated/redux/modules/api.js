@@ -1,5 +1,4 @@
 define([], function () {
-
   const actions = {
     CURRENT_QUERY_UPDATED: '[api] CURRENT_QUERY_UPDATED',
     FETCH_DATA: '[api] FETCH_DATA',
@@ -24,8 +23,8 @@ define([], function () {
   };
 
   // action creators
-  const displayDocuments = (result) => ({ type: actions.QUERY_PROVIDED, result });
-  const processResponse = (result) => ({ type: actions.RECEIVED_RESPONSE, result });
+  const displayDocuments = result => ({ type: actions.QUERY_PROVIDED, result });
+  const processResponse = result => ({ type: actions.RECEIVED_RESPONSE, result });
 
   return {
     reducer,

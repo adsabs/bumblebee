@@ -3,37 +3,34 @@
  * This module contains a set of utilities to bootstrap Discovery app
  */
 define([
-    'underscore',
-    'backbone',
-    'js/components/api_query',
-    'js/components/api_request',
-    'js/components/pubsub_events',
-    'hbs',
-    'js/components/api_targets'
-    ],
-  function(
-    _,
-    Backbone,
-    ApiQuery,
-    ApiRequest,
-    PubSubEvents,
-    HandleBars,
-    ApiTargets
-  ) {
-
+  'underscore',
+  'backbone',
+  'js/components/api_query',
+  'js/components/api_request',
+  'js/components/pubsub_events',
+  'hbs',
+  'js/components/api_targets'
+],
+function (
+  _,
+  Backbone,
+  ApiQuery,
+  ApiRequest,
+  PubSubEvents,
+  HandleBars,
+  ApiTargets
+) {
   var Mixin = {
 
-    configure: function() {
-
+    configure: function () {
       var conf = this.getObject('DynamicConfig');
 
       if (conf) {
-
         var beehive = this.getBeeHive();
         var api = beehive.getService('Api');
 
         if (conf.root) {
-          api.url = conf.root + "/" + api.url;
+          api.url = conf.root + '/' + api.url;
           this.root = conf.root;
         }
         if (conf.debug !== undefined) {
@@ -49,21 +46,21 @@ define([
           api.clientVersion = conf.version;
         }
 
-        //ApiTargets has a _needsCredentials array that contains all endpoints
-        //that require cookies
-        api.modifyRequestOptions = function(opts, request) {
+        // ApiTargets has a _needsCredentials array that contains all endpoints
+        // that require cookies
+        api.modifyRequestOptions = function (opts, request) {
           // there is a list of endpoints that DONT require cookies, if this endpoint
           // is not in that list,
-          if (ApiTargets._doesntNeedCredentials.indexOf(request.get("target")) == -1){
+          if (ApiTargets._doesntNeedCredentials.indexOf(request.get('target')) == -1) {
             opts.xhrFields = {
               withCredentials: true
-            }
+            };
           }
         };
 
         var orcidApi = beehive.getService('OrcidApi');
 
-        if (conf.orcidProxy){
+        if (conf.orcidProxy) {
           orcidApi.orcidProxyUri = location.origin + conf.orcidProxy;
         }
 
@@ -72,11 +69,10 @@ define([
         if (conf.useCache) {
           this.triggerMethodOnAll('activateCache');
         }
-
       }
     },
 
-    bootstrap: function() {
+    bootstrap: function () {
       // XXX:rca - solve this better, through config
       var beehive = this.getBeeHive();
       var dynConf = this.getObject('DynamicConfig');
@@ -95,7 +91,6 @@ define([
 
       // load configuration from remote endpoints
       if (this.bootstrapUrls) {
-
         var pendingReqs = this.bootstrapUrls.length;
         var retVal = {};
 
@@ -119,28 +114,28 @@ define([
           if (url.indexOf('http') > -1) {
             opts.u = url;
             api.request(new ApiRequest({
-                query: new ApiQuery({redirect_uri: redirect_uri}),
-                target: ''}),
-              opts);
-          }
-          else {
+              query: new ApiQuery({ redirect_uri: redirect_uri }),
+              target: ''
+            }),
+            opts);
+          } else {
             delete opts.u;
             api.request(new ApiRequest({
-                query: new ApiQuery({redirect_uri: redirect_uri}),
-                target: url}),
-              opts);
+              query: new ApiQuery({ redirect_uri: redirect_uri }),
+              target: url
+            }),
+            opts);
           }
         });
 
-        setTimeout(function() {
+        setTimeout(function () {
           if (defer.state() === 'resolved') {
             return;
           }
           defer.reject(new Error('Timed out while loading modules'));
         }, timeout);
-      }
-      else {
-        setTimeout(function() {
+      } else {
+        setTimeout(function () {
           defer.resolve({});
         }, 1);
       }
@@ -152,7 +147,7 @@ define([
      * If the url already contains 'bbbRedirect', redirect to the error page.
      * @param errorPage
      */
-    reload: function(endPage) {
+    reload: function (endPage) {
       if (location.search.indexOf('debug') > -1) {
         console.warn('Debug stop, normally would reload to: ' + endPage);
         return; // do nothing
@@ -164,7 +159,7 @@ define([
       location.search = location.search ? location.search + '&bbbRedirect=1' : 'bbbRedirect=1';
     },
 
-    redirect: function(endPage) {
+    redirect: function (endPage) {
       if (this.router) {
         location.pathname = this.router.root + endPage;
       }
@@ -172,31 +167,29 @@ define([
       // router is not yet available; therefore it should hit situations when the app
       // was not loaded (but it is not bulletproof - the urls can vary greatly)
       // TODO: intelligently explore the rigth url (by sending HEAD requests)
-      location.href = location.protocol + '//' + location.hostname + ':' + location.port +
-        location.pathname.substring(0, location.pathname.lastIndexOf('/')) + '/' + endPage;
+      location.href = location.protocol + '//' + location.hostname + ':' + location.port
+        + location.pathname.substring(0, location.pathname.lastIndexOf('/')) + '/' + endPage;
     },
 
-    start: function(Router) {
+    start: function (Router) {
       var app = this;
       var beehive = this.getBeeHive();
-      var api = beehive.getService("Api");
+      var api = beehive.getService('Api');
       var conf = this.getObject('DynamicConfig');
 
       // set the config into the appstorage
       // TODO: find a more elegant solution
-      this.getBeeHive().getObject("AppStorage").setConfig(conf);
+      this.getBeeHive().getObject('AppStorage').setConfig(conf);
 
-      var complain = function(x) {
-        throw new Error("Ooops. Check you config! There is no " + x + " component @#!")
+      var complain = function (x) {
+        throw new Error('Ooops. Check you config! There is no ' + x + ' component @#!');
       };
 
       var navigator = app.getBeeHive().Services.get('Navigator');
-      if (!navigator)
-        complain('services.Navigator');
+      if (!navigator) complain('services.Navigator');
 
       var masterPageManager = app.getObject('MasterPageManager');
-      if (!masterPageManager)
-        complain('objects.MasterPageManager');
+      if (!masterPageManager) complain('objects.MasterPageManager');
 
       // get together all pages and insert widgets there
       masterPageManager.assemble(app);
@@ -217,19 +210,17 @@ define([
       // Trigger the initial route and enable HTML5 History API support
       Backbone.history.start(conf ? conf.routerConf : {});
 
-      $(document).on("scroll", function () {
-
-        if ($("#landing-page-layout").length > 0) {
-          return
+      $(document).on('scroll', function () {
+        if ($('#landing-page-layout').length > 0) {
+          return;
         }
-        //navbar is currently 40 px height
+        // navbar is currently 40 px height
         if ($(window).scrollTop() > 50) {
-          $(".s-quick-add").addClass("hidden");
-          $(".s-search-bar-full-width-container").addClass("s-search-bar-motion");
-        }
-        else {
-          $(".s-search-bar-full-width-container").removeClass("s-search-bar-motion");
-          $(".s-quick-add").removeClass("hidden");
+          $('.s-quick-add').addClass('hidden');
+          $('.s-search-bar-full-width-container').addClass('s-search-bar-motion');
+        } else {
+          $('.s-search-bar-full-width-container').removeClass('s-search-bar-motion');
+          $('.s-quick-add').removeClass('hidden');
         }
       });
     }

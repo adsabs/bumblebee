@@ -1,6 +1,5 @@
-'use strict';
-define([], function () {
 
+define([], function () {
   var States = {
     READY: 0,
     LOADING: 1,

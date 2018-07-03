@@ -1,14 +1,13 @@
-'use strict';
+
 define([
   'underscore',
   'jsonpath',
   'js/modules/orcid/work'
 ], function (_, jp, Work) {
-
   var PATHS = {
-    firstName:     '$.person.name["given-names"].value',
-    lastName:      '$.person.name["family-name"].value',
-    orcid:         '$["orcid-identifier"].path',
+    firstName: '$.person.name["given-names"].value',
+    lastName: '$.person.name["family-name"].value',
+    orcid: '$["orcid-identifier"].path',
     workSummaries: '$["activities-summary"].works.group'
   };
 
@@ -32,7 +31,7 @@ define([
       var val = jp.query(this._root, path);
       if (_.isEmpty(val)) {
         return null;
-      } else if (_.isArray(val) && val.length <= 1) {
+      } if (_.isArray(val) && val.length <= 1) {
         return val[0];
       }
       return val;

@@ -23,9 +23,7 @@ define([
   _,
   ApiQueryImplementation,
   Facade
-  ) {
-
-
+) {
   var hardenedInterface = {
     add: 'add values',
     set: 'set (replace existing)',
@@ -50,15 +48,13 @@ define([
   };
 
   var ApiQuery = function (data, options) {
-
     // Facade pattern, we want to expose only limited API
     // despite the fact that the underlying instance has
     // all power of the Backbone.Model
 
     if (data instanceof ApiQueryImplementation) {
       this.innerQuery = new Facade(hardenedInterface, data);
-    }
-    else {
+    } else {
       this.innerQuery = new Facade(hardenedInterface, new ApiQueryImplementation(data, options));
     }
   };
@@ -66,7 +62,7 @@ define([
   var toInsert = {};
   _.each(_.keys(hardenedInterface), function (element, index, list) {
     toInsert[element] = function () {
-      return this.innerQuery[element].apply(this.innerQuery, arguments)
+      return this.innerQuery[element].apply(this.innerQuery, arguments);
     };
   });
   _.extend(ApiQuery.prototype, toInsert, {
@@ -81,6 +77,4 @@ define([
   });
 
   return ApiQuery;
-
-
 });

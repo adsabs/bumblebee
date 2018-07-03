@@ -1,5 +1,4 @@
 define([], function () {
-
   const actions = {
     LINK_CLICKED: '[ui] LINK_CLICKED',
     SET_LOADING: '[ui] SET_LOADING',
@@ -28,15 +27,17 @@ define([], function () {
       case actions.SET_DATA_PRODUCTS:
         return { ...state, dataProducts: action.result };
       case actions.SET_HAS_ERROR:
-        return { ...initialState, hasError: action.result, noResults: true, loading: false };
+        return {
+          ...initialState, hasError: action.result, noResults: true, loading: false
+        };
       default:
         return state;
     }
   };
 
   // action creators
-  const handleLinkClick = (result) => ({ type: actions.LINK_CLICKED, result });
-  const setError = (result) => ({ type: actions.SET_HAS_ERROR, result });
+  const handleLinkClick = result => ({ type: actions.LINK_CLICKED, result });
+  const setError = result => ({ type: actions.SET_HAS_ERROR, result });
 
   return {
     reducer,

@@ -14,14 +14,12 @@
  * batch of results arrives from server (the widget must call 'setMaxNum')
  */
 define(['underscore'], function (_) {
-
   var Paginator = function (options) {
-
     this.start = options.start || 0; // the beginning offset
-    this.rows = options.rows || 20;  // how many to fetch in one go
+    this.rows = options.rows || 20; // how many to fetch in one go
     this.initialStart = options.start || 0; // useful for reset
-    this.startName = options.startName || "start"; // name of the parameter for offset
-    this.rowsName = options.rowsName || "rows"; // name of the parameter for num of items to fetch
+    this.startName = options.startName || 'start'; // name of the parameter for offset
+    this.rowsName = options.rowsName || 'rows'; // name of the parameter for num of items to fetch
     this.cycle = 0; // counter of how many times we were called
     this.maxNum = -1; // set from outside to limit how many items there are to fetch (for this query)
   };
@@ -46,8 +44,7 @@ define(['underscore'], function (_) {
       // increment the actual value
       this.start += this.rows;
 
-      if (this.maxNum > 0 && this.maxNum < this.start)
-        this.start = this.maxNum;
+      if (this.maxNum > 0 && this.maxNum < this.start) this.start = this.maxNum;
 
       this.cycle += 1;
       return apiQuery;
@@ -60,15 +57,15 @@ define(['underscore'], function (_) {
       this.cycle = 0;
     },
 
-    getCycle: function() {
+    getCycle: function () {
       return this.cycle;
     },
 
-    setMaxNum: function(maxNum) {
+    setMaxNum: function (maxNum) {
       this.maxNum = maxNum;
     },
 
-    hasMore: function() {
+    hasMore: function () {
       if (this.maxNum == -1 || this.maxNum > this.start) {
         return true;
       }
@@ -79,7 +76,7 @@ define(['underscore'], function (_) {
      * Removes any notion of pagination from the ApiQuery
      * @returns {ApiQuery}
      */
-    cleanQuery: function(apiQuery) {
+    cleanQuery: function (apiQuery) {
       apiQuery.unset(this.startName);
       apiQuery.unset(this.rowsName);
       return apiQuery;
@@ -88,5 +85,4 @@ define(['underscore'], function (_) {
   });
 
   return Paginator;
-
 });

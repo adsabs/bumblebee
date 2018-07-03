@@ -1,12 +1,13 @@
-'use strict';
+
 define([
   'react'
 ], function (React) {
-
   /**
    * Affiliation section of the row
    */
-  const AffiliationRow = ({ years, name, selected, onChange }) => (
+  const AffiliationRow = ({
+    years, name, selected, onChange
+  }) => (
     <div>
       <div className="col-xs-8">
         <label

@@ -1,15 +1,13 @@
 define([
-    'underscore',
-    'jquery-ui',
-    'jquery'
-  ],
-  function (
+  'underscore',
+  'jquery-ui',
+  'jquery'
+],
+function (
   _,
   $ui,
   $
-  ) {
-
-
+) {
   var Utils = {
     /**
      * Receives the  ISO8601 date string (actually, browsers will be able to parse
@@ -28,20 +26,22 @@ define([
      *    unknown publication dates) or when a day or month are missing
      * @returns {*}
      */
-    formatDate : function(dateString, format){
-
+    formatDate: function (dateString, format) {
       if (format && !_.isObject(format)) {
         throw new Error('format must be an object of string formats');
       }
-      format = _.defaults((format || {}), {format: 'yy/mm/dd',
-        missing: {day: 'yy/mm', month: 'yy'},
+      format = _.defaults((format || {}), {
+        format: 'yy/mm/dd',
+        missing: { day: 'yy/mm', month: 'yy' },
         separator: '-',
         junk: '-00'
       });
 
       var fooIndex = ['day', 'month'];
 
-      var localDatePretendingToBeUtc, utc, formatToUse;
+      var localDatePretendingToBeUtc,
+        utc,
+        formatToUse;
       formatToUse = format.format;
 
       utc = new Date(dateString);
@@ -61,24 +61,20 @@ define([
                 throw new Error('format is missing: ' + fooIndex[i]);
               }
             }
-          }
-          catch (e) {
+          } catch (e) {
             // pass
           }
           i += 1;
         }
-        if (_.isNaN(utc.getYear()))
-          throw new Error('Error parsing input: ' + dateString);
-      }
-      else {
+        if (_.isNaN(utc.getYear())) throw new Error('Error parsing input: ' + dateString);
+      } else {
         // it parsed well, but the string was too short
         var s = format.separator;
         if (dateString.indexOf(s) > -1) {
           var parts = dateString.split(s);
           if (parts.length == 2) {
             formatToUse = format.missing[fooIndex[0]];
-          }
-          else if (parts.length == 1) {
+          } else if (parts.length == 1) {
             formatToUse = format.missing[fooIndex[1]];
           }
           if (!formatToUse) {
@@ -95,13 +91,13 @@ define([
       return $.datepicker.formatDate(formatToUse, localDatePretendingToBeUtc);
     },
 
-    shortenAbstract : function(abs, maxLen){
+    shortenAbstract: function (abs, maxLen) {
       maxLen = maxLen || 300;
-      //if this function returns undefined,
-      //the template knows to just show the whole abstract
+      // if this function returns undefined,
+      // the template knows to just show the whole abstract
       if (abs.length <= maxLen) return undefined;
-      var i = abs.slice(0, maxLen).lastIndexOf(" ");
-      return abs.slice(0, i + 1) + "...";
+      var i = abs.slice(0, maxLen).lastIndexOf(' ');
+      return abs.slice(0, i + 1) + '...';
     },
 
     /**
@@ -110,7 +106,6 @@ define([
      * @returns {*}
      */
     prepareDocForViewing: function (data) {
-
       var shownAuthors;
       var maxAuthorNames = 3;
 
@@ -125,36 +120,33 @@ define([
         var format = function (d, i, arr) {
           var l = arr.length - 1;
           if (i === l || l === 0) {
-            return d; //last one, or only one
-          } else {
-            return d + ";";
+            return d; // last one, or only one
           }
+          return d + ';';
         };
         data.authorFormatted = _.map(shownAuthors, format);
         data.allAuthorFormatted = _.map(data.author, format);
       }
 
       data.formattedDate = data.formattedDate || (data.pubdate ? this.formatDate(data.pubdate) : undefined);
-      data.shortAbstract = data.abstract? this.shortenAbstract(data.abstract) : undefined;
-      data.details = data.details || {shortAbstract: data.shortAbstract, pub: data.pub, abstract : data.abstract};
-      data.num_citations = data["[citations]"] ? data["[citations]"]["num_citations"] : undefined;
+      data.shortAbstract = data.abstract ? this.shortenAbstract(data.abstract) : undefined;
+      data.details = data.details || { 'shortAbstract': data.shortAbstract, 'pub': data.pub, 'abstract': data.abstract };
+      data.num_citations = data['[citations]'] ? data['[citations]'].num_citations : undefined;
       data.identifier = data.bibcode;
 
       // make sure undefined doesn't become "undefined"
-      data.encodedIdentifier = _.isUndefined(data.identifier) ? 
-        data.identifier : encodeURIComponent(data.identifier);
+      data.encodedIdentifier = _.isUndefined(data.identifier)
+        ? data.identifier : encodeURIComponent(data.identifier);
 
-      if (data.pubdate || data.shortAbstract){
+      if (data.pubdate || data.shortAbstract) {
         data.popover = true;
       }
 
-      if (this.model)
-        data.orderNum = this.model.get("resultsIndex") + 1;
+      if (this.model) data.orderNum = this.model.get('resultsIndex') + 1;
 
       return data;
     }
   };
 
   return Utils;
-
 });

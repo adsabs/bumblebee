@@ -1,12 +1,11 @@
 
-'use strict';
+
 define([
   'underscore',
   'require',
   'analytics_config',
   'jquery'
 ], function (_, require, config, $) {
-
   /*
    * Set of targets
    * each has a set of hooks which coorespond to the event label passed
@@ -14,7 +13,7 @@ define([
    * url is a template which will be passed the incoming data
    */
   var TARGETS = {
-    'resolver': {
+    resolver: {
       hooks: [
         'toc-link-followed',
         'abstract-link-followed',
@@ -48,11 +47,9 @@ define([
    * @param {object} data - the event data
    */
   var adsLogger = function (label, data) {
-
     // if label or data is not present, do nothing
     if (_.isString(label) || _.isPlainObject(data)) {
       _.forEach(TARGETS, function (val) {
-
         // send event if we find a hook and the target is in the list of types
         if (_.contains(val.hooks, label) && _.contains(val.types, data.target)) {
           sendEvent(data.url ? data.url : val.url(data));
@@ -61,24 +58,23 @@ define([
     }
   };
 
-  if (window.GoogleAnalyticsObject)
-    return function () { window[window.GoogleAnalyticsObject].apply(this, arguments); };
+  if (window.GoogleAnalyticsObject) return function () { window[window.GoogleAnalyticsObject].apply(this, arguments); };
 
   if (!config) {
     console.error('Analytics will not work because require.config["js/components/analytics"]["require"] does not tells where to find config');
-    return function() {}; // empty function, ignoring
+    return function () {}; // empty function, ignoring
   }
 
   var Analytics,
-    gaName = "ga"; // Global name of analytics object. Defaults to `ga`.
+    gaName = 'ga'; // Global name of analytics object. Defaults to `ga`.
 
   // Setup temporary Google Analytics objects.
   window.GoogleAnalyticsObject = gaName;
-  window[gaName] = function () { (
-    window[gaName].q = window[gaName].q || []).push(arguments);
+  window[gaName] = function () {
+    (
+      window[gaName].q = window[gaName].q || []).push(arguments);
     // safety measure
-    if (window[gaName].q.length > 100)
-      window[gaName].q = window[gaName].q.slice(0, 50)
+    if (window[gaName].q.length > 100) window[gaName].q = window[gaName].q.slice(0, 50);
   };
   window[gaName].l = 1 * new Date();
 
@@ -91,15 +87,15 @@ define([
   };
 
   // Immediately add a pageview event to the queue.
-  window[gaName]("create", config.googleTrackingCode, config.googleTrackingOptions);
+  window[gaName]('create', config.googleTrackingCode, config.googleTrackingOptions);
 
   // Asynchronously load Google Analytics, letting it take over our `window[gaName]`
   // object after it loads. This allows us to add events to `window[gaName]` even
   // before the library has fully loaded.
   var defer = $.Deferred();
-  require(['google-analytics'], function(ga) {
+  require(['google-analytics'], function (ga) {
     defer.resolve();
-  }, function(err) {
+  }, function (err) {
     console.warn('google-analytics could not be loaded; we will work just fine without it', err);
     defer.reject();
   });

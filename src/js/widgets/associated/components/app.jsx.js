@@ -3,27 +3,26 @@ define([
   'react',
   'react-prop-types',
 ], function (_, React, PropTypes) {
-
   // component styles
   const styles = {
     title: {
-      "fontSize": "1.1em",
-      "color": "#335baf",
-      "textTransform": "uppercase"
+      fontSize: '1.1em',
+      color: '#335baf',
+      textTransform: 'uppercase'
     },
     list: {
-      "listStyleType": "none",
-      "marginLeft": "-10px",
-      "padding": "0"
+      listStyleType: 'none',
+      marginLeft: '-10px',
+      padding: '0'
     },
     link: {
-      "fontSize": "1em"
+      fontSize: '1em'
     },
     icon: {
-      "fontSize": "1.4em",
-      "padding-right": "5px"
+      'fontSize': '1.4em',
+      'padding-right': '5px'
     }
-  }
+  };
 
   // create the title element
   const Title = ({ children }) => (
@@ -36,10 +35,9 @@ define([
   // create the links element
   const Links = ({ items, onClick }) => (
     <ul style={styles.list}>
-      {items.map(i =>
-        <li key={i.id} style={styles.link}>
-        {i.circular ? i.name :
-          <a href={i.url} onClick={e => onClick(i)}>{i.name}</a>
+      {items.map(i => <li key={i.id} style={styles.link}>
+        {i.circular ? i.name
+          : <a href={i.url} onClick={e => onClick(i)}>{i.name}</a>
         }
         </li>
       )}
@@ -103,7 +101,7 @@ define([
       }
       return null;
     }
-  };
+  }
 
   App.propTypes = {
     hasError: PropTypes.bool,

@@ -1,34 +1,33 @@
 define([
-    'backbone',
-    'underscore',
-    'js/mixins/add_stable_index_to_collection'
+  'backbone',
+  'underscore',
+  'js/mixins/add_stable_index_to_collection'
 ],
-function(
+function (
   Backbone,
   _,
   WidgetPaginationMixin
-  ) {
-
+) {
   var ItemModel = Backbone.Model.extend({
     defaults: function () {
       return {
-        abstract: undefined,
-        title: undefined,
-        authorAff: undefined,
-        pub: undefined,
-        pubdate: undefined,
-        keywords: undefined,
-        bibcode: undefined,
-        pub_raw: undefined,
-        doi: undefined,
-        details: undefined,
-        links_data: undefined,
-        resultsIndex: undefined,
-        visible: false,
-        actionsVisible: true
-      }
+        'abstract': undefined,
+        'title': undefined,
+        'authorAff': undefined,
+        'pub': undefined,
+        'pubdate': undefined,
+        'keywords': undefined,
+        'bibcode': undefined,
+        'pub_raw': undefined,
+        'doi': undefined,
+        'details': undefined,
+        'links_data': undefined,
+        'resultsIndex': undefined,
+        'visible': false,
+        'actionsVisible': true
+      };
     },
-    idAttribute: "resultsIndex"
+    idAttribute: 'resultsIndex'
 
   });
 
@@ -43,8 +42,8 @@ function(
 
       if (options && options.paginationModel) {
         this.paginationModel = options.paginationModel;
-        this.listenTo(this.paginationModel, "change:page", this._onPaginationChange);
-        this.listenTo(this.paginationModel, "change:perPage", this._onPaginationChange);
+        this.listenTo(this.paginationModel, 'change:page', this._onPaginationChange);
+        this.listenTo(this.paginationModel, 'change:perPage', this._onPaginationChange);
       }
     },
 
@@ -52,22 +51,22 @@ function(
 
     numFound: undefined,
 
-    comparator: "resultsIndex",
+    comparator: 'resultsIndex',
 
     _updateStartAndEndIndex: function () {
-      var pageNum = this.paginationModel.get("page");
-      var perPage = this.paginationModel.get("perPage");
-      var numFound = this.paginationModel.get("numFound");
-      //used as a metric to see if we need to fetch new data or if data at these indexes
-      //already exist
+      var pageNum = this.paginationModel.get('page');
+      var perPage = this.paginationModel.get('perPage');
+      var numFound = this.paginationModel.get('numFound');
+      // used as a metric to see if we need to fetch new data or if data at these indexes
+      // already exist
       this.currentStartIndex = this.getPageStart(pageNum, perPage);
       this.currentEndIndex = this.getPageEnd(pageNum, perPage, numFound);
     },
 
     _onPaginationChange: function () {
       this._updateStartAndEndIndex();
-      //propagate the signal to the controller
-      this.trigger("pagination:change");
+      // propagate the signal to the controller
+      this.trigger('pagination:change');
     },
 
     /*
@@ -76,25 +75,25 @@ function(
     * will never fetch beyond 25 records
     * */
 
-    reset: function() {
+    reset: function () {
       this.lastMissingTrigger = null;
       this.lastIndex = -1;
       Backbone.Collection.prototype.reset.apply(this, arguments);
     },
 
-    getStartIndex: function() {
+    getStartIndex: function () {
       return this.currentStartIndex;
     },
-    getEndIndex: function() {
-      return this.paginationModel.get("perPage");
+    getEndIndex: function () {
+      return this.paginationModel.get('perPage');
     },
 
-    _incrementLastIndex: function() {
+    _incrementLastIndex: function () {
       this.lastIndex += 1;
       return this.lastIndex;
     },
 
-    _prepareModel: function(attrs, options) {
+    _prepareModel: function (attrs, options) {
       if (attrs.resultsIndex === undefined) {
         attrs.resultsIndex = this._incrementLastIndex();
       }
@@ -105,8 +104,8 @@ function(
       return Backbone.Collection.prototype._prepareModel.call(this, attrs, options);
     },
 
-    getVisibleModels: function() {
-      return _.filter(this.models, function(x) {return x.attributes.visible});
+    getVisibleModels: function () {
+      return _.filter(this.models, function (x) { return x.attributes.visible; });
     },
 
 
@@ -121,21 +120,21 @@ function(
      * @param options
      * @returns {number}
      */
-    updateIndexes: function(start, end, options) {
+    updateIndexes: function (start, end, options) {
       options = options || {};
       var start = _.isNumber(start) ? start : this.currentStartIndex;
-      var end = _.isNumber(end) ?  end : this.currentEndIndex + 1;
+      var end = _.isNumber(end) ? end : this.currentEndIndex + 1;
       var visible = 0;
       var currStart = null; var currEnd = 0;
       var gaps = [];
 
       var lastIdx = null; var rIdx;
 
-      this.each(function(model) {
+      this.each(function (model) {
         rIdx = model.attributes.resultsIndex;
 
-        if (lastIdx !== null && rIdx != lastIdx+1) {
-          _.each(_.range(lastIdx+1, rIdx), function(c) {
+        if (lastIdx !== null && rIdx != lastIdx + 1) {
+          _.each(_.range(lastIdx + 1, rIdx), function (c) {
             gaps.push(c);
           });
         }
@@ -147,30 +146,28 @@ function(
 
           visible += 1;
           currEnd = rIdx;
-        }
-        else {
+        } else {
           model.set('visible', false);
         }
       });
 
-      if (visible !== (end-start)+1) {
-        _.each(_.range((lastIdx || start+gaps.length)+1, end+1), function(c) {
-          if (!this.get(c))
-            gaps.push(c);
+      if (visible !== (end - start) + 1) {
+        _.each(_.range((lastIdx || start + gaps.length) + 1, end + 1), function (c) {
+          if (!this.get(c)) gaps.push(c);
         }, this);
       }
 
       if (gaps.length) {
-
         // we have discoverd all gaps, but we want to report only those that span the start..end range
-        var startIdx = 0, endIdx = gaps.length;
-        for (var i=0; i<gaps.length; i++) {
+        var startIdx = 0,
+          endIdx = gaps.length;
+        for (var i = 0; i < gaps.length; i++) {
           if (gaps[i] > end) {
             endIdx = i;
             break;
           }
           if (gaps[i] < start) {
-            startIdx = i+1
+            startIdx = i + 1;
           }
         }
         gaps = gaps.slice(startIdx, endIdx);
@@ -191,21 +188,20 @@ function(
       return visible;
     },
 
-    _compressGaps: function(gaps) {
+    _compressGaps: function (gaps) {
       var leftBound = gaps[0];
       var rightBound = leftBound;
       var s = gaps.length;
       var toSend = [];
-      for (var i=0; i<s; i++) {
-        var j = i+1;
-        while(j < s && gaps[j] == leftBound + (j-i)) {
+      for (var i = 0; i < s; i++) {
+        var j = i + 1;
+        while (j < s && gaps[j] == leftBound + (j - i)) {
           rightBound = gaps[j];
           j += 1;
         }
-        toSend.push({start: leftBound, end: rightBound});
-        i = j-1;
-        if (j < s)
-          leftBound = rightBound = gaps[j];
+        toSend.push({ start: leftBound, end: rightBound });
+        i = j - 1;
+        if (j < s) leftBound = rightBound = gaps[j];
       }
       return toSend;
     },
@@ -217,24 +213,23 @@ function(
      * @param end
      * @returns {*}
      */
-    showRange: function(start, end, options) {
+    showRange: function (start, end, options) {
       options = options || {};
-      if (start < 0) throw new Error("Start cannot be negative");
-      if (end < start) throw new Error("End cannot be smaller than start");
+      if (start < 0) throw new Error('Start cannot be negative');
+      if (end < start) throw new Error('End cannot be smaller than start');
       return this.updateIndexes(start, end, options);
     },
-    getNumVisible: function() {
+    getNumVisible: function () {
       return this.numVisible;
     },
 
-    showMore: function(howMany) {
+    showMore: function (howMany) {
       if (howMany === null) { // set all of them visible
         return this.updateIndexes(0, this.model.length);
       }
-      else {
-        var visible = this.getNumVisible();
-        return this.updateIndexes(this.currentStartIndex, this.currentEndIndex == 0 ? howMany-1 : this.currentEndIndex + howMany) - visible;
-      }
+
+      var visible = this.getNumVisible();
+      return this.updateIndexes(this.currentStartIndex, this.currentEndIndex == 0 ? howMany - 1 : this.currentEndIndex + howMany) - visible;
     }
   });
   _.extend(ListOfThingsCollection.prototype, WidgetPaginationMixin);

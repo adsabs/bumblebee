@@ -4,13 +4,12 @@ define([
 ], function (
   FacetFactory,
   analytics
-  ) {
-
-  return function() {
+) {
+  return function () {
     var widget = FacetFactory.makeHierarchicalCheckboxFacet({
-      facetField: "grant_facet_hier",
-      facetTitle: "Grants",
-      logicOptions: {single: ['limit to', 'exclude'], multiple: ["or", "exclude"]}
+      facetField: 'grant_facet_hier',
+      facetTitle: 'Grants',
+      logicOptions: { single: ['limit to', 'exclude'], multiple: ['or', 'exclude'] }
     });
 
 
@@ -19,15 +18,13 @@ define([
       var paginator = this.findPaginator(q).paginator;
       var conditions = this.queryUpdater.removeTmpEntry(q, 'SelectedItems');
 
-      //XXX:rca - hack ; this logic is triggerd multiple times
+      // XXX:rca - hack ; this logic is triggerd multiple times
       // we need to prevent that
 
       if (conditions && _.keys(conditions).length > 0) {
-
-
         conditions = _.values(conditions);
         _.each(conditions, function (c, i, l) {
-          l[i] = "grant:\"" + c.title + "\"";
+          l[i] = 'grant:"' + c.title + '"';
         });
 
         q = q.clone();
@@ -36,16 +33,12 @@ define([
 
         if (operator == 'and' || operator == 'limit to') {
           this.queryUpdater.updateQuery(q, fieldName, 'limit', conditions);
-        }
-        else if (operator == 'or') {
+        } else if (operator == 'or') {
           this.queryUpdater.updateQuery(q, fieldName, 'expand', conditions);
-        }
-
-        else if (operator == 'exclude' ) {
+        } else if (operator == 'exclude') {
           if (q.get(fieldName)) {
             this.queryUpdater.updateQuery(q, fieldName, 'exclude', conditions);
-          }
-          else {
+          } else {
             conditions.unshift('*:*');
             this.queryUpdater.updateQuery(q, fieldName, 'exclude', conditions);
           }
@@ -55,8 +48,7 @@ define([
         var fqs = q.get('fq');
         if (!fqs) {
           q.set('fq', [fq]);
-        }
-        else {
+        } else {
           var i = _.indexOf(fqs, fq);
           if (i == -1) {
             fqs.push(fq);
@@ -67,11 +59,9 @@ define([
         q.unset('facet');
         this.dispatchNewQuery(paginator.cleanQuery(q));
 
-        analytics('send', 'event', 'interaction', 'facet-applied', JSON.stringify({name : this.facetField, logic : operator, conditions : conditions }));
-
+        analytics('send', 'event', 'interaction', 'facet-applied', JSON.stringify({ name: this.facetField, logic: operator, conditions: conditions }));
       }
     };
     return widget;
   };
-
 });

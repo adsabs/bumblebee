@@ -37,7 +37,7 @@
  *
  */
 
-'use strict';
+
 define([
   'underscore',
   'bootstrap',
@@ -74,7 +74,6 @@ function (
   Work,
   Profile
 ) {
-
   var OrcidApi = GenericModule.extend({
 
     /**
@@ -162,12 +161,12 @@ function (
       this.getPubSub().publish(this.getPubSub().APP_EXIT, {
         type: 'orcid',
         url: this.config.loginUrl
-          + "&redirect_uri=" + encodeURIComponent(this.config.redirectUrlBase +
-          (targetRoute || '/#/user/orcid'))
+          + '&redirect_uri=' + encodeURIComponent(this.config.redirectUrlBase
+          + (targetRoute || '/#/user/orcid'))
       });
 
-      //make sure to redirect to the proper page after sign in
-      this.getPubSub().publish(this.getPubSub().ORCID_ANNOUNCEMENT, "login");
+      // make sure to redirect to the proper page after sign in
+      this.getPubSub().publish(this.getPubSub().ORCID_ANNOUNCEMENT, 'login');
     },
 
     /**
@@ -176,9 +175,9 @@ function (
      * @param {Object} userData - user data to update
      * @returns {*|jQuery.Promise}
      */
-    setADSUserData : function (userData) {
-      var url = this.getBeeHive().getService("Api").url +
-        ApiTargets.ORCID_PREFERENCES + "/" + this.authData.orcid;
+    setADSUserData: function (userData) {
+      var url = this.getBeeHive().getService('Api').url
+        + ApiTargets.ORCID_PREFERENCES + '/' + this.authData.orcid;
       var request = this.createRequest(url, { method: 'POST' }, userData);
       request.fail(function () {
         var msg = 'ADS ORCiD preferences could not be set';
@@ -193,9 +192,9 @@ function (
      *
      * @returns {*|jQuery.Promise}
      */
-    getADSUserData : function () {
-      var url = this.getBeeHive().getService("Api").url +
-        ApiTargets.ORCID_PREFERENCES + "/" + this.authData.orcid;
+    getADSUserData: function () {
+      var url = this.getBeeHive().getService('Api').url
+        + ApiTargets.ORCID_PREFERENCES + '/' + this.authData.orcid;
       var request = this.createRequest(url);
       request.fail(function () {
         var msg = 'ADS ORCiD preferences could not be retrieved';
@@ -209,7 +208,7 @@ function (
      */
     signOut: function () {
       this.saveAccessData(null);
-      this.getPubSub().publish(this.getPubSub().ORCID_ANNOUNCEMENT, "logout");
+      this.getPubSub().publish(this.getPubSub().ORCID_ANNOUNCEMENT, 'logout');
     },
 
     /**
@@ -320,12 +319,12 @@ function (
      */
     getUrl: function (name, putCodes) {
       var targets = {
-        'profile': '/orcid-profile',
-        'works': '/orcid-works',
-        'work': '/orcid-work'
+        profile: '/orcid-profile',
+        works: '/orcid-works',
+        work: '/orcid-work'
       };
-      var url = this.config.apiEndpoint + '/' +
-        this.authData.orcid + targets[name];
+      var url = this.config.apiEndpoint + '/'
+        + this.authData.orcid + targets[name];
 
       var end = (_.isArray(putCodes)) ? putCodes.join(',') : putCodes;
 
@@ -413,7 +412,6 @@ function (
           var workWithBibcode;
           var workWithDoi;
           _.forEach(work, function (item) {
-
             // check if the source is ADS
             var isADS = self.isSourcedByADS(item);
 
@@ -457,7 +455,7 @@ function (
         }
 
         // take the first work if we haven't found an array to process
-        return w ? w : work[0];
+        return w || work[0];
       });
 
       // set the new works
@@ -524,7 +522,6 @@ function (
       var reqs = $.when.apply($, proms);
       reqs.done(_.bind($dd.resolve, $dd));
       reqs.fail(function () {
-
         // we are passed an array for EACH argument, so passing the whole thing
         $dd.reject(arguments);
       });
@@ -595,7 +592,6 @@ function (
       // take each chunk, loop through them creating a request for each
       _.forEach(chunks, function (c, i) {
         _.forEach(c, function (del) {
-
           // add the promise object to array for checking later
           promises.push(del.promise.promise());
 
@@ -605,11 +601,10 @@ function (
           // 3rd request -> wait 9 seconds
           // ...
           _.delay(function () {
-
             // create the request for each delete
             var request = self.createRequest(self.getUrl('works', del.putCode), {
               beforeSend: function (xhr) {
-                xhr._id = del.id
+                xhr._id = del.id;
               },
               method: 'DELETE'
             });
@@ -629,10 +624,9 @@ function (
 
       // resolve remaining promises
       var finalizeCacheEntries = function () {
-
         self.deleteCache = _.reduce(self.deleteCache, function (res, entry) {
-          entry.promise.state() === 'pending' ?
-            entry.promise.reject() : res.push(entry);
+          entry.promise.state() === 'pending'
+            ? entry.promise.reject() : res.push(entry);
           return res;
         }, []);
       };
@@ -684,7 +678,6 @@ function (
 
       // On success, create a new work and remove the entry from the cache
       prom.done(function (workResponse) {
-
         // workResponse will be in ID:WORK format
         _.forEach(workResponse, function (work, id) {
           var cacheEntry = _.find(self.addCache, function (e) {
@@ -701,11 +694,9 @@ function (
 
           // check to see if the work is an error message, { error: {...} }
           if (!work) {
-
             // something weird going on with work, just reject
             promise.reject();
           } else if (work.error) {
-
             // check to see if it's just a conflict
             if (work.error['response-code'] === 409) {
               promise.resolve(oldWork);
@@ -713,7 +704,6 @@ function (
               promise.reject();
             }
           } else {
-
             // no errors, resolve with the new work, { work: {...} }
             promise.resolve(new Work(work.work));
           }
@@ -729,11 +719,9 @@ function (
       prom.fail(function (ids) {
         var args = arguments;
         _.forEach(ids, function (id) {
-
           // find the cache entry
           var idx = _.findIndex(self.addCache, { id: id });
           if (idx >= 0) {
-
             // grab reference to promise
             var promise = self.addCache[idx].promise;
 
@@ -790,7 +778,6 @@ function (
 
       // when all the promises finish, aggregate the result and index by id
       $.when.apply($, promises).then(function () {
-
         // make sure arguments is an 2d array
         var doneArgs = _.isArray(arguments[0]) ? arguments : [arguments];
 
@@ -826,7 +813,6 @@ function (
      * @returns {*}
      */
     sendData: function (url, data, opts) {
-
       var result = $.Deferred();
       opts = opts || {};
 
@@ -849,11 +835,11 @@ function (
         // we must be able to handle it properly (but it is not
         // nice of them)
         options.converters = {
-          "* text": window.String,
-          "text html": true,
-          "text json": function(input) {input = input || '{}'; return $.parseJSON(input)},
-          "text xml": $.parseXML
-        }
+          '* text': window.String,
+          'text html': true,
+          'text json': function (input) { input = input || '{}'; return $.parseJSON(input); },
+          'text xml': $.parseXML
+        };
       } else {
         options.data = null; // to prevent api.request() from adding {} to the url params
       }
@@ -867,14 +853,14 @@ function (
       }
 
       options.headers.Authorization = api.access_token;
-      if (!options.headers["Orcid-Authorization"] && this.authData) {
-        options.headers["Orcid-Authorization"] = "Bearer " + this.authData.access_token;
+      if (!options.headers['Orcid-Authorization'] && this.authData) {
+        options.headers['Orcid-Authorization'] = 'Bearer ' + this.authData.access_token;
       }
-      if (!options.headers["Content-Type"]) {
-        options.headers["Content-Type"] = "application/json";
+      if (!options.headers['Content-Type']) {
+        options.headers['Content-Type'] = 'application/json';
       }
-      if (!options.headers["Accept"]) {
-        options.headers["Accept"] = "application/json";
+      if (!options.headers.Accept) {
+        options.headers.Accept = 'application/json';
       }
 
       api.request(new ApiRequest({
@@ -912,7 +898,6 @@ function (
       apiQuery.set('rows', '5000');
 
       var onDone = function (data) {
-
         if (!data || !data.response || !data.response.docs) {
           return dd.resolve({});
         }
@@ -950,14 +935,14 @@ function (
       })).fail(onFail);
 
       // reject after timeout, if necessary
-      (function check (count) {
+      (function check(count) {
         if (dd.state() === 'pending' && count <= 0) {
           return dd.reject('Request Timeout');
-        } else if (dd.state() === 'resolved') {
+        } if (dd.state() === 'resolved') {
           return;
         }
         _.delay(check, 1000, --count);
-      })(this.adsQueryTimeout);
+      }(this.adsQueryTimeout));
 
       return dd.promise();
     },
@@ -996,10 +981,9 @@ function (
 
       // reformat array as 'identifier:xxx OR identifier:xxx'
       var q = _.filter(query.identifier, function (i) {
-
-          // grab only non-empty entries
-          return !_.isEmpty(i.trim()) || i === 'NONE';
-        }).join(' OR ');
+        // grab only non-empty entries
+        return !_.isEmpty(i.trim()) || i === 'NONE';
+      }).join(' OR ');
 
       // don't let an empty query string through
       if (_.isEmpty(q)) {
@@ -1055,7 +1039,6 @@ function (
           } else if (_.has(ids, 'null')) {
             key += 'NONE';
           } else if (!_.isEmpty(ids)) {
-
             // grab the first value
             key += _.values(ids)[0];
           }
@@ -1079,8 +1062,7 @@ function (
             for (var j = steps[i]; j < steps[i] + self.maxQuerySize; j++) {
               if (j >= query.length) break;
               var ps = query[j].split(':');
-              if (!q[ps[0]])
-                q[ps[0]] = [];
+              if (!q[ps[0]]) q[ps[0]] = [];
               q[ps[0]].push(self.queryUpdater.quoteIfNecessary(ps[1]));
             }
 
@@ -1109,7 +1091,6 @@ function (
          *
          */
         var querySuccess = function (ids) {
-
           // Update each orcid record with identifier info gained from ADS
           _.each(db, function (v, key) {
             var bibcode = ids[key];
@@ -1139,7 +1120,6 @@ function (
       if (profile) {
         update(profile);
       } else {
-
         // if we aren't passed a profile, get the current one
         this.getUserProfile().done(update).fail(function () {
           self.dbUpdatePromise.reject.apply(self.dbUpdatePromise, arguments);
@@ -1158,10 +1138,8 @@ function (
      * @returns {object} db - the update database object
      */
     _combineDatabaseWorks: function (db) {
-
       // loop through each entry of the database
       _.forEach(db, function (data, identifier) {
-
         // we can only do this for entries with data and bibcodes
         if (_.isUndefined(data) || _.isUndefined(data.bibcode)) {
           return true;
@@ -1172,7 +1150,6 @@ function (
 
         // add an children property to the current (parent entry)
         _.forEach(db, function (entry, subKey) {
-
           // excluding our parent, see if the key matches the bibcode
           if (entry.bibcode === key && subKey !== identifier) {
             data.children = data.children || [];
@@ -1208,7 +1185,7 @@ function (
        *
        * @param {object} adsWork
        */
-      var getRecordMetaData = function getInfo (adsWork) {
+      var getRecordMetaData = function getInfo(adsWork) {
         var out = {
           isCreatedByADS: false,
           isCreatedByOthers: false,
@@ -1222,7 +1199,6 @@ function (
         record or not
           */
         var updateRecord = function (v, k) {
-
           // db is always 'identifier:xxx'
           var key = ('identifier:' + v).toLowerCase();
           var rec = self.db[key];
@@ -1237,7 +1213,7 @@ function (
             if (rec.idx > -1) {
               out.isKnownToADS = true;
             }
-            out = _.extend({}, out, rec)
+            out = _.extend({}, out, rec);
           }
         };
 
@@ -1287,11 +1263,11 @@ function (
 
     hardenedInterface: {
       hasAccess: 'boolean indicating access to ORCID Api',
-      getUserProfile : 'get user profile',
+      getUserProfile: 'get user profile',
       signIn: 'login',
       signOut: 'logout',
-      getADSUserData : '',
-      setADSUserData : '',
+      getADSUserData: '',
+      setADSUserData: '',
       getRecordInfo: 'provides info about a document',
       addWork: 'add a new orcid work',
       deleteWork: 'remove an entry from orcid',

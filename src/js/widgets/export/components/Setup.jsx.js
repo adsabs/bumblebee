@@ -1,15 +1,14 @@
-'use strict';
+
 
 define([
   'react',
   'react-prop-types'
 ], function (React, ReactPropTypes) {
-
   const Setup = ({
-       onApply, setFormat, disabled, onCancel, batchSize, hasMore, onReset,
-       format, formats, count, setCount, maxCount, onGetNext, totalRecs,
-        showSlider, showReset, remaining, autoSubmit, customFormat, onCustomFormatChange
-    }) => (
+    onApply, setFormat, disabled, onCancel, batchSize, hasMore, onReset,
+    format, formats, count, setCount, maxCount, onGetNext, totalRecs,
+    showSlider, showReset, remaining, autoSubmit, customFormat, onCustomFormatChange
+  }) => (
     <div>
       <div className="row">
         <div className="col-sm-10">
@@ -25,15 +24,15 @@ define([
             {formats.map(f => <option key={f.id} value={f.id} title={f.help}>{f.label}</option>)}
           </select>
         </div>
-        { disabled &&
-        <div className="col-sm-2">
+        { disabled
+        && <div className="col-sm-2">
           <div className="export-loading-icon fa fa-spinner fa-spin fa-2x"/>
         </div>
         }
       </div>
 
-      { format.value === 'custom' &&
-        <div className="row">
+      { format.value === 'custom'
+        && <div className="row">
           <div className="col-sm-10">
             <label htmlFor="ex-custom-input">
               Enter Custom Format
@@ -57,8 +56,8 @@ define([
         </div>
       }
 
-      { showSlider &&
-        <div className="row">
+      { showSlider
+        && <div className="row">
           <div className="col-sm-10">
             <label htmlFor="ex-range">
               Limit to <strong>{count}</strong> {count > 1 ? 'records' : 'record'}
@@ -79,8 +78,8 @@ define([
 
       <div className="row">
         <div className="col-sm-12 btn-toolbar">
-          {(!autoSubmit || format.value === 'custom') &&
-          <button
+          {(!autoSubmit || format.value === 'custom')
+          && <button
             className="btn btn-primary"
             onClick={onApply}
             disabled={disabled}
@@ -88,24 +87,24 @@ define([
             Apply
           </button>
           }
-          {!disabled && showReset &&
-          <button
+          {!disabled && showReset
+          && <button
             className="btn btn-info"
             onClick={onReset}
           >
             Reset
           </button>
           }
-          {!disabled && hasMore &&
-            <button
+          {!disabled && hasMore
+            && <button
               className="btn btn-link"
               onClick={onGetNext}
             >
               Get Next {remaining} Record(s)
             </button>
           }
-          {disabled && (!autoSubmit || format.value === 'custom') &&
-            <button
+          {disabled && (!autoSubmit || format.value === 'custom')
+            && <button
               className="btn btn-warning"
               onClick={onCancel}
             >

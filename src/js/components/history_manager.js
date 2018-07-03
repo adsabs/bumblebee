@@ -1,52 +1,48 @@
 
 define([
-      'js/components/generic_module',
-      'js/mixins/dependon',
-      'js/mixins/hardened',
-      'js/components/pubsub_key'
-    ],
-    function(
-        GenericModule,
-        Dependon,
-        Hardened,
-        PubSubKey
-    ) {
+  'js/components/generic_module',
+  'js/mixins/dependon',
+  'js/mixins/hardened',
+  'js/components/pubsub_key'
+],
+function (
+  GenericModule,
+  Dependon,
+  Hardened,
+  PubSubKey
+) {
+  var History = GenericModule.extend({
 
-      var History = GenericModule.extend({
+    initialize: function () {
+      this._history = [];
+    },
 
-        initialize: function () {
-          this._history = [];
-        },
+    activate: function (beehive) {
+      this.setBeeHive(beehive);
+      var pubsub = this.getPubSub();
+      pubsub.subscribe(pubsub.NAVIGATE, _.bind(this.recordNav, this));
+    },
 
-        activate: function (beehive) {
+    recordNav: function () {
+      this._history.push([].slice.apply(arguments));
+    },
 
-          this.setBeeHive(beehive);
-          var pubsub = this.getPubSub();
-          pubsub.subscribe(pubsub.NAVIGATE, _.bind(this.recordNav, this));
+    getCurrentNav: function () {
+      return this._history[this._history.length - 1];
+    },
 
-        },
+    getPreviousNav: function () {
+      return this._history[this._history.length - 2];
+    },
 
-        recordNav: function () {
-          this._history.push([].slice.apply(arguments));
-        },
+    hardenedInterface: {
+      getPreviousNav: '',
+      getCurrentNav: '',
+    }
 
-        getCurrentNav : function(){
-          return this._history[this._history.length-1];
-        },
+  });
 
-        getPreviousNav: function(){
-          return this._history[this._history.length-2];
-        },
+  _.extend(History.prototype, Dependon.BeeHive, Hardened);
 
-        hardenedInterface: {
-         getPreviousNav : "",
-         getCurrentNav : "",
-        }
-
-      });
-
-      _.extend(History.prototype, Dependon.BeeHive, Hardened);
-
-      return History;
-
+  return History;
 });

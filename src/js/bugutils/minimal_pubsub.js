@@ -38,7 +38,7 @@ define(['underscore', 'backbone',
   'js/components/api_request',
   'js/components/api_feedback',
   'js/components/api_response'
-], function(
+], function (
   _,
   BackBone,
   QueryMediator,
@@ -49,29 +49,28 @@ define(['underscore', 'backbone',
   ApiRequest,
   ApiFeedback,
   ApiResponse
-  ) {
-
-  var MinimalPubsub = function() {
+) {
+  var MinimalPubsub = function () {
     this.beehive = null;
     this.pubsub = null;
     this.initialize.apply(this, arguments);
   };
 
-  _.extend(MinimalPubsub.prototype, Backbone.Events, PubSubEvents,  {
-    initialize: function(options) {
-      options =  options || {};
+  _.extend(MinimalPubsub.prototype, Backbone.Events, PubSubEvents, {
+    initialize: function (options) {
+      options = options || {};
       if (options.verbose) {
         console.log('[MinSub]', 'starting');
       }
       this.requestCounter = 0;
-      this.fakeApp = {getPskOfPluginOrWidget: sinon.stub().returns(null)};
+      this.fakeApp = { getPskOfPluginOrWidget: sinon.stub().returns(null) };
       this.beehive = new BeeHive();
       this.pubsub = new PubSub();
       this.pubsub.debug = true;
       this.beehive.addService('PubSub', this.pubsub);
       var self = this;
       this.beehive.addService('Api', options.Api || {
-        request: function(req, context) {
+        request: function (req, context) {
           self.requestCounter += 1;
           if (!context) {
             context = req.get('options');
@@ -82,12 +81,13 @@ define(['underscore', 'backbone',
             console.log('[MinSub]', 'request', self.requestCounter, response);
           }
           var defer = $.Deferred();
-          defer.done(function() {
-              context.done.call(context.context, response);
+          defer.done(function () {
+            context.done.call(context.context, response);
           });
           defer.resolve(response);
           return defer.promise();
-        }});
+        }
+      });
       this.beehive.activate(this.beehive);
 
       // add Query-mediator; it is using an app object, so we'll feed it
@@ -106,63 +106,63 @@ define(['underscore', 'backbone',
       _.extend(this, options);
     },
 
-    listen: function() {
+    listen: function () {
       this.pubsub.subscribe(this.pubsub.getPubSubKey(), 'all', _.bind(this.logAll, this));
     },
 
-    destroy: function(){
+    destroy: function () {
       if (this.verbose) {
         console.log('[MinSub]', 'closing');
       }
       this.beehive.destroy();
     },
 
-    logAll: function(ev) {
+    logAll: function (ev) {
       if (this.verbose) {
         var args = Array.prototype.slice.call(arguments, 1);
         console.log('[PubSub]', ev, args);
       }
     },
 
-    publish: function() {
+    publish: function () {
       var args = _.toArray(arguments);
       args.unshift(this.key);
       this.pubsub.publish.apply(this.pubsub, args);
     },
 
-    subscribe: function(signal, callback) {
+    subscribe: function (signal, callback) {
       var args = _.toArray(arguments);
       args.unshift(this.key);
       this.pubsub.subscribe.apply(this.pubsub, args);
     },
-    subscribeOnce: function(signal, callback) {
+    subscribeOnce: function (signal, callback) {
       var args = _.toArray(arguments);
       args.unshift(this.key);
       this.pubsub.subscribeOnce.apply(this.pubsub, args);
     },
-    on: function() {
+    on: function () {
       this.pubsub.on.apply(this.pubsub, arguments);
     },
-    off: function() {
+    off: function () {
       this.pubsub.on.apply(this.pubsub, arguments);
     },
 
-    request: function(apiRequest, params) {
+    request: function (apiRequest, params) {
       if (this.verbose) {
         console.log('[Api]', 'request', apiRequest, params);
       }
       return {};
     },
 
-    createQuery: function(data) {
+    createQuery: function (data) {
       return new ApiQuery(data);
     },
 
-    createRequest: function(data) {
+    createRequest: function (data) {
       return new ApiRequest(data);
     },
 
-    createFeedback: function(data) {
+    createFeedback: function (data) {
       return new ApiFeedback(data);
     },
 

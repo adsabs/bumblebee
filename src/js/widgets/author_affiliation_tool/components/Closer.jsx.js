@@ -1,9 +1,8 @@
-'use strict';
+
 
 define([
   'react'
 ], function (React) {
-
   const style = {
     position: 'absolute',
     right: '5px'
@@ -13,7 +12,6 @@ define([
    * A simple closer link that looks like an `X`
    */
   const Closer = ({ onClick }) => {
-
     const handleClick = (e) => {
       e.preventDefault();
       onClick();

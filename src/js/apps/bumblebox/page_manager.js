@@ -6,16 +6,14 @@ define([
   PageManagerController,
   PageManagerView,
   PageManagerTemplate) {
-
   var PageManager = PageManagerController.extend({
 
-    createView: function(options) {
+    createView: function (options) {
       options = options || {};
       options.template = PageManagerTemplate;
-      return new PageManagerView({template: PageManagerTemplate, className: "s-embedded-layout"})
+      return new PageManagerView({ template: PageManagerTemplate, className: 's-embedded-layout' });
     }
   });
 
   return PageManager;
-
 });

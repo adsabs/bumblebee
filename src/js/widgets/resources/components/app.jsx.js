@@ -3,7 +3,6 @@ define([
   'react',
   'react-prop-types',
 ], function (_, React, PropTypes) {
-
   // No Results View
   const NoResults = () => (
     <h3 className="s-right-col-widget-title">
@@ -29,12 +28,10 @@ define([
         <i className="fa fa-file-text-o" aria-hidden="true"/>
         <div className="resources__header__title">full text sources</div>
       </div>
-      {_.map(items, (groups, key) =>
-        <div className="resources__content" key={key}>
+      {_.map(items, (groups, key) => <div className="resources__content" key={key}>
           <div className="resources__content__title">{key}</div>
           <div className="resources__content__links">
-            {_.map(groups, (g, idx) =>
-              <span>
+            {_.map(groups, (g, idx) => <span>
                 <a
                   href={g.url}
                   target="_blank"
@@ -47,8 +44,8 @@ define([
                   {g.type === 'SCAN' && <i className="fa fa-file-image-o" aria-hidden="true"/>}
                   {g.type === 'INSTITUTION' && <i className="fa fa-university" aria-hidden="true"/>}
                 </a>
-                {idx < groups.length -1 &&
-                  <div className="resources__content__link__separator">|</div>
+                {idx < groups.length - 1
+                  && <div className="resources__content__link__separator">|</div>
                 }
               </span>
             )}
@@ -74,8 +71,7 @@ define([
         <div className="resources__header__title">data products</div>
       </div>
       <div className="resources__content">
-        {_.map(items, item =>
-          <a
+        {_.map(items, item => <a
             href={item.url}
             target="_blank"
             rel="noopener"
@@ -102,13 +98,13 @@ define([
     <div className="s-right-col-widget-container" style={{ padding: 10 }}>
       { props.loading && <Loading />}
       { props.noResults && !props.loading && <NoResults /> }
-      { !props.loading && !props.hasError &&
-        <div className="resources__container">
-          { !_.isEmpty(props.fullTextSources) &&
-            <FullTextLinkList items={props.fullTextSources} onClick={props.onLinkClick} />
+      { !props.loading && !props.hasError
+        && <div className="resources__container">
+          { !_.isEmpty(props.fullTextSources)
+            && <FullTextLinkList items={props.fullTextSources} onClick={props.onLinkClick} />
           }
-          { !_.isEmpty(props.dataProducts) &&
-            <DataProductLinkList items={props.dataProducts} onClick={props.onLinkClick} />
+          { !_.isEmpty(props.dataProducts)
+            && <DataProductLinkList items={props.dataProducts} onClick={props.onLinkClick} />
           }
         </div>
       }

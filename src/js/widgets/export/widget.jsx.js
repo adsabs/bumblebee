@@ -1,4 +1,4 @@
-'use strict';
+
 define([
   'jquery',
   'underscore',
@@ -17,9 +17,8 @@ define([
   'js/components/api_feedback',
   'hbs!js/widgets/export/templates/classic_submit_form'
 ], function ($, _, Backbone, React, ReactDOM, Redux, ReactRedux,
-             ReduxThunk, BaseWidget, reducers, actions, App, ApiQuery, ApiTargets,
-             ApiFeedback, ClassicFormTemplate) {
-
+  ReduxThunk, BaseWidget, reducers, actions, App, ApiQuery, ApiTargets,
+  ApiFeedback, ClassicFormTemplate) {
   var View = Backbone.View.extend({
 
     /**
@@ -28,7 +27,6 @@ define([
      * @param {object} options - view options
      */
     initialize: function (options) {
-
       // provide this with all the options passed in
       _.assign(this, options);
     },
@@ -39,7 +37,6 @@ define([
      * @returns {View}
      */
     render: function () {
-
       // create provider component, that passes the store to <App>
       ReactDOM.render(
         <ReactRedux.Provider store={this.store}>
@@ -50,7 +47,6 @@ define([
       return this;
     },
     destroy: function () {
-
       // on destroy, make sure the React DOM is unmounted
       ReactDOM.unmountComponentAtNode(this.el);
     }
@@ -90,7 +86,7 @@ define([
       const { setQuery } = actions;
       this.activateWidget();
 
-      pubsub.subscribe(pubsub.INVITING_REQUEST, (query) => (
+      pubsub.subscribe(pubsub.INVITING_REQUEST, query => (
         dispatch(setQuery(query.toJSON()))));
       this.attachGeneralHandler(this.onApiFeedback);
     },
@@ -142,7 +138,6 @@ define([
 
       // if a format is selected, then we can start an actual export
       if (format !== 'other') {
-
         // take a snapshot of the state
         dispatch(takeSnapshot());
 
@@ -156,7 +151,6 @@ define([
             .always(() => dispatch(takeSnapshot()))
           );
       } else {
-
         // take a snapshot if no export is selected
         dispatch(takeSnapshot());
       }
@@ -167,7 +161,7 @@ define([
      */
     closeWidget: function () {
       const pubsub = this.getPubSub();
-      pubsub.publish(pubsub.NAVIGATE, "results-page");
+      pubsub.publish(pubsub.NAVIGATE, 'results-page');
     },
 
     /**
@@ -182,7 +176,7 @@ define([
       const $dd = $.Deferred();
 
       const pubsub = this.getPubSub();
-      pubsub.subscribeOnce(pubsub.DELIVERING_RESPONSE, (res) => $dd.resolve(res));
+      pubsub.subscribeOnce(pubsub.DELIVERING_RESPONSE, res => $dd.resolve(res));
       pubsub.publish(pubsub.EXECUTE_REQUEST, req);
       return $dd.promise();
     },
@@ -195,7 +189,7 @@ define([
      * @param {Array} recs - current array of records (identifiers)
      * @param {object} data - object containing the format
      */
-    renderWidgetForListOfBibcodes : function (recs, data) {
+    renderWidgetForListOfBibcodes: function (recs, data) {
       const { dispatch } = this.store;
       const {
         receiveIds, findAndSetFormat, fetchUsingIds, hardReset,
@@ -213,7 +207,6 @@ define([
       if (data.format !== 'other') {
         dispatch(fetchUsingIds()).done(() => dispatch(takeSnapshot()));
       } else {
-
         // otherwise only snapshot, so we can get back to this state later
         dispatch(takeSnapshot());
       }
@@ -230,52 +223,51 @@ define([
      *
      * @param {{bibcodes: Array, currentQuery: ApiQuery}} options
      */
-    openClassicExports : function(options) {
-
+    openClassicExports: function (options) {
       // if bibcodes is present, then fill out and submit the form
       if (options.bibcodes) {
-        var $form =  $(ClassicFormTemplate({
+        var $form = $(ClassicFormTemplate({
           bibcode: options.bibcodes,
-          exportLimit : ApiTargets._limits.ExportWidget.limit
+          exportLimit: ApiTargets._limits.ExportWidget.limit
         }));
-        $("body").append($form);
+        $('body').append($form);
         $form.submit();
         $form.remove();
       }
 
       // otherwise, get the ids first from the passed in query
-      else if (options.currentQuery ) {
+      else if (options.currentQuery) {
         var q = options.currentQuery.clone();
-        q.set("rows", ApiTargets._limits.ExportWidget.limit);
-        q.set("fl", "bibcode");
+        q.set('rows', ApiTargets._limits.ExportWidget.limit);
+        q.set('fl', 'bibcode');
         var req = this.composeRequest(q);
 
         this._executeApiRequest(req)
-          .done(function(apiResponse) {
+          .done(function (apiResponse) {
             // export documents by their ids
-            var ids = _.map(apiResponse.get('response.docs'), function(d) {
-              return d.bibcode
+            var ids = _.map(apiResponse.get('response.docs'), function (d) {
+              return d.bibcode;
             });
-            var $form =  $(ClassicFormTemplate({
+            var $form = $(ClassicFormTemplate({
               bibcode: ids,
-              exportLimit: ids.length }));
-            //firefox requires form to actually be in the dom when it is submitted
-            $("body").append($form);
+              exportLimit: ids.length
+            }));
+            // firefox requires form to actually be in the dom when it is submitted
+            $('body').append($form);
             $form.submit();
             $form.remove();
           });
-      }
-      else {
-        throw new Error("can't export with no bibcodes or query");
+      } else {
+        throw new Error('can\'t export with no bibcodes or query');
       }
 
-      //finally, close export widget and return to results page
+      // finally, close export widget and return to results page
       if (options.libid) {
         // We are in an ADS library: the contents of the library need to stay visible and the highlight
         // has to go back to the "View Library" menu item
-        this.getPubSub().publish(this.getPubSub().NAVIGATE, "IndividualLibraryWidget", {subView: "library", id : options.libid});
+        this.getPubSub().publish(this.getPubSub().NAVIGATE, 'IndividualLibraryWidget', { subView: 'library', id: options.libid });
       } else {
-        this.getPubSub().publish(this.getPubSub().NAVIGATE, "results-page");
+        this.getPubSub().publish(this.getPubSub().NAVIGATE, 'results-page');
       }
     }
   });

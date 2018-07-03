@@ -1,8 +1,7 @@
-'use strict';
+
 define([
   'underscore'
 ], function (_) {
-
   /**
    * Parse and format author affiliation data
    *
@@ -14,8 +13,7 @@ define([
    * @returns {{id: string, selected: boolean, author: *, affiliations: Array, lastActiveDates: Array}}
    */
   const authorAffiliationFactory = function (author, affs) {
-
-    let out = {
+    const out = {
       id: _.uniqueId(),
       selected: true,
       author: author,

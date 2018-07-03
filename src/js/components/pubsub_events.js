@@ -18,7 +18,7 @@
  *
  */
 
-define([], function() {
+define([], function () {
   var PubSubEvents = {
 
     /**
@@ -116,7 +116,7 @@ define([], function() {
      */
     GET_QTREE: '[FC]-GetQTree',
 
-    NAVIGATE : '[Router]-Navigate-With-Trigger',
+    NAVIGATE: '[Router]-Navigate-With-Trigger',
 
     /*
     * so navigator can notify interested widgets about a change
@@ -125,21 +125,21 @@ define([], function() {
     * */
     PAGE_CHANGE: '[Navigator]Page-Changed',
 
-    /*for custom widget-to-widget events*/
-    CUSTOM_EVENT : '[PubSub]-Custom-Event',
+    /* for custom widget-to-widget events */
+    CUSTOM_EVENT: '[PubSub]-Custom-Event',
 
-    ARIA_ANNOUNCEMENT : "[PubSub]-Aria-Announcement",
+    ARIA_ANNOUNCEMENT: '[PubSub]-Aria-Announcement',
 
-    /*anything to do with changing the state of the user, including session events*/
-    USER_ANNOUNCEMENT : "[PubSub]-User-Announcement",
+    /* anything to do with changing the state of the user, including session events */
+    USER_ANNOUNCEMENT: '[PubSub]-User-Announcement',
 
 
     /**
      * A message/action that should be displayed to the user (on prominent)
      * place
      */
-    ALERT: "[Alert]-Message",
-    ORCID_ANNOUNCEMENT: "[PubSub]-Orcid-Announcement",
+    ALERT: '[Alert]-Message',
+    ORCID_ANNOUNCEMENT: '[PubSub]-Orcid-Announcement',
 
     /**
      * Happens during the main cycle of the application birth
@@ -148,28 +148,28 @@ define([], function() {
      *  STARTING = + right before the router and history objects start()
      *  STARTED = app is alive and handling requests
      */
-    APP_LOADED: "[App]-Application-Loaded",
-    APP_BOOTSTRAPPED: "[App]-Application-Bootstrapped",
-    APP_STARTING: "[App]-Application-Starting",
-    APP_STARTED: "[App]-Application-Started",
+    APP_LOADED: '[App]-Application-Loaded',
+    APP_BOOTSTRAPPED: '[App]-Application-Bootstrapped',
+    APP_STARTING: '[App]-Application-Starting',
+    APP_STARTED: '[App]-Application-Started',
     APP_EXIT: '[App]-Exit',
 
 
     /**
      * Is triggered when user selects/deselects records
      */
-    PAPER_SELECTION: "[User]-Paper-Selection",
+    PAPER_SELECTION: '[User]-Paper-Selection',
 
-    //instead of toggling, adds all papers
-    BULK_PAPER_SELECTION: "[User]-Bulk-Paper-Selection",
+    // instead of toggling, adds all papers
+    BULK_PAPER_SELECTION: '[User]-Bulk-Paper-Selection',
     /*
     * is triggered by app storage itself when list of selected papers changes
     * */
-    STORAGE_PAPER_UPDATE: "[User]-Paper-Update",
+    STORAGE_PAPER_UPDATE: '[User]-Paper-Update',
 
-    LIBRARY_CHANGE : "[PubSub]-Library-Change"
+    LIBRARY_CHANGE: '[PubSub]-Library-Change'
 
-};
+  };
 
   return PubSubEvents;
 });

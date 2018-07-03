@@ -1,10 +1,10 @@
 define([
-  "marionette",
-  "js/widgets/base/base_widget",
-  "./views/openurl",
-  "./views/orcid",
-  "js/components/api_feedback",
-  "hbs!js/widgets/preferences/templates/orcid-form-submit-modal"
+  'marionette',
+  'js/widgets/base/base_widget',
+  './views/openurl',
+  './views/orcid',
+  'js/components/api_feedback',
+  'hbs!js/widgets/preferences/templates/orcid-form-submit-modal'
 ], function (
   Marionette,
   BaseWidget,
@@ -12,15 +12,14 @@ define([
   OrcidView,
   ApiFeedback,
   OrcidModalTemplate
-  ) {
-
+) {
   var PreferencesModel = Backbone.Model.extend({
 
-    defaults : function(){
+    defaults: function () {
       return {
-        openURLConfig : undefined,
-        orcidLoggedIn : undefined,
-      }
+        openURLConfig: undefined,
+        orcidLoggedIn: undefined,
+      };
     }
 
   });
@@ -28,24 +27,24 @@ define([
   var PreferencesView = Marionette.LayoutView.extend({
 
     template: function () {
-      return "<div class=\"content-container\"></div>"
+      return '<div class="content-container"></div>';
     },
 
-    className: "s-preferences preferences-widget",
+    className: 's-preferences preferences-widget',
 
     regions: {
-      content: ".content-container"
+      content: '.content-container'
     },
 
     setSubView: function (viewConstructor) {
-      //providing all views with a copy of the model
-      var view = new viewConstructor({model: this.model});
+      // providing all views with a copy of the model
+      var view = new viewConstructor({ model: this.model });
 
-      this.getRegion("content").show(view);
+      this.getRegion('content').show(view);
 
-      //forward events
-      this.listenTo(view, "all", function(){
-        this.trigger.apply(this, arguments)
+      // forward events
+      this.listenTo(view, 'all', function () {
+        this.trigger.apply(this, arguments);
       });
     }
 
@@ -65,7 +64,7 @@ define([
 
       this.model = new PreferencesModel();
       this.view = new PreferencesView({ model: this.model });
-      this.listenTo(this.view, "all", this.handleViewEvents);
+      this.listenTo(this.view, 'all', this.handleViewEvents);
 
       BaseWidget.prototype.initialize.apply(this, arguments);
     },
@@ -78,66 +77,63 @@ define([
       pubsub.subscribe(pubsub.USER_ANNOUNCEMENT, this.handleUserAnnouncement);
       pubsub.subscribe(pubsub.ORCID_ANNOUNCEMENT, this.handleOrcidAnnouncement);
 
-      //as soon as preferences widget is activated, get the open url config
-      this.getBeeHive().getObject("User").getOpenURLConfig().done(function (config) {
-        that.model.set("openURLConfig", config);
+      // as soon as preferences widget is activated, get the open url config
+      this.getBeeHive().getObject('User').getOpenURLConfig().done(function (config) {
+        that.model.set('openURLConfig', config);
       });
 
-      //and the user data (which contains user's open url selection)
-      this.model.set(this.getBeeHive().getObject("User").getUserData());
-
+      // and the user data (which contains user's open url selection)
+      this.model.set(this.getBeeHive().getObject('User').getUserData());
     },
 
-    //translates what comes from toc widget (e.g. userPreferences__orcid) to view name
-    views : {
-      orcid : OrcidView,
-      librarylink : OpenURLView
+    // translates what comes from toc widget (e.g. userPreferences__orcid) to view name
+    views: {
+      orcid: OrcidView,
+      librarylink: OpenURLView
     },
 
     setSubView: function (subView) {
       if (_.isArray(subView)) {
-        //XXX:figure out why array
+        // XXX:figure out why array
         subView = subView[0];
       }
       var viewConstructor = this.views[subView];
-      if (!viewConstructor){
-        console.warn("don't recognize this subview: ", subView );
-        return
+      if (!viewConstructor) {
+        console.warn('don\'t recognize this subview: ', subView);
+        return;
       }
       this.view.setSubView(viewConstructor);
 
       this.fetchNecessaryData.apply(this, arguments);
     },
 
-    fetchNecessaryData : function(subView) {
-
+    fetchNecessaryData: function (subView) {
       var that = this;
 
-      this.model.set("orcidLoggedIn", this.getBeeHive().getService("OrcidApi").hasAccess());
-      /*right now only orcid view needs extra data */
+      this.model.set('orcidLoggedIn', this.getBeeHive().getService('OrcidApi').hasAccess());
+      /* right now only orcid view needs extra data */
 
-      if (subView === "orcid" && this.model.get("orcidLoggedIn") ){
+      if (subView === 'orcid' && this.model.get('orcidLoggedIn')) {
+        this.model.set('loading', true);
 
-        this.model.set("loading", true);
+        // get main orcid name
+        var orcidProfile = this.getBeeHive().getService('OrcidApi').getUserProfile();
+        var adsOrcidUserInfo = this.getBeeHive().getService('OrcidApi').getADSUserData();
 
-        //get main orcid name
-        var orcidProfile = this.getBeeHive().getService("OrcidApi").getUserProfile();
-        var adsOrcidUserInfo = this.getBeeHive().getService("OrcidApi").getADSUserData();
-
-        //doing it at once so there's no flicker of rapid rendering as different vals change
-        $.when(orcidProfile, adsOrcidUserInfo).done(function(profile, ads){
+        // doing it at once so there's no flicker of rapid rendering as different vals change
+        $.when(orcidProfile, adsOrcidUserInfo).done(function (profile, ads) {
           var data = {
             userSubmitted: _.isArray(ads) ? ads[0] : ads
           };
           try {
             var firstName = profile.getFirstName();
             var lastName = profile.getLastName();
-            //unchangeable orcid name
-            data.orcidName =  lastName + ", " + firstName;
-            data.prettyOrcidName = firstName + " " + lastName;
-          } catch(e){
-            data.orcidName = "unknown";
-            data.prettyOrcidName = "unknown";
+            // unchangeable orcid name
+            data.orcidName = lastName + ', ' + firstName;
+            data.prettyOrcidName = firstName + ' ' + lastName;
+          } catch (e) {
+            data.orcidName = 'unknown';
+            data.prettyOrcidName = 'unknown';
           }
           data.loading = false;
           that.model.set(data);
@@ -148,42 +144,39 @@ define([
     handleViewEvents: function (event, arg1, arg2) {
       var that = this;
 
-      if (event === "change:link_server") {
-        this.getBeeHive().getObject("User").setUserData({link_server: arg1});
-      }
-
-      else if (event === "orcid-authenticate"){
-        this.getBeeHive().getService("OrcidApi").signIn();
-      }
-
-      else if (event === "orcid-form-submit"){
-        this.getBeeHive().getService("OrcidApi").setADSUserData(arg1).done(function(){
-          //show the success modal
+      if (event === 'change:link_server') {
+        this.getBeeHive().getObject('User').setUserData({ link_server: arg1 });
+      } else if (event === 'orcid-authenticate') {
+        this.getBeeHive().getService('OrcidApi').signIn();
+      } else if (event === 'orcid-form-submit') {
+        this.getBeeHive().getService('OrcidApi').setADSUserData(arg1).done(function () {
+          // show the success modal
           that.getPubSub().publish(that.getPubSub().ALERT, new ApiFeedback({
             code: ApiFeedback.CODES.ALERT,
             msg: OrcidModalTemplate(),
-            type: "success",
-            title: "Thanks for submitting your supplemental ORCID information",
+            type: 'success',
+            title: 'Thanks for submitting your supplemental ORCID information',
             modal: true
           }));
 
-          //this will re-render the form
-          that.setSubView("orcid");
-        }).fail(function(){
-          //show the success modal
-          that.getPubSub().publish(that.getPubSub().ALERT, new ApiFeedback({
-            code: ApiFeedback.CODES.ALERT,
-            msg: "Please try again later.",
-            type: "danger",
-            title: "Your ORCID information was not submitted",
-            modal: true
-          }));
+          // this will re-render the form
+          that.setSubView('orcid');
         })
+          .fail(function () {
+          // show the success modal
+            that.getPubSub().publish(that.getPubSub().ALERT, new ApiFeedback({
+              code: ApiFeedback.CODES.ALERT,
+              msg: 'Please try again later.',
+              type: 'danger',
+              title: 'Your ORCID information was not submitted',
+              modal: true
+            }));
+          });
       }
     },
 
     handleUserAnnouncement: function (event, data) {
-      //update the user model if it changes
+      // update the user model if it changes
       var user = this.getBeeHive().getObject('User');
       if (event == user.USER_INFO_CHANGE) {
         this.model.set(data);
@@ -191,18 +184,15 @@ define([
     },
 
     handleOrcidAnnouncement: function (event) {
-      //update the user model if it changes
-      if (event === "login") {
-        this.model.set("orcidLoggedIn", false);
-
-      }
-      else if (event === "logout"){
-        this.model.set("orcidLoggedIn", false);
+      // update the user model if it changes
+      if (event === 'login') {
+        this.model.set('orcidLoggedIn', false);
+      } else if (event === 'logout') {
+        this.model.set('orcidLoggedIn', false);
       }
     }
 
   });
 
-  return PreferencesWidget
-
+  return PreferencesWidget;
 });

@@ -1,8 +1,7 @@
-'use strict';
-define([], function () {
 
+define([], function () {
   // set of targets corresponding to actions (helps with dispatching)
-  let target = {
+  const target = {
     fetchData: 'FETCHING_DATA',
     setLoading: 'SET_LOADING',
     setData: 'SET_DATA',

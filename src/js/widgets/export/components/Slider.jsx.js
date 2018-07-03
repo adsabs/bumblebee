@@ -1,10 +1,9 @@
-'use strict';
+
 
 define([
   'react',
   'react-prop-types'
 ], function (React, ReactPropTypes) {
-
   const Slider = ({ count, setCount }) => (
     <div>
       <label htmlFor="ex-range">

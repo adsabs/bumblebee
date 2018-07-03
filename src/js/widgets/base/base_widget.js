@@ -16,8 +16,7 @@ define([
   ApiTargets,
   Dependon,
   WidgetStateManagerMixin
-  ) {
-
+) {
   /**
    * Default PubSub based widget; the main functionality is inside
    *
@@ -60,12 +59,11 @@ define([
   var BaseWidget = Marionette.Controller.extend({
 
     initialize: function (options) {
-
       options = options || {};
 
       // these methods are called by PubSub as handlers so we bind them to 'this' object
       // and they will carry their own context 'this'
-      _.bindAll(this, "dispatchRequest", "processResponse");
+      _.bindAll(this, 'dispatchRequest', 'processResponse');
 
       this._currentQuery = new ApiQuery();
       this.defaultQueryArguments = this.defaultQueryArguments || {};
@@ -79,10 +77,8 @@ define([
       }
 
       // our way of listening to views/models
-      if (this.view)
-        Marionette.bindEntityEvents(this, this.view, Marionette.getOption(this, "viewEvents"));
-      if (this.model)
-        Marionette.bindEntityEvents(this, this.model, Marionette.getOption(this, "modelEvents"));
+      if (this.view) Marionette.bindEntityEvents(this, this.view, Marionette.getOption(this, 'viewEvents'));
+      if (this.model) Marionette.bindEntityEvents(this, this.model, Marionette.getOption(this, 'modelEvents'));
     },
 
     /**
@@ -98,9 +94,9 @@ define([
       this.setBeeHive(beehive);
       var pubsub = beehive.getService('PubSub');
 
-      //custom dispatchRequest function goes here
+      // custom dispatchRequest function goes here
       pubsub.subscribe(pubsub.INVITING_REQUEST, this.dispatchRequest);
-      //custom handleResponse function goes here
+      // custom handleResponse function goes here
       pubsub.subscribe(pubsub.DELIVERING_RESPONSE, this.processResponse);
     },
 
@@ -110,9 +106,9 @@ define([
      *
      * @param apiQuery
      */
-    dispatchNewQuery: function(apiQuery) {
+    dispatchNewQuery: function (apiQuery) {
       // remove the arguments that are useful only to this widget
-      _.each(this.defaultQueryArguments, function(v,k) {apiQuery.unset(k)});
+      _.each(this.defaultQueryArguments, function (v, k) { apiQuery.unset(k); });
       var pubsub = this.getPubSub();
       pubsub.publish(pubsub.START_SEARCH, apiQuery);
     },
@@ -121,10 +117,10 @@ define([
      * Default callback to be called by PubSub on 'INVITING_REQUEST'
      */
     dispatchRequest: function (apiQuery) {
-     this._dispatchRequest(apiQuery);
+      this._dispatchRequest(apiQuery);
     },
 
-    _dispatchRequest: function(apiQuery) {
+    _dispatchRequest: function (apiQuery) {
       var q = this.customizeQuery(apiQuery);
       if (q) {
         var req = this.composeRequest(q);
@@ -154,12 +150,11 @@ define([
      * @param apiResponse
      */
     processResponse: function (apiResponse) {
-
       // in your widget, you should always set the current query like this
       var q = apiResponse.getApiQuery();
       this.setCurrentQuery(q);
 
-      throw new Error("you need to customize this function");
+      throw new Error('you need to customize this function');
     },
 
     /**
@@ -194,7 +189,8 @@ define([
      * @returns {ApiQuery|*}
      */
     getCurrentQuery: function () {
-      var currQuery, beehive;
+      var currQuery,
+        beehive;
       if (this._currentQuery instanceof ApiQuery) {
         currQuery = this._currentQuery;
       } else if (_.isFunction(this.getBeeHive)) {
@@ -220,15 +216,13 @@ define([
       if (!apiQuery) {
         query = this.getCurrentQuery();
         query = query.clone();
-      }
-      else {
+      } else {
         query = apiQuery;
       }
 
       if (queryParams) {
         _.each(queryParams, function (v, k) {
-          if (!query.has(k))
-            query.set(k, v)
+          if (!query.has(k)) query.set(k, v);
         });
       }
       return query;
@@ -246,13 +240,12 @@ define([
      *
      * @returns {view.el}
      */
-    getEl : function(){
-      if ( this.view.el && this.view.$el.children().length ){
-        return this.view.el
+    getEl: function () {
+      if (this.view.el && this.view.$el.children().length) {
+        return this.view.el;
       }
-      else {
-        return this.view.render().el;
-      }
+
+      return this.view.render().el;
     },
     /*
     *
@@ -260,12 +253,12 @@ define([
     *
     * */
 
-    render : function(){
+    render: function () {
       return this.view.render();
     }
 
 
-  }, {mixin: WidgetMixin});
+  }, { mixin: WidgetMixin });
 
   _.extend(BaseWidget.prototype, Dependon.BeeHive, WidgetStateManagerMixin);
 

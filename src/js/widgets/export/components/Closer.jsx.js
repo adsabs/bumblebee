@@ -1,11 +1,9 @@
-'use strict';
+
 
 define([
-'react', 'react-prop-types'
+  'react', 'react-prop-types'
 ], function (React, ReactPropTypes) {
-
   const Closer = ({ onClick }) => {
-
     const handleClick = (e) => {
       e.preventDefault();
       onClick();
