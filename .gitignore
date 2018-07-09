@@ -36,3 +36,4 @@ src/discovery.vars.js
 .*
 !.babelrc
 !.travis.yml
+!.eslintrc.json

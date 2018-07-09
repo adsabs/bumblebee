@@ -1,0 +1,56 @@
+{
+    "extends": "airbnb",
+    "env": {
+        "browser": true,
+        "amd": true,
+        "es6": false,
+        "commonjs": false,
+        "jquery": true,
+        "mocha": true
+    },
+    "parserOptions": {
+        "ecmaFeatures": {
+            "jsx": true
+        },
+        "sourceType": "module"
+    },
+    "plugins": [
+        "requirejs"
+    ],
+    "globals": {
+        "sinon": true,
+        "expect": true,
+        "normalizeSpace": true,
+        "_": true,
+        "d3": true,
+        "Backbone": true,
+        "grecaptcha": true,
+        "onRecaptchaLoad": true,
+        "assert": true,
+        "R": true
+    },
+    "rules": {
+        "import/no-amd": "off",
+        "vars-on-top":"off",
+        "no-var":"off",
+        "prefer-arrow-callback": "off",
+        "no-param-reassign": "off",
+        "function-paren-newline": "off",
+        "comma-dangle": "off",
+        "func-names":"off",
+        "padded-blocks": "off",
+        "object-shorthand":"off",
+        "no-shadow": "off",
+        "prefer-rest-params": "off",
+        "no-underscore-dangle": "off",
+        "prefer-template": "off",
+        "prefer-spread": "off",
+        "consistent-return": "warn",
+        "prefer-destructuring": "off",
+        "no-global-assign": "error",
+        "indent":"off",
+        "space-before-blocks": "off",
+        "quote-props": "off",
+        "react/jsx-filename-extension": "off"
+    }
+}
