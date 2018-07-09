@@ -72,7 +72,7 @@ define([
           '<span class="ui-state-highlight">$1</span>'
         );
         var $li = $('<li/>').appendTo(ul);
-        $('<a/>').attr('href', '#').html(label).appendTo($li);
+        $('<a/>').html(label).appendTo($li);
         return $li;
       };
     },
@@ -153,7 +153,8 @@ define([
 
     submitForm: function (query) {
       var newQuery = new ApiQuery({
-        q: query
+        q: query,
+        sort: ['date desc']
       });
 
       this.getPubSub().publish(this.getPubSub().START_SEARCH, newQuery);
@@ -161,7 +162,8 @@ define([
 
     submitBigQuery: function (bibcodes) {
       var newQuery = new ApiQuery({
-        __bigquery: bibcodes
+        __bigquery: bibcodes,
+        sort: ['date desc']
       });
 
       this.getPubSub().publish(this.getPubSub().START_SEARCH, newQuery);
