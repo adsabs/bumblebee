@@ -194,19 +194,19 @@ define([
         const expected = {
           "fullTextSources": [
             {
-              "url": "/link_gateway/foo/PUB_PDF",
-              "open": false,
-              "shortName": "Publisher",
-              "name": "Publisher PDF",
-              "type": "PDF",
-              "description": "Publisher PDF"
-            },
-            {
               "url": "bar?&url_ver=Z39.88-2004&rfr_id=info:sid/ADS&rft_val_fmt=info:ofi/fmt:kev:mtx:article&rft_id=info:doi/b&rft_id=info:bibcode/foo&id=doi:b&rft.genre=article&sid=ADS&genre=article",
               "openUrl": true,
               "type": "INSTITUTION",
               "shortName": "My Institution",
               "name": "My Institution",
+              "description": "Find Article At My Institution"
+            },
+            {
+              "url": "/link_gateway/foo/PUB_PDF",
+              "open": false,
+              "shortName": "Publisher",
+              "name": "Publisher PDF",
+              "type": "PDF",
               "description": "Publisher PDF"
             }
           ],
@@ -220,12 +220,12 @@ define([
         const expected = {
           "fullTextSources": [
             {
+              "description": undefined,
               "url": "/link_gateway/foo/BAR",
               "open": false,
-              "type": undefined,
-              "shortName": undefined,
-              "name": undefined,
-              "description": undefined
+              "shortName": "BAR",
+              "name": "BAR",
+              "type": "HTML"
             }
           ],
           "dataProducts": []
