@@ -64,7 +64,7 @@ define([
 
         minsub.publish(minsub.START_SEARCH, new ApiQuery({q: 'pluto'}));
 
-        expect(widget.dispatchRequest.firstCall.args[0].url()).to.eql('q=pluto');
+        expect(widget.dispatchRequest.firstCall.args[0].url()).to.eql('q=pluto&sort=date%20desc%2C%20bibcode%20desc');
         expect(widget.customizeQuery.calledOnce).to.be.true;
         expect(widget.customizeQuery.calledBefore(widget.composeRequest)).to.be.true;
         expect(widget.processResponse.called).to.be.true;

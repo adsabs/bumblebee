@@ -1684,7 +1684,7 @@ define([
     //query should be double encoded
     expect(networkWidget.getPubSub().publish.args[0][1].get("query").toJSON()).to.eql({
       "query": [
-        "{\"q\":[\"star\"],\"rows\":[400]}"
+        "{\"q\":[\"star\"],\"sort\":[\"date desc, bibcode desc\"],\"rows\":[400]}"
       ]
     })
 
@@ -1911,7 +1911,9 @@ define([
 
     setTimeout(function () {
         expect(networkWidget.getPubSub().publish.args[0][0]).to.eql(minsub.EXECUTE_REQUEST);
-        expect(networkWidget.getPubSub().publish.args[0][1].get("query").toJSON().query).to.eql(['{"q":["star"],"rows":[400]}']);
+        expect(networkWidget.getPubSub().publish.args[0][1].get("query").toJSON().query).to.eql([
+          "{\"q\":[\"star\"],\"sort\":[\"date desc, bibcode desc\"],\"rows\":[400]}"
+        ]);
         expect(normalizeSpace($("#test").find(".network-metadata").text())).to.eql('Currently viewing data for 400 papers. Change to first papers (max is 1000). Submit');
         done();
     }, 800);

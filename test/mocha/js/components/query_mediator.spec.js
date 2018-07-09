@@ -34,7 +34,7 @@ define([
     ) {
 
       describe('Query Mediator - Controller (query_mediator.spec.js)', function() {
-        
+
       var createTestQM = function(beehive) {
         var qm = new QueryMediator({
           shortDelayInMs: 2,
@@ -120,7 +120,7 @@ define([
           }, 5, this, done)
         }
       });
-      
+
 
       it("returns QueryMediator object", function(done) {
         expect(new QueryMediator()).to.be.instanceof(QueryMediator);
@@ -175,6 +175,9 @@ define([
               "q": [
                 "*:*"
               ],
+              "sort": [
+                "date desc, bibcode desc"
+              ],
               "__qid": [
                 "fakeQueryID"
               ]
@@ -213,7 +216,7 @@ define([
 
         // Check that query mediator object has "original_query" and "original_url" attributes
         expect(qm.original_query).to.eql(["bibstem:ApJ object:Foo year:2001"]);
-        expect(qm.original_url).to.eql("q=bibstem%3AApJ%20object%3AFoo%20year%3A2001");
+        expect(qm.original_url).to.eql("q=bibstem%3AApJ%20object%3AFoo%20year%3A2001&sort=date%20desc%2C%20bibcode%20desc");
 
         // Check that response from API gets properly processed
         qm.getPubSub().publish(qm.getPubSub().DELIVERING_RESPONSE, new JsonResponse({"query":"bibstem:ApJ simbid:123456 year:2001"}));
@@ -223,7 +226,8 @@ define([
           {
             "q": [
               "bibstem:ApJ simbid:123456 year:2001"
-            ]
+            ],
+            "sort": ["date desc, bibcode desc"]
           },
           "fakeKey"
         ]));
@@ -522,7 +526,7 @@ define([
 
       });
 
-      
+
 
       it("executes queries", function(done) {
         var pubSpy = this.pubSpy;
@@ -674,22 +678,22 @@ define([
         var pubSpy = this.pubSpy;
         var x = createTestQM(this.beehive);
         var qm = x.qm, key1 = x.key1, key2 = x.key2, req1 = x.req1, req2 = x.req2;
-  
+
         this.beehive.addObject('DynamicConfig', {pskToExecuteFirst: key2.getId()});
         qm.__searchCycle.waiting[key1.getId()] = {key: key1, request: req1};
         qm.__searchCycle.waiting[key2.getId()] = {key: key2, request: req2};
         qm.startExecutingQueries();
         expect(qm.__searchCycle.running).to.be.true;
         expect(qm.__searchCycle.inprogress[key2.getId()]).to.be.defined;
-  
+
         this.server.respond();
         expect(qm.__searchCycle.done[key2.getId()]).to.be.defined;
         expect(qm.__searchCycle.inprogress[key1.getId()]).to.be.defined;
         expect(_.keys(qm.__searchCycle.waiting).length).to.be.eql(0);
-  
+
         expect(pubSpy.lastCall.args[1]).to.be.instanceOf(ApiFeedback);
         expect(pubSpy.lastCall.args[1].code).to.be.eql(ApiFeedback.CODES.SEARCH_CYCLE_STARTED);
-  
+
         this.server.respond();
         var mydone = done;
 
@@ -701,23 +705,23 @@ define([
           done();
         }, 1, this, done, pubSpy);
       });
-  
+
       it("knows to recover from certain errors", function(done) {
         var pubSpy = this.pubSpy;
         var x = createTestQM(this.beehive);
         var qm = x.qm, key1 = x.key1, key2 = x.key2, req1 = x.req1, req2 = x.req2;
         var rk = qm._getCacheKey(req1);
-  
+
         req1.set('target', '503');
         qm._executeRequest(req1, key1);
-  
+
         this.server.respond();
         expect(qm.onApiRequestFailure.callCount).to.be.eql(1);
         expect(qm.tryToRecover.callCount).to.be.eql(1);
-  
+
         // now pretend that server 'recovered'
         this.urlCodes[this.urlCodes.lastUrl] = 200;
-  
+
         setTimeout(function(self, done) {
           self.server.respond();
           expect(qm.onApiResponse.callCount).to.be.eql(1);
@@ -726,7 +730,7 @@ define([
         }, 5, this, done);
       });
 
-      
+
     });
 
 

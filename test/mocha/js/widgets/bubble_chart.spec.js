@@ -6064,6 +6064,9 @@ define([
         ],
         "fq": [
           "{!type=aqp v=$fq_bubble_chart}"
+        ],
+        "sort": [
+          "date desc, bibcode desc"
         ]
       });
 
