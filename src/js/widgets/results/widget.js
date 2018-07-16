@@ -13,8 +13,7 @@ define([
   'hbs!js/widgets/results/templates/container-template',
   'js/mixins/papers_utils',
   'js/modules/orcid/extension',
-  'js/mixins/dependon',
-  'analytics'
+  'js/mixins/dependon'
 ],
 
 function (
@@ -26,12 +25,10 @@ function (
   ContainerTemplate,
   PapersUtilsMixin,
   OrcidExtension,
-  Dependon,
-  analytics
-
+  Dependon
 ) {
   var ResultsWidget = ListOfThingsWidget.extend({
-    initialize: function (options) {
+    initialize: function () {
       ListOfThingsWidget.prototype.initialize.apply(this, arguments);
       // now adjusting the List Model
       this.view.template = ContainerTemplate;
@@ -88,12 +85,22 @@ function (
     activate: function (beehive) {
       ListOfThingsWidget.prototype.activate.apply(this, [].slice.apply(arguments));
       var pubsub = beehive.getService('PubSub');
-      _.bindAll(this, 'dispatchRequest', 'processResponse', 'onUserAnnouncement', 'onStoragePaperUpdate', 'onCustomEvent');
+      _.bindAll(this, 'dispatchRequest', 'processResponse', 'onUserAnnouncement', 'onStoragePaperUpdate', 'onCustomEvent', 'onStartSearch');
       pubsub.subscribe(pubsub.INVITING_REQUEST, this.dispatchRequest);
       pubsub.subscribe(pubsub.DELIVERING_RESPONSE, this.processResponse);
       pubsub.subscribe(pubsub.USER_ANNOUNCEMENT, this.onUserAnnouncement);
       pubsub.subscribe(pubsub.STORAGE_PAPER_UPDATE, this.onStoragePaperUpdate);
       pubsub.subscribe(pubsub.CUSTOM_EVENT, this.onCustomEvent);
+      pubsub.subscribe(pubsub.START_SEARCH, this.onStartSearch);
+    },
+
+    _clearResults: function () {
+      this.hiddenCollection.reset();
+      this.view.collection.reset();
+    },
+
+    onStartSearch: function () {
+      this._clearResults();
     },
 
     onUserAnnouncement: function (message, data) {
