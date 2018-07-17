@@ -22,6 +22,7 @@ $fa-font-path:        "//netdna.bootstrapcdn.com/font-awesome/4.6.3/fonts";  // 
 @import 'ads-sass/utility';
 
 /* Import Bumblebee-specific modules */
+@import 'ads-sass/layout';
 @import 'ads-sass/any-page';
 @import 'ads-sass/abstract-page-widgets';
 @import 'ads-sass/bootstrap-overrides';

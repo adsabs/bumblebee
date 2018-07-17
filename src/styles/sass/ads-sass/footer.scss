@@ -1,52 +1,63 @@
-.s-footer {
-
-  background-color:  #E0E0E0;
-  color: lighten($text-color, 10%);
-  margin-top: 20px;
-  padding: 30px 0;
-  font-size: 16px;
+.__footer_wrapper {
+  background-color: #484f4f;
+  color: white;
+  font-size: 1.1em;
+  font-family: "Helvetica Neue",Helvetica,Arial,sans-serif;
   font-weight: 300;
-  margin: 0 -15px;
-  position: relative;
-  z-index: $z-index-4;
-  border-top: $border-default;
+  padding: 30px 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  @media (min-width: $screen-sm-min) {
+    flex-direction: row;
+  }
 
-  .top-ads-links {
-    margin: -31px -50px -15px -50px;
-    padding: 15px;
-
-    h4 {
-      display: inline-block;
-      margin-left: 45px;
-      padding-top: 30px;
-      font-weight: 300;
+  &>* {
+    padding: 0 30px;
+  }
+  .__footer_brand_extra {
+    color: rgba(255, 255, 255, 0.5);
+    font-size: 0.7em;
+    max-width: 300px;
+    @media (min-width: $screen-sm-min) {
+      width: 100%;
     }
-    h4:first-of-type {
-      margin-left:0;
+  }
+
+  .__footer_brand_logos img {
+    width: 64px;
+    .smithsonian {
+      width: 56px;
     }
-
-  }
-
-  img {
-    width: 80px;
-    height: auto;
-    margin-bottom: 20px;
-    max-width: 120px;
-    position: relative;
-    top: 12px;
-    margin-left: 2%;
-  }
-
-  img.smithsonian{
-    width: 67px;
-    margin-right: 2%;
-  }
-
-  .s-help {
-    text-align: center;
-    font-size: 18px;
-
   }
 }
 
+.__footer_links {
+  list-style: none;
+  padding-left: 0;
+  margin-top: 0;
+  margin-bottom: 0;
 
+  a {
+    text-decoration: none;
+    color: rgba(255, 255, 255, 0.8);
+    font-weight: 100;
+    &:hover {
+      color: #5683e0;
+    }
+  }
+
+  li {
+    line-height: 1.25;
+    margin-bottom: 8px;
+  }
+}
+
+.__footer_list_title {
+  font-weight: 400;
+  margin-bottom: 1em;
+}
+
+.s-footer {
+  width: 100%;
+}
