@@ -79,6 +79,12 @@ define([
         // give tests the chance to set up stubs or whatever before activation
         beforeActivate && beforeActivate.call(widget, widget);
 
+        // make sure results aren't cleared until after a short timeout
+        var startSearch = widget.onStartSearch;
+        widget.onStartSearch = function () {
+          setTimeout(startSearch.bind(widget), 100);
+        }
+
         widget.activate(minsub.beehive.getHardenedInstance());
         return widget;
       };
@@ -339,6 +345,12 @@ define([
         minsub.beehive.addObject("User", fakeUserObject);
         var fakeDocStashController = {getHardenedInstance :function(){return this}, stashDocs : sinon.spy()};
         minsub.beehive.addObject("DocStashController", fakeDocStashController );
+
+        // make sure results aren't cleared until after a short timeout
+        var startSearch = widget.onStartSearch;
+        widget.onStartSearch = function () {
+          setTimeout(startSearch.bind(widget), 100);
+        }
 
         widget.activate(minsub.beehive.getHardenedInstance());
 

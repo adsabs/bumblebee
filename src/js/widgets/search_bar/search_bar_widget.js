@@ -731,6 +731,9 @@ function (
             citationLabel: 'citations'
           });
         }
+      } else {
+        this.model.unset('citationCount');
+        this.model.unset('citationLabel');
       }
     },
 
