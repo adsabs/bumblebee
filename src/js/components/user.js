@@ -18,6 +18,7 @@
  *
  */
 define([
+  'underscore',
   'backbone',
   'js/components/api_request',
   'js/components/api_targets',
@@ -29,6 +30,7 @@ define([
 
 ],
 function (
+  _,
   Backbone,
   ApiRequest,
   ApiTargets,
@@ -58,7 +60,14 @@ function (
     defaults: function () {
       return {
         user: undefined,
-        link_server: undefined
+        link_server: undefined,
+        minAuthorPerResult: 4,
+        externalLinkAction: 'Open in new tab',
+        defaultDatabase: [
+          { name: 'Physics', value: false },
+          { name: 'Astrophysics', value: false },
+          { name: 'General', value: false }
+        ]
       };
     }
   });
@@ -85,6 +94,8 @@ function (
       this.base_url = this.test ? 'location.origin' : location.origin;
 
       this.buildAdditionalParameters();
+
+      this.composeRequest = _.debounce(_.bind(this.composeRequest, this), 300, { leading: true });
     },
 
     activate: function (beehive) {
@@ -251,7 +262,7 @@ function (
         requestData;
 
       function done() {
-        deferred.resolve.apply(undefined, arguments);
+        deferred.resolve.apply(deferred, arguments);
       }
 
       // will have a default fail message for get requests or put/post requests
@@ -260,7 +271,7 @@ function (
         var argsWithTarget = [].slice.apply(arguments);
         argsWithTarget.push(target);
         toCall.apply(that, argsWithTarget);
-        deferred.fail.apply(undefined, arguments);
+        deferred.reject.apply(deferred, arguments);
       }
 
       requestData = {

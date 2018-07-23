@@ -29,7 +29,7 @@ define([
       UserPreferences__librarylink: { title: 'Library Link Server', path: 'user/settings/librarylink', category: 'preferences' },
       UserPreferences__orcid: { title: 'ORCID Settings', path: 'user/settings/orcid', category: 'preferences' },
       LibraryImport: { title: 'Import Libraries', path: 'user/settings/libraryimport', category: 'preferences' },
-
+      UserPreferences__application: { title: 'Application', path: 'user/settings/application', category: 'preferences' },
       UserSettings__email: { title: 'Change Email', path: 'user/settings/email', category: 'settings' },
       UserSettings__password: { title: 'Change Password', path: 'user/settings/password', category: 'settings' },
       UserSettings__token: { title: 'API Token', path: 'user/settings/token', category: 'settings' },
