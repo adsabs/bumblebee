@@ -71,6 +71,26 @@ define(['config', 'module'], function (config, module) {
         app.start(Router);
         pubsub.publish(pubsub.getCurrentPubSubKey(), pubsub.APP_STARTED);
 
+        // handle user preferences for external link actions
+        var updateExternalLinkBehavior = function () {
+          var userData = app.getBeeHive().getObject('User').getUserData('USER_DATA');
+          var action = userData.externalLinkAction && userData.externalLinkAction.toUpperCase() || 'AUTO';
+          var handler = function () {
+            if ($(this).attr('target') === '_blank') {
+              $(this).attr('target', '');
+            }
+          };
+          var $a = $('a');
+          if (action === 'OPEN IN CURRENT TAB') {
+            $a.off('click.global');
+            $a.on('click.global', handler);
+          } else {
+            $a.off('click.global');
+          }
+        };
+        pubsub.subscribe(pubsub.getCurrentPubSubKey(), pubsub.USER_ANNOUNCEMENT, updateExternalLinkBehavior);
+        updateExternalLinkBehavior();
+
         analytics('send', 'event', 'timer', 'app-booted', Date.now() - timeLoaded);
 
         // some global event handlers, not sure if right place
