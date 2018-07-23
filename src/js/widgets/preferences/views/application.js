@@ -7,7 +7,7 @@ define([
 
   var DEFAULTS = {
     numAuthors: {
-      initialOptions: ['none'].concat((_.range(1, 11))).concat(['all']),
+      initialOptions: (_.range(1, 11)).concat(['all']),
       initialValue: 4
     },
     externalLinks: {
