@@ -161,6 +161,12 @@ define([
     q.set('bibcode', ids);
     if (format.value === 'custom' && exports.customFormatString.length > 0) {
       q.set('format', exports.customFormatString);
+    } else if (format.value === 'custom' && exports.customFormatString.length <= 0) {
+
+      // send back an empty response
+      return $.Deferred().resolve().promise().then(function () {
+        dispatch(receiveExport(''));
+      });
     }
 
     const req = composeRequest(q);

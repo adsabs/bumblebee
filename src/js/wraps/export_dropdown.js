@@ -1,6 +1,8 @@
 define([
+  'underscore',
+  'js/widgets/config',
   'js/widgets/dropdown-menu/widget'
-], function (DropdownWidget) {
+], function (_, config, DropdownWidget) {
   var links = [
     { description: 'in BibTeX', navEvent: 'export', params: { format: 'bibtex' } },
     { description: 'in AASTeX', navEvent: 'export', params: { format: 'aastex' } },
@@ -28,6 +30,33 @@ define([
       iconClass: iconClass,
       rightAlign: rightAlign,
       selectedOption: selectedOption,
+      updateLinks: function (userData) {
+        var format = userData.defaultExportFormat;
+        var formatVal = (_.find(config.export.formats, { label: format })).value;
+
+        if (format) {
+          var match;
+          _.forEach(links, function (link, idx) {
+            if (link.params && link.params.format && link.params.format === formatVal) {
+              match = idx;
+              return false;
+            }
+          });
+
+          var newVal = _.assign({}, links[0], {
+            description: 'in ' + format,
+            params: _.assign({}, links[0].params, { format: formatVal })
+          });
+          return match ?
+            [newVal]
+              .concat(links.slice(1, match))
+              .concat(links[0])
+              .concat(links.slice(match + 1)) :
+            [newVal]
+              .concat(links.slice(1));
+        }
+        return links;
+      }
     });
 
     return Dropdown;

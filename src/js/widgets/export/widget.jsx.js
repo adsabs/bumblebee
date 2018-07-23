@@ -15,10 +15,12 @@ define([
   'js/components/api_query',
   'js/components/api_targets',
   'js/components/api_feedback',
-  'hbs!js/widgets/export/templates/classic_submit_form'
+  'hbs!js/widgets/export/templates/classic_submit_form',
+  'js/widgets/config'
 ], function ($, _, Backbone, React, ReactDOM, Redux, ReactRedux,
   ReduxThunk, BaseWidget, reducers, actions, App, ApiQuery, ApiTargets,
-  ApiFeedback, ClassicFormTemplate) {
+  ApiFeedback, ClassicFormTemplate, config) {
+
   var View = Backbone.View.extend({
 
     /**
@@ -72,6 +74,8 @@ define([
 
       // create the view passing the store as the only property
       this.view = new View({ store: this.store });
+
+      this.defaultFormat = 'BibTeX';
     },
 
     /**
@@ -89,6 +93,8 @@ define([
       pubsub.subscribe(pubsub.INVITING_REQUEST, query => (
         dispatch(setQuery(query.toJSON()))));
       this.attachGeneralHandler(this.onApiFeedback);
+      pubsub.subscribe(pubsub.USER_ANNOUNCEMENT,
+        _.bind(this.getDefaultFormatFromUserData, this));
     },
 
     /**
@@ -100,6 +106,13 @@ define([
      */
     onApiFeedback: function (feedback) {
       this.store.dispatch(actions.requestFailed(feedback));
+    },
+
+    getDefaultFormatFromUserData: function () {
+      const userData = this.getBeeHive().getObject('User').getUserData('USER_DATA');
+      const format = _.has(userData, 'defaultExportFormat') ?
+        userData.defaultExportFormat : this.defaultFormat;
+      return (_.find(config.export.formats, { label: format })).value;
     },
 
     /**
@@ -117,6 +130,9 @@ define([
         fetchUsingQuery, fetchUsingIds, findAndSetFormat, hardReset,
         setCount, setQuery, setTotalRecs, takeSnapshot, setOrigin
       } = actions;
+
+      const fmt = format === 'default' || format === 'other' ?
+        this.getDefaultFormatFromUserData() : format;
 
       // perform a full reset of the store
       dispatch(hardReset());
@@ -137,7 +153,8 @@ define([
       dispatch(setTotalRecs(numFound));
 
       // if a format is selected, then we can start an actual export
-      if (format !== 'other') {
+      if (fmt !== 'other') {
+
         // take a snapshot of the state
         dispatch(takeSnapshot());
 
@@ -151,6 +168,7 @@ define([
             .always(() => dispatch(takeSnapshot()))
           );
       } else {
+
         // take a snapshot if no export is selected
         dispatch(takeSnapshot());
       }
@@ -196,10 +214,13 @@ define([
         setCount, setTotalRecs, takeSnapshot, setOrigin
       } = actions;
 
+      const format = data.format === 'default' || data.format === 'other' ?
+        this.getDefaultFormatFromUserData() : data.format;
+
       dispatch(hardReset());
       dispatch(setOrigin(this.componentParams && this.componentParams.origin));
       dispatch(receiveIds(recs));
-      dispatch(findAndSetFormat(data.format));
+      dispatch(findAndSetFormat(format.toLowerCase()));
       dispatch(setCount(recs.length));
       dispatch(setTotalRecs(recs.length));
 
@@ -207,6 +228,7 @@ define([
       if (data.format !== 'other') {
         dispatch(fetchUsingIds()).done(() => dispatch(takeSnapshot()));
       } else {
+
         // otherwise only snapshot, so we can get back to this state later
         dispatch(takeSnapshot());
       }
