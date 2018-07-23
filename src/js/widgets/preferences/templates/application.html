@@ -96,29 +96,29 @@
 
         <!-- Default Export Format -->
         <div class="form-group">
-          <label for="numAuthors">
-            Authors Visible Per Result
-            <a href="#collapseNumAuthorsDesc" data-toggle="collapse" role="button" aria-expanded="false" aria-controls="collapseNumAuthorsDesc">
+          <label for="exportFormat">
+            Default Export Format
+            <a href="#collapseExportFormat" data-toggle="collapse" role="button" aria-expanded="false" aria-controls="collapseExportFormat">
               <i class="fa fa-question-circle"></i>
             </a>
           </label>
           <p>
-            <div class="collapse" id="collapseNumAuthorsDesc">
+            <div class="collapse" id="collapseExportFormat">
               <div class="card card-body text-muted">
                 <p>
-                    Specifies the number of authors to show
-                    under each result before the list is truncated.
+                    Select the default export format you would like to use
+                    when opening the Export tool.
                     <br>
-                    (<strong>default: {{numAuthorsDefault}}</strong>)
+                    (<strong>default: {{exportFormatDefault}}</strong>)
                 </p>
               </div>
             </div>
           </p>
-          <select class="form-control" id="numAuthors" aria-describedby="collapseNumAuthorsDesc">
-            {{#each numAuthorsOptions}}
+          <select class="form-control" id="exportFormat" aria-describedby="collapseExportFormat">
+            {{#each exportFormatOptions}}
               <option
                 value="{{this}}"
-                {{#compare this ../numAuthorsSelected}} selected="selected" {{/compare}}
+                {{#compare this ../exportFormatSelected}} selected="selected" {{/compare}}
               >{{this}}</option>
             {{/each}}
           </select>
@@ -127,6 +127,7 @@
         <hr class="hr">
         <button class="btn btn-primary" role="submit" id="appSettingsSubmit">Save</button>
         <button class="btn btn-default" role="reset" id="appSettingsCancel">Cancel</button>
+        <a href="#" class="link" id="appSettingsReset">Reset To Defaults</a>
       </form>
 
       <div class="col-md-6 col-md-offset-3 text-center">

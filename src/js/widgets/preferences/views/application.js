@@ -1,8 +1,9 @@
 define([
   'underscore',
   'marionette',
-  'hbs!js/widgets/preferences/templates/application'
-], function (_, Marionette, ApplicationTemplate) {
+  'hbs!js/widgets/preferences/templates/application',
+  'js/widgets/config'
+], function (_, Marionette, ApplicationTemplate, config) {
 
   var DEFAULTS = {
     numAuthors: {
@@ -12,6 +13,10 @@ define([
     externalLinks: {
       initialOptions: [ 'Auto', 'Open new tab', 'Open in current tab' ],
       initialValue: 'Auto'
+    },
+    exportFormat: {
+      initialOptions: _.map(config.export.formats, 'label'),
+      initialValue: 'BibTeX'
     },
     database: {
       initialValue: [
@@ -26,14 +31,17 @@ define([
 
     initialize: function () {
 
-      // NEEDS to pull from model here
+      // Get the latest value from the incoming model, or just take the default
       var numAuthors = this.model.get('minAuthorsPerResult') ||
         DEFAULTS.numAuthors.initialValue;
       var externalLinks = this.model.get('externalLinkAction') ||
         DEFAULTS.externalLinks.initialValue;
       var database = this.model.get('defaultDatabase') ||
         DEFAULTS.database.initialValue;
+      var exportFormat = this.model.get('defaultExportFormat') ||
+        DEFAULTS.exportFormat.initialValue
 
+      // must clone the props that will get mutated
       this.model.set({
         numAuthorsOptions: DEFAULTS.numAuthors.initialOptions,
         numAuthorsDefault: DEFAULTS.numAuthors.initialValue,
@@ -41,7 +49,10 @@ define([
         externalLinksOptions: DEFAULTS.externalLinks.initialOptions,
         externalLinksDefault: DEFAULTS.externalLinks.initialValue,
         externalLinksSelected: _.clone(externalLinks),
-        databaseSelected: _.cloneDeep(database)
+        databaseSelected: _.cloneDeep(database),
+        exportFormatOptions: DEFAULTS.exportFormat.initialOptions,
+        exportFormatDefault: DEFAULTS.exportFormat.initialValue,
+        exportFormatSelected: _.clone(exportFormat)
       });
       this.model.trigger('change');
     },
@@ -53,6 +64,7 @@ define([
     events: {
       'click #appSettingsSubmit': 'onSubmit',
       'click #appSettingsCancel': 'onCancel',
+      'click #appSettingsReset': 'onResetToDefaults',
       'click .database-select': 'onDatabaseSelect',
       'change select': 'syncModel'
     },
@@ -63,8 +75,14 @@ define([
 
     onDatabaseSelect: function (e) {
       var data = this.model.get('databaseSelected');
+
+      // find the current index of the element
       var idx = $('.database-select', this.el).index(e.currentTarget);
-      var newVal = _.assign(data[idx], { value: !data[idx].value });
+
+      // grab the object at [idx] and make our change
+      var newVal = _.assign({}, data[idx], { value: !data[idx].value });
+
+      // place our new value in the array
       var newData = data.slice(0, idx).concat(newVal).concat(data.slice(idx + 1));
       this.model.set('databaseSelected', newData);
       this.model.trigger('change');
@@ -108,13 +126,27 @@ define([
       this.trigger('change:applicationSettings', {
         minAuthorsPerResult: this._convertToString(this.model.get('numAuthorsSelected')),
         externalLinkAction: this.model.get('externalLinksSelected'),
-        defaultDatabase: this.model.get('databaseSelected')
+        defaultDatabase: this.model.get('databaseSelected'),
+        defaultExportFormat: this.model.get('exportFormatSelected')
       });
     },
 
     onCancel: function (e) {
       e.preventDefault();
       this.initialize();
+    },
+
+    onResetToDefaults: function () {
+
+      // clear the model
+      this.model.set({
+        minAuthorsPerResult: undefined,
+        externalLinkAction: undefined,
+        defaultDatabase: undefined,
+        defaultExportFormat: undefined
+      }, { unset: true });
+
+      this.onCancel.apply(this, arguments);
     },
 
     onError: function () {

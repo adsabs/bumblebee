@@ -67,7 +67,8 @@ function (
           { name: 'Physics', value: false },
           { name: 'Astrophysics', value: false },
           { name: 'General', value: false }
-        ]
+        ],
+        defaultExportFormat: 'BibTeX'
       };
     }
   });
