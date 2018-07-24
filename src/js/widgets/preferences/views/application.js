@@ -21,7 +21,7 @@ define([
     database: {
       initialValue: [
         { name: 'Physics', value: false },
-        { name: 'Astrophysics', value: false },
+        { name: 'Astronomy', value: false },
         { name: 'General', value: false }
       ]
     }

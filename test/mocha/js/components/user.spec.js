@@ -377,7 +377,7 @@ define([
             "value": false
           },
           {
-            "name": "Astrophysics",
+            "name": "Astronomy",
             "value": false
           },
           {

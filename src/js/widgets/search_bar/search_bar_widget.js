@@ -740,35 +740,37 @@ function (
 
     applyDefaultFilters: function (apiQuery) {
       var dbfilters = this.defaultDatabases;
-      var fqString = '{!type=aqp v=$fq_database}';
+      if (dbfilters.length > 0) {
+        var fqString = '{!type=aqp v=$fq_database}';
 
-      // check for presence of database fq
-      var fq = apiQuery.get('fq');
-      fq = _.isArray(fq) ? fq : [fq];
-      var match = _.indexOf(fqString);
-      if (match < 0) {
-        fq.push(fqString);
-        apiQuery.set('fq', fq);
-      }
+        // check for presence of database fq
+        var fq = apiQuery.get('fq');
+        fq = _.isArray(fq) ? fq : [fq];
+        var match = _.indexOf(fqString);
+        if (match < 0) {
+          fq.push(fqString);
+          apiQuery.set('fq', fq);
+        }
 
-      // check for presence of fq_database
-      if (!apiQuery.has('fq_database')) {
-        var fq_database_string = _.reduce(dbfilters, function (res, db, i) {
-          var d = db.toLowerCase();
-          return res.replace(/(\(.*)(\))/, i === 0 ?
-              '$1database=' + d + '$2' :
-              '$1 OR database=' + d + '$2'
-            );
-        }, '()');
-        apiQuery.set('fq_database', fq_database_string);
-      }
+        // check for presence of fq_database
+        if (!apiQuery.has('fq_database')) {
+          var fq_database_string = _.reduce(dbfilters, function (res, db, i) {
+            var d = db.toLowerCase();
+            return res.replace(/(\(.*)(\))/, i === 0 ?
+                '$1database=' + d + '$2' :
+                '$1 OR database=' + d + '$2'
+              );
+          }, '()');
+          apiQuery.set('fq_database', fq_database_string);
+        }
 
-      // finally add the filters
-      if (!apiQuery.has('__filter_database_fq_database')) {
-        var fq_database_filters = _.map(dbfilters, function (db) {
-          return 'database=' + db.toLowerCase();
-        });
-        apiQuery.set('__filter_database_fq_database', ['OR'].concat(fq_database_filters));
+        // finally add the filters
+        if (!apiQuery.has('__filter_database_fq_database')) {
+          var fq_database_filters = _.map(dbfilters, function (db) {
+            return 'database=' + db.toLowerCase();
+          });
+          apiQuery.set('__filter_database_fq_database', ['OR'].concat(fq_database_filters));
+        }
       }
 
       return apiQuery;
@@ -900,12 +902,15 @@ function (
         newQuery = new ApiQuery(_.assign({}, oldQ, newQ));
       }
 
+      // apply any default filters only if this is a new search
+      if (this.currentPage === 'index-page') {
+        newQuery = this.applyDefaultFilters(newQuery);
+      }
+
       // remove the bigquery from the query if the user cleared it
       if (newQuery.has('__clearBigQuery')) {
         newQuery.unset('__qid');
       }
-
-      newQuery = this.applyDefaultFilters(newQuery);
 
       this.view.setFormVal(newQuery.get('q')[0]);
       this.setCurrentQuery(newQuery);

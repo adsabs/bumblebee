@@ -178,7 +178,6 @@ define([
             }));
           });
       } else if (event === 'change:applicationSettings') {
-        console.log('updating', arg1);
         var subView = this.view.content.currentView;
         this.getBeeHive().getObject('User').setUserData(arg1)
           .done(_.bind(subView.onSuccess, subView))
@@ -192,7 +191,6 @@ define([
       if (event == user.USER_INFO_CHANGE) {
         this.model.set(data);
       }
-      console.log(event, data);
     },
 
     handleOrcidAnnouncement: function (event) {
