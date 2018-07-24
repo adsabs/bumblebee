@@ -200,7 +200,7 @@ define([
 
           var view = pageManager.show();
 
-          expect(pageManager.widgets.tocWidget.collection.get("ShowPaperExport__bibtex").get("category")).to.eql("export");
+          expect(pageManager.widgets.tocWidget.collection.get("ShowPaperExport__default").get("category")).to.eql("export");
 
           var spy = sinon.spy();
           var pubsub = app.getService('PubSub').getHardenedInstance();
@@ -209,20 +209,20 @@ define([
 
           pageManager.widgets.tocWidget.resetActiveStates();
 
-          view.$("a[data-widget-id=ShowPaperExport__bibtex]").click();
+          view.$("a[data-widget-id=ShowPaperExport__default]").click();
 
           expect(spy.args[0][0]).to.eql("ShowPaperExport");
           expect(spy.args[0][1]["idAttribute"]).to.eql("ShowPaperExport");
-          expect(spy.args[0][1]["href"]).to.eql("/abs//export/bibtex");
+          expect(spy.args[0][1]["href"]).to.eql("/abs//export");
 
 
           pageManager.widgets.ShowPaperExport.setSubView = sinon.spy();
 
           //should both set the toc nav collection properly, and tell the export widget which view to show
-          pageManager.setActive("ShowPaperExport", "bibtex");
+          pageManager.setActive("ShowPaperExport", "default");
 
-          expect(pageManager.widgets.ShowPaperExport.setSubView.calledWith("bibtex")).to.eql(true);
-          expect(pageManager.widgets.tocWidget.collection.get("ShowPaperExport__bibtex").get("isSelected")).to.eql(true);
+          expect(pageManager.widgets.ShowPaperExport.setSubView.calledWith("default")).to.eql(true);
+          expect(pageManager.widgets.tocWidget.collection.get("ShowPaperExport__default").get("isSelected")).to.eql(true);
 
 
         });

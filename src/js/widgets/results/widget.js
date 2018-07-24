@@ -173,14 +173,27 @@ function (
       }
     },
 
+    getUserData: function () {
+      try {
+        var beehive = _.isFunction(this.getBeeHive) && this.getBeeHive();
+        var user = _.isFunction(beehive.getObject) && beehive.getObject('User');
+        if (_.isPlainObject(user)) {
+          return _.isFunction(user.getUserData) && user.getUserData('USER_DATA');
+        }
+        return {};
+      } catch (e) {
+        return {};
+      }
+    },
+
     updateMinAuthorsFromUserData: function () {
-      var userData = this.getBeeHive().getObject('User').getUserData('USER_DATA');
+      var userData = this.getUserData();
       var min = _.has(userData, 'minAuthorsPerResult') ?
         userData.minAuthorsPerResult : this.minAuthorsPerResult;
 
-      if (min.toUpperCase() === 'ALL') {
+      if (String(min).toUpperCase() === 'ALL') {
         this.minAuthorsPerResult = Number.MAX_SAFE_INTEGER;
-      } else if (min.toUpperCase() === 'NONE') {
+      } else if (String(min).toUpperCase() === 'NONE') {
         this.minAuthorsPerResult = 0;
       } else {
         this.minAuthorsPerResult = Number(min);

@@ -108,8 +108,21 @@ define([
       this.store.dispatch(actions.requestFailed(feedback));
     },
 
+    getUserData: function () {
+      try {
+        var beehive = _.isFunction(this.getBeeHive) && this.getBeeHive();
+        var user = _.isFunction(beehive.getObject) && beehive.getObject('User');
+        if (_.isPlainObject(user)) {
+          return _.isFunction(user.getUserData) && user.getUserData('USER_DATA');
+        }
+        return {};
+      } catch (e) {
+        return {};
+      }
+    },
+
     getDefaultFormatFromUserData: function () {
-      const userData = this.getBeeHive().getObject('User').getUserData('USER_DATA');
+      const userData = this.getUserData();
       const format = _.has(userData, 'defaultExportFormat') ?
         userData.defaultExportFormat : this.defaultFormat;
       return (_.find(config.export.formats, { label: format })).value;

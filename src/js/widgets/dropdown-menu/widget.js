@@ -148,8 +148,21 @@ function (Marionette, BaseWidget, dropdownTemplate, dropdownItemTemplate) {
       this.updateFromUserData();
     },
 
+    getUserData: function () {
+      try {
+        var beehive = _.isFunction(this.getBeeHive) && this.getBeeHive();
+        var user = _.isFunction(beehive.getObject) && beehive.getObject('User');
+        if (_.isPlainObject(user)) {
+          return _.isFunction(user.getUserData) && user.getUserData('USER_DATA');
+        }
+        return {};
+      } catch (e) {
+        return {};
+      }
+    },
+
     updateFromUserData: function () {
-      var userData = this.getBeeHive().getObject('User').getUserData('USER_DATA');
+      var userData = this.getUserData();
       var links = this.options.updateLinks(userData, this.options.links) || this.options.links;
       this.options.links = links;
       this.collection.reset(links);

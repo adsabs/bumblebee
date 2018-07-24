@@ -95,8 +95,6 @@ function (
       this.base_url = this.test ? 'location.origin' : location.origin;
 
       this.buildAdditionalParameters();
-
-      this.composeRequest = _.debounce(_.bind(this.composeRequest, this), 300, { leading: true });
     },
 
     activate: function (beehive) {

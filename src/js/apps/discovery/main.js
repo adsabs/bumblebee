@@ -71,9 +71,22 @@ define(['config', 'module'], function (config, module) {
         app.start(Router);
         pubsub.publish(pubsub.getCurrentPubSubKey(), pubsub.APP_STARTED);
 
+        var getUserData = function () {
+          try {
+            var beehive = _.isFunction(this.getBeeHive) && this.getBeeHive();
+            var user = _.isFunction(beehive.getObject) && beehive.getObject('User');
+            if (_.isPlainObject(user)) {
+              return _.isFunction(user.getUserData) && user.getUserData('USER_DATA');
+            }
+            return {};
+          } catch (e) {
+            return {};
+          }
+        }
+
         // handle user preferences for external link actions
         var updateExternalLinkBehavior = function () {
-          var userData = app.getBeeHive().getObject('User').getUserData('USER_DATA');
+          var userData = getUserData.call(app);
           var action = userData.externalLinkAction && userData.externalLinkAction.toUpperCase() || 'AUTO';
           var handler = function () {
             if ($(this).attr('target') === '_blank') {

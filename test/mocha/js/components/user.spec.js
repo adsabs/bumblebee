@@ -367,8 +367,25 @@ define([
        u.userModel.set("link_server", "woobly");
 
        expect(u.getUserData()).to.eql({
-       user : "foobly@gmail.com",
-       link_server : "woobly"
+        "user": "foobly@gmail.com",
+        "link_server": "woobly",
+        "minAuthorPerResult": 4,
+        "externalLinkAction": "Open in new tab",
+        "defaultDatabase": [
+          {
+            "name": "Physics",
+            "value": false
+          },
+          {
+            "name": "Astrophysics",
+            "value": false
+          },
+          {
+            "name": "General",
+            "value": false
+          }
+        ],
+        "defaultExportFormat": "BibTeX"
       });
 
       expect(u.getUserName()).to.eql("foobly@gmail.com");
@@ -379,7 +396,7 @@ define([
      });
 
 
-   it("allows widgets to post/put data to user endpoints (user data, change email, change password, delete account, get token)", function(){
+   it("allows widgets to post/put data to user endpoints (user data, change email, change password, delete account, get token)", function(done){
 
      var u = new User();
 
@@ -424,42 +441,47 @@ define([
      //returns a promise
      expect(a.then).to.be.instanceof(Function);
 
+     setTimeout(function () {
+      u.changeEmail({email : "alex@alex.com", confirm_email: "alex@alex.com", password : "foo"});
 
-     u.changeEmail({email : "alex@alex.com", confirm_email: "alex@alex.com", password : "foo"});
+      var request2 = requestStub.args[1][0];
+      expect(request2.toJSON().target).to.eql("accounts/change-email");
+      expect(request2.toJSON().options.type).to.eql("POST");
+      expect(request2.toJSON().options.data).to.eql('{"email":"alex@alex.com","confirm_email":"alex@alex.com","password":"foo","verify_url":"http://localhost:8000/#user/account/verify/change-email"}');
+      expect(fakeCSRF.getCSRF.callCount).to.eql(2);
 
-     var request2 = requestStub.args[1][0];
-     expect(request2.toJSON().target).to.eql("accounts/change-email");
-     expect(request2.toJSON().options.type).to.eql("POST");
-     expect(request2.toJSON().options.data).to.eql('{"email":"alex@alex.com","confirm_email":"alex@alex.com","password":"foo","verify_url":"http://localhost:8000/#user/account/verify/change-email"}');
-     expect(fakeCSRF.getCSRF.callCount).to.eql(2);
+      setTimeout(function () {
+        var token;
+        var tokenPromise = u.generateToken();
 
-     var token;
-     var tokenPromise = u.generateToken();
+        var request3 = requestStub.args[2][0];
+        expect(request3.toJSON().target).to.eql("accounts/token");
+        expect(request3.toJSON().options.type).to.eql("PUT");
+        tokenPromise.done(function(data){token = data});
+        expect(token).to.eql({access_token : "foo"});
+        expect(fakeCSRF.getCSRF.callCount).to.eql(3);
 
-     var request3 = requestStub.args[2][0];
-     expect(request3.toJSON().target).to.eql("accounts/token");
-     expect(request3.toJSON().options.type).to.eql("PUT");
-     tokenPromise.done(function(data){token = data});
-     expect(token).to.eql({access_token : "foo"});
-     expect(fakeCSRF.getCSRF.callCount).to.eql(3);
+        expect(u.userModel.get("link_server")).to.be.undefined;
 
-     expect(u.userModel.get("link_server")).to.be.undefined;
+        setTimeout(function () {
+          u.setUserData({link_server : "foo.com"});
 
-     u.setUserData({link_server : "foo.com"});
-
-     var request4 = requestStub.args[3][0];
-     expect(request4.toJSON().target).to.eql("vault/user-data");
-     expect(request4.toJSON().options.type).to.eql("POST");
-     expect(request4.toJSON().options.data).to.eql('{"link_server":"foo.com"}' );
-     //doesn't require csrf token
-     expect(fakeCSRF.getCSRF.callCount).to.eql(3);
+          var request4 = requestStub.args[3][0];
+          expect(request4.toJSON().target).to.eql("vault/user-data");
+          expect(request4.toJSON().options.type).to.eql("POST");
+          expect(request4.toJSON().options.data).to.eql('{"link_server":"foo.com"}' );
+          //doesn't require csrf token
+          expect(fakeCSRF.getCSRF.callCount).to.eql(3);
 
 
-     //automatically sets returned data into its model
-     expect(u.userModel.get("link_server")).to.eql("foo.com")
+          //automatically sets returned data into its model
+          expect(u.userModel.get("link_server")).to.eql("foo.com")
 
-     requestStub.restore();
-
+          requestStub.restore();
+          done();
+        }, 51);
+      }, 51)
+     }, 51);
    });
 
    it("has a method to get OpenURL Config", function(){

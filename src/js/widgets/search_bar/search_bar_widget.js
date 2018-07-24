@@ -718,11 +718,24 @@ function (
       this.updateFromUserData();
     },
 
-    updateFromUserData: function () {
-      var userData = this.getBeeHive().getObject('User').getUserData('USER_DATA');
-      if (userData && userData.defaultDatabase) {
-        this.defaultDatabases = _.map(_.filter(userData.defaultDatabase, { value: true }), 'name');
+    getUserData: function () {
+      try {
+        var beehive = _.isFunction(this.getBeeHive) && this.getBeeHive();
+        var user = _.isFunction(beehive.getObject) && beehive.getObject('User');
+        if (_.isPlainObject(user)) {
+          return _.isFunction(user.getUserData) && user.getUserData('USER_DATA');
+        }
+        return {};
+      } catch (e) {
+        return {};
       }
+    },
+
+    updateFromUserData: function () {
+      var userData = this.getUserData();
+      this.defaultDatabases = _.has(userData, 'defaultDatabase') ?
+        _.map(_.filter(userData.defaultDatabase, { value: true }), 'name') :
+        this.defaultDatabases;
     },
 
     applyDefaultFilters: function (apiQuery) {
