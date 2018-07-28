@@ -1,4 +1,4 @@
-  // Main config file for the Discovery application
+// Main config file for the Discovery application
 require.config({
   // Initialize the application with the main application file or if we run
   // as a test, then load the test unittests
@@ -150,8 +150,7 @@ require.config({
   // application) see http://requirejs.org/docs/api.html#config-map
   map: {
     '*': {
-      'pubsub_service_impl': 'js/services/default_pubsub',
-      'analytics_config': 'discovery.vars'
+      'pubsub_service_impl': 'js/services/default_pubsub'
     }
   },
 
@@ -231,7 +230,10 @@ require.config({
       '//cdnjs.cloudflare.com/ajax/libs/FileSaver.js/1.3.8/FileSaver.min',
       'libs/file-saver/index'
     ],
-    'google-analytics': '//www.google-analytics.com/analytics',
+    'google-analytics': [
+      '//www.google-analytics.com/analytics',
+      'data:application/javascript,'
+    ],
     'google-recaptcha': '//www.google.com/recaptcha/api.js?&render=explicit&onload=onRecaptchaLoad',
     'hbs': 'libs/require-handlebars-plugin/hbs',
     'immutable': 'libs/immutable/index',
@@ -345,6 +347,10 @@ require.config({
       exports : 'Marionette'
     },
 
+    analytics: {
+      'deps': ['google-analytics']
+    },
+
     cache: {
       exports: 'Cache'
     },
@@ -363,6 +369,10 @@ require.config({
 
     'd3-cloud': {
       deps: ['d3']
+    },
+
+    'google-analytics': {
+      exports: '__ga__'
     },
 
     'jquery-ui' : {
@@ -403,7 +413,19 @@ require.config({
     }
   },
 
-  callback: function() {
+  callback: function () {
+
+    require(['discovery.vars'], function (config) {
+
+      // google analytics config
+      window.GoogleAnalyticsObject = '__ga__';
+      window.__ga__ = {
+        q: [
+          ['create', config.googleTrackingCode || '', config.googleTrackingOptions || 'auto']
+        ],
+        l: Date.now()
+      };
+    });
 
     require([
       'hbs/handlebars'
