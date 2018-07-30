@@ -231,10 +231,13 @@ require.config({
       'libs/file-saver/index'
     ],
     'google-analytics': [
-      '//www.google-analytics.com/analytics',
+      '//google-analytics.com/analytics',
       'data:application/javascript,'
     ],
-    'google-recaptcha': '//www.google.com/recaptcha/api.js?&render=explicit&onload=onRecaptchaLoad',
+    'google-recaptcha': [
+      '//google.com/recaptcha/api.js?&render=explicit&onload=onRecaptchaLoad',
+      'data:application/javascript,'
+    ],
     'hbs': 'libs/require-handlebars-plugin/hbs',
     'immutable': 'libs/immutable/index',
     'jquery': [
