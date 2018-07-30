@@ -71,6 +71,8 @@ define([
       this.listenTo(this.view, 'all', this.handleViewEvents);
 
       BaseWidget.prototype.initialize.apply(this, arguments);
+
+      this.fetchNecessaryData = _.debounce(_.bind(this.fetchNecessaryData, this), 300);
     },
 
     activate: function (beehive) {
@@ -81,13 +83,25 @@ define([
       pubsub.subscribe(pubsub.USER_ANNOUNCEMENT, this.handleUserAnnouncement);
       pubsub.subscribe(pubsub.ORCID_ANNOUNCEMENT, this.handleOrcidAnnouncement);
 
+      this.updateFromUser();
+    },
+
+    updateFromUser: function () {
+      var model = this.model;
+      var user = this.getBeeHive().getObject('User');
+
       // as soon as preferences widget is activated, get the open url config
-      this.getBeeHive().getObject('User').getOpenURLConfig().done(function (config) {
-        that.model.set('openURLConfig', config);
+      user.getOpenURLConfig().done(function (config) {
+        model.set({
+          openURLConfig: config,
+          openURLError: false
+        });
+      }).fail(function () {
+        model.set('openURLError', true);
       });
 
       // and the user data (which contains user's open url selection)
-      this.model.set(this.getBeeHive().getObject('User').getUserData());
+      model.set(user.getUserData());
     },
 
     // translates what comes from toc widget (e.g. userPreferences__orcid) to view name
@@ -114,6 +128,8 @@ define([
 
     fetchNecessaryData: function (subView) {
       var that = this;
+
+      this.updateFromUser();
 
       this.model.set('orcidLoggedIn', this.getBeeHive().getService('OrcidApi').hasAccess());
       /* right now only orcid view needs extra data */

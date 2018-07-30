@@ -78,16 +78,13 @@
   }
 }
 
-#link-server-container {
-  .form-group {
-    min-width:300px;
-  }
+.link-server-form-container {
+  padding: 15px;
+  margin-top: 10px;
+}
 
-  button.submit {
-    position: relative;
-    top: 12px;
-    left: 1%;
-  }
+button#clear-link-server {
+  text-decoration: none;
 }
 
 .input-list__input {
@@ -115,5 +112,11 @@
     color: $btn-success-color;
     background-color: $btn-success-bg;
     border-color: $btn-success-border;
+  }
+  .link-server-univ-icon {
+    border: solid 1px rgba(0,0,0, 0.2);
+    border-radius: 5px;
+    padding: 5px;
+    white-space: pre;
   }
 }

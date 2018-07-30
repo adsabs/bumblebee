@@ -1,49 +1,220 @@
 <div class="panel-heading"> Library Link Server </div>
 
 <div class="panel-body">
-    {{#if loading}}
-        <p><i class="icon-loading"></i> Loading...</p>
-    {{else}}
-
-    {{#if openURLName}}
-    <div class="current-link-server">
-        <p>Your Library Link Server is set to <b>{{{openURLName}}}</b>.</p>
-        <button class="btn btn-primary-faded btn-sm {{#if openURLName }} collapsed {{/if}}" data-toggle="collapse" data-target="#link-server-container"><i class="toggle-icon"></i> Change Library Link Server</button>
-    </div>
+  <div class="container-fluid link-server-container">
+    {{#if openURLError}}
+      <div class="alert alert-danger">
+        Error retrieving user link servers, please try again later.
+      </div>
     {{/if}}
+    {{#if loading}}
+      <div class="row">
+        <div class="col-sm-12 text-center">
+          <i class="icon-loading"></i> Loading...
+        </div>
+      </div>
+    {{else}}
+      {{#unless openURLError}}
+        <div class="row">
+          <div class="col-sm-12">
+            {{#if openURLName}}
+              <div class="h4">
+                Current Link Server: <strong>{{openURLName}}</strong>.
+              </div>
+            {{else}}
+              <div class="h4">
+                No Link Server Selected.
+              </div>
+            {{/if}}
+          </div>
+        </div>
+        <div class="help-block">
+          <button id="change-link-server" class="btn btn-primary">
+            <i class="fa fa-cog"></i> Update
+          </button>
+          <button id="clear-link-server"
+            class="btn btn-link {{#if editing}} disabled {{/if}} {{#compare openURLName undefined}} disabled {{/compare}}">
+            <span class="text-danger">
+              <i class="fa fa-trash"></i> Clear
+            </span>
+          </button>
+        </div>
+        {{#if editing}}
+        <div class="link-server-form-container">
+          <form class="form-inline">
+            <div class="input-group">
+              <label for="set-link-server">Choose Your Institution
+                <select name="set-link-server" id="set-link-server" class="form-control" style="width: 100%">
+                  {{#each openURLConfig}}
+                  <option value="{{this.link}}" {{#compare ../link_server this.link }} selected="selected" {{/compare}}>{{{this.name}}}</option>
+                  {{/each}}
+                </select>
+              </label>
+            </div>
+            <div class="help-block">
+              <button class="btn btn-success" id="link-server-apply">Apply</button>
+              <button class="btn btn-danger" id="link-server-cancel">Cancel</button>
+            </div>
+          </form>
+        </div>
+        {{/if}}
+        {{#if confirming}}
+          <div id="link-server-clear-confirm">
+            <div class="row col-sm-6 col-sm-offset-3">
+              <div class="alert alert-info text-center">
+                <p>
+                  <strong>Are you sure?</strong>
+                </p>
+                <p>
+                  <button class="btn btn-success btn-sm submit" id="clear-link-server-confirm">Yes, clear</button>
+                  <button class="btn btn-danger btn-sm reset" id="clear-link-server-cancel">Cancel</button>
+                </p>
+              </div>
+            </div>
+            <div class="col-sm-3"></div>
+          </div>
+        {{/if}}
+        {{#unless confirming}}
+          <hr class="hr">
+        {{/unless}}
+        <div class="row">
+          <div class="col-md-8">
+            <div class="h4">
+              <i class="fa fa-question-circle"></i>
+              What Is a Library Link Server?
+            </div>
+            <p>
+              Users who have access to electronic resources through their library
+              subscriptions can configure their user preferences so that the appropriate
+              links to the fulltext will be provided when viewing a record in the ADS.
+            </p>
+            <p>
+              After your selection, look for the <span class="link-server-univ-icon"><strong>My Institution</strong> <i class="fa fa-university"></i></span>
+              entry in the source list on an abstract page.
+            </p>
+            <p>
+              If you find your institution in the above list, please select it so that we
+              can generate the appropriate links for you. For more information,
+              please visit our <a href="//adsabs.github.io/help/userpreferences/library-servers">Help Docs.</a>
+            </p>
+          </div>
+          <div class="col-md-4"></div>
+        </div>
+        <div class="row">
+          <div class="col-md-8">
+              <div class="h4">
+                <i class="fa fa-exclamation-triangle"></i>
+                Institution Not Found?
+              </div>
+              <p>
+                Please contact your electronic resources librarian and request that
+                they email <em>adshelp@cfa.harvard.edu</em> with the relevant
+                openurl information.
+              </p>
+              <p>
+                If you are still having difficulties,
+                <strong><a href="mailto:adshelp@cfa.harvard.edu">Contact Us</a></strong>
+                for help.
+              </p>
+          </div>
+          <div class="col-md-4"></div>
+        </div>
+      {{/unless}}
+    {{/if}}
+  </div>
+
+
+
+
+<!--
+
+  {{#if loading}}
+  <p>
+    <i class="icon-loading"></i>
+    Loading...
+  </p>
+  {{else}}
+  {{#if openURLName}}
+    <div class="current-link-server">
+      <p>Your Library Link Server is set to
+      <b>{{{openURLName}}}</b>.</p>
+      <button id="change-link-server" class="btn btn-primary-faded {{#if openURLName }} collapsed {{/if}}" data-toggle="collapse" data-target="#link-server-container">
+      <i class="toggle-icon"></i> Change Library Link Server</button>
+      <button id="clear-link-server" class="btn btn-danger">Clear Link Server</button>
+    </div>
+  {{/if}}
 
     <div id="link-server-container" class="{{#if openURLName }} collapse {{/if}}">
+      <br/>
+      <form class="form-inline">
+        <div class="form-group" style="min-width:300px">
+          <label for="set-link-server">Choose Your Institution</label>
+          <br/>
+          <select name="set-link-server" id="set-link-server" class="form-control" style="width: 100%">
+            {{#each openURLConfig}}
+            <option value="{{this.link}}" {{#compare ../link_server this.link }} selected="selected" {{/compare}}>{{{this.name}}}</option>
+            {{/each}}
+          </select>
+        </div>
+        <button class="btn btn-sm btn-success submit">submit</button>
+
         <br/>
-        <form class="form-inline" >
-            <div class="form-group" style="min-width:300px">
-                <label for="set-link-server">Choose Your Institution</label><br/>
-                <select name="set-link-server" id="set-link-server" class="form-control" style="width: 100%">
-                    {{#each openURLConfig}}
-                    <option value="{{this.link}}" {{#compare ../link_server this.link }} selected="selected" {{/compare}} >{{{this.name}}}</option>
-                    {{/each}}
-                </select>
-            </div>
-            <button class="btn btn-sm btn-success submit">submit</button>
-
-            <br/>
-            <br/>
-            <br/>
-
-            <p> <b>Can't find your institution in the list above?</b>
-            </p>
-            <p>
-                Please contact your electronic resources librarian
-                and request that he or she email adshelp@cfa.harvard.edu with the relevant openurl information.
-            </p>
-            <p>
-                If you are still having difficulties, <b><a href="mailto:adshelp@cfa.harvard.edu">contact us</a></b> for help.
-            </p>
-        </form>
+        <br/>
         <br/>
 
+        <p>
+          <b>Can't find your institution in the list above?</b>
+        </p>
+        <p>
+          Please contact your electronic resources librarian and request that he or she email adshelp@cfa.harvard.edu with the relevant
+          openurl information.
+        </p>
+        <p>
+          If you are still having difficulties,
+          <b>
+            <a href="mailto:adshelp@cfa.harvard.edu">contact us</a>
+          </b> for help.
+        </p>
+      </form>
+      <br/>
+      <div>
+        <div class="h3">
+          <i class="fa fa-question-circle"></i>
+          What Is a Library Link Server?
+        </div>
+        <p>
+          Users who have access to electronic resources through their library
+          subscriptions can configure their user preferences so that the appropriate
+          links to the fulltext will be provided when viewing a record in the ADS.
+        </p>
+        <p>
+          Look for the <span class="link-server-univ-icon"><strong>My Institution</strong> <i class="fa fa-university"></i></span>
+          entry in the source list on the abstract page.
+        </p>
+        <p>
+          If you find your institution in the above list, please select it so that we
+          can generate the appropriate links for you. For more information,
+          please visit our <a href="//adsabs.github.io/help/userpreferences/library-servers">Help Docs.</a>
+        </p>
+      </div>
     </div>
 
+    {{#if showConfirm}}
+      <div id="link-server-clear-confirm">
+        <div class="container">
+          <div class="row" style="margin-top: 20px; max-width: 300px">
+            <div class="alert alert-info text-center">
+              <p>
+                <strong>Are you sure?</strong>
+              </p>
+              <p>
+                <button class="btn btn-success btn-sm" id="clear-link-server-confirm">Yes, clear</button>
+                <button class="btn btn-danger btn-sm" id="clear-link-server-cancel">Cancel</button>
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
     {{/if}}
-</div>
-
-
+  {{/if}}
+</div> -->
