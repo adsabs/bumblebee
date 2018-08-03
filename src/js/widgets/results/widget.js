@@ -102,12 +102,37 @@ function (
     onStartSearch: function (apiQuery) {
       // quickly check if the query changed
       try {
-        var recentQuery = this.getBeeHive().getObject('AppStorage').getCurrentQuery().toJSON();
+        var beehive = this.getBeeHive();
+        var storage = beehive.getObject('AppStorage');
+        var history = beehive.getService('HistoryManager');
+        var recentQuery = storage.getCurrentQuery().toJSON()
         var currentQuery = apiQuery.toJSON();
-      } catch (e) {}
+        var previousNav = history.getCurrentNav();
+      } catch (e) {
+        return;
+      }
 
       if (!_.isEqual(recentQuery, currentQuery)) {
         this._clearResults();
+      } else if (_.isArray(previousNav) && previousNav[0] === 'ShowAbstract') {
+
+        // clear the focus interval
+        clearInterval(this.focusInterval);
+
+        // loop for a while, in case we have to wait for the elemen to show up
+        var focusInterval = setInterval(function () {
+          var $link = $('a[href$="' + previousNav[1].href + '"]');
+          if ($link) {
+
+            // found it, clear the interval and scroll
+            clearInterval(focusInterval);
+            $('#app-container').animate({ scrollTop: $link.offset().top }, 'fast');
+          }
+        }, 100);
+
+        // clear it after a timeout no matter what
+        setTimeout(function () { clearInterval(focusInterval); }, 10000);
+        this.focusInterval = focusInterval;
       }
     },
 
