@@ -99,8 +99,16 @@ function (
       this.view.collection.reset();
     },
 
-    onStartSearch: function () {
-      this._clearResults();
+    onStartSearch: function (apiQuery) {
+      // quickly check if the query changed
+      try {
+        var recentQuery = this.getBeeHive().getObject('AppStorage').getCurrentQuery().toJSON();
+        var currentQuery = apiQuery.toJSON();
+      } catch (e) {}
+
+      if (!_.isEqual(recentQuery, currentQuery)) {
+        this._clearResults();
+      }
     },
 
     onUserAnnouncement: function (message, data) {
