@@ -171,26 +171,22 @@ define([
         .attr('transform', 'translate(' + margin.left + ',' + margin.top + ')')
         .classed('graph-container-g', true);
 
-      // create the key
-      if (!this.$('.graph-key').children().length) {
-        var keyDivs = d3.select(this.$('.graph-key')[0])
-          .selectAll('div')
-          .data(graphData.map(function (o) { return o.key; }))
-          .enter()
-          .append('div');
+      svg.selectAll('[data-legend]')
+        .data(_.map(graphData, 'key'))
+        .enter().append('g')
+        .attr('data-legend', _.identity)
+        .attr('data-legend-color', function (d, i) { return that.colors[i]; });;
 
-        keyDivs
-          .append('div')
-          .classed('key-block', true)
-          .style('background-color', function (d, i) {
-            return that.colors[i];
-          });
-        keyDivs
-          .append('span')
-          .text(function (d) {
-            return d;
-          });
-      }
+      var legend = svg.append('g')
+        .attr('class', 'legend')
+        .attr('transform', 'translate(70, 20)')
+        .attr('data-style-padding', 7)
+        .style('font-size', '12px')
+        .call(d3.legend);
+
+      setTimeout(function () {
+        legend.call(d3.legend);
+      }, 500);
 
       // cache it so it can be applied to the rects later
       if (!this.tip) {
@@ -490,7 +486,7 @@ define([
             'width': '200px',
             'height': '100px'
           }).style({
-            'padding-left': '10px',
+            'padding-left': '100px',
             'opacity': 0.75,
             'font-size': '0.60em'
           });
@@ -622,25 +618,22 @@ define([
       }());
       // **** End Hover Data Line ****
 
-      // append key
-      var keyDivs = d3.select(this.$('.graph-key')[0])
-        .style({ position: 'absolute', right: 0 })
-        .selectAll('div')
-        .data(graphData.map(function (o) { return o.key; }))
-        .enter()
-        .append('div');
+      svg.selectAll('[data-legend]')
+        .data(_.map(graphData, 'key'))
+        .enter().append('g')
+        .attr('data-legend', _.identity)
+        .attr('data-legend-color', function (d, i) { return that.colors[i]; });;
 
-      keyDivs
-        .append('div')
-        .classed('key-block', true)
-        .style('background-color', function (d, i) {
-          return that.colors[i];
-        });
-      keyDivs
-        .append('span')
-        .text(function (d) {
-          return d;
-        });
+      var legend = svg.append('g')
+        .attr('class', 'legend')
+        .attr('transform', 'translate(70, 36)')
+        .attr('data-style-padding', 7)
+        .style('font-size', '12px')
+        .call(d3.legend);
+
+      setTimeout(function () {
+        legend.call(d3.legend);
+      }, 500);
     },
 
     // listens on change events
