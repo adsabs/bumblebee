@@ -69,6 +69,7 @@ function (
       var resultsFields = this.defaultQueryArguments.fl.split(',');
       resultsFields = _.union(abstractFields, resultsFields);
       this.defaultQueryArguments.fl = resultsFields.join(',');
+      this.minAuthorsPerResult = 3;
     },
 
     defaultQueryArguments: {
@@ -118,6 +119,7 @@ function (
         this.hiddenCollection.reset(docs);
         this.view.collection.reset(this.hiddenCollection.getVisibleModels());
       }
+      this.updateMinAuthorsFromUserData();
     },
 
     onCustomEvent: function (event) {
@@ -171,13 +173,42 @@ function (
       }
     },
 
+    getUserData: function () {
+      try {
+        var beehive = _.isFunction(this.getBeeHive) && this.getBeeHive();
+        var user = _.isFunction(beehive.getObject) && beehive.getObject('User');
+        if (_.isPlainObject(user)) {
+          return _.isFunction(user.getUserData) && user.getUserData('USER_DATA');
+        }
+        return {};
+      } catch (e) {
+        return {};
+      }
+    },
+
+    updateMinAuthorsFromUserData: function () {
+      var userData = this.getUserData();
+      var min = _.has(userData, 'minAuthorsPerResult') ?
+        userData.minAuthorsPerResult : this.minAuthorsPerResult;
+
+      if (String(min).toUpperCase() === 'ALL') {
+        this.minAuthorsPerResult = Number.MAX_SAFE_INTEGER;
+      } else if (String(min).toUpperCase() === 'NONE') {
+        this.minAuthorsPerResult = 0;
+      } else {
+        this.minAuthorsPerResult = Number(min);
+      }
+    },
+
     processDocs: function (apiResponse, docs, paginationInfo) {
       var params = apiResponse.get('responseHeader.params');
       var start = params.start || 0;
       var docs = PaginationMixin.addPaginationToDocs(docs, start);
       var highlights = apiResponse.has('highlighting') ? apiResponse.get('highlighting') : {};
       var self = this;
-      var link_server = this.getBeeHive().getObject('User').getUserData('USER_DATA').link_server;
+      var userData = this.getBeeHive().getObject('User').getUserData('USER_DATA');
+      var link_server = userData.link_server;
+      this.updateMinAuthorsFromUserData();
 
       var appStorage = null;
       if (this.hasBeeHive() && this.getBeeHive().hasObject('AppStorage')) {
@@ -218,7 +249,7 @@ function (
           }());
         }
 
-        var maxAuthorNames = 3;
+        var maxAuthorNames = self.minAuthorsPerResult;
         var shownAuthors;
 
         if (d.author && d.author.length > maxAuthorNames) {

@@ -126,6 +126,7 @@ function (
       _.bindAll(this, 'fieldInsert');
       this.queryBuilder = new QueryBuilderPlugin();
       this.queryValidator = new QueryValidator();
+      this.defaultDatabases = [];
     },
 
     activate: function (beehive) {
@@ -713,6 +714,66 @@ function (
       this.view.activate(beehive.getHardenedInstance());
       pubsub.subscribe(pubsub.INVITING_REQUEST, _.bind(this.dispatchRequest, this));
       pubsub.subscribe(pubsub.DELIVERING_RESPONSE, this.processResponse);
+      pubsub.subscribe(pubsub.USER_ANNOUNCEMENT, _.bind(this.updateFromUserData, this));
+      this.updateFromUserData();
+    },
+
+    getUserData: function () {
+      try {
+        var beehive = _.isFunction(this.getBeeHive) && this.getBeeHive();
+        var user = _.isFunction(beehive.getObject) && beehive.getObject('User');
+        if (_.isPlainObject(user)) {
+          return _.isFunction(user.getUserData) && user.getUserData('USER_DATA');
+        }
+        return {};
+      } catch (e) {
+        return {};
+      }
+    },
+
+    updateFromUserData: function () {
+      var userData = this.getUserData();
+      this.defaultDatabases = _.has(userData, 'defaultDatabase') ?
+        _.map(_.filter(userData.defaultDatabase, { value: true }), 'name') :
+        this.defaultDatabases;
+    },
+
+    applyDefaultFilters: function (apiQuery) {
+      var dbfilters = this.defaultDatabases;
+      if (dbfilters.length > 0) {
+        var fqString = '{!type=aqp v=$fq_database}';
+
+        // check for presence of database fq
+        var fq = apiQuery.get('fq');
+        fq = _.isArray(fq) ? fq : [fq];
+        var match = _.indexOf(fqString);
+        if (match < 0) {
+          fq.push(fqString);
+          apiQuery.set('fq', fq);
+        }
+
+        // check for presence of fq_database
+        if (!apiQuery.has('fq_database')) {
+          var fq_database_string = _.reduce(dbfilters, function (res, db, i) {
+            var d = db.toLowerCase();
+            return res.replace(/(\(.*)(\))/, i === 0 ?
+                '$1database=' + d + '$2' :
+                '$1 OR database=' + d + '$2'
+              );
+          }, '()');
+          apiQuery.set('fq_database', fq_database_string);
+        }
+
+        // finally add the filters
+        if (!apiQuery.has('__filter_database_fq_database')) {
+          var fq_database_filters = _.map(dbfilters, function (db) {
+            return 'database=' + db.toLowerCase();
+          });
+          apiQuery.set('__filter_database_fq_database', ['OR'].concat(fq_database_filters));
+        }
+      }
+
+      return apiQuery;
     },
 
     processResponse: function (apiResponse) {
@@ -839,6 +900,11 @@ function (
       // if we aren't on the index page, only refine the current query, don't wipe it out
       if (this.currentPage !== 'index-page') {
         newQuery = new ApiQuery(_.assign({}, oldQ, newQ));
+      }
+
+      // apply any default filters only if this is a new search
+      if (this.currentPage === 'index-page') {
+        newQuery = this.applyDefaultFilters(newQuery);
       }
 
       // remove the bigquery from the query if the user cleared it

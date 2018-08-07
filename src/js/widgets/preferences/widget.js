@@ -1,15 +1,19 @@
 define([
+  'underscore',
   'marionette',
   'js/widgets/base/base_widget',
   './views/openurl',
   './views/orcid',
+  './views/application',
   'js/components/api_feedback',
   'hbs!js/widgets/preferences/templates/orcid-form-submit-modal'
 ], function (
+  _,
   Marionette,
   BaseWidget,
   OpenURLView,
   OrcidView,
+  ApplicationView,
   ApiFeedback,
   OrcidModalTemplate
 ) {
@@ -89,7 +93,8 @@ define([
     // translates what comes from toc widget (e.g. userPreferences__orcid) to view name
     views: {
       orcid: OrcidView,
-      librarylink: OpenURLView
+      librarylink: OpenURLView,
+      application: ApplicationView
     },
 
     setSubView: function (subView) {
@@ -172,6 +177,11 @@ define([
               modal: true
             }));
           });
+      } else if (event === 'change:applicationSettings') {
+        var subView = this.view.content.currentView;
+        this.getBeeHive().getObject('User').setUserData(arg1)
+          .done(_.bind(subView.onSuccess, subView))
+          .fail(_.bind(subView.onError, subView));
       }
     },
 

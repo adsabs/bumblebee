@@ -1,0 +1,154 @@
+<div class="panel-heading">Application Settings</div>
+
+<div class="panel-body" id="application-settings-container">
+  <div class="row">
+    <div class="col-md-12">
+      <form role="form" class="form-horizontal">
+
+        <!-- NUM AUTHORS -->
+        <div class="form-group">
+          <label for="numAuthors">
+            Authors Visible Per Result
+            <a href="#collapseNumAuthorsDesc" data-toggle="collapse" role="button" aria-expanded="false" aria-controls="collapseNumAuthorsDesc">
+              <i class="fa fa-question-circle"></i>
+            </a>
+          </label>
+          <p>
+            <div class="collapse" id="collapseNumAuthorsDesc">
+              <div class="card card-body text-muted">
+                <p>
+                    Specifies the number of authors to show
+                    under each result before the list is truncated.
+                    <br>
+                    (<strong>default: {{numAuthorsDefault}}</strong>)
+                </p>
+              </div>
+            </div>
+          </p>
+          <select class="form-control" id="numAuthors" aria-describedby="collapseNumAuthorsDesc">
+            {{#each numAuthorsOptions}}
+              <option
+                value="{{this}}"
+                {{#compare this ../numAuthorsSelected}} selected="selected" {{/compare}}
+              >{{this}}</option>
+            {{/each}}
+          </select>
+        </div>
+
+        <!-- Always Open Links In New Tab/Same Tab -->
+        <div class="form-group">
+          <label for="externalLinks">
+            Default Action For External Links
+            <a href="#collapseExternalLinks" data-toggle="collapse" role="button" aria-expanded="false" aria-controls="collapseExternalLinks">
+              <i class="fa fa-question-circle"></i>
+            </a>
+          </label>
+          <p>
+            <div class="collapse" id="collapseExternalLinks">
+              <div class="card card-body text-muted">
+                <p>
+                  Select the default action when opening an external link.
+                  <br>
+                  (<strong>default: {{externalLinksDefault}}</strong>)
+                </p>
+              </div>
+            </div>
+          </p>
+          <select class="form-control" id="externalLinks" aria-describedby="collapseExternalLinks">
+            {{#each externalLinksOptions}}
+              <option
+                value="{{this}}"
+                {{#compare this ../externalLinksSelected}} selected="selected" {{/compare}}
+              >{{this}}</option>
+            {{/each}}
+          </select>
+        </div>
+
+        <!-- Default Database -->
+        <div class="form-group">
+          <label for="database">
+            Default Database(s)
+            <a href="#collapseDatabase" data-toggle="collapse" role="button" aria-expanded="false" aria-controls="collapseDatabase">
+              <i class="fa fa-question-circle"></i>
+            </a>
+          </label>
+          <p>
+            <div class="collapse" id="collapseDatabase">
+              <div class="card card-body text-muted">
+                <p>
+                  This will apply a default database
+                  facet to each search.  You can manually remove or alter it from there.
+                  <br>
+                  (<strong>default: none</strong>)
+                </p>
+              </div>
+            </div>
+          </p>
+          <div class="btn-group" data-toggle="buttons">
+            {{#each databaseSelected}}
+              <label
+                class="database-select btn btn-default {{#if this.value}} active {{/if}}">
+                <input type="checkbox" name="database" checked="{{this.value}}" id="database_{{this.name}}"> {{this.name}}
+              </label>
+            {{/each}}
+          </div>
+        </div>
+
+        <!-- Default Export Format -->
+        <div class="form-group">
+          <label for="exportFormat">
+            Default Export Format
+            <a href="#collapseExportFormat" data-toggle="collapse" role="button" aria-expanded="false" aria-controls="collapseExportFormat">
+              <i class="fa fa-question-circle"></i>
+            </a>
+          </label>
+          <p>
+            <div class="collapse" id="collapseExportFormat">
+              <div class="card card-body text-muted">
+                <p>
+                    Select the default export format you would like to use
+                    when opening the Export tool.
+                    <br>
+                    (<strong>default: {{exportFormatDefault}}</strong>)
+                </p>
+              </div>
+            </div>
+          </p>
+          <select class="form-control" id="exportFormat" aria-describedby="collapseExportFormat">
+            {{#each exportFormatOptions}}
+              <option
+                value="{{this}}"
+                {{#compare this ../exportFormatSelected}} selected="selected" {{/compare}}
+              >{{this}}</option>
+            {{/each}}
+          </select>
+        </div>
+
+        <hr class="hr">
+        <button class="btn btn-primary" role="submit" id="appSettingsSubmit">Save</button>
+        <button class="btn btn-default" role="reset" id="appSettingsCancel">Cancel</button>
+        <a href="#" class="link" id="appSettingsReset">Reset To Defaults</a>
+      </form>
+
+      <div class="col-md-6 col-md-offset-3 text-center">
+        {{#if loading}}
+          <i class="text-muted fa fa-refresh fa-spin fa-3x"></i>
+        {{/if}}
+
+        {{#if updateSucceeded}}
+          <div class="alert alert-success fade in">
+            <i class="fa fa-check fa-2x"></i>
+            <strong>Settings updated successfully</strong>
+          </div>
+        {{/if}}
+
+        {{#if updateFailed}}
+          <div class="alert alert-danger fade in">
+            <i class="fa fa-times fa-3x"></i>
+            <strong>Settings not updated, please try again.</strong>
+          </div>
+        {{/if}}
+      </div>
+    </div>
+  </div>
+</div>
