@@ -21,7 +21,6 @@ define([
 
     serializeData: function () {
       var data = this.model.toJSON();
-      console.log(data);
 
       if (data.openURLError) {
         data.loading = false;
