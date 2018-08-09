@@ -829,7 +829,7 @@ describe("Metrics Widget (metrics_widget.spec.js)", function(){
       //need to wait for animation to complete
 
       setTimeout(function(){
-      expect($("#test rect").length).to.eql(15);
+      expect($("#test rect").length).to.eql(16);
         $("#test").empty();
         done();
 
