@@ -79,8 +79,8 @@ define([
       ShowMetrics: {
         title: 'Metrics', path: 'metrics', showCount: false, category: 'view'
       },
-      ShowPaperExport__bibtex: {
-        title: 'Export', path: 'export/bibtex', category: 'export', alwaysThere: 'true'
+      ShowPaperExport__default: {
+        title: 'Export', path: 'export', category: 'export', alwaysThere: 'true'
       },
 
     }

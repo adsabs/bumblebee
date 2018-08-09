@@ -126,14 +126,16 @@ function (Marionette, BaseWidget, dropdownTemplate, dropdownItemTemplate) {
   var DropdownWidget = BaseWidget.extend({
 
     initialize: function (options) {
-      options = options || {};
-      if (!options.links) {
+      this.options = _.defaults(options, {
+        updateLinks: _.noop
+      });
+      if (!this.options.links) {
         throw new Error('Dropdown menu will be empty!');
       }
       // selectedOption: do we want the option to switch from showing all papers vs showing selected papers?
-      this.model = new ContainerModel({ selectedOption: options.selectedOption });
-      this.collection = new DropdownCollection(options.links);
-      this.view = new DropdownView(_.extend({ collection: this.collection, model: this.model }, options));
+      this.model = new ContainerModel({ selectedOption: this.options.selectedOption });
+      this.collection = new DropdownCollection(this.options.links);
+      this.view = new DropdownView(_.extend({ collection: this.collection, model: this.model }, this.options));
       this.listenTo(this.collection, 'change:selected', this.emitNavigateEvent);
     },
 
@@ -142,6 +144,28 @@ function (Marionette, BaseWidget, dropdownTemplate, dropdownItemTemplate) {
       this.setBeeHive(beehive);
       var pubsub = this.getPubSub();
       pubsub.subscribe(pubsub.STORAGE_PAPER_UPDATE, this.onStoragePaperChange);
+      pubsub.subscribe(pubsub.USER_ANNOUNCEMENT, this.updateFromUserData);
+      this.updateFromUserData();
+    },
+
+    getUserData: function () {
+      try {
+        var beehive = _.isFunction(this.getBeeHive) && this.getBeeHive();
+        var user = _.isFunction(beehive.getObject) && beehive.getObject('User');
+        if (_.isPlainObject(user)) {
+          return _.isFunction(user.getUserData) && user.getUserData('USER_DATA');
+        }
+        return {};
+      } catch (e) {
+        return {};
+      }
+    },
+
+    updateFromUserData: function () {
+      var userData = this.getUserData();
+      var links = this.options.updateLinks(userData, this.options.links) || this.options.links;
+      this.options.links = links;
+      this.collection.reset(links);
     },
 
     onStoragePaperChange: function (numSelected) {
