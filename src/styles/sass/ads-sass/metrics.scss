@@ -1,36 +1,30 @@
-
 .s-metrics-svg {
   display: inline-block;
-  	position: absolute;
-  	top: 0;
-  	left: 0;
-
-  .disabled{
+  position: absolute;
+  top: 0;
+  left: 0;
+  .disabled {
     pointer-events: all;
   }
 }
 
-
 .s-metrics-svg-container {
   display: inline-block;
-	position: relative;
-	width: 100%;
-	vertical-align: middle;
-	overflow: hidden;
+  position: relative;
+  width: 100%;
+  vertical-align: middle;
+  overflow: hidden;
   padding-bottom: 100%;
-
 }
 
-
 .s-metrics-title {
-  @extend  .s-title-format;
+  @extend .s-title-format;
   margin: 6px 0;
 }
 
-
-.s-metrics-table, .s-metrics-graph {
-
-  @media(min-width: $screen-sm-min){
+.s-metrics-table,
+.s-metrics-graph {
+  @media(min-width: $screen-sm-min) {
     display: inline-block;
     vertical-align: top;
     padding: 0 0 0 2%;
@@ -38,7 +32,7 @@
 }
 
 .s-metrics-table {
-  font-size : 14px;
+  font-size: 14px;
   position: relative;
   top: 10px;
   /*
@@ -46,33 +40,27 @@
   the width from the parent div is also being applied to the table
   but I thought a table was a block level element
   */
-
   table {
     width: 100%;
   }
-
-  @media(min-width: $screen-sm-min){
+  @media(min-width: $screen-sm-min) {
     width: 33%;
   }
-
   th {
     text-align: right;
   }
-
   tr td:first-of-type {
-
     width: 190px;
-
   }
-
-  tr td:nth-of-type(3), tr td:nth-of-type(4) {
-      text-align: right;
+  tr td:nth-of-type(3),
+  tr td:nth-of-type(4) {
+    text-align: right;
   }
-
 }
 
 .s-abstract-content {
-  .s-metrics-table, .s-metrics-graph {
+  .s-metrics-table,
+  .s-metrics-graph {
     width: 100%;
   }
 }
@@ -80,15 +68,13 @@
 .s-metrics-graph {
   //mostly for print considerations
   max-width: 700px;
-
-  @media(min-width: $screen-sm-min){
+  @media(min-width: $screen-sm-min) {
     width: 60%;
   }
 }
 
-
 .s-graph-tab {
-  display:inline-block;
+  display: inline-block;
   width: 15%;
   font-size: 14px;
   margin: 0 10px 20px 0;
@@ -97,100 +83,92 @@
   font-weight: 600;
   padding: 5px;
   border-bottom: 3px solid #fff;
-
-
   &:first-of-type {
     margin-left: 5%;
   }
-
   &:hover {
     border-bottom: 3px solid lighten($brand-primary-faded, 30%);
   }
-
-  transition : all, .5s;
-
+  transition: all,
+  .5s;
 }
 
-.s-graph-tab.active{
+.s-graph-tab.active {
   border-bottom: 3px solid $brand-primary-faded;
-  color:  $brand-primary-faded;
+  color: $brand-primary-faded;
 }
-
 
 .s-graph-container text {
-
-  font-size : 10px !important;
+  font-size: 10px !important;
 }
 
 .s-metrics-metadata {
   padding: 3%;
-
   input {
     width: 60px;
   }
 }
 
 .s-metrics-metadata:empty {
-  padding:0;
+  padding: 0;
 }
-
 
 .s-graph-view {
   position: relative;
   top: 20px;
-
-.axis path,
-.axis line {
-  fill: none;
-  stroke: #000;
-  shape-rendering: crispEdges;
-}
-
-.graph-label {
-  font-weight: bold;
-  font-size: 10px !important;
-  fill: #4b4b4b !important;
-}
-
-.stacked-form {
-  label {
-    font-weight: normal;
+  .axis path,
+  .axis line {
+    fill: none;
+    stroke: #000;
+    shape-rendering: crispEdges;
   }
-  margin-left: 10%;
-  display: inline-block;
-}
-
-rect {
-  opacity: .85;
-  transition: opacity .2s;
-  &:hover {
-    opacity: 1;
+  .graph-label {
+    font-weight: bold;
+    font-size: 10px !important;
+    fill: #4b4b4b !important;
+  }
+  .stacked-form {
+    label {
+      font-weight: normal;
+    }
+    margin-left: 10%;
+    display: inline-block;
+  }
+  rect {
+    opacity: .85;
+    transition: opacity .2s;
+    &:hover {
+      opacity: 1;
+    }
+  }
+  .line {
+    stroke-opacity: .85;
+    transition: stroke-opacity .2s;
+    &:hover {
+      stroke-opacity: 1;
+    }
+  }
+  .key-block {
+    width: 10px;
+    height: 10px;
+    display: inline-block;
+    margin-right: 5px;
+  }
+  .graph-key {
+    font-size: 12px;
+    padding-right: 15px;
+  }
+  .legend {
+    opacity: 0.8;
+    rect {
+      fill: white;
+      stroke: black;
+    }
+    &:hover {
+      opacity: 0.25;
+    }
   }
 }
-
-.line {
-  stroke-opacity: .85;
-  transition: stroke-opacity .2s;
-  &:hover {
-    stroke-opacity: 1;
-  }
-}
-
-.key-block {
-  width: 10px;
-  height: 10px;
-  display:inline-block;
-  margin-right: 5px;
-}
-
-.graph-key {
-  font-size: 12px;
-  padding-right: 15px;
-}
-
-
-}
-
 
 .d3-tip {
   line-height: 1;
@@ -200,7 +178,9 @@ rect {
   border-radius: 2px;
 }
 
+
 /* Creates a small triangle extender for the tooltip */
+
 .d3-tip:after {
   box-sizing: border-box;
   display: inline;
@@ -213,7 +193,9 @@ rect {
   text-align: center;
 }
 
+
 /* Style northward tooltips differently */
+
 .d3-tip.n:after {
   margin: -1px 0 0 0;
   top: 100%;
