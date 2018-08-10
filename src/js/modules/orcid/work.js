@@ -311,7 +311,7 @@ define([
       } else {
         put(work, PATHS.publicationDateMonth, get(ads.pubdate).split('-')[1]);
       }
-      put(work, PATHS.shortDescription, get(ads.abstract));
+      put(work, PATHS.shortDescription, get(ads.abstract).slice(0, 4997) + '...');
       put(work, PATHS.externalIdType, exIds.types);
       put(work, PATHS.externalIdValue, exIds.values);
       put(work, PATHS.externalIdRelationship, exIds.relationships);
