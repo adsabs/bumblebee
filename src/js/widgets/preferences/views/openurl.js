@@ -21,48 +21,106 @@ define([
 
     serializeData: function () {
       var data = this.model.toJSON();
-      // either user data or openurl data has yet to load
-      if (!data.openURLConfig || !data.user) {
+
+      if (data.openURLError) {
+        data.loading = false;
+        return data;
+      }
+
+      // if this is true, there was an issue getting it from the server
+      if (_.isEmpty(data.openURLConfig) || _.isEmpty(data.user)) {
         data.loading = true;
         return data;
+      }
+
+      if (_.isEmpty(data.openURLName)) {
+        data.openURLName = 'None';
+        this.editing = true;
       }
 
       // in weird/buggy cases, the previously selected open url might not exist in our openURLCOnfig data
       // available now. So just act like there is no openURLName, which will prompt the user to select a new
       // openURL
-      var current = _.findWhere(data.openURLConfig, { link: data.link_server });
-      data.openURLName = current ? current.name : '';
+      var current = _.find(data.openURLConfig, { link: data.link_server });
+      data.openURLName = current ? current.name : false;
       return data;
     },
 
     modelEvents: {
       'change:link_server': 'render',
       'change:user': 'render',
-      'change:openURLConfig': 'render'
+      'change:openURLConfig': 'render',
+      'change:editing': 'render',
+      'change:confirming': 'render',
+      'change:loading': 'render',
+      'change:openURLError': 'render'
     },
 
     events: {
-      'click #link-server-container .submit': 'changeLinkServer'
+      'click #link-server-apply': 'changeLinkServer',
+      'click #link-server-cancel': 'onCancelLinkServer',
+      'click #change-link-server': 'onChangeClick',
+      'click #clear-link-server': 'onClearClick',
+      'click #clear-link-server-confirm': 'onConfirmClear',
+      'click #clear-link-server-cancel': 'onConfirmCancel'
     },
 
     changeLinkServer: function (e) {
       e.preventDefault();
-      var newVal = this.$('#link-server-container select').val();
+      var newVal = this.$('#set-link-server').val();
 
-      // in the case that someone re-selected their link server a second time
-      if (newVal === this.model.get('link_server')) {
-        // just close the panel
-        this.render();
-        return;
+      // check for a re-apply
+      if (this.model.has('link_server') && newVal === this.model.get('link_server')) {
+        return this.model.set('editing', false);
       }
+
+      this.$(e.currentTarget).html('<i class="fa fa-spinner fa-pulse"></i> Loading');
+
+      // otherwise, trigger the update
       this.trigger('change:link_server', newVal);
+      this.model.set('editing', false);
+    },
 
-      var loadingString = '<i class="fa fa-spinner fa-pulse"></i> Loading';
-      this.$('#link-server-container .submit').html(loadingString);
-      // loading string will be removed when view is re-rendered
+    onCancelLinkServer: function () {
+      this.model.set({
+        editing: false,
+        confirming: false,
+        showConfirm: false
+      });
+    },
+
+    onChangeClick: function () {
+      if (this.model.get('editing')) {
+        return this.model.set('editing', false);
+      }
+      this.model.set({
+        confirming: false,
+        editing: true
+      });
+    },
+
+    onClearClick: function () {
+      this.model.set({
+        editing: false,
+        confirming: true
+      });
+    },
+
+    onConfirmCancel: function () {
+      this.model.set({
+        editing: false,
+        confirming: false
+      });
+    },
+
+    onConfirmClear: function () {
+      this.trigger('change:link_server', '');
+      this.model.set({
+        openURLName: '',
+        editing: false,
+        confirming: false
+      });
     }
-
-
   });
 
   return OpenURLView;
