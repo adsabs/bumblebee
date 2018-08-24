@@ -5,7 +5,17 @@
 {{/if}}
 <div class="graph-legend"></div>
 {{#unless graphData}}
-loading...
+  {{#if error}}
+    <div class="text-center">
+      <i class="fa fa-exclamation-triangle text-danger" aria-hidden="true"></i>
+      Could not load graph.
+    </div>
+  {{else}}
+    <div class="text-center">
+      <i class="fa fa-spin fa-spinner fa-2x" aria-hidden="true"></i> Loading...
+    </div>
+  {{/if}}
+
 {{/unless}}
  <div class="s-svg-container">
      <svg class="chart s-chart" viewBox="0 0 110 100" preserveAspectRatio="xMinYMin meet">

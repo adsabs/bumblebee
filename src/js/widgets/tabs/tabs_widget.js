@@ -36,6 +36,7 @@ function (
         w.activate(hardenedBee = beehive.getHardenedInstance());
         children.push({ name: w.title, object: w, beehive: hardenedBee });
       });
+
       return children;
     },
 
@@ -45,8 +46,15 @@ function (
         if (!t.widget) {
           throw new Error('Missing "widget" for: ' + t.title + ' [' + i + ']');
         }
+        if (t['default']) {
+          t.widget.trigger('active');
+        } else {
+          t.widget.trigger('hidden');
+        }
         return t.widget;
       });
+      this.on('active', this.onActive);
+      this.on('hidden', this.onHidden);
     },
 
     // overriding marionette render method
@@ -67,8 +75,17 @@ function (
 
       this.$el.html($tempEl.html());
       _.each(this.tabs, function (t) {
+        var self = this;
         // attaching the html of child widgets
         this.$('#' + t.id).append(t.widget.getEl());
+
+        this.$('a[href="#' + t.id + '"]')
+          .on('show.bs.tab', function () {
+            self.trigger('active', t);
+          })
+          .on('hide.bs.tab', function () {
+            self.trigger('hidden', t);
+          });
       }, this);
 
       this.bindUIElements();
@@ -96,8 +113,15 @@ function (
       }
 
       return this.render().el;
-    }
+    },
 
+    onActive: function (tab) {
+      tab.widget.trigger('active');
+    },
+
+    onHidden: function (tab) {
+      tab.widget.trigger('hidden');
+    }
   });
 
   return TabsWidget;
