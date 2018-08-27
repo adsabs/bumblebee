@@ -177,15 +177,14 @@ define([
         .attr('data-legend', _.identity)
         .attr('data-legend-color', function (d, i) { return that.colors[i]; });;
 
-      var legend = svg.append('g')
+      // must delay to make sure element exists
+      setTimeout(function () {
+        svg.append('g')
         .attr('class', 'legend')
         .attr('transform', 'translate(70, 20)')
         .attr('data-style-padding', 7)
         .style('font-size', '12px')
         .call(d3.legend);
-
-      setTimeout(function () {
-        legend.call(d3.legend);
       }, 500);
 
       // cache it so it can be applied to the rects later
@@ -484,9 +483,9 @@ define([
           .attr({
             'class': 'info-box',
             'width': '200px',
-            'height': '100px'
+            'height': '100px',
+            'x': '100'
           }).style({
-            'padding-left': '100px',
             'opacity': 0.75,
             'font-size': '0.60em'
           });
@@ -624,15 +623,14 @@ define([
         .attr('data-legend', _.identity)
         .attr('data-legend-color', function (d, i) { return that.colors[i]; });;
 
-      var legend = svg.append('g')
+      // must delay to make sure the element is available
+      setTimeout(function () {
+        svg.append('g')
         .attr('class', 'legend')
         .attr('transform', 'translate(70, 36)')
         .attr('data-style-padding', 7)
         .style('font-size', '12px')
         .call(d3.legend);
-
-      setTimeout(function () {
-        legend.call(d3.legend);
       }, 500);
     },
 
@@ -739,6 +737,17 @@ define([
       _.bindAll(this, 'setCurrentQuery', 'processMetrics', 'checkIfSimpleRequired');
       var pubsub = beehive.getService('PubSub');
       pubsub.subscribe(pubsub.INVITING_REQUEST, this.setCurrentQuery);
+      this.activateWidget();
+      this.attachGeneralHandler(this.onApiFeedback);
+    },
+
+    onApiFeedback: function () {
+      this.closeWidget();
+      pubsub.publish(pubsub.ALERT, new ApiFeedback({
+        code: 0,
+        msg: 'Sorry Metrics are unavailable at this time, try again later',
+        type: 'danger'
+      }));
     },
 
     closeWidget: function () {
