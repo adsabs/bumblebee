@@ -925,17 +925,21 @@ function (
     },
 
     onShow: function () {
-      var $input = this.view.$('input[name=q]');
 
-      // attempt to focus a few times, firefox has some problems otherwise
-      var id;
-      (function retry(count) {
-        $input.blur().focus();
-        if ($input.is(':focus') || count > 9) {
-          return clearTimeout(id);
-        }
-        setTimeout(retry, 500, count + 1);
-      })(0);
+      // only focus on the index-page
+      if (this.currentPage === 'index-page') {
+        var $input = this.view.$('input[name=q]');
+
+        // attempt to focus a few times, firefox has some problems otherwise
+        var id;
+        (function retry(count) {
+          $input.blur().focus();
+          if ($input.is(':focus') || count > 9) {
+            return clearTimeout(id);
+          }
+          setTimeout(retry, 500, count + 1);
+        })(0);
+      }
     },
 
     onDestroy: function () {
