@@ -348,7 +348,7 @@ define([
           verbose: false
         });
 
-        var widget = AuthorFacet();
+        var widget = AuthorFacet({ debug: true });
         widget.activate(minsub.beehive.getHardenedInstance());
 
         //set in some initial data
