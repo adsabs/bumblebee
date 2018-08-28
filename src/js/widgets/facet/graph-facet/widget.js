@@ -89,7 +89,6 @@ function (
 
     onFeedback: function (apiFeedback) {
       this.model.set('error', true);
-      console.log('error', apiFeedback);
     }
   });
 
