@@ -56,9 +56,13 @@ define([
 
   var ga = window[window.GoogleAnalyticsObject];
   window[window.GoogleAnalyticsObject] = function () {
-    ga.q = ga.q || [];
-    ga.q.push([arguments]);
-    ga.apply(ga, arguments);
+    try {
+      ga.q = ga.q || [];
+      ga.q.push([arguments]);
+      ga.apply(ga, arguments);
+    } catch (e) {
+      console.info('google analytics event not tracked');
+    }
   };
 
   var Analytics = function () {
