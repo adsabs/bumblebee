@@ -429,14 +429,12 @@ require.config({
 
   callback: function() {
 
-    window._GA = '__ga__';
+    window.GoogleAnalyticsObject = '__ga__';
 
     require(['discovery.vars', 'google-analytics', 'analytics'], function(config) {
-
-      window[window._GA].q = [
-        ['create', config.googleTrackingCode || '', config.googleTrackingOptions || 'auto']
-      ];
-      window[window._GA].l = Date.now();
+      var qa = window[window.GoogleAnalyticsObject];
+      qa.l = Date.now();
+      qa('create', config.googleTrackingCode || '', config.googleTrackingOptions);
     });
 
     require([
