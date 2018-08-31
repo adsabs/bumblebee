@@ -54,17 +54,16 @@ define([
     }
   };
 
-  window[window._GA] = function () {
-    var ga = window[window._GA];
-    (ga.q = ga.q || []).push(arguments);
-    if (ga.q.length > 100) {
-      ga.q = ga.q.slice(0, 50);
-    }
+  var ga = window[window.GoogleAnalyticsObject];
+  window[window.GoogleAnalyticsObject] = function () {
+    ga.q = ga.q || [];
+    ga.q.push([arguments]);
+    ga.apply(ga, arguments);
   };
 
   var Analytics = function () {
     adsLogger.apply(null, _.rest(arguments, 3));
-    window[window._GA].apply(this, arguments);
+    window[window.GoogleAnalyticsObject].apply(this, arguments);
   };
 
   return Analytics;
