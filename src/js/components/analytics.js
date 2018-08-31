@@ -54,18 +54,17 @@ define([
     }
   };
 
-  var ga = window[window.GoogleAnalyticsObject];
-
-  window[window.GoogleAnalyticsObject] = function () {
-    ga.q = (_.isArray(ga.q) ? ga.q : []).push(_.toArray(arguments));
+  window[window._GA] = function () {
+    var ga = window[window._GA];
+    (ga.q = ga.q || []).push(arguments);
     if (ga.q.length > 100) {
       ga.q = ga.q.slice(0, 50);
     }
-  }
+  };
 
   var Analytics = function () {
     adsLogger.apply(null, _.rest(arguments, 3));
-    window[window.GoogleAnalyticsObject].apply(this, arguments);
+    window[window._GA].apply(this, arguments);
   };
 
   return Analytics;
