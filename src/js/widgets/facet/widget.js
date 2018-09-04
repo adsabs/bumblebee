@@ -79,6 +79,9 @@ function (Backbone,
 
       this.view = new FacetContainerView();
       this.view.render = _.partial(this.view.render, this.store, this.actions);
+      if (!options.debug) {
+        this._dispatchRequest = _.debounce(_.bind(this._dispatchRequest, this), 300);
+      }
     },
 
     // facetField is added in initialize function
@@ -93,6 +96,23 @@ function (Backbone,
       this.setBeeHive(beehive);
       _.bindAll(this, 'dispatchRequest', 'processResponse');
       this.getPubSub().subscribe(this.getPubSub().INVITING_REQUEST, this.dispatchRequest);
+      this.activateWidget();
+      this.attachGeneralHandler(this.onApiFeedback);
+      if (window.store) {
+        window.store.push(this.store);
+      } else {
+        window.store = [this.store];
+      }
+    },
+
+    onApiFeedback: function () {
+      var dispatch = this.store.dispatch;
+      setTimeout(function () {
+        dispatch({
+          type: 'FACET_TOGGLED',
+          open: false
+        });
+      }, 300);
     },
 
     /*
