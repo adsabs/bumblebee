@@ -180,8 +180,13 @@ define([
         // and 1575544 in this example). These should be present as keys in the cache generated in
         // the object facet widget, returning the associated (canonical) object names
         // create an array with just the user-friendly names of the facets
-        var logic = q.get('filter_simbad_object_facet_hier_fq_simbad_object_facet_hier')[0];
-        q.set('filter_simbad_object_facet_hier_fq_simbad_object_facet_hier', [logic].concat(selectedFacets));
+        var prop = _.find(_.keys(q.toJSON()), function (k) {
+          return k.match(/fq_simbad_facet_hier/i);
+        });
+        if (prop) {
+          var logic = q.get(prop)[0];
+          q.set('filter_simbad_object_facet_hier_fq_simbad_object_facet_hier', [logic].concat(selectedFacets));
+        }
       }
 
       q.unset('facet.prefix');

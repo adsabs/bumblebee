@@ -55,13 +55,15 @@ define([
   };
 
   var ga = window[window.GoogleAnalyticsObject];
-
   window[window.GoogleAnalyticsObject] = function () {
-    ga.q = (_.isArray(ga.q) ? ga.q : []).push(_.toArray(arguments));
-    if (ga.q.length > 100) {
-      ga.q = ga.q.slice(0, 50);
+    try {
+      ga.q = ga.q || [];
+      ga.q.push([arguments]);
+      ga.apply(ga, arguments);
+    } catch (e) {
+      console.info('google analytics event not tracked');
     }
-  }
+  };
 
   var Analytics = function () {
     adsLogger.apply(null, _.rest(arguments, 3));
