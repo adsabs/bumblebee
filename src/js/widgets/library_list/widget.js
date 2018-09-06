@@ -17,7 +17,9 @@ define([
   'js/mixins/add_stable_index_to_collection',
   'js/mixins/add_secondary_sort',
   'bootstrap',
-  'hbs!js/wraps/widget/loading/template'
+  'hbs!js/wraps/widget/loading/template',
+  'es6!js/widgets/sort/widget.jsx',
+  'es6!js/widgets/sort/redux/modules/sort-app'
 
 ], function (
   Marionette,
@@ -38,8 +40,9 @@ define([
   PaginationMixin,
   SecondarySort,
   Bootstrap,
-  loadingTemplate
-
+  loadingTemplate,
+  SortWidget,
+  SortActions
 ) {
   var LibraryItemView = DefaultItemView.extend({
 
@@ -76,6 +79,12 @@ define([
 
   var LibraryContainerView = ListOfThingsPaginatedContainerView.extend({
 
+    initialize: function () {
+      this.sortWidget = new SortWidget();
+      ListOfThingsPaginatedContainerView.prototype.initialize.apply(this, arguments);
+      this.sortWidget.onSortChange = _.bind(this.onSortChange, this);
+    },
+
     childView: LibraryItemView,
     template: LibraryContainer,
     className: 'library-detail-view',
@@ -83,7 +92,6 @@ define([
     emptyView: LibraryEmptyView,
 
     events: {
-      'change #sort-select': 'changeSort',
       'click a.page-control': 'changePageWithButton',
       'keyup input.page-control': 'tabOrEnterChangePageWithInput',
       'click .per-page': 'changePerPage'
@@ -93,10 +101,12 @@ define([
       change: 'render'
     },
 
-    changeSort: function (e) {
-      e.stopPropagation();
-      this.model.set('sort', e.target.value);
-      // trigger the event explicitly for the parent view
+    onSortChange: function () {
+      var state = this.sortWidget.store.getState().get('SortApp');
+      var sort = state.get('sort').get('id');
+      var dir = state.get('direction');
+      var newSort = sort + ' ' + dir;
+      this.model.set('sort', newSort);
       this.trigger('changeSort');
     },
 
@@ -114,6 +124,12 @@ define([
       view.$('.remove-record').html('<i class="fa fa-spinner fa-pulse"></i>');
       var bibcode = view.model.get('bibcode');
       this.trigger('removeRecord', bibcode);
+    },
+
+    render: function () {
+      ListOfThingsPaginatedContainerView.prototype.render.apply(this, arguments);
+      this.$('#sort-container').html(this.sortWidget.render().el);
+      return this;
     }
 
   });
@@ -164,6 +180,19 @@ define([
 
     activate: function (beehive) {
       ListOfThingsWidget.prototype.activate.apply(this, [].slice.apply(arguments));
+      this.view.sortWidget.activate(beehive);
+      this.updateSortWidget();
+    },
+
+    updateSortWidget: function (query) {
+      var sortWidget = this.view.sortWidget;
+      var query = query || this.getCurrentQuery();
+      query = query.toJSON();
+      var sortStr = sortWidget.extractSort(query && query.sort && query.sort[0] || '');
+      sortWidget.store.dispatch(SortActions.setQuery(query));
+      sortWidget.store.dispatch(SortActions.setSort(sortStr.sort, true));
+      sortWidget.store.dispatch(SortActions.setDirection(sortStr.direction, true));
+      sortWidget.store.dispatch(SortActions.setLocked(false));
     },
 
     onShow: function () {
@@ -208,6 +237,7 @@ define([
       resp = new ApiResponse(resp.solr);
       resp.setApiQuery(apiQuery);
       this.processResponse(resp);
+      this.updateSortWidget(apiQuery);
     },
 
     // this is called by list_of_things show:missing handler
