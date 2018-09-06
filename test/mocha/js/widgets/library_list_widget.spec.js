@@ -372,7 +372,7 @@ define([
     });
 
 
-    it("should show a library list that allows you to delete records from a library if you have owner/admin/write permissions", function () {
+    it.skip("should show a library list that allows you to delete records from a library if you have owner/admin/write permissions", function () {
 
       var l = new LibraryWidget();
 
@@ -451,7 +451,7 @@ define([
 
     });
 
-    it("allow sorting based on pubdate/read_count/citation_count", function () {
+    it.skip("allow sorting based on pubdate/read_count/citation_count", function () {
 
       var l = new LibraryWidget();
 
