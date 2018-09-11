@@ -91,6 +91,7 @@ define([
 
       // scroll to top
       document.body.scrollTop = document.documentElement.scrollTop = 0;
+      $('#app-container').scrollTop(0);
       // and fix the search bar back in its default spot
       $('.s-search-bar-full-width-container').removeClass('s-search-bar-motion');
       $('.s-quick-add').removeClass('hidden');
@@ -179,6 +180,19 @@ define([
       }
 
       this.getPubSub().publish(this.getPubSub().ARIA_ANNOUNCEMENT, pageManagerName);
+
+      var $backToTopBtn = $('#backToTopBtn');
+      var $appContainer = $('#app-container');
+      $appContainer.scroll(function () {
+        if ($appContainer.scrollTop() > 100) {
+          $backToTopBtn.css('display', 'block');
+        } else {
+          $backToTopBtn.css('display', 'none');
+        }
+      });
+      $backToTopBtn.click(function () {
+        $appContainer.scrollTop(0);
+      });
     },
 
     // used by discovery mediator
