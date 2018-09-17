@@ -115,10 +115,17 @@ function (
           this.getPubSub().publish(this.getPubSub().START_SEARCH, q);
         } catch (e) {
           console.error('Error parsing query from a string: ', query, e);
+          this.getPubSub().publish(this.getPubSub().NAVIGATE, 'index-page');
           this.getPubSub().publish(this.getPubSub().BIG_FIRE, new ApiFeedback({
             code: ApiFeedback.CODES.CANNOT_ROUTE,
             reason: 'Cannot parse query',
             query: query
+          }));
+          return this.getPubSub().publish(this.getPubSub().ALERT, new ApiFeedback({
+            code: ApiFeedback.CODES.ALERT,
+            msg: 'unable parse query',
+            type: 'danger',
+            modal : true
           }));
         }
       } else {

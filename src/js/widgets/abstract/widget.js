@@ -210,6 +210,7 @@ function (
 
       // and set the title, maintain tags
       document.title = $('<div>' + this.model.get('title') + '</div>').text();
+      document.body.scrollTop = document.documentElement.scrollTop = 0;
       $('#app-container').scrollTop(0);
     }
   });
