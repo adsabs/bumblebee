@@ -275,7 +275,7 @@ define([
 
     updateLocalStorage: function (options) {
       // if someone has selected perPage, save it in to localStorage
-      if (options.hasOwnProperty('perPage') && _.contains([25, 50, 100], options.perPage)) {
+      if (options.hasOwnProperty('perPage') && _.contains([25, 50, 100, 200, 500], options.perPage)) {
         this.getBeeHive().getObject('User').setLocalStorage({ perPage: options.perPage });
         console.log('set user\'s page preferences in localStorage: ' + options.perPage);
       }
