@@ -273,17 +273,16 @@ define([
       if (this.model.get('orcidLoggedIn')) {
         // set the orcid username into the model
         var that = this;
-        orcidApi.getUserProfile()
-          .done(function (profile) {
-            var firstName = profile.getFirstName();
-            var lastName = profile.getLastName();
-            that.model.set('orcidFirstName', firstName);
-            that.model.set('orcidLastName', lastName);
-            that.model.set('orcidQueryName', lastName + ', ' + firstName);
+        orcidApi.getUserBio().done(function(bio) {
+          var firstName = bio.getFirstName();
+          var lastName = bio.getLastName();
+          that.model.set('orcidFirstName', firstName);
+          that.model.set('orcidLastName', lastName);
+          that.model.set('orcidQueryName', lastName + ', ' + firstName);
 
-            // this will always be available
-            that.model.set('orcidURI', profile.getOrcid());
-          });
+          // this will always be available
+          that.model.set('orcidURI', bio.getOrcid());
+        });
       }
 
       // also set in the "hourly" flag

@@ -161,7 +161,7 @@ define([
         '_work': this
       }, ids);
     };
-
+      
     /**
      * Creates an object containing all external ids
      * @example
