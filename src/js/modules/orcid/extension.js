@@ -201,41 +201,23 @@ function (
 
           // make sure the doc has any information we gained
           if (_.isUndefined(work.identifier)) {
-            if (_.isString(info.bibcode)) {
-              work.identifier = info.bibcode;
-            } else if (_.isArray(info.doi)) {
-              work.identifier = info.doi[0];
-            } else if (_.isPlainObject(work._work)) {
-              var type = work._work.getExternalIdType();
-              type = _.isArray(type) ? type[0] : type;
-              if (_.isString(type)) {
-                work.identifier = work._work.getExternalIds()[type];
-              }
-            }
+            work.identifier = work._work.getIdentifier();
           }
 
           var model = _.find(self.hiddenCollection.models, function (m) {
             // do our best to find the match
             return (_.isPlainObject(work._work) && work._work === m.get('_work'))
-              || (_.isString(work.bibcode) && work.bibcode === m.get('bibcode'))
-              || (_.isArray(work.doi) && work.doi === m.get('doi'))
               || (!_.isUndefined(work.identifier) && work.identifier === m.get('identifier'));
           });
 
           // found the model, update it
           if (model) {
             var sources;
-            var orcidPath;
 
             // grab the array of sources, if it exists
             if (_.isPlainObject(work._work)) {
               sources = work._work.getSources();
-              var host = work._work.getSourceOrcidIdHost();
-              var path = work._work.getPath();
 
-              if (_.isString(host) && _.isString(path)) {
-                orcidPath = '//' + host + '/' + path;
-              }
             }
 
             if (_.isUndefined(model.get('identifier')) && self.orcidWidget) {
@@ -244,8 +226,7 @@ function (
 
             model.set({
               orcid: actions,
-              source_name: _.isArray(sources) ? sources.join('; ') : model.get('source_name'),
-              orcidWorkPath: orcidPath
+              source_name: _.isArray(sources) ? sources.join('; ') : model.get('source_name')
             });
           } else if (count < 60) {
             _.delay(_.bind(onSuccess, self, [work], count + 1), 500);
@@ -331,7 +312,7 @@ function (
      */
     WidgetClass.prototype._updateModelsWithOrcid = function (models, tries) {
       var modelsToUpdate = _.filter(models || this.hiddenCollection.models, function (m) {
-        return !m.has('_work') && (m.has('bibcode') || m.has('doi'));
+        return !m.has('_work') && (m.has('bibcode') || m.has('doi') || m.has('identifier'));
       });
 
       if (_.isEmpty(modelsToUpdate)) {
@@ -348,7 +329,7 @@ function (
         _.forEach(modelsToUpdate, function (m) {
           var exIds = _.flatten(_.values(_.pick(m.attributes, ['bibcode', 'doi', 'identifier'])));
           _.forEach(works, function (w) {
-            var wIds = _.flatten(_.values(w.getExternalIds()));
+            var wIds = _.flatten(_.values(w.getIdentifier()));
             var idMatch = _.intersection(exIds, wIds).length > 0;
 
             if (idMatch) {
@@ -381,7 +362,7 @@ function (
         if (pagination.numFound !== result.length) {
           _.extend(pagination, this.getPaginationInfo(apiResponse, docs));
         }
-        _.delay(_.bind(this._updateModelsWithOrcid, this), 1000);
+        _.delay(_.bind(this._updateModelsWithOrcid, this, 0), 1000);
         return result;
       }
       return docs;
@@ -444,11 +425,7 @@ function (
        * @param {Work} fullOrcidWork - the full orcid work record
        */
       var onRecieveFullOrcidWork = function (fullOrcidWork) {
-        var identifier = model.get('identifier')
-          || fullOrcidWork.pickIdentifier(['bibcode', 'doi']);
-        if (!identifier) {
-          throw Error('Unable to determine suitable identifier');
-        }
+        var identifier = model.get('identifier');
 
         var q = new ApiQuery({
           q: 'identifier:' + queryUpdater.quoteIfNecessary(identifier),
@@ -508,7 +485,7 @@ function (
       var success = function (profile) {
         var works = profile.getWorks();
         var matchedWork = _.find(works, function (w) {
-          var wIds = w.getExternalIds();
+          var wIds = w.getIdentifier();
           var doi = _.any(exIds.doi, wIds.doi);
 
           return exIds.bibcode === wIds.bibcode || doi;

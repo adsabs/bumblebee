@@ -5,10 +5,7 @@ define([
   'js/modules/orcid/work'
 ], function (_, jp, Work) {
   var PATHS = {
-    firstName: '$.person.name["given-names"].value',
-    lastName: '$.person.name["family-name"].value',
-    orcid: '$["orcid-identifier"].path',
-    workSummaries: '$["activities-summary"].works.group'
+    workSummaries: '$'
   };
 
   /**
@@ -58,20 +55,6 @@ define([
     };
 
     /**
-     * Pull all arrays of works from the profile
-     * grabs all works, not just the first
-     *
-     * @returns {[]Work[]} - the array of arrays of Work summaries
-     */
-    this.getWorksDeep = function () {
-      return _.map(this.getWorkSummaries(), function (w) {
-        return _.map(w['work-summary'], function (subWork) {
-          return new Work(subWork);
-        });
-      });
-    };
-
-    /**
      * Convenience method for generating an ADS response object
      * this can then be used to update the pagination of lists of orcid works
      *
@@ -101,12 +84,8 @@ define([
 
       return {
         responseHeader: {
-          params: {
-            orcid: this.getOrcid(),
-            firstName: this.getFirstName(),
-            lastName: this.getLastName()
-          }
-        },
+          params: {}
+          },
         response: {
           numFound: docs.length,
           start: 0,

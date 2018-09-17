@@ -66,6 +66,7 @@ function (
 
     // store ADS information connected with ORCID here
     ORCID_PREFERENCES: 'orcid/preferences',
+    ORCID_NAME: 'orcid/orcid-name',
 
     // library endpoints
     // can get info about all libraries, or list of bibcodes associated w/specific lib (libraries/id)
