@@ -757,8 +757,8 @@ function (
           var fq_database_string = _.reduce(dbfilters, function (res, db, i) {
             var d = db.toLowerCase();
             return res.replace(/(\(.*)(\))/, i === 0 ?
-                '$1database=' + d + '$2' :
-                '$1 OR database=' + d + '$2'
+                '$1database:' + d + '$2' :
+                '$1 OR database:' + d + '$2'
               );
           }, '()');
           apiQuery.set('fq_database', fq_database_string);
@@ -767,7 +767,7 @@ function (
         // finally add the filters
         if (!apiQuery.has('__filter_database_fq_database')) {
           var fq_database_filters = _.map(dbfilters, function (db) {
-            return 'database=' + db.toLowerCase();
+            return 'database:' + db.toLowerCase();
           });
           apiQuery.set('__filter_database_fq_database', ['OR'].concat(fq_database_filters));
         }
