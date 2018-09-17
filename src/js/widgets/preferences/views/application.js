@@ -24,6 +24,10 @@ define([
         { name: 'Astronomy', value: false },
         { name: 'General', value: false }
       ]
+    },
+    hideSidebars: {
+      initialValue: 'Show',
+      initialOptions: ['Show', 'Hide']
     }
   };
 
@@ -40,6 +44,8 @@ define([
         DEFAULTS.database.initialValue;
       var exportFormat = this.model.get('defaultExportFormat') ||
         DEFAULTS.exportFormat.initialValue
+      var hideSidebars = this.model.get('defaultHideSidebars') ||
+        DEFAULTS.hideSidebars.initialValue
 
       // must clone the props that will get mutated
       this.model.set({
@@ -52,7 +58,10 @@ define([
         databaseSelected: _.cloneDeep(database),
         exportFormatOptions: DEFAULTS.exportFormat.initialOptions,
         exportFormatDefault: DEFAULTS.exportFormat.initialValue,
-        exportFormatSelected: _.clone(exportFormat)
+        exportFormatSelected: _.clone(exportFormat),
+        hideSideBarsDefault: DEFAULTS.hideSidebars.initialValue,
+        hideSideBarsOptions: DEFAULTS.hideSidebars.initialOptions,
+        hideSideBarsSelected: _.clone(hideSidebars)
       });
       this.model.trigger('change');
     },
@@ -127,7 +136,8 @@ define([
         minAuthorsPerResult: this._convertToString(this.model.get('numAuthorsSelected')),
         externalLinkAction: this.model.get('externalLinksSelected'),
         defaultDatabase: this.model.get('databaseSelected'),
-        defaultExportFormat: this.model.get('exportFormatSelected')
+        defaultExportFormat: this.model.get('exportFormatSelected'),
+        defaultHideSidebars: this.model.get('hideSideBarsSelected')
       });
     },
 
@@ -143,7 +153,8 @@ define([
         minAuthorsPerResult: undefined,
         externalLinkAction: undefined,
         defaultDatabase: undefined,
-        defaultExportFormat: undefined
+        defaultExportFormat: undefined,
+        defaultHideSidebars: undefined
       }, { unset: true });
 
       this.onCancel.apply(this, arguments);
