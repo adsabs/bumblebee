@@ -344,7 +344,10 @@ define([
       var numFound = _.isNumber(update.numFound) ? update.numFound : this.model.get('numFound');
 
       // once the hash is updated, this is called again, return here so we don't recompute, and only on results page
-      if (('' + page) !== (_.isArray(pageParam) && pageParam[0]) && opts.updateHash && /search/.test(location.hash)) {
+      if (('' + page) !== (_.isArray(pageParam) && pageParam[0]) &&
+        opts.updateHash && /search/.test(location.hash) &&
+        utils.qs('p_', location.hash) !== ('' + page)
+      ) {
         location.hash = utils.updateHash('p_', page, location.hash);
         return;
       }
@@ -364,6 +367,7 @@ define([
 
       // finally, scroll back to the top
       document.body.scrollTop = document.documentElement.scrollTop = 0;
+      $('#app-container').scrollTop(0);
     },
 
     onAllInternalEvents: function (ev, arg1, arg2) {
