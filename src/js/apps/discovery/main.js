@@ -75,33 +75,32 @@ define(['config', 'module'], function (config, module) {
           try {
             var beehive = _.isFunction(this.getBeeHive) && this.getBeeHive();
             var user = _.isFunction(beehive.getObject) && beehive.getObject('User');
-            if (_.isPlainObject(user)) {
-              return _.isFunction(user.getUserData) && user.getUserData('USER_DATA');
+            if (user) {
+              return user.getUserData('USER_DATA');
             }
-            return {};
           } catch (e) {
-            return {};
+            // do nothing
           }
+          return {};
         }
 
         // handle user preferences for external link actions
-        var updateExternalLinkBehavior = function () {
+        var updateExternalLinkBehavior = _.debounce(function () {
           var userData = getUserData.call(app);
           var action = userData.externalLinkAction && userData.externalLinkAction.toUpperCase() || 'AUTO';
-          var handler = function () {
-            if ($(this).attr('target') === '_blank') {
-              $(this).attr('target', '');
-            }
-          };
-          var $a = $('a');
           if (action === 'OPEN IN CURRENT TAB') {
-            $a.off('click.global');
-            $a.on('click.global', handler);
-          } else {
-            $a.off('click.global');
+            var max = 10;
+            var timeout;
+            (function updateLinks(count) {
+              clearTimeout(timeout);
+              if (count < max) {
+                $('a[target="_blank"]').attr('target', '');
+                timeout = setTimeout(updateLinks, 1000, count + 1);
+              }
+            })(0);
           }
-        };
-        pubsub.subscribe(pubsub.getCurrentPubSubKey(), pubsub.USER_ANNOUNCEMENT, updateExternalLinkBehavior);
+        }, 3000, { leading: true, trailing: false }, false);
+        pubsub.subscribe(pubsub.getCurrentPubSubKey(), pubsub.NAVIGATE, updateExternalLinkBehavior);
         updateExternalLinkBehavior();
 
         analytics('send', 'event', 'timer', 'app-booted', Date.now() - timeLoaded);
