@@ -13,7 +13,8 @@ define([
   'hbs!js/widgets/results/templates/container-template',
   'js/mixins/papers_utils',
   'js/modules/orcid/extension',
-  'js/mixins/dependon'
+  'js/mixins/dependon',
+  'js/components/api_feedback'
 ],
 
 function (
@@ -25,7 +26,8 @@ function (
   ContainerTemplate,
   PapersUtilsMixin,
   OrcidExtension,
-  Dependon
+  Dependon,
+  ApiFeedback
 ) {
   var ResultsWidget = ListOfThingsWidget.extend({
     initialize: function () {
@@ -39,6 +41,7 @@ function (
           title: undefined,
           // assuming there will always be abstracts
           showAbstract: 'closed',
+          makeSpace: false,
           // often they won't exist
           showHighlights: false,
           pagination: true
@@ -70,6 +73,8 @@ function (
       resultsFields = _.union(abstractFields, resultsFields);
       this.defaultQueryArguments.fl = resultsFields.join(',');
       this.minAuthorsPerResult = 3;
+
+      this.model.on('change:makeSpace', _.bind(this.onMakeSpace, this));
     },
 
     defaultQueryArguments: {
@@ -135,6 +140,12 @@ function (
         setTimeout(function () { clearInterval(focusInterval); }, 10000);
         this.focusInterval = focusInterval;
       }
+    },
+
+    onMakeSpace: function () {
+      var pubsub = this.getPubSub();
+      var code = this.model.get('makeSpace') ? 'MAKE_SPACE' : 'UNMAKE_SPACE';
+      pubsub.publish(pubsub.FEEDBACK, new ApiFeedback({ code: ApiFeedback.CODES[code] }));
     },
 
     onUserAnnouncement: function (message, data) {
