@@ -108,20 +108,19 @@ function (
           type: 'GET',
           timeout: timeout - 1
         };
-        var redirect_uri = location.origin + location.pathname;
 
         _.each(this.bootstrapUrls, function (url) {
           if (url.indexOf('http') > -1) {
             opts.u = url;
             api.request(new ApiRequest({
-              query: new ApiQuery({ redirect_uri: redirect_uri }),
+              query: new ApiQuery(),
               target: ''
             }),
             opts);
           } else {
             delete opts.u;
             api.request(new ApiRequest({
-              query: new ApiQuery({ redirect_uri: redirect_uri }),
+              query: new ApiQuery(),
               target: url
             }),
             opts);
