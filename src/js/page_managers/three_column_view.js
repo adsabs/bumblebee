@@ -144,7 +144,7 @@ function (
           var $col = x[2];
           setTimeout(function () {
             $col.children().show(0);
-          }, 500);
+          }, 200);
         } else {
           x[2].addClass('hidden');
         }
