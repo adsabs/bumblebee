@@ -124,6 +124,35 @@
           </select>
         </div>
 
+        <!-- Default Show/Hide Sidebars -->
+        <div class="form-group">
+          <label for="hideSideBars">
+            Results List Side Bars
+            <a href="#collapseHideSideBars" data-toggle="collapse" role="button" aria-expanded="false" aria-controls="collapseHideSideBars">
+              <i class="fa fa-question-circle"></i>
+            </a>
+          </label>
+          <p>
+            <div class="collapse" id="collapseHideSideBars">
+              <div class="card card-body text-muted">
+                <p>
+                    Select the default state of the results list sidebars (hide/show)
+                    <br>
+                    (<strong>default: {{hideSideBarsDefault}}</strong>)
+                </p>
+              </div>
+            </div>
+          </p>
+          <select class="form-control" id="hideSideBars" aria-describedby="collapseHideSideBars">
+            {{#each hideSideBarsOptions}}
+              <option
+                value="{{this}}"
+                {{#compare this ../hideSideBarsSelected}} selected="selected" {{/compare}}
+              >{{this}}</option>
+            {{/each}}
+          </select>
+        </div>
+
         <hr class="hr">
         <button class="btn btn-primary" role="submit" id="appSettingsSubmit">Save</button>
         <button class="btn btn-default" role="reset" id="appSettingsCancel">Cancel</button>
