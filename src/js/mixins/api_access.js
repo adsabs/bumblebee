@@ -49,7 +49,6 @@ function (
     getApiAccess: function (options) {
       options = options || {};
       var api = this.getBeeHive().getService('Api');
-      var redirect_uri = location.origin + location.pathname;
       var self = this;
       var defer = $.Deferred();
 
@@ -57,7 +56,7 @@ function (
       var request = options.tokenRefresh ? '_request' : 'request';
 
       api[request](new ApiRequest({
-        query: new ApiQuery({ redirect_uri: redirect_uri }),
+        query: new ApiQuery(),
         target: this.bootstrapUrls ? this.bootstrapUrls[0] : '/accounts/bootstrap'
       }),
       {
