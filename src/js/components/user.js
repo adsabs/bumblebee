@@ -68,7 +68,8 @@ function (
           { name: 'Astronomy', value: false },
           { name: 'General', value: false }
         ],
-        defaultExportFormat: 'BibTeX'
+        defaultExportFormat: 'BibTeX',
+        defaultHideSidebars: 'Show'
       };
     }
   });

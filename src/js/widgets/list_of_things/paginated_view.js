@@ -133,6 +133,7 @@ function (
     events: {
       'click .show-highlights': 'toggleHighlights',
       'click .show-abstract': 'toggleAbstract',
+      'click .toggle-make-space': 'toggleMakeSpace',
       'click a.page-control': 'changePageWithButton',
       'keyup input.page-control': 'tabOrEnterChangePageWithInput',
       'click .per-page': 'changePerPage'
@@ -153,6 +154,12 @@ function (
         this.model.set('showAbstract', 'open');
         analytics('send', 'event', 'interaction', 'abstracts-toggled-on');
       }
+    },
+
+    toggleMakeSpace: function () {
+      var val = !this.model.get('makeSpace');
+      this.model.set('makeSpace', val);
+      analytics('send', 'event', 'interaction', 'sidebars-toggled-' + val ? 'on' : 'off');
     },
 
     modelEvents: {
