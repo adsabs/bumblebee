@@ -119,7 +119,7 @@ define([
      * @returns {*} - ORCiD formatted object
      */
     this.getAsOrcid = function () {
-      return _.reduce(ADSPATHS, _.bind(function (res, p) {
+      return _.reduce(PATHS, _.bind(function (res, p) {
         var val = this.get(p);
         if (val) {
           if (_.isArray(val)) {

@@ -39,7 +39,7 @@ define([
       minsub.beehive.addService('OrcidApi', {
         hasAccess: function() {return true},
         getHardenedInstance: function() {return this},
-        getUserProfile : function(){
+        getUserBio : function(){
           var d = $.Deferred();
           d.resolve({
             getFirstName: _.constant('Testy'),
