@@ -15,12 +15,6 @@ define([
 
     this.get = function (path) {
       var val = jp.query(this._root, path);
-      if (_.isEmpty(val)) {
-        return null;
-      }
-      if (_.isArray(val) && val.length <= 1) {
-        return val[0];
-      }
       return val[0];
     };
 
