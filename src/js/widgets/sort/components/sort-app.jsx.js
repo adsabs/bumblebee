@@ -7,7 +7,6 @@ define([
     const options = app.get('options');
     const sort = app.get('sort');
     const direction = app.get('direction');
-    const locked = app.get('locked');
 
     /**
      * Call the handler after a selection is made from the dropdown
@@ -23,8 +22,6 @@ define([
     return (
       <div className="btn-group">
         <button
-          disabled={locked}
-          aria-disabled={locked}
           type="button"
           className="btn btn-default"
           onClick={setDirection}
@@ -37,8 +34,6 @@ define([
         </button>
         <button
           style={{ minWidth: 100 }}
-          disabled={locked}
-          aria-disabled={locked}
           type="button"
           className="btn btn-default dropdown-toggle"
           data-toggle="dropdown"
