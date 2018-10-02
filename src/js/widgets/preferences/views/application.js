@@ -28,7 +28,15 @@ define([
     hideSidebars: {
       initialValue: 'Show',
       initialOptions: ['Show', 'Hide']
-    }
+    },
+    addCustomFormatOptions: [
+      { id: _.uniqueId(), name: 'my format 1', code: 'r$d/3\dlddk', editing: true },
+      { id: _.uniqueId(), name: 'my format 2', code: 'r$d/3\dlddk' },
+      { id: _.uniqueId(), name: 'my format 3', code: 'r$d/3\dlddk' },
+      { id: _.uniqueId(), name: 'my format 4', code: 'r$d/3\dlddk' },
+      { id: _.uniqueId(), name: 'my format 5', code: 'r$d/3\dlddk' },
+      { id: _.uniqueId(), name: 'my format 6', code: 'r$d/3\dlddk' },
+    ]
   };
 
   var ApplicationView = Marionette.ItemView.extend({
@@ -46,6 +54,8 @@ define([
         DEFAULTS.exportFormat.initialValue
       var hideSidebars = this.model.get('defaultHideSidebars') ||
         DEFAULTS.hideSidebars.initialValue
+      var addCustomFormatOptions = this.model.get('addCustomFormat') ||
+        DEFAULTS.addCustomFormatOptions;
 
       // must clone the props that will get mutated
       this.model.set({
@@ -61,7 +71,8 @@ define([
         exportFormatSelected: _.clone(exportFormat),
         hideSideBarsDefault: DEFAULTS.hideSidebars.initialValue,
         hideSideBarsOptions: DEFAULTS.hideSidebars.initialOptions,
-        hideSideBarsSelected: _.clone(hideSidebars)
+        hideSideBarsSelected: _.clone(hideSidebars),
+        addCustomFormatOptions: _.clone(addCustomFormatOptions)
       });
       this.model.trigger('change');
     },
@@ -75,6 +86,20 @@ define([
       'click #appSettingsCancel': 'onCancel',
       'click #appSettingsReset': 'onResetToDefaults',
       'click .database-select': 'onDatabaseSelect',
+      'click #addCustomFormatAdd': 'onAddCustomFormat',
+
+      // Custom format editor events
+      'click #addCustomFormatEdit': 'onEditCustomFormat',
+      'click #addCustomFormatConfirmEdit': 'onConfirmEditCustomFormat',
+      'click #addCustomFormatCancelEdit': 'onCancelEditCustomFormat',
+
+      // custom format deleting events
+      'click #addCustomFormatDelete': 'onDeleteCustomFormat',
+      'click #addCustomFormatConfirmDelete': 'onConfirmDeleteCustomFormat',
+      'click #addCustomFormatCancelDelete': 'onCancelDeleteCustomFormat',
+
+      'enter .custom-format-edit': 'onConfirmEditCustomFormat',
+
       'change select': 'syncModel'
     },
 
@@ -180,6 +205,109 @@ define([
       setTimeout(function () {
         model.set('updateSucceeded', false);
       }, 5000);
+    },
+
+    // updateCustomFormatItemEvents: function () {
+    //   var items = this.model.get('addCustomFormatOptions');
+    //   _.each(items, _.bind(function (i) {
+    //     var nameEl = 'enter #custom-format-name-' + i.id;
+    //     var codeEl = 'enter #custom-format-code-' + i.id;
+    //     var obj = {};
+    //     obj[nameEl] = 'onConfirmEditCustomFormat';
+    //     obj[codeEl] = 'onConfirmEditCustomFormat';
+    //     this.delegateEvents(_.extend(_.clone(this.events)), obj);
+    //   }, this));
+    // },
+
+    onAddCustomFormat: function (e) {
+      e.preventDefault();
+      console.log('adding format');
+      var items = _.clone(this.model.get('addCustomFormatOptions'));
+      items.unshift({
+        id: _.uniqueId(),
+        name: 'My New Format',
+        code: '<---- Format ---->'
+      });
+      this.model.set('addCustomFormatOptions', items);
+    },
+
+    updateCustomFormatEntry: function (_id, data) {
+      var items = _.clone(this.model.get('addCustomFormatOptions'));
+      var id = _id + '';
+      var idx = _.findIndex(items, { id: id });
+      if (_.isPlainObject(data)) {
+        items[idx] = _.assign({}, items[idx], data);
+      }
+      this.model.set('addCustomFormatOptions', items);
+      this.model.trigger('change');
+    },
+
+    onEditCustomFormat: function (e) {
+      e.preventDefault();
+      var id = this.$(e.currentTarget).data('id');
+      console.log('onEdit', id);
+
+      // update the page
+      this.updateCustomFormatEntry(id, {
+        editing: true
+      });
+
+      // apply some listeners
+      var $name = $('#custom-format-name-' + id);
+      $name.focus().select();
+    },
+
+    applyEditById: function (id) {
+      var name = this.$('#custom-format-name-' + id).val();
+      var code = this.$('#custom-format-code-' + id).val();
+      this.updateCustomFormatEntry(id, {
+        editing: false,
+        name: name,
+        code: code
+      });
+    },
+
+    onConfirmEditCustomFormat: function (e) {
+      e.preventDefault();
+      var id = this.$(e.currentTarget).data('id');
+      this.applyEditById(id);
+    },
+
+    onCancelEditCustomFormat: function (e) {
+      e.preventDefault();
+      var id = this.$(e.currentTarget).data('id');
+      this.updateCustomFormatEntry(id, {
+        editing: false
+      });
+    },
+
+    onDeleteCustomFormat: function (e) {
+      e.preventDefault();
+      var model = this.model;
+      var id = this.$(e.currentTarget).data('id') + '';
+      var items = _.clone(model.get('addCustomFormatOptions'));
+      var newList = _.reject(items, { id: id });
+      this.$(e.currentTarget).closest('li').fadeOut(400, function () {
+        model.set('addCustomFormatOptions', newList);
+      });
+    },
+
+    onConfirmDeleteCustomFormat: function (e) {
+      e.preventDefault();
+      console.log('confirmed');
+    },
+
+    onCancelDeleteCustomFormat: function (e) {
+      e.preventDefault();
+      console.log('delete canceled');
+    },
+
+    onRender: function () {
+      this.$('form input.custom-format-edit').on('keydown', _.bind(function (e) {
+        if (e.keyCode === 13) {
+          this.onConfirmEditCustomFormat(e);
+        }
+      }, this));
     }
   });
 

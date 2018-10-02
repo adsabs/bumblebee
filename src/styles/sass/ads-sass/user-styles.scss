@@ -121,3 +121,8 @@ button#clear-link-server {
   padding: 5px;
   white-space: pre;
 }
+
+#addCustomFormat ul {
+  max-height: 400px;
+  overflow: scroll;
+}
