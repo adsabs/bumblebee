@@ -147,7 +147,7 @@ function (
       opts.headers['X-BB-Api-Client-Version'] = this.clientVersion;
     }
 
-    if (this.access_token) {
+    if (this.access_token && !(/accounts\/bootstrap/i.test(target))) {
       opts.headers.Authorization = this.access_token;
     }
 
