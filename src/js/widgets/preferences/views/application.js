@@ -29,14 +29,7 @@ define([
       initialValue: 'Show',
       initialOptions: ['Show', 'Hide']
     },
-    addCustomFormatOptions: [
-      { id: _.uniqueId(), name: 'my format 1', code: 'r$d/3\dlddk', editing: true },
-      { id: _.uniqueId(), name: 'my format 2', code: 'r$d/3\dlddk' },
-      { id: _.uniqueId(), name: 'my format 3', code: 'r$d/3\dlddk' },
-      { id: _.uniqueId(), name: 'my format 4', code: 'r$d/3\dlddk' },
-      { id: _.uniqueId(), name: 'my format 5', code: 'r$d/3\dlddk' },
-      { id: _.uniqueId(), name: 'my format 6', code: 'r$d/3\dlddk' },
-    ]
+    addCustomFormatOptions: []
   };
 
   var ApplicationView = Marionette.ItemView.extend({
@@ -54,7 +47,7 @@ define([
         DEFAULTS.exportFormat.initialValue
       var hideSidebars = this.model.get('defaultHideSidebars') ||
         DEFAULTS.hideSidebars.initialValue
-      var addCustomFormatOptions = this.model.get('addCustomFormat') ||
+      var addCustomFormatOptions = this.model.get('customFormats') ||
         DEFAULTS.addCustomFormatOptions;
 
       // must clone the props that will get mutated
@@ -95,11 +88,6 @@ define([
 
       // custom format deleting events
       'click #addCustomFormatDelete': 'onDeleteCustomFormat',
-      'click #addCustomFormatConfirmDelete': 'onConfirmDeleteCustomFormat',
-      'click #addCustomFormatCancelDelete': 'onCancelDeleteCustomFormat',
-
-      'enter .custom-format-edit': 'onConfirmEditCustomFormat',
-
       'change select': 'syncModel'
     },
 
@@ -162,7 +150,10 @@ define([
         externalLinkAction: this.model.get('externalLinksSelected'),
         defaultDatabase: this.model.get('databaseSelected'),
         defaultExportFormat: this.model.get('exportFormatSelected'),
-        defaultHideSidebars: this.model.get('hideSideBarsSelected')
+        defaultHideSidebars: this.model.get('hideSideBarsSelected'),
+        customFormats: _.map(this.model.get('addCustomFormatOptions'), function (i) {
+          return _.pick(i, ['id', 'name', 'code']);
+        })
       });
     },
 
@@ -207,28 +198,23 @@ define([
       }, 5000);
     },
 
-    // updateCustomFormatItemEvents: function () {
-    //   var items = this.model.get('addCustomFormatOptions');
-    //   _.each(items, _.bind(function (i) {
-    //     var nameEl = 'enter #custom-format-name-' + i.id;
-    //     var codeEl = 'enter #custom-format-code-' + i.id;
-    //     var obj = {};
-    //     obj[nameEl] = 'onConfirmEditCustomFormat';
-    //     obj[codeEl] = 'onConfirmEditCustomFormat';
-    //     this.delegateEvents(_.extend(_.clone(this.events)), obj);
-    //   }, this));
-    // },
-
     onAddCustomFormat: function (e) {
       e.preventDefault();
-      console.log('adding format');
       var items = _.clone(this.model.get('addCustomFormatOptions'));
+      var id = _.uniqueId('format-');
       items.unshift({
-        id: _.uniqueId(),
+        id: id,
         name: 'My New Format',
-        code: '<---- Format ---->'
+        code: '<---- Format ---->',
+        editing: true
       });
       this.model.set('addCustomFormatOptions', items);
+      var $name = $('#custom-format-name-' + id);
+      $name.focus().select();
+      var $msg = this.$('#new-format-msg');
+      $msg.fadeIn('slow', function () {
+        $msg.fadeOut('slow');
+      });
     },
 
     updateCustomFormatEntry: function (_id, data) {
@@ -245,7 +231,6 @@ define([
     onEditCustomFormat: function (e) {
       e.preventDefault();
       var id = this.$(e.currentTarget).data('id');
-      console.log('onEdit', id);
 
       // update the page
       this.updateCustomFormatEntry(id, {
@@ -292,14 +277,18 @@ define([
       });
     },
 
-    onConfirmDeleteCustomFormat: function (e) {
-      e.preventDefault();
-      console.log('confirmed');
-    },
+    onSortChange: function (e, ui) {
+      var items = _.clone(this.model.get('addCustomFormatOptions'));
+      var index = this.$('#addCustomFormat .list-group-item').index(ui.item);
+      var id = this.$(ui.item).data('id');
+      var fIndex = _.findIndex(items, { id: id });
 
-    onCancelDeleteCustomFormat: function (e) {
-      e.preventDefault();
-      console.log('delete canceled');
+      // swap
+      if (index !== fIndex) {
+        items.splice(index, 0, items.splice(fIndex, 1)[0]);
+      }
+
+      this.model.set('addCustomFormatOptions', items);
     },
 
     onRender: function () {
@@ -308,6 +297,17 @@ define([
           this.onConfirmEditCustomFormat(e);
         }
       }, this));
+      var onSortChange = _.bind(this.onSortChange, this);
+      setTimeout(function () {
+        $('#addCustomFormat').sortable({
+          axis: 'y',
+          items: '.list-group-item',
+          update: onSortChange,
+          scroll: true,
+          scrollSensitivity: 80,
+          scrollSpeed: 3
+        });
+      }, 100);
     }
   });
 

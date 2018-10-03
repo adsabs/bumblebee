@@ -141,14 +141,16 @@
               </div>
             </div>
           </p>
+          <p>
+            You current have {{addCustomFormatOptions.length}} format(s) defined.
+          </p>
           <div id="addCustomFormat">
-            <p>
-              You current have {{addCustomFormatOptions.length}} format(s) defined.
-            </p>
             <ul class="list-group col-xs-12" id="format-editable">
               {{#each addCustomFormatOptions}}
-                <li class="list-group-item clearfix">
-                  <div class="col-xs-1">{{@index}}</div>
+                <li class="list-group-item clearfix" data-id="{{id}}">
+                  <div class="col-xs-1">
+                    <i class="fa fa-unsorted"></i>
+                  </div>
 
                   {{#if editing}}
                     <div class="col-xs-3">
@@ -192,10 +194,14 @@
                 </div>
               {{/each}}
             </ul>
-            <div class="col-md-12">
-              <button class="btn btn-primary btn-sm" id="addCustomFormatAdd">Add</button>
-            </div>
           </div>
+          <p>
+            <button class="btn btn-primary" id="addCustomFormatAdd">Add</button>
+            &nbsp;
+            <span id="new-format-msg" class="text-muted" style="display: none">
+              New format added!
+            </span>
+          </p>
         </div>
 
         <!-- Default Show/Hide Sidebars -->
