@@ -21,7 +21,8 @@ define([
     setCount,
     cancelRequest,
     reset,
-    downloadFile
+    downloadFile,
+    getCustomFormats
   } = actions;
 
   class App extends React.Component {
@@ -36,7 +37,8 @@ define([
         'handleGetNextClick',
         'handleResetClick',
         'handleDownloadFileClick',
-        'onCopyText'
+        'onCopyText',
+        'onCustomFormatClick'
       ]);
       const { dispatch } = props;
 
@@ -49,13 +51,13 @@ define([
       }, 500);
 
       this.onCustomFormatChange = _.debounce((val) => {
-        dispatch;
         dispatch({ type: 'SET_CUSTOM_FORMAT', format: val });
       }, 500);
 
       this.state = {
         count: '0',
-        showAlert: false
+        showAlert: false,
+        customFormatDirectEntry: false
       };
     }
 
@@ -122,6 +124,15 @@ define([
       this.props.dispatch(reset());
     }
 
+    onCustomFormatClick() {
+      if (this.state.customFormatDirectEntry) {
+        this.onCustomFormatChange(this.props.customFormats[0].code);
+      }
+      this.setState({
+        'customFormatDirectEntry': !this.state.customFormatDirectEntry
+      });
+    }
+
     /**
      * Update the format on the state when the user selects a new one
      *
@@ -129,7 +140,11 @@ define([
      */
     handleFormatChange(id) {
       const { dispatch, formats, autoSubmit } = this.props;
-      const format = _.find(formats, { id: id });
+      let format = _.find(formats, { id: id });
+
+      if (format.value === 'custom' && this.props.customFormats.length > 0) {
+        this.onCustomFormatChange(this.props.customFormats[0].code);
+      }
       dispatch(setFormat(format));
 
       // if autoSubmit, then hit apply as the format changes
@@ -157,10 +172,10 @@ define([
       const {
         format, formats, isFetching, output, batchSize, showCloser, showReset,
         progress, maxCount, hasError, errorMsg, totalRecs, showSlider, splitCols,
-        autoSubmit, customFormat
+        autoSubmit, customFormat, customFormats
       } = this.props;
       const {
-        count, hasMore, showAlert, alertMsg, remaining
+        count, hasMore, showAlert, alertMsg, remaining, customFormatDirectEntry
       } = this.state;
 
       const low = maxCount - batchSize;
@@ -195,6 +210,8 @@ define([
                 autoSubmit={autoSubmit}
                 remaining={remaining}
                 customFormat={customFormat}
+                customFormats={customFormats}
+                customFormatDirectEntry={customFormatDirectEntry}
                 onCustomFormatChange={this.onCustomFormatChange}
                 onReset={this.handleResetClick}
                 onApply={this.handleApplyClick}
@@ -202,6 +219,7 @@ define([
                 setFormat={this.handleFormatChange}
                 onGetNext={this.handleGetNextClick}
                 setCount={this.handleCountChange}
+                onCustomFormatClick={this.onCustomFormatClick}
               />
               {hasError
               && <div className="row">
@@ -281,7 +299,8 @@ define([
     splitCols: state.main.splitCols,
     showReset: state.main.showReset,
     ids: state.exports.ids,
-    query: state.main.query
+    query: state.main.query,
+    customFormats: state.exports.customFormats
   });
 
   return ReactRedux.connect(mapStateToProps)(App);

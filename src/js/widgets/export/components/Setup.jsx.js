@@ -7,7 +7,9 @@ define([
   const Setup = ({
     onApply, setFormat, disabled, onCancel, batchSize, hasMore, onReset,
     format, formats, count, setCount, maxCount, onGetNext, totalRecs,
-    showSlider, showReset, remaining, autoSubmit, customFormat, onCustomFormatChange
+    showSlider, showReset, remaining, autoSubmit, customFormat, onCustomFormatChange,
+    customFormats, customFormatSelected, onCustomFormatSelectionChange, customFormatDirectEntry,
+    onCustomFormatClick
   }) => (
     <div>
       <div className="row">
@@ -34,24 +36,62 @@ define([
       { format.value === 'custom'
         && <div className="row">
           <div className="col-sm-10">
-            <label htmlFor="ex-custom-input">
-              Enter Custom Format
-              <span style={{ marginLeft: 5 }}>
-                <a
-                  title="Get Help With ADS Custom Format Syntax"
-                  target="_blank"
-                  rel="noopener"
-                  href="https://adsabs.github.io/help/actions/export">
-                  <i className="fa fa-info-circle fa-invert" />
-                </a>
-              </span>
-            </label>
-            <input
-              type="text"
-              className="form-control"
-              value={customFormat}
-              onChange={e => onCustomFormatChange(e.target.value)}
-            />
+           {!customFormatDirectEntry &&
+            <div className="col-sm-12">
+              <label htmlFor="ex-custom-input">
+                Select a Custom Format
+                <span style={{ marginLeft: 5 }}>
+                  <a
+                    title="Get Help With ADS Custom Format Syntax"
+                    target="_blank"
+                    rel="noopener"
+                    href="https://adsabs.github.io/help/actions/export">
+                    <i className="fa fa-info-circle fa-invert" />
+                  </a>
+                </span>
+                <span style={{ marginLeft: 5 }}>
+                  <a
+                    title="manage custom formats"
+                    href="/#user/settings/librarylink">
+                    <i className="fa fa-cog fa-invert"></i>
+                  </a>
+                </span>
+              </label>
+              <select
+                className="form-control"
+                value={customFormat}
+                onChange={e => onCustomFormatChange(e.target.value)}
+              >
+              {customFormats.map((f) => (
+                <option value={f.code} key={f.id}>{f.name}: {f.code}</option>
+              ))}
+              </select>
+              <button className="btn btn-link" role="button" onClick={onCustomFormatClick}>Or enter your own</button>
+            </div>
+            }
+            { customFormatDirectEntry &&
+              <div className="col-sm-12">
+                <label htmlFor="ex-custom-input">
+                  Enter Custom Format
+                  <span style={{ marginLeft: 5 }}>
+                    <a
+                      title="Get Help With ADS Custom Format Syntax"
+                      target="_blank"
+                      rel="noopener"
+                      href="https://adsabs.github.io/help/actions/export">
+                      <i className="fa fa-info-circle fa-invert" />
+                    </a>
+                  </span>
+                </label>
+                <input
+                  type="text"
+                  className="form-control"
+                  value={customFormat}
+                  onChange={e => onCustomFormatChange(e.target.value)}
+                />
+                <button className="btn btn-link" role="button" onClick={onCustomFormatClick}>Or select from your saved custom formats</button>
+              </div>
+            }
           </div>
         </div>
       }

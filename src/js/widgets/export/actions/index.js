@@ -36,7 +36,8 @@ define([
     RECEIVE_EXPORT: 'RECEIVE_EXPORT',
     REQUEST_FAILED: 'REQUEST_FAILED',
     REQUEST_CANCELLED: 'REQUEST_CANCELLED',
-    SET_ORIGIN: 'SET_ORIGIN'
+    SET_ORIGIN: 'SET_ORIGIN',
+    SET_CUSTOM_FORMATS: 'SET_CUSTOM_FORMATS'
   };
 
   actions.setTab = tab => ({ type: actions.SET_TAB, tab });
@@ -62,6 +63,7 @@ define([
   actions.reset = () => ({ type: actions.RESET });
   actions.hardReset = () => ({ type: actions.HARD_RESET });
   actions.setOrigin = origin => ({ type: actions.SET_ORIGIN, origin });
+  actions.setCustomFormats = customFormats => ({ type: actions.SET_CUSTOM_FORMATS, customFormats });
 
   /**
    * On request failure, we want to display a message to the user here
@@ -233,7 +235,7 @@ define([
    *
    * @param {object} snapshot - the current state
    */
-  actions.takeSnapshot = snapshot => (dispatch, getState) => {
+  actions.takeSnapshot = () => (dispatch, getState) => {
     const snapshot = _.omit(getState().exports, 'snapshot');
     dispatch({ type: actions.TAKE_SNAPSHOT, snapshot: snapshot });
   };
