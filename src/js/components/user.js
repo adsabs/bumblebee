@@ -69,7 +69,8 @@ function (
           { name: 'General', value: false }
         ],
         defaultExportFormat: 'BibTeX',
-        defaultHideSidebars: 'Show'
+        defaultHideSidebars: 'Show',
+        customFormats: []
       };
     }
   });

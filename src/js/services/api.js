@@ -149,6 +149,9 @@ function (
 
     if (this.access_token) {
       opts.headers.Authorization = this.access_token;
+      if (/accounts\/bootstrap/i.test(target)) {
+        opts.headers.Authorization = '';
+      }
     }
 
     // extend, rather than replace, the headers with user-supplied headers if any
