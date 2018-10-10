@@ -15,9 +15,6 @@ module.exports = {
   convert_requirejs: {
     cmd: 'node_modules/.bin/uglifyjs src/libs/requirejs/require.js -c -m -o src/libs/requirejs/require.js'
   },
-  convert_bootstrap_editable: {
-    cmd: 'node node_modules/requirejs/bin/r.js -convert src/libs/bootstrap-editable src/libs/bootstrap-editable'
-  },
   latest_commit: {
     cmd: 'git rev-parse --short=7 --verify HEAD | cat > git-latest-commit'
   },

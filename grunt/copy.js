@@ -223,18 +223,6 @@ module.exports = function (grunt) {
           rename: function (dest, src) {
             return dest + src.replace('react-dom.min', 'index');
           }
-        },
-        {
-          cwd: 'node_modules/bootstrap-editable/js',
-          src: 'index.js',
-          dest: 'src/libs/bootstrap-editable/',
-          expand: true
-        },
-        {
-          cwd: 'node_modules/bootstrap-editable/css',
-          src: 'bootstrap-editable.css',
-          dest: 'src/styles/css/',
-          expand: true
         }
       ]
     },
