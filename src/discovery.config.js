@@ -197,10 +197,6 @@ require.config({
       '//ajax.aspnetcdn.com/ajax/bootstrap/3.3.5/bootstrap.min',
       'libs/bootstrap/bootstrap'
     ],
-    'bootstrap-editable': [
-      '//cdnjs.cloudflare.com/ajax/libs/x-editable/1.5.1/bootstrap3-editable/js/bootstrap-editable.min',
-      'lib/bootstrap-editable'
-    ],
     'cache': 'libs/dsjslib/lib/Cache',
     'chai': '../bower_components/chai/chai',
     'classnames': [
@@ -343,13 +339,6 @@ require.config({
     },
     'bootstrap': {
       deps: ['jquery', 'jquery-ui']
-    },
-    'bootstrap-editable': {
-      deps: ['bootstrap'],
-      exports: '$',
-      init: function () {
-        window.jQuery = $;
-      }
     },
     'backbone': {
       deps: ['jquery', 'underscore']

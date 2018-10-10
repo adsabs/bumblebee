@@ -30,7 +30,6 @@
     "babel-plugin-transform-react-jsx": "^6.24.1",
     "babel-preset-env": "^1.6.0",
     "babel-preset-react": "^6.24.1",
-    "bootstrap-editable": "^1.0.1",
     "browserify": "^14.4.0",
     "chalk": "~0.4.0",
     "compression": "^1.7.2",

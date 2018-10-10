@@ -14,8 +14,7 @@ module.exports = {
     'exec:convert_enzyme',
     'exec:convert_dsjslib',
     'exec:convert_redux_immutable',
-    'exec:convert_requirejs',
-    'exec:convert_bootstrap_editable'
+    'exec:convert_requirejs'
   ],
   hash_require: [
     'hash_require:js',
