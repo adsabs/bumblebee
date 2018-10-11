@@ -18,7 +18,8 @@ define([
       ],
       types: [
         'abstract', 'citations', 'references',
-        'metrics', 'coreads', 'graphics', 'associated'
+        'metrics', 'coreads', 'graphics', 'associated',
+        [ 'tableofcontents', { redirectTo: 'toc' }]
       ],
       url: _.template('link_gateway/<%= bibcode %>/<%= target %>')
     }
@@ -46,9 +47,22 @@ define([
     // if label or data is not present, do nothing
     if (_.isString(label) || _.isPlainObject(data)) {
       _.forEach(TARGETS, function (val) {
+
+        var target = null;
+        _.forEach(val.types, function (type) {
+          if (_.isArray(type)) {
+            if (type[0] === data.target && _.has(type[1], 'redirectTo')) {
+              target = type[1].redirectTo;
+            }
+          } else if (type === data.target) {
+            target = type;
+          }
+        });
+
         // send event if we find a hook and the target is in the list of types
-        if (_.contains(val.hooks, label) && _.contains(val.types, data.target)) {
-          sendEvent(data.url ? data.url : val.url(data));
+        if (_.contains(val.hooks, label) && target) {
+          var params = _.assign({}, data, { target: target });
+          sendEvent(data.url ? data.url : val.url(params));
         }
       });
     }
