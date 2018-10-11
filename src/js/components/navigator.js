@@ -101,13 +101,17 @@ function (
 
     handleMissingTransition: function () {
       console.error('Cannot handle \'navigate\' event: ' + JSON.stringify(arguments));
-      this.getPubSub().publish(this.getPubSub().BIG_FIRE, 'navigation-error', arguments);
+      var ps = this.getPubSub();
+      ps.publish(ps.BIG_FIRE, 'navigation-error', arguments);
+      ps.publish(ps.NAVIGATE, '404');
     },
 
     handleTransitionError: function (transition, error, args) {
       console.error('Error while executing transition', transition, args);
       console.error(error.stack);
-      this.getPubSub().publish(this.getPubSub().CITY_BURNING, 'navigation-error', arguments);
+      var ps = this.getPubSub();
+      ps.publish(ps.CITY_BURNING, 'navigation-error', arguments);
+      ps.publish(ps.NAVIGATE, '404');
     },
 
     /**
