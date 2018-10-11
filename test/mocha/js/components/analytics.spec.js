@@ -92,21 +92,20 @@ define([
 
     it('should send request to adsAnalytics endpoints', function () {
       var server = sinon.fakeServer.create();
-        server.respondWith('/link_gateway/foo/toc', function (xhr) {
-          var expected = {
-            method: 'GET',
-            url: '/link_gateway/foo/toc'
-          };
-          var actual = _.pick(xhr, ['method', 'url']);
+      server.respondWith('/link_gateway/foo/toc', function (xhr) {
+        var expected = {
+          method: 'GET',
+          url: '/link_gateway/foo/toc'
+        };
+        var actual = _.pick(xhr, ['method', 'url']);
 
-          expect(expected).to.eql(actual);
-        });
-        analytics('send', 'event', 'interaction', 'toc-link-followed', {
-          target: 'tableofcontents',
-          bibcode: 'foo'
-        });
-        server.respond();
+        expect(expected).to.eql(actual);
       });
+      analytics('send', 'event', 'interaction', 'toc-link-followed', {
+        target: 'tableofcontents',
+        bibcode: 'foo'
+      });
+      server.respond();
     });
 
     it('should not send a request if hooks do not match', function () {

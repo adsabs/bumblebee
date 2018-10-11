@@ -45,7 +45,7 @@ define([
    */
   var adsLogger = function (label, data) {
     // if label or data is not present, do nothing
-    if (_.isString(label) || _.isPlainObject(data)) {
+    if (_.isString(label) && _.isPlainObject(data) && _.has(data, 'target')) {
       _.forEach(TARGETS, function (val) {
 
         var target = null;
