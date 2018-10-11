@@ -11,7 +11,7 @@ define([
 ) {
   var PageManager = PageManagerController.extend({
 
-    persistentWidgets: ['SearchWidget', 'ShowAbstract', 'ShowCitations', 'ShowReferences', 'tocWidget'],
+    persistentWidgets: ['SearchWidget', 'ShowAbstract', 'ShowCitations', 'ShowTableofcontents', 'ShowReferences', 'tocWidget'],
 
     TOCTemplate: TOCTemplate,
 
@@ -69,7 +69,7 @@ define([
       ShowCoreads: {
         title: 'Co-Reads', path: 'coreads', category: 'view', showCount: false
       },
-      ShowTableOfContents: {
+      ShowTableofcontents: {
         title: 'Volume Content', path: 'tableofcontents', category: 'view', showCount: false
       },
       ShowSimilar: { title: 'Similar Papers', path: 'similar', category: 'view' },
@@ -81,8 +81,7 @@ define([
       },
       ShowPaperExport__default: {
         title: 'Export', path: 'export', category: 'export', alwaysThere: 'true'
-      },
-
+      }
     }
 
 
