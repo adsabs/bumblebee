@@ -631,7 +631,7 @@ function (
         showDetail([id].concat(detailsPageAlwaysVisible), id);
         this.route = data.href;
       });
-      this.set('ShowTableOfContents', function (id, data) {
+      this.set('ShowTableofcontents', function (id, data) {
         showDetail([id].concat(detailsPageAlwaysVisible), id);
         this.route = data.href;
       });
