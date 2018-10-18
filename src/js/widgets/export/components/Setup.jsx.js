@@ -52,7 +52,7 @@ define([
                 <span style={{ marginLeft: 5 }}>
                   <a
                     title="manage custom formats"
-                    href="/#user/settings/librarylink">
+                    href="/#user/settings/application">
                     <i className="fa fa-cog fa-invert"></i>
                   </a>
                 </span>
@@ -63,7 +63,7 @@ define([
                 onChange={e => onCustomFormatChange(e.target.value)}
               >
               {customFormats.map((f) => (
-                <option value={f.code} key={f.id}>{f.name}: {f.code}</option>
+                <option value={f.code} key={f.id}>{f.name}</option>
               ))}
               </select>
               <button className="btn btn-link" role="button" onClick={onCustomFormatClick}>Or enter your own</button>
