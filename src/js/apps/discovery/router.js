@@ -300,7 +300,7 @@ function (
       // possible subViews: "token", "password", "email", "preferences"
       if (_.contains(['token', 'password', 'email', 'delete'], subView)) {
         this.routerNavigate('UserSettings', { subView: subView });
-      } else if (_.contains(['librarylink', 'orcid'], subView)) {
+      } else if (_.contains(['librarylink', 'orcid', 'libraryimport', 'application'], subView)) {
         // show preferences if no subview provided
         this.routerNavigate('UserPreferences', { subView: subView });
       } else {

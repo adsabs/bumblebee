@@ -201,6 +201,11 @@ define([
     onAddCustomFormat: function (e) {
       e.preventDefault();
       var items = _.clone(this.model.get('addCustomFormatOptions'));
+      var applyEditById = _.bind(this.applyEditById, this);
+      items = _.map(items, function (i, idx) {
+        return i.editing ? applyEditById(i.id, true)[idx] : i;
+      });
+
       var id = _.uniqueId('format-');
       items.unshift({
         id: id,
@@ -217,15 +222,18 @@ define([
       });
     },
 
-    updateCustomFormatEntry: function (_id, data) {
+    updateCustomFormatEntry: function (_id, data, silent) {
       var items = _.clone(this.model.get('addCustomFormatOptions'));
       var id = _id + '';
       var idx = _.findIndex(items, { id: id });
       if (_.isPlainObject(data)) {
         items[idx] = _.assign({}, items[idx], data);
       }
-      this.model.set('addCustomFormatOptions', items);
-      this.model.trigger('change');
+      if (!silent) {
+        this.model.set('addCustomFormatOptions', items);
+        this.model.trigger('change');
+      }
+      return items;
     },
 
     onEditCustomFormat: function (e) {
@@ -242,14 +250,14 @@ define([
       $name.focus().select();
     },
 
-    applyEditById: function (id) {
+    applyEditById: function (id, silent) {
       var name = this.$('#custom-format-name-' + id).val();
       var code = this.$('#custom-format-code-' + id).val();
-      this.updateCustomFormatEntry(id, {
+      return this.updateCustomFormatEntry(id, {
         editing: false,
         name: name,
         code: code
-      });
+      }, silent);
     },
 
     onConfirmEditCustomFormat: function (e) {

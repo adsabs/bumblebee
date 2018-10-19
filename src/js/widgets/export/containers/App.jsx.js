@@ -57,7 +57,7 @@ define([
       this.state = {
         count: '0',
         showAlert: false,
-        customFormatDirectEntry: false
+        customFormatDirectEntry: true
       };
     }
 
