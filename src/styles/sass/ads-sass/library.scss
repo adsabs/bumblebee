@@ -185,6 +185,10 @@ a:hover {
   }
 }
 
+.s-checkbox-col input {
+  display : inline-block !important;
+}
+
 //styles specific to individual library widget
 //consfusing nesting
 .s-library-widget {
@@ -192,7 +196,6 @@ a:hover {
   .s-library-actions {
     padding: 10px 0%;
   }
-
 
   .s-permissions-list-container, .s-public-container {
     padding: 1%;

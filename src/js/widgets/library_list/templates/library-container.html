@@ -3,7 +3,19 @@
         <h3 class="record-deleted"><i class="icon-success"/> Record successfully deleted</h3>
     {{/if}}
     {{#if hasRecords}}
-      <div id="sort-container"></div>
+      <div class="row">
+        <div class="col-sm-1" style="padding-left: 12.5px">
+          <label for="select-all-docs" class="sr-only">Select All Docs</label>
+          <input type="checkbox" id="select-all-docs" name="select-all-docs" title="select all docs" {{#if allSelected}} checked {{/if}}>
+        </div>
+        <div class="col-sm-3">
+          <button
+            class="btn btn-danger btn-sm hidden" id="bulk-delete">Delete Selected</button>
+        </div>
+        <div class="col-sm-3 col-sm-offset-5">
+          <div id="sort-container"></div>
+        </div>
+      </div>
     {{/if}}
 </div>
 <hr/>
