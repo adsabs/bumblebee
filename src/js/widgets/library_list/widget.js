@@ -80,6 +80,7 @@ define([
   var LibraryContainerView = ListOfThingsPaginatedContainerView.extend({
 
     initialize: function () {
+
       this.sortWidget = new SortWidget();
       ListOfThingsPaginatedContainerView.prototype.initialize.apply(this, arguments);
       this.sortWidget.onSortChange = _.bind(this.onSortChange, this);
@@ -94,7 +95,9 @@ define([
     events: {
       'click a.page-control': 'changePageWithButton',
       'keyup input.page-control': 'tabOrEnterChangePageWithInput',
-      'click .per-page': 'changePerPage'
+      'click .per-page': 'changePerPage',
+      'click #bulk-delete': 'bulkDelete',
+      'click #select-all-docs': 'toggleAll'
     },
 
     modelEvents: {
@@ -126,9 +129,29 @@ define([
       this.trigger('removeRecord', bibcode);
     },
 
+    bulkDelete: function () {
+      this.$('#bulk-delete').toggleClass('disabled').html('<i class="fa fa-spinner fa-pulse"></i>');
+      this.trigger('bulkDelete');
+      this.model.set({
+        numSelected: false,
+        allSelected: false
+      });
+    },
+
+    toggleAll: function (e) {
+      var flag = e.target.checked ? 'add' : 'remove';
+      this.model.set('allSelected', !this.model.get('allSelected'));
+      this.trigger('selectAllRecords', flag);
+    },
+
     render: function () {
       ListOfThingsPaginatedContainerView.prototype.render.apply(this, arguments);
       this.$('#sort-container').html(this.sortWidget.render().el);
+      var numSelected = this.model.get('numSelected');
+      var $bulkDeleteBtn = this.$('#bulk-delete');
+      $bulkDeleteBtn
+        .toggleClass('hidden', !(numSelected > 0))
+        .html('Delete ' + numSelected + ' Record' + (numSelected > 1 ? 's' : ''));
       return this;
     }
 
@@ -179,6 +202,8 @@ define([
     },
 
     activate: function (beehive) {
+      var pubsub = beehive.getService('PubSub');
+      pubsub.subscribe(pubsub.STORAGE_PAPER_UPDATE, _.bind(this.onStoragePaperUpdate, this));
       ListOfThingsWidget.prototype.activate.apply(this, [].slice.apply(arguments));
       this.view.sortWidget.activate(beehive);
       this.updateSortWidget();
@@ -312,6 +337,37 @@ define([
       return docs;
     },
 
+    onBulkDelete: function () {
+      var chosen = this.collection.where({ chosen: true });
+      console.log(chosen);
+    },
+
+    onStoragePaperUpdate: function () {
+      var appStorage;
+      if (this.hasBeeHive() && this.getBeeHive().hasObject('AppStorage')) {
+        appStorage = this.getBeeHive().getObject('AppStorage');
+      } else {
+        console.warn('AppStorage object disapperared!');
+        return;
+      }
+      this.collection.each(function (m) {
+        if (appStorage.isPaperSelected(m.get('identifier'))) {
+          m.set('chosen', true);
+        } else {
+          m.set('chosen', false);
+        }
+      });
+      this.hiddenCollection.each(function (m) {
+        if (appStorage.isPaperSelected(m.get('identifier'))) {
+          m.set('chosen', true);
+        } else {
+          m.set('chosen', false);
+        }
+      });
+      var numSelected = this.collection.where({ chosen: true }).length;
+      this.view.model.set('numSelected', numSelected);
+    },
+
     reset: function () {
       this.model.set({
         hasRecords: false
@@ -325,6 +381,28 @@ define([
       switch (event) {
         case 'changeSort':
           this.changeSort(arg1);
+          break;
+        case 'selectAllRecords':
+          var bibs = this.collection.pluck('bibcode');
+          var pubsub = this.getPubSub();
+          pubsub.publish(pubsub.BULK_PAPER_SELECTION, bibs, arg1);
+          break;
+        case 'bulkDelete':
+          var chosen = _.map(this.collection.where({ chosen: true }), function (m) {
+            return m.get('bibcode');
+          });
+          if (chosen.length > 0) {
+            var data = { bibcode: chosen, action: 'remove' },
+            id = this.model.get('libraryID');
+            this.getBeeHive().getObject('LibraryController').updateLibraryContents(id, data)
+              .done(function () {
+                that.reset();
+                // flash a success message
+                that.model.set('itemDeleted', true);
+                var data = that.model.get('sort') ? { sort: that.model.get('sort') } : {};
+                that.dispatchRequest(data);
+              });
+          }
           break;
         case 'removeRecord':
           // from library list view
