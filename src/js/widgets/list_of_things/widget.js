@@ -410,7 +410,6 @@ define([
     },
 
     executeRequest: function (req) {
-      console.log('executing', req.get('query').toJSON());
       this.getPubSub().publish(this.getPubSub().EXECUTE_REQUEST, req);
     },
 

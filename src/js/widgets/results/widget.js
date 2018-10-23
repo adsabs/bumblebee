@@ -43,7 +43,7 @@ function (
           showAbstract: 'closed',
           makeSpace: false,
           // often they won't exist
-          showHighlights: false,
+          showHighlights: 'closed',
           pagination: true
         };
       };
@@ -66,6 +66,9 @@ function (
       // finally, listen
       // to this event on the view
       this.listenTo(this.view, 'toggle-all', this.triggerBulkAction);
+      // this.view.listenTo('showHighlights', function () {
+      //   console.log('showHighlights');
+      // });
 
       // to facilitate sharing records with abstract, extend defaultQueryFields to include any extra abstract fields
       var abstractFields = AbstractWidget.prototype.defaultQueryArguments.fl.split(',');
@@ -168,7 +171,7 @@ function (
     },
 
     onCustomEvent: function (event) {
-      if (event == 'add-all-on-page') {
+      if (event === 'add-all-on-page') {
         var bibs = this.collection.pluck('bibcode');
         var pubsub = this.getPubSub();
         pubsub.publish(pubsub.BULK_PAPER_SELECTION, bibs);
@@ -211,11 +214,11 @@ function (
         }
       }
 
-      if (hExists) {
-        this.model.set('showHighlights', 'open'); // default is to be open
-      } else {
-        this.model.set('showHighlights', false); // will make it non-clickable
-      }
+      // if (hExists) {
+      //   this.model.set('showHighlights', 'open'); // default is to be open
+      // } else {
+      //   this.model.set('showHighlights', false); // will make it non-clickable
+      // }
     },
 
     getUserData: function () {

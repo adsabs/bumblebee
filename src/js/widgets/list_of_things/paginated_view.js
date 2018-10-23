@@ -87,6 +87,15 @@ function (
       this.model = new MainViewModel();
     },
 
+    render: function () {
+      this._render.apply(this, arguments);
+      return this;
+    },
+
+    _render: _.debounce(function () {
+      Marionette.CompositeView.prototype.render.apply(this, arguments);
+    }, 100),
+
     serializeData: function () {
       var data = this.model.toJSON();
       // if it's an abstract page list with an 'export to results page'
@@ -134,6 +143,7 @@ function (
       'click .show-highlights': 'toggleHighlights',
       'click .show-abstract': 'toggleAbstract',
       'click .toggle-make-space': 'toggleMakeSpace',
+      'click #go-to-bottom': 'goToBottom',
       'click a.page-control': 'changePageWithButton',
       'keyup input.page-control': 'tabOrEnterChangePageWithInput',
       'change #per-page-select': 'changePerPage'
@@ -160,6 +170,11 @@ function (
       var val = !this.model.get('makeSpace');
       this.model.set('makeSpace', val);
       analytics('send', 'event', 'interaction', 'sidebars-toggled-' + val ? 'on' : 'off');
+    },
+
+    goToBottom: function () {
+      $('#app-container')
+        .animate({ scrollTop: this.$el.outerHeight() }, 'fast');
     },
 
     modelEvents: {
@@ -191,12 +206,14 @@ function (
     toggleChildrenHighlights: function () {
       var show = this.model.get('showHighlights');
 
-      var itemVal = show === 'open';
+      this.trigger('change:highlights', show);
 
-      this.collection.each(function (m) {
-        // notify each item view to rerender itself and show/hide details
-        m.set('showHighlights', itemVal);
-      });
+      // var itemVal = show === 'open';
+
+      // this.collection.each(function (m) {
+      //   // notify each item view to rerender itself and show/hide details
+      //   m.set('showHighlights', itemVal);
+      // });
     },
 
     toggleChildrenAbstracts: function () {
