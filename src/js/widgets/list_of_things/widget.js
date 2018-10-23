@@ -286,7 +286,7 @@ define([
 
     updatePagination: function (options) {
       // update the current model based on the data passed in
-      var opts = _.defaults(options, {
+      var opts = _.defaults({}, options, {
         silentIndexUpdate: false,
         updateHash: true
       });
@@ -385,18 +385,20 @@ define([
       } else if (ev === 'pagination:select') {
         return this.updatePagination({ page: arg1 });
       } else if (ev === 'show:missing') {
+        this.updatePagination();
         _.each(arg1, function (gap) {
           var numFound = this.model.get('numFound');
           var start = gap.start;
           var perPage = this.model.get('perPage');
+          var currStart = this.model.get('start');
 
-          if (start >= numFound) return; // ignore this
+          if (start >= numFound || (start !== currStart && currStart > 0)) return; // ignore this
 
           var q = this.model.get('currentQuery').clone();
           q.set('__fetch_missing', 'true');
           q.set('start', start);
           // larger row numbers were causing timeouts
-          q.set('rows', 25);
+          q.set('rows', perPage - start <= 0 ? perPage : perPage - start);
           var req = this.composeRequest(q);
 
           // allows widgets to override if necessary
@@ -408,6 +410,7 @@ define([
     },
 
     executeRequest: function (req) {
+      console.log('executing', req.get('query').toJSON());
       this.getPubSub().publish(this.getPubSub().EXECUTE_REQUEST, req);
     },
 

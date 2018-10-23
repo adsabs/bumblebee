@@ -78,11 +78,11 @@ function (
     },
 
     defaultQueryArguments: {
-      'hl': 'true',
-      'hl.fl': 'title,abstract,body,ack',
-      'hl.maxAnalyzedChars': '150000',
-      'hl.requireFieldMatch': 'true',
-      'hl.usePhraseHighlighter': 'true',
+      // 'hl': 'true',
+      // 'hl.fl': 'title,abstract,body,ack',
+      // 'hl.maxAnalyzedChars': '150000',
+      // 'hl.requireFieldMatch': 'true',
+      // 'hl.usePhraseHighlighter': 'true',
       'fl': 'title,abstract,bibcode,author,keyword,id,links_data,property,esources,data,citation_count,[citations],pub,aff,email,volume,pubdate,doi,doctype',
       'rows': 25,
       'start': 0
@@ -195,8 +195,8 @@ function (
          may be complex and after dropping the wildcard you could still want to
          highlight things. But, that may need to be fixed on the solr side.
          */
-      var hq = q.get('q')[0];
-      if (!hq.match(/\W\*\W/)) q.set('hl.q', hq);
+      // var hq = q.get('q')[0];
+      // if (!hq.match(/\W\*\W/)) q.set('hl.q', hq);
 
       return q;
     },
