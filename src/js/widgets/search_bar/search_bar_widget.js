@@ -707,6 +707,7 @@ function (
       this.setBeeHive(beehive);
       this.activateWidget();
       var pubsub = this.getPubSub();
+      _.bindAll(this, 'processResponse');
 
       // search widget doesn't need to execute queries (but it needs to listen to them)
       pubsub.subscribe(pubsub.FEEDBACK, _.bind(this.handleFeedback, this));
@@ -716,6 +717,12 @@ function (
       pubsub.subscribe(pubsub.DELIVERING_RESPONSE, this.processResponse);
       pubsub.subscribe(pubsub.USER_ANNOUNCEMENT, _.bind(this.updateFromUserData, this));
       this.updateFromUserData();
+      this.startTimer();
+    },
+
+    startTimer: function () {
+      this.model.unset('timing');
+      this.timingStart = +new Date();
     },
 
     getUserData: function () {
@@ -777,8 +784,10 @@ function (
     },
 
     processResponse: function (apiResponse) {
+      this.model.set('timing', (+new Date() - this.timingStart) / 1000);
       var res = apiResponse.toJSON();
-      if (res.stats) {
+      var sort = res.responseHeader.params.sort;
+      if (res.stats && /citation.*/.test(sort)) {
         var type = _.keys(res.stats.stats_fields)[0];
         var sum = res.stats.stats_fields[type].sum;
         if (type === 'citation_count_norm') {
@@ -862,12 +871,15 @@ function (
 
         this.view.setFormVal(newq);
         this.updateState('idle');
+        this.startTimer();
       }
     },
 
     changeDefaultSort: function (query) {
+      var currentQuery = this.getCurrentQuery();
+
       // make sure not to override an explicit sort if there is one
-      if (!query.has('sort')) {
+      if (!query.has('sort') && (currentQuery && !currentQuery.has('sort'))) {
         var queryVal = query.get('q')[0];
 
         // citations operator should be sorted by pubdate, so it isn't added here
@@ -887,6 +899,8 @@ function (
         } else if (!operator) {
           query.set('sort', 'date desc');
         }
+      } else if (currentQuery && currentQuery.has('sort')) {
+        query.set('sort', currentQuery.get('sort'));
       }
     },
 
@@ -894,12 +908,14 @@ function (
       var newQ = newQuery.toJSON();
       var oldQ = _.omit(this.getCurrentQuery().toJSON(), function (val, key) {
         // omit certain fields (highlights, paging)
-        return /^hl.*/.test(key) || /^p_$/.test(key) || /^__original_query$/.test(key);
+        return /^hl.*/.test(key)
+          || /^p_$/.test(key)
+          || /^__original_query$/.test(key);
       });
 
       // if we aren't on the index page, only refine the current query, don't wipe it out
       if (this.currentPage !== 'index-page') {
-        newQuery = new ApiQuery(_.assign({}, oldQ, newQ));
+        newQuery = new ApiQuery(_.assign(oldQ, newQ));
       }
 
       // apply any default filters only if this is a new search
