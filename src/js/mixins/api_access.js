@@ -38,9 +38,7 @@ function (
         var userName = data.anonymous ? undefined : data.username;
         userObject.setUser(userName);
         var storage = beehive.getService('PersistentStorage');
-        if (_.isPlainObject(storage) && _.isFunction(storage.set)) {
-          storage.set('appConfig', data);
-        }
+        storage && storage.set && storage.set('appConfig', data);
       } else {
         console.warn('bootstrap didn\'t provide access_token!');
       }
