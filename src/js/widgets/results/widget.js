@@ -43,7 +43,7 @@ function (
           showAbstract: 'closed',
           makeSpace: false,
           // often they won't exist
-          showHighlights: 'closed',
+          showHighlights: true, //'closed',
           pagination: true
         };
       };
@@ -71,10 +71,10 @@ function (
       // });
 
       // to facilitate sharing records with abstract, extend defaultQueryFields to include any extra abstract fields
-      var abstractFields = AbstractWidget.prototype.defaultQueryArguments.fl.split(',');
-      var resultsFields = this.defaultQueryArguments.fl.split(',');
-      resultsFields = _.union(abstractFields, resultsFields);
-      this.defaultQueryArguments.fl = resultsFields.join(',');
+      // var abstractFields = AbstractWidget.prototype.defaultQueryArguments.fl.split(',');
+      // var resultsFields = this.defaultQueryArguments.fl.split(',');
+      // resultsFields = _.union(abstractFields, resultsFields);
+      // this.defaultQueryArguments.fl = resultsFields.join(',');
       this.minAuthorsPerResult = 3;
 
       this.model.on('change:makeSpace', _.bind(this.onMakeSpace, this));
@@ -86,7 +86,7 @@ function (
       // 'hl.maxAnalyzedChars': '150000',
       // 'hl.requireFieldMatch': 'true',
       // 'hl.usePhraseHighlighter': 'true',
-      'fl': 'title,abstract,bibcode,author,keyword,id,links_data,property,esources,data,citation_count,[citations],pub,aff,email,volume,pubdate,doi,doctype',
+      'fl': 'title,abstract,bibcode,author,citation_count,pubdate,doi,property,esources,data',
       'rows': 25,
       'start': 0
     },
@@ -101,6 +101,7 @@ function (
       pubsub.subscribe(pubsub.STORAGE_PAPER_UPDATE, this.onStoragePaperUpdate);
       pubsub.subscribe(pubsub.CUSTOM_EVENT, this.onCustomEvent);
       pubsub.subscribe(pubsub.START_SEARCH, this.onStartSearch);
+      this.queryTimer = +new Date();
     },
 
     _clearResults: function () {
@@ -143,6 +144,7 @@ function (
         setTimeout(function () { clearInterval(focusInterval); }, 10000);
         this.focusInterval = focusInterval;
       }
+      this.queryTimer = +new Date();
     },
 
     onMakeSpace: function () {
@@ -354,7 +356,14 @@ function (
       try {
         docs = this.parseLinksData(docs);
       } catch (e) {
+        console.log('ERROR', e);
         // doc will not have link data
+      }
+
+      // if the latest request equals the total perPage, then we're done, send off event
+      if (this.pagination && this.pagination.perPage === (+params.start + +params.rows)) {
+        var pubsub = this.getPubSub();
+        pubsub.publish(pubsub.CUSTOM_EVENT, 'timing:results-loaded', +new Date() - this.queryTimer);
       }
 
       return docs;
@@ -383,8 +392,12 @@ function (
         }
       });
       if (this.collection.where({ chosen: true }).length == 0) {
+
         // make sure the "selectAll" button is unchecked
-        this.view.$('input#select-all-docs')[0].checked = false;
+        var $chk = this.view.$('input#select-all-docs');
+        if ($chk.length > 0) {
+          $chk[0].checked = false;
+        }
       }
     },
 

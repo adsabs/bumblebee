@@ -241,7 +241,7 @@ function (
 
     defaultQueryArguments: {
       fl: 'title,abstract,comment,bibcode,author,keyword,id,citation_count,[citations],pub,aff,volume,pubdate,doi,pub_raw,page',
-      rows: 40
+      rows: 1
     },
 
     mergeStashedDocs: function (docs) {
@@ -293,7 +293,7 @@ function (
     onDisplayDocuments: function (apiQuery) {
       // check to see if a query is already in progress (the way bbb is set up, it will be)
       // if so, auto fill with docs initially requested by results widget
-      this.mergeStashedDocs(this.getBeeHive().getObject('DocStashController').getDocs());
+      // this.mergeStashedDocs(this.getBeeHive().getObject('DocStashController').getDocs());
 
       var bibcode = apiQuery.get('q'),
         q;

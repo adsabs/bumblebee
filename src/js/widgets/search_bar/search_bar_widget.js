@@ -716,13 +716,9 @@ function (
       pubsub.subscribe(pubsub.INVITING_REQUEST, _.bind(this.dispatchRequest, this));
       pubsub.subscribe(pubsub.DELIVERING_RESPONSE, this.processResponse);
       pubsub.subscribe(pubsub.USER_ANNOUNCEMENT, _.bind(this.updateFromUserData, this));
+      pubsub.subscribe(pubsub.CUSTOM_EVENT, _.bind(this.onCustomEvent, this));
+      pubsub.subscribe(pubsub.START_SEARCH, _.bind(this.onStartSearch, this));
       this.updateFromUserData();
-      this.startTimer();
-    },
-
-    startTimer: function () {
-      this.model.unset('timing');
-      this.timingStart = +new Date();
     },
 
     getUserData: function () {
@@ -735,6 +731,16 @@ function (
         return {};
       } catch (e) {
         return {};
+      }
+    },
+
+    onStartSearch: function () {
+      this.model.unset('timing');
+    },
+
+    onCustomEvent: function (event, time) {
+      if (event === 'timing:results-loaded') {
+        this.model.set('timing', time / 1000);
       }
     },
 
@@ -784,7 +790,6 @@ function (
     },
 
     processResponse: function (apiResponse) {
-      this.model.set('timing', (+new Date() - this.timingStart) / 1000);
       var res = apiResponse.toJSON();
       var sort = res.responseHeader.params.sort;
       if (res.stats && /citation.*/.test(sort)) {
@@ -871,7 +876,6 @@ function (
 
         this.view.setFormVal(newq);
         this.updateState('idle');
-        this.startTimer();
       }
     },
 

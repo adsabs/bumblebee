@@ -39,6 +39,7 @@ define([
   PaginatedCollection,
   PaginatedView
 ) {
+
   var ListOfThingsWidget = BaseWidget.extend({
     initialize: function (options) {
       options = options || {};
@@ -397,7 +398,6 @@ define([
           var q = this.model.get('currentQuery').clone();
           q.set('__fetch_missing', 'true');
           q.set('start', start);
-          // larger row numbers were causing timeouts
           q.set('rows', perPage - start <= 0 ? perPage : perPage - start);
           var req = this.composeRequest(q);
 
