@@ -30,10 +30,10 @@ define(['marionette',
     ) {
 
     describe("ListOfThings (list_of_things_widget.spec.js)", function () {
-      
+
       // on slower machines 20000 default is not enough
       this.timeout(40000);
-      
+
       beforeEach(function () {
         this.sb = sinon.sandbox.create();
       })
@@ -237,7 +237,7 @@ define(['marionette',
         // give command to display first 20 docs; since responses are coming in
         // batches of 10; the collection will automatically ask twice
         minsub.publish(minsub.DISPLAY_DOCUMENTS, new ApiQuery({'q': 'bibcode:bar'}));
-        expect($w.find("label").length).to.equal(50);
+        expect($w.find("label").length).to.equal(51);
         expect($(".s-checkbox-col").text().replace(/\s+/g, " ")).to.eql(" 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29 30 31 32 33 34 35 36 37 38 39 40 41 42 43 44 45 46 47 48 49 50 ")
 
         // click on next page // this should trigger new request
@@ -305,7 +305,7 @@ define(['marionette',
 
         // model should update, and reset page back to 0
         expect(widget.model.get("perPage")).to.eql(50);
-        expect($(".per-page--active").text().trim()).to.eql("50");
+        expect($("#per-page-select>option:selected").text().trim()).to.eql("50");
         expect($("input.page-control").val()).to.eql("1");
 
 
@@ -316,10 +316,10 @@ define(['marionette',
 
         widget.trigger("pagination:changePerPage", 50);
         expect(widget.model.get("perPage")).to.eql(50);
-        
+
         expect(JSON.stringify(widget.model.toJSON())).to.eql('{"mainResults":false,"showAbstract":"closed","showHighlights":false,"pagination":true,"start":0,"perPage":50,"numFound":100,"currentQuery":{"q":["foo:bar"]},"pageData":{"perPage":50,"totalPages":2,"currentPage":1,"previousPossible":false,"nextPossible":true},"page":0,"showRange":[0,49],"query":false,"loading":false}');
 
-        expect($(".per-page--active").text().trim()).to.eql("50");
+        expect($("#per-page-select>option:selected").text().trim()).to.eql("50");
         expect($("input.page-control").val()).to.eql("1");
 
         expect($(".page-control.previous-page").parent().hasClass("disabled")).to.be.true;
@@ -382,7 +382,7 @@ define(['marionette',
 
         widget.updatePagination({ page : 2 , perPage : 25});
 
-        expect($(".per-page--active").text().trim()).to.eql("25");
+        expect($("#per-page-select>option:selected").text().trim()).to.eql("25");
         expect($("input.page-control").val()).to.eql("3");
 
         expect($(".page-control.previous-page").parent().hasClass("disabled")).to.be.false;
@@ -400,7 +400,7 @@ define(['marionette',
         expect($(".page-control.previous-page").parent().hasClass("disabled")).to.be.false;
         expect($(".page-control.next-page").parent().hasClass("disabled")).to.be.true;
 
-        expect($(".per-page--active").text().trim()).to.eql("25");
+        expect($("#per-page-select>option:selected").text().trim()).to.eql("25");
         expect($("input.page-control").val()).to.eql("4");
 
 
