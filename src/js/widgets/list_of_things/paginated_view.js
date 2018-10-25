@@ -136,7 +136,7 @@ function (
       'click .toggle-make-space': 'toggleMakeSpace',
       'click a.page-control': 'changePageWithButton',
       'keyup input.page-control': 'tabOrEnterChangePageWithInput',
-      'click .per-page': 'changePerPage'
+      'change #per-page-select': 'changePerPage'
     },
 
     toggleHighlights: function () {
@@ -232,9 +232,8 @@ function (
 
     changePerPage: function (e) {
       e.preventDefault();
-      var val = parseInt($(e.target).text().trim());
-      if (val === this.model.get('perPage')) return;
-      this.trigger('pagination:changePerPage', val);
+      var val = parseInt(e.currentTarget ? e.currentTarget.value : 25);
+      val !== this.model.get('perPage') && this.trigger('pagination:changePerPage', val);
     }
   });
 

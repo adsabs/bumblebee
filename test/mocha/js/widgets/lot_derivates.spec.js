@@ -110,7 +110,7 @@ define([
       //$('#test').append($w);
 
       minsub.publish(minsub.DISPLAY_DOCUMENTS, new ApiQuery({'q': 'bibcode:bar'}));
-      expect($w.find("label").length).to.equal(25);
+      expect($w.find("label").length).to.equal(26);
 
       expect($w.find("a:first").attr("href")).to.eql('#search/q=citations(bibcode%3Abar)&sort=date%20desc');
 
@@ -129,7 +129,7 @@ define([
      expect(query.url()).to.eql('fl=title%2Cbibcode%2Cauthor%2Ckeyword%2Cpub%2Caff%2Cvolume%2Cyear%2C%5Bcitations%5D%2Cproperty%2Cpubdate%2Cabstract%2Cesources%2Cdata&q=references(bibcode%3Abar)&rows=25&sort=first_author%20asc&start=0');
 
       minsub.publish(minsub.DISPLAY_DOCUMENTS, new ApiQuery({'q': 'bibcode:bar'}));
-      expect($w.find("label").length).to.equal(25);
+      expect($w.find("label").length).to.equal(26);
 
       expect($w.find(".s-list-description").text()).to.eql("Papers referenced by");
 
@@ -156,7 +156,7 @@ define([
       expect(query.url()).to.eql( 'fl=title%2Cbibcode%2Cauthor%2Ckeyword%2Cpub%2Caff%2Cvolume%2Cyear%2C%5Bcitations%5D%2Cproperty%2Cpubdate%2Cabstract%2Cesources%2Cdata&q=trending(bibcode%3Abar)-bibcode%3Abar&rows=25&sort=date%20desc&start=0');
 
       minsub.publish(minsub.DISPLAY_DOCUMENTS, new ApiQuery({'q': 'bibcode:bar'}));
-      expect($w.find("label").length).to.equal(25);
+      expect($w.find("label").length).to.equal(26);
 
       expect($w.find(".s-list-description").text()).to.eql("Papers also read by those who read");
 
@@ -182,7 +182,7 @@ define([
       var $w = widget.render().$el;
 
       minsub.publish(minsub.DISPLAY_DOCUMENTS, new ApiQuery({'q': 'bibcode:bar'}));
-      expect($w.find("label").length).to.equal(25);
+      expect($w.find("label").length).to.equal(26);
 
       expect($w.find(".s-list-description").text()).to.eql("Papers in the same volume as");
 
