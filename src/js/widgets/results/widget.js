@@ -353,12 +353,7 @@ function (
         return d;
       });
 
-      try {
-        docs = this.parseLinksData(docs);
-      } catch (e) {
-        console.log('ERROR', e);
-        // doc will not have link data
-      }
+      docs = this.parseLinksData(docs);
 
       // if the latest request equals the total perPage, then we're done, send off event
       if (this.pagination && this.pagination.perPage === (+params.start + +params.rows)) {
