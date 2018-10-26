@@ -4,6 +4,7 @@
  */
 
 define([
+  'underscore',
   'marionette',
   'backbone',
   'js/components/api_request',
@@ -23,6 +24,7 @@ define([
 ],
 
 function (
+  _,
   Marionette,
   Backbone,
   ApiRequest,
@@ -55,7 +57,8 @@ function (
         // often they won't exist
         showHighlights: false,
         pagination: true,
-        start: 0
+        start: 0,
+        highlightsLoaded: false
       };
     }
   });
@@ -86,15 +89,6 @@ function (
     initialize: function (options) {
       this.model = new MainViewModel();
     },
-
-    render: function () {
-      this._render.apply(this, arguments);
-      return this;
-    },
-
-    _render: _.debounce(function () {
-      Marionette.CompositeView.prototype.render.apply(this, arguments);
-    }, 100),
 
     serializeData: function () {
       var data = this.model.toJSON();
@@ -149,11 +143,15 @@ function (
       'change #per-page-select': 'changePerPage'
     },
 
-    toggleHighlights: function () {
-      if (this.model.get('showHighlights') == 'open') {
-        this.model.set('showHighlights', 'closed');
-      } else if (this.model.get('showHighlights') == 'closed') {
-        this.model.set('showHighlights', 'open');
+    toggleHighlights: function (e) {
+      var state = this.model.get('showHighlights');
+      state = _.isBoolean(state) && state
+        ? 'closed' : (state === 'open') ? 'closed' : 'open';
+
+      this.model.set('showHighlights', state);
+      if (!this.model.get('highlightsLoaded')) {
+        this.model.set('highlightsLoaded', true);
+        this.trigger('toggle-highlights', state === 'open');
       }
     },
 
@@ -184,18 +182,13 @@ function (
     },
 
     collectionEvents: {
-      reset: 'resetViewModel'
+      'reset': 'onResetCollection'
     },
 
     template: ResultsContainerTemplate,
 
-    resetViewModel: function () {
-      var defaults = this.model.defaults();
-
-      this.model.set({
-        showAbstract: defaults.showAbstract,
-        showHighlights: defaults.showHighlights
-      });
+    onResetCollection: function () {
+      this.model.set('highlightsLoaded', false);
     },
 
     /**
@@ -205,24 +198,12 @@ function (
        */
     toggleChildrenHighlights: function () {
       var show = this.model.get('showHighlights');
-
-      this.trigger('change:highlights', show);
-
-      // var itemVal = show === 'open';
-
-      // this.collection.each(function (m) {
-      //   // notify each item view to rerender itself and show/hide details
-      //   m.set('showHighlights', itemVal);
-      // });
+      this.collection.invoke('set', 'showHighlights', show === 'open');
     },
 
     toggleChildrenAbstracts: function () {
       var show = this.model.get('showAbstract');
-      var itemVal = show === 'open';
-      this.collection.each(function (m) {
-        // notify each item view to rerender itself and show/hide details
-        m.set('showAbstract', itemVal);
-      });
+      this.collection.invoke('set', 'showAbstract', show === 'open');
     },
 
     changePageWithButton: function (e) {

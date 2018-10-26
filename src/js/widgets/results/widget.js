@@ -43,7 +43,7 @@ function (
           showAbstract: 'closed',
           makeSpace: false,
           // often they won't exist
-          showHighlights: true, //'closed',
+          showHighlights: 'closed',
           pagination: true
         };
       };
@@ -66,9 +66,6 @@ function (
       // finally, listen
       // to this event on the view
       this.listenTo(this.view, 'toggle-all', this.triggerBulkAction);
-      // this.view.listenTo('showHighlights', function () {
-      //   console.log('showHighlights');
-      // });
 
       // to facilitate sharing records with abstract, extend defaultQueryFields to include any extra abstract fields
       // var abstractFields = AbstractWidget.prototype.defaultQueryArguments.fl.split(',');
@@ -81,12 +78,7 @@ function (
     },
 
     defaultQueryArguments: {
-      // 'hl': 'true',
-      // 'hl.fl': 'title,abstract,body,ack',
-      // 'hl.maxAnalyzedChars': '150000',
-      // 'hl.requireFieldMatch': 'true',
-      // 'hl.usePhraseHighlighter': 'true',
-      'fl': 'title,abstract,bibcode,author,citation_count,pubdate,doi,property,esources,data',
+      'fl': 'id,title,abstract,bibcode,author,citation_count,pubdate,doi,property,esources,data',
       'rows': 25,
       'start': 0
     },

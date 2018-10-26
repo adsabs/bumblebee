@@ -293,7 +293,7 @@ function (
     onDisplayDocuments: function (apiQuery) {
       // check to see if a query is already in progress (the way bbb is set up, it will be)
       // if so, auto fill with docs initially requested by results widget
-      // this.mergeStashedDocs(this.getBeeHive().getObject('DocStashController').getDocs());
+      this.mergeStashedDocs(this.getBeeHive().getObject('DocStashController').getDocs());
 
       var bibcode = apiQuery.get('q'),
         q;

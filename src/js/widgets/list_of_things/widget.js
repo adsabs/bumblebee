@@ -168,7 +168,24 @@ define([
       docs = this.processDocs(apiResponse, docs, pagination);
 
       if (docs && docs.length) {
-        this.hiddenCollection.add(docs, { merge: true });
+
+        // make sure the new docs close highlights if they aren't there
+        var newDocs = _.map(docs, function (d) {
+          return _.extend(d, {
+            showHighlights: !_.isEmpty(d.highlights)
+          });
+        });
+
+        this.hiddenCollection.add(newDocs, { merge: true });
+
+        // finally, if there aren't any highlights, close the button
+        var hasHighlights = this.hiddenCollection.filter(function (m) {
+          return m.get('highlights');
+        });
+        if (hasHighlights.length === 0) {
+          this.view.model.set('showHighlights', 'closed');
+        }
+
 
         if (pagination.showRange) {
           // we must update the model before updating collection because the showRange
@@ -383,7 +400,9 @@ define([
       if (ev === 'pagination:changePerPage') {
         this.updateLocalStorage({ perPage: arg1 });
         this.updatePagination({ page: 0, perPage: arg1 });
+        this.view.model.set('showHighlights', 'closed');
       } else if (ev === 'pagination:select') {
+        this.view.model.set('showHighlights', 'closed');
         return this.updatePagination({ page: arg1 });
       } else if (ev === 'show:missing') {
         this.updatePagination();
@@ -396,6 +415,11 @@ define([
           if (start >= numFound || (start !== currStart && currStart > 0)) return; // ignore this
 
           var q = this.model.get('currentQuery').clone();
+          q.unset('hl');
+          q.unset('hl.fl');
+          q.unset('hl.maxAnalyzedChars');
+          q.unset('hl.requireFieldMatch');
+          q.unset('hl.userPhraseHighlighter');
           q.set('__fetch_missing', 'true');
           q.set('start', start);
           q.set('rows', perPage - start <= 0 ? perPage : perPage - start);
@@ -406,6 +430,47 @@ define([
         }, this);
       } else if (ev == 'childview:toggleSelect') {
         pubsub.publish(pubsub.PAPER_SELECTION, arg2.data.identifier);
+      } else if (ev === 'toggle-highlights') {
+        var perPage = this.model.get('perPage');
+        var pageStart = this.model.get('start');
+
+        // request runner
+        var runRequest = _.bind(function (start, rows) {
+
+          var q = this.model.get('currentQuery').clone();
+          q.set({
+            'hl': 'true',
+            'hl.fl': 'title,abstract,body,ack',
+            'hl.maxAnalyzedChars': '150000',
+            'hl.requireFieldMatch': 'true',
+            'hl.userPhraseHighlighter': 'true',
+            start: pageStart + start,
+            rows: rows
+          });
+          var req = this.composeRequest(q);
+
+          // allows widgets to override if necessary
+          this.executeRequest(req);
+        }, this);
+
+        var chunkRequests = _.debounce(_.bind(function () {
+          // batch requests, spacing them out by 300ms
+          var withHighlights = this.hiddenCollection.filter(function (m) {
+            return m.get('highlights');
+          });
+
+          var start = withHighlights.length;
+          var batchSize = Math.ceil((perPage - start) / 5);
+          for (var i = start, j = 1; i < perPage; i = i + batchSize, j++) {
+            if (i === start) {
+              runRequest(i, batchSize);
+            } else {
+              setTimeout(runRequest, 500 * j, i, batchSize);
+            }
+          }
+        }, this), 3000);
+
+        chunkRequests();
       }
     },
 
