@@ -12,12 +12,18 @@
     <div class="col-sm-12 pagination-controls s-pagination-controls">
         <div class="col-xs-5 per-page-container">
             {{#if pageData}}
-            Per Page:
-            <a href="#" class="btn btn-sm {{#compare pageData.perPage 25}} per-page--active {{else}} btn-link {{/compare}} per-page">25</a>
-            <a href="#" class="btn btn-sm  {{#compare pageData.perPage 50}} per-page--active {{else}} btn-link {{/compare}} per-page">50</a>
-            <a href="#" class="btn btn-sm {{#compare pageData.perPage 100}} per-page--active {{else}} btn-link {{/compare}} per-page">100</a>
-            <a href="#" class="btn btn-sm {{#compare pageData.perPage 200}} per-page--active {{else}} btn-link {{/compare}} per-page">200</a>
-            <a href="#" class="btn btn-sm {{#compare pageData.perPage 500}} per-page--active {{else}} btn-link {{/compare}} per-page">500</a>
+            <div class="form-group">
+              <label for="per-page-select" class="col-xs-4 control-label" style="line-height: 32px;">Per Page</label>
+              <div class="col-xs-8 col-sm-5">
+                <select name="per-page-select" id="per-page-select" class="form-control">
+                  <option value="25" {{#compare pageData.perPage 25}}selected{{/compare}}>25</option>
+                  <option value="50" {{#compare pageData.perPage 50}}selected{{/compare}}>50</option>
+                  <option value="100" {{#compare pageData.perPage 100}}selected{{/compare}}>100</option>
+                  <option value="200" {{#compare pageData.perPage 200}}selected{{/compare}}>200</option>
+                  <option value="500" {{#compare pageData.perPage 500}}selected{{/compare}}>500</option>
+                </select>
+              </div>
+            </div>
             {{/if}}
         </div>
         <div class="col-xs-6">

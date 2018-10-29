@@ -743,6 +743,7 @@ define([
 
     onApiFeedback: function () {
       this.closeWidget();
+      var pubsub = this.getPubSub();
       pubsub.publish(pubsub.ALERT, new ApiFeedback({
         code: 0,
         msg: 'Sorry Metrics are unavailable at this time, try again later',

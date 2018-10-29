@@ -10,9 +10,7 @@
             <input title="select all on this page" type="checkbox" id="select-all-docs"/>
         </div>
 
-        <div class="col-xs-6">
-
-
+        <div class="col-xs-11">
             <div class="s-show-details-container">
                 {{#if showHighlights}}
                     {{#compare showHighlights "open"}}
@@ -32,26 +30,12 @@
                     <button class="btn btn-sm btn-inverse btn-primary toggle-make-space">Hide Sidebars</button>
                 {{/if}}
             </div>
-
         </div>
-
-
-        <div class="col-xs-2 sort-container">
-
-        </div>
-
-        <div class="col-xs-3">
-
-        </div>
-
     </div>
-
 </div>
 
 <div class="row">
     <h2 class="sr-only">Search Results</h2>
-
-
     {{#if title}}
     <div class="col-sm-12">
         <h2 class="s-article-title">{{{title}}}</h2>

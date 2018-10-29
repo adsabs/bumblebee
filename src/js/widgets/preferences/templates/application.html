@@ -124,6 +124,86 @@
           </select>
         </div>
 
+        <!-- Custom Formats -->
+        <div class="form-group">
+          <label for="addCustomFormat">
+            Custom Formats
+            <a href="#collapseAddCustomFormat" data-toggle="collapse" role="button" aria-expanded="false" aria-controls="collapseAddCustomFormat">
+              <i class="fa fa-question-circle"></i>
+            </a>
+          </label>
+          <p>
+            <div class="collapse" id="collapseAddCustomFormat">
+              <div class="card card-body text-muted">
+                <p>
+                    Edit your saved custom formats
+                </p>
+              </div>
+            </div>
+          </p>
+          <p>
+            You current have {{addCustomFormatOptions.length}} format(s) defined.
+          </p>
+          <div id="addCustomFormat">
+            <ul class="list-group col-xs-12">
+              {{#each addCustomFormatOptions}}
+                <li class="list-group-item clearfix" data-id="{{id}}">
+                  <div class="col-xs-1">
+                    <i class="fa fa-unsorted"></i>
+                  </div>
+
+                  {{#if editing}}
+                    <div class="col-xs-3">
+                      <input type="text" class="form-control custom-format-edit" id="custom-format-name-{{id}}" value="{{name}}" data-id="{{id}}">
+                    </div>
+                    <div class="col-xs-6">
+                      <input type="text" class="form-control custom-format-edit" id="custom-format-code-{{id}}" value="{{code}}" data-id="{{id}}">
+                    </div>
+                    <span class="col-xs-2 text-right">
+                      <button id="addCustomFormatConfirmEdit" role="button" data-id="{{id}}" class="btn-link">
+                        <i class="fa fa-check text-success"></i>
+                      </button>
+                      <button id="addCustomFormatCancelEdit" role="button" data-id="{{id}}" class="btn-link">
+                        <i class="fa fa-times text-danger"></i>
+                      </button>
+                    </span>
+                  {{else}}
+                    <div class="col-xs-3">
+                      <p id="custom-format-name-{{id}}">
+                        <strong>{{name}}</strong>
+                      </p>
+                    </div>
+                    <div class="col-xs-6">
+                      <p id="custom-format-code-{{id}}">
+                        <code>{{code}}</code>
+                      </p>
+                    </div>
+                    <span class="col-xs-2 text-right">
+                      <button id="addCustomFormatEdit" role="button" data-id="{{id}}" class="btn-link">
+                        <i class="fa fa-pencil text-primary"></i>
+                      </button>
+                      <button id="addCustomFormatDelete" role="button" data-id="{{id}}" class="btn-link">
+                        <i class="fa fa-times text-danger"></i>
+                      </button>
+                    </span>
+                  {{/if}}
+                </li>
+              {{else}}
+                <div class="well">
+                  Nothing here... Add a new format below
+                </div>
+              {{/each}}
+            </ul>
+          </div>
+          <p>
+            <button class="btn btn-primary" id="addCustomFormatAdd">Add</button>
+            &nbsp;
+            <span id="new-format-msg" class="text-muted" style="display: none">
+              New format added!
+            </span>
+          </p>
+        </div>
+
         <!-- Default Show/Hide Sidebars -->
         <div class="form-group">
           <label for="hideSideBars">

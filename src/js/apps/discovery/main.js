@@ -37,7 +37,10 @@ define(['config', 'module'], function (config, module) {
     var debug = window.location.href.indexOf('debug=true') > -1;
 
     // app object will load everything
-    var app = new (Application.extend(DiscoveryBootstrap))({ debug: debug, timeout: 30000 });
+    var app = new (Application.extend(DiscoveryBootstrap))({
+      debug: debug,
+      timeout: 300000 // 5 minutes
+    });
 
     // load the objects/widgets/modules (using discovery.config.js)
     var defer = app.loadModules(module.config());

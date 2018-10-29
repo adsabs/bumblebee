@@ -386,7 +386,8 @@ define([
           }
         ],
         "defaultExportFormat": "BibTeX",
-        "defaultHideSidebars": "Show"
+        "defaultHideSidebars": "Show",
+        "customFormats": []
       });
 
       expect(u.getUserName()).to.eql("foobly@gmail.com");

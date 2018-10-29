@@ -34,7 +34,8 @@ define([
     TAKE_SNAPSHOT,
     SET_ORIGIN,
     RESET,
-    HARD_RESET
+    HARD_RESET,
+    SET_CUSTOM_FORMATS
   } = actions;
 
   // format reducer
@@ -93,6 +94,7 @@ define([
     ignore: false,
     totalRecs: 0,
     customFormatString: '',
+    customFormats: [],
     snapshot: {}
   }, action) => {
     switch (action.type) {
@@ -108,6 +110,8 @@ define([
         return { ...state, isFetching: true, progress: 0 };
       case SET_CUSTOM_FORMAT:
         return { ...state, customFormatString: action.format };
+      case SET_CUSTOM_FORMATS:
+        return { ...state, customFormats: action.customFormats };
       case RECEIVE_EXPORT:
         return {
           ...state,

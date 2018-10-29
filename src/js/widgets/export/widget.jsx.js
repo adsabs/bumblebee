@@ -115,10 +115,8 @@ define([
         if (_.isPlainObject(user)) {
           return _.isFunction(user.getUserData) && user.getUserData('USER_DATA');
         }
-        return {};
-      } catch (e) {
-        return {};
-      }
+      } catch (e) {}
+      return {};
     },
 
     getDefaultFormatFromUserData: function () {
@@ -126,6 +124,13 @@ define([
       const format = _.has(userData, 'defaultExportFormat') ?
         userData.defaultExportFormat : this.defaultFormat;
       return (_.find(config.export.formats, { label: format })).value;
+    },
+
+    getCustomFormatsFromUserData: function () {
+      const userData = this.getUserData();
+      const formats = _.has(userData, 'customFormats') ?
+        userData.customFormats : this.customFormats;
+      return formats;
     },
 
     /**
@@ -141,7 +146,7 @@ define([
       const { dispatch } = this.store;
       const {
         fetchUsingQuery, fetchUsingIds, findAndSetFormat, hardReset,
-        setCount, setQuery, setTotalRecs, takeSnapshot, setOrigin
+        setCount, setQuery, setTotalRecs, takeSnapshot, setOrigin, setCustomFormats
       } = actions;
 
       const fmt = format === 'default' || format === 'other' ?
@@ -149,6 +154,9 @@ define([
 
       // perform a full reset of the store
       dispatch(hardReset());
+
+      const customFormats = this.getCustomFormatsFromUserData();
+      dispatch(setCustomFormats(customFormats));
 
       // set the origin of the request (abstract/results/etc.)
       dispatch(setOrigin(this.componentParams && this.componentParams.origin));
@@ -224,13 +232,15 @@ define([
       const { dispatch } = this.store;
       const {
         receiveIds, findAndSetFormat, fetchUsingIds, hardReset,
-        setCount, setTotalRecs, takeSnapshot, setOrigin
+        setCount, setTotalRecs, takeSnapshot, setOrigin, setCustomFormats
       } = actions;
 
       const format = data.format === 'default' || data.format === 'other' ?
         this.getDefaultFormatFromUserData() : data.format;
 
       dispatch(hardReset());
+      const customFormats = this.getCustomFormatsFromUserData();
+      dispatch(setCustomFormats(customFormats));
       dispatch(setOrigin(this.componentParams && this.componentParams.origin));
       dispatch(receiveIds(recs));
       dispatch(findAndSetFormat(format.toLowerCase()));

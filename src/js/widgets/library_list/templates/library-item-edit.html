@@ -3,7 +3,8 @@
 
     <div class="row s-top-row">
         <div class="col-sm-1 col-xs-2 s-checkbox-col s-top-row-col">
-            {{indexToShow}}.
+          {{indexToShow}}.
+          <input type="checkbox" value={{identifier}} name="identifier" {{#if chosen}} checked {{/if}}>
         </div>
         <div class="col-sm-3 col-xs-4 s-top-row-col identifier s-identifier">
             <a href="#abs/{{identifier}}/abstract" aria-label="bibcode">
