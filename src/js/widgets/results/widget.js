@@ -285,7 +285,7 @@ function (
       docs = _.map(docs, function (d) {
         // used by link generator mixin
         d.link_server = link_server;
-        d.identifier = d.bibcode;
+        d.identifier = d.bibcode ? d.bibcode : d.identifier;
 
         // make sure undefined doesn't become "undefined"
         d.encodedIdentifier = _.isUndefined(d.identifier)

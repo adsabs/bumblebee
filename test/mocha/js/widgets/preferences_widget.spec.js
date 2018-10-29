@@ -192,7 +192,7 @@ function(
       var fakeOrcid = {
         getHardenedInstance: function() { return this },
         hasAccess: function() { return true },
-        getUserProfile: function() {
+        getUserBio: function() {
           var d = $.Deferred();
           d.resolve({
             getFirstName: _.constant('Alex'),
@@ -292,7 +292,7 @@ function(
       var fakeOrcid = {
         getHardenedInstance: function() { return this },
         hasAccess: function() { return true },
-        getUserProfile: function() {
+        getUserBio: function() {
           var d = $.Deferred();
           d.resolve({
             getFirstName: _.constant('Alex'),

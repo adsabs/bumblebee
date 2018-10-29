@@ -3,6 +3,16 @@ define([
   'underscore',
   'jsonpath'
 ], function (_, jp) {
+  var ADSPATHS = {
+    status: '$.status',
+    title: '$.title',
+    publicationDateMonth: '$.pubmonth',
+    publicationDateYear: '$.pubyear',
+    lastModifiedDate: '$.updated',
+    sourceName: '$.source',
+    putCode: '$.putcode',
+    identifier: '$.identifier'
+  };
   var PATHS = {
     createdDate: '$["created-date"].value',
     lastModifiedDate: '$["last-modified-date"].value',
@@ -55,7 +65,7 @@ define([
     work = work || {};
 
     // find the inner summary as the root
-    this._root = (work['work-summary']) ? work['work-summary'][0] : work;
+    this._root = work;
 
     this.sources = [];
 
@@ -104,7 +114,7 @@ define([
 
     /**
      * Returns the generated ORCiD work from the current _root object.
-     * The object will be based on the paths in PATHS
+     * The object will be based on the paths in ADSPATHS
      *
      * @returns {*} - ORCiD formatted object
      */
@@ -130,17 +140,13 @@ define([
      * @returns {*} - ADS formatted object
      */
     this.toADSFormat = function () {
-      var ids = this.getExternalIds();
-      if (ids.doi) {
-        ids.doi = [ids.doi];
-      }
+      var ids = this.getIdentifier();
+
       return _.extend({}, ids, {
-        'author': this.getContributorName(),
         'title': [this.getTitle()],
         'formattedDate': this.getFormattedPubDate(),
-        'abstract': this.getShortDescription(),
         'source_name': this.getSources().join('; '),
-        'pub': this.getJournalTitle(),
+        'identifier': this.getIdentifier(),
         '_work': this
       });
     };
@@ -156,57 +162,8 @@ define([
       return year + '/' + month;
     };
 
-    /**
-     * Creates an object containing all external ids
-     * @example
-     * { bibcode: ["2018CNSNS..56..270Q"], doi: [...] }
-     *
-     * @returns {Object} - object containing external ids
-     */
-    this.getExternalIds = function () {
-      var types = this.getExternalIdType();
-      var values = this.getExternalIdValue();
-      types = _.isArray(types) ? types : [types];
-      values = _.isArray(values) ? values : [values];
-      if (types.length !== values.length) {
-        return {};
-      }
-
-      return _.reduce(types, function (res, t, i) {
-        res[t] = values[i];
-        return res;
-      }, {});
-    };
-
-    /**
-     * Convenience method for distinguishing a particular identifier by priority.
-     * Given a set of external ids, this will return the value of the identifier.
-     *
-     * @example
-     * pickIdentifier(['bibcode', 'doi']);
-     * // returns: "2018CNSNS..56..270Q"
-     *
-     * @example
-     * pickIdentifier(['doi', 'bibcode']);
-     * // returns: "10.1016/j.cnsns.2017.08.014"
-     *
-     * @param {String[]} props - priority of the chosen ids
-     * @returns {String} - value of the chosen identifier
-     */
-    this.pickIdentifier = function (props) {
-      var ids = this.getExternalIds();
-      var out = {};
-      _.eachRight(props, function (p) {
-        if (_.isString(ids[p])) {
-          out = ids[p];
-          return false;
-        }
-      });
-      return out;
-    };
-
     // create getters for each of the PATHS
-    _.reduce(PATHS, function (obj, p, k) {
+    _.reduce(ADSPATHS, function (obj, p, k) {
       if (_.isString(k) && k.slice) {
         var prop = k[0].toUpperCase() + k.slice(1);
         obj['get' + prop] = _.partial(obj.get, p);

@@ -138,7 +138,7 @@ define([
         this.model.set('loading', true);
 
         // get main orcid name
-        var orcidProfile = this.getBeeHive().getService('OrcidApi').getUserProfile();
+        var orcidProfile = this.getBeeHive().getService('OrcidApi').getUserBio();
         var adsOrcidUserInfo = this.getBeeHive().getService('OrcidApi').getADSUserData();
 
         // doing it at once so there's no flicker of rapid rendering as different vals change
