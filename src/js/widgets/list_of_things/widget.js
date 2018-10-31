@@ -405,7 +405,7 @@ define([
         this.view.model.set('showHighlights', 'closed');
         return this.updatePagination({ page: arg1 });
       } else if (ev === 'show:missing') {
-        this.updatePagination();
+        this.updatePagination({ updateHash: false });
         _.each(arg1, function (gap) {
           var numFound = this.model.get('numFound');
           var start = gap.start;

@@ -66,12 +66,6 @@ function (
       // finally, listen
       // to this event on the view
       this.listenTo(this.view, 'toggle-all', this.triggerBulkAction);
-
-      // to facilitate sharing records with abstract, extend defaultQueryFields to include any extra abstract fields
-      // var abstractFields = AbstractWidget.prototype.defaultQueryArguments.fl.split(',');
-      // var resultsFields = this.defaultQueryArguments.fl.split(',');
-      // resultsFields = _.union(abstractFields, resultsFields);
-      // this.defaultQueryArguments.fl = resultsFields.join(',');
       this.minAuthorsPerResult = 3;
 
       this.model.on('change:makeSpace', _.bind(this.onMakeSpace, this));
@@ -186,15 +180,6 @@ function (
         q = this.composeQuery(this.defaultQueryArguments, q);
       }
 
-      /*
-         right now we're only showing a highlight query if there are no
-         unbounded wildcards (e.g. title:*). This is not ideal bc some queries
-         may be complex and after dropping the wildcard you could still want to
-         highlight things. But, that may need to be fixed on the solr side.
-         */
-      // var hq = q.get('q')[0];
-      // if (!hq.match(/\W\*\W/)) q.set('hl.q', hq);
-
       return q;
     },
 
@@ -207,12 +192,6 @@ function (
           break;
         }
       }
-
-      // if (hExists) {
-      //   this.model.set('showHighlights', 'open'); // default is to be open
-      // } else {
-      //   this.model.set('showHighlights', false); // will make it non-clickable
-      // }
     },
 
     getUserData: function () {
@@ -345,7 +324,11 @@ function (
         return d;
       });
 
-      docs = this.parseLinksData(docs);
+      try {
+        docs = this.parseLinksData(docs);
+      } catch (e) {
+        console.warn(e.message);
+      }
 
       // if the latest request equals the total perPage, then we're done, send off event
       if (this.pagination && this.pagination.perPage === (+params.start + +params.rows)) {

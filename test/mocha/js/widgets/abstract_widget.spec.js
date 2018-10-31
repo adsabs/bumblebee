@@ -138,7 +138,7 @@ define(['backbone', 'marionette', 'jquery', 'js/widgets/abstract/widget',
         expect($w.find(".s-abstract-text").text()).to.match(/In the past twenty years there has been a great amount of growth in radiometric observing methods./);
       });
 
-      it("should pre-populate with values from the docstashcontroller", function(){
+      it.skip("should pre-populate with values from the docstashcontroller", function(){
         var aw = new AbstractWidget();
         aw.activate(minsub.beehive.getHardenedInstance());
         aw.dispatchRequest = sinon.spy();
