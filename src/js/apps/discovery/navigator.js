@@ -208,6 +208,25 @@ function (
       // request for the widget
       this.set('UserPreferences', settingsPreferencesView('UserPreferences', 'librarylink', 'Library Link Server'));
 
+      this.set('LibraryActionsWidget', function () {
+        var $dd = $.Deferred();
+        var that = this;
+        if (redirectIfNotSignedIn()) {
+          return $dd.resolve().promise();
+        };
+
+        app.getObject('MasterPageManager').show('LibrariesPage',
+          ['LibraryActionsWidget', 'UserNavbarWidget']).then(function () {
+            app.getWidget('LibraryActionsWidget').done(function (widget) {
+              widget.reset();
+              that.route = '#user/libraries/actions';
+              publishPageChange('libraries-page');
+              $dd.resolve();
+            });
+          });
+        return $dd.promise();
+      });
+
       this.set('AllLibrariesWidget', function (widget, subView) {
         var defer = $.Deferred();
         var that = this;
@@ -222,6 +241,7 @@ function (
           ['AllLibrariesWidget', 'UserNavbarWidget']).then(function() {
             app.getWidget('AllLibrariesWidget').done(function (widget) {
               widget.setSubView({ view: subView });
+              widget.reset();
               that.route = '#user/libraries/';
               that.title = 'My Libraries';
               publishPageChange('libraries-page');

@@ -47,6 +47,7 @@ define([
         "updateLibraryMetadata",
         "importLibraries",
         "getLibraryBibcodes",
+        "performLibraryOperation",
         "__facade__",
         "mixIn"
       ]);

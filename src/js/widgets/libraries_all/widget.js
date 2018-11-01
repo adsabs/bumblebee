@@ -111,7 +111,6 @@ function (
     },
 
     activate: function (beehive) {
-      var that = this;
       this.setBeeHive(beehive);
       _.bindAll(this);
       var ps = this.getPubSub();
@@ -119,6 +118,15 @@ function (
       ps.subscribe(ps.CUSTOM_EVENT, this.onCustomEvent);
 
       // initial data request
+      this.getData();
+    },
+
+    reset: function () {
+      this.getData();
+    },
+
+    getData: function () {
+      var that = this;
       this.getBeeHive().getObject('LibraryController').getLibraryMetadata().done(function (data) {
         that.updateCollection.call(that, data);
       });
@@ -157,10 +165,11 @@ function (
     },
 
     handleSubViewEvents: function (event, arg1, arg2) {
+      var pubsub = this.getPubSub();
       switch (event) {
         case 'navigate:library':
           // where arg1 = library's id
-          this.getPubSub().publish(this.getPubSub().NAVIGATE, 'IndividualLibraryWidget', { subView: 'library', id: arg1 });
+          pubsub.publish(pubsub.NAVIGATE, 'IndividualLibraryWidget', { subView: 'library', id: arg1 });
           break;
       }
     }

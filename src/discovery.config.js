@@ -138,6 +138,7 @@ require.config({
         ShowLibraryAdd: 'js/wraps/abstract_page_library_add/widget',
 
         IndividualLibraryWidget: 'js/widgets/library_individual/widget',
+        LibraryActionsWidget: 'es6!js/widgets/library_actions/widget.jsx',
         AllLibrariesWidget: 'js/widgets/libraries_all/widget',
         LibraryListWidget: 'js/widgets/library_list/widget'
       },

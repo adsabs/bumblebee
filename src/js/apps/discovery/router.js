@@ -189,6 +189,10 @@ function (
 
     librariesPage: function (id, subView, subData) {
       if (id) {
+        if (id === 'actions') {
+          return this.routerNavigate('LibraryActionsWidget', 'libraries');
+        }
+
         // individual libraries view
         var subView = subView || 'library';
         if (_.contains(['library', 'admin'], subView)) {
