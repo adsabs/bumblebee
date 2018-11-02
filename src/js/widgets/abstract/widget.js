@@ -241,7 +241,7 @@ function (
 
     defaultQueryArguments: {
       fl: 'title,abstract,comment,bibcode,author,keyword,id,citation_count,[citations],pub,aff,volume,pubdate,doi,pub_raw,page',
-      rows: 40
+      rows: 1
     },
 
     mergeStashedDocs: function (docs) {

@@ -488,6 +488,7 @@ function (
         var orcidApi = app.getService('OrcidApi');
         var persistentStorage = app.getService('PersistentStorage');
         var appStorage = app.getObject('AppStorage');
+        var user = app.getObject('User');
 
         // traffic from Orcid - user has authorized our access
         if (!orcidApi.hasAccess() && orcidApi.hasExchangeCode()) {
@@ -500,12 +501,14 @@ function (
           orcidApi.getAccessData(orcidApi.getExchangeCode())
             .done(function (data) {
               orcidApi.saveAccessData(data);
+              user.setOrcidMode(true);
               self.getPubSub().publish(self.getPubSub().APP_EXIT, {
                 url: window.location.pathname
                     + ((targetRoute && _.isString(targetRoute)) ? targetRoute : window.location.hash)
               });
             })
             .fail(function () {
+              user.setOrcidMode(false);
               console.warn('Unsuccessful login to ORCID');
               self.get('index-page').execute();
               var alerter = app.getController('AlertsController');

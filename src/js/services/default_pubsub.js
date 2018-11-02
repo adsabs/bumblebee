@@ -347,7 +347,7 @@ function (
     // the default implementation just counts the number of errors per module (key) and
     // triggers pubsub.many_errors
     handleCallbackError: function (e, event, args) {
-      console.warn('[PubSub] Error: ', event, args);
+      console.warn('[PubSub] Error: ', event, args, e.message, e.stack);
       if (this.debug) {
         throw e;
       } else {

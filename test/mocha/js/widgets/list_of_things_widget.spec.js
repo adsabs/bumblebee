@@ -238,12 +238,16 @@ define(['marionette',
         // batches of 10; the collection will automatically ask twice
         minsub.publish(minsub.DISPLAY_DOCUMENTS, new ApiQuery({'q': 'bibcode:bar'}));
         expect($w.find("label").length).to.equal(51);
-        expect($(".s-checkbox-col").text().replace(/\s+/g, " ")).to.eql(" 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29 30 31 32 33 34 35 36 37 38 39 40 41 42 43 44 45 46 47 48 49 50 ")
+        expect($(".s-checkbox-col").text().replace(/\s+/g, " ").trim()).to.eql(_.range(1, 51).join(' '));
 
         // click on next page // this should trigger new request
         $w.find('.page-control.next-page').click();
-        expect($(".s-checkbox-col").text().replace(/\s+/g, " ")).to.eql(" 51 52 53 54 55 56 57 58 59 60 61 62 63 64 65 66 67 68 69 70 71 72 73 74 75 76 77 78 79 80 81 82 83 84 85 86 87 88 89 90 91 92 93 94 95 96 97 98 99 100 ");
 
+        /* We don't expect to get chunked requests here, since rest of the items are sent as one request.
+           So when the server responds with 10, the list doesn't check the numFound to see if it was missing
+           it trusts the server to respond with the correct amount, this may not be a good thing...
+        */
+        expect($(".s-checkbox-col").text().replace(/\s+/g, " ").trim()).to.eql(_.range(51, 61).join(' '));
         done();
       });
 
@@ -317,7 +321,7 @@ define(['marionette',
         widget.trigger("pagination:changePerPage", 50);
         expect(widget.model.get("perPage")).to.eql(50);
 
-        expect(JSON.stringify(widget.model.toJSON())).to.eql('{"mainResults":false,"showAbstract":"closed","showHighlights":false,"pagination":true,"start":0,"perPage":50,"numFound":100,"currentQuery":{"q":["foo:bar"]},"pageData":{"perPage":50,"totalPages":2,"currentPage":1,"previousPossible":false,"nextPossible":true},"page":0,"showRange":[0,49],"query":false,"loading":false}');
+        expect(JSON.stringify(widget.model.toJSON())).to.eql('{"mainResults":false,"showAbstract":"closed","showHighlights":"closed","pagination":true,"start":0,"highlightsLoaded":false,"perPage":50,"numFound":100,"currentQuery":{"q":["foo:bar"]},"pageData":{"perPage":50,"totalPages":2,"currentPage":1,"previousPossible":false,"nextPossible":true},"page":0,"showRange":[0,49],"query":false,"loading":false}');
 
         expect($("#per-page-select>option:selected").text().trim()).to.eql("50");
         expect($("input.page-control").val()).to.eql("1");

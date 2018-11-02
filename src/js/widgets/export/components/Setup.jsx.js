@@ -89,7 +89,9 @@ define([
                   value={customFormat}
                   onChange={e => onCustomFormatChange(e.target.value)}
                 />
-                <button className="btn btn-link" role="button" onClick={onCustomFormatClick}>Or select from your saved custom formats</button>
+                {customFormats.length > 0 &&
+                  <button className="btn btn-link" role="button" onClick={onCustomFormatClick}>Or select from your saved custom formats</button>
+                }
               </div>
             }
           </div>

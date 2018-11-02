@@ -43,7 +43,7 @@ function (
           showAbstract: 'closed',
           makeSpace: false,
           // often they won't exist
-          showHighlights: false,
+          showHighlights: 'closed',
           pagination: true
         };
       };
@@ -66,24 +66,13 @@ function (
       // finally, listen
       // to this event on the view
       this.listenTo(this.view, 'toggle-all', this.triggerBulkAction);
-
-      // to facilitate sharing records with abstract, extend defaultQueryFields to include any extra abstract fields
-      var abstractFields = AbstractWidget.prototype.defaultQueryArguments.fl.split(',');
-      var resultsFields = this.defaultQueryArguments.fl.split(',');
-      resultsFields = _.union(abstractFields, resultsFields);
-      this.defaultQueryArguments.fl = resultsFields.join(',');
       this.minAuthorsPerResult = 3;
 
       this.model.on('change:makeSpace', _.bind(this.onMakeSpace, this));
     },
 
     defaultQueryArguments: {
-      'hl': 'true',
-      'hl.fl': 'title,abstract,body,ack',
-      'hl.maxAnalyzedChars': '150000',
-      'hl.requireFieldMatch': 'true',
-      'hl.usePhraseHighlighter': 'true',
-      'fl': 'title,abstract,bibcode,author,keyword,id,links_data,property,esources,data,citation_count,[citations],pub,aff,email,volume,pubdate,doi,doctype',
+      'fl': 'id,title,abstract,bibcode,author,citation_count,pubdate,doi,property,esources,data',
       'rows': 25,
       'start': 0
     },
@@ -98,6 +87,7 @@ function (
       pubsub.subscribe(pubsub.STORAGE_PAPER_UPDATE, this.onStoragePaperUpdate);
       pubsub.subscribe(pubsub.CUSTOM_EVENT, this.onCustomEvent);
       pubsub.subscribe(pubsub.START_SEARCH, this.onStartSearch);
+      this.queryTimer = +new Date();
     },
 
     _clearResults: function () {
@@ -140,6 +130,7 @@ function (
         setTimeout(function () { clearInterval(focusInterval); }, 10000);
         this.focusInterval = focusInterval;
       }
+      this.queryTimer = +new Date();
     },
 
     onMakeSpace: function () {
@@ -168,7 +159,7 @@ function (
     },
 
     onCustomEvent: function (event) {
-      if (event == 'add-all-on-page') {
+      if (event === 'add-all-on-page') {
         var bibs = this.collection.pluck('bibcode');
         var pubsub = this.getPubSub();
         pubsub.publish(pubsub.BULK_PAPER_SELECTION, bibs);
@@ -189,15 +180,6 @@ function (
         q = this.composeQuery(this.defaultQueryArguments, q);
       }
 
-      /*
-         right now we're only showing a highlight query if there are no
-         unbounded wildcards (e.g. title:*). This is not ideal bc some queries
-         may be complex and after dropping the wildcard you could still want to
-         highlight things. But, that may need to be fixed on the solr side.
-         */
-      var hq = q.get('q')[0];
-      if (!hq.match(/\W\*\W/)) q.set('hl.q', hq);
-
       return q;
     },
 
@@ -209,12 +191,6 @@ function (
           hExists = true;
           break;
         }
-      }
-
-      if (hExists) {
-        this.model.set('showHighlights', 'open'); // default is to be open
-      } else {
-        this.model.set('showHighlights', false); // will make it non-clickable
       }
     },
 
@@ -351,7 +327,13 @@ function (
       try {
         docs = this.parseLinksData(docs);
       } catch (e) {
-        // doc will not have link data
+        console.warn(e.message);
+      }
+
+      // if the latest request equals the total perPage, then we're done, send off event
+      if (this.pagination && this.pagination.perPage === (+params.start + +params.rows)) {
+        var pubsub = this.getPubSub();
+        pubsub.publish(pubsub.CUSTOM_EVENT, 'timing:results-loaded', +new Date() - this.queryTimer);
       }
 
       return docs;
@@ -380,8 +362,12 @@ function (
         }
       });
       if (this.collection.where({ chosen: true }).length == 0) {
+
         // make sure the "selectAll" button is unchecked
-        this.view.$('input#select-all-docs')[0].checked = false;
+        var $chk = this.view.$('input#select-all-docs');
+        if ($chk.length > 0) {
+          $chk[0].checked = false;
+        }
       }
     },
 

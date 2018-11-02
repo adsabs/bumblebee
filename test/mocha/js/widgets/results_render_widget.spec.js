@@ -108,23 +108,8 @@ define([
             "q": [
               "star isbn:* *:*"
             ],
-            "hl": [
-              "true"
-            ],
-            "hl.fl": [
-              "title,abstract,body,ack"
-            ],
-            "hl.maxAnalyzedChars": [
-              "150000"
-            ],
-            "hl.requireFieldMatch": [
-              "true"
-            ],
-            "hl.usePhraseHighlighter": [
-              "true"
-            ],
             "fl": [
-              "title,abstract,comment,bibcode,author,keyword,id,citation_count,[citations],pub,aff,volume,pubdate,doi,pub_raw,page,links_data,property,esources,data,email,doctype"
+              "id,title,abstract,bibcode,author,citation_count,pubdate,doi,property,esources,data"
             ],
             "rows": [
               25
@@ -137,7 +122,7 @@ define([
             ]
           });
 
-          expect(widget.model.get('currentQuery').url()).to.eql('fl=title%2Cabstract%2Ccomment%2Cbibcode%2Cauthor%2Ckeyword%2Cid%2Ccitation_count%2C%5Bcitations%5D%2Cpub%2Caff%2Cvolume%2Cpubdate%2Cdoi%2Cpub_raw%2Cpage%2Clinks_data%2Cproperty%2Cesources%2Cdata%2Cemail%2Cdoctype&hl=true&hl.fl=title%2Cabstract%2Cbody%2Cack&hl.maxAnalyzedChars=150000&hl.requireFieldMatch=true&hl.usePhraseHighlighter=true&q=star%20isbn%3A*%20*%3A*&rows=25&sort=date%20desc%2C%20bibcode%20desc&start=0');
+          expect(widget.model.get('currentQuery').url()).to.eql('fl=id%2Ctitle%2Cabstract%2Cbibcode%2Cauthor%2Ccitation_count%2Cpubdate%2Cdoi%2Cproperty%2Cesources%2Cdata&q=star%20isbn%3A*%20*%3A*&rows=25&sort=date%20desc%2C%20bibcode%20desc&start=0');
           expect(widget.collection.length).to.eql(10);
           done();
         }, 50);
@@ -161,39 +146,21 @@ define([
             "q": [
               "star"
             ],
-            "hl": [
-              "true"
-            ],
-            "hl.fl": [
-              "title,abstract,body,ack"
-            ],
-            "hl.maxAnalyzedChars": [
-              "150000"
-            ],
-            "hl.requireFieldMatch": [
-              "true"
-            ],
-            "hl.usePhraseHighlighter": [
-              "true"
+            "sort": [
+              "date desc, bibcode desc"
             ],
             "fl": [
-              "title,abstract,comment,bibcode,author,keyword,id,citation_count,[citations],pub,aff,volume,pubdate,doi,pub_raw,page,links_data,property,esources,data,email,doctype"
+              "id,title,abstract,bibcode,author,citation_count,pubdate,doi,property,esources,data"
             ],
             "rows": [
               25
             ],
             "start": [
               0
-            ],
-            "hl.q": [
-              "star"
-            ],
-            "sort": [
-              "date desc, bibcode desc"
             ]
           });
 
-          expect(widget.model.get('currentQuery').url()).to.eql('fl=title%2Cabstract%2Ccomment%2Cbibcode%2Cauthor%2Ckeyword%2Cid%2Ccitation_count%2C%5Bcitations%5D%2Cpub%2Caff%2Cvolume%2Cpubdate%2Cdoi%2Cpub_raw%2Cpage%2Clinks_data%2Cproperty%2Cesources%2Cdata%2Cemail%2Cdoctype&hl=true&hl.fl=title%2Cabstract%2Cbody%2Cack&hl.maxAnalyzedChars=150000&hl.q=star&hl.requireFieldMatch=true&hl.usePhraseHighlighter=true&q=star&rows=25&sort=date%20desc%2C%20bibcode%20desc&start=0');
+          expect(widget.model.get('currentQuery').url()).to.eql('fl=id%2Ctitle%2Cabstract%2Cbibcode%2Cauthor%2Ccitation_count%2Cpubdate%2Cdoi%2Cproperty%2Cesources%2Cdata&q=star&rows=25&sort=date%20desc%2C%20bibcode%20desc&start=0');
           expect(widget.collection.length).to.eql(10);
           done();
         }, 50);
@@ -252,85 +219,6 @@ define([
 
         widget.dispatchRequest.restore();
       });
-
-      it("should render the show snippets button only if highlights exist given the paginated docs", function () {
-
-        var widget = _getWidget();
-        var responseWithHighlights = new ApiResponse({
-          "responseHeader": {
-            "status": 0,
-            "QTime": 11,
-            "params": {
-              "fl": "id",
-              "indent": "true",
-              "q": "author:accomazzi,a",
-              "hl.simple.pre": "<em>",
-              "hl.simple.post": "</em>",
-              "wt": "json",
-              "hl": "true"}},
-          "response": {"numFound": 175, "start": 0, "docs": [
-            {
-              "id": "10406064"},
-            {
-              "id": "3513629"},
-            {
-              "id": "5422941"}
-          ]
-          },
-          "highlighting": {
-            "10406064": {"title": "fooblydoo"},
-            "3513629": {"abstract": ""}
-          }});
-        responseWithHighlights.setApiQuery(new ApiQuery({start : 0, rows : 25}));
-        widget.processResponse(responseWithHighlights);
-        expect(widget.model.get('showHighlights')).to.eql('open');
-
-        var $w = widget.render().$el;
-        $('#test').append($w);
-
-        //expect results button;
-        expect(widget.view.render().$el.find(".show-highlights").length).to.eql(1);
-
-
-        widget.model.set('showHighlights', false);
-        expect(widget.view.render().$el.find(".show-highlights").length).to.eql(0);
-
-
-        var responseWithoutHighlights = new ApiResponse({
-          "responseHeader": {
-            "status": 0,
-            "QTime": 11,
-            "params": {
-              "fl": "id",
-              "indent": "true",
-              "q": "author:accomazzi,a",
-              "hl.simple.pre": "<em>",
-              "hl.simple.post": "</em>",
-              "wt": "json",
-              "hl": "true"}},
-          "response": {"numFound": 3, "start": 0, "docs": [
-            {
-              "id": "10406064"},
-            {
-              "id": "3513629"},
-            {
-              "id": "5422941"}
-          ]
-          },
-          "highlighting": {
-            "10406064": {"title": ""},
-            "3513629": {"abstract": ""}
-          }});
-        responseWithoutHighlights.setApiQuery(new ApiQuery());
-
-        widget.reset();
-        expect(widget.model.get('showHighlights')).to.be.false;
-        widget.processResponse(responseWithoutHighlights);
-        expect(widget.model.get('showHighlights')).to.be.false;
-
-
-      });
-
 
       it("has a view that displays records for each model in the collection", function(done){
 

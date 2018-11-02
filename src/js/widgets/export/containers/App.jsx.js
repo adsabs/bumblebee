@@ -125,7 +125,7 @@ define([
     }
 
     onCustomFormatClick() {
-      if (this.state.customFormatDirectEntry) {
+      if (this.state.customFormatDirectEntry && this.props.customFormats.length > 0) {
         this.onCustomFormatChange(this.props.customFormats[0].code);
       }
       this.setState({

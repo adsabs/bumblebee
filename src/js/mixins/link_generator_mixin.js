@@ -404,8 +404,12 @@ define(['underscore', 'js/mixins/openurl_generator'], function (_, OpenURLGenera
     const parseResourcesData = _.bind(this.parseResourcesData, this);
     if (_.isArray(data)) {
       return _.map(data, function (d) {
-        const linkData = parseResourcesData(d);
-        return parseLinksDataForModel(d, linkData);
+        try {
+          const linkData = parseResourcesData(d);
+          return parseLinksDataForModel(d, linkData);
+        } catch (e) {
+          return d;
+        }
       });
     }
     return [];
