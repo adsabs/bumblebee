@@ -144,6 +144,13 @@ define([
       this.trigger('selectAllRecords', flag);
     },
 
+    resetBulkDelete: function () {
+      this.model.set({
+        numSelected: false,
+        allSelected: false
+      });
+    },
+
     render: function () {
       ListOfThingsPaginatedContainerView.prototype.render.apply(this, arguments);
       this.$('#sort-container').html(this.sortWidget.render().el);
@@ -287,6 +294,8 @@ define([
     },
 
     processDocs: function (apiResponse, docs, paginationInfo) {
+      this.view.resetBulkDelete();
+
       if (!apiResponse.has('response')) return [];
       var params = apiResponse.get('response');
       var start = params.start || (paginationInfo.start || 0);
@@ -335,11 +344,6 @@ define([
       }
 
       return docs;
-    },
-
-    onBulkDelete: function () {
-      var chosen = this.collection.where({ chosen: true });
-      console.log(chosen);
     },
 
     onStoragePaperUpdate: function () {
