@@ -302,7 +302,7 @@ define([
       docs = PaginationMixin.addPaginationToDocs(docs, start);
 
       _.each(docs, function (d, i) {
-        d.identifier = d.bibcode ? d.bibcode : d.identifier;
+        d.identifier = d.bibcode;
         d.noCheckbox = true;
 
         var maxAuthorNames = 3;

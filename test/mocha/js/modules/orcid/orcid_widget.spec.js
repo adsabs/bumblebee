@@ -9,7 +9,6 @@ define([
     'js/modules/orcid/module',
     'js/components/api_query',
     'js/modules/orcid/profile',
-    'js/modules/orcid/bio',
     './helpers'
   ],
   function (
@@ -23,7 +22,6 @@ define([
     OrcidModule,
     ApiQuery,
     Profile,
-    Bio,
     helpers
     ) {
 
@@ -178,13 +176,10 @@ define([
         sinon.stub(orcidApi, 'hasAccess', function() {return true});
         var widget = _getWidget(this.minsub.beehive);
 
-        var bio = new Bio(helpers.getMock('bio'));
-        var bioResponse = new JsonResponse(bio.toADSFormat());
-
         var profile = new Profile(helpers.getMock('profile'));
         var response = new JsonResponse(profile.toADSFormat());
+        response.setApiQuery(new ApiQuery(response.get('responseHeader.params')));
 
-        response.setApiQuery(new ApiQuery(bioResponse.get('responseHeader.params')));
         widget.processResponse(response);
 
         var $w = widget.render().$el;
@@ -200,10 +195,6 @@ define([
 
         var orcidApi = getOrcidApi(this.minsub.beehive);
         orcidApi.saveAccessData({access: true});
-        orcidApi.getUserBio = function() {
-            return $.Deferred()
-                .resolve(new Bio(helpers.getMock('bio'))).promise();
-        };
         orcidApi.getUserProfile = function() {
           return $.Deferred()
             .resolve(new Profile(helpers.getMock('profile'))).promise();
@@ -236,9 +227,9 @@ define([
 
         var orcidApi = getOrcidApi(this.minsub.beehive);
         orcidApi.saveAccessData({access: true});
-        orcidApi.getUserBio = function() {
+        orcidApi.getUserProfile = function() {
           return $.Deferred()
-            .resolve(new Bio(helpers.getMock('bio'))).promise();
+            .resolve(new Profile(helpers.getMock('profile'))).promise();
         };
 
         orcidApi.getADSUserData = sinon.spy(function(){

@@ -17,8 +17,7 @@ define([
   'js/components/api_feedback',
   'js/components/json_response',
   'hbs!js/modules/orcid/widget/templates/empty-template',
-  'js/modules/orcid/extension',
-  'js/modules/orcid/bio'
+  'js/modules/orcid/extension'
 ], function (
   _,
   ListOfThingsWidget,
@@ -32,8 +31,7 @@ define([
   ApiFeedback,
   JsonResponse,
   EmptyViewTemplate,
-  OrcidExtension,
-  OrcidBio
+  OrcidExtension
 ) {
   var ResultsWidget = ListOfThingsWidget.extend({
 
@@ -239,19 +237,18 @@ define([
         }
 
         self.model.set('loading', true);
-        var orcidBio = oApi.getUserBio();
-        var orcidProfile = oApi.getUserProfile();
 
-        $.when(orcidBio, orcidProfile).done(function (bio, profile) {
+        var profile = oApi.getUserProfile();
+
+        profile.done(function gotProfile(profile) {
           var response = new JsonResponse(profile.toADSFormat());
-          var bioResponse = new JsonResponse(bio.toADSFormat());
-          var params = bioResponse.get('responseHeader.params');
+          var params = response.get('responseHeader.params');
 
-          var firstName = bio.getFirstName();
-          var lastName = bio.getLastName();
+          var firstName = params.firstName;
+          var lastName = params.lastName;
 
           self.model.set({
-            orcidID: bio.getOrcid(),
+            orcidID: params.orcid,
             orcidUserName: firstName + ' ' + lastName,
             orcidFirstName: firstName,
             orcidLastName: lastName,
@@ -263,7 +260,7 @@ define([
           self.processResponse(response);
         });
 
-        orcidProfile.fail(function () {
+        profile.fail(function () {
           self.model.set({
             loading: false
           });

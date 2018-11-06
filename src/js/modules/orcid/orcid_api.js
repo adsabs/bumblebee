@@ -54,8 +54,7 @@ define([
   'js/components/api_query_updater',
   'js/components/api_feedback',
   'js/modules/orcid/work',
-  'js/modules/orcid/profile',
-  'js/modules/orcid/bio'
+  'js/modules/orcid/profile'
 ],
 function (
   _,
@@ -73,8 +72,7 @@ function (
   ApiQueryUpdater,
   ApiFeedback,
   Work,
-  Profile,
-  Bio
+  Profile
 ) {
   var OrcidApi = GenericModule.extend({
 
@@ -205,23 +203,6 @@ function (
       return request;
     },
 
-    getUserBio: function () {
-      var dd = new $.Deferred();
-      var url = this.getBeeHive().getService('Api').url
-        + ApiTargets.ORCID_NAME + '/' + this.authData.orcid;
-      var request = this.createRequest(url);
-      request.fail(function () {
-          var msg = 'ADS name could not be retrieved';
-          console.error.apply(console, [msg].concat(arguments));
-          dd.reject();
-      });
-      request.done(function (bio) {
-        var orcidBio = new Bio(bio);
-        dd.resolve(orcidBio);
-      });
-      return dd.promise();
-    },
-
     /**
      * Forgets the OAuth access_token
      */
@@ -338,8 +319,7 @@ function (
      */
     getUrl: function (name, putCodes) {
       var targets = {
-        profile_bib: '/orcid-profile/simple',
-        profile_full: '/orcid-profile/full?update=True',
+        profile: '/orcid-profile',
         works: '/orcid-works',
         work: '/orcid-work'
       };
@@ -384,15 +364,14 @@ function (
      */
     _getUserProfile: function () {
       var self = this;
-      var request = this.createRequest(this.getUrl('profile_full'));
+      var request = this.createRequest(this.getUrl('profile'));
 
       // get everything so far in the cache
       var cache = self.getUserProfileCache.splice(0);
 
       request.done(function (profile) {
         _.forEach(cache, function (promise) {
-          orcidProfile = new Profile(profile);
-          promise.resolve(orcidProfile.setWorks(_.map(profile, function (profile, idx) {return new Work(profile)})));
+          promise.resolve(self._reconcileProfileWorks(profile));
         });
       });
 
@@ -402,6 +381,86 @@ function (
           promise.reject.apply(promise, args);
         });
       });
+    },
+
+    /**
+     * Reconcile the works contained in the incoming profile.
+     * Since it's possible for an ORCiD record to contain multiple sources,
+     * we have to figure out the best one to pick.
+     *
+     * The user can selected a "preferred" source, but since we can only match
+     * on items that have enough information (bibcode, doi, etc), we have to search
+     * through them all to find the best one.
+     *
+     * @param {object} rawProfile - the incoming profile
+     * @returns {Profile} - the new profile (with reconciled works)
+     */
+    _reconcileProfileWorks: function (rawProfile) {
+      /*
+        1. Source is ADS
+        2. Has Bibcode
+        3. Has DOI
+        4. Other
+      */
+      var self = this;
+      var profile = new Profile(rawProfile);
+      var works = _.map(profile.getWorksDeep(), function (work, idx) {
+        var w;
+
+        // only operate on arrays > 1
+        if (work.length > 1) {
+          var workWithBibcode;
+          var workWithDoi;
+          _.forEach(work, function (item) {
+            // check if the source is ADS
+            var isADS = self.isSourcedByADS(item);
+
+            // grab an array of external ids ['bibcode', 'doi', '...']
+            var exIds = item.getExternalIdType();
+            var hasBibcode = exIds.indexOf('bibcode') > -1;
+            var hasDoi = exIds.indexOf('doi') > -1;
+
+            // if it's sourced by ADS, use that one and break out of loop
+            if (isADS) {
+              w = item;
+              return false;
+            }
+
+            // grab the first one that has a bibcode
+            if (hasBibcode && !workWithBibcode) {
+              workWithBibcode = item;
+            }
+
+            // grab the first one that has a doi
+            if (hasDoi && !workWithDoi) {
+              workWithDoi = item;
+            }
+            return true;
+          });
+
+          // w will be defined if we found an ADS-sourced work
+          // otherwise, set the work accordingly below
+          if (!w && workWithBibcode) {
+            w = workWithBibcode;
+          } else if (!w && workWithDoi) {
+            w = workWithDoi;
+          } else if (!w) {
+            w = work[0];
+          }
+
+          // set the work's list of sources based on the full list from orcid
+          w.setSources(_.map(work, function (_w) {
+            return _w.getSourceName();
+          }));
+        }
+
+        // take the first work if we haven't found an array to process
+        return w || work[0];
+      });
+
+      // set the new works
+      profile.setWorks(works);
+      return profile;
     },
 
     /**
@@ -893,7 +952,7 @@ function (
      * @param {Work} work
      */
     isSourcedByADS: function isSourcedByADS(work) {
-      return work.getSourceName().indexOf('NASA Astrophysics Data System') > -1;
+      return this.config.clientId === work.getSourceClientIdPath();
     },
 
     /**
@@ -971,9 +1030,18 @@ function (
         var db = {};
         _.forEach(works, function addIdsToDatabase(w, i) {
           var key = 'identifier:';
-          var ids = w.getIdentifier();
+          var ids = w.getExternalIds();
 
-          key += ids;
+          if (_.has(ids, 'bibcode')) {
+            key += ids.bibcode;
+          } else if (_.has(ids, 'doi')) {
+            key += ids.doi;
+          } else if (_.has(ids, 'null')) {
+            key += 'NONE';
+          } else if (!_.isEmpty(ids)) {
+            // grab the first value
+            key += _.values(ids)[0];
+          }
 
           if (key) {
             query.push(key);
@@ -1035,6 +1103,7 @@ function (
             }
           });
 
+          self._combineDatabaseWorks(db);
           finishUpdate(db);
         };
 
@@ -1058,6 +1127,38 @@ function (
       }
 
       return self.dbUpdatePromise.promise();
+    },
+
+    /**
+     * Looks at the identifier of the work and attempts to
+     * detect if a bibcode has a child within the other entries
+     * of the database.
+     *
+     * @param {object} db - the database object
+     * @returns {object} db - the update database object
+     */
+    _combineDatabaseWorks: function (db) {
+      // loop through each entry of the database
+      _.forEach(db, function (data, identifier) {
+        // we can only do this for entries with data and bibcodes
+        if (_.isUndefined(data) || _.isUndefined(data.bibcode)) {
+          return true;
+        }
+
+        // remove 'identifier:' from front of key
+        var key = identifier.split(':')[1];
+
+        // add an children property to the current (parent entry)
+        _.forEach(db, function (entry, subKey) {
+          // excluding our parent, see if the key matches the bibcode
+          if (entry.bibcode === key && subKey !== identifier) {
+            data.children = data.children || [];
+            data.children.push(entry.putcode);
+          }
+        });
+      });
+
+      return db;
     },
 
     /**
@@ -1163,7 +1264,6 @@ function (
     hardenedInterface: {
       hasAccess: 'boolean indicating access to ORCID Api',
       getUserProfile: 'get user profile',
-      getUserBio: 'get user bio',
       signIn: 'login',
       signOut: 'logout',
       getADSUserData: '',
