@@ -217,9 +217,7 @@ define([
     extractDocs: function (apiResponse) {
       var docs = apiResponse.get('response.docs');
       docs = _.map(docs, function (d) {
-        if (d.bibcode) {
-          d.identifier = d.bibcode ? d.bibcode : d.identifier;
-        }
+        d.identifier = d.bibcode;
         return d;
       });
       return docs;

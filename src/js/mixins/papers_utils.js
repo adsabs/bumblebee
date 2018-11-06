@@ -132,7 +132,7 @@ function (
       data.shortAbstract = data.abstract ? this.shortenAbstract(data.abstract) : undefined;
       data.details = data.details || { 'shortAbstract': data.shortAbstract, 'pub': data.pub, 'abstract': data.abstract };
       data.num_citations = data['[citations]'] ? data['[citations]'].num_citations : undefined;
-      data.identifier = data.bibcode ? data.bibcode : data.identifier;
+      data.identifier = data.bibcode;
 
       // make sure undefined doesn't become "undefined"
       data.encodedIdentifier = _.isUndefined(data.identifier)
