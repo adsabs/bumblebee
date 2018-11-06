@@ -140,7 +140,7 @@ define([
    * Fetch using ids, this will set up a request and fetch a request using
    * identifiers and some other information.
    */
-  actions.fetchUsingIds = () => (dispatch, getState, widget) => {
+  actions.fetchUsingIds = (isLibrary) => (dispatch, getState, widget) => {
     const {
       requestExport, receiveExport, requestFailed, setIgnore, setHasError
     } = actions;
@@ -154,9 +154,12 @@ define([
 
     // get the current count, which the user selected
     const count = exports.count < exports.batchSize ? exports.count : exports.batchSize;
+    const start = exports.maxCount - exports.batchSize;
 
     // only grab the first n records
-    const ids = _.take(exports.ids, count);
+    const ids = isLibrary
+      ? exports.ids.slice(start, start + count)
+      : _.take(exports.ids, count);
 
     // setting up a new query using our current ids
     const q = new ApiQuery();
@@ -225,7 +228,13 @@ define([
       dispatch(setCount(count));
     }
     dispatch(setMaxCount(max));
-    dispatch(fetchUsingQuery()).done(() => dispatch(fetchUsingIds()));
+
+    // check if we are in a library (been given all of our ids)
+    if (exports.ids.length === exports.totalRecs) {
+      dispatch(fetchUsingIds(true));
+    } else {
+      dispatch(fetchUsingQuery()).done(() => dispatch(fetchUsingIds()));
+    }
   };
 
   /**
