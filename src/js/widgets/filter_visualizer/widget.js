@@ -86,6 +86,7 @@ function (
       this.view = new WidgetView({ collection: this.collection });
       this.listenTo(this.view, 'childview:filter-event', this.onFilterEvent);
       this.knownFilters = {
+        fq_aff: 'Affiliations',
         fq_author: 'Author',
         fq_database: 'Collection',
         fq_property: 'Property',
@@ -375,6 +376,10 @@ function (
         case 'fq_author':
           s = s.replace(/author_facet_hier:/g, '');
           s = s.replace(/\d+\//g, ''); // remove hier markers
+          break;
+        case 'fq_aff':
+          s = s.replace(/aff_facet_hier:/g, '');
+          s = s.replace(/\d+\//g, '');
           break;
         case 'fq_database':
           s = s.replace(/database:/g, '');

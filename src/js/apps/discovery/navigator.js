@@ -59,7 +59,7 @@ function (
       };
 
       var searchPageAlwaysVisible = [
-        'Results', 'QueryInfo', 'AuthorFacet', 'DatabaseFacet', 'RefereedFacet',
+        'Results', 'QueryInfo', 'AffiliationFacet', 'AuthorFacet', 'DatabaseFacet', 'RefereedFacet',
         'KeywordFacet', 'BibstemFacet', 'BibgroupFacet', 'DataFacet', 'ObjectFacet',
         'NedObjectFacet', 'VizierFacet', 'GrantsFacet', 'GraphTabs', 'QueryDebugInfo',
         'ExportDropdown', 'VisualizationDropdown', 'SearchWidget',
