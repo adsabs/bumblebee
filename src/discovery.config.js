@@ -106,6 +106,7 @@ require.config({
         OrcidBigWidget: 'js/modules/orcid/widget/widget',
         OrcidSelector: 'es6!js/widgets/orcid-selector/widget.jsx',
 
+        AffiliationFacet: 'js/wraps/affiliation_facet',
         AuthorFacet: 'js/wraps/author_facet',
         BibgroupFacet: 'js/wraps/bibgroup_facet',
         BibstemFacet: 'js/wraps/bibstem_facet',

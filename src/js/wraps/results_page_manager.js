@@ -10,7 +10,7 @@ define([
 
     persistentWidgets: [
       'PubtypeFacet', 'SearchWidget', 'BreadcrumbsWidget', 'Sort',
-      'ExportDropdown', 'VisualizationDropdown', 'AuthorFacet',
+      'ExportDropdown', 'VisualizationDropdown', 'AffiliationFacet', 'AuthorFacet',
       'DatabaseFacet', 'RefereedFacet', 'KeywordFacet', 'BibstemFacet',
       'BibgroupFacet', 'DataFacet', 'VizierFacet', 'GrantsFacet', 'Results',
       'OrcidBigWidget', 'QueryInfo', 'GraphTabs', 'OrcidSelector'
