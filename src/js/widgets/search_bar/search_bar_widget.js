@@ -495,6 +495,7 @@ function (
           this.$input.selectRange(newString.length - 1);
         }
       }
+      analytics('send', 'event', 'interaction', 'field-insert-dropdown-selected', val);
     },
 
     fieldInsert: function (e) {
