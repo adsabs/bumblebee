@@ -213,7 +213,7 @@ define([
 
           expect(spy.args[0][0]).to.eql("ShowPaperExport");
           expect(spy.args[0][1]["idAttribute"]).to.eql("ShowPaperExport");
-          expect(spy.args[0][1]["href"]).to.eql("/abs//export");
+          expect(spy.args[0][1]["href"]).to.eql("#abs//export");
 
 
           pageManager.widgets.ShowPaperExport.setSubView = sinon.spy();
