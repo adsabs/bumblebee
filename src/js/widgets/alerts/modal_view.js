@@ -16,7 +16,7 @@ define([
     },
 
     closeModal: function () {
-      $('#alert-modal').modal('hide');
+      $('#alert-modal').modal('hide').remove();
     },
 
     modelEvents: {
@@ -24,15 +24,17 @@ define([
     },
 
     render: function () {
-      // append parent container at end of html, where it needs to be
-      // this will prevent creation of infinite modals at the end of the document as before
-      if (!$('#modal-alert-content').length) {
-        // append to end of document
+
+      // this makes sure that the modal re-uses the element if necessary and doesn't create new ones
+      if ($('#alert-modal').length <= 0) {
         $('body').append('<div class="modal fade" id="alert-modal" tabindex="-1" role="dialog" aria-labelledby="alert-modal-label" aria-hidden="true"></div>');
         this.setElement($('#alert-modal')[0]);
       }
 
-      if (!this.model.get('modal')) return;
+      if (!this.model.get('modal')) {
+        $('#alert-modal').remove();
+        return;
+      }
 
       // log the error to console as well
       if (this.model.get('type') === 'danger') {

@@ -1,39 +1,48 @@
 define([
   'marionette',
-  'hbs!js/widgets/alerts/templates/page_top_alert'
+  'bootstrap-notify'
 ], function (
-  Marionette,
-  BannerTemplate
+  Marionette
 ) {
   var AlertView = Marionette.ItemView.extend({
-
-    tagName: 'span',
-    className: 'alert-banner',
-    template: BannerTemplate,
-
+    settings: {
+      placement: {
+        from: 'bottom',
+        align: 'center'
+      },
+      offset: 100,
+      newest_on_top: true,
+      timer: 10000
+    },
+    template: _.noop,
     modelEvents: {
       change: 'render'
     },
 
-    events: {
-      'click #page-top-alert button.close': 'close'
-    },
-
-    close: function () {
-      this.$('.alert').css('display', 'none');
-    },
-
     render: function () {
-      if (this.model.get('modal')) return this;
-      if (!this.model.get('msg') && !this.model.get('title')) {
-        this.$el.html('');
+      var model = this.model;
+      if (model.get('modal') || !model.get('msg')) {
         return this;
       }
-      return Marionette.ItemView.prototype.render.apply(this, arguments);
+      $.notify({
+        icon: 'fa fa-exclamation-triangle',
+        title: model.get('title'),
+        message: model.get('msg')
+      }, _.extend(this.settings, {
+        type: model.get('type'),
+        onClosed: function () {
+
+          // on close, clear the model
+          // this ensures duplicate alerts are shown properly
+          model.clear();
+        }
+      }));
+
       // log the error to console as well
       if (this.model.get('type') === 'danger') {
         console.error('error feedback: ', this.model.get('title'), this.model.get('msg'));
       }
+      return Marionette.ItemView.prototype.render.apply(this, arguments);
     }
 
   });

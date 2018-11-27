@@ -16,7 +16,6 @@ define([
   'jquery',
   'jquery-ui',
   'bootstrap'
-
 ],
 function (
   Marionette,

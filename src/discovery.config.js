@@ -198,6 +198,10 @@ require.config({
       '//ajax.aspnetcdn.com/ajax/bootstrap/3.3.5/bootstrap.min',
       'libs/bootstrap/bootstrap'
     ],
+    'bootstrap-notify': [
+      '//cdnjs.cloudflare.com/ajax/libs/mouse0270-bootstrap-notify/3.1.7/bootstrap-notify.min',
+      '../bower_components/remarkable-bootstrap-notify/bootstrap-notify.min'
+    ],
     'cache': 'libs/dsjslib/lib/Cache',
     'chai': '../bower_components/chai/chai',
     'classnames': [
@@ -341,6 +345,12 @@ require.config({
     'bootstrap': {
       deps: ['jquery', 'jquery-ui']
     },
+
+    'bootstrap-notify': {
+      deps: [ 'jquery', 'bootstrap' ],
+      exports: 'jQuery'
+    },
+
     'backbone': {
       deps: ['jquery', 'underscore']
     },
