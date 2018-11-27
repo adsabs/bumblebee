@@ -29,7 +29,7 @@ define(['config', 'module'], function (config, module) {
     var updateProgress = (typeof window.__setAppLoadingProgress === 'function')
       ? window.__setAppLoadingProgress : function () {};
 
-    var timeStart = Date.now();
+    var timeStart = +Date.now();
 
     Application.prototype.shim();
 
@@ -50,7 +50,7 @@ define(['config', 'module'], function (config, module) {
     // after they are loaded; we'll kick off the application
     defer.done(function () {
       updateProgress(50, 'Modules Loaded');
-      var timeLoaded = Date.now();
+      var timeLoaded = +Date.now();
 
       analytics('send', 'event', 'timer', 'modules-loaded', timeLoaded - timeStart);
 
@@ -106,7 +106,7 @@ define(['config', 'module'], function (config, module) {
         pubsub.subscribe(pubsub.getCurrentPubSubKey(), pubsub.NAVIGATE, updateExternalLinkBehavior);
         updateExternalLinkBehavior();
 
-        analytics('send', 'event', 'timer', 'app-booted', Date.now() - timeLoaded);
+        analytics('send', 'event', 'timer', 'app-booted', +Date.now() - timeLoaded);
 
         // some global event handlers, not sure if right place
         $('body').on('click', 'button.toggle-menu', function (e) {
@@ -132,13 +132,14 @@ define(['config', 'module'], function (config, module) {
         // app is loaded, send timing event
 
         if (__PAGE_LOAD_TIMESTAMP) {
-          var time = new Date() - __PAGE_LOAD_TIMESTAMP;
+          var time = +new Date() - __PAGE_LOAD_TIMESTAMP;
           analytics('send', {
             hitType: 'timing',
             timingCategory: 'Application',
             timingVar: 'Loaded',
             timingValue: time
           });
+          analytics('send', 'event', 'timer', 'app-loaded', time);
           if (debug) {
             console.log('Application Started: ' + time + 'ms');
           }

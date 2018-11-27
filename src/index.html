@@ -118,7 +118,7 @@
           setTimeout(function () { window.__setAppLoadingProgress(10); }, 200);
           setTimeout(function () { window.__setAppLoadingProgress(15); }, 500);
           window.__setAppLoadingProgress(5, 'Downloading Assets');
-          window.__PAGE_LOAD_TIMESTAMP = new Date();
+          window.__PAGE_LOAD_TIMESTAMP = +new Date();
 
           // Show a reload button if the page is taking too long
           setTimeout(function check () {
