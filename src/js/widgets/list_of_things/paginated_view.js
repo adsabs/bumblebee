@@ -138,6 +138,7 @@ function (
       'click .show-abstract': 'toggleAbstract',
       'click .toggle-make-space': 'toggleMakeSpace',
       'click #go-to-bottom': 'goToBottom',
+      'click #backToTopBtn': 'goToTop',
       'click a.page-control': 'changePageWithButton',
       'keyup input.page-control': 'tabOrEnterChangePageWithInput',
       'change #per-page-select': 'changePerPage'
@@ -173,6 +174,11 @@ function (
     goToBottom: function () {
       $('#app-container')
         .animate({ scrollTop: this.$el.outerHeight() }, 'fast');
+    },
+
+    goToTop: function () {
+      $('#app-container')
+        .animate({ scrollTop: 0 }, 'fast');
     },
 
     modelEvents: {
