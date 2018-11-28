@@ -72,7 +72,7 @@ function (
     },
 
     defaultQueryArguments: {
-      'fl': 'id,title,abstract,bibcode,author,citation_count,pubdate,doi,property,esources,data',
+      'fl': 'title,abstract,bibcode,author,keyword,id,links_data,property,esources,data,citation_count,[citations],pub,aff,email,volume,pubdate,doi,doctype',
       'rows': 25,
       'start': 0
     },
