@@ -180,19 +180,6 @@ define([
       }
 
       this.getPubSub().publish(this.getPubSub().ARIA_ANNOUNCEMENT, pageManagerName);
-
-      var $backToTopBtn = $('#backToTopBtn');
-      var $appContainer = $('#app-container');
-      $appContainer.scroll(function () {
-        if ($appContainer.scrollTop() > 100) {
-          $backToTopBtn.css('display', 'block');
-        } else {
-          $backToTopBtn.css('display', 'none');
-        }
-      });
-      $backToTopBtn.click(function () {
-        $appContainer.scrollTop(0);
-      });
     },
 
     // used by discovery mediator

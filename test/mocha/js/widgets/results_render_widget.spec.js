@@ -109,7 +109,7 @@ define([
               "star isbn:* *:*"
             ],
             "fl": [
-              "id,title,abstract,bibcode,author,citation_count,pubdate,doi,property,esources,data"
+              "title,abstract,bibcode,author,keyword,id,links_data,property,esources,data,citation_count,[citations],pub,aff,email,volume,pubdate,doi,doctype"
             ],
             "rows": [
               25
@@ -121,8 +121,7 @@ define([
               "date desc, bibcode desc"
             ]
           });
-
-          expect(widget.model.get('currentQuery').url()).to.eql('fl=id%2Ctitle%2Cabstract%2Cbibcode%2Cauthor%2Ccitation_count%2Cpubdate%2Cdoi%2Cproperty%2Cesources%2Cdata&q=star%20isbn%3A*%20*%3A*&rows=25&sort=date%20desc%2C%20bibcode%20desc&start=0');
+          expect(widget.model.get('currentQuery').url()).to.eql('fl=title%2Cabstract%2Cbibcode%2Cauthor%2Ckeyword%2Cid%2Clinks_data%2Cproperty%2Cesources%2Cdata%2Ccitation_count%2C%5Bcitations%5D%2Cpub%2Caff%2Cemail%2Cvolume%2Cpubdate%2Cdoi%2Cdoctype&q=star%20isbn%3A*%20*%3A*&rows=25&sort=date%20desc%2C%20bibcode%20desc&start=0');
           expect(widget.collection.length).to.eql(10);
           done();
         }, 50);
@@ -150,7 +149,7 @@ define([
               "date desc, bibcode desc"
             ],
             "fl": [
-              "id,title,abstract,bibcode,author,citation_count,pubdate,doi,property,esources,data"
+              "title,abstract,bibcode,author,keyword,id,links_data,property,esources,data,citation_count,[citations],pub,aff,email,volume,pubdate,doi,doctype"
             ],
             "rows": [
               25
@@ -159,8 +158,7 @@ define([
               0
             ]
           });
-
-          expect(widget.model.get('currentQuery').url()).to.eql('fl=id%2Ctitle%2Cabstract%2Cbibcode%2Cauthor%2Ccitation_count%2Cpubdate%2Cdoi%2Cproperty%2Cesources%2Cdata&q=star&rows=25&sort=date%20desc%2C%20bibcode%20desc&start=0');
+          expect(widget.model.get('currentQuery').url()).to.eql('fl=title%2Cabstract%2Cbibcode%2Cauthor%2Ckeyword%2Cid%2Clinks_data%2Cproperty%2Cesources%2Cdata%2Ccitation_count%2C%5Bcitations%5D%2Cpub%2Caff%2Cemail%2Cvolume%2Cpubdate%2Cdoi%2Cdoctype&q=star&rows=25&sort=date%20desc%2C%20bibcode%20desc&start=0');
           expect(widget.collection.length).to.eql(10);
           done();
         }, 50);
