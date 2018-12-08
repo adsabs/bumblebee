@@ -343,7 +343,7 @@ define([
       var run = function() {
         if (self.debug) console.time('startLoading' + sectionName);
         // start loading the modules
-        console.log('loading', implNames, impls)
+        //console.log('loading', implNames, impls)
         require(impls, callback, errback);
         return self._setTimeout(defer).promise();
       }
