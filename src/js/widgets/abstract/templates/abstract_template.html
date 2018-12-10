@@ -60,7 +60,7 @@
 <dl class="s-abstract-dl-horizontal">
 
     {{#if pub_raw}}
-    <dt>Publication</dt>
+    <dt>Publication:</dt>
     <dd>
         <div id="article-publication">{{{pub_raw}}}</div>
     </dd>
@@ -81,7 +81,7 @@
     </dd>
     {{/if}}
 
-    <dt>Bibcode</dt>
+    <dt>Bibcode:</dt>
     <dd>
       <a href="#abs/{{bibcode}}/abstract">
         {{ bibcode }}
@@ -91,7 +91,7 @@
 
     {{#if keyword}}
     <div id="keywords">
-        <dt>Keywords</dt>
+        <dt>Keywords:</dt>
         <dd>
             <ul class="list-inline">
                 {{#each keyword}}
@@ -108,7 +108,7 @@
 
     {{#if comment}}
     <div id="comment">
-        <dt>Comments</dt>
+        <dt>Comments:</dt>
         <dd>
             <ul class="list-unstyled">
                 {{#each commentList}}
@@ -126,6 +126,25 @@
     </div>
     {{/if}}
 
+    {{#if pubnote}}
+    <div id="pubnote">
+        <dt>E-Print Comments:</dt>
+        <dd>
+            <ul class="list-unstyled">
+                {{#each pubnoteList}}
+                    <li>{{{this}}}</li>
+                {{/each}}
+                {{#if hasExtraPubnotes}}
+                    {{#if showAllPubnotes}}
+                    <li><a href="#" id="show-less-pubnotes">show less</a></li>
+                    {{else}}
+                    <li><a href="#" id="show-all-pubnotes">show all</a></li>
+                    {{/if}}
+                {{/if}}
+            </ul>
+        </dd>
+    </div>
+    {{/if}}
 
 </dl>
 <br/>
