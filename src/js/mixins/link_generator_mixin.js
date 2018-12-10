@@ -223,7 +223,7 @@ define(['underscore', 'js/mixins/openurl_generator'], function (_, OpenURLGenera
     let dataProducts = [];
     let countOpenUrls = 0;
     const property = data.property;
-    const hasHTMLOpenAccess = _.contains(property, 'OPENACCESS');
+    const hasHTMLOpenAccess = _.contains(property, 'PUB_OPENACCESS');
 
     // check the esources property
     _.forEach(data.esources, function (el, ids, sources) {
