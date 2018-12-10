@@ -37,7 +37,7 @@ define([
                   target="_blank"
                   rel="noopener"
                   onClick={() => onClick(g)}
-                  title={`${g.description} ${g.open ? 'OPEN ACCESS' : 'SIGN IN REQUIRED'}`}
+                  title={`${g.description} ${g.open ? 'OPEN ACCESS' : g.type === 'INSTITUTION' ? '' : 'SIGN IN REQUIRED'}`}
                   className={`resources__content__link ${g.open ? 'unlock' : ''}`}>
                   {g.type === 'PDF' && <i className="fa fa-file-pdf-o" aria-hidden="true"/>}
                   {g.type === 'HTML' && <i className="fa fa-file-text" aria-hidden="true"/>}
