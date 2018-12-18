@@ -41,15 +41,34 @@ if (process.env.SERVER_ENV === 'release') {
   config = Object.assign(config, { root: '/dist' });
 }
 
+// little helper to keep paths less verbose
+const p = function (url, base) {
+  return path.join(__dirname, base ? '' : config.root, url);
+}
+
 // serve the static assets
 app.use(compression());
-app.use('/', express.static(path.join(__dirname, config.root)));
-app.use('/test', express.static(path.join(__dirname, '/test')));
-app.use('/node_modules', express.static(path.join(__dirname, '/node_modules')));
-app.use('/bower_components', express.static(path.join(__dirname, '/bower_components')));
+app.use('/js', express.static(p('js')));
+app.use('/libs', express.static(p('libs')));
+app.use('/styles', express.static(p('styles')));
+app.use('/test', express.static(p('test', true)));
+app.use('/node_modules', express.static(p('node_modules', true)));
+app.use('/bower_components', express.static(p('bower_components', true)));
 
 // proxy api calls to the api endpoint
 app.use(config.apiPath, proxy(config.proxy));
+
+app.get('*', function (req, res) {
+
+  console.log(req.url);
+
+  if (/discovery\.config\.js/.test(req.url)) {
+    res.sendFile(p('discovery.config.js'));
+  } else if (/discovery\.vars\.js/.test(req.url)) {
+    res.sendFile(p('discovery.vars.js'));
+  }
+  res.sendFile(p('index.html'));
+});
 
 // start the server
 app.listen(8000, () => {

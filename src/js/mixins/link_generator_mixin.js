@@ -362,7 +362,7 @@ define(['underscore', 'js/mixins/openurl_generator'], function (_, OpenURLGenera
           links.list.push({
             letter: 'C',
             name: 'Citations (' + citations.num_citations + ')',
-            url: '#abs/' + data.bibcode + '/citations'
+            url: '/abs/' + data.bibcode + '/citations'
           });
         }
 
@@ -371,7 +371,7 @@ define(['underscore', 'js/mixins/openurl_generator'], function (_, OpenURLGenera
           links.list.push({
             letter: 'R',
             name: 'References (' + citations.num_references + ')',
-            url: '#abs/' + data.bibcode + '/references'
+            url: '/abs/' + data.bibcode + '/references'
           });
         }
       }
@@ -382,7 +382,7 @@ define(['underscore', 'js/mixins/openurl_generator'], function (_, OpenURLGenera
           links.list.push({
             letter: 'T',
             name: 'Table of Contents',
-            url: '#abs/' + data.bibcode + '/tableofcontents'
+            url: '/abs/' + data.bibcode + '/tableofcontents'
           });
         }
       }

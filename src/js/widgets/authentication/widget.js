@@ -497,7 +497,7 @@ define([
 
       if (model.target == 'REGISTER') {
         // add verify_url to data so email redirects to right url
-        _.extend(data, { verify_url: location.origin + '/#user/account/verify/' + ApiTargets.REGISTER });
+        _.extend(data, { verify_url: location.origin + '/user/account/verify/' + ApiTargets.REGISTER });
         this.getBeeHive().getObject('Session').register(model.toJSON());
       } else if (model.target == 'USER') {
         // only show success message if login initiated from auth widget

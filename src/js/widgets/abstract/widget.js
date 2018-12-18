@@ -106,7 +106,7 @@ function (
           };
 
           if (doc.titleLink.href.match(/^\/abs/)) {
-            doc.titleLink.href = '#' + doc.titleLink.href.slice(1);
+            doc.titleLink.href = doc.titleLink.href.slice(1);
           }
         }
       }

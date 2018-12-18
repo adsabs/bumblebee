@@ -18989,9 +18989,9 @@ define([
       //summary
       expect($(".s-group-content p:first").text()).to.eql('This group consists of 60 papers, which have been cited, in total, 2904\n           times.');
       //most highly cited
-      expect(normalizeSpace($(".s-group-content .s-top-papers").find("li:first").html().trim())).to.eql('<a href="#abs/1999PASP..111..438F" data-bypass="" target="_blank" rel="noopener"><b>The Updated Zwicky Catalog (UZC)</b></a>; <i>Falco, Emilio E.</i> (295 citations)');
+      expect(normalizeSpace($(".s-group-content .s-top-papers").find("li:first").html().trim())).to.eql('<a href="/abs/1999PASP..111..438F" data-bypass="" target="_blank" rel="noopener"><b>The Updated Zwicky Catalog (UZC)</b></a>; <i>Falco, Emilio E.</i> (295 citations)');
       //most highly referenced
-      expect(normalizeSpace($(".s-group-content ul:last li:first").html().trim())).to.eql('<i class=\"fa fa-star-o\"></i> <a href=\"#abs/2005PASP..117.1411F\" data-bypass=\"\" target=\"_blank\" rel=\"noopener\">2005PASP..117.1411F</a> (cited by 28% of papers in this group)');
+      expect(normalizeSpace($(".s-group-content ul:last li:first").html().trim())).to.eql('<i class=\"fa fa-star-o\"></i> <a href=\"/abs/2005PASP..117.1411F\" data-bypass=\"\" target=\"_blank\" rel=\"noopener\">2005PASP..117.1411F</a> (cited by 28% of papers in this group)');
 
     });
 
@@ -19016,7 +19016,7 @@ define([
       //to change the detail view, set the current group in the container view model to the group id
       paperNetwork.view.graphView.model.set("selectedEntity", [group1, group2]);
 
-      expect(normalizeSpace($(".s-group-content tbody tr:first").html())).to.eql('<td> <a href="#abs/1986SPIE..627..733T">1986SPIE..627..733T</a> </td> <td> 0.61% </td> <td> 0.69% </td>')
+      expect(normalizeSpace($(".s-group-content tbody tr:first").html())).to.eql('<td> <a href="/abs/1986SPIE..627..733T">1986SPIE..627..733T</a> </td> <td> 0.61% </td> <td> 0.69% </td>')
 
     });
 

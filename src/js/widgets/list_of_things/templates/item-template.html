@@ -8,7 +8,7 @@
     </div>
 
     <div class="hidden-xs hidden-sm col-md-3 s-top-row-col identifier s-identifier">
-        <a href="#abs/{{encodedIdentifier}}/abstract" aria-label="bibcode" class="abs-redirect-link">
+        <a href="/abs/{{encodedIdentifier}}/abstract" aria-label="bibcode" class="abs-redirect-link">
             {{identifier}}
         </a>
     </div>
@@ -17,7 +17,7 @@
     </div>
     <div class="col-xs-3 col-sm-4 col-md-2 s-top-row-col">
         {{#if citation_count }}
-        <a href="#abs/{{encodedIdentifier}}/citations" title="citation count" class="citations-redirect-link">cited: {{citation_count}}</a>
+        <a href="/abs/{{encodedIdentifier}}/citations" title="citation count" class="citations-redirect-link">cited: {{citation_count}}</a>
         {{/if}}
     </div>
     <div class="col-xs-4 col-sm-4 pull-right">
@@ -114,14 +114,14 @@
     <div class="col-xs-10 col-xs-offset-1">
         {{#if isOrcidWidget}}
             {{#if encodedIdentifier}}
-                <a href="#abs/{{encodedIdentifier}}/abstract" class="abs-redirect-link">
+                <a href="/abs/{{encodedIdentifier}}/abstract" class="abs-redirect-link">
                     <h3 class="s-results-title">{{{title}}}</h3>
                 </a>
             {{else}}
                 <h3 class="s-results-title">{{{title}}}</h3>
             {{/if}}
         {{else}}
-            <a href="#abs/{{encodedIdentifier}}/abstract" class="abs-redirect-link">
+            <a href="/abs/{{encodedIdentifier}}/abstract" class="abs-redirect-link">
                 <h3 class="s-results-title">{{{title}}}</h3>
             </a>
         {{/if}}
@@ -258,7 +258,7 @@
         {{#if showAbstract}}
         <div class="col-xs-9 col-xs-offset-1 s-more-info">
                 {{#if abstract}}
-                    <h4 aria-label="read full abstract below"><a href="#abs/{{identifier}}">Abstract</a></h4>
+                    <h4 aria-label="read full abstract below"><a href="/abs/{{identifier}}">Abstract</a></h4>
                     {{#if shortAbstract}}
 
                     <div class="short-abstract" aria-label="a truncated version of the abstract">
