@@ -36,6 +36,7 @@ function (
     initialize: function (options) {
       options = options || {};
       this.router = options.router;
+      this.globalLinksHandled = false;
       this.catalog = new TransitionCatalog(); // catalog of nagivation points (later we can build FST)
     },
 
@@ -95,6 +96,22 @@ function (
 
       // clear any metadata added to head on the previous page
       $('head').find('meta[data-highwire]').remove();
+
+      var self = this;
+      if (!this.globalLinksHandled) {
+        $(document).on('click', 'a[href^="/"]', function (ev) {
+          var href = $(ev.currentTarget).attr('href');
+          if (!ev.altKey && !ev.ctrlKey && !ev.metaKey && !ev.shiftKey) {
+            ev.preventDefault();
+            var url = href.replace(/^\//,'').replace('\#\!\/','');
+            self.router.navigate(url, { trigger: true, replace: true });
+            self.globalLinksHandled = false;
+            return false;
+          }
+        });
+        self.globalLinksHandled = true;
+      }
+
       // and set the default title
       document.title = 'ADS Search';
     },

@@ -51,8 +51,8 @@ define([
 
       r.processResponse(new JsonResponse(testData));
 
-      expect($("#test").find("li:first a").attr("href")).to.eql("#abs/1998ApJ...509..212S");
-      expect($("#test").find("li:last a").attr("href")).to.eql("#abs/1978MNRAS.182..147B");
+      expect($("#test").find("li:first a").attr("href")).to.eql("/abs/1998ApJ...509..212S");
+      expect($("#test").find("li:last a").attr("href")).to.eql("/abs/1978MNRAS.182..147B");
     });
 
 
@@ -65,7 +65,7 @@ define([
       r.deferredObject = $.Deferred();
 
       r.processResponse(new JsonResponse(testData));
-      
+
       expect($("#test").find("i.icon-help").data("content")).to.eql("These recommendations are based on a number of factors, including text similarity, citations, and co-readership information. This feature is still in beta.");
     });
 

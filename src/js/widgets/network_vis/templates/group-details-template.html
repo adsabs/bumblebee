@@ -18,7 +18,7 @@
     <ul class="list-unstyled">
         {{#each papers}}
         <li>
-            <a href="#abs/{{bibcode}}" data-bypass="" target="_blank" rel="noopener"><b>{{title}}</b></a> {{#if citation_count}}
+            <a href="/abs/{{bibcode}}" data-bypass="" target="_blank" rel="noopener"><b>{{title}}</b></a> {{#if citation_count}}
             <small> {{citation_count}} citations</small> {{else}}
             <small>no citations</small> {{/if}} {{#if numAuthors}}
             <small>({{numAuthors}} authors from this group)</small> {{/if}}

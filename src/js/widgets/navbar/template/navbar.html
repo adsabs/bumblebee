@@ -9,12 +9,12 @@
                 <span class="icon-bar"></span>
             </button>
             {{#unless hourly}}
-            <a class="navbar-brand s-navbar-brand" href="#"><img class="s-ads-icon" src="styles/img/transparent_logo.svg" alt="ads icon"/>
+            <a class="navbar-brand s-navbar-brand" href="/"><img class="s-ads-icon" src="styles/img/transparent_logo.svg" alt="ads icon"/>
                 <h1> <b>ads</b></h1>
             </a>
             {{else}}
             <div class="s-hourly-warning">
-                <a class="navbar-brand s-navbar-brand" href="#"><i class="icon-danger fa-2x"></i> ADS TEST</a>
+                <a class="navbar-brand s-navbar-brand" href="/"><i class="icon-danger fa-2x"></i> ADS TEST</a>
                 <span> Nothing you do here will be saved!  <a href="https://ui.adsabs.harvard.edu/">I want the real ADS <i class="fa fa-arrow-right"></i></a>
                 </span>
             </div>
@@ -58,7 +58,7 @@
 
                         <li class="divider"></li>
                         <li>
-                            <a class="orcid-link" href="#user/orcid" >View my ORCID papers in ADS </a>
+                            <a class="orcid-link" href="/user/orcid" >View my ORCID papers in ADS </a>
                         </li>
                         {{#if orcidURI}}
                         <li>
@@ -98,7 +98,7 @@
                         <li style="clear:both" class="no-hover-style">You have turned off the ORCID view for the ADS search results page, but are still logged in.</li>
                         <li class="divider"></li>
                         <li>
-                            <a class="orcid-link" href="#user/orcid" > View my ORCID papers in ADS</a>
+                            <a class="orcid-link" href="/user/orcid" > View my ORCID papers in ADS</a>
                         </li>
                         {{#if orcidURI}}
                         <li>
@@ -160,17 +160,17 @@
                     </button>
                     <ul class="dropdown-menu" role="menu">
                         <li class="no-hover-style" style="padding:15px 10px;">You are signed in as <br/> <b>{{currentUser}}</b></li>
-                        <li ><a href="#/user/home"> <i class="fa fa-user"></i> My Home Page</a></li>
-                        <li><a href="#/user/libraries"> <i class="fa fa-book"></i> ADS Libraries</a></li>
-                        <li><a href="#/user/settings"> <i class="fa fa-cog"></i> Customize Settings</a></li>
+                        <li ><a href="/user/home"> <i class="fa fa-user"></i> My Home Page</a></li>
+                        <li><a href="/user/libraries"> <i class="fa fa-book"></i> ADS Libraries</a></li>
+                        <li><a href="/user/settings"> <i class="fa fa-cog"></i> Customize Settings</a></li>
                         <li class="divider"></li>
                         <li><a href="#" class="logout">Log Out</a></li>
                     </ul>
                 </li>
 
                 {{else}}
-                <li class="register"><a href="#user/account/register">Sign Up</a></li>
-                <li class="login"><a href="#user/account/login">Log In</a></li>
+                <li class="register"><a href="/user/account/register">Sign Up</a></li>
+                <li class="login"><a href="/user/account/login">Log In</a></li>
                 {{/if}}
 
             </ul>

@@ -32,7 +32,7 @@
            <ul class="list-unstyled s-top-papers">
                {{#each topNodes}}
                <li title="{{this.node_name}}">
-                   <a href="#abs/{{this.node_name}}" data-bypass target="_blank" rel="noopener"><b>{{this.title}}</b></a>; <i>{{this.first_author}}</i>
+                   <a href="/abs/{{this.node_name}}" data-bypass target="_blank" rel="noopener"><b>{{this.title}}</b></a>; <i>{{this.first_author}}</i>
                    ({{this.citation_count}} citations)
                </li>
 
@@ -54,7 +54,7 @@
                    {{else}}
                    <i class="fa fa-star-o no-show"></i>
                    {{/if}}
-                   <a href="#abs/{{this.bibcode}}" data-bypass target="_blank" rel="noopener">{{this.bibcode}}</a> (cited by {{this.percent}}% of papers
+                   <a href="/abs/{{this.bibcode}}" data-bypass target="_blank" rel="noopener">{{this.bibcode}}</a> (cited by {{this.percent}}% of papers
                    in this group)
                </li>
 

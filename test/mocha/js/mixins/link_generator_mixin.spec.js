@@ -303,12 +303,12 @@ define([
               {
                 letter: 'C',
                 name: 'Citations (10)',
-                url: '#abs/foo/citations'
+                url: '/abs/foo/citations'
               },
               {
                 letter: 'R',
                 name: 'References (20)',
-                url: '#abs/foo/references'
+                url: '/abs/foo/references'
               }
             ],
           }
@@ -327,7 +327,7 @@ define([
               {
                 letter: 'T',
                 name: 'Table of Contents',
-                url: '#abs/foo/tableofcontents'
+                url: '/abs/foo/tableofcontents'
               }
             ],
           }

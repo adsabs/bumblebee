@@ -164,7 +164,7 @@ define([
 
           //testing back button
           var view = pageManager.show();
-          expect(view.$el.find('.s-back-button-container').html()).to.eql('<a href="#search/q=bibcode%3Afoo" class="back-button btn btn-sm btn-default"> <i class="fa fa-arrow-left"></i> Back to results</a>');
+          expect(view.$el.find('.s-back-button-container').html()).to.eql('<a href="/search/q=bibcode%3Afoo" class="back-button btn btn-sm btn-default"> <i class="fa fa-arrow-left"></i> Back to results</a>');
 
           //testing toc widget reset
           pageManager.widgets.tocWidget.resetActiveStates();
@@ -213,7 +213,7 @@ define([
 
           expect(spy.args[0][0]).to.eql("ShowPaperExport");
           expect(spy.args[0][1]["idAttribute"]).to.eql("ShowPaperExport");
-          expect(spy.args[0][1]["href"]).to.eql("#abs//export");
+          expect(spy.args[0][1]["href"]).to.eql("/abs//export");
 
 
           pageManager.widgets.ShowPaperExport.setSubView = sinon.spy();

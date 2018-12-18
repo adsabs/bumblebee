@@ -104,13 +104,13 @@ function (
       this.set('ClassicSearchForm', function () {
         app.getObject('MasterPageManager').show('LandingPage', ['ClassicSearchForm']);
         app.getWidget('LandingPage').done(function (widget) { widget.setActive('ClassicSearchForm'); });
-        this.route = '#classic-form';
+        this.route = '/classic-form';
       });
 
       this.set('PaperSearchForm', function () {
         app.getObject('MasterPageManager').show('LandingPage', ['PaperSearchForm']);
         app.getWidget('LandingPage').done(function (widget) { widget.setActive('PaperSearchForm'); });
-        this.route = '#paper-form';
+        this.route = '/paper-form';
       });
 
       this.set('LibraryImport', function (page, data) {
@@ -123,7 +123,7 @@ function (
             widget.setActive('LibraryImport');
           });
 
-        this.route = '#user/settings/libraryimport';
+        this.route = '/user/settings/libraryimport';
         publishPageChange('settings-page');
       });
 
@@ -145,7 +145,7 @@ function (
             widget.setActive(widgetName, subView);
           });
 
-          this.route = '#user/settings/' + subView;
+          this.route = '/user/settings/' + subView;
           publishPageChange('settings-page');
         };
       }
@@ -166,7 +166,7 @@ function (
           widget.setSubView({ view: subView });
         });
 
-        this.route = '#user/libraries/';
+        this.route = '/user/libraries/';
         publishPageChange('libraries-page');
       });
 
@@ -187,7 +187,7 @@ function (
 
         data.publicView = data.publicView ? data.publicView : false;
 
-        this.route = data.publicView ? '#/public-libraries/' + data.id : '#user/libraries/' + data.id;
+        this.route = data.publicView ? '/public-libraries/' + data.id : '/user/libraries/' + data.id;
 
         app.getObject('LibraryController').getLibraryMetadata(data.id).done(function (metadata) {
           data.editRecords = _.contains(['write', 'admin', 'owner'], metadata.permission)
@@ -248,11 +248,11 @@ function (
           if (publicView) {
             app.getObject('MasterPageManager').show('PublicLibrariesPage',
               ['IndividualLibraryWidget', widgetName]);
-            this.route = '#/public-libraries/' + data.id;
+            this.route = '/public-libraries/' + data.id;
           } else {
             app.getObject('MasterPageManager').show('LibrariesPage',
               ['IndividualLibraryWidget', 'UserNavbarWidget', widgetName]);
-            this.route = '#user/libraries/' + data.id;
+            this.route = '/user/libraries/' + data.id;
             publishPageChange('libraries-page');
           }
         }
@@ -300,7 +300,7 @@ function (
           // redirect to index
           self.get('index-page').execute();
         } else {
-          this.route = '#user/account/' + subView;
+          this.route = '/user/account/' + subView;
           app.getObject('MasterPageManager').show('AuthenticationPage',
             ['Authentication']);
           app.getWidget('Authentication').done(function (w) {
@@ -315,10 +315,10 @@ function (
         // allowing widgets to override appstorage query (so far only used for orcid redirect)
         var q = app.getObject('AppStorage').getCurrentQuery();
         if (q && q.get('__original_url')) {
-          var route = '#search/' + q.get('__original_url');
+          var route = '/search/' + q.get('__original_url');
           q.unset('__original_url');
         } else {
-          var route = '#search/' + queryUpdater.clean(q).url();
+          var route = '/search/' + queryUpdater.clean(q).url();
         }
 
         // update the pagination of the results widget
@@ -547,7 +547,7 @@ function (
           }
 
           // go to the orcidbigwidget
-          this.route = '#user/orcid';
+          this.route = '/user/orcid';
           app.getObject('MasterPageManager').show('OrcidPage',
             ['OrcidBigWidget', 'SearchWidget']);
         } else {
@@ -567,7 +567,7 @@ function (
         var widgetName = _.map(command.split('-').slice(1), function (w) { return w[0].toUpperCase() + w.slice(1); }).join('');
         app.getObject('MasterPageManager').show('SearchPage',
           [widgetName].concat(searchPageAlwaysVisible.slice(1)));
-        this.route = '#search/' + queryUpdater.clean(q.clone()).url()
+        this.route = '/search/' + queryUpdater.clean(q.clone()).url()
                         + '/' + command.split('-').slice(1).join('-');
 
         // show selected, need to explicitly tell widget to show bibcodes
@@ -663,7 +663,7 @@ function (
         app.getObject('MasterPageManager').show('SearchPage', [
           'AuthorAffiliationTool'
         ].concat(searchPageAlwaysVisible.slice(1)));
-        this.route = '#search/' + queryUpdater.clean(q).url();
+        this.route = '/search/' + queryUpdater.clean(q).url();
         app.getWidget('AuthorAffiliationTool').done(function (w) {
           if (options && options.onlySelected) {
             var selected = app.getObject('AppStorage').getSelectedPapers();

@@ -58,8 +58,8 @@ define([
 
       r.processResponse(new JsonResponse(testData));
 
-      expect($("#test").find("li a").first().attr("href")).to.eql("#abs/1970RSPTA.266..225B");
-      expect($("#test").find("li a").last().attr("href")).to.eql("#abs/1981PhRvA..24.2979S");
+      expect($("#test").find("li a").first().attr("href")).to.eql("/abs/1970RSPTA.266..225B");
+      expect($("#test").find("li a").last().attr("href")).to.eql("/abs/1981PhRvA..24.2979S");
     });
 
     it("should have a function that empties the main view", function(){

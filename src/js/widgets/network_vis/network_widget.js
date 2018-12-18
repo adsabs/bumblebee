@@ -491,7 +491,7 @@ function (Marionette,
       }).render().el);
 
       // set the home tab as default
-      this.$('.nav-tabs a[href=\'#home\']').tab('show');
+      this.$('.nav-tabs a[href=\'/home\']').tab('show');
 
       this.renderMetadata();
     },
