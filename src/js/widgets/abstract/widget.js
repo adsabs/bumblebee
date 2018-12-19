@@ -241,6 +241,22 @@ function (
       this.trigger($(ev.target).attr('target'));
     },
 
+    render: function () {
+      console.log('render');
+      return Marionette.ItemView.prototype.render.call(this, arguments);
+    },
+
+    delegateInitialRender: function () {
+      $('*[data-deferred="true"]', this.$el).show();
+      var _template = this.template;
+      this.template = _.template(this.$el.html());
+      var _onRender = _.bind(this.onRender || _.noop, this);
+      this.onRender = function () {
+        this.template = _template;
+        _onRender();
+      }
+    },
+
     onRender: function () {
       this.$('.icon-help').popover({ trigger: 'hover', placement: 'right', html: true });
 

@@ -1,23 +1,18 @@
-<!doctype html>
-<html lang="en">
-
-<head profile="http://a9.com/-/spec/opensearch/1.1/">
-  <meta charset="utf-8"/>
-  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"/>
-  <meta name="viewport" content="width=device-width,initial-scale=1"/>
-  <meta name="google-site-verification" content="XxQuw38lagr8-TgtCyhAMP_6ELS9dy35fgrqo9dxw3o" />
-  <title>NASA/ADS Search</title>
-  <meta name="description" content="A powerful, streamlined new Astrophysics Data System" />
+<html lang="en"><head profile="http://a9.com/-/spec/opensearch/1.1/">
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="google-site-verification" content="XxQuw38lagr8-TgtCyhAMP_6ELS9dy35fgrqo9dxw3o">
+  <title>Effects of anisotropic stress in interacting dark matter - dark energy scenarios</title>
+  <meta name="description" content="A powerful, streamlined new Astrophysics Data System">
   <link rel="preload" href="./styles/css/styles.css" as="style">
-  <link rel="preload" href="//cdnjs.cloudflare.com/ajax/libs/require.js/2.3.5/require.min.js" as="script">
+  <link rel="preload" href="./libs/requirejs/require.js" as="script">
   <link rel="preload" href="./discovery.config.js" as="script">
 
-  <link rel="stylesheet" href="./styles/css/styles.css" />
-  <link rel="icon" type="image/png" sizes="32x32" href="./styles/img/favicon.ico"/>
-  <link rel="search"
-    type="application/opensearchdescription+xml"
-    href="https://ui.adsabs.harvard.edu/opensearch.xml"
-    title="ADS Search" />
+  <link rel="stylesheet" href="./styles/css/styles.css">
+  <link rel="icon" type="image/png" sizes="32x32" href="./styles/img/favicon.ico">
+  <link rel="search" type="application/opensearchdescription+xml" href="https://ui.adsabs.harvard.edu/opensearch.xml" title="ADS Search">
+  <!-- <script src="//ajax.aspnetcdn.com/ajax/jQuery/jquery-2.0.3.min.js" async></script> -->
   <noscript>
     <style>
       #app-container {
@@ -38,9 +33,178 @@
       }
     </style>
   </noscript>
-</head>
 
-  <body>
+
+  <!-- <script type="text/javascript" async="" src="https://www.gstatic.com/recaptcha/api2/v1545073489967/recaptcha__en.js"></script><script type="text/javascript" charset="utf-8" async="" data-requirecontext="_" data-requiremodule="discovery.config" src="./discovery.config.js"></script><script type="text/javascript" charset="utf-8" async="" data-requirecontext="_" data-requiremodule="underscore" src="//cdnjs.cloudflare.com/ajax/libs/lodash.js/2.4.2/lodash.min.js"></script><script type="text/javascript" charset="utf-8" async="" data-requirecontext="_" data-requiremodule="jquery" src="//ajax.aspnetcdn.com/ajax/jQuery/jquery-2.0.3.min.js"></script><script type="text/javascript" charset="utf-8" async="" data-requirecontext="_" data-requiremodule="es5-shim" src="//cdnjs.cloudflare.com/ajax/libs/es5-shim/4.5.10/es5-shim.min.js"></script><script type="text/javascript" charset="utf-8" async="" data-requirecontext="_" data-requiremodule="google-analytics" src="//google-analytics.com/analytics.js"></script><script type="text/javascript" charset="utf-8" async="" data-requirecontext="_" data-requiremodule="d3" src="//cdnjs.cloudflare.com/ajax/libs/d3/3.4.6/d3.min.js"></script><script type="text/javascript" charset="utf-8" async="" data-requirecontext="_" data-requiremodule="backbone" src="//cdnjs.cloudflare.com/ajax/libs/backbone.js/1.1.2/backbone-min.js"></script><script type="text/javascript" charset="utf-8" async="" data-requirecontext="_" data-requiremodule="backbone-validation" src="//cdnjs.cloudflare.com/ajax/libs/backbone.validation/0.11.3/backbone-validation-amd-min.js"></script><script type="text/javascript" charset="utf-8" async="" data-requirecontext="_" data-requiremodule="d3-cloud" src="//cdnjs.cloudflare.com/ajax/libs/d3-cloud/1.2.5/d3.layout.cloud.min.js"></script><script type="text/javascript" charset="utf-8" async="" data-requirecontext="_" data-requiremodule="jsonpath" src="//cdn.jsdelivr.net/npm/jsonpath@0.2.12/jsonpath.min.js"></script><script type="text/javascript" charset="utf-8" async="" data-requirecontext="_" data-requiremodule="react" src="//cdnjs.cloudflare.com/ajax/libs/react/15.6.1/react-with-addons.min.js"></script><script type="text/javascript" charset="utf-8" async="" data-requirecontext="_" data-requiremodule="react-dom" src="//cdnjs.cloudflare.com/ajax/libs/react/15.6.1/react-dom.min.js"></script><script type="text/javascript" charset="utf-8" async="" data-requirecontext="_" data-requiremodule="react-redux" src="//cdnjs.cloudflare.com/ajax/libs/react-redux/4.4.5/react-redux.min.js"></script><script type="text/javascript" charset="utf-8" async="" data-requirecontext="_" data-requiremodule="react-prop-types" src="//cdnjs.cloudflare.com/ajax/libs/prop-types/15.6.0/prop-types.min.js"></script><script type="text/javascript" charset="utf-8" async="" data-requirecontext="_" data-requiremodule="create-react-class" src="//cdn.jsdelivr.net/npm/create-react-class@15.6.2/create-react-class.min.js"></script><script type="text/javascript" charset="utf-8" async="" data-requirecontext="_" data-requiremodule="redux" src="//cdnjs.cloudflare.com/ajax/libs/redux/3.5.2/redux.min.js"></script><script type="text/javascript" charset="utf-8" async="" data-requirecontext="_" data-requiremodule="redux-thunk" src="//cdnjs.cloudflare.com/ajax/libs/redux-thunk/2.1.0/redux-thunk.min.js"></script><script type="text/javascript" charset="utf-8" async="" data-requirecontext="_" data-requiremodule="moment" src="//cdnjs.cloudflare.com/ajax/libs/moment.js/2.22.2/moment.min.js"></script><script type="text/javascript" charset="utf-8" async="" data-requirecontext="_" data-requiremodule="google-recaptcha" src="//google.com/recaptcha/api.js?&amp;render=explicit&amp;onload=onRecaptchaLoad"></script><script type="text/javascript" charset="utf-8" async="" data-requirecontext="_" data-requiremodule="select2" src="//cdnjs.cloudflare.com/ajax/libs/select2/4.0.3/js/select2.min.js"></script><script type="text/javascript" charset="utf-8" async="" data-requirecontext="_" data-requiremodule="clipboard" src="//cdnjs.cloudflare.com/ajax/libs/clipboard.js/1.7.1/clipboard.min.js"></script><script type="text/javascript" charset="utf-8" async="" data-requirecontext="_" data-requiremodule="sprintf" src="//cdnjs.cloudflare.com/ajax/libs/sprintf/1.0.2/sprintf.min.js"></script><script type="text/javascript" charset="utf-8" async="" data-requirecontext="_" data-requiremodule="marionette" src="//cdnjs.cloudflare.com/ajax/libs/backbone.marionette/2.4.5/backbone.marionette.min.js"></script><script type="text/javascript" charset="utf-8" async="" data-requirecontext="_" data-requiremodule="persist-js" src="//cdn.jsdelivr.net/npm/persist-js@0.3.1/src/persist.min.js"></script><script type="text/javascript" charset="utf-8" async="" data-requirecontext="_" data-requiremodule="backbone.stickit" src="//cdnjs.cloudflare.com/ajax/libs/backbone.stickit/0.8.0/backbone.stickit.min.js"></script><script type="text/javascript" charset="utf-8" async="" data-requirecontext="_" data-requiremodule="jquery-ui" src="//ajax.aspnetcdn.com/ajax/jquery.ui/1.10.4/jquery-ui.min.js"></script><script type="text/javascript" charset="utf-8" async="" data-requirecontext="_" data-requiremodule="mathjax" src="//cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS_HTML&amp;amp;delayStartupUntil=configured"></script><script type="text/javascript" charset="utf-8" async="" data-requirecontext="_" data-requiremodule="filesaver" src="//cdnjs.cloudflare.com/ajax/libs/FileSaver.js/1.3.8/FileSaver.min.js"></script><script type="text/javascript" charset="utf-8" async="" data-requirecontext="_" data-requiremodule="bootstrap" src="//ajax.aspnetcdn.com/ajax/bootstrap/3.3.5/bootstrap.min.js"></script> -->
+
+
+
+<style type="text/css">.MathJax_Hover_Frame {border-radius: .25em; -webkit-border-radius: .25em; -moz-border-radius: .25em; -khtml-border-radius: .25em; box-shadow: 0px 0px 15px #83A; -webkit-box-shadow: 0px 0px 15px #83A; -moz-box-shadow: 0px 0px 15px #83A; -khtml-box-shadow: 0px 0px 15px #83A; border: 1px solid #A6D ! important; display: inline-block; position: absolute}
+.MathJax_Menu_Button .MathJax_Hover_Arrow {position: absolute; cursor: pointer; display: inline-block; border: 2px solid #AAA; border-radius: 4px; -webkit-border-radius: 4px; -moz-border-radius: 4px; -khtml-border-radius: 4px; font-family: 'Courier New',Courier; font-size: 9px; color: #F0F0F0}
+.MathJax_Menu_Button .MathJax_Hover_Arrow span {display: block; background-color: #AAA; border: 1px solid; border-radius: 3px; line-height: 0; padding: 4px}
+.MathJax_Hover_Arrow:hover {color: white!important; border: 2px solid #CCC!important}
+.MathJax_Hover_Arrow:hover span {background-color: #CCC!important}
+</style><style type="text/css">#MathJax_About {position: fixed; left: 50%; width: auto; text-align: center; border: 3px outset; padding: 1em 2em; background-color: #DDDDDD; color: black; cursor: default; font-family: message-box; font-size: 120%; font-style: normal; text-indent: 0; text-transform: none; line-height: normal; letter-spacing: normal; word-spacing: normal; word-wrap: normal; white-space: nowrap; float: none; z-index: 201; border-radius: 15px; -webkit-border-radius: 15px; -moz-border-radius: 15px; -khtml-border-radius: 15px; box-shadow: 0px 10px 20px #808080; -webkit-box-shadow: 0px 10px 20px #808080; -moz-box-shadow: 0px 10px 20px #808080; -khtml-box-shadow: 0px 10px 20px #808080; filter: progid:DXImageTransform.Microsoft.dropshadow(OffX=2, OffY=2, Color='gray', Positive='true')}
+#MathJax_About.MathJax_MousePost {outline: none}
+.MathJax_Menu {position: absolute; background-color: white; color: black; width: auto; padding: 5px 0px; border: 1px solid #CCCCCC; margin: 0; cursor: default; font: menu; text-align: left; text-indent: 0; text-transform: none; line-height: normal; letter-spacing: normal; word-spacing: normal; word-wrap: normal; white-space: nowrap; float: none; z-index: 201; border-radius: 5px; -webkit-border-radius: 5px; -moz-border-radius: 5px; -khtml-border-radius: 5px; box-shadow: 0px 10px 20px #808080; -webkit-box-shadow: 0px 10px 20px #808080; -moz-box-shadow: 0px 10px 20px #808080; -khtml-box-shadow: 0px 10px 20px #808080; filter: progid:DXImageTransform.Microsoft.dropshadow(OffX=2, OffY=2, Color='gray', Positive='true')}
+.MathJax_MenuItem {padding: 1px 2em; background: transparent}
+.MathJax_MenuArrow {position: absolute; right: .5em; padding-top: .25em; color: #666666; font-size: .75em}
+.MathJax_MenuActive .MathJax_MenuArrow {color: white}
+.MathJax_MenuArrow.RTL {left: .5em; right: auto}
+.MathJax_MenuCheck {position: absolute; left: .7em}
+.MathJax_MenuCheck.RTL {right: .7em; left: auto}
+.MathJax_MenuRadioCheck {position: absolute; left: .7em}
+.MathJax_MenuRadioCheck.RTL {right: .7em; left: auto}
+.MathJax_MenuLabel {padding: 1px 2em 3px 1.33em; font-style: italic}
+.MathJax_MenuRule {border-top: 1px solid #DDDDDD; margin: 4px 3px}
+.MathJax_MenuDisabled {color: GrayText}
+.MathJax_MenuActive {background-color: #606872; color: white}
+.MathJax_MenuDisabled:focus, .MathJax_MenuLabel:focus {background-color: #E8E8E8}
+.MathJax_ContextMenu:focus {outline: none}
+.MathJax_ContextMenu .MathJax_MenuItem:focus {outline: none}
+#MathJax_AboutClose {top: .2em; right: .2em}
+.MathJax_Menu .MathJax_MenuClose {top: -10px; left: -10px}
+.MathJax_MenuClose {position: absolute; cursor: pointer; display: inline-block; border: 2px solid #AAA; border-radius: 18px; -webkit-border-radius: 18px; -moz-border-radius: 18px; -khtml-border-radius: 18px; font-family: 'Courier New',Courier; font-size: 24px; color: #F0F0F0}
+.MathJax_MenuClose span {display: block; background-color: #AAA; border: 1.5px solid; border-radius: 18px; -webkit-border-radius: 18px; -moz-border-radius: 18px; -khtml-border-radius: 18px; line-height: 0; padding: 8px 0 6px}
+.MathJax_MenuClose:hover {color: white!important; border: 2px solid #CCC!important}
+.MathJax_MenuClose:hover span {background-color: #CCC!important}
+.MathJax_MenuClose:hover:focus {outline: none}
+</style><style type="text/css">.MathJax_Preview .MJXf-math {color: inherit!important}
+</style><style type="text/css">.MJX_Assistive_MathML {position: absolute!important; top: 0; left: 0; clip: rect(1px, 1px, 1px, 1px); padding: 1px 0 0 0!important; border: 0!important; height: 1px!important; width: 1px!important; overflow: hidden!important; display: block!important; -webkit-touch-callout: none; -webkit-user-select: none; -khtml-user-select: none; -moz-user-select: none; -ms-user-select: none; user-select: none}
+.MJX_Assistive_MathML.MJX_Assistive_MathML_Block {width: 100%!important}
+</style><style type="text/css">#MathJax_Zoom {position: absolute; background-color: #F0F0F0; overflow: auto; display: block; z-index: 301; padding: .5em; border: 1px solid black; margin: 0; font-weight: normal; font-style: normal; text-align: left; text-indent: 0; text-transform: none; line-height: normal; letter-spacing: normal; word-spacing: normal; word-wrap: normal; white-space: nowrap; float: none; -webkit-box-sizing: content-box; -moz-box-sizing: content-box; box-sizing: content-box; box-shadow: 5px 5px 15px #AAAAAA; -webkit-box-shadow: 5px 5px 15px #AAAAAA; -moz-box-shadow: 5px 5px 15px #AAAAAA; -khtml-box-shadow: 5px 5px 15px #AAAAAA; filter: progid:DXImageTransform.Microsoft.dropshadow(OffX=2, OffY=2, Color='gray', Positive='true')}
+#MathJax_ZoomOverlay {position: absolute; left: 0; top: 0; z-index: 300; display: inline-block; width: 100%; height: 100%; border: 0; padding: 0; margin: 0; background-color: white; opacity: 0; filter: alpha(opacity=0)}
+#MathJax_ZoomFrame {position: relative; display: inline-block; height: 0; width: 0}
+#MathJax_ZoomEventTrap {position: absolute; left: 0; top: 0; z-index: 302; display: inline-block; border: 0; padding: 0; margin: 0; background-color: white; opacity: 0; filter: alpha(opacity=0)}
+</style><style type="text/css">.MathJax_Preview {color: #888}
+#MathJax_Message {position: fixed; left: 1em; bottom: 1.5em; background-color: #E6E6E6; border: 1px solid #959595; margin: 0px; padding: 2px 8px; z-index: 102; color: black; font-size: 80%; width: auto; white-space: nowrap}
+#MathJax_MSIE_Frame {position: absolute; top: 0; left: 0; width: 0px; z-index: 101; border: 0px; margin: 0px; padding: 0px}
+.MathJax_Error {color: #CC0000; font-style: italic}
+</style><style type="text/css">.MJXp-script {font-size: .8em}
+.MJXp-right {-webkit-transform-origin: right; -moz-transform-origin: right; -ms-transform-origin: right; -o-transform-origin: right; transform-origin: right}
+.MJXp-bold {font-weight: bold}
+.MJXp-italic {font-style: italic}
+.MJXp-scr {font-family: MathJax_Script,'Times New Roman',Times,STIXGeneral,serif}
+.MJXp-frak {font-family: MathJax_Fraktur,'Times New Roman',Times,STIXGeneral,serif}
+.MJXp-sf {font-family: MathJax_SansSerif,'Times New Roman',Times,STIXGeneral,serif}
+.MJXp-cal {font-family: MathJax_Caligraphic,'Times New Roman',Times,STIXGeneral,serif}
+.MJXp-mono {font-family: MathJax_Typewriter,'Times New Roman',Times,STIXGeneral,serif}
+.MJXp-largeop {font-size: 150%}
+.MJXp-largeop.MJXp-int {vertical-align: -.2em}
+.MJXp-math {display: inline-block; line-height: 1.2; text-indent: 0; font-family: 'Times New Roman',Times,STIXGeneral,serif; white-space: nowrap; border-collapse: collapse}
+.MJXp-display {display: block; text-align: center; margin: 1em 0}
+.MJXp-math span {display: inline-block}
+.MJXp-box {display: block!important; text-align: center}
+.MJXp-box:after {content: " "}
+.MJXp-rule {display: block!important; margin-top: .1em}
+.MJXp-char {display: block!important}
+.MJXp-mo {margin: 0 .15em}
+.MJXp-mfrac {margin: 0 .125em; vertical-align: .25em}
+.MJXp-denom {display: inline-table!important; width: 100%}
+.MJXp-denom > * {display: table-row!important}
+.MJXp-surd {vertical-align: top}
+.MJXp-surd > * {display: block!important}
+.MJXp-script-box > *  {display: table!important; height: 50%}
+.MJXp-script-box > * > * {display: table-cell!important; vertical-align: top}
+.MJXp-script-box > *:last-child > * {vertical-align: bottom}
+.MJXp-script-box > * > * > * {display: block!important}
+.MJXp-mphantom {visibility: hidden}
+.MJXp-munderover {display: inline-table!important}
+.MJXp-over {display: inline-block!important; text-align: center}
+.MJXp-over > * {display: block!important}
+.MJXp-munderover > * {display: table-row!important}
+.MJXp-mtable {vertical-align: .25em; margin: 0 .125em}
+.MJXp-mtable > * {display: inline-table!important; vertical-align: middle}
+.MJXp-mtr {display: table-row!important}
+.MJXp-mtd {display: table-cell!important; text-align: center; padding: .5em 0 0 .5em}
+.MJXp-mtr > .MJXp-mtd:first-child {padding-left: 0}
+.MJXp-mtr:first-child > .MJXp-mtd {padding-top: 0}
+.MJXp-mlabeledtr {display: table-row!important}
+.MJXp-mlabeledtr > .MJXp-mtd:first-child {padding-left: 0}
+.MJXp-mlabeledtr:first-child > .MJXp-mtd {padding-top: 0}
+.MJXp-merror {background-color: #FFFF88; color: #CC0000; border: 1px solid #CC0000; padding: 1px 3px; font-style: normal; font-size: 90%}
+.MJXp-scale0 {-webkit-transform: scaleX(.0); -moz-transform: scaleX(.0); -ms-transform: scaleX(.0); -o-transform: scaleX(.0); transform: scaleX(.0)}
+.MJXp-scale1 {-webkit-transform: scaleX(.1); -moz-transform: scaleX(.1); -ms-transform: scaleX(.1); -o-transform: scaleX(.1); transform: scaleX(.1)}
+.MJXp-scale2 {-webkit-transform: scaleX(.2); -moz-transform: scaleX(.2); -ms-transform: scaleX(.2); -o-transform: scaleX(.2); transform: scaleX(.2)}
+.MJXp-scale3 {-webkit-transform: scaleX(.3); -moz-transform: scaleX(.3); -ms-transform: scaleX(.3); -o-transform: scaleX(.3); transform: scaleX(.3)}
+.MJXp-scale4 {-webkit-transform: scaleX(.4); -moz-transform: scaleX(.4); -ms-transform: scaleX(.4); -o-transform: scaleX(.4); transform: scaleX(.4)}
+.MJXp-scale5 {-webkit-transform: scaleX(.5); -moz-transform: scaleX(.5); -ms-transform: scaleX(.5); -o-transform: scaleX(.5); transform: scaleX(.5)}
+.MJXp-scale6 {-webkit-transform: scaleX(.6); -moz-transform: scaleX(.6); -ms-transform: scaleX(.6); -o-transform: scaleX(.6); transform: scaleX(.6)}
+.MJXp-scale7 {-webkit-transform: scaleX(.7); -moz-transform: scaleX(.7); -ms-transform: scaleX(.7); -o-transform: scaleX(.7); transform: scaleX(.7)}
+.MJXp-scale8 {-webkit-transform: scaleX(.8); -moz-transform: scaleX(.8); -ms-transform: scaleX(.8); -o-transform: scaleX(.8); transform: scaleX(.8)}
+.MJXp-scale9 {-webkit-transform: scaleX(.9); -moz-transform: scaleX(.9); -ms-transform: scaleX(.9); -o-transform: scaleX(.9); transform: scaleX(.9)}
+.MathJax_PHTML .noError {vertical-align: ; font-size: 90%; text-align: left; color: black; padding: 1px 3px; border: 1px solid}
+</style><meta name="og:type" content="article" data-highwire="true">
+<meta name="twitter:card" content="summary" data-highwire="true">
+
+<meta name="citation_title" content="Effects of anisotropic stress in interacting dark matter - dark energy scenarios" data-highwire="true">
+<meta name="og:title" content="Effects of anisotropic stress in interacting dark matter - dark energy scenarios" data-highwire="true">
+<meta name="twitter:title" content="Effects of anisotropic stress in interacting dark matter - dark energy scenarios" data-highwire="true">
+
+<meta name="og:url" content="https://ui.adsabs.harvard.edu/#abs/2019MNRAS.482.1858Y/abstract" data-highwire="true">
+<meta name="twitter:url" content="https://ui.adsabs.harvard.edu/#abs/2019MNRAS.482.1858Y/abstract" data-highwire="true">
+<meta name="citation_abstract_html_url" content="https://ui.adsabs.harvard.edu/#abs/2019MNRAS.482.1858Y/abstract" data-highwire="true">
+
+<meta name="og:image" content="https://ui.adsabs.harvard.edu/styles/img/transparent_logo.svg" data-highwire="true">
+<meta name="twitter:image" content="https://ui.adsabs.harvard.edu/styles/img/transparent_logo.svg" data-highwire="true">
+
+<meta name="og:description" content="We study a novel interacting dark energy - dark matter scenario where the anisotropic stress of the large-scale inhomogeneities is considered. The dark energy has a constant equation of state and the interaction model produces stable perturbations. The resulting picture is constrained using different astronomical data aiming to measure the impact of the anisotropic stress on the cosmological parameters. Our analyses show that a non-zero interaction in the dark sector is allowed, while a non-interaction scenario is recovered within 68 per cent CL. The anisotropic stress is also constrained to be small, and its zero value is permitted within 68 per cent CL. The dark energy equation of state, w<SUB>x</SUB>, is also found to be close to `-1' boundary. However, from the ratio of the CMB TT spectra, we see that the model has a mild deviation from the ΛCDM cosmology, while such deviation is almost forbidden from the CMB TT spectra alone. Although the deviation is not much significant, but from this data, we cannot exclude such deviation. Overall, at the background level, the model is close to the ΛCDM cosmology, while at the level of perturbations, a non-zero but a very small interaction in the dark sector is permitted. Perhaps, a more accurate conclusion can be made with the next generation of surveys. We also found that the region, w<SUB>x</SUB> &amp;lt; -1, is found to be effective to release the tension on H<SUB>0</SUB>. Finally, from the Bayesian analysis, we find that ΛCDM remains still preferred over the interacting scenarios." data-highwire="true">
+<meta name="twitter:description" content="We study a novel interacting dark energy - dark matter scenario where the anisotropic stress of the large-scale inhomogeneities is considered. The dark energy has a constant equation of state and the interaction model produces stable perturbations. The resulting picture is constrained using different astronomical data aiming to measure the impact of the anisotropic stress on the cosmological parameters. Our analyses show that a non-zero interaction in the dark sector is allowed, while a non-interaction scenario is recovered within 68 per cent CL. The anisotropic stress is also constrained to be small, and its zero value is permitted within 68 per cent CL. The dark energy equation of state, w<SUB>x</SUB>, is also found to be close to `-1' boundary. However, from the ratio of the CMB TT spectra, we see that the model has a mild deviation from the ΛCDM cosmology, while such deviation is almost forbidden from the CMB TT spectra alone. Although the deviation is not much significant, but from this data, we cannot exclude such deviation. Overall, at the background level, the model is close to the ΛCDM cosmology, while at the level of perturbations, a non-zero but a very small interaction in the dark sector is permitted. Perhaps, a more accurate conclusion can be made with the next generation of surveys. We also found that the region, w<SUB>x</SUB> &amp;lt; -1, is found to be effective to release the tension on H<SUB>0</SUB>. Finally, from the Bayesian analysis, we find that ΛCDM remains still preferred over the interacting scenarios." data-highwire="true">
+<meta name="citation_author" content="Yang, Weiqiang" data-highwire="true">
+<meta xmlns="http://www.w3.org/1999/xhtml" name="citation_author_institution" content="Department of Physics, Liaoning Normal University, Dalian 116029, P.R. China" data-highwire="true">
+<meta name="citation_author" content="Pan, Supriya" data-highwire="true">
+<meta xmlns="http://www.w3.org/1999/xhtml" name="citation_author_institution" content="Department of Mathematics, Raiganj Surendranath Mahavidyalaya, Sudarshanpur, Raiganj, West Bengal 733134, India" data-highwire="true">
+<meta name="citation_author" content="Xu, Lixin" data-highwire="true">
+<meta xmlns="http://www.w3.org/1999/xhtml" name="citation_author_institution" content="Institute of Theoretical Physics, School of Physics, Dalian University of Technology, Dalian 116024, P.R. China" data-highwire="true">
+<meta name="citation_author" content="Mota, David F." data-highwire="true">
+<meta xmlns="http://www.w3.org/1999/xhtml" name="citation_author_institution" content="Institute of Theoretical Astrophysics, University of Oslo, PO Box 1029 Blindern, N-0315 Oslo, Norway" data-highwire="true">
+<meta name="citation_firstpage" content="1858" data-highwire="true">
+<meta name="citation_publication_date" content="2019-11-00" data-highwire="true">
+<meta name="citation_journal_title" content="Monthly Notices of the Royal Astronomical Society" data-highwire="true">
+<meta name="citation_volume" content="482" data-highwire="true">
+<meta name="citation_issue" content="2" data-highwire="true">
+<meta name="citation_doi" content="10.1093/mnras/sty2789" data-highwire="true">
+<meta name="citation_keywords" content="cosmological parameters" data-highwire="true">
+<meta name="citation_keywords" content="dark energy" data-highwire="true">
+<meta name="citation_keywords" content="dark matter" data-highwire="true">
+<meta name="citation_keywords" content="Astrophysics - Cosmology and Nongalactic Astrophysics" data-highwire="true">
+<meta name="citation_keywords" content="General Relativity and Quantum Cosmology" data-highwire="true">
+<meta name="citation_pdf_url" content="/link_gateway/2019MNRAS.482.1858Y/PUB_PDF" data-highwire="true"><style type="text/css">.MathJax_Display {text-align: center; margin: 1em 0em; position: relative; display: block!important; text-indent: 0; max-width: none; max-height: none; min-width: 0; min-height: 0; width: 100%}
+.MathJax .merror {background-color: #FFFF88; color: #CC0000; border: 1px solid #CC0000; padding: 1px 3px; font-style: normal; font-size: 90%}
+.MathJax .MJX-monospace {font-family: monospace}
+.MathJax .MJX-sans-serif {font-family: sans-serif}
+#MathJax_Tooltip {background-color: InfoBackground; color: InfoText; border: 1px solid black; box-shadow: 2px 2px 5px #AAAAAA; -webkit-box-shadow: 2px 2px 5px #AAAAAA; -moz-box-shadow: 2px 2px 5px #AAAAAA; -khtml-box-shadow: 2px 2px 5px #AAAAAA; filter: progid:DXImageTransform.Microsoft.dropshadow(OffX=2, OffY=2, Color='gray', Positive='true'); padding: 3px 4px; z-index: 401; position: absolute; left: 0; top: 0; width: auto; height: auto; display: none}
+.MathJax {display: inline; font-style: normal; font-weight: normal; line-height: normal; font-size: 100%; font-size-adjust: none; text-indent: 0; text-align: left; text-transform: none; letter-spacing: normal; word-spacing: normal; word-wrap: normal; white-space: nowrap; float: none; direction: ltr; max-width: none; max-height: none; min-width: 0; min-height: 0; border: 0; padding: 0; margin: 0}
+.MathJax:focus, body :focus .MathJax {display: inline-table}
+.MathJax.MathJax_FullWidth {text-align: center; display: table-cell!important; width: 10000em!important}
+.MathJax img, .MathJax nobr, .MathJax a {border: 0; padding: 0; margin: 0; max-width: none; max-height: none; min-width: 0; min-height: 0; vertical-align: 0; line-height: normal; text-decoration: none}
+img.MathJax_strut {border: 0!important; padding: 0!important; margin: 0!important; vertical-align: 0!important}
+.MathJax span {display: inline; position: static; border: 0; padding: 0; margin: 0; vertical-align: 0; line-height: normal; text-decoration: none}
+.MathJax nobr {white-space: nowrap!important}
+.MathJax img {display: inline!important; float: none!important}
+.MathJax * {transition: none; -webkit-transition: none; -moz-transition: none; -ms-transition: none; -o-transition: none}
+.MathJax_Processing {visibility: hidden; position: fixed; width: 0; height: 0; overflow: hidden}
+.MathJax_Processed {display: none!important}
+.MathJax_ExBox {display: block!important; overflow: hidden; width: 1px; height: 60ex; min-height: 0; max-height: none}
+.MathJax .MathJax_EmBox {display: block!important; overflow: hidden; width: 1px; height: 60em; min-height: 0; max-height: none}
+.MathJax_LineBox {display: table!important}
+.MathJax_LineBox span {display: table-cell!important; width: 10000em!important; min-width: 0; max-width: none; padding: 0; border: 0; margin: 0}
+.MathJax .MathJax_HitBox {cursor: text; background: white; opacity: 0; filter: alpha(opacity=0)}
+.MathJax .MathJax_HitBox * {filter: none; opacity: 1; background: transparent}
+#MathJax_Tooltip * {filter: none; opacity: 1; background: transparent}
+@font-face {font-family: MathJax_Main; src: url('https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/fonts/HTML-CSS/TeX/woff/MathJax_Main-Regular.woff?V=2.7.0') format('woff'), url('https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/fonts/HTML-CSS/TeX/otf/MathJax_Main-Regular.otf?V=2.7.0') format('opentype')}
+@font-face {font-family: MathJax_Main-bold; src: url('https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/fonts/HTML-CSS/TeX/woff/MathJax_Main-Bold.woff?V=2.7.0') format('woff'), url('https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/fonts/HTML-CSS/TeX/otf/MathJax_Main-Bold.otf?V=2.7.0') format('opentype')}
+@font-face {font-family: MathJax_Main-italic; src: url('https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/fonts/HTML-CSS/TeX/woff/MathJax_Main-Italic.woff?V=2.7.0') format('woff'), url('https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/fonts/HTML-CSS/TeX/otf/MathJax_Main-Italic.otf?V=2.7.0') format('opentype')}
+@font-face {font-family: MathJax_Math-italic; src: url('https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/fonts/HTML-CSS/TeX/woff/MathJax_Math-Italic.woff?V=2.7.0') format('woff'), url('https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/fonts/HTML-CSS/TeX/otf/MathJax_Math-Italic.otf?V=2.7.0') format('opentype')}
+@font-face {font-family: MathJax_Caligraphic; src: url('https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/fonts/HTML-CSS/TeX/woff/MathJax_Caligraphic-Regular.woff?V=2.7.0') format('woff'), url('https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/fonts/HTML-CSS/TeX/otf/MathJax_Caligraphic-Regular.otf?V=2.7.0') format('opentype')}
+@font-face {font-family: MathJax_Size1; src: url('https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/fonts/HTML-CSS/TeX/woff/MathJax_Size1-Regular.woff?V=2.7.0') format('woff'), url('https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/fonts/HTML-CSS/TeX/otf/MathJax_Size1-Regular.otf?V=2.7.0') format('opentype')}
+@font-face {font-family: MathJax_Size2; src: url('https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/fonts/HTML-CSS/TeX/woff/MathJax_Size2-Regular.woff?V=2.7.0') format('woff'), url('https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/fonts/HTML-CSS/TeX/otf/MathJax_Size2-Regular.otf?V=2.7.0') format('opentype')}
+@font-face {font-family: MathJax_Size3; src: url('https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/fonts/HTML-CSS/TeX/woff/MathJax_Size3-Regular.woff?V=2.7.0') format('woff'), url('https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/fonts/HTML-CSS/TeX/otf/MathJax_Size3-Regular.otf?V=2.7.0') format('opentype')}
+@font-face {font-family: MathJax_Size4; src: url('https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/fonts/HTML-CSS/TeX/woff/MathJax_Size4-Regular.woff?V=2.7.0') format('woff'), url('https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/fonts/HTML-CSS/TeX/otf/MathJax_Size4-Regular.otf?V=2.7.0') format('opentype')}
+.MathJax .noError {vertical-align: ; font-size: 90%; text-align: left; color: black; padding: 1px 3px; border: 1px solid}
+</style></head>
+
+  <body style=""><div style="visibility: hidden; overflow: hidden; position: absolute; top: 0px; height: 1px; width: auto; padding: 0px; border: 0px; margin: 0px; text-align: left; text-indent: 0px; text-transform: none; line-height: normal; letter-spacing: normal; word-spacing: normal;"><div id="MathJax_Hidden"><br></div></div><div id="MathJax_Message" style="display: none;"></div>
     <noscript>
       <div id="noscriptmsg">
         <div class="h3">JavaScript Required</div>
@@ -63,36 +227,508 @@
 
     <!--items for announcement of new page, and optional skip to main content link go here (inserted by master.js)-->
 
-    <div id="app-container">
-     <!--this is where bbb discovery gets inserted -->
-      <div id="body-template-container">
+    <a href="#main-content" id="skip-to-main-content" class="sr-only sr-only-focusable">Skip to main content</a>
 
-        <div class="loading-screen">
-            <div class="row">
-                <div class="col-xs-8 col-xs-offset-2">
-                    <div class="logo__astrophysics">astrophysics</div>
-                    <div class="logo__data-system">data system</div>
-                </div>
+<div id="aria-announcement-container">
+    Now on
+    article abstract page
+
+</div>
+<div id="app-container">
+     <!--this is where bbb discovery gets inserted -->
+      <div id="body-template-container"><div class="s-master-page-manager" style=""><div id="navbar-container">
+  <div data-widget="NavbarWidget"><div><nav class="navbar fluid navbar-inverse">
+        <!-- Brand and toggle get grouped for better mobile display -->
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand s-navbar-brand" href="#"><img class="s-ads-icon" src="styles/img/transparent_logo.svg" alt="ads icon">
+                <h1> <b>ads</b></h1>
+            </a>
+        </div>
+
+        <!-- Collect the nav links, forms, and other content for toggling -->
+
+        <!-- /.navbar-collapse -->
+
+</nav>
+<!-- /.container-fluid -->
+</div></div>
+</div>
+
+<div id="alerts-container">
+  <div data-widget="AlertsWidget"><span class="alert-banner"></span></div>
+</div>
+
+<div id="content-container">
+  <div class="dynamic-container s-dynamic-container"><div><div id="abstract-page-layout" class="s-abstract-page-layout">
+
+    <div class="row s-stable-search-bar-height">
+        <div class="s-search-bar-full-width-container">
+            <div class="col-xs-0 col-sm-12 col-md-2 s-back-button-container">
             </div>
-            <div class="row">
-                <div class="col-xs-6 col-xs-offset-3">
-                    <span class="sr-only">loading...</span>
-                    <div class="progress">
-                        <div class="progress-bar" role="progressbar" id="app_loading_progress" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="width: 0%">
-                            <div class="sr-only">0% Complete</div>
-                        </div>
-                    </div>
-                    <span class="loading-screen__loading" id="app_loading_message"></span>
-                </div>
-            </div>
+            <div class="col-xs-12 col-sm-9 col-md-7 s-search-bar-row" id="search-bar-row" data-widget="SearchWidget"><div class="s-search-bar-widget"><div role="search">
+  <div class="row">
+    <h2 class="sr-only">Search Bar to Enter New Query</h2>
+    <div class="col-sm-12 s-quick-add" aria-label="quick add fields">
+      <div id="expanded-search-form" class="unselectable">
+        <div id="field-options">
+          <span class="s-field-options">quick field:</span>
+
+          <span class="visible-sm-inline visible-md-inline visible-lg-inline">
+            <button class="btn btn-link btn-sm" title="" data-toggle="tooltip" data-field="author" data-punc="&quot;" data-original-title="search for an author, e.g. author:&quot;Kurtz,M&quot;">Author</button>
+            <button class="btn btn-link btn-sm" title="" data-toggle="tooltip" data-field="first-author" data-punc="&quot;" data-original-title="search for a first author, e.g. author:&quot;^Kurtz,M&quot;">First Author</button>
+            <button class="btn btn-link btn-sm" title="" data-toggle="tooltip" data-field="abs" data-punc="&quot;" data-original-title="limit search to abstract, title and keyword fields">Abstract</button>
+          </span>
+
+          <span class="visible-lg-inline">
+            <button class="btn btn-link btn-sm" title="" data-toggle="tooltip" data-field="year" data-original-title="e.g. year:1999 or year:1999-2016">Year</button>
+            <button class="btn btn-link btn-sm" title="" data-toggle="tooltip" data-field="full" data-punc="&quot;" data-original-title="search titles, abstract, text, keywords and acknowledgements of the articles">Fulltext</button>
+          </span>
+
+          <!--container for additional fields/operators-->
+          <span id="option-dropdown-container"><select class="quick-add-dropdown select2-hidden-accessible" tabindex="-1" aria-hidden="true">
+<optgroup label="fields">
+  <option value="abs" data-field="abs">abstract</option>
+  <option value="abstract">abstract only</option>
+  <option value="aff">affiliation</option>
+  <option value="arxiv_class">arXiv category</option>
+  <option value="author" data-field="author">author</option>
+  <option value="bibcode">bibcode</option>
+  <option value="bibgroup">bibliographic group</option>
+  <option value="bibstem">bib abbrev, e.g. ApJ</option>
+  <option value="body">body of article</option>
+  <option value="data">data archive</option>
+  <option value="database">database</option>
+  <option value="doctype">doctype</option>
+  <option value="doi">doi</option>
+  <option value="first-author" data-field="first-author">first author</option>
+  <option value="full" data-field="full">fulltext</option>
+  <option value="identifier">identifier</option>
+  <option value="keyword">keyword</option>
+  <option value="object">object</option>
+  <option value="orcid">orcid</option>
+  <option value="page">page</option>
+  <option value="property">property</option>
+  <option value="pub">publication full name</option>
+  <option value="pubdate" data-default-value="[2000-01-01 TO 2010-01-01]">date published</option>
+  <option value="title">title</option>
+  <option value="volume">volume</option>
+  <option value="year" data-field="year">year</option>
+</optgroup>
+<optgroup label="operators">
+  <option value="citations">citations()</option>
+  <option value="references">references()</option>
+  <option value="reviews">reviews()</option>
+  <option value="topn">topn()</option>
+  <option value="trending">trending()</option>
+  <option value="useful">useful()</option>
+</optgroup>
+<optgroup label="special characters">
+  <option value="?">single wildcard: ?</option>
+  <option value="*">wildcard: *</option>
+  <option value="=">exact match: =</option>
+</optgroup>
+</select><span class="select2 select2-container select2-container--default" dir="ltr" style="width: auto;"><span class="selection"><span class="select2-selection select2-selection--single" role="combobox" aria-haspopup="true" aria-expanded="false" tabindex="0" aria-labelledby="select2-16fa-container"><span class="select2-selection__rendered" id="select2-16fa-container" title="abstract"><span class="select2-selection__placeholder">All Search Terms</span></span><span class="select2-selection__arrow" role="presentation"><b role="presentation"></b></span></span></span><span class="dropdown-wrapper" aria-hidden="true"></span></span>
+</span>
         </div>
       </div>
     </div>
-    <!-- {{#each data}} -->
+  </div>
+  <div class="row"></div>
+  <div class="row">
+    <div class="col-sm-12 search-bar-input-row s-search-bar-input-row">
+      <form name="main-query">
+        <div class="form-group has-feedback">
+          <div class="input-group">
+
+            <span role="status" aria-live="polite" class="ui-helper-hidden-accessible"></span>
+            <input type="text" class="form-control q ui-autocomplete-input disabled" name="q" autofocus="" aria-label="Start typing a query here to begin an ADS Search" autocomplete="off" value="" data-original-title="" title="">
+            <i class="icon-clear s-clear-control hidden"></i>
+            <span class="input-group-btn">
+                       <button type="submit" class="btn btn-primary search-submit s-search-submit disabled" aria-label="submit">
+                           <i class="fa fa-pulse fa-spinner"></i></button>
+                  </span>
+
+          </div>
+          <!-- /input-group -->
+        </div>
+        <!-- /form-group-->
+      </form>
+    </div>
+  </div>
+</div>
+<div class="row">
+  <div class="only-show-on-landing">
+    <div class="quick-reference">
+      <div class="col-sm-6">
+        <dl class="dl-horizontal">
+          <dt>author</dt>
+          <dd>author:"huchra, john"</dd>
+          <dt>first author</dt>
+          <dd>author:"^huchra, john"</dd>
+          <dt>abstract + title</dt>
+          <dd>abs:"dark energy"</dd>
+          <dt>year</dt>
+          <dd>year:2000</dd>
+          <dt>year range</dt>
+          <dd>year:2000-2005</dd>
+          <dt>full text</dt>
+          <dd>full:"gravitational waves"</dd>
+          <dt>publication</dt>
+          <dd>bibstem:ApJ <i class="icon-help" data-toggle="tooltip" title="" data-original-title="this field requires the bibstem, or journal abbreviation--try going to the 'Paper' tab above for an easy-to-use form version"></i></dd>
+        </dl>
+      </div>
+      <div class="col-sm-6  quick-reference">
+        <dl class="dl-horizontal">
+          <dt>citations</dt>
+          <dd>citations(author:"huchra, j") <i class="icon-help" data-toggle="tooltip" title="" data-original-title="finds all papers that cite a given set of papers"></i></dd>
+          <dt>references</dt>
+          <dd>references(author:"huchra, j") <i class="icon-help" data-toggle="tooltip" title="" data-original-title="finds all papers referenced by a given set of papers"></i></dd>
+          <dt>reviews</dt>
+          <dd>reviews("gamma-ray bursts") <i class="icon-help" data-toggle="tooltip" title="" data-original-title="finds articles citing the most relevant papers on the topic being researched"></i></dd>
+          <hr>
+          <dt>refereed</dt>
+          <dd>property:refereed <i class="icon-help" data-toggle="tooltip" title="" data-original-title="limit to non-refereed papers by searching property:notrefereed"></i></dd>
+          <dt>astronomy</dt>
+          <dd>database:astronomy <i class="icon-help" data-toggle="tooltip" title="" data-original-title="limit to physics papers by searching database:physics"></i></dd>
+          <dt>OR</dt>
+          <dd>abs:(planet OR star) <i class="icon-help" data-toggle="tooltip" title="" data-original-title="default logic is AND, e.g. abs:(planet star) would be interpreted as abs:(planet AND star)"></i></dd>
+        </dl>
+      </div>
+    </div>
+
+  </div>
+
+    <div class="s-num-found">
+      <span class="s-light-font description">Your search returned</span>
+        <b><span class="num-found-container">0</span></b>
+        <span class="s-light-font"> results </span>
+    </div>
+</div>
+
+</div></div>
+        </div>
+    </div>
+    <div class="row nav-button-container s-nav-button-container">
+       <button class="btn btn-primary-faded toggle-menu s-toggle-menu "> <i class="fa fa-bars"></i> Show Menu </button>
+     </div>
+    <div class="row s-dynamic-page-body" id="dynamic-page-body">
+        <div class="s-abstract-content">
+
+            <div class="col-sm-2 nav-container s-nav-container" id="left-column"> <div>
+<nav>
+    <div class="s-nav-header s-view-nav"> <i class="icon-list"></i> <h3>view </h3> </div>
+
+
+    <a href="#abs/2019MNRAS.482.1858Y/abstract" data-widget-id="ShowAbstract">
+    <div class="abstract-nav s-nav  s-nav-selected  ">
+            <span class="s-content">
+            Abstract
+            </span>
+    </div>
+    </a>
+
+
+    <a href="#abs/2019MNRAS.482.1858Y/citations" data-widget-id="ShowCitations">
+    <div class="abstract-nav s-nav  s-nav-inactive">
+            <span class="s-content">
+            Citations
+    </div>
+    </a>
+
+
+    <a href="#abs/2019MNRAS.482.1858Y/references" data-widget-id="ShowReferences">
+    <div class="abstract-nav s-nav  s-nav-inactive">
+            <span class="s-content">
+            References
+    </div>
+    </a>
+
+
+    <a href="#abs/2019MNRAS.482.1858Y/coreads" data-widget-id="ShowCoreads">
+    <div class="abstract-nav s-nav  s-nav-inactive">
+            <span class="s-content">
+            Co-Reads
+            </span>
+    </div>
+    </a>
+
+
+    <a href="#abs/2019MNRAS.482.1858Y/tableofcontents" data-widget-id="ShowTableofcontents">
+    <div class="abstract-nav s-nav  s-nav-inactive">
+            <span class="s-content">
+            Volume Content
+            </span>
+    </div>
+    </a>
+
+
+    <a href="#abs/2019MNRAS.482.1858Y/graphics" aria-disabled="true" data-widget-id="ShowGraphics">
+    <div class="abstract-nav s-nav   s-nav-inactive ">
+            <span class="s-content">
+            Graphics
+            </span>
+    </div>
+    </a>
+
+
+    <a href="#abs/2019MNRAS.482.1858Y/metrics" data-widget-id="ShowMetrics">
+    <div class="abstract-nav s-nav s-nav-inactive">
+            <span class="s-content">
+            Metrics
+            </span>
+    </div>
+    </a>
+
+
+    <a href="#abs/2019MNRAS.482.1858Y/export" data-widget-id="ShowPaperExport__default" style="display:none;" data-deferred="true">
+      <div class="abstract-nav s-nav  ">
+        <span class="content">
+          Export
+        </span>
+      </div>
+    </a>
+
+</nav>
+</div></div>
+
+            <div class="col-sm-9 col-md-7 s-middle-column" id="middle-column">
+                <!--id is for screen readers-->
+                <div class="main-content-container s-main-content-container" id="main-content" tabindex="-1">
+                    <div class="print-visible"><h2 style="margin-left:6.1%;">NASA/ADS</h2> </div>
+
+                    <div id="abstract-title-container" class="s-abstract-title-container"></div>
+                    <div id="current-subview">
+                        <div data-widget="ShowAbstract"><article class="s-abstract-metadata"><!--<div id="article-navigation">|</div>-->
+
+
+<h2 class="s-abstract-title">
+    Effects of anisotropic stress in interacting dark matter - dark energy scenarios
+    <a href=""></a>
+</h2>
+
+
+<button class="btn btn-xs btn-default-flat s-toggle-aff" id="toggle-aff" style="display:none;" data-deferred="true">Show affiliations</button>
+
+<div id="authors-and-aff" class="s-authors-and-aff">
+    <ul class="list-inline">
+        <li class="author"><a href="#search/q=author:%22Yang%2C+Weiqiang%22&amp;sort=date%20desc,%20bibcode%20desc">Yang, Weiqiang</a><span class="affiliation hide"> (<i>Department of Physics, Liaoning Normal University, Dalian 116029, P.R. China</i>)</span>;</li>
+        <li class="author"><a href="#search/q=author:%22Pan%2C+Supriya%22&amp;sort=date%20desc,%20bibcode%20desc">Pan, Supriya</a><span class="affiliation hide"> (<i>Department of Mathematics, Raiganj Surendranath Mahavidyalaya, Sudarshanpur, Raiganj, West Bengal 733134, India</i>)</span>;</li>
+        <li class="author"><a href="#search/q=author:%22Xu%2C+Lixin%22&amp;sort=date%20desc,%20bibcode%20desc">Xu, Lixin</a><span class="affiliation hide"> (<i>Institute of Theoretical Physics, School of Physics, Dalian University of Technology, Dalian 116024, P.R. China</i>)</span>;</li>
+        <li class="author"><a href="#search/q=author:%22Mota%2C+David+F.%22&amp;sort=date%20desc,%20bibcode%20desc">Mota, David F.</a><span class="affiliation hide"> (<i>Institute of Theoretical Astrophysics, University of Oslo, PO Box 1029 Blindern, N-0315 Oslo, Norway</i>)</span></li>
+    </ul>
+</div>
+
+<div class="s-abstract-text">
+    <h4 class="sr-only">Abstract</h4>
+    <p>
+        We study a novel interacting dark energy - dark matter scenario where the anisotropic stress of the large-scale inhomogeneities is considered. The dark energy has a constant equation of state and the interaction model produces stable perturbations. The resulting picture is constrained using different astronomical data aiming to measure the impact of the anisotropic stress on the cosmological parameters. Our analyses show that a non-zero interaction in the dark sector is allowed, while a non-interaction scenario is recovered within 68 per cent CL. The anisotropic stress is also constrained to be small, and its zero value is permitted within 68 per cent CL. The dark energy equation of state, w<sub>x</sub>, is also found to be close to `-1' boundary. However, from the ratio of the CMB TT spectra, we see that the model has a mild deviation from the ΛCDM cosmology, while such deviation is almost forbidden from the CMB TT spectra alone. Although the deviation is not much significant, but from this data, we cannot exclude such deviation. Overall, at the background level, the model is close to the ΛCDM cosmology, while at the level of perturbations, a non-zero but a very small interaction in the dark sector is permitted. Perhaps, a more accurate conclusion can be made with the next generation of surveys. We also found that the region, w<sub>x</sub> &lt; -1, is found to be effective to release the tension on H<sub>0</sub>. Finally, from the Bayesian analysis, we find that ΛCDM remains still preferred over the interacting scenarios.
+    </p>
+</div>
+
+<br>
+<dl class="s-abstract-dl-horizontal">
+
+    <dt>Publication:</dt>
+    <dd>
+        <div id="article-publication">Monthly Notices of the Royal Astronomical Society, Volume 482, Issue 2, p.1858-1871</div>
+    </dd>
+
+    <dt>Pub Date:</dt>
+    <dd>November 2019</dd>
+
+    <dt>DOI:</dt>
+    <dd>
+        <span>
+            <a href="/link_gateway/2019MNRAS.482.1858Y/doi:10.1093/mnras/sty2789" target="_blank" rel="noopener">10.1093/mnras/sty2789</a>
+            <i class="fa fa-external-link"></i>
+        </span>
+    </dd>
+
+    <dt>Bibcode:</dt>
+    <dd>
+      <a href="#abs/2019MNRAS.482.1858Y/abstract">
+        2019MNRAS.482.1858Y
+      </a>
+      <i class="icon-help" data-toggle="popover" data-content="The bibcode is assigned by the ADS as a unique identifier for the paper." data-original-title="" title=""></i>
+    </dd>
+
+    <div id="keywords">
+        <dt>Keywords:</dt>
+        <dd>
+            <ul class="list-inline">
+                <li>cosmological parameters;</li>
+                <li>dark energy;</li>
+                <li>dark matter;</li>
+                <li>Astrophysics - Cosmology and Nongalactic Astrophysics;</li>
+                <li>General Relativity and Quantum Cosmology</li>
+            </ul>
+        </dd>
+    </div>
+
+
+    <div id="pubnote">
+        <dt>E-Print Comments:</dt>
+        <dd>
+            <ul class="list-unstyled">
+                    <li>18 pages, 9 figures, 7 tables</li>
+                    <li> to appear in MNRAS</li>
+                    <li> doi:10.1093/mnras/sty2789</li>
+            </ul>
+        </dd>
+    </div>
+
+</dl>
+<br>
+<a class="small pull-right text-faded" target="_blank" rel="noopener" href="http://adsabs.harvard.edu/adsfeedback/submit_abstract.php?bibcode=2019MNRAS.482.1858Y" title="Provide feedback or suggest corrections">
+    <span class="fa-stack">
+        <i class="fa fa-comment-o fa-stack-2x"></i>
+        <i class="fa fa-exclamation fa-stack-1x"></i>
+    </span>
+    Feedback/Corrections?
+</a>
+
+</article></div>
+                        <div data-widget="ShowCitations"></div>
+                        <div data-widget="ShowReferences"></div>
+                        <div data-widget="ShowCoreads"></div>
+                        <div data-widget="ShowTableofcontents"></div>
+                        <div data-widget="ShowSimilar" data-debug="true"></div>
+                        <div data-widget="ShowGraphics"></div>
+                        <div data-widget="ShowPaperExport" data-origin="abstract"></div>
+                        <div data-widget="ShowMetrics" data-allow-redirect="false"></div>
+                        <div data-widget="MetaTagsWidget"><div></div></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="s-right-col-container col-sm-3 col-lg-2 s-right-column" id="right-col-container">
+                <div data-widget="ShowResources"><div><div data-reactroot="" class="s-right-col-widget-container" style="padding: 10px;"><div class="resources__container"><div class="resources__full__list"><div class="resources__header__row"><i class="fa fa-file-text-o" aria-hidden="true"></i><div class="resources__header__title">full text sources</div></div><div class="resources__content"><div class="resources__content__title">Publisher</div><div class="resources__content__links"><span><a href="/link_gateway/2019MNRAS.482.1858Y/PUB_PDF" target="_blank" rel="noopener" title="Publisher PDF SIGN IN REQUIRED" class="resources__content__link "><i class="fa fa-file-pdf-o" aria-hidden="true"></i></a><div class="resources__content__link__separator">|</div></span><span><a href="/link_gateway/2019MNRAS.482.1858Y/PUB_HTML" target="_blank" rel="noopener" title="Electronic on-line publisher article (HTML) SIGN IN REQUIRED" class="resources__content__link "><i class="fa fa-file-text" aria-hidden="true"></i></a></span></div></div><div class="resources__content"><div class="resources__content__title">arXiv</div><div class="resources__content__links"><span><a href="/link_gateway/2019MNRAS.482.1858Y/EPRINT_PDF" target="_blank" rel="noopener" title="ArXiv eprint OPEN ACCESS" class="resources__content__link unlock"><i class="fa fa-file-pdf-o" aria-hidden="true"></i></a><div class="resources__content__link__separator">|</div></span><span><a href="/link_gateway/2019MNRAS.482.1858Y/EPRINT_HTML" target="_blank" rel="noopener" title="Arxiv article OPEN ACCESS" class="resources__content__link unlock"><i class="fa fa-file-text" aria-hidden="true"></i></a></span></div></div></div></div></div></div></div>
+                <div data-widget="ShowLibraryAdd"><div class="query-info-widget s-query-info-widget"></div></div>
+                <div data-widget="ShowGraphicsSidebar"><div class="s-graphics-sidebar graphics-sidebar"></div></div>
+                <div data-widget="ShowAssociated"><div><!-- react-empty: 1 --></div></div>
+            </div>
+
+            <div class="col-lg-1"></div>
+        </div>
+    </div>
+</div>
+
+</div></div>
+</div>
+
+<div id="footer-container">
+  <div data-widget="FooterWidget"><div class="footer s-footer"><footer>
+  <div class="__footer_wrapper">
+    <div class="__footer_brand">
+      © The SAO/NASA Astrophysics Data System
+      <div class="__footer_brand_extra">
+        <p>
+          <i class="fa fa-envelope"></i> adshelp[at]cfa.harvard.edu
+        </p>
+        <p>
+          The ADS is operated by the Smithsonian Astrophysical Observatory under NASA Cooperative Agreement <em>NNX16AC86A</em>
+        </p>
+      </div>
+      <div class="__footer_brand_logos">
+        <a href="http://www.nasa.gov" target="_blank" rel="noopener">
+          <img src="styles/img/nasa.svg" alt="NASA logo">
+        </a>
+        <a href="http://www.si.edu" target="_blank" rel="noopener">
+          <img class="smithsonian" src="styles/img/smithsonian.svg" alt="Smithsonian logo">
+        </a>
+        <a href="https://www.cfa.harvard.edu/" target="_blank" rel="noopener">
+          <img src="styles/img/cfa.png" title="Harvard Center for Astrophysics logo">
+        </a>
+      </div>
+    </div>
+    <div class="__footer_list">
+      <div class="__footer_list_title">
+        Resources
+      </div>
+      <ul class="__footer_links">
+        <li>
+          <a href="//ui.adsabs.harvard.edu/about/" target="_blank" rel="noopener">
+            <i class="fa fa-question-circle"></i> About ADS
+          </a>
+        </li>
+        <li>
+          <a href="//adsabs.github.io/help/" target="_blank" rel="noopener">
+            <i class="fa fa-info-circle"></i> ADS Help
+          </a>
+        </li>
+        <li>
+          <a href="//ui.adsabs.harvard.edu/about/careers/" target="_blank" rel="noopener">
+            <i class="fa fa-group"></i> Careers@ADS
+          </a>
+        </li>
+      </ul>
+    </div>
+    <div class="__footer_list">
+      <div class="__footer_list_title">
+        Social
+      </div>
+      <ul class="__footer_links">
+        <li>
+          <a href="//twitter.com/adsabs" target="_blank" rel="noopener">
+            <i class="fa fa-twitter"></i> @adsabs
+          </a>
+        </li>
+        <li>
+          <a href="//adsabs.github.io/blog/" target="_blank" rel="noopener">
+            <i class="fa fa-newspaper-o"></i> ADS Blog
+          </a>
+        </li>
+      </ul>
+    </div>
+    <div class="__footer_list">
+      <div class="__footer_list_title">
+        Project
+      </div>
+      <ul class="__footer_links">
+        <li>
+          <a href="https://adsisdownorjustme.herokuapp.com/" target="_blank" rel="noopener">Is ADS down? (or is it just me...)</a>
+        </li>
+        <li>
+          <a href="http://adsabs.harvard.edu/mirrors.html" target="_blank" rel="noopener">ADS Mirrors</a>
+        </li>
+        <li>
+          <a href="http://www.si.edu" target="_blank" rel="noopener">Smithsonian Institution</a>
+        </li>
+        <li>
+          <a href="http://www.si.edu/Privacy" target="_blank" rel="noopener">Smithsonian Privacy Notice</a>
+        </li>
+        <li>
+          <a href="http://www.si.edu/Termsofuse" target="_blank" rel="noopener">Smithsonian Terms of Use</a>
+        </li>
+        <li>
+          <a href="http://www.cfa.harvard.edu/sao" target="_blank" rel="noopener">Smithsonian Astrophysical Observatory</a>
+        </li>
+        <li>
+          <a href="http://www.nasa.gov" target="_blank" rel="noopener">NASA</a>
+        </li>
+      </ul>
+    </div>
+  </div>
+</footer>
+</div></div>
+</div>
+</div></div>
+    </div>
+    <!--  -->
     <script type="application/ld+json">
-      {{{this}}}
+      {"@context":"http://schema.org","@type":"WebSite","name":"ADS","alternateName":"Astrophysics Data System","url":"https://ui.adsabs.harvard.edu"}
     </script>
-    <!-- {{/each}} -->
+    <!--  -->
+    <script type="application/ld+json">
+      {"@context":"http://schema.org","@type":"WebSite","url":"https://ui.absads.harvard.edu/","potentialAction":{"@type":"SearchAction","target":"https://ui.adsabs.harvard.edu/#search/q={search_term_string}","query-input":"required name=search_term_string"}}
+    </script>
+    <!--  -->
     <script>
         // define waitSeconds above require script tag
         // to override the default, until main.js loads
@@ -135,9 +771,62 @@
     </script>
 
     <!-- start the discovery application -->
-    <script data-main="./discovery.config" src="//cdnjs.cloudflare.com/ajax/libs/require.js/2.3.5/require.min.js"></script>
     <script>
-        !window.requirejs && document.write('<script data-main="./discovery.config.js" src="./libs/requirejs/require.js">\x3C/script>');
+      window.__PRERENDERED = true;
+      window.res = [];
+      window.resCount = 0;
     </script>
-  </body>
-</html>
+    <script data-main="discovery.config" src="./libs/requirejs/require.js"></script>
+    <!-- <script>
+        !window.requirejs && document.write('<script data-main="./discovery.config.js" src="./libs/requirejs/require.js">\x3C/script>');
+    </script> -->
+    <!-- <script src="./discovery.config.js"></script> -->
+
+<div class="modal fade" id="feedback-modal">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+                <h4 class="modal-title">Feedback Form</h4>
+            </div>
+            <div class="modal-body">
+                <form class="feedback-form">
+
+                    <input type="hidden" name="_subject" value="Bumblebee Feedback">
+                    <input type="hidden" name="feedback-type" value="feedback">
+
+                    <input type="text" name="_gotcha" style="display:none">
+
+                    <div class="form-group half-width">
+                        <label> Name
+                            <input class="form-control" type="text" name="name" required="">
+                        </label>
+                    </div>
+                    <div class="form-group half-width">
+                        <label> Email
+                            <input class="form-control" type="email" name="_replyto" required="">
+                        </label>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Feedback <br>
+                        <textarea rows="8" cols="50" name="comments" required=""></textarea>
+                        </label>
+
+                    </div>
+                    <div class="form-group">
+                        <div class="g-recaptcha"></div>
+                    </div>
+                    <button class="btn btn-success" type="submit" value="Send">Submit</button>
+                </form>
+
+                <br>
+                <p>You can also reach us at <b>adshelp [at] cfa.harvard.edu</b></p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close without submitting</button>
+            </div>
+        </div><!-- /.modal-content -->
+    </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
+<ul class="ui-autocomplete ui-front ui-menu ui-widget ui-widget-content ui-corner-all" id="ui-id-1" tabindex="0" style="display: none;"></ul><div class="d3-tip" style="position: absolute; top: 0px; opacity: 0; pointer-events: none; box-sizing: border-box;"></div><div class="d3-tip" style="position: absolute; top: 0px; opacity: 0; pointer-events: none; box-sizing: border-box;"></div><div style="position: absolute; width: 0px; height: 0px; overflow: hidden; padding: 0px; border: 0px; margin: 0px;"><div id="MathJax_Font_Test" style="position: absolute; visibility: hidden; top: 0px; left: 0px; width: auto; padding: 0px; border: 0px; margin: 0px; white-space: nowrap; text-align: left; text-indent: 0px; text-transform: none; line-height: normal; letter-spacing: normal; word-spacing: normal; font-size: 40px; font-weight: normal; font-style: normal; font-family: MathJax_Main, sans-serif;"></div></div></body></html>

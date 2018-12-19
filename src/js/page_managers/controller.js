@@ -18,6 +18,12 @@ function ($, _,
   PageManagerViewMixin,
   Dependon
 ) {
+
+  var PRIORITY_WIDGETS = [
+    'ShowAbstract'
+  ];
+
+
   var PageManagerController = BaseWidget.extend({
 
     initialize: function (options) {
@@ -101,13 +107,20 @@ function ($, _,
             componentParams: $(widgetDom).data()
           });
 
+          console.log('widget', widgetName);
+
           // reducing unneccessary rendering
-          if (widget.getEl) {
-            el = widget.getEl();
+          if (window.__PRERENDERED && widget.view && PRIORITY_WIDGETS.indexOf(widgetName) > -1) {
+            widget.view.$el = $('*[data-widget="' + widgetName + '"]:first-child()');
+            widget.view.el = widget.view.$el.get(0);
+            widget.view.delegateEvents();
+            widget.view.delegateInitialRender();
+            window['widget_' + widgetName] = widget;
           } else {
-            el = widget.render().el;
+            el = widget.getEl ? widget.getEl() : widget.render().el;
+            $(that.widgetDoms[widgetName]).html(el);
           }
-          $(that.widgetDoms[widgetName]).empty().append(el);
+
           that.widgets[widgetName] = widget;
         }
       }, this);

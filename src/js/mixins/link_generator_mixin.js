@@ -231,7 +231,7 @@ define(['underscore', 'js/mixins/openurl_generator'], function (_, OpenURLGenera
       const linkInfo = LINK_TYPES[el];
       const hasScan = _.contains(sources, 'ADS_SCAN');
       const linkServer = data.link_server;
-      const identifier = data.doi || data.issn || data.isbn;
+      const identifier = data.bibcode || data.doi || data.issn || data.isbn;
 
       // Create an OpenURL
       // Only create an openURL if the following is true:
