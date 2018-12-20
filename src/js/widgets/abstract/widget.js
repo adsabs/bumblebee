@@ -241,20 +241,15 @@ function (
       this.trigger($(ev.target).attr('target'));
     },
 
-    render: function () {
-      console.log('render');
-      return Marionette.ItemView.prototype.render.call(this, arguments);
-    },
+    handlePrerenderedContent: function ($el) {
+      this.$el = $(this.tagName + '.' + this.className, $el);
+      this.el = this.$el.get(0);
+      this.delegateEvents();
 
-    delegateInitialRender: function () {
-      $('*[data-deferred="true"]', this.$el).show();
-      var _template = this.template;
-      this.template = _.template(this.$el.html());
-      var _onRender = _.bind(this.onRender || _.noop, this);
-      this.onRender = function () {
-        this.template = _template;
-        _onRender();
-      }
+      // replace the template function to manually set the content
+      this.getTemplate = _.bind(function () {
+        return this.model.has('bibcode') ? this.template : $el.html();
+      }, this);
     },
 
     onRender: function () {
@@ -264,8 +259,10 @@ function (
 
       // and set the title, maintain tags
       document.title = $('<div>' + this.model.get('title') + '</div>').text();
-      document.body.scrollTop = document.documentElement.scrollTop = 0;
-      $('#app-container').scrollTop(0);
+      if (!window.__PRERENDERED) {
+        document.body.scrollTop = document.documentElement.scrollTop = 0;
+        $('#app-container').scrollTop(0);
+      }
     }
   });
 

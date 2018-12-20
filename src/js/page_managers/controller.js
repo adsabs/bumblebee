@@ -23,7 +23,6 @@ function ($, _,
     'ShowAbstract'
   ];
 
-
   var PageManagerController = BaseWidget.extend({
 
     initialize: function (options) {
@@ -107,15 +106,10 @@ function ($, _,
             componentParams: $(widgetDom).data()
           });
 
-          console.log('widget', widgetName);
-
           // reducing unneccessary rendering
           if (window.__PRERENDERED && widget.view && PRIORITY_WIDGETS.indexOf(widgetName) > -1) {
-            widget.view.$el = $('*[data-widget="' + widgetName + '"]:first-child()');
-            widget.view.el = widget.view.$el.get(0);
-            widget.view.delegateEvents();
-            widget.view.delegateInitialRender();
-            window['widget_' + widgetName] = widget;
+            var $el = $('*[data-widget="' + widgetName + '"]');
+            widget.view.handlePrerenderedContent($el);
           } else {
             el = widget.getEl ? widget.getEl() : widget.render().el;
             $(that.widgetDoms[widgetName]).html(el);

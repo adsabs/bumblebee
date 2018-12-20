@@ -90,8 +90,10 @@ define([
       model.attributes.numAttach += 1;
 
       // scroll to top
-      document.body.scrollTop = document.documentElement.scrollTop = 0;
-      $('#app-container').scrollTop(0);
+      if (!window.__PRERENDERED) {
+        document.body.scrollTop = document.documentElement.scrollTop = 0;
+        $('#app-container').scrollTop(0);
+      }
       // and fix the search bar back in its default spot
       $('.s-search-bar-full-width-container').removeClass('s-search-bar-motion');
       $('.s-quick-add').removeClass('hidden');
