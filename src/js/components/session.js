@@ -125,7 +125,7 @@ define([
     register: function (data) {
       var current_loc = this.test ? 'location.origin' : location.origin;
       // add base_url to data so email redirects to right url
-      _.extend(data, { verify_url: current_loc + '/#user/account/verify/register' });
+      _.extend(data, { verify_url: current_loc + '/user/account/verify/register' });
 
       this.sendRequestWithNewCSRF(function (csrfToken) {
         var request = new ApiRequest({
@@ -147,7 +147,7 @@ define([
     resetPassword1: function (data) {
       var current_loc = this.test ? 'location.origin' : location.origin;
       // add base_url to data so email redirects to right url
-      _.extend(data, { reset_url: current_loc + '/#user/account/verify/reset-password' });
+      _.extend(data, { reset_url: current_loc + '/user/account/verify/reset-password' });
 
       var email = data.email;
       var data = _.omit(data, 'email');

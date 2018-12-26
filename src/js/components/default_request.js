@@ -136,7 +136,8 @@ function (
         url += '?' + whatToSort.query.url();
       }
       if ('sender' in whatToSort) {
-        url += '#' + MultiParams.prototype.url.call(this, { sender: whatToSort.sender });
+        console.log('sender!', whatToSort);
+        url += MultiParams.prototype.url.call(this, { sender: whatToSort.sender });
       }
       return url;
     },

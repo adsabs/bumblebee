@@ -179,7 +179,7 @@ function (
       // any extra info that needs to be sent in post or get requests
       // but not known about by the widget models goes here
       var additional = {};
-      additional.CHANGE_EMAIL = { verify_url: this.base_url + '/#user/account/verify/change-email' };
+      additional.CHANGE_EMAIL = { verify_url: this.base_url + '/user/account/verify/change-email' };
       this.additionalParameters = additional;
     },
 

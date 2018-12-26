@@ -42,7 +42,7 @@ define([
     show: function (pageName) {
       var ret = PageManagerController.prototype.show.apply(this, arguments);
       if (this.view.model && this.view.model.has('query')) {
-        ret.$el.find('.s-back-button-container').empty().html('<a href="#search/' + this.view.model.get('query') + '" class="back-button btn btn-sm btn-default"> <i class="fa fa-arrow-left"></i> Back to results</a>');
+        ret.$el.find('.s-back-button-container').empty().html('<a href="/search/' + this.view.model.get('query') + '" class="back-button btn btn-sm btn-default"> <i class="fa fa-arrow-left"></i> Back to results</a>');
       }
 
       // when arriving at the abstract page, scroll back to the top

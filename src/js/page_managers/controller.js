@@ -18,6 +18,11 @@ function ($, _,
   PageManagerViewMixin,
   Dependon
 ) {
+
+  var PRIORITY_WIDGETS = [
+    'ShowAbstract'
+  ];
+
   var PageManagerController = BaseWidget.extend({
 
     initialize: function (options) {
@@ -102,12 +107,15 @@ function ($, _,
           });
 
           // reducing unneccessary rendering
-          if (widget.getEl) {
-            el = widget.getEl();
+          if (window.__PRERENDERED && widget.view && PRIORITY_WIDGETS.indexOf(widgetName) > -1) {
+            var $el = $('*[data-widget="' + widgetName + '"]');
+            widget.view.handlePrerenderedContent($el);
+            window.__PRERENDERED = false;
           } else {
-            el = widget.render().el;
+            el = widget.getEl ? widget.getEl() : widget.render().el;
+            $(that.widgetDoms[widgetName]).html(el);
           }
-          $(that.widgetDoms[widgetName]).empty().append(el);
+
           that.widgets[widgetName] = widget;
         }
       }, this);

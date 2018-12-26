@@ -52,7 +52,7 @@ define([
                 <span style={{ marginLeft: 5 }}>
                   <a
                     title="manage custom formats"
-                    href="/#user/settings/application">
+                    href="/user/settings/application">
                     <i className="fa fa-cog fa-invert"></i>
                   </a>
                 </span>

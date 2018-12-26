@@ -173,7 +173,7 @@ define([
 
     triggerShowGrid: function () {
       this.getPubSub().publish(this.getPubSub().NAVIGATE, 'ShowGraphics', {
-        href: '#abs/' + this._bibcode + '/graphics'
+        href: '/abs/' + this._bibcode + '/graphics'
       });
     }
 
