@@ -110,6 +110,7 @@ function ($, _,
           if (window.__PRERENDERED && widget.view && PRIORITY_WIDGETS.indexOf(widgetName) > -1) {
             var $el = $('*[data-widget="' + widgetName + '"]');
             widget.view.handlePrerenderedContent($el);
+            window.__PRERENDERED = false;
           } else {
             el = widget.getEl ? widget.getEl() : widget.render().el;
             $(that.widgetDoms[widgetName]).html(el);

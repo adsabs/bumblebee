@@ -246,9 +246,15 @@ function (
       this.el = this.$el.get(0);
       this.delegateEvents();
 
+      var _getTemplate = _.bind(this.getTemplate, this);
       // replace the template function to manually set the content
       this.getTemplate = _.bind(function () {
-        return this.model.has('bibcode') ? this.template : $el.html();
+        if (this.model.has('bibcode')) {
+          this.getTemplate = _getTemplate;
+          return this.template;
+        } else {
+          return $el.html();
+        }
       }, this);
     },
 
