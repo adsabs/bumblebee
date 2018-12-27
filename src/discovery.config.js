@@ -591,28 +591,31 @@ require.config({
     });
 
     // for pre-rendered abstract pages
-    window.__PREPARE_STATIC_PAGE__ = function (cb) {
+    window.__PREPARE_STATIC_PAGE__ = function (cb, wait) {
+      window.__PAGE_COMPLETE_WAIT__ = wait || 3000;
       require(['jquery'], function ($) {
-        var toRemove = [
-          '#toggle-aff',
-          '#toggle-more-authors',
-          'div.navbar-collapse',
-          'head>script',
-          '.popover'
-        ];
-        $(toRemove.join(', ')).remove();
-        $('#authors-and-aff').prepend('<div style="height:20px;"></div>')
-        $('.s-nav-container nav>[data-widget-id]>div')
-          .not('[data-widget-id~="ShowAbstract"]>div').addClass('s-nav-inactive').attr('href', '#');
-        $('form[name="main-query"] input').addClass('disabled');
-        $('form[name="main-query"] button[type="submit"]>i').addClass('disabled fa-spin fa-spinner');
-        $('head').append('<script>window.__PRERENDERED = true;</script>');
         var dd = $.Deferred();
         window.__PAGE_COMPLETE__ = function () {
+          var toRemove = [
+            '#toggle-aff',
+            '#toggle-more-authors',
+            'div.navbar-collapse',
+            'head>script',
+            '.popover'
+          ];
+          $(toRemove.join(', ')).remove();
+          $('#authors-and-aff').prepend('<div style="height:20px;"></div>')
+          $('.s-nav-container nav>[data-widget-id]>div')
+          .not('[data-widget-id~="ShowAbstract"]>div').addClass('s-nav-inactive').attr('href', '#');
+          $('form[name="main-query"] input').addClass('disabled');
+          $('form[name="main-query"] button[type="submit"]>i').addClass('disabled fa-spin fa-spinner');
+          $('head').append('<script>window.__PRERENDERED = true;</script>');
           dd.resolve(document.documentElement.outerHTML);
         }
         dd.promise().then(cb);
       });
     };
+    window.__PREPARE_STATIC_PAGE__(html => console.log(html));
   }
 });
+
