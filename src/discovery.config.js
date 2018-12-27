@@ -607,9 +607,11 @@ require.config({
         $('form[name="main-query"] input').addClass('disabled');
         $('form[name="main-query"] button[type="submit"]>i').addClass('disabled fa-spin fa-spinner');
         $('head').append('<script>window.__PRERENDERED = true;</script>');
-        cb && cb(function () {
-          return document.documentElement.outerHTML;
-        });
+        var dd = $.Deferred();
+        window.__PAGE_COMPLETE__ = function () {
+          dd.resolve(document.documentElement.outerHTML);
+        }
+        dd.promise().then(cb);
       });
     };
   }

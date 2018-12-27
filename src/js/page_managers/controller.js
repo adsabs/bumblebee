@@ -27,6 +27,7 @@ function ($, _,
 
     initialize: function (options) {
       this.widgets = {};
+      this._renderedWidgets = [];
       this.widgetDoms = {};
       this.initialized = false;
       this.widgetId = null;
@@ -106,8 +107,16 @@ function ($, _,
             componentParams: $(widgetDom).data()
           });
 
+
           // reducing unneccessary rendering
           if (window.__PRERENDERED && widget.view && PRIORITY_WIDGETS.indexOf(widgetName) > -1) {
+            var dd = $.Deferred();
+            this._renderedWidgets.push(dd.promise());
+            var _onRender = widget.view.onRender || _.noop;
+            widget.view.onRender = function () {
+              dd.resolve();
+              _onRender.apply(widget.view, arguments);
+            }
             var $el = $('*[data-widget="' + widgetName + '"]');
             widget.view.handlePrerenderedContent($el);
             window.__PRERENDERED = false;
@@ -119,6 +128,11 @@ function ($, _,
           that.widgets[widgetName] = widget;
         }
       }, this);
+      if (this._renderedWidgets.length > 0) {
+        $.when.apply($, this._renderedWidgets).then(function () {
+          _.defer(window.__PAGE_COMPLETE__);
+        });
+      }
     },
 
     disAssemble: function (app) {
