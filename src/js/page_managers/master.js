@@ -218,6 +218,7 @@ define([
       $('a#skip-to-main-content').remove();
       $('div#aria-announcement-container').remove();
       $('#app-container').before(AriaAnnouncementTemplate({ page: msg }));
+      window.dispatchEvent(new Event("page-rendered"));
     }
 
   });

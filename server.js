@@ -64,10 +64,14 @@ app.get('*', function (req, res) {
 
   if (/discovery\.config\.js/.test(req.url)) {
     res.sendFile(p('discovery.config.js'));
+    
   } else if (/discovery\.vars\.js/.test(req.url)) {
     res.sendFile(p('discovery.vars.js'));
   }
-  res.sendFile(p('index.html'));
+  else {
+    res.sendFile(p('index.html'));
+
+  }
 });
 
 // start the server
