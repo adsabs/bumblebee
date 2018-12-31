@@ -5,7 +5,6 @@
 /**
  * Mediator to coordinate UI-query exchange
  */
-
 define(['underscore',
   'jquery',
   'cache',
@@ -283,24 +282,7 @@ function (
       q.lock();
       ps.publish(ps.INVITING_REQUEST, q);
 
-      // give widgets some time to submit their requests
-      var self = this;
-
-      if (this.shortDelayInMs) {
-        setTimeout(function () {
-          self.__searchCycle.collectingRequests = false;
-          if (self.startExecutingQueries()) {
-            self.monitorExecution();
-          }
-        }, this.shortDelayInMs);
-      } else {
-        this.__searchCycle.collectingRequests = false;
-        if (self.startExecutingQueries()) {
-          setTimeout(function () {
-            self.monitorExecution();
-          }, this.shortDelayInMs);
-        }
-      }
+      this.startExecutingQueries() && this.monitorExecution();
     },
 
 
@@ -372,8 +354,8 @@ function (
           }));
 
           self.displayTugboatMessages();
-          // after we are done with the first query, start executing other queries
-          var f = function () {
+          var completeWaiting = function () {
+            // after we are done with the first query, start executing other queries
             _.each(_.keys(cycle.waiting), function (k) {
               data = cycle.waiting[k];
               delete cycle.waiting[k];
@@ -403,14 +385,19 @@ function (
             });
           };
 
-            // for the display experience, it is better to introduce delays
-          if (self.longDelayInMs && self.longDelayInMs > 0) {
+          // wait an initial 500ms to let the widgets get their requests in,
+          // wait in 100ms increments until we no longer see a change in request cache
+          (function watchForChanges (l) {
             setTimeout(function () {
-              f();
-            }, self.longDelayInMs);
-          } else {
-            f();
-          }
+              // check the current length, if equal then we can assume nothing has changed
+              // since last check, let the cycle finish
+              if (l === self.__searchCycle.waiting.length) {
+                self.__searchCycle.collectingRequests = false;
+                return completeWaiting();
+              }
+              setTimeout(watchForChanges, 100, self.__searchCycle.waiting.length);
+            }, 500);
+          })(self.__searchCycle.waiting.length);
         })
         .fail(function (jqXHR, textStatus, errorThrown) {
           self.__searchCycle.error = true;
