@@ -89,9 +89,8 @@ function (
             }
 
             // close the widget immediately
-            var widget = self.getWidget();
-            if (widget && widget.closeView) {
-              widget.closeView();
+            if (self._widget && self._widget.closeView) {
+              self._widget.closeView();
             }
           }
         });
@@ -99,21 +98,36 @@ function (
     },
 
     getWidget: function () {
-      if (this._widget) return this._widget;
-      this._widget = this.getApp()._getWidget(this.widgetName || 'AlertsWidget');
-      return this._widget;
+      var defer = $.Deferred();
+      var self = this;
+
+      if (this._widget) {
+        defer.resolve(this._widget);
+      }
+      else {
+        this.getApp()._getWidget(this.widgetName || 'AlertsWidget').done(function(widget) {
+          self._widget = widget;
+          defer.resolve(widget);
+        })
+      } 
+      return defer.promise();
     },
 
-    alert: function (apiFeedback) {
-      var w = this.getWidget();
+    alert: async function (apiFeedback) {
+      
+      var w = await this.getWidget();
+
       if (!w) {
-        console.warn('"AlertsWidget" has disappeared, we cant display messages to the user');
         var defer = $.Deferred();
+        console.warn('"AlertsWidget" has disappeared, we cant display messages to the user');
         defer.reject('AlertsWidget has disappeared');
         return defer.promise();
       }
-      // return promise
-      return w.alert(apiFeedback);
+      else {
+        // return promise
+        return w.alert(apiFeedback);
+      }
+      
     },
 
     hardenedInterface: {

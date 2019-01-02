@@ -135,51 +135,61 @@ define([
       }
 
       var pageManagerModel = this.collection.find({ id: pageManagerName });
+      var self = this;
 
       // if the model does not already reference the actual manager widget, add it now
-      var pageManagerWidget;
+      var promise;
       if (pageManagerModel.get('object')) {
-        pageManagerWidget = pageManagerModel.get('object');
+        var defer = $.Deferred();
+        defer.resolve(pageManagerModel.get('object'));
+        promise = defer.promise();
       } else {
-        pageManagerWidget = app._getWidget(pageManagerName); // will throw error if not there
+        promise = app._getWidget(pageManagerName); // will throw error if not there
+      }
+
+      promise.done( function(pageManagerWidget) {
+        
         pageManagerModel.set('object', pageManagerWidget);
-      }
+        if (!pageManagerWidget) { console.error('unable to find page manager: ' + pageManagerName); }
 
-      if (!pageManagerWidget) { console.error('unable to find page manager: ' + pageManagerName); }
-
-      if (pageManagerWidget.assemble) {
-        // assemble the new page manager (while the old one is still in place)
-        pageManagerWidget.assemble(app);
-      } else {
-        console.error('eeeek, ' + pageManagerName + ' has no assemble() method!');
-      }
-
-      // it's a new page
-      if (!pageManagerModel.get('isSelected')) {
-        pageManagerModel.set({ options: options, object: pageManagerWidget });
-        this.collection.selectOne(pageManagerName);
-        this.view.changeManager();
-      } else {
-        // it's within a page
-        pageManagerModel.set({ options: options, object: pageManagerWidget });
-        // it's already selected, trigger a change within the manager
-        this.view.changeWithinManager();
-      }
-
-      var previousPMName = this.currentChild;
-      this.currentChild = pageManagerName;
-
-      // disassemble the old one (behind the scenes)
-      if (previousPMName && previousPMName != pageManagerName) {
-        var oldPM = this.collection.find({ id: previousPMName });
-
-        if (oldPM && oldPM.get('object')) {
-          oldPM.set('numDetach', oldPM.get('numDetach') + 1);
-          oldPM.get('object').disAssemble(app);
+        if (pageManagerWidget.assemble) {
+          // assemble the new page manager (while the old one is still in place)
+          pageManagerWidget.assemble(app);
+        } else {
+          console.error('eeeek, ' + pageManagerName + ' has no assemble() method!');
         }
-      }
+  
+        // it's a new page
+        if (!pageManagerModel.get('isSelected')) {
+          pageManagerModel.set({ options: options, object: pageManagerWidget });
+          self.collection.selectOne(pageManagerName);
+          self.view.changeManager();
+        } else {
+          // it's within a page
+          pageManagerModel.set({ options: options, object: pageManagerWidget });
+          // it's already selected, trigger a change within the manager
+          self.view.changeWithinManager();
+        }
+  
+        var previousPMName = self.currentChild;
+        self.currentChild = pageManagerName;
+  
+        // disassemble the old one (behind the scenes)
+        if (previousPMName && previousPMName != pageManagerName) {
+          var oldPM = self.collection.find({ id: previousPMName });
+  
+          if (oldPM && oldPM.get('object')) {
+            oldPM.set('numDetach', oldPM.get('numDetach') + 1);
+            oldPM.get('object').disAssemble(app);
+          }
+        }
+  
+        self.getPubSub().publish(self.getPubSub().ARIA_ANNOUNCEMENT, pageManagerName);
+        }
+      ); 
 
-      this.getPubSub().publish(this.getPubSub().ARIA_ANNOUNCEMENT, pageManagerName);
+      return promise;
+      
     },
 
     // used by discovery mediator

@@ -431,15 +431,6 @@ function (
             // switch immediately to the results page -make widgets listen to the START_SEARCH
             app.getService('Navigator').navigate('results-page', { replace: false });
 
-            // another way to accomplish the same (however, this has the undesired effect of
-            // search bar temporarily disappearing - as it is snatched from the previous page
-            // and inserted into the other one)
-
-            // widget = app._getWidget('SearchPage');
-            // widget.assemble(app);
-            // setTimeout(function() {
-            //  app.returnWidget('SearchPage');
-            // }, 10000);
           }
 
           qm.getQueryAndStartSearchCycle.apply(qm, arguments);

@@ -81,12 +81,16 @@ function (
         return false;
       }
 
-      this.set('index-page', function () {
-        app.getObject('MasterPageManager').show('LandingPage', ['SearchWidget']);
-        app.getWidget('LandingPage').done(function (widget) {
-          widget.setActive('SearchWidget');
-        });
-        this.route = '';
+      this.set('index-page', async function () {
+        var self = this;
+        app.getObject('MasterPageManager').show('LandingPage', ['SearchWidget']).done(
+          function() {
+            app.getWidget('LandingPage').done(function (widget) {
+              widget.setActive('SearchWidget');
+            });
+            self.route = '';
+          }
+        )
       });
 
       this.set('SearchWidget', function () {
