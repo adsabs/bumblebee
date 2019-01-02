@@ -58,7 +58,7 @@ define([
         expect(widget.model.get('name')).to.eql('wonderful BumBleBee');
       });
 
-      it("knows to listen to the pubsub", function() {
+      it("knows to listen to the pubsub", function(done) {
         var widget = new HelloWorldWidget();
         widget.activate(this.minsub.beehive.getHardenedInstance()); // this is normally done by application
 
@@ -68,7 +68,11 @@ define([
         var minsub = this.minsub;
         minsub.publish(minsub.START_SEARCH, minsub.createQuery({'q': 'hello'}));
 
-        expect($w.find('.message').text()).to.be.eql('The query found: 841359 results.');
+        // wait enough time for sub-queries to fire
+        setTimeout(function () {
+          expect($w.find('.message').text()).to.be.eql('The query found: 841359 results.');
+          done();
+        }, 550);
       });
 
 
