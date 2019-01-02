@@ -61,15 +61,14 @@ define([
 
         widget.activate(minsub.beehive.getHardenedInstance());
 
-
         minsub.publish(minsub.START_SEARCH, new ApiQuery({q: 'pluto'}));
-
-        expect(widget.dispatchRequest.firstCall.args[0].url()).to.eql('q=pluto&sort=date%20desc%2C%20bibcode%20desc');
-        expect(widget.customizeQuery.calledOnce).to.be.true;
-        expect(widget.customizeQuery.calledBefore(widget.composeRequest)).to.be.true;
-        expect(widget.processResponse.called).to.be.true;
-        done();
-
+        setTimeout(function () {
+          expect(widget.dispatchRequest.firstCall.args[0].url()).to.eql('q=pluto&sort=date%20desc%2C%20bibcode%20desc');
+          expect(widget.customizeQuery.calledOnce).to.be.true;
+          expect(widget.customizeQuery.calledBefore(widget.composeRequest)).to.be.true;
+          expect(widget.processResponse.called).to.be.true;
+          done();
+        }, 550);
       });
 
       it("has the activate and close methods necessary for most/all ui widgets", function(){

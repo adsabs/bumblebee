@@ -114,40 +114,43 @@ define([
         minsub.publish(minsub.DELIVERING_REQUEST, x.reqUnAuthorized);
       });
       minsub.publish(minsub.START_SEARCH, x.qError);
-
-
       minsub.subscribeOnce(minsub.START_SEARCH, function() {
-        done()}); // if this fires, query was resurrected
+        done();
+      }); // if this fires, query was resurrected
+      var server = this.server;
 
-      x.app.getPluginOrWidgetName = sinon.stub().returns(null);
-      x.app = _.extend(x.app, {
-        getApiAccess: function() {
-          var defer = $.Deferred();
-          defer.resolve({});
-          return defer;
-        },
-        getController: function(name) {
-          if (name == 'QueryMediator')
-            return {
-              resetFailures: function() {}
-            }
-        },
-        getService: function(name) {
-          if (name == 'Api') {
-            return {
-              request: function (apiReq, options) {
-                var d = $.Deferred();
-                d.done(options.done);
-                d.fail(options.fail);
-                d.resolve();
-                return d;
+      // wait enough time for sub-queries to fire
+      setTimeout(function () {
+
+        x.app.getPluginOrWidgetName = sinon.stub().returns(null);
+        x.app = _.extend(x.app, {
+          getApiAccess: function() {
+            var defer = $.Deferred();
+            defer.resolve({});
+            return defer;
+          },
+          getController: function(name) {
+            if (name == 'QueryMediator')
+              return {
+                resetFailures: function() {}
+              }
+          },
+          getService: function(name) {
+            if (name == 'Api') {
+              return {
+                request: function (apiReq, options) {
+                  var d = $.Deferred();
+                  d.done(options.done);
+                  d.fail(options.fail);
+                  d.resolve();
+                  return d;
+                }
               }
             }
           }
-        }
-        });
-      this.server.respond();
-
+          });
+        server.respond();
+      }, 550);
     });
 
     it("resets ORCID settings when the ORCID API returns 401, which is passed to the feedback service", function () {

@@ -136,7 +136,8 @@ module.exports = function (grunt) {
     options: {
       args: {
         ignoreResourceErrors: true,
-        timeout: 10000
+        timeout: 10000,
+        fullTrace: true
       }
     },
     all: {
