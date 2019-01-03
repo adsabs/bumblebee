@@ -81,7 +81,7 @@ function (
         return false;
       }
 
-      this.set('index-page', async function () {
+      this.set('index-page', function () {
         var self = this;
         app.getObject('MasterPageManager').show('LandingPage', ['SearchWidget']).done(
           function() {
