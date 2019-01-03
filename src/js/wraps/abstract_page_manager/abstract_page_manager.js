@@ -30,9 +30,10 @@ define([
     },
 
     assemble: function (app) {
+      var self = this;
       return PageManagerController.prototype.assemble.apply(this, arguments).done(function() {
         var storage = app.getObject('AppStorage');
-        if (storage && storage.hasCurrentQuery()) this.addQuery(storage.getCurrentQuery());
+        if (storage && storage.hasCurrentQuery()) self.addQuery(storage.getCurrentQuery());
       })
     },
 
