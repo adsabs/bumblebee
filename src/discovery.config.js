@@ -358,10 +358,6 @@ require.config({
       exports: 'Cache'
     },
 
-    'jquery-querybuilder': {
-      deps: ['jquery']
-    },
-
     'filesaver': {
       exports: 'saveAs'
     },
