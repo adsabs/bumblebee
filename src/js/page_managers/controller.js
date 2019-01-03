@@ -66,7 +66,11 @@ function ($, _,
        * @param app
        */
     assemble: function (app) {
-      if (this.assembled) return this.view.el;
+      var defer = $.Deferred();
+      if (this.assembled) {
+        defer.resolve(this.view.el);
+        return defer.promise();
+      }
 
       this.assembled = true;
       this.view.render();
@@ -121,6 +125,17 @@ function ($, _,
         promises.push(promise);
         
       }, this);
+
+      var bigPromise = $.when.apply($, promises)
+        .then(function () {
+          defer.resolve();
+        })
+        .fail(function () {
+          console.error('Generic error - we were not successul in assembling page');
+          if (arguments.length) console.error(arguments);
+          defer.reject();
+        });
+      return defer.promise();
     },
 
     disAssemble: function (app) {

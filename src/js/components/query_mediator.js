@@ -5,7 +5,6 @@
 /**
  * Mediator to coordinate UI-query exchange
  */
-
 define(['underscore',
   'jquery',
   'cache',
@@ -283,24 +282,10 @@ function (
       q.lock();
       ps.publish(ps.INVITING_REQUEST, q);
 
-      // give widgets some time to submit their requests
-      var self = this;
-
-      if (this.shortDelayInMs) {
-        setTimeout(function () {
-          self.__searchCycle.collectingRequests = false;
-          if (self.startExecutingQueries()) {
-            self.monitorExecution();
-          }
-        }, this.shortDelayInMs);
-      } else {
-        this.__searchCycle.collectingRequests = false;
-        if (self.startExecutingQueries()) {
-          setTimeout(function () {
-            self.monitorExecution();
-          }, this.shortDelayInMs);
-        }
-      }
+      // move this off the current stack, to add small delay
+      setTimeout(_.bind(function () {
+        this.startExecutingQueries() && this.monitorExecution();
+      }, this), 0);
     },
 
 
@@ -372,14 +357,13 @@ function (
           }));
 
           self.displayTugboatMessages();
-          // after we are done with the first query, start executing other queries
-          var f = function () {
+          var completeWaiting = function () {
+            // after we are done with the first query, start executing other queries
             _.each(_.keys(cycle.waiting), function (k) {
               data = cycle.waiting[k];
               delete cycle.waiting[k];
               cycle.inprogress[k] = data;
               var psk = k;
-
               self._executeRequest.call(self, data.request, data.key)
                 .done(function () {
                   cycle.done[psk] = cycle.inprogress[psk];
@@ -403,14 +387,19 @@ function (
             });
           };
 
-            // for the display experience, it is better to introduce delays
-          if (self.longDelayInMs && self.longDelayInMs > 0) {
+          // wait an initial 500ms to let the widgets get their requests in,
+          // wait in 100ms increments until we no longer see a change in request cache
+          (function watchForChanges (l) {
             setTimeout(function () {
-              f();
-            }, self.longDelayInMs);
-          } else {
-            f();
-          }
+              // check the current length, if equal then we can assume nothing has changed
+              // since last check, let the cycle finish
+              if (l === self.__searchCycle.waiting.length) {
+                self.__searchCycle.collectingRequests = false;
+                return completeWaiting();
+              }
+              setTimeout(watchForChanges, 100, self.__searchCycle.waiting.length);
+            }, 500);
+          })(self.__searchCycle.waiting.length);
         })
         .fail(function (jqXHR, textStatus, errorThrown) {
           self.__searchCycle.error = true;
@@ -523,8 +512,17 @@ function (
         apiRequest.set('target', ApiTargets.MYADS_STORAGE + '/execute_query/' + qid);
       }
 
-      var ps = this.getPubSub();
-      var api = this.getBeeHive().getService('Api');
+      try {
+        var ps = this.getPubSub();
+        var api = this.getBeeHive().getService('Api');
+      } catch (e) {
+        return $.Deferred().reject().promise();
+      }
+
+      // reject the request if we don't have an api to call
+      if (!ps || !api) {
+        return $.Deferred().reject().promise();
+      }
 
       var requestKey = this._getCacheKey(apiRequest);
       var maxTry = this.failedRequestsCache.getSync(requestKey) || 0;
@@ -534,8 +532,7 @@ function (
           request: apiRequest, key: senderKey, requestKey: requestKey, qm: this
         },
         [{ status: ApiFeedback.CODES.TOO_MANY_FAILURES }, 'Error', 'This request has reached maximum number of failures (wait before retrying)']);
-        var d = $.Deferred();
-        return d.reject();
+        return $.Deferred().reject().promise();
       }
 
 

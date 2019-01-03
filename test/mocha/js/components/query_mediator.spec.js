@@ -111,13 +111,13 @@ define([
 
       afterEach(function(done) {
         if (this.beehive) {
-          setTimeout(function(self, xdone) {
+          setTimeout(function(self) {
             self.server.restore();
             self.server.requests = []
             self.beehive.destroy();
             self.beehive = null;
-            xdone();
-          }, 5, this, done)
+            done();
+          }, 5, this)
         }
       });
 
@@ -431,7 +431,6 @@ define([
 
         qm.startSearchCycle(new ApiQuery({'q': 'foo'}), key);
 
-        expect(qm._cache.size).to.be.eql(0);
         expect(qm.reset.callCount).to.eql(1);
         expect(qm.__searchCycle.initiator).to.be.eql(key.getId());
         expect(qm.__searchCycle.waiting[key.getId()]).to.be.defined;
@@ -500,6 +499,31 @@ define([
 
       });
 
+      it("sends CYCLE signals when job starts and is done", function(done) {
+        var pubSpy = this.pubSpy;
+        var x = createTestQM(this.beehive);
+        var qm = x.qm, key1 = x.key1, key2 = x.key2, req1 = x.req1, req2 = x.req2;
+        var respond = _.bind(this.server.respond, this.server);
+        qm.__searchCycle.waiting[key1.getId()] = {key: key1, request: req1};
+        qm.__searchCycle.waiting[key2.getId()] = {key: key2, request: req2};
+        qm.startExecutingQueries();
+        expect(qm.__searchCycle.running).to.be.true;
+        expect(qm.__searchCycle.inprogress[key1.getId()]).to.be.defined;
+        respond();
+        expect(qm.__searchCycle.done[key1.getId()]).to.be.defined;
+        expect(pubSpy.lastCall.args[1]).to.be.instanceOf(ApiFeedback);
+        expect(pubSpy.lastCall.args[1].code).to.be.eql(ApiFeedback.CODES.SEARCH_CYCLE_STARTED);
+        expect(_.keys(qm.__searchCycle.waiting).length).to.be.eql(1);
+        respond();
+        setTimeout(function() {
+          respond();
+          expect(pubSpy.lastCall.args[1]).to.be.instanceOf(ApiFeedback);
+          expect(pubSpy.lastCall.args[1].code).to.be.eql(ApiFeedback.CODES.SEARCH_CYCLE_FINISHED);
+          qm.destroy();
+          done();
+        }, 600);
+      });
+
       it("responds to GET_QTREE signal", function(done) {
         var pubSpy = this.pubSpy;
         var x = createTestQM(this.beehive);
@@ -550,9 +574,10 @@ define([
         expect(qm._executeRequest.callCount).to.be.eql(1);
         expect(qm.onApiResponse.callCount).to.be.eql(0);
 
-        this.server.respond();
-        this.server.respond();
+        var server = this.server;
+        server.respond();
         setTimeout(function(qm, pubSpy, done) {
+          server.respond();
           expect(pubSpy.firstCall.args[0]).to.be.eql(PubSubEvents.DELIVERING_RESPONSE + key1.getId());
           expect(pubSpy.secondCall.args[0]).to.be.eql(PubSubEvents.FEEDBACK);
           expect(pubSpy.secondCall.args[1].code).to.be.eql(ApiFeedback.CODES.SEARCH_CYCLE_STARTED);
@@ -561,7 +586,7 @@ define([
           expect(qm.onApiResponse.callCount).to.be.eql(2);
           qm.destroy();
           done();
-        }, 50, qm, pubSpy, done);
+        }, 800, qm, pubSpy, done);
 
       });
 
@@ -671,39 +696,6 @@ define([
         expect(qm._cache.size).to.be.eql(0);
         qm.destroy();
         done();
-      });
-
-
-      it("sends CYCLE signals when job starts and is done", function(done) {
-        var pubSpy = this.pubSpy;
-        var x = createTestQM(this.beehive);
-        var qm = x.qm, key1 = x.key1, key2 = x.key2, req1 = x.req1, req2 = x.req2;
-
-        this.beehive.addObject('DynamicConfig', {pskToExecuteFirst: key2.getId()});
-        qm.__searchCycle.waiting[key1.getId()] = {key: key1, request: req1};
-        qm.__searchCycle.waiting[key2.getId()] = {key: key2, request: req2};
-        qm.startExecutingQueries();
-        expect(qm.__searchCycle.running).to.be.true;
-        expect(qm.__searchCycle.inprogress[key2.getId()]).to.be.defined;
-
-        this.server.respond();
-        expect(qm.__searchCycle.done[key2.getId()]).to.be.defined;
-        expect(qm.__searchCycle.inprogress[key1.getId()]).to.be.defined;
-        expect(_.keys(qm.__searchCycle.waiting).length).to.be.eql(0);
-
-        expect(pubSpy.lastCall.args[1]).to.be.instanceOf(ApiFeedback);
-        expect(pubSpy.lastCall.args[1].code).to.be.eql(ApiFeedback.CODES.SEARCH_CYCLE_STARTED);
-
-        this.server.respond();
-        var mydone = done;
-
-        setTimeout(function(self, done, pubSpy) {
-          self.server.respond();
-          expect(pubSpy.lastCall.args[1]).to.be.instanceOf(ApiFeedback);
-          expect(pubSpy.lastCall.args[1].code).to.be.eql(ApiFeedback.CODES.SEARCH_CYCLE_FINISHED);
-          qm.destroy();
-          done();
-        }, 1, this, done, pubSpy);
       });
 
       it("knows to recover from certain errors", function(done) {

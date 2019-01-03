@@ -23,40 +23,50 @@ function (_, Marionette, BasicPageManagerController, TOCWidget, analytics) {
 
 
     assemble: function (app) {
+      var defer = $.Deferred();
+
       if (!this.navConfig) {
-        throw new Error('TOC widget is being assembled without navigation configuration (navConfig)');
+        defer.reject(new Error('TOC widget is being assembled without navigation configuration (navConfig)'));
+        return defer.promise();
       }
 
-      if (this.assembled) return;
+      if (this.assembled) {
+        defer.resolve();
+        return defer.promise();
+      }
 
-      BasicPageManagerController.prototype.assemble.apply(this, arguments);
+      var self = this;
+      BasicPageManagerController.prototype.assemble.apply(this, arguments).done(function() {
+        var tocTemplate = Marionette.getOption(this, 'TOCTemplate');
 
-      var tocTemplate = Marionette.getOption(this, 'TOCTemplate');
-
-      if (this.TOCEvents) {
-        // initiate the TOC view
-        this.widgets.tocWidget = new TOCWidget(
-          {
+        if (self.TOCEvents) {
+          // initiate the TOC view
+          self.widgets.tocWidget = new TOCWidget(
+            {
+              template: tocTemplate,
+              events: Marionette.getOption(self, 'TOCEvents'),
+              navConfig: Marionette.getOption(self, 'navConfig')
+            }
+          );
+        } else {
+          // initiate the TOC view
+          self.widgets.tocWidget = new TOCWidget({
             template: tocTemplate,
-            events: Marionette.getOption(this, 'TOCEvents'),
-            navConfig: Marionette.getOption(this, 'navConfig')
-          }
-        );
-      } else {
-        // initiate the TOC view
-        this.widgets.tocWidget = new TOCWidget({
-          template: tocTemplate,
-          navConfig: Marionette.getOption(this, 'navConfig')
-        });
-      }
+            navConfig: Marionette.getOption(self, 'navConfig')
+          });
+        }
 
-      // insert the TOC nav view into its slot
-      this.view.$('.nav-container').append(this.widgets.tocWidget.render().el);
+        // insert the TOC nav view into its slot
+        self.view.$('.nav-container').append(self.widgets.tocWidget.render().el);
 
-      _.each(_.keys(this.widgets), function (w) {
-        this.listenTo(this.widgets[w], 'page-manager-event', _.bind(this.onPageManagerEvent, this, this.widgets[w]));
-        this.broadcast('page-manager-message', 'new-widget', w);
-      }, this);
+        _.each(_.keys(self.widgets), function (w) {
+          self.listenTo(this.widgets[w], 'page-manager-event', _.bind(this.onPageManagerEvent, this, this.widgets[w]));
+          self.broadcast('page-manager-message', 'new-widget', w);
+        }, self);
+        defer.resolve();
+      });
+
+      return defer.promise();
     },
 
 

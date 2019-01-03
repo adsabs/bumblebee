@@ -71,78 +71,81 @@ define(['config', 'module'], function (config, module) {
         pubsub.publish(pubsub.getCurrentPubSubKey(), pubsub.APP_BOOTSTRAPPED);
 
         pubsub.publish(pubsub.getCurrentPubSubKey(), pubsub.APP_STARTING);
-        app.start(Router);
-        pubsub.publish(pubsub.getCurrentPubSubKey(), pubsub.APP_STARTED);
+        app.start(Router).done(function() {
 
-        var getUserData = function () {
-          try {
-            var beehive = _.isFunction(this.getBeeHive) && this.getBeeHive();
-            var user = _.isFunction(beehive.getObject) && beehive.getObject('User');
-            if (user) {
-              return user.getUserData('USER_DATA');
-            }
-          } catch (e) {
-            // do nothing
-          }
-          return {};
-        }
-
-        // handle user preferences for external link actions
-        var updateExternalLinkBehavior = _.debounce(function () {
-          var userData = getUserData.call(app);
-          var action = userData.externalLinkAction && userData.externalLinkAction.toUpperCase() || 'AUTO';
-          if (action === 'OPEN IN CURRENT TAB') {
-            var max = 10;
-            var timeout;
-            (function updateLinks(count) {
-              clearTimeout(timeout);
-              if (count < max) {
-                $('a[target="_blank"]').attr('target', '');
-                timeout = setTimeout(updateLinks, 1000, count + 1);
+          pubsub.publish(pubsub.getCurrentPubSubKey(), pubsub.APP_STARTED);
+  
+          var getUserData = function () {
+            try {
+              var beehive = _.isFunction(this.getBeeHive) && this.getBeeHive();
+              var user = _.isFunction(beehive.getObject) && beehive.getObject('User');
+              if (user) {
+                return user.getUserData('USER_DATA');
               }
-            })(0);
+            } catch (e) {
+              // do nothing
+            }
+            return {};
           }
-        }, 3000, { leading: true, trailing: false }, false);
-        pubsub.subscribe(pubsub.getCurrentPubSubKey(), pubsub.NAVIGATE, updateExternalLinkBehavior);
-        updateExternalLinkBehavior();
-
-        analytics('send', 'event', 'timer', 'app-booted', Date.now() - timeLoaded);
-
-        // some global event handlers, not sure if right place
-        $('body').on('click', 'button.toggle-menu', function (e) {
-          var $button = $(e.target),
-            $sidebar = $button.parents().eq(1).find('.nav-container');
-
-          $sidebar.toggleClass('show');
-          var text = $sidebar.hasClass('show') ? '  <i class="fa fa-close"></i> Close Menu' : ' <i class="fa fa-bars"></i> Show Menu';
-          $button.html(text);
-        });
-
-        // accessibility: skip to main content
-        $('body').on('click', '#skip-to-main-content', function (e) {
-          e.preventDefault();
-        });
-
-        var dynConf = app.getObject('DynamicConfig');
-        if (dynConf && dynConf.debugExportBBB) {
-          console.log('Exposing Bumblebee as global object: window.bbb');
-          window.bbb = app;
-        }
-
-        // app is loaded, send timing event
-
-        if (__PAGE_LOAD_TIMESTAMP) {
-          var time = new Date() - __PAGE_LOAD_TIMESTAMP;
-          analytics('send', {
-            hitType: 'timing',
-            timingCategory: 'Application',
-            timingVar: 'Loaded',
-            timingValue: time
+  
+          // handle user preferences for external link actions
+          var updateExternalLinkBehavior = _.debounce(function () {
+            var userData = getUserData.call(app);
+            var action = userData.externalLinkAction && userData.externalLinkAction.toUpperCase() || 'AUTO';
+            if (action === 'OPEN IN CURRENT TAB') {
+              var max = 10;
+              var timeout;
+              (function updateLinks(count) {
+                clearTimeout(timeout);
+                if (count < max) {
+                  $('a[target="_blank"]').attr('target', '');
+                  timeout = setTimeout(updateLinks, 1000, count + 1);
+                }
+              })(0);
+            }
+          }, 3000, { leading: true, trailing: false }, false);
+          pubsub.subscribe(pubsub.getCurrentPubSubKey(), pubsub.NAVIGATE, updateExternalLinkBehavior);
+          updateExternalLinkBehavior();
+  
+          analytics('send', 'event', 'timer', 'app-booted', Date.now() - timeLoaded);
+  
+          // some global event handlers, not sure if right place
+          $('body').on('click', 'button.toggle-menu', function (e) {
+            var $button = $(e.target),
+              $sidebar = $button.parents().eq(1).find('.nav-container');
+  
+            $sidebar.toggleClass('show');
+            var text = $sidebar.hasClass('show') ? '  <i class="fa fa-close"></i> Close Menu' : ' <i class="fa fa-bars"></i> Show Menu';
+            $button.html(text);
           });
-          if (debug) {
-            console.log('Application Started: ' + time + 'ms');
+  
+          // accessibility: skip to main content
+          $('body').on('click', '#skip-to-main-content', function (e) {
+            e.preventDefault();
+          });
+  
+          var dynConf = app.getObject('DynamicConfig');
+          if (dynConf && dynConf.debugExportBBB) {
+            console.log('Exposing Bumblebee as global object: window.bbb');
+            window.bbb = app;
           }
-        }
+  
+          // app is loaded, send timing event
+  
+          if (__PAGE_LOAD_TIMESTAMP) {
+            var time = new Date() - __PAGE_LOAD_TIMESTAMP;
+            analytics('send', {
+              hitType: 'timing',
+              timingCategory: 'Application',
+              timingVar: 'Loaded',
+              timingValue: time
+            });
+            if (debug) {
+              console.log('Application Started: ' + time + 'ms');
+            }
+          }
+        })
+        
       }).fail(function () {
         analytics('send', 'event', 'introspection', 'failed-load', arguments);
 
