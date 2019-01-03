@@ -102,23 +102,33 @@ function ($, _,
           if (widget) {
             // maybe it is a page-manager (this is a security hole though!)
             if (widget.assemble) {
-              widget.assemble(app);
+              widget.assemble(app).done(function() {
+                // in case the user passed data params on the dom element,
+                // create props on the widget
+                _.assign(widget, {
+                  componentParams: $(widgetDom).data()
+                });
+      
+                // reducing unneccessary rendering
+                if (widget.getEl) {
+                  el = widget.getEl();
+                } else {
+                  el = widget.render().el;
+                }
+                $(self.widgetDoms[widgetName]).empty().append(el);
+              })
             }
-  
-            // in case the user passed data params on the dom element,
-            // create props on the widget
-            _.assign(widget, {
-              componentParams: $(widgetDom).data()
-            });
-  
-            // reducing unneccessary rendering
-            if (widget.getEl) {
-              el = widget.getEl();
-            } else {
-              el = widget.render().el;
+            else {
+              // reducing unneccessary rendering
+              if (widget.getEl) {
+                el = widget.getEl();
+              } else {
+                el = widget.render().el;
+              }
+              $(self.widgetDoms[widgetName]).empty().append(el);
             }
-            $(self.widgetDoms[widgetName]).empty().append(el);
             self.widgets[widgetName] = widget;
+            
           }
         });
 

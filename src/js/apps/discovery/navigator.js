@@ -314,55 +314,63 @@ function (
       });
 
       this.set('results-page', function (widget, args) {
-        app.getObject('MasterPageManager').show('SearchPage',
-          searchPageAlwaysVisible);
-        // allowing widgets to override appstorage query (so far only used for orcid redirect)
-        var q = app.getObject('AppStorage').getCurrentQuery();
-        if (q && q.get('__original_url')) {
-          var route = '#search/' + q.get('__original_url');
-          q.unset('__original_url');
-        } else {
-          var route = '#search/' + queryUpdater.clean(q).url();
-        }
+        var self = this;
+        var defer = $.Deferred();
 
-        // update the pagination of the results widget
-        if (q instanceof ApiQuery) {
-          var update = {};
-          var par = function (str) {
-            if (_.isString(str)) {
-              try {
-                return parseInt(str);
-              } catch (e) {
-                // do nothing
+        app.getObject('MasterPageManager').show('SearchPage',
+          searchPageAlwaysVisible).done(function() {
+            // allowing widgets to override appstorage query (so far only used for orcid redirect)
+            // XXX:rca - not sure I understand why
+            var q = app.getObject('AppStorage').getCurrentQuery();
+            if (q && q.get('__original_url')) {
+              var route = '#search/' + q.get('__original_url');
+              q.unset('__original_url');
+            } else {
+              var route = '#search/' + queryUpdater.clean(q).url();
+            }
+
+            // XXX:rca why here and not inside mediator???
+            // update the pagination of the results widget
+            if (q instanceof ApiQuery) {
+              var update = {};
+              var par = function (str) {
+                if (_.isString(str)) {
+                  try {
+                    return parseInt(str);
+                  } catch (e) {
+                    // do nothing
+                  }
+                }
+                return false;
+              };
+
+              if (q.has('p_')) {
+                var page = par(q.get('p_')[0]);
+                update.page = page;
+              } else {
+                route += '&p_=0';
+              }
+
+              if (!_.isEmpty(update)) {
+                app.getWidget('Results').then(function (w) {
+                  if (_.isFunction(w.updatePagination)) {
+                    w.updatePagination(update);
+                  }
+                });
               }
             }
-            return false;
-          };
 
-          if (q.has('p_')) {
-            var page = par(q.get('p_')[0]);
-            update.page = page;
-          } else {
-            route += '&p_=0';
-          }
+            // taking care of inserting bigquery key here, not sure if right place
+            // clean(q) above got rid of qid key, reinsert it
+            if (q && q.get('__qid')) {
+              route += ('&__qid=' + q.get('__qid')[0]);
+            }
 
-          if (!_.isEmpty(update)) {
-            app.getWidget('Results').then(function (w) {
-              if (_.isFunction(w.updatePagination)) {
-                w.updatePagination(update);
-              }
-            });
-          }
-        }
-
-        // taking care of inserting bigquery key here, not sure if right place
-        // clean(q) above got rid of qid key, reinsert it
-        if (q && q.get('__qid')) {
-          route += ('&__qid=' + q.get('__qid')[0]);
-        }
-
-        this.route = route;
-        publishFeedback({ code: ApiFeedback.CODES.UNMAKE_SPACE });
+            self.route = route;
+            publishFeedback({ code: ApiFeedback.CODES.UNMAKE_SPACE });
+            defer.resolve();
+          })
+          return defer.promise();
       });
 
       this.set('export', function (nav, options) {

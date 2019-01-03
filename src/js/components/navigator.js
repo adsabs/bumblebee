@@ -54,7 +54,7 @@ function (
     /**
        * Responds to PubSubEvents.NAVIGATE signal
        */
-    navigate: function (ev, arg1, arg2) {
+    navigate: async function (ev, arg1, arg2) {
       if (!this.router || !(this.router instanceof Backbone.Router)) {
         throw new Error('Navigator must be given \'router\' instance');
       }
@@ -72,7 +72,7 @@ function (
       if (!transition.execute) return; // do nothing
 
       try {
-        transition.execute.apply(transition, arguments);
+        await transition.execute.apply(transition, arguments);
       } catch (e) {
         this.handleTransitionError(transition, e, arguments);
       }
@@ -95,8 +95,10 @@ function (
 
       // clear any metadata added to head on the previous page
       $('head').find('meta[data-highwire]').remove();
+      // XXX:rca - this can probably go....anyways, shouldn't be here, is not generic
       // and set the default title
       document.title = 'ADS Search';
+      return true;
     },
 
     handleMissingTransition: function () {
