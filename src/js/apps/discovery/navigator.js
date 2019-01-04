@@ -81,14 +81,14 @@ function (
         return false;
       }
 
-      this.set('index-page', function () {
+      this.set('index-page', async function () {
         var self = this;
-        app.getObject('MasterPageManager').show('LandingPage', ['SearchWidget']).done(
+        app.getObject('MasterPageManager').show('LandingPage', ['SearchWidget']).then(
           function() {
-            app.getWidget('LandingPage').done(function (widget) {
+            return app.getWidget('LandingPage').then(function (widget) {
               widget.setActive('SearchWidget');
+              self.route = '';
             });
-            self.route = '';
           }
         )
       });
@@ -466,6 +466,32 @@ function (
           });
       });
 
+      this.set('search-page', function (endPoint, data) {
+        
+        var possibleSearchSubPages = ['Metrics', 'AuthorNetwork', 'PaperNetwork',
+        'ConceptCloud', 'BubbleChart'];
+
+        // convention is that a navigate command for search page widget starts with "show-"
+        // waits for the navigate to results page emitted by the discovery_mediator
+        // once the solr search has been received
+        var widgetName = _.map(data.page.split('-').slice(1), function (w) { return w[0].toUpperCase() + w.slice(1); }).join('');
+        var pages;
+        
+        if (possibleSearchSubPages.indexOf(widgetName) > -1) {
+          pages = [widgetName].concat(searchPageAlwaysVisible.slice(1));
+        }
+        else {
+          console.error('Results page subpage not recognized:', widgetName);
+          pages = searchPageAlwaysVisible;
+        }
+
+
+        showResultsPage(pages).then(function() {
+          self.getPubSub().publish(self.getPubSub().START_SEARCH, data.q);
+        })
+        
+      });
+
       this.set('execute-query', function (endPoint, queryId) {
         var api = app.getService('Api');
         api.request(new ApiRequest({
@@ -618,59 +644,107 @@ function (
 
       this.set('visualization-closed', this.get('results-page'));
 
+      var showResultsPage = async function (pages, toActivate) {
+        return app.getObject('MasterPageManager').show('SearchPage',
+          pages)
+      };
+
       /*
         * Below are functions for abstract pages
         */
 
-      var showDetail = function (pages, toActivate) {
-        app.getObject('MasterPageManager').show('DetailsPage',
-          pages);
-        app.getWidget('DetailsPage').done(function (w) {
-          w.setActive(toActivate);
-        });
+      var showDetail = async function (pages, toActivate) {
+        return app.getObject('MasterPageManager').show('DetailsPage',
+          pages).then(function() {
+            return app.getWidget('DetailsPage').then(function (w) {
+              w.setActive(toActivate);
+            });
+          })
       };
+      
+      this.set('verify-abstract', async function() {
+        // check we are using the canonical bibcode and redirect to it if necessary
+          var q,
+          req,
+          self;
+        self = this;
+        q = new ApiQuery({ q: 'identifier:' + this.queryUpdater.quoteIfNecessary(bibcode), fl: 'bibcode' });
+        req = new ApiRequest({
+          query: q,
+          target: ApiTargets.SEARCH,
+          options: {
+            done: function (resp) {
+              var navigateString,
+                href;
 
-      this.set('ShowAbstract', function (id, data) {
-        showDetail([id].concat(detailsPageAlwaysVisible), id);
+              if (!subPage) {
+                navigateString = 'ShowAbstract';
+              } else {
+                navigateString = 'Show' + subPage[0].toUpperCase() + subPage.slice(1);
+                href = '#abs/' + bibcode + '/' + subPage;
+              }
+              self.routerNavigate(navigateString, { href: href });
+
+              if (resp.response && resp.response.docs && resp.response.docs[0]) {
+                bibcode = resp.response.docs[0].bibcode;
+                self.getPubSub().publish(self.getPubSub().DISPLAY_DOCUMENTS, new ApiQuery({ q: 'bibcode:' + bibcode }));
+              } else if (resp.response && resp.response.docs && !resp.response.docs.length) {
+                console.error('the query  ' + q.get('q')[0] + '  did not return any bibcodes');
+              }
+            },
+            fail: function () {
+              console.log('Cannot identify page to load, bibcode: ' + bibcode);
+              self.getPubSub().publish(this.getPubSub().NAVIGATE, 'index-page');
+            }
+          }
+        });
+
+        this.getPubSub().publish(this.getPubSub().EXECUTE_REQUEST, req);
+      });
+
+      this.set('ShowAbstract', async function (id, data) {
+        await showDetail([id].concat(detailsPageAlwaysVisible), id)
+        self.getPubSub().publish(self.getPubSub().DISPLAY_DOCUMENTS, new ApiQuery({ q: 'bibcode:' + data.bibcode }))
         this.route = data.href;
       });
-      this.set('ShowCitations', function (id, data) {
-        showDetail([id].concat(detailsPageAlwaysVisible), id);
+      this.set('ShowCitations', async function (id, data) {
+        await showDetail([id].concat(detailsPageAlwaysVisible), id);
         this.route = data.href;
       });
-      this.set('ShowReferences', function (id, data) {
-        showDetail([id].concat(detailsPageAlwaysVisible), id);
+      this.set('ShowReferences', async function (id, data) {
+        await showDetail([id].concat(detailsPageAlwaysVisible), id);
         this.route = data.href;
       });
-      this.set('ShowCoreads', function (id, data) {
-        showDetail([id].concat(detailsPageAlwaysVisible), id);
+      this.set('ShowCoreads', async function (id, data) {
+        await showDetail([id].concat(detailsPageAlwaysVisible), id);
         this.route = data.href;
       });
-      this.set('ShowTableofcontents', function (id, data) {
-        showDetail([id].concat(detailsPageAlwaysVisible), id);
+      this.set('ShowTableofcontents', async function (id, data) {
+        await showDetail([id].concat(detailsPageAlwaysVisible), id);
         this.route = data.href;
       });
-      this.set('ShowSimilar', function (id, data) {
-        showDetail([id].concat(detailsPageAlwaysVisible), id);
+      this.set('ShowSimilar', async function (id, data) {
+        await showDetail([id].concat(detailsPageAlwaysVisible), id);
         this.route = data.href;
       });
-      this.set('ShowMetrics', function (id, data) {
-        showDetail([id].concat(detailsPageAlwaysVisible), id);
+      this.set('ShowMetrics', async function (id, data) {
+        await showDetail([id].concat(detailsPageAlwaysVisible), id);
         this.route = data.href;
       });
-      this.set('ShowPaperExport', function (id, data) {
+      this.set('ShowPaperExport', async function (id, data) {
         var format = data.subView;
         app.getObject('MasterPageManager').show('DetailsPage',
-          [id].concat(detailsPageAlwaysVisible));
-        app.getWidget('DetailsPage').done(function (w) {
-          w.setActive(id, format);
-        });
+          [id].concat(detailsPageAlwaysVisible)).done(function() {
+            app.getWidget('DetailsPage').done(function (w) {
+              w.setActive(id, format);
+            });
+          })
       });
-      this.set('ShowGraphics', function (id, data) {
+      this.set('ShowGraphics', async function (id, data) {
         showDetail([id].concat(detailsPageAlwaysVisible), id);
         this.route = data.href;
       });
-      this.set('show-author-affiliation-tool', function (id, options) {
+      this.set('show-author-affiliation-tool', async function (id, options) {
         var q = app.getObject('AppStorage').getCurrentQuery();
         app.getObject('MasterPageManager').show('SearchPage', [
           'AuthorAffiliationTool'
