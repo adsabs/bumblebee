@@ -61,7 +61,7 @@ function (
       var searchPageAlwaysVisible = [
         'Results', 'QueryInfo', 'AffiliationFacet', 'AuthorFacet', 'DatabaseFacet', 'RefereedFacet',
         'KeywordFacet', 'BibstemFacet', 'BibgroupFacet', 'DataFacet', 'ObjectFacet',
-        'NedObjectFacet', 'VizierFacet', 'GrantsFacet', 'GraphTabs', 'QueryDebugInfo',
+        'NedObjectFacet', 'VizierFacet', 'GraphTabs', 'QueryDebugInfo',
         'ExportDropdown', 'VisualizationDropdown', 'SearchWidget',
         'Sort', 'BreadcrumbsWidget', 'PubtypeFacet', 'OrcidSelector'
       ];
@@ -93,33 +93,35 @@ function (
         )
       });
 
-      this.set('SearchWidget', function () {
+      this.set('SearchWidget', async function () {
         // you must set a route within the function, even if you are calling
         // another function that sets a route
         this.route = '';
-        self.get('index-page').execute();
+        return self.get('index-page').execute();
       });
 
-      this.set('404', function () {
-        app.getObject('MasterPageManager').show('ErrorPage');
+      this.set('404', async function () {
+        return app.getObject('MasterPageManager').show('ErrorPage');
       });
 
 
-      this.set('ClassicSearchForm', function () {
-        app.getObject('MasterPageManager').show('LandingPage', ['ClassicSearchForm']);
-        app.getWidget('LandingPage').done(function (widget) { widget.setActive('ClassicSearchForm'); });
-        this.route = '#classic-form';
+      this.set('ClassicSearchForm', async function () {
+        app.getObject('MasterPageManager').show('LandingPage', ['ClassicSearchForm']).then(function() {
+          app.getWidget('LandingPage').done(function (widget) { widget.setActive('ClassicSearchForm'); });
+          self.route = '#classic-form';
+        })
       });
 
-      this.set('PaperSearchForm', function () {
-        app.getObject('MasterPageManager').show('LandingPage', ['PaperSearchForm']);
-        app.getWidget('LandingPage').done(function (widget) { widget.setActive('PaperSearchForm'); });
-        this.route = '#paper-form';
+      this.set('PaperSearchForm', async function () {
+        app.getObject('MasterPageManager').show('LandingPage', ['PaperSearchForm']).then(function() {
+          app.getWidget('LandingPage').done(function (widget) { widget.setActive('PaperSearchForm'); });
+          self.route = '#paper-form';
+        })
       });
 
-      this.set('LibraryImport', function (page, data) {
+      this.set('LibraryImport', async function (page, data) {
         if (redirectIfNotSignedIn()) return;
-        app.getObject('MasterPageManager').show('SettingsPage',
+        await app.getObject('MasterPageManager').show('SettingsPage',
           ['LibraryImport', 'UserNavbarWidget']);
 
         app.getWidget('SettingsPage')
@@ -127,13 +129,13 @@ function (
             widget.setActive('LibraryImport');
           });
 
-        this.route = '#user/settings/libraryimport';
+        self.route = '#user/settings/libraryimport';
         publishPageChange('settings-page');
       });
 
 
       function settingsPreferencesView(widgetName, defaultView) {
-        return function (page, data) {
+        return async function (page, data) {
           if (redirectIfNotSignedIn()) return;
 
           var subView = data.subView || defaultView;
@@ -142,14 +144,14 @@ function (
                 + 'to the navigator function!');
           }
 
-          app.getObject('MasterPageManager').show('SettingsPage',
+          await app.getObject('MasterPageManager').show('SettingsPage',
             [widgetName, 'UserNavbarWidget']);
 
           app.getWidget('SettingsPage').done(function (widget) {
             widget.setActive(widgetName, subView);
           });
 
-          this.route = '#user/settings/' + subView;
+          self.route = '#user/settings/' + subView;
           publishPageChange('settings-page');
         };
       }
@@ -160,38 +162,38 @@ function (
       // request for the widget
       this.set('UserPreferences', settingsPreferencesView('UserPreferences', 'librarylink'));
 
-      this.set('AllLibrariesWidget', function (widget, subView) {
+      this.set('AllLibrariesWidget', async function (widget, subView) {
         if (redirectIfNotSignedIn()) return;
 
         var subView = subView || 'libraries';
-        app.getObject('MasterPageManager').show('LibrariesPage',
+        await app.getObject('MasterPageManager').show('LibrariesPage',
           ['AllLibrariesWidget', 'UserNavbarWidget']);
         app.getWidget('AllLibrariesWidget').done(function (widget) {
           widget.setSubView({ view: subView });
+          self.route = '#user/libraries/';
+          publishPageChange('libraries-page');
         });
 
-        this.route = '#user/libraries/';
-        publishPageChange('libraries-page');
       });
 
-      this.set('LibraryAdminView', function (widget) {
+      this.set('LibraryAdminView', async function (widget) {
         // this is NOT navigable from outside, so library already has data
         // only setting a nav event to hide previous widgets
-        app.getWidget('IndividualLibraryWidget').done(function (widget) {
+        app.getWidget('IndividualLibraryWidget').done(async function (widget) {
           widget.setSubView({ subView: 'admin' });
-          app.getObject('MasterPageManager').show('LibrariesPage',
+          await app.getObject('MasterPageManager').show('LibrariesPage',
             ['IndividualLibraryWidget', 'UserNavbarWidget']);
           publishPageChange('libraries-page');
         });
       });
 
-      this.set('IndividualLibraryWidget', function (widget, data) {
+      this.set('IndividualLibraryWidget', async function (widget, data) {
         // where view is an object in the form
         // {subView: subView, id: id, publicView : false}
 
         data.publicView = data.publicView ? data.publicView : false;
 
-        this.route = data.publicView ? '#/public-libraries/' + data.id : '#user/libraries/' + data.id;
+        self.route = data.publicView ? '#/public-libraries/' + data.id : '#user/libraries/' + data.id;
 
         app.getObject('LibraryController').getLibraryMetadata(data.id).done(function (metadata) {
           data.editRecords = _.contains(['write', 'admin', 'owner'], metadata.permission)
@@ -201,18 +203,18 @@ function (
             widget.setData(data);
 
             if (data.publicView) {
-              app.getWidget('IndividualLibraryWidget').done(function (widget) {
+              app.getWidget('IndividualLibraryWidget').done(async function (widget) {
                 widget.setSubView(data);
                 // then, show library page manager
-                app.getObject('MasterPageManager').show('PublicLibrariesPage',
+                await app.getObject('MasterPageManager').show('PublicLibrariesPage',
                   ['IndividualLibraryWidget', 'LibraryListWidget']);
               });
             }
             // make sure user is signed in
             else if (!redirectIfNotSignedIn()) {
-              app.getWidget('IndividualLibraryWidget').done(function (widget) {
+              app.getWidget('IndividualLibraryWidget').done(async function (widget) {
                 widget.setSubView(data);
-                app.getObject('MasterPageManager').show('LibrariesPage',
+                await app.getObject('MasterPageManager').show('LibrariesPage',
                   ['IndividualLibraryWidget', 'LibraryListWidget', 'UserNavbarWidget']);
                 publishPageChange('libraries-page');
               });
@@ -222,7 +224,7 @@ function (
       });
 
       // for external widgets shown by library
-      function navToLibrarySubView(widget, data) {
+      async function navToLibrarySubView(widget, data) {
         var that = this;
 
         // actual name of widget to be shown in main area
@@ -241,7 +243,7 @@ function (
         }
 
         // clear current data
-        app.getWidget(widgetName).done(function (widget) {
+        await app.getWidget(widgetName).done(function (widget) {
           if (widget.reset) widget.reset();
           else if (widget.resetWidget) widget.resetWidget();
         });
@@ -250,13 +252,13 @@ function (
         // paginates through the library bibcodes
         if (!(widgetName === 'ExportWidget' && format === 'classic')) { // export to classic opens a new tab, nothing to update here
           if (publicView) {
-            app.getObject('MasterPageManager').show('PublicLibrariesPage',
+            await app.getObject('MasterPageManager').show('PublicLibrariesPage',
               ['IndividualLibraryWidget', widgetName]);
-            this.route = '#/public-libraries/' + data.id;
+            self.route = '#/public-libraries/' + data.id;
           } else {
-            app.getObject('MasterPageManager').show('LibrariesPage',
+            await app.getObject('MasterPageManager').show('LibrariesPage',
               ['IndividualLibraryWidget', 'UserNavbarWidget', widgetName]);
-            this.route = '#user/libraries/' + data.id;
+            self.route = '#user/libraries/' + data.id;
             publishPageChange('libraries-page');
           }
         }
@@ -289,23 +291,23 @@ function (
       this.set('library-metrics', navToLibrarySubView);
       this.set('library-citation_helper', navToLibrarySubView);
 
-      this.set('home-page', function () {
-        app.getObject('MasterPageManager').show('HomePage',
+      this.set('home-page', async function () {
+        await app.getObject('MasterPageManager').show('HomePage',
           []);
         publishPageChange('home-page');
       });
 
-      this.set('authentication-page', function (page, data) {
+      this.set('authentication-page', async function (page, data) {
         var data = data || {},
           subView = data.subView || 'login',
           loggedIn = app.getBeeHive().getObject('User').isLoggedIn();
 
         if (loggedIn) {
           // redirect to index
-          self.get('index-page').execute();
+          await self.get('index-page').execute();
         } else {
           this.route = '#user/account/' + subView;
-          app.getObject('MasterPageManager').show('AuthenticationPage',
+          await app.getObject('MasterPageManager').show('AuthenticationPage',
             ['Authentication']);
           app.getWidget('Authentication').done(function (w) {
             w.setSubView(subView);
@@ -789,32 +791,45 @@ function (
       });
 
       this.set('ShowAbstract', async function (id, data) {
-        await showDetail([id].concat(detailsPageAlwaysVisible), id)
-        self.getPubSub().publish(self.getPubSub().DISPLAY_DOCUMENTS, new ApiQuery({ q: 'bibcode:' + data.bibcode }))
+        await showDetail([id].concat(detailsPageAlwaysVisible), id);
+        if (data.bibcode) // new search
+          self.getPubSub().publish(self.getPubSub().DISPLAY_DOCUMENTS, new ApiQuery({ q: 'bibcode:' + data.bibcode }))
         this.route = data.href;
       });
       this.set('ShowCitations', async function (id, data) {
         await showDetail([id].concat(detailsPageAlwaysVisible), id);
+        if (data.bibcode) // new search
+          self.getPubSub().publish(self.getPubSub().DISPLAY_DOCUMENTS, new ApiQuery({ q: 'bibcode:' + data.bibcode }))
         this.route = data.href;
       });
       this.set('ShowReferences', async function (id, data) {
         await showDetail([id].concat(detailsPageAlwaysVisible), id);
+        if (data.bibcode) // new search
+          self.getPubSub().publish(self.getPubSub().DISPLAY_DOCUMENTS, new ApiQuery({ q: 'bibcode:' + data.bibcode }))
         this.route = data.href;
       });
       this.set('ShowCoreads', async function (id, data) {
         await showDetail([id].concat(detailsPageAlwaysVisible), id);
+        if (data.bibcode) // new search
+          self.getPubSub().publish(self.getPubSub().DISPLAY_DOCUMENTS, new ApiQuery({ q: 'bibcode:' + data.bibcode }))
         this.route = data.href;
       });
       this.set('ShowTableofcontents', async function (id, data) {
         await showDetail([id].concat(detailsPageAlwaysVisible), id);
+        if (data.bibcode) // new search
+          self.getPubSub().publish(self.getPubSub().DISPLAY_DOCUMENTS, new ApiQuery({ q: 'bibcode:' + data.bibcode }))
         this.route = data.href;
       });
       this.set('ShowSimilar', async function (id, data) {
         await showDetail([id].concat(detailsPageAlwaysVisible), id);
+        if (data.bibcode) // new search
+          self.getPubSub().publish(self.getPubSub().DISPLAY_DOCUMENTS, new ApiQuery({ q: 'bibcode:' + data.bibcode }))
         this.route = data.href;
       });
       this.set('ShowMetrics', async function (id, data) {
         await showDetail([id].concat(detailsPageAlwaysVisible), id);
+        if (data.bibcode) // new search
+          self.getPubSub().publish(self.getPubSub().DISPLAY_DOCUMENTS, new ApiQuery({ q: 'bibcode:' + data.bibcode }))
         this.route = data.href;
       });
       this.set('ShowPaperExport', async function (id, data) {
@@ -827,7 +842,9 @@ function (
           })
       });
       this.set('ShowGraphics', async function (id, data) {
-        showDetail([id].concat(detailsPageAlwaysVisible), id);
+        await showDetail([id].concat(detailsPageAlwaysVisible), id);
+        if (data.bibcode) // new search
+          self.getPubSub().publish(self.getPubSub().DISPLAY_DOCUMENTS, new ApiQuery({ q: 'bibcode:' + data.bibcode }))
         this.route = data.href;
       });
       this.set('show-author-affiliation-tool', async function (id, options) {
