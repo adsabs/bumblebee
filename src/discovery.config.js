@@ -7,7 +7,7 @@ require.config({
     if (typeof window !== "undefined" && window.skipMain) {
       return [];
     } else {
-      return ['js/apps/discovery/main'];
+      return ['babel-polyfill', 'js/apps/discovery/main'];
     }
 
   }()),
@@ -194,6 +194,7 @@ require.config({
       '//cdnjs.cloudflare.com/ajax/libs/backbone.wreqr/1.0.0/backbone.wreqr.min',
       'libs/backbone.wreqr/lib/backbone.wreqr'
     ],
+    'babel-polyfill': '../node_modules/@babel/polyfill/dist/polyfill.min',
     'bootstrap': [
       '//ajax.aspnetcdn.com/ajax/bootstrap/3.3.5/bootstrap.min',
       'libs/bootstrap/bootstrap'
