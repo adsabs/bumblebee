@@ -935,7 +935,7 @@ function (
 
       this.view.setFormVal(newQuery.get('q')[0]);
       this.setCurrentQuery(newQuery);
-      this.getPubSub().publish(this.getPubSub().START_SEARCH, newQuery);
+      this.getPubSub().publish(this.getPubSub().NAVIGATE, 'search-page', {q: newQuery});
     },
 
     openQueryAssistant: function (queryString) {

@@ -37,7 +37,7 @@ function (_, Marionette, BasicPageManagerController, TOCWidget, analytics) {
 
       var self = this;
       BasicPageManagerController.prototype.assemble.apply(this, arguments).done(function() {
-        var tocTemplate = Marionette.getOption(this, 'TOCTemplate');
+        var tocTemplate = Marionette.getOption(self, 'TOCTemplate');
 
         if (self.TOCEvents) {
           // initiate the TOC view

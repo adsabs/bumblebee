@@ -138,10 +138,40 @@ define([
       var pageManagerModel = this.collection.find({ id: pageManagerName });
       var self = this;
 
+      var activatePage = function(pageManagerWidget) {
+        // it's a new page
+        if (!pageManagerModel.get('isSelected')) {
+          pageManagerModel.set({ options: options, object: pageManagerWidget });
+          self.collection.selectOne(pageManagerName);
+          self.view.changeManager();
+        } else {
+          // it's within a page
+          pageManagerModel.set({ options: options, object: pageManagerWidget });
+          // it's already selected, trigger a change within the manager
+          self.view.changeWithinManager();
+        }
+  
+        var previousPMName = self.currentChild;
+        self.currentChild = pageManagerName;
+  
+        // disassemble the old one (behind the scenes)
+        if (previousPMName && previousPMName != pageManagerName) {
+          var oldPM = self.collection.find({ id: previousPMName });
+  
+          if (oldPM && oldPM.get('object')) {
+            oldPM.set('numDetach', oldPM.get('numDetach') + 1);
+            //oldPM.get('object').disAssemble(app);
+          }
+        }
+  
+        self.getPubSub().publish(self.getPubSub().ARIA_ANNOUNCEMENT, pageManagerName);
+        defer.resolve();
+      }
+
       // if the model does not already reference the actual manager widget, add it now
       var promise;
       if (pageManagerModel.get('object')) {
-        defer.resolve(pageManagerModel.get('object'));
+        activatePage(pageManagerModel.get('object'));
         return defer.promise();
       }
       
@@ -153,33 +183,7 @@ define([
         if (pageManagerWidget.assemble) {
           // assemble the new page manager (while the old one is still in place)
           pageManagerWidget.assemble(app).done(function() {
-            // it's a new page
-            if (!pageManagerModel.get('isSelected')) {
-              pageManagerModel.set({ options: options, object: pageManagerWidget });
-              self.collection.selectOne(pageManagerName);
-              self.view.changeManager();
-            } else {
-              // it's within a page
-              pageManagerModel.set({ options: options, object: pageManagerWidget });
-              // it's already selected, trigger a change within the manager
-              self.view.changeWithinManager();
-            }
-      
-            var previousPMName = self.currentChild;
-            self.currentChild = pageManagerName;
-      
-            // disassemble the old one (behind the scenes)
-            if (previousPMName && previousPMName != pageManagerName) {
-              var oldPM = self.collection.find({ id: previousPMName });
-      
-              if (oldPM && oldPM.get('object')) {
-                oldPM.set('numDetach', oldPM.get('numDetach') + 1);
-                oldPM.get('object').disAssemble(app);
-              }
-            }
-      
-            self.getPubSub().publish(self.getPubSub().ARIA_ANNOUNCEMENT, pageManagerName);
-            defer.resolve();
+            activatePage(pageManagerWidget);
           })
         } else {
             console.error('eeeek, ' + pageManagerName + ' has no assemble() method!');

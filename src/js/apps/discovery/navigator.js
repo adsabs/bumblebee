@@ -471,13 +471,16 @@ function (
         var possibleSearchSubPages = ['Metrics', 'AuthorNetwork', 'PaperNetwork',
         'ConceptCloud', 'BubbleChart'];
 
+        var widgetName, pages;
+
         // convention is that a navigate command for search page widget starts with "show-"
         // waits for the navigate to results page emitted by the discovery_mediator
         // once the solr search has been received
-        var widgetName = _.map(data.page.split('-').slice(1), function (w) { return w[0].toUpperCase() + w.slice(1); }).join('');
-        var pages;
+        if (data.page)
+          widgetName = _.map(data.page.split('-').slice(1), function (w) { return w[0].toUpperCase() + w.slice(1); }).join('');
+        
 
-        if (possibleSearchSubPages.indexOf(widgetName) > -1) {
+        if (widgetName && possibleSearchSubPages.indexOf(widgetName) > -1) {
           pages = [widgetName].concat(searchPageAlwaysVisible.slice(1));
         }
         else {
@@ -521,93 +524,83 @@ function (
         var failMessage,
         failTitle,
         route,
-        done,
-        request,
-        type,
-        that = this;
+        done;
       
         function fail(jqXHR, status, errorThrown) {
-          // redirect to index page
-          this.getPubSub().publish(this.getPubSub().NAVIGATE, 'index-page');
-          var error = (jqXHR.responseJSON && jqXHR.responseJSON.error) ? jqXHR.responseJSON.error : 'error unknown';
-          // call alerts widget
-          this.getPubSub().publish(this.getPubSub().ALERT, new ApiFeedback({
-            code: 0, title: failTitle, msg: ' <b>' + error + '</b> <br/>' + failMessage, modal: true, type: 'danger'
-          }));
-        }
-        
-
-      if (data.subView == 'register') {
-        failTitle = 'Registration failed.';
-        failMessage = '<p>Please try again, or contact <b> adshelp@cfa.harvard.edu for support </b></p>';
-        route = ApiTargets.VERIFY + '/' + token;
-
-        done = function (reply) {
-          // user has been logged in already by server
-          // request bootstrap
-          self.getApiAccess({ reconnect: true }).done(function () {
-            
-            await self.get('index-page').execute();
-            var title = 'Welcome to ADS';
-            var msg = '<p>You have been successfully registered with the username</p> <p><b>' + reply.email + '</b></p>';
-            that.getPubSub().publish(that.getPubSub().ALERT, new ApiFeedback({
-              code: 0, title: title, msg: msg, modal: true, type: 'success'
-            }));
-          }).fail(function(jqXHR, status, errorThrown) {
-            await self.get('index-page').execute();
+          self.get('index-page').execute().then(function() {
             var error = (jqXHR.responseJSON && jqXHR.responseJSON.error) ? jqXHR.responseJSON.error : 'error unknown';
+            // call alerts widget
             this.getPubSub().publish(this.getPubSub().ALERT, new ApiFeedback({
               code: 0, title: failTitle, msg: ' <b>' + error + '</b> <br/>' + failMessage, modal: true, type: 'danger'
             }));
-          });
-        };
-      } else if (subView == 'change-email') {
-        failTitle = 'Attempt to change email failed';
-        failMessage = 'Please try again, or contact adshelp@cfa.harvard.edu for support';
-        route = ApiTargets.VERIFY + '/' + token;
-
-        done = function (reply) {
-          // user has been logged in already
-          // request bootstrap
-          this.getApiAccess({ reconnect: true }).done(function () {
-            // redirect to index page
-            that.getPubSub().publish(that.getPubSub().NAVIGATE, 'index-page');
-            // call alerts widget
-            var title = 'Email has been changed.';
-            var msg = 'Your new ADS email is <b>' + reply.email + '</b>';
-            that.getPubSub().publish(that.getPubSub().ALERT, new ApiFeedback({
-              code: 0, title: title, msg: msg, modal: true, type: 'success'
-            }));
-          }).fail(function () {
-            // fail function defined below
-            this.apply(fail, arguments);
-          });
-        };
-      } else if (subView == 'reset-password') {
-        done = function () {
-          // route to reset-password-2 form
-          // set the token so that session can use it in the put request with the new password
-          this.getBeeHive().getObject('Session').setChangeToken(token);
-          this.getPubSub().publish(this.getPubSub().NAVIGATE, 'authentication-page', { subView: 'reset-password-2' });
-        };
-
-        failMessage = 'Reset password token was invalid.';
-        route = ApiTargets.RESET_PASSWORD + '/' + token;
-        type = 'GET';
-      }
-      
-
-      request = new ApiRequest({
-        target: route,
-        options: {
-          type: type || 'GET',
-          context: this,
-          done: done,
-          fail: fail
+          })
         }
-      });
+        
 
-      this.getBeeHive().getService('Api').request(request);
+        if (data.subView === 'register') {
+          failTitle = 'Registration failed.';
+          failMessage = '<p>Please try again, or contact <b> adshelp@cfa.harvard.edu for support </b></p>';
+          route = ApiTargets.VERIFY + '/' + token;
+
+          done = function (reply) {
+            // user has been logged in already by server
+            // request bootstrap
+            self.getApiAccess({ reconnect: true }).done(function () {
+              self.get('index-page').execute().then(function() {
+                var msg = '<p>You have been successfully registered with the username</p> <p><b>' + reply.email + '</b></p>';
+                self.getPubSub().publish(self.getPubSub().ALERT, new ApiFeedback({
+                  code: 0, title: 'Welcome to ADS', msg: msg, modal: true, type: 'success'
+                }));
+              })
+            }).fail(function() {
+              this.apply(fail, arguments);
+            });
+          };
+        } else if (subView === 'change-email') {
+          failTitle = 'Attempt to change email failed';
+          failMessage = 'Please try again, or contact adshelp@cfa.harvard.edu for support';
+          route = ApiTargets.VERIFY + '/' + token;
+
+          done = function (reply) {
+            // user has been logged in already
+            // request bootstrap
+            this.getApiAccess({ reconnect: true }).done(function () {
+                self.get('index-page').execute().then(function() {
+                var msg = 'Your new ADS email is <b>' + reply.email + '</b>';
+                self.getPubSub().publish(self.getPubSub().ALERT, new ApiFeedback({
+                  code: 0, title: 'Email has been changed.', msg: msg, modal: true, type: 'success'
+                }));
+              })
+            }).fail(function () {
+              this.apply(fail, arguments);
+            });
+          };
+        } else if (subView === 'reset-password') {
+          done = function () {
+            // route to reset-password-2 form
+            // set the token so that session can use it in the put request with the new password
+            self.getBeeHive().getObject('Session').setChangeToken(token);
+            self.getPubSub().publish(self.getPubSub().NAVIGATE, 'authentication-page', { subView: 'reset-password-2' });
+          };
+
+          failMessage = 'Reset password token was invalid.';
+          route = ApiTargets.RESET_PASSWORD + '/' + token;
+          type = 'GET';
+        }
+        
+
+        var request = new ApiRequest({
+          target: route,
+          options: {
+            type: type || 'GET',
+            context: self,
+            done: done,
+            fail: fail
+          }
+        });
+
+        self.getBeeHive().getService('Api').request(request);
+        
       });
 
       this.set('orcid-instructions', function () {
