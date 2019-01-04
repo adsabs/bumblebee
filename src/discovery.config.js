@@ -244,7 +244,7 @@ require.config({
       '//ajax.aspnetcdn.com/ajax/jQuery/jquery-2.0.3.min',
       'libs/jquery/jquery'
     ],
-    'jquery-querybuilder': 'libs/jQuery-QueryBuilder/query-builder',
+    'jquery-querybuilder': 'libs/jQuery-QueryBuilder/query-builder.min',
     'jquery-ui': [
       '//ajax.aspnetcdn.com/ajax/jquery.ui/1.10.4/jquery-ui.min',
       'libs/jqueryui/jquery-ui'
@@ -358,10 +358,6 @@ require.config({
       exports: 'Cache'
     },
 
-    'jquery-querybuilder': {
-      deps: ['jquery']
-    },
-
     'filesaver': {
       exports: 'saveAs'
     },
@@ -379,6 +375,10 @@ require.config({
     },
 
     'jquery-ui': {
+      deps: ['jquery']
+    },
+
+    'jquery-querybuilder': {
       deps: ['jquery']
     },
 
