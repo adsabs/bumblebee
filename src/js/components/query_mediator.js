@@ -56,7 +56,7 @@ function (
       this.__searchCycle = {
         waiting: {}, inprogress: {}, done: {}, failed: {}
       };
-      this.shortDelayInMs = _.isNumber(options.shortDelayInMs) ? options.shortDelayInMs : 10;
+      this.shortDelayInMs = _.isNumber(options.shortDelayInMs) ? options.shortDelayInMs : 300;
       this.longDelayInMs = _.isNumber(options.longDelayInMs) ? options.longDelayInMs : 100;
       this.monitoringDelayInMs = _.isNumber(options.monitoringDelayInMs) ? options.monitoringDelayInMs : 200;
       this.mostRecentQuery = new ApiQuery();
@@ -286,21 +286,13 @@ function (
       // give widgets some time to submit their requests
       var self = this;
 
-      if (this.shortDelayInMs) {
-        setTimeout(function () {
-          self.__searchCycle.collectingRequests = false;
-          if (self.startExecutingQueries()) {
-            self.monitorExecution();
-          }
-        }, this.shortDelayInMs);
-      } else {
-        this.__searchCycle.collectingRequests = false;
-        if (self.startExecutingQueries()) {
-          setTimeout(function () {
-            self.monitorExecution();
-          }, this.shortDelayInMs);
-        }
-      }
+      var startExecuting = function () {
+        self.__searchCycle.collectingRequests = false;
+        self.startExecutingQueries() && self.monitorExecution();
+      };
+
+      this.shortDelayInMs ?
+        setTimeout(startExecuting, this.shortDelayInMs) : startExecuting();
     },
 
 
