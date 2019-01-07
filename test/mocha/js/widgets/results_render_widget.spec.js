@@ -164,7 +164,7 @@ define([
         }, 50);
       });
 
-      it("provides the openurl linkserver info to each model's data for the link_generator_mixin", function(done){
+      it("provides the openurl linkserver info to each model's data for the link_generator_mixin", function(){
 
         //each model will interact with the link generator mixin, which expectes the link_server param
 
@@ -172,11 +172,8 @@ define([
 
         minsub.publish(minsub.START_SEARCH, new ApiQuery({q: "star"}));
 
-        // wait enough time for sub-queries to fire
-        setTimeout(function () {
-          expect(widget.collection.pluck("link_server")).to.eql(["foo", "foo", "foo", "foo", "foo", "foo", "foo", "foo", "foo", "foo"]);
-          done();
-        }, 550);
+        expect(widget.collection.pluck("link_server")).to.eql(["foo", "foo", "foo", "foo", "foo", "foo", "foo", "foo", "foo", "foo"]);
+
       });
 
       //TODO: re-enable this test, skipping for now
@@ -279,7 +276,7 @@ define([
       });
 
 
-      it("should mark papers as selected", function(done) {
+      it("should mark papers as selected", function() {
         var s = new AppStorage();
         s.activate(minsub.beehive);
         minsub.beehive.addObject('AppStorage', s);
@@ -289,17 +286,17 @@ define([
 
         s.addSelectedPapers('2013arXiv1305.3460H');
         minsub.publish(minsub.START_SEARCH, new ApiQuery({'q': 'foo:bar'}));
-        // wait enough time for sub-queries to fire
-        setTimeout(function () {
-          var $w = widget.render().$el;
-          $("#test").append($w);
 
-          // select a paper and observe it gets into the storage
-          expect(s.isPaperSelected('1993sfgi.conf..324C')).to.eql(false);
-          $w.find('input[value="1993sfgi.conf..324C"]').click();
-          expect(s.isPaperSelected('1993sfgi.conf..324C')).to.eql(true);
-          done();
-        }, 550);
+        var $w = widget.render().$el;
+        $("#test").append($w);
+
+        // select a paper and observe it gets into the storage
+        expect(s.isPaperSelected('1993sfgi.conf..324C')).to.eql(false);
+        $w.find('input[value="1993sfgi.conf..324C"]').click();
+        expect(s.isPaperSelected('1993sfgi.conf..324C')).to.eql(true);
+
+
+
       });
     })
   });

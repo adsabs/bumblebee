@@ -379,6 +379,7 @@ function (
               delete cycle.waiting[k];
               cycle.inprogress[k] = data;
               var psk = k;
+
               self._executeRequest.call(self, data.request, data.key)
                 .done(function () {
                   cycle.done[psk] = cycle.inprogress[psk];
@@ -522,17 +523,8 @@ function (
         apiRequest.set('target', ApiTargets.MYADS_STORAGE + '/execute_query/' + qid);
       }
 
-      try {
-        var ps = this.getPubSub();
-        var api = this.getBeeHive().getService('Api');
-      } catch (e) {
-        return $.Deferred().reject().promise();
-      }
-
-      // reject the request if we don't have an api to call
-      if (!ps || !api) {
-        return $.Deferred().reject().promise();
-      }
+      var ps = this.getPubSub();
+      var api = this.getBeeHive().getService('Api');
 
       var requestKey = this._getCacheKey(apiRequest);
       var maxTry = this.failedRequestsCache.getSync(requestKey) || 0;
@@ -542,7 +534,8 @@ function (
           request: apiRequest, key: senderKey, requestKey: requestKey, qm: this
         },
         [{ status: ApiFeedback.CODES.TOO_MANY_FAILURES }, 'Error', 'This request has reached maximum number of failures (wait before retrying)']);
-        return $.Deferred().reject().promise();
+        var d = $.Deferred();
+        return d.reject();
       }
 
 
