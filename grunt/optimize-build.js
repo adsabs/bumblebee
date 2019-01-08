@@ -73,19 +73,9 @@ module.exports = function (grunt) {
 
     var writeOutConfig = function (config) {
       var output = `
-// GENERATED FILE (edits will be overwritten)
-  module.exports = function (grunt) {
-    var path = require('path');
-    var finalizeOutputFile = function (text) {
-      console.log('finalizing');
-      var output = text.replace(/es6!/gi, '');
-      grunt.file.write(path.resolve(__dirname, '../dist', 'app.bundle.js'), output);
-    };
-    var config = ${ JSON.stringify(config, null, 2) };
-    config.app.options.out = finalizeOutputFile;
-    return config;
-  };
-`;
+        // GENERATED FILE (edits will be overwritten)
+        module.exports = ${ JSON.stringify(config, null, 2) };
+      `;
       fullConfig = config;
       grunt.file.write(path.resolve(__dirname, 'requirejs.js'), output);
       grunt.log.writeln('Configuration Generated...');
@@ -96,12 +86,12 @@ module.exports = function (grunt) {
       var addConfig = function (name, cfg) {
         config[name] = {};
         config[name].options = _.extend({}, baseConfig, {
-          name: name + '.bundle'
+          name: name + '.bundle',
+          out: 'dist/' + name + '.bundle.js'
         }, cfg);
       }
 
       addConfig('app', {
-        stubModules: [],
         include: [
           "js/apps/discovery/main",
           "router",
