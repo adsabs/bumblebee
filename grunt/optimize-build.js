@@ -72,16 +72,6 @@ module.exports = function (grunt) {
     };
 
     var writeOutConfig = function (config) {
-      // var output = '// GENERATED FILE (edits will be overwritten)\n\n'
-      //    + 'module.exports = function (grunt) { '
-      //    + '\n\n  function finalizeOutputFile(text) { \n'
-      //    + '    var output = text.replace(/es6!/gi, \'\'); \n'
-      //    + '    grunt.file.write(path.resolve(__dirname, \'../dist/\' + name + \'.bundle.js\'), output); \n'
-      //    + '  }'
-      //    + '\n  var config = ' + JSON.stringify(config, null, 2) + '\n'
-      //    + '  config[out] = finalizeOutputFile;'
-      //    + 'return config;'
-      //    + '};';
       var output = `
 // GENERATED FILE (edits will be overwritten)
   module.exports = function (grunt) {
@@ -119,7 +109,6 @@ module.exports = function (grunt) {
           "js/mixins/discovery_bootstrap",
           "js/mixins/api_access",
           "es5-shim",
-          "babel-polyfill",
           "discovery.vars",
           "hbs/handlebars",
           "google-analytics",

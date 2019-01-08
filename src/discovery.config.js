@@ -429,8 +429,6 @@ require.config({
 
   callback: function() {
 
-    require(['babel-polyfill']);
-
     window.GoogleAnalyticsObject = '__ga__';
 
     require(['discovery.vars', 'google-analytics', 'analytics'], function(config) {
