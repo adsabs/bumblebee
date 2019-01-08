@@ -1,13 +1,12 @@
 {
 	"plugins": [
-		"@babel/plugin-transform-react-jsx-compat",
-		"@babel/plugin-proposal-object-rest-spread",
-    "@babel/plugin-transform-object-assign",
-    "@babel/plugin-transform-async-to-generator"
+		"transform-react-jsx",
+		["transform-object-rest-spread", { "useBuiltIns": true }],
+		"transform-object-assign"
 	],
 	"presets": [
 		[
-			"@babel/preset-env",
+			"env",
 			{
 				"targets": {
 					"browsers": [
@@ -21,10 +20,10 @@
 				},
 				"debug": false,
 				"loose": true,
-        "modules": false,
-        "useBuiltIns": false
+				"modules": false,
+				"useBuiltIns": true
 			}
 		],
-		"@babel/preset-react"
+		"react"
 	]
 }

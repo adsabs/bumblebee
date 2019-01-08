@@ -29,7 +29,6 @@ module.exports =
         "google-recaptcha": "empty:",
         "jquery": "empty:",
         "jquery-ui": "empty:",
-        "jquery-querybuilder": "empty:",
         "jsonpath": "empty:",
         "marionette": "empty:",
         "mathjax": "empty:",
