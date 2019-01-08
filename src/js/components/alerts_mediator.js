@@ -113,21 +113,25 @@ function (
       return defer.promise();
     },
 
-    alert: async function (apiFeedback) {
+    alert: function (apiFeedback) {
       
-      var w = await this.getWidget();
+      var defer = $.Deferred();
+      this.getWidget().done(function(w) {
+        if (!w) {
+          console.warn('"AlertsWidget" has disappeared, we cant display messages to the user');
+          defer.reject('AlertsWidget has disappeared');
+        }
+        else {
+          // since alerts widget returns a promise that gets
+          // resolved once the widget rendered; we have to 
+          // wait little bit more
+          w.alert(apiFeedback).done(function() {
+            defer.resolve.apply(defer, arguments);
+          })
+        }
+      })
 
-      if (!w) {
-        var defer = $.Deferred();
-        console.warn('"AlertsWidget" has disappeared, we cant display messages to the user');
-        defer.reject('AlertsWidget has disappeared');
-        return defer.promise();
-      }
-      else {
-        // return promise
-        return w.alert(apiFeedback);
-      }
-      
+      return defer.promise();
     },
 
     hardenedInterface: {
