@@ -149,7 +149,7 @@ define([
           promise = self._loadModules('plugins', plugins);
           if (promise) promises.push(promise);
         }
-  
+
         if (widgets) {
           promise = self._loadModules('widgets', widgets);
           if (promise) promises.push(promise);
@@ -170,7 +170,7 @@ define([
         }
       }
 
-      
+
 
       if (promises.length == 1) {
         promises.push(promise); // hack, so that $.when() always returns []
@@ -348,13 +348,8 @@ define([
         return self._setTimeout(defer).promise();
       }
 
-      if (lazyLoad) {
-        return run;
-      }
-      else {
-        return run();
-      }
-      
+      run.lazyLoad = lazyLoad;
+      return lazyLoad ? run : run();
     },
 
 
@@ -471,7 +466,7 @@ define([
       var defer = $.Deferred();
       var self = this;
 
-      
+
       if (arguments.length > 1) {
         var w = {};
         var promises = [];
@@ -511,7 +506,7 @@ define([
         });
       }, 1);
 
-      
+
       return defer.promise();
     },
 
@@ -527,7 +522,7 @@ define([
         self.incrRefCount(cat, name);
         defer.resolve(w);
       });
-      
+
       return defer.promise();
     },
 
@@ -713,11 +708,11 @@ define([
         throw new Error(cat + ' cannot be lazy loaded, sorry');
       }
       var thing = placeholder.get(name);
-      
+
       if (thing == null) {
         defer.reject(name + ' does not exist');
       }
-      else if (thing && thing.name === 'run') { // load it
+      else if (thing && thing.lazyLoad) { // load it
         thing().done(function(cat, loadedModule) {
           self._registerLoadedModules(cat, loadedModule);
           defer.resolve();

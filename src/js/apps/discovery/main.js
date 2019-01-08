@@ -13,7 +13,7 @@
  *
  */
 
-define(['config', 'module'], function (config, module) {
+define(['discovery.config', 'module'], function (config, module) {
   require([
     'router',
     'js/components/application',
@@ -74,7 +74,7 @@ define(['config', 'module'], function (config, module) {
         app.start(Router).done(function() {
 
           pubsub.publish(pubsub.getCurrentPubSubKey(), pubsub.APP_STARTED);
-  
+
           var getUserData = function () {
             try {
               var beehive = _.isFunction(this.getBeeHive) && this.getBeeHive();
@@ -87,7 +87,7 @@ define(['config', 'module'], function (config, module) {
             }
             return {};
           }
-  
+
           // handle user preferences for external link actions
           var updateExternalLinkBehavior = _.debounce(function () {
             var userData = getUserData.call(app);
@@ -106,32 +106,32 @@ define(['config', 'module'], function (config, module) {
           }, 3000, { leading: true, trailing: false }, false);
           pubsub.subscribe(pubsub.getCurrentPubSubKey(), pubsub.NAVIGATE, updateExternalLinkBehavior);
           updateExternalLinkBehavior();
-  
+
           analytics('send', 'event', 'timer', 'app-booted', Date.now() - timeLoaded);
-  
+
           // some global event handlers, not sure if right place
           $('body').on('click', 'button.toggle-menu', function (e) {
             var $button = $(e.target),
               $sidebar = $button.parents().eq(1).find('.nav-container');
-  
+
             $sidebar.toggleClass('show');
             var text = $sidebar.hasClass('show') ? '  <i class="fa fa-close"></i> Close Menu' : ' <i class="fa fa-bars"></i> Show Menu';
             $button.html(text);
           });
-  
+
           // accessibility: skip to main content
           $('body').on('click', '#skip-to-main-content', function (e) {
             e.preventDefault();
           });
-  
+
           var dynConf = app.getObject('DynamicConfig');
           if (dynConf && dynConf.debugExportBBB) {
             console.log('Exposing Bumblebee as global object: window.bbb');
             window.bbb = app;
           }
-  
+
           // app is loaded, send timing event
-  
+
           if (__PAGE_LOAD_TIMESTAMP) {
             var time = new Date() - __PAGE_LOAD_TIMESTAMP;
             analytics('send', {
@@ -145,7 +145,7 @@ define(['config', 'module'], function (config, module) {
             }
           }
         })
-        
+
       }).fail(function () {
         analytics('send', 'event', 'introspection', 'failed-load', arguments);
 
