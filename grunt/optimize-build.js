@@ -45,7 +45,6 @@ module.exports = function (grunt) {
     optimize: 'none',
     mainConfigFile: 'dist/discovery.config.js',
     deps: [],
-    stubModules: ['babel', 'es6'],
     findNestedDependencies: false,
     create: true,
     paths: PATHS

@@ -8,7 +8,6 @@ module.exports = {
   release: {
     src: [
       'dist/',
-      'grunt/requirejs.js'
     ]
   },
   deploy: {
