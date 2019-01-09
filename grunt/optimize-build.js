@@ -47,7 +47,8 @@ module.exports = function (grunt) {
     deps: [],
     findNestedDependencies: false,
     create: true,
-    paths: PATHS
+    paths: PATHS,
+    stubModules: ['es6', 'babel']
   };
 
   grunt.registerMultiTask('optimize-build', 'Generate config and optimize build', function () {
@@ -70,18 +71,25 @@ module.exports = function (grunt) {
       return urls;
     };
 
-    var writeOutConfig = function (config) {
+    var writeOutConfig = function (config, done) {
       var output = `
         // GENERATED FILE (edits will be overwritten)
         module.exports = ${ JSON.stringify(config, null, 2) };
       `;
       fullConfig = config;
       grunt.file.write(path.resolve(__dirname, 'requirejs.js'), output);
-      grunt.log.writeln('Configuration Generated...');
+      (function check(i) {
+        if (i >= 30 || grunt.file.exists(path.resolve(__dirname, 'requirejs.js'))) {
+          grunt.log.writeln('Configuration Generated...');
+          return done();
+        }
+        setTimeout(check, 500, ++i);
+      })(0);
     };
 
     grunt.registerTask('generateConfig', function () {
       var config = {};
+      var done = this.async();
       var addConfig = function (name, cfg) {
         config[name] = {};
         config[name].options = _.extend({}, baseConfig, {
@@ -213,7 +221,7 @@ module.exports = function (grunt) {
         ]
       });
 
-      writeOutConfig(config);
+      writeOutConfig(config, done);
     });
 
     grunt.registerTask('applyIncludesToConfig', function () {
@@ -241,8 +249,7 @@ module.exports = function (grunt) {
       grunt.log.writeln('discovery.config.js updated with bundle information');
     });
 
-    grunt.task.run('generateConfig');
-    grunt.task.run(['clean:release', 'copy:release', 'requirejs']);
+    grunt.task.run(['clean:release', 'copy:release', 'generateConfig', 'requirejs']);
     grunt.task.run('applyIncludesToConfig');
     // grunt.task.run('hash_require'); // still have to completely figure out
     grunt.task.run(['babel', 'uglify']);
