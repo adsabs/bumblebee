@@ -48,6 +48,10 @@
         "sprintf": "empty:",
         "underscore": "empty:"
       },
+      "stubModules": [
+        "es6",
+        "babel"
+      ],
       "name": "app.bundle",
       "out": "dist/app.bundle.js",
       "include": [
