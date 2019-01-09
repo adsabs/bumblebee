@@ -54,9 +54,12 @@ function (
     /**
        * Responds to PubSubEvents.NAVIGATE signal
        */
-    navigate: async function (ev, arg1, arg2) {
+    navigate: function (ev, arg1, arg2) {
+      var defer = $.Deferred();
+
       if (!this.router || !(this.router instanceof Backbone.Router)) {
-        throw new Error('Navigator must be given \'router\' instance');
+        defer.reject(new Error('Navigator must be given \'router\' instance'));
+        return defer.promise();
       }
 
       analytics('send', 'pageview', {
@@ -66,39 +69,60 @@ function (
       var transition = this.catalog.get(ev);
       if (!transition) {
         this.handleMissingTransition(arguments);
-        return;
+        defer.reject(new Error('Missing route; going to 404'));
+        return defer.promise();
       }
 
-      if (!transition.execute) return; // do nothing
+      if (!transition.execute) { // do nothing
+        defer.resolve()
+        return defer.promise();
+      }
 
+      var self = this;
+      var afterNavigation = function() {
+        // router can communicate directly with navigator to replace url
+        var replace = !!((transition.replace || arg1 && arg1.replace));
+
+        // don't reset the url if it is already correct, this could potentially
+        // cause a safari browser bug
+
+        if (decodeURI(window.location.hash) !== transition.route
+              && transition.route || transition.route === ''
+        ) {
+          // update the History object
+          self.router.navigate(
+            transition.route,
+            { trigger: transition.trigger || false, replace: replace }
+          );
+        }
+
+        // clear any metadata added to head on the previous page
+        $('head').find('meta[data-highwire]').remove();
+        // XXX:rca - this can probably go....anyways, shouldn't be here, is not generic
+        // and set the default title
+        document.title = 'ADS Search';
+      }
+
+      var p;
       try {
-        await transition.execute.apply(transition, arguments);
+        p = transition.execute.apply(transition, arguments);
+        if (p && typeof p.then == 'function') {
+          p.then(function() {
+            afterNavigation();
+            defer.resolve();
+          })
+        }
+        else {
+          afterNavigation();
+          defer.resolve();
+        }
       } catch (e) {
         this.handleTransitionError(transition, e, arguments);
+        defer.reject(new Error('Error transitioning to route; going to 404'));
+        return defer.promise();
       }
 
-      // router can communicate directly with navigator to replace url
-      var replace = !!((transition.replace || arg1 && arg1.replace));
-
-      // don't reset the url if it is already correct, this could potentially
-      // cause a safari browser bug
-
-      if (decodeURI(window.location.hash) !== transition.route
-            && transition.route || transition.route === ''
-      ) {
-        // update the History object
-        this.router.navigate(
-          transition.route,
-          { trigger: transition.trigger || false, replace: replace }
-        );
-      }
-
-      // clear any metadata added to head on the previous page
-      $('head').find('meta[data-highwire]').remove();
-      // XXX:rca - this can probably go....anyways, shouldn't be here, is not generic
-      // and set the default title
-      document.title = 'ADS Search';
-      return true;
+      return defer.promise();
     },
 
     handleMissingTransition: function () {
