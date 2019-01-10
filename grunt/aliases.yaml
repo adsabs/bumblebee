@@ -101,7 +101,7 @@ release:
     - 'exec:git_describe'
     - 'optimize-build'
     - 'string-replace:final'
-    - 'imagemin'
+    # - 'imagemin'
     - 'cssmin'
     - 'htmlmin'
     # - 'string-replace:dist'
