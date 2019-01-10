@@ -243,7 +243,7 @@ require.config({
       '//ajax.aspnetcdn.com/ajax/jQuery/jquery-2.0.3.min',
       'libs/jquery/jquery'
     ],
-    'jquery-querybuilder': 'libs/jQuery-QueryBuilder/query-builder.min',
+    'jquery-querybuilder': 'libs/jQuery-QueryBuilder/query-builder',
     'jquery-ui': [
       '//ajax.aspnetcdn.com/ajax/jquery.ui/1.10.4/jquery-ui.min',
       'libs/jqueryui/jquery-ui'

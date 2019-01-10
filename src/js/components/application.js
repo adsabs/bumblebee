@@ -176,7 +176,9 @@ define([
         promises.push(promise); // hack, so that $.when() always returns []
       }
 
-      var bigPromise = $.when.apply($, promises)
+      
+      var bigPromise = $.Deferred();
+      $.when.apply($, promises)
         .then(function () {
           _.each(arguments, function (promisedValues, idx) {
             if (_.isArray(promisedValues)) {
@@ -187,16 +189,20 @@ define([
             }
           });
         })
+        .done(function() {
+          bigPromise.resolve();
+        })
         .fail(function () {
           console.error('Generic error - we were not successul in loading all modules for config', config);
           if (arguments.length) console.error(arguments);
+          bigPromise.reject.apply(bigPromise, arguments);
           // throw new Error("We are screwed!"); do not throw errors because then .fail() callbacks cannot be used
         });
       // .done(function() {
       //  console.log('DONE loading', this, config);
       // });
 
-      return bigPromise;
+      return bigPromise.promise();
     },
 
     getBeeHive: function () {

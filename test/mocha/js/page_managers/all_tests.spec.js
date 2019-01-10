@@ -89,37 +89,39 @@ define([
 
 
         it("assembles/disassembles the page view", function(done) {
-          // this fails when the time limit is 2000ms, because it roughly takes 2600ms
-          // limit is set in: bower_components/mocha/mocha.js
           var app = new Application({debug: false});
           delete config.core.objects.Navigator;
           config.widgets.PageManager = 'js/wraps/abstract_page_manager/abstract_page_manager';
 
           app.loadModules(config).done(function() {
 
-            var pageManager = app._getWidget("PageManager");
-            app.activate();
-            pageManager.assemble(app);
+            app._getWidget("PageManager").done(function(pageManager) {
+              
+              app.activate();
+              pageManager.assemble(app).done(function() {
 
-            //$('#test').append(pageManager.view.el);
-            expect(_.keys(pageManager.widgets).length).to.be.gt(1);
-
-            var $w = pageManager.view.$el;
-            expect($w.find('[data-widget="ShowAbstract"]').children().length).to.be.equal(1);
-            expect($w.find('[data-widget="SearchWidget"]').children().length).to.be.equal(1);
-
-            // normally called by master page-manager
-            expect(pageManager.assembled).to.eql(true);
-            expect(app.__widgets['widget:SearchWidget']).to.be.defined;
-
-            pageManager.disAssemble(app);
-            expect(app.returnWidget('PageManager')).to.eql(0);
-            expect(pageManager.assembled).to.eql(false);
-
-            expect(app.__widgets['widget:SearchWidget']).to.be.undefined;
-            done();
+                //$('#test').append(pageManager.view.el);
+                expect(_.keys(pageManager.widgets).length).to.be.gt(1);
+    
+                var $w = pageManager.view.$el;
+                expect($w.find('[data-widget="ShowAbstract"]').children().length).to.be.equal(1);
+                expect($w.find('[data-widget="SearchWidget"]').children().length).to.be.equal(1);
+    
+                // normally called by master page-manager
+                expect(pageManager.assembled).to.eql(true);
+                expect(app.__widgets['widget:SearchWidget']).to.be.defined;
+    
+                pageManager.disAssemble(app);
+                expect(app.returnWidget('PageManager')).to.eql(0);
+                expect(pageManager.assembled).to.eql(false);
+    
+                expect(app.__widgets['widget:SearchWidget']).to.be.undefined;
+                done();
+              })
+  
+            })
           });
-        });
+        }).timeout(1000);
 
         it("the three-col view reacts to user actions", function() {
 
@@ -160,26 +162,28 @@ define([
           app.loadModules(config).done(function() {
 
             // hack (normally this will not be the usage pattern)
-            var pm = app.__widgets.get('PageManager');
-            app.__widgets.remove('PageManager');
-            app.__widgets.add('PageManager', function() {
-              var x = new pm();
-              x.createView = function(options) {
-                var TV = OneColumnView.extend({template: OneColumnTemplate});
-                return new TV(options)
-              };
-              return x;
-            });
+            app.__widgets.get('PageManager').done(function(pm) {
 
-            app.getWidget("PageManager").done(function(pageManager) {
-              app.activate();
-              pageManager.assemble(app);
-
-              //$('#test').append(pageManager.view.el);
-              var $w = pageManager.view.$el;
-              expect($w.find('[data-widget="SearchWidget"]').children().length).to.be.equal(1);
-
-              done();
+              app.__widgets.remove('PageManager');
+              app.__widgets.add('PageManager', function() {
+                var x = new pm();
+                x.createView = function(options) {
+                  var TV = OneColumnView.extend({template: OneColumnTemplate});
+                  return new TV(options)
+                };
+                return x;
+              });
+  
+              app.getWidget("PageManager").done(function(pageManager) {
+                app.activate();
+                pageManager.assemble(app);
+  
+                //$('#test').append(pageManager.view.el);
+                var $w = pageManager.view.$el;
+                expect($w.find('[data-widget="SearchWidget"]').children().length).to.be.equal(1);
+  
+                done();
+              });
             });
           });
 
