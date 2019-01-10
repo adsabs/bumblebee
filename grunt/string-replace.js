@@ -21,7 +21,7 @@ module.exports = {
   },
   final: {
     files: {
-      'dist/': 'dist/**'
+      'dist/': 'dist/**/*.{js,html}'
     },
     options: {
       replacements: [{
