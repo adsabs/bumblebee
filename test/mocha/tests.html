@@ -42,6 +42,14 @@
 
               // init mochaPhantomJS
               global.initMochaPhantomJS();
+
+              // Stop console.log from cluttering up testing output
+              global.console = {
+                info: function () {},
+                warn: function () {},
+                log: function () {},
+                error: function () {}
+              };
             }
 
             // parse out url params, needed only to grab suite name

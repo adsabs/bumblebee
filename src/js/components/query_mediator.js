@@ -5,6 +5,7 @@
 /**
  * Mediator to coordinate UI-query exchange
  */
+
 define(['underscore',
   'jquery',
   'cache',
@@ -55,7 +56,7 @@ function (
       this.__searchCycle = {
         waiting: {}, inprogress: {}, done: {}, failed: {}
       };
-      this.shortDelayInMs = _.isNumber(options.shortDelayInMs) ? options.shortDelayInMs : 10;
+      this.shortDelayInMs = _.isNumber(options.shortDelayInMs) ? options.shortDelayInMs : 300;
       this.longDelayInMs = _.isNumber(options.longDelayInMs) ? options.longDelayInMs : 100;
       this.monitoringDelayInMs = _.isNumber(options.monitoringDelayInMs) ? options.monitoringDelayInMs : 200;
       this.mostRecentQuery = new ApiQuery();
@@ -282,10 +283,16 @@ function (
       q.lock();
       ps.publish(ps.INVITING_REQUEST, q);
 
-      // move this off the current stack, to add small delay
-      setTimeout(_.bind(function () {
-        this.startExecutingQueries() && this.monitorExecution();
-      }, this), 0);
+      // give widgets some time to submit their requests
+      var self = this;
+
+      var startExecuting = function () {
+        self.__searchCycle.collectingRequests = false;
+        self.startExecutingQueries() && self.monitorExecution();
+      };
+
+      this.shortDelayInMs ?
+        setTimeout(startExecuting, this.shortDelayInMs) : startExecuting();
     },
 
 
@@ -357,13 +364,14 @@ function (
           }));
 
           self.displayTugboatMessages();
-          var completeWaiting = function () {
-            // after we are done with the first query, start executing other queries
+          // after we are done with the first query, start executing other queries
+          var f = function () {
             _.each(_.keys(cycle.waiting), function (k) {
               data = cycle.waiting[k];
               delete cycle.waiting[k];
               cycle.inprogress[k] = data;
               var psk = k;
+
               self._executeRequest.call(self, data.request, data.key)
                 .done(function () {
                   cycle.done[psk] = cycle.inprogress[psk];
@@ -387,19 +395,14 @@ function (
             });
           };
 
-          // wait an initial 500ms to let the widgets get their requests in,
-          // wait in 100ms increments until we no longer see a change in request cache
-          (function watchForChanges (l) {
+            // for the display experience, it is better to introduce delays
+          if (self.longDelayInMs && self.longDelayInMs > 0) {
             setTimeout(function () {
-              // check the current length, if equal then we can assume nothing has changed
-              // since last check, let the cycle finish
-              if (l === self.__searchCycle.waiting.length) {
-                self.__searchCycle.collectingRequests = false;
-                return completeWaiting();
-              }
-              setTimeout(watchForChanges, 100, self.__searchCycle.waiting.length);
-            }, 500);
-          })(self.__searchCycle.waiting.length);
+              f();
+            }, self.longDelayInMs);
+          } else {
+            f();
+          }
         })
         .fail(function (jqXHR, textStatus, errorThrown) {
           self.__searchCycle.error = true;
@@ -512,17 +515,8 @@ function (
         apiRequest.set('target', ApiTargets.MYADS_STORAGE + '/execute_query/' + qid);
       }
 
-      try {
-        var ps = this.getPubSub();
-        var api = this.getBeeHive().getService('Api');
-      } catch (e) {
-        return $.Deferred().reject().promise();
-      }
-
-      // reject the request if we don't have an api to call
-      if (!ps || !api) {
-        return $.Deferred().reject().promise();
-      }
+      var ps = this.getPubSub();
+      var api = this.getBeeHive().getService('Api');
 
       var requestKey = this._getCacheKey(apiRequest);
       var maxTry = this.failedRequestsCache.getSync(requestKey) || 0;
@@ -532,7 +526,8 @@ function (
           request: apiRequest, key: senderKey, requestKey: requestKey, qm: this
         },
         [{ status: ApiFeedback.CODES.TOO_MANY_FAILURES }, 'Error', 'This request has reached maximum number of failures (wait before retrying)']);
-        return $.Deferred().reject().promise();
+        var d = $.Deferred();
+        return d.reject();
       }
 
 
