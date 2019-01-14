@@ -125,11 +125,12 @@ function (
       return defer.promise();
     },
 
-    handleMissingTransition: function () {
+    handleMissingTransition: function (transition) {
       console.error('Cannot handle \'navigate\' event: ' + JSON.stringify(arguments));
       var ps = this.getPubSub();
       ps.publish(ps.BIG_FIRE, 'navigation-error', arguments);
-      ps.publish(ps.NAVIGATE, '404');
+      if (this.catalog.get('404'))
+        ps.publish(ps.NAVIGATE, '404');
     },
 
     handleTransitionError: function (transition, error, args) {
@@ -137,7 +138,8 @@ function (
       console.error(error.stack);
       var ps = this.getPubSub();
       ps.publish(ps.CITY_BURNING, 'navigation-error', arguments);
-      ps.publish(ps.NAVIGATE, '404');
+      if (this.catalog.get('404'))
+        ps.publish(ps.NAVIGATE, '404');
     },
 
     /**

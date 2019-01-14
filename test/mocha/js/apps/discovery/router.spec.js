@@ -28,8 +28,9 @@ define([
       r.activate(beehive.getHardenedInstance());
       r.search("q=foo", "metrics");
 
-      expect(fakePubSub.publish.args[0][1]).to.eql("[PubSub]-New-Query");
-      expect(fakePubSub.publish.args[0][2].toJSON()).to.eql({
+      expect(fakePubSub.publish.args[0][1]).to.eql("[Router]-Navigate-With-Trigger");
+      expect(fakePubSub.publish.args[0][2]).to.eql("search-page");
+      expect(fakePubSub.publish.args[0][3]['q'].toJSON()).to.eql({
         "q": [
           "foo"
         ]
@@ -37,8 +38,8 @@ define([
 
       fakePubSub.publish(fakePubSub.pubSubKey, fakePubSub.NAVIGATE, "results-page");
 
-      expect(fakePubSub.publish.args[2][1]).to.eql("[Router]-Navigate-With-Trigger");
-      expect(fakePubSub.publish.args[2][2]).to.eql("show-metrics");
+      expect(fakePubSub.publish.args[1][1]).to.eql("[Router]-Navigate-With-Trigger");
+      expect(fakePubSub.publish.args[1][2]).to.eql("results-page");
 
     })
 

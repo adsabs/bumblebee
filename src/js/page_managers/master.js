@@ -160,6 +160,7 @@ define([
   
           if (oldPM && oldPM.get('object')) {
             oldPM.set('numDetach', oldPM.get('numDetach') + 1);
+            //XXX:rca - widgets are disappearing, probably must call incrCounter separately
             //oldPM.get('object').disAssemble(app);
           }
         }

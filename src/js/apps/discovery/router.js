@@ -152,7 +152,7 @@ function (
 
 
     routeToVerifyPage: function (subView, token) {
-      this.getPubSub().publish(this.getPubSub().NAVIGATE, 'user-action');
+      this.getPubSub().publish(this.getPubSub().NAVIGATE, 'user-action', {subView: subView, token: token});
     },
 
     orcidPage: function () {

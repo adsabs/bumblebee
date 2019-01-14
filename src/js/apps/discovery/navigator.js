@@ -623,6 +623,9 @@ function (
         route,
         done,
         defer = $.Deferred();
+
+        var token = data.token,
+          subView = data.subView;
       
         function fail(jqXHR, status, errorThrown) {
           self.get('index-page').execute().then(function() {
@@ -636,7 +639,7 @@ function (
         }
         
 
-        if (data.subView === 'register') {
+        if (subView === 'register') {
           failTitle = 'Registration failed.';
           failMessage = '<p>Please try again, or contact <b> adshelp@cfa.harvard.edu for support </b></p>';
           route = ApiTargets.VERIFY + '/' + token;

@@ -490,7 +490,7 @@ define([
             w[wName] = widget;
           }));
         });
-        $.when(promises).done(function() {
+        $.when.apply($, promises).done(function() {
           defer.resolve(w);
         })
       } else if (name) {

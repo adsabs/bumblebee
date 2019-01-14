@@ -43,10 +43,11 @@ function (
       pubsub.subscribe(pubsub.ALERT, _.bind(this.onAlert, this));
       pubsub.subscribe(pubsub.NAVIGATE, _.bind(this.onNavigate, this));
 
-      var widget = this.getWidget();
-      if (!widget) {
-        throw new Error('If you want to use AlertController, you also need to have a Widget capable of displaying the messages (default: AlertsWidget)');
-      }
+      this.getWidget().fail(function() {
+        console.error('If you want to use AlertController, you also need to have a Widget capable of displaying the messages (default: AlertsWidget)');
+        pubsub.publish(pubsub.BIG_FIRE, "Alerts Widget not available");
+      });
+      
     },
 
     onNavigate: function (route) {
@@ -109,6 +110,9 @@ function (
           self._widget = widget;
           defer.resolve(widget);
         })
+        .fail(function() {
+          defer.reject();
+        })
       } 
       return defer.promise();
     },
@@ -129,6 +133,9 @@ function (
             defer.resolve.apply(defer, arguments);
           })
         }
+      })
+      .fail(function() {
+        defer.reject('AlertsWidget not available');
       })
 
       return defer.promise();
