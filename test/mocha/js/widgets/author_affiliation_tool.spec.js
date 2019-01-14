@@ -151,8 +151,8 @@ define([
               expect(state().data.length).to.eql(mockGroupedData.length);
               expect(state().loading).to.eql(false);
               done();
-            }, 15);
-          }, 15);
+            }, 150);
+          }, 150);
         });
 
         it('updates the table with data', function (done) {
