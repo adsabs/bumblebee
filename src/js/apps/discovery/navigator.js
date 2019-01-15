@@ -15,7 +15,8 @@ define([
   'js/components/api_request',
   'js/components/api_targets',
   'hbs!404',
-  'hbs!js/apps/discovery/templates/orcid-modal-template'
+  'hbs!js/apps/discovery/templates/orcid-modal-template',
+  'js/mixins/api_access'
 ],
 
 function (
@@ -30,7 +31,8 @@ function (
   ApiRequest,
   ApiTargets,
   ErrorTemplate,
-  OrcidModalTemplate
+  OrcidModalTemplate,
+  ApiAccessMixin
 
 ) {
   var NavigatorService = Navigator.extend({
@@ -308,6 +310,8 @@ function (
                   defer.resolve();
                 });
               } else {
+                // XXX - this was async in the original version; likely wrong
+                // one block should be main...
                 app.getWidget(widgetName).done(function (widget) {
                   widget.renderWidgetForListOfBibcodes(bibcodes, additional);
                   defer.resolve();
@@ -335,6 +339,7 @@ function (
                 ['IndividualLibraryWidget', widgetName]).then(function() {
                   renderLibrarySub(id).done(function() {
                     self.route = '#/public-libraries/' + data.id; // XXX:rca - i think this should be that.route
+                    defer.resolve();
                   })
                 })
             } else {
@@ -343,6 +348,7 @@ function (
                   renderLibrarySub(id).done(function() {
                     self.route = '#user/libraries/' + data.id;
                     publishPageChange('libraries-page');
+                    defer.resolve();
                   })
                 });
             }
@@ -350,8 +356,8 @@ function (
           else {
             defer.resolve();
           }
-          return defer.promise();
         })   
+        return defer.promise();
       } // end navToLibrarySubview
 
 
@@ -617,9 +623,9 @@ function (
         return defer.promise();
       });
 
-      this.set('user-action', function(subRoute, data) {
-        var failMessage,
-        failTitle,
+      this.set('user-action', function(endPoint, data) {
+        var failMessage = '',
+        failTitle = '',
         route,
         done,
         defer = $.Deferred();
@@ -631,7 +637,7 @@ function (
           self.get('index-page').execute().then(function() {
             var error = (jqXHR.responseJSON && jqXHR.responseJSON.error) ? jqXHR.responseJSON.error : 'error unknown';
             // call alerts widget
-            this.getPubSub().publish(this.getPubSub().ALERT, new ApiFeedback({
+            self.getPubSub().publish(self.getPubSub().ALERT, new ApiFeedback({
               code: 0, title: failTitle, msg: ' <b>' + error + '</b> <br/>' + failMessage, modal: true, type: 'danger'
             }));
             defer.reject();
@@ -667,7 +673,7 @@ function (
           done = function (reply) {
             // user has been logged in already
             // request bootstrap
-            this.getApiAccess({ reconnect: true }).done(function () {
+            self.getApiAccess({ reconnect: true }).done(function () {
                 self.get('index-page').execute().then(function() {
                 var msg = 'Your new ADS email is <b>' + reply.email + '</b>';
                 self.getPubSub().publish(self.getPubSub().ALERT, new ApiFeedback({
@@ -687,17 +693,19 @@ function (
             self.getPubSub().publish(self.getPubSub().NAVIGATE, 'authentication-page', { subView: 'reset-password-2' });
             defer.resolve();
           };
-
+          failTitle = 'Password reset failed'
           failMessage = 'Reset password token was invalid.';
           route = ApiTargets.RESET_PASSWORD + '/' + token;
-          type = 'GET';
         }
-        
+        else {
+          defer.reject('Unknown subView: ' + subView);
+          return defer.promise();
+        }
 
         var request = new ApiRequest({
           target: route,
           options: {
-            type: type || 'GET',
+            type: 'GET',
             context: self,
             done: done,
             fail: fail
@@ -1048,5 +1056,6 @@ function (
     }
   });
 
+  _.extend(NavigatorService.prototype, ApiAccessMixin);
   return NavigatorService;
 });
