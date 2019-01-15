@@ -133,7 +133,7 @@ define([
               expect(self.w.fetchAffiliationData.called).to.eql(true);
               done();
             }, 25);
-          }, 25);
+          }, 16);
         });
 
         it('updates store correctly', function (done) {
@@ -152,7 +152,7 @@ define([
               expect(state().loading).to.eql(false);
               done();
             }, 150);
-          }, 150);
+          }, 16);
         });
 
         it('updates the table with data', function (done) {
@@ -168,7 +168,7 @@ define([
               expect(el.text()).to.eql(mockTable);
               done();
             }, 15);
-          }, 15);
+          }, 16);
         });
       });
 
