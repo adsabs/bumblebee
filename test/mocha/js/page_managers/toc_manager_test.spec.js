@@ -209,43 +209,47 @@ define([
         app.loadModules(config).done(function () {
 
           // hack (normally this will not be the usage pattern)
-          var pageManager = app._getWidget("PageManager");
-          app.activate();
-          pageManager.assemble(app);
+          app._getWidget("PageManager").done(function(pageManager) {
 
-          var view = pageManager.show();
+            app.activate();
+            pageManager.assemble(app).done(function() {
 
-          expect(pageManager.widgets.tocWidget.collection.get("ShowPaperExport__default").get("category")).to.eql("export");
-
-          var spy = sinon.spy();
-          var pubsub = app.getService('PubSub').getHardenedInstance();
-
-          pubsub.subscribe(pubsub.NAVIGATE, spy);
-
-          pageManager.widgets.tocWidget.resetActiveStates();
-
-          view.$("a[data-widget-id=ShowPaperExport__default]").click();
-
-          expect(spy.args[0][0]).to.eql("ShowPaperExport");
-          expect(spy.args[0][1]["idAttribute"]).to.eql("ShowPaperExport");
-          expect(spy.args[0][1]["href"]).to.eql("#abs//export");
-
-
-          pageManager.widgets.ShowPaperExport.setSubView = sinon.spy();
-
-          //should both set the toc nav collection properly, and tell the export widget which view to show
-          pageManager.setActive("ShowPaperExport", "default");
-
-          expect(pageManager.widgets.ShowPaperExport.setSubView.calledWith("default")).to.eql(true);
-          expect(pageManager.widgets.tocWidget.collection.get("ShowPaperExport__default").get("isSelected")).to.eql(true);
+              var view = pageManager.show();
+    
+              expect(pageManager.widgets.tocWidget.collection.get("ShowPaperExport__default").get("category")).to.eql("export");
+    
+              var spy = sinon.spy();
+              var pubsub = app.getService('PubSub').getHardenedInstance();
+    
+              pubsub.subscribe(pubsub.NAVIGATE, spy);
+    
+              pageManager.widgets.tocWidget.resetActiveStates();
+    
+              view.$("a[data-widget-id=ShowPaperExport__default]").click();
+    
+              expect(spy.args[0][0]).to.eql("ShowPaperExport");
+              expect(spy.args[0][1]["idAttribute"]).to.eql("ShowPaperExport");
+              expect(spy.args[0][1]["href"]).to.eql("#abs//export");
+    
+    
+              pageManager.widgets.ShowPaperExport.setSubView = sinon.spy();
+    
+              //should both set the toc nav collection properly, and tell the export widget which view to show
+              pageManager.setActive("ShowPaperExport", "default");
+    
+              expect(pageManager.widgets.ShowPaperExport.setSubView.calledWith("default")).to.eql(true);
+              expect(pageManager.widgets.tocWidget.collection.get("ShowPaperExport__default").get("isSelected")).to.eql(true);
+              done();
+            })
+  
+          })
 
 
         });
-        done();
 
       });
 
-      it("destroys itself properly", function(){
+      it("destroys itself properly", function(done){
         var app = new Application({debug: false});
         delete config.core.objects.Navigator;
         config.widgets.PageManager = 'js/wraps/abstract_page_manager/abstract_page_manager';
@@ -253,19 +257,21 @@ define([
         app.loadModules(config).done(function () {
 
           // hack (normally this will not be the usage pattern)
-          var pageManager = app._getWidget("PageManager");
-          app.activate();
-          pageManager.assemble(app);
-
-          var view = pageManager.show();
-
-          pageManager.destroy();
-
-          expect(_.isEmpty(pageManager._listeningTo)).to.be.true;
-
-          expect(_.isEmpty(pageManager.widgets)).to.be.true;
-
-          expect(view.isDestroyed).to.be.true;
+          app._getWidget("PageManager").done(function(pageManager) {
+            app.activate();
+            pageManager.assemble(app);
+  
+            var view = pageManager.show();
+  
+            pageManager.destroy();
+  
+            expect(_.isEmpty(pageManager._listeningTo)).to.be.true;
+  
+            expect(_.isEmpty(pageManager.widgets)).to.be.true;
+  
+            expect(view.isDestroyed).to.be.true;
+            done();
+          })
         });
 
       })
