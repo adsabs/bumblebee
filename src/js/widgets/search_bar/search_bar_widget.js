@@ -299,13 +299,20 @@ function (
           .appendTo(ul);
       };
 
-      $input.keydown(function (event) {
-        if (event.keyCode == 8) {
-          performSearch = false; // backspace, do not perform the search
-        } else if (event.keyCode == 32) { // space, do not perform the search
+      $input.bind({
+        keydown: function (event) {
+          if (event.keyCode == 8) {
+            performSearch = false; // backspace, do not perform the search
+          } else if (event.keyCode == 32) { // space, do not perform the search
+            performSearch = false;
+          } else {
+            performSearch = true; // perform the search
+          }
+        },
+
+        // don't do anything on paste
+        paste: function () {
           performSearch = false;
-        } else {
-          performSearch = true; // perform the search
         }
       });
 
