@@ -1,8 +1,10 @@
 define([
+  'jquery',
   'js/components/application',
   'module',
   'js/services/api'
 ], function(
+  $,
   Application,
   module,
   Api
@@ -100,66 +102,71 @@ define([
       });
     });
 
-    it("provides methods to retrieve widgets/plugins", async function(done) {
+    it("provides methods to retrieve widgets/plugins", function(done) {
       var app = new Application();
-      await app.loadModules(config);
-      await app._getWidget('ApiResponse');
-      await app._getWidget('ApiResponse2');
-      await app._getPlugin('Test');
+      app.loadModules(config).done(function() {
+        var promises = [];
+        promises.push(app._getWidget('ApiResponse'));
+        promises.push(app._getWidget('ApiResponse2'));
+        promises.push(app._getPlugin('Test'));
+        
+        $.when.apply($, promises).then(function() {
+          app.getAllWidgets().done(function(w) {
+            expect(w.length).to.be.eql(2);
+          });
+          app.getAllPlugins().done(function(w) {
+            expect(w.length).to.be.eql(1);
+          });
 
-      await app.getAllWidgets().done(function(w) {
-        expect(w.length).to.be.eql(2);
-      });
-      await app.getAllPlugins().done(function(w) {
-        expect(w.length).to.be.eql(1);
-      });
-
-      expect(app.isActivated()).to.be.equal(false);
-      app.activate();
-      expect(app.isActivated()).to.be.equal(true);
-
-      await app.getWidget('ApiResponse', 'ApiResponse2').done(
-        function(w) {
-          var w1 = w.ApiResponse;
-          var w2 = w.ApiResponse2;
-
-          expect(app.getPluginOrWidgetByPubSubKey(w1.getPubSub().getCurrentPubSubKey().getId())).to.be.eql(w1);
-          expect(app.getPluginOrWidgetByPubSubKey(w2.getPubSub().getCurrentPubSubKey().getId())).to.be.eql(w2);
-
-          expect(app.getPluginOrWidgetByPubSubKey('foo')).to.be.undefined;
-          delete app.__barbarianRegistry[w1.getPubSub().getCurrentPubSubKey()];
-          expect(function() {app.getPluginOrWidgetByPubSubKey('foo')}).to.throw.Error;
-
-          done();
-      });
+          expect(app.isActivated()).to.be.equal(false);
+          app.activate();
+          expect(app.isActivated()).to.be.equal(true);
     
+          app.getWidget('ApiResponse', 'ApiResponse2').done(
+            function(w) {
+              var w1 = w.ApiResponse;
+              var w2 = w.ApiResponse2;
+    
+              expect(app.getPluginOrWidgetByPubSubKey(w1.getPubSub().getCurrentPubSubKey().getId())).to.be.eql(w1);
+              expect(app.getPluginOrWidgetByPubSubKey(w2.getPubSub().getCurrentPubSubKey().getId())).to.be.eql(w2);
+    
+              expect(app.getPluginOrWidgetByPubSubKey('foo')).to.be.undefined;
+              delete app.__barbarianRegistry[w1.getPubSub().getCurrentPubSubKey()];
+              expect(function() {app.getPluginOrWidgetByPubSubKey('foo')}).to.throw.Error;
+    
+              done();
+          });
+        })
+      })
     });
 
-    it("has triggerMethod", async function(done) {
+    it("has triggerMethod", function(done) {
       var app = new Application();
-      await app.loadModules(config);
+      app.loadModules(config).done(function() {
+        var counter = 0;
+        var args = [];
+        _.each(app.getAllControllers(), function(w) {
+          w[1].foox = function(options) {
+            counter += 1;
+            args.push(options);
+          }
+        });
+  
+        app._getWidget('ApiResponse').done(function(w) {
+          w.foox = function(options) {
+            counter += 1;
+            args.push(options);
+          }
+          expect(counter).to.be.equal(0);
+          app.triggerMethodOnAll('foox', 'foo');
+          expect(counter).to.be.equal(2);
+          expect(args).to.be.eql(['foo', 'foo']);
+  
+          done();
+        });
 
-      var counter = 0;
-      var args = [];
-      _.each(app.getAllControllers(), function(w) {
-        w[1].foox = function(options) {
-          counter += 1;
-          args.push(options);
-        }
-      });
+      })
 
-      app._getWidget('ApiResponse').done(function(w) {
-        w.foox = function(options) {
-          counter += 1;
-          args.push(options);
-        }
-        expect(counter).to.be.equal(0);
-        app.triggerMethodOnAll('foox', 'foo');
-        expect(counter).to.be.equal(2);
-        expect(args).to.be.eql(['foo', 'foo']);
-
-        done();
-      });
 
     });
 

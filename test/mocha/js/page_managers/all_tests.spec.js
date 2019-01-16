@@ -236,7 +236,7 @@ define([
             app.activate();
             masterPageManager.assemble(app);
 
-            navigator.set('show-stuff', async function() {
+            navigator.set('show-stuff', function() {
               app.getObject('PageManager').show('SecondPageManager');
             });
 
