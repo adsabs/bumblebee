@@ -221,7 +221,7 @@ function (
         var defer = $.Deferred();
         // this is NOT navigable from outside, so library already has data
         // only setting a nav event to hide previous widgets
-        app.getWidget('IndividualLibraryWidget').done(async function (widget) {
+        app.getWidget('IndividualLibraryWidget').done(function (widget) {
           widget.setSubView({ subView: 'admin' });
           app.getObject('MasterPageManager').show('LibrariesPage',
             ['IndividualLibraryWidget', 'UserNavbarWidget']).then(function() {
@@ -261,7 +261,7 @@ function (
             }
             // make sure user is signed in
             else if (!redirectIfNotSignedIn()) {
-              app.getWidget('IndividualLibraryWidget').done(async function (widget) {
+              app.getWidget('IndividualLibraryWidget').done(function (widget) {
                 widget.setSubView(data);
                 app.getObject('MasterPageManager').show('LibrariesPage',
                   ['IndividualLibraryWidget', 'LibraryListWidget', 'UserNavbarWidget']).then(function() {
