@@ -31,59 +31,59 @@ define([
     
 
       r.routerNavigate('foo')
-      expect(fakePubSub.publish.args[fakePubSub.publish.args.length-1][1]).to.eql(fakePubSub.NAVIGATE);
-      expect(fakePubSub.publish.args[fakePubSub.publish.args.length-1][2]).to.eql("foo");
-      expect(fakePubSub.publish.args[fakePubSub.publish.args.length-1][3]).to.eql({
+      expect(fakePubSub.publish.lastCall.args[1]).to.eql(fakePubSub.NAVIGATE);
+      expect(fakePubSub.publish.lastCall.args[2]).to.eql("foo");
+      expect(fakePubSub.publish.lastCall.args[3]).to.eql({
         'replace': true
       })
 
       r.index('foo')
-      expect(fakePubSub.publish.args[fakePubSub.publish.args.length-1][1]).to.eql(fakePubSub.NAVIGATE);
-      expect(fakePubSub.publish.args[fakePubSub.publish.args.length-1][2]).to.eql("index-page");
-      expect(fakePubSub.publish.args[fakePubSub.publish.args.length-1][3]).to.eql({
+      expect(fakePubSub.publish.lastCall.args[1]).to.eql(fakePubSub.NAVIGATE);
+      expect(fakePubSub.publish.lastCall.args[2]).to.eql("index-page");
+      expect(fakePubSub.publish.lastCall.args[3]).to.eql({
         'replace': true
       })
 
       r.classicForm();
-      expect(fakePubSub.publish.args[fakePubSub.publish.args.length-1][1]).to.eql(fakePubSub.NAVIGATE);
-      expect(fakePubSub.publish.args[fakePubSub.publish.args.length-1][2]).to.eql("ClassicSearchForm");
+      expect(fakePubSub.publish.lastCall.args[1]).to.eql(fakePubSub.NAVIGATE);
+      expect(fakePubSub.publish.lastCall.args[2]).to.eql("ClassicSearchForm");
 
       r.paperForm();
-      expect(fakePubSub.publish.args[fakePubSub.publish.args.length-1][1]).to.eql(fakePubSub.NAVIGATE);
-      expect(fakePubSub.publish.args[fakePubSub.publish.args.length-1][2]).to.eql("PaperSearchForm");
+      expect(fakePubSub.publish.lastCall.args[1]).to.eql(fakePubSub.NAVIGATE);
+      expect(fakePubSub.publish.lastCall.args[2]).to.eql("PaperSearchForm");
 
       r.search("q=foo", "metrics");
-      expect(fakePubSub.publish.args[fakePubSub.publish.args.length-1][1]).to.eql(fakePubSub.NAVIGATE);
-      expect(fakePubSub.publish.args[fakePubSub.publish.args.length-1][2]).to.eql("search-page");
-      expect(fakePubSub.publish.args[fakePubSub.publish.args.length-1][3]['q'].url()).to.eql('q=foo');
-      expect(fakePubSub.publish.args[fakePubSub.publish.args.length-1][3]['page']).to.eql('show-metrics');
+      expect(fakePubSub.publish.lastCall.args[1]).to.eql(fakePubSub.NAVIGATE);
+      expect(fakePubSub.publish.lastCall.args[2]).to.eql("search-page");
+      expect(fakePubSub.publish.lastCall.args[3]['q'].url()).to.eql('q=foo');
+      expect(fakePubSub.publish.lastCall.args[3]['page']).to.eql('show-metrics');
 
       r.executeQuery('queryid');
-      expect(fakePubSub.publish.args[fakePubSub.publish.args.length-1][1]).to.eql(fakePubSub.NAVIGATE);
-      expect(fakePubSub.publish.args[fakePubSub.publish.args.length-1][2]).to.eql("execute-query");
-      expect(fakePubSub.publish.args[fakePubSub.publish.args.length-1][3]).to.eql('queryid');
+      expect(fakePubSub.publish.lastCall.args[1]).to.eql(fakePubSub.NAVIGATE);
+      expect(fakePubSub.publish.lastCall.args[2]).to.eql("execute-query");
+      expect(fakePubSub.publish.lastCall.args[3]).to.eql('queryid');
       
       r.view('bibcooode', 'metrics')
-      expect(fakePubSub.publish.args[fakePubSub.publish.args.length-1][1]).to.eql(fakePubSub.NAVIGATE);
-      expect(fakePubSub.publish.args[fakePubSub.publish.args.length-1][2]).to.eql("ShowMetrics");
-      expect(fakePubSub.publish.args[fakePubSub.publish.args.length-1][3]).to.eql({
+      expect(fakePubSub.publish.lastCall.args[1]).to.eql(fakePubSub.NAVIGATE);
+      expect(fakePubSub.publish.lastCall.args[2]).to.eql("ShowMetrics");
+      expect(fakePubSub.publish.lastCall.args[3]).to.eql({
         href: "#abs/bibcooode/metrics", 
         bibcode: "bibcooode", 
         replace: true})
       
       
       r.routeToVerifyPage('subview', 'token')
-      expect(fakePubSub.publish.args[fakePubSub.publish.args.length-1][1]).to.eql(fakePubSub.NAVIGATE);
-      expect(fakePubSub.publish.args[fakePubSub.publish.args.length-1][2]).to.eql("user-action");
-      expect(fakePubSub.publish.args[fakePubSub.publish.args.length-1][3]).to.eql({
+      expect(fakePubSub.publish.lastCall.args[1]).to.eql(fakePubSub.NAVIGATE);
+      expect(fakePubSub.publish.lastCall.args[2]).to.eql("user-action");
+      expect(fakePubSub.publish.lastCall.args[3]).to.eql({
         subView: "subview", 
         token: "token", 
       })
 
       r.orcidPage()
-      expect(fakePubSub.publish.args[fakePubSub.publish.args.length-1][1]).to.eql(fakePubSub.NAVIGATE);
-      expect(fakePubSub.publish.args[fakePubSub.publish.args.length-1][2]).to.eql("orcid-page");
-      expect(fakePubSub.publish.args[fakePubSub.publish.args.length-1][3]).to.not.eql({
+      expect(fakePubSub.publish.lastCall.args[1]).to.eql(fakePubSub.NAVIGATE);
+      expect(fakePubSub.publish.lastCall.args[2]).to.eql("orcid-page");
+      expect(fakePubSub.publish.lastCall.args[3]).to.not.eql({
         replace: true
       })
 

@@ -377,9 +377,9 @@ require.config({
       deps: ['jquery']
     },
 
-    'jquery-querybuilder': {
-      deps: ['jquery']
-    },
+    //'jquery-querybuilder': {
+    //  deps: ['jquery']
+    //},
 
     'sprintf': {
       exports: 'sprintf'

@@ -80,7 +80,7 @@ define([
 
     it("fails when message cannot be displayed", function(done) {
       var x = _getM();
-      x.app._getWidget = function() {var d = $.Deferred();d.reject();return d.promise()};
+      x.app._getWidget = function() {return $.Deferred().reject().promise()};
       x.m._widget = null;
       x.m.alert(new ApiFeedback({msg: 'foo'})).fail(function() {done()})
       
