@@ -6,7 +6,9 @@
  */
 module.exports = {
   release: {
-    src: ['dist/']
+    src: [
+      'dist/',
+    ]
   },
   deploy: {
     src: [
