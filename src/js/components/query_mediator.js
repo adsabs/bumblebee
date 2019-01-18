@@ -264,6 +264,14 @@ function (
 
       if (this.__searchCycle.running && this.__searchCycle.waiting && _.keys(this.__searchCycle.waiting)) {
         console.error('The previous search cycle did not finish, and there already comes the next!');
+
+        // mark all current waiting requests with a STALE flag
+        _.forEach(_.extend({},
+          this.__searchCycle.waiting,
+          this.__searchCycle.inprogress
+        ), function (psks) {
+          psks.request.__STALE = true;
+        });
       }
 
       this.reset();
@@ -346,6 +354,9 @@ function (
 
       this._executeRequest(data.request, data.key)
         .done(function (response, textStatus, jqXHR) {
+          if (data.request.__STALE) {
+            return;
+          }
           cycle.done[firstReqKey] = data;
           delete cycle.inprogress[firstReqKey];
 
@@ -374,10 +385,18 @@ function (
 
               self._executeRequest.call(self, data.request, data.key)
                 .done(function () {
+                  if (data.request.__STALE) {
+                    return;
+                  }
+
                   cycle.done[psk] = cycle.inprogress[psk];
                   delete cycle.inprogress[psk];
                 })
                 .fail(function () {
+                  if (data.request.__STALE) {
+                    return;
+                  }
+
                   cycle.failed[psk] = cycle.inprogress[psk];
                   delete cycle.inprogress[psk];
                 })
@@ -598,6 +617,10 @@ function (
     onApiResponse: function (data, textStatus, jqXHR) {
       var qm = this.qm;
 
+      if (this.request.__STALE) {
+        return;
+      }
+
       // TODO: check the status responses
 
       var response = (data.responseHeader && data.responseHeader.params) ? new ApiResponse(data) : new JsonResponse(data);
@@ -622,6 +645,10 @@ function (
 
     onApiRequestFailure: function (jqXHR, textStatus, errorThrown) {
       var qm = this.qm;
+      if (this.request.__STALE) {
+        return;
+      }
+
       var query = this.request.get('query');
       if (qm.debug) {
         console.warn('[QM]: request failed', jqXHR, textStatus, errorThrown);

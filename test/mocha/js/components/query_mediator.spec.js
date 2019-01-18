@@ -613,6 +613,38 @@ define([
 
       });
 
+      it("stale requests should get flagged", function() {
+        var x = createTestQM(this.beehive);
+        var qm = x.qm;
+
+        qm.activateCache();
+
+        sinon.spy(qm, 'startExecutingQueries');
+
+        var pubsub = x.pubsub;
+        var key = pubsub.getPubSubKey();
+
+        // it needs requests to start working
+        pubsub.subscribe(key, pubsub.INVITING_REQUEST, function() {
+          pubsub.publish(x.key1, pubsub.DELIVERING_REQUEST, x.req1);
+        });
+
+
+        // add some empty "subscribers" and act as if the search cycle was already running,
+        // these will be the stale requests
+        var foo = {};
+        var bar = {};
+        _.extend(qm.__searchCycle.waiting, { 'foo': { request: foo } });
+        _.extend(qm.__searchCycle.inprogress, { 'bar': { request: bar } });
+        qm.__searchCycle.running = true;
+
+        qm.startSearchCycle(new ApiQuery({ 'q': 'foo' }), key);
+
+        // after the new cycle starts, these should now have a __STALE property
+        expect(foo).to.have.property('__STALE', true);
+        expect(bar).to.have.property('__STALE', true);
+      });
+
       it("uses cache to serve identical requests", function(done) {
         var pubSpy = this.pubSpy;
         var x = createTestQM(this.beehive);
