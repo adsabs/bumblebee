@@ -102,7 +102,6 @@ function (
         // and set the default title
         document.title = 'ADS Search';
 
-        var self = this;
         if (!this.globalLinksHandled) {
           $(document).on('click', 'a', function (ev) {
             var href = $(ev.currentTarget).attr('href');
