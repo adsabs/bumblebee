@@ -481,19 +481,19 @@ module.exports = function (grunt) {
     });
 
     grunt.registerTask('applyIncludesToConfig', function () {
+      var content = grunt.file.read('dist/discovery.config.js');
+      var cfg = {};
+      (function () {
+        var require = requirejs = {
+          config: function (data) { cfg = data; }
+        };
+        eval(content.toString());
+      })();
+
       _.forEach(fullConfig, function (bundle, name) {
-        var content = grunt.file.read('dist/discovery.config.js');
-        var cfg = {};
-        (function () {
-          var require = requirejs = {
-            config: function (data) { cfg = data; }
-          };
-          eval(content.toString());
-        })();
-
-
+        var _cfg = _.extend({}, cfg);
         _.forEach(bundle.options.include, function (path) {
-          cfg.paths[path] = bundle.options.name;
+          _cfg.paths[path] = bundle.options.name;
         });
 
         var out = `
@@ -501,7 +501,7 @@ module.exports = function (grunt) {
  * GENERATED FILE (edits will be overwritten):
  * This is the configuration for ${name}.
  */
-require.config(${JSON.stringify(cfg, null, 2)});
+require.config(${JSON.stringify(_cfg, null, 2)});
         `;
         grunt.file.write(`dist/${name}.config.js`, out);
         grunt.log.writeln(`${name}.config.js has been created`);
