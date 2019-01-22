@@ -147,16 +147,23 @@
         'search': 'search-page',
         'abs': 'abstract-page'
       };
-      var loc = window.location;
-      var path = loc[loc.pathname === '/' ? 'hash' : 'pathname'].split('/')[0].replace('#', '');
-      var addScript = function (name) {
-        document.write('<script data-main="./' + name + '.config.js" src="./libs/requirejs/require.js" async>\x3C/script>')
-      }
-      var load = function () {
-        require([paths[path] + '.config'], null, function () {
+      var load;
+      try {
+        var loc = wisdndow.location;
+        var path = loc[loc.pathname === '/' ? 'hash' : 'pathname'].split('/')[0].replace('#', '');
+        load = function () {
+
+          // attempt to get bundle config
+          require([paths[path] + '.config']);
+        };
+      } catch (e) {
+        load = function () {
+
+          // on errors, just fallback to normal config
           require(['discovery.config']);
-        });
-      };
+        };
+      }
+
       (function check() {
         if (window.requirejs) {
           return load();
