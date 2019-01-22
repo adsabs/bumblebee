@@ -10,7 +10,6 @@
   <meta name="description" content="A powerful, streamlined new Astrophysics Data System" />
   <link rel="preload" href="./styles/css/styles.css" as="style">
   <link rel="preload" href="./libs/requirejs/require.js" as="script">
-  <link rel="preload" href="./discovery.config.js" as="script">
 
   <link rel="stylesheet" href="./styles/css/styles.css" />
   <link rel="icon" type="image/png" sizes="32x32" href="./styles/img/favicon.ico"/>
@@ -135,9 +134,35 @@
     </script>
 
     <!-- start the discovery application -->
-    <script data-main="./discovery.config" src="./libs/requirejs/require.js" async></script>
+    <script src="./libs/requirejs/require.js" async></script>
     <script>
-        !window.requirejs && document.write('<script data-main="./discovery.config.js" src="./libs/requirejs/require.js">\x3C/script>');
+      /*
+        Dynamically pick which configuration to use based on the url.
+        Then attempt to load the resource, using require, upon failure we
+        load a known resource (discovery.config.js)
+      */
+
+      var paths = {
+        '': 'landing-page',
+        'search': 'search-page',
+        'abs': 'abstract-page'
+      };
+      var loc = window.location;
+      var path = loc[loc.pathname === '/' ? 'hash' : 'pathname'].split('/')[0].replace('#', '');
+      var addScript = function (name) {
+        document.write('<script data-main="./' + name + '.config.js" src="./libs/requirejs/require.js" async>\x3C/script>')
+      }
+      var load = function () {
+        require([paths[path] + '.config'], null, function () {
+          require(['discovery.config']);
+        });
+      };
+      (function check() {
+        if (window.requirejs) {
+          return load();
+        }
+        setTimeout(check, 10);
+      })();
     </script>
   </body>
 </html>

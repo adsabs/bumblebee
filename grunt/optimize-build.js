@@ -98,7 +98,7 @@ module.exports = function (grunt) {
         }, cfg);
       }
 
-      addConfig('app', {
+      addConfig('landing-page', {
         include: [
           "analytics",
           "backbone-validation",
@@ -217,26 +217,105 @@ module.exports = function (grunt) {
           "select2",
           "sprintf",
           "underscore",
-          "utils",
+          "utils"
+        ]
+      });
 
-          // this is for results-page; once we are building separate bundles
-          "clipboard",
-          "filesaver",
+      addConfig('search-page', {
+        include: [
+          "analytics",
+          "cache",
+          "discovery.vars",
+          "hbs",
+          "hbs/handlebars",
+          "hbs/json2",
+          "hbs/underscore",
           "immutable",
+          "js/apps/discovery/main",
+          "js/apps/discovery/navigator",
+          "js/bugutils/diagnostics",
+          "js/components/alerts",
+          "js/components/alerts_mediator",
+          "js/components/api_feedback",
+          "js/components/api_query",
+          "js/components/api_query_updater",
+          "js/components/api_request",
+          "js/components/api_response",
+          "js/components/api_targets",
+          "js/components/app_storage",
+          "js/components/application",
+          "js/components/beehive",
+          "js/components/csrf_manager",
+          "js/components/default_request",
+          "js/components/doc_stash_controller",
+          "js/components/facade",
+          "js/components/feedback_mediator",
+          "js/components/generic_module",
+          "js/components/history_manager",
+          "js/components/json_response",
+          "js/components/library_controller",
+          "js/components/multi_params",
+          "js/components/navigator",
+          "js/components/persistent_storage",
+          "js/components/pubsub_events",
+          "js/components/pubsub_key",
+          "js/components/query_mediator",
+          "js/components/query_validator",
+          "js/components/recaptcha_manager",
+          "js/components/services_container",
+          "js/components/session",
+          "js/components/solr_params",
+          "js/components/solr_response",
+          "js/components/transition",
+          "js/components/transition_catalog",
+          "js/components/user",
+          "js/mixins/add_secondary_sort",
           "js/mixins/add_stable_index_to_collection",
+          "js/mixins/api_access",
+          "js/mixins/dependon",
+          "js/mixins/discovery_bootstrap",
+          "js/mixins/formatter",
+          "js/mixins/hardened",
+          "js/mixins/link_generator_mixin",
+          "js/mixins/openurl_generator",
           "js/mixins/papers_utils",
           "js/mixins/user_change_rows",
+          "js/mixins/widget_mixin_method",
+          "js/mixins/widget_state_manager",
+          "js/mixins/widget_utility",
           "js/modules/orcid/extension",
+          "js/modules/orcid/module",
+          "js/modules/orcid/orcid_api",
+          "js/modules/orcid/profile",
+          "js/modules/orcid/work",
+          "js/page_managers/controller",
+          "js/page_managers/master",
+          "js/page_managers/three_column_view",
+          "js/page_managers/view_mixin",
+          "js/services/api",
+          "js/services/default_pubsub",
+          "js/services/pubsub",
+          "js/services/storage",
           "js/widgets/abstract/widget",
+          "js/widgets/alerts/modal_view",
+          "js/widgets/alerts/page_top_alert",
+          "js/widgets/alerts/widget",
           "js/widgets/api_query/widget",
+          "js/widgets/base/base_widget",
           "js/widgets/bubble_chart/widget",
           "js/widgets/citation_helper/widget",
-          "js/widgets/config",
           "js/widgets/dropdown-menu/widget",
+          "js/widgets/facet/actions",
+          "js/widgets/facet/create_store",
+          "js/widgets/facet/factory",
           "js/widgets/facet/graph-facet/base_graph",
           "js/widgets/facet/graph-facet/h_index_graph",
+          "js/widgets/facet/graph-facet/widget",
           "js/widgets/facet/graph-facet/year_graph",
+          "js/widgets/facet/reducers",
+          "js/widgets/facet/widget",
           "js/widgets/filter_visualizer/widget",
+          "js/widgets/footer/widget",
           "js/widgets/list_of_things/item_view",
           "js/widgets/list_of_things/model",
           "js/widgets/list_of_things/paginated_view",
@@ -244,18 +323,24 @@ module.exports = function (grunt) {
           "js/widgets/metrics/d3-tip",
           "js/widgets/metrics/extractor_functions",
           "js/widgets/metrics/widget",
+          "js/widgets/navbar/widget",
           "js/widgets/network_vis/network_widget",
           "js/widgets/query_info/query_info_widget",
           "js/widgets/results/widget",
+          "js/widgets/search_bar/autocomplete",
+          "js/widgets/search_bar/search_bar_widget",
           "js/widgets/tabs/tabs_widget",
+          "js/widgets/widget_states",
           "js/widgets/wordcloud/widget",
           "js/wraps/affiliation_facet",
+          "js/wraps/alerts_mediator",
           "js/wraps/author_facet",
           "js/wraps/author_network",
           "js/wraps/bibgroup_facet",
           "js/wraps/bibstem_facet",
           "js/wraps/data_facet",
           "js/wraps/database_facet",
+          "js/wraps/discovery_mediator",
           "js/wraps/export_dropdown",
           "js/wraps/graph_tabs",
           "js/wraps/keyword_facet",
@@ -267,8 +352,128 @@ module.exports = function (grunt) {
           "js/wraps/simbad_object_facet",
           "js/wraps/visualization_dropdown",
           "js/wraps/vizier_facet",
-          //"mathjax",
+          "libs/select2/matcher",
           "redux-immutable",
+          "router",
+          "utils"
+        ]
+      });
+
+      addConfig('abstract-page', {
+        include: [
+          "analytics",
+          "cache",
+          "discovery.vars",
+          "hbs",
+          "hbs/handlebars",
+          "hbs/json2",
+          "hbs/underscore",
+          "js/apps/discovery/main",
+          "js/apps/discovery/navigator",
+          "js/bugutils/diagnostics",
+          "js/components/alerts",
+          "js/components/alerts_mediator",
+          "js/components/api_feedback",
+          "js/components/api_query",
+          "js/components/api_query_updater",
+          "js/components/api_request",
+          "js/components/api_response",
+          "js/components/api_targets",
+          "js/components/app_storage",
+          "js/components/application",
+          "js/components/beehive",
+          "js/components/csrf_manager",
+          "js/components/default_request",
+          "js/components/doc_stash_controller",
+          "js/components/facade",
+          "js/components/feedback_mediator",
+          "js/components/generic_module",
+          "js/components/history_manager",
+          "js/components/json_response",
+          "js/components/library_controller",
+          "js/components/multi_params",
+          "js/components/navigator",
+          "js/components/persistent_storage",
+          "js/components/pubsub_events",
+          "js/components/pubsub_key",
+          "js/components/query_mediator",
+          "js/components/query_validator",
+          "js/components/recaptcha_manager",
+          "js/components/services_container",
+          "js/components/session",
+          "js/components/solr_params",
+          "js/components/solr_response",
+          "js/components/transition",
+          "js/components/transition_catalog",
+          "js/components/user",
+          "js/mixins/add_secondary_sort",
+          "js/mixins/add_stable_index_to_collection",
+          "js/mixins/api_access",
+          "js/mixins/dependon",
+          "js/mixins/discovery_bootstrap",
+          "js/mixins/formatter",
+          "js/mixins/hardened",
+          "js/mixins/link_generator_mixin",
+          "js/mixins/openurl_generator",
+          "js/mixins/papers_utils",
+          "js/mixins/widget_mixin_method",
+          "js/mixins/widget_state_manager",
+          "js/mixins/widget_utility",
+          "js/modules/orcid/module",
+          "js/modules/orcid/orcid_api",
+          "js/modules/orcid/profile",
+          "js/modules/orcid/work",
+          "js/page_managers/controller",
+          "js/page_managers/master",
+          "js/page_managers/three_column_view",
+          "js/page_managers/toc_controller",
+          "js/page_managers/toc_widget",
+          "js/page_managers/view_mixin",
+          "js/services/api",
+          "js/services/default_pubsub",
+          "js/services/pubsub",
+          "js/services/storage",
+          "js/widgets/abstract/widget",
+          "js/widgets/alerts/modal_view",
+          "js/widgets/alerts/page_top_alert",
+          "js/widgets/alerts/widget",
+          "js/widgets/base/base_widget",
+          "js/widgets/facet/actions",
+          "js/widgets/facet/create_store",
+          "js/widgets/facet/factory",
+          "js/widgets/facet/graph-facet/widget",
+          "js/widgets/facet/reducers",
+          "js/widgets/facet/widget",
+          "js/widgets/footer/widget",
+          "js/widgets/graphics/widget",
+          "js/widgets/list_of_things/details_widget",
+          "js/widgets/list_of_things/item_view",
+          "js/widgets/list_of_things/model",
+          "js/widgets/list_of_things/paginated_view",
+          "js/widgets/list_of_things/widget",
+          "js/widgets/meta_tags/widget",
+          "js/widgets/metrics/d3-tip",
+          "js/widgets/metrics/extractor_functions",
+          "js/widgets/metrics/widget",
+          "js/widgets/navbar/widget",
+          "js/widgets/query_info/query_info_widget",
+          "js/widgets/search_bar/autocomplete",
+          "js/widgets/search_bar/search_bar_widget",
+          "js/widgets/widget_states",
+          "js/wraps/abstract_page_library_add/widget",
+          "js/wraps/abstract_page_manager/abstract_page_manager",
+          "js/wraps/alerts_mediator",
+          "js/wraps/citations",
+          "js/wraps/coreads",
+          "js/wraps/discovery_mediator",
+          "js/wraps/paper_export",
+          "js/wraps/paper_metrics",
+          "js/wraps/references",
+          "js/wraps/sidebar-graphics-widget",
+          "js/wraps/table_of_contents",
+          "libs/select2/matcher",
+          "router",
+          "utils"
         ]
       });
 
@@ -276,28 +481,31 @@ module.exports = function (grunt) {
     });
 
     grunt.registerTask('applyIncludesToConfig', function () {
-      var content = grunt.file.read('dist/discovery.config.js');
-      var cfg = {};
-      (function () {
-        var require = requirejs = {
-          config: function (data) { cfg = data; }
-        };
-        eval(content.toString());
-      })();
+      _.forEach(fullConfig, function (bundle, name) {
+        var content = grunt.file.read('dist/discovery.config.js');
+        var cfg = {};
+        (function () {
+          var require = requirejs = {
+            config: function (data) { cfg = data; }
+          };
+          eval(content.toString());
+        })();
 
-      _.forEach(fullConfig.app.options.include, function (val) {
-        cfg.paths[val] = 'app.bundle';
+
+        _.forEach(bundle.options.include, function (path) {
+          cfg.paths[path] = bundle.options.name;
+        });
+
+        var out = `
+/**
+ * GENERATED FILE (edits will be overwritten):
+ * This is the configuration for ${name}.
+ */
+require.config(${JSON.stringify(cfg, null, 2)});
+        `;
+        grunt.file.write(`dist/${name}.config.js`, out);
+        grunt.log.writeln(`${name}.config.js has been created`);
       });
-
-      // content = content.toString();
-      // config = {};
-      // config.bundles = _.reduce(fullConfig, function (acc, v) {
-      //   acc[v.options.name] = v.options.include;
-      //   return acc;
-      // }, {});
-      var out = '//GENERATED: \nrequire.config(' + JSON.stringify(cfg, null, 2) + ');'
-      grunt.file.write('dist/discovery.config.js', out);
-      grunt.log.writeln('discovery.config.js updated with bundle information');
     });
 
     grunt.task.run(['clean:release', 'copy:release', 'generateConfig', 'requirejs']);
