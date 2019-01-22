@@ -102,7 +102,7 @@ function (
         // and set the default title
         document.title = (transition.title ? transition.title + ' - ' : '') + 'NASA/ADS Search';
 
-        if (!this.globalLinksHandled) {
+        if (!this.globalLinksHandled && Backbone.history.options.pushState) {
           $(document).on('click', 'a', function (ev) {
             var href = $(ev.currentTarget).attr('href');
 
