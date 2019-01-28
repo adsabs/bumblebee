@@ -846,11 +846,18 @@ function (
       var currentQuery = this.getCurrentQuery();
 
       // make sure not to override an explicit sort if there is one
-      if (!query.has('sort') && (currentQuery && !currentQuery.has('sort'))) {
+      if (!query.has('sort')) {
         var queryVal = query.get('q')[0];
 
         // citations operator should be sorted by pubdate, so it isn't added here
-        var toMatch = ['trending(', 'instructive(', 'useful(', 'references(', 'reviews('];
+        var toMatch = [
+          'trending(',
+          'instructive(',
+          'useful(',
+          'references(',
+          'reviews(',
+          'similar('
+        ];
 
         // if there are multiple, this will just match the first operator
         var operator = _.find(toMatch, function (e) {

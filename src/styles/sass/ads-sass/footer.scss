@@ -24,10 +24,17 @@
     }
   }
 
-  .__footer_brand_logos img {
-    width: 64px;
-    .smithsonian {
-      width: 56px;
+  .__footer_brand_logos {
+
+    #nasa-logo {
+      width: 80px;
+    }
+    #smithsonian-logo {
+      width: 66px;
+    }
+    #cfa-logo {
+      width: 100px;
+      padding-left: 5px;
     }
   }
 }
