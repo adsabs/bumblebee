@@ -89,6 +89,8 @@ define([
   const processResponse = (ctx, { dispatch, getState }) => next => (action) => {
     next(action);
     if (action.type === RECEIVED_RESPONSE) {
+      // update the link server
+      ctx._updateLinkServer();
       const { linkServer } = getState().api;
       const response = action.result;
       if (_.isPlainObject(response)) {
