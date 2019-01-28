@@ -107,8 +107,9 @@ define([
       $w.find('.orcid-sign-in').click();
 
       expect(signInStub.callCount).to.eql(1);
-      expect(setOrcidModeStub.callCount).to.eql(1);
-      expect(setOrcidModeStub.args[0][0]).to.eql(true);
+
+      // orcid mode should not be toggled if not already signed-in
+      expect(setOrcidModeStub.callCount).to.eql(0);
       done();
 
     });

@@ -317,16 +317,16 @@ define([
         orcidApi = this.getBeeHive().getService('OrcidApi');
 
       var newVal = _.isBoolean(val) ? val : this.model.get('orcidModeOn');
-      user.setOrcidMode(newVal);
-      this.model.set('orcidModeOn', newVal);
+      this.resetOrcidTimer();
 
       if (newVal) {
         // sign into orcid api if not signed in already
         if (!orcidApi.hasAccess()) {
-          orcidApi.signIn();
+          return orcidApi.signIn();
         }
       }
-      this.resetOrcidTimer();
+      user.setOrcidMode(newVal);
+      this.model.set('orcidModeOn', newVal);
     },
 
     searchAuthor: function () {
