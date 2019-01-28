@@ -107,12 +107,12 @@ function (
     },
 
     search: function (query, widgetName) {
-      var possibleSearchSubPages = ['metrics', 'author-network', 'paper-network',
-        'concept-cloud', 'bubble-chart'];
+      
       if (query) {
         try {
           var q = new ApiQuery().load(query);
-          this.getPubSub().publish(this.getPubSub().START_SEARCH, q);
+          this.routerNavigate('search-page', {q: q, page: 'show-' + widgetName})
+          
         } catch (e) {
           console.error('Error parsing query from a string: ', query, e);
           this.getPubSub().publish(this.getPubSub().NAVIGATE, 'index-page');
@@ -131,19 +131,6 @@ function (
       } else {
         this.getPubSub().publish(this.getPubSub().NAVIGATE, 'index-page');
       }
-
-      if (widgetName && possibleSearchSubPages.indexOf(widgetName) > -1) {
-        // convention is that a navigate command for search page widget starts with "show-"
-        // waits for the navigate to results page emitted by the discovery_mediator
-        // once the solr search has been received
-        this.getPubSub().subscribeOnce(this.getPubSub().NAVIGATE, _.bind(function (page) {
-          if (page == 'results-page') {
-            this.getPubSub().publish(this.getPubSub().NAVIGATE, 'show-' + widgetName);
-          }
-        }, this));
-      } else if (widgetName && possibleSearchSubPages.indexOf(widgetName) == -1) {
-        console.error('Results page subpage not recognized:', widgetName);
-      }
     },
 
 
@@ -152,132 +139,20 @@ function (
     },
 
     view: function (bibcode, subPage) {
-      // check we are using the canonical bibcode and redirect to it if necessary
-      var q,
-        req,
-        self;
-      self = this;
-      q = new ApiQuery({ q: 'identifier:' + this.queryUpdater.quoteIfNecessary(bibcode), fl: 'bibcode' });
-      req = new ApiRequest({
-        query: q,
-        target: ApiTargets.SEARCH,
-        options: {
-          done: function (resp) {
-            var navigateString,
+      var navigateString,
               href;
-
-            if (!subPage) {
-              navigateString = 'ShowAbstract';
-            } else {
-              navigateString = 'Show' + subPage[0].toUpperCase() + subPage.slice(1);
-              href = '#abs/' + bibcode + '/' + subPage;
-            }
-            self.routerNavigate(navigateString, { href: href });
-
-            if (resp.response && resp.response.docs && resp.response.docs[0]) {
-              bibcode = resp.response.docs[0].bibcode;
-              self.getPubSub().publish(self.getPubSub().DISPLAY_DOCUMENTS, new ApiQuery({ q: 'bibcode:' + bibcode }));
-            } else if (resp.response && resp.response.docs && !resp.response.docs.length) {
-              console.error('the query  ' + q.get('q')[0] + '  did not return any bibcodes');
-            }
-          },
-          fail: function () {
-            console.log('Cannot identify page to load, bibcode: ' + bibcode);
-            self.getPubSub().publish(this.getPubSub().NAVIGATE, 'index-page');
-          }
-        }
-      });
-
-      this.getPubSub().publish(this.getPubSub().EXECUTE_REQUEST, req);
+      if (!subPage) {
+        navigateString = 'ShowAbstract';
+      } else {
+        navigateString = 'Show' + subPage[0].toUpperCase() + subPage.slice(1);
+        href = '#abs/' + bibcode + '/' + subPage;
+      }
+      this.routerNavigate(navigateString, { href: href, bibcode: bibcode });
     },
 
 
     routeToVerifyPage: function (subView, token) {
-      var failMessage,
-        failTitle,
-        route,
-        done,
-        request,
-        type,
-        that = this;
-
-      if (subView == 'register') {
-        failTitle = 'Registration failed.';
-        failMessage = '<p>Please try again, or contact <b> adshelp@cfa.harvard.edu for support </b></p>';
-        route = ApiTargets.VERIFY + '/' + token;
-
-        done = function (reply) {
-          // user has been logged in already by server
-          // request bootstrap
-          this.getApiAccess({ reconnect: true }).done(function () {
-            // redirect to index page
-            that.getPubSub().publish(that.getPubSub().NAVIGATE, 'index-page');
-            // call alerts widget
-            var title = 'Welcome to ADS';
-            var msg = '<p>You have been successfully registered with the username</p> <p><b>' + reply.email + '</b></p>';
-            that.getPubSub().publish(that.getPubSub().ALERT, new ApiFeedback({
-              code: 0, title: title, msg: msg, modal: true, type: 'success'
-            }));
-          }).fail(function () {
-            // fail function defined below
-            fail();
-          });
-        };
-      } else if (subView == 'change-email') {
-        failTitle = 'Attempt to change email failed';
-        failMessage = 'Please try again, or contact adshelp@cfa.harvard.edu for support';
-        route = ApiTargets.VERIFY + '/' + token;
-
-        done = function (reply) {
-          // user has been logged in already
-          // request bootstrap
-          this.getApiAccess({ reconnect: true }).done(function () {
-            // redirect to index page
-            that.getPubSub().publish(that.getPubSub().NAVIGATE, 'index-page');
-            // call alerts widget
-            var title = 'Email has been changed.';
-            var msg = 'Your new ADS email is <b>' + reply.email + '</b>';
-            that.getPubSub().publish(that.getPubSub().ALERT, new ApiFeedback({
-              code: 0, title: title, msg: msg, modal: true, type: 'success'
-            }));
-          }).fail(function () {
-            // fail function defined below
-            this.apply(fail, arguments);
-          });
-        };
-      } else if (subView == 'reset-password') {
-        done = function () {
-          // route to reset-password-2 form
-          // set the token so that session can use it in the put request with the new password
-          this.getBeeHive().getObject('Session').setChangeToken(token);
-          this.getPubSub().publish(this.getPubSub().NAVIGATE, 'authentication-page', { subView: 'reset-password-2' });
-        };
-
-        failMessage = 'Reset password token was invalid.';
-        route = ApiTargets.RESET_PASSWORD + '/' + token;
-        type = 'GET';
-      }
-      function fail(jqXHR, status, errorThrown) {
-        // redirect to index page
-        this.getPubSub().publish(this.getPubSub().NAVIGATE, 'index-page');
-        var error = (jqXHR.responseJSON && jqXHR.responseJSON.error) ? jqXHR.responseJSON.error : 'error unknown';
-        // call alerts widget
-        this.getPubSub().publish(this.getPubSub().ALERT, new ApiFeedback({
-          code: 0, title: failTitle, msg: ' <b>' + error + '</b> <br/>' + failMessage, modal: true, type: 'danger'
-        }));
-      }
-
-      request = new ApiRequest({
-        target: route,
-        options: {
-          type: type || 'GET',
-          context: this,
-          done: done,
-          fail: fail
-        }
-      });
-
-      this.getBeeHive().getService('Api').request(request);
+      this.getPubSub().publish(this.getPubSub().NAVIGATE, 'user-action', {subView: subView, token: token});
     },
 
     orcidPage: function () {

@@ -33,6 +33,7 @@ src/styles/css
 .vagrant
 
 src/discovery.vars.js
+grunt/requirejs.js
 .*
 !.babelrc
 !.travis.yml
