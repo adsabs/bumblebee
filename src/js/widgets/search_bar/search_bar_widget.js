@@ -715,7 +715,7 @@ function (
     },
 
     applyDefaultFilters: function (apiQuery) {
-      var dbfilters = this.defaultDatabases;
+      var dbfilters = this.defaultDatabases || [];
       if (dbfilters.length > 0) {
         var fqString = '{!type=aqp v=$fq_database}';
 
@@ -893,7 +893,7 @@ function (
       }
 
       // apply any default filters only if this is a new search
-      if (this.currentPage === 'index-page') {
+      if (this.currentPage === 'index-page' || !this.currentPage) {
         newQuery = this.applyDefaultFilters(newQuery);
       }
 
