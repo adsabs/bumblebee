@@ -41,11 +41,8 @@ define([
       sinon.spy(m, 'onAlert');
       var app = {
         _getWidget: function(name) {
-          var defer = $.Deferred();
-          if (name == 'AlertsWidget') {
-            defer.resolve(widget);
-          }
-          return defer.promise();
+          if (name == 'AlertsWidget')
+            return widget;
         },
         getController: function(name) {
           if (name == 'AlertsController')
@@ -66,24 +63,21 @@ define([
       var x = _getM();
       var m = x.m;
 
-      m.getWidget().done(function(widget) {
-        expect(widget).to.equal(x.widget);
+      expect(m.getWidget()).to.equal(x.widget);
 
-        minsub.publish(minsub.ALERT, new ApiFeedback({code: 0, msg: 'foo'}));
-        expect(m.onAlert.called).to.be.true;
-        expect(m.alert.called).to.be.true;
-  
-        done();
-      })
+      minsub.publish(minsub.ALERT, new ApiFeedback({code: 0, msg: 'foo'}));
+      expect(m.onAlert.called).to.be.true;
+      expect(m.alert.called).to.be.true;
 
+      done();
     });
 
-    it("fails when message cannot be displayed", function(done) {
+    it("fails when message cannot be displayed", function() {
       var x = _getM();
-      x.app._getWidget = function() {return $.Deferred().reject().promise()};
+      x.app._getWidget = function() {};
       x.m._widget = null;
-      x.m.alert(new ApiFeedback({msg: 'foo'})).fail(function() {done()})
-      
+      var promise = x.m.alert(new ApiFeedback({msg: 'foo'}));
+      expect(promise.state()).to.be.eql('rejected');
     });
 
     it("accepts different payload for events", function() {

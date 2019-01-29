@@ -139,46 +139,23 @@ define([
         });
       }
 
-      // plugins and widgets will be lazy-loaded (default)
-
       var plugins = config.plugins;
+      if (plugins) {
+        promise = self._loadModules('plugins', plugins);
+        if (promise) promises.push(promise);
+      }
+
       var widgets = config.widgets;
-
-      if (options && options.eagerLoad) {
-        if (plugins) {
-          promise = self._loadModules('plugins', plugins);
-          if (promise) promises.push(promise);
-        }
-
-        if (widgets) {
-          promise = self._loadModules('widgets', widgets);
-          if (promise) promises.push(promise);
-        }
+      if (widgets) {
+        promise = self._loadModules('widgets', widgets);
+        if (promise) promises.push(promise);
       }
-      else {
-        if (plugins) {
-          _.each(plugins, function(value, key) {
-            var x = {};x[key] = value;
-            self.__plugins.add(key, self._loadModules('plugins', x, false, true));
-          })
-        }
-        if (widgets) {
-          _.each(widgets, function(value, key) {
-            var x = {};x[key] = value;
-            self.__widgets.add(key, self._loadModules('widgets', x, false, true));
-          })
-        }
-      }
-
-
 
       if (promises.length == 1) {
         promises.push(promise); // hack, so that $.when() always returns []
       }
 
-      
-      var bigPromise = $.Deferred();
-      $.when.apply($, promises)
+      var bigPromise = $.when.apply($, promises)
         .then(function () {
           _.each(arguments, function (promisedValues, idx) {
             if (_.isArray(promisedValues)) {
@@ -189,20 +166,16 @@ define([
             }
           });
         })
-        .done(function() {
-          bigPromise.resolve();
-        })
         .fail(function () {
           console.error('Generic error - we were not successul in loading all modules for config', config);
           if (arguments.length) console.error(arguments);
-          bigPromise.reject.apply(bigPromise, arguments);
           // throw new Error("We are screwed!"); do not throw errors because then .fail() callbacks cannot be used
         });
       // .done(function() {
       //  console.log('DONE loading', this, config);
       // });
 
-      return bigPromise.promise();
+      return bigPromise;
     },
 
     getBeeHive: function () {
@@ -273,7 +246,7 @@ define([
       _.each(_.pairs(modules), function (m) {
         key = m[0], module = m[1];
         if (hasKey(key)) {
-          console.warn('Replacing (existing) object in [' + section + ']: ' + key);
+          console.warn('Removing (existing) object into [' + section + ']: ' + key);
           removeKey(key);
         }
         var inst = createInstance(key, module);
@@ -309,7 +282,7 @@ define([
      * @param modulePrescription
      * @private
      */
-    _loadModules: function (sectionName, modulePrescription, ignoreErrors, lazyLoad) {
+    _loadModules: function (sectionName, modulePrescription, ignoreErrors) {
       var self = this;
       this._checkPrescription(modulePrescription);
 
@@ -346,16 +319,13 @@ define([
         defer.reject(err);
       };
 
-      var run = function() {
-        if (self.debug) console.time('startLoading' + sectionName);
-        // start loading the modules
-        //console.log('loading', implNames, impls)
-        require(impls, callback, errback);
-        return self._setTimeout(defer).promise();
-      }
+      if (self.debug) console.time('startLoading' + sectionName);
 
-      run.lazyLoad = lazyLoad;
-      return lazyLoad ? run : run();
+      // start loading the modules
+      // console.log('loading', implNames, impls)
+      require(impls, callback, errback);
+
+      return this._setTimeout(defer).promise();
     },
 
 
@@ -455,48 +425,32 @@ define([
       if (ds) {
         return ds.counter;
       }
-      return -1;
-    },
 
-    incrRefCount: function(cat, name) {
-      var symbolicName = cat + ':' + name;
-      if (this.__barbarianInstances[symbolicName]) {
-        this.__barbarianInstances[symbolicName].counter++;
-      }
-      else {
-        throw Error("Invalid operation" + symbolicName + " is not initialized");
-      }
+      return -1;
     },
 
     getWidget: function (name) {
       var defer = $.Deferred();
       var self = this;
 
-
+      var w = {};
       if (arguments.length > 1) {
-        var w = {};
-        var promises = [];
+        w = {};
         _.each(arguments, function (x) {
-          var wName = x;
-          promises.push(self._getWidget(x).fail(function() {
+          if (!x) return;
+          try {
+            w[x] = self._getWidget(x);
+          } catch (er) {
             console.error('Error loading: ' + x);
             _.each(w, function (val, key) {
               self.returnWidget(key);
               delete w[key];
             });
             throw er;
-          })
-          .done(function(widget) {
-            w[wName] = widget;
-          }));
+          }
         });
-        $.when.apply($, promises).done(function() {
-          defer.resolve(w);
-        })
       } else if (name) {
-        this._getWidget(name).done(function(widget) {
-          defer.resolve(widget);
-        });
+        w = this._getWidget(name);
       }
 
       // this happens right after the callback
@@ -512,24 +466,14 @@ define([
         });
       }, 1);
 
-
+      defer.resolve(w);
       return defer.promise();
     },
 
     _getWidget: function (name) {
-      return this._getThing('widget', name); // returns a promise
-    },
-
-    _getThing: function(cat, name) {
-      var defer = $.Deferred();
-      var self = this;
-      this._lazyLoadIfNecessary(cat, name).done(function() {
-        var w = self._getOrCreateBarbarian(cat, name);
-        self.incrRefCount(cat, name);
-        defer.resolve(w);
-      });
-
-      return defer.promise();
+      var w = this._getOrCreateBarbarian('widget', name);
+      this.__barbarianInstances['widget:' + name].counter++;
+      return w;
     },
 
     returnWidget: function (name) {
@@ -600,7 +544,9 @@ define([
     },
 
     _getPlugin: function (name) {
-      return this._getThing('plugin', name);
+      var w = this._getOrCreateBarbarian('plugin', name);
+      this.__barbarianInstances['plugin:' + name].counter++;
+      return w;
     },
 
     /**
@@ -697,37 +643,6 @@ define([
       var newSubscribers = _.without(_.keys(pubsub._issuedKeys), _.keys(pubsub._issuedKeys));
       this._registerBarbarian(symbolicName, instance, children, hardenedBee, newSubscribers);
       return instance;
-    },
-
-    _lazyLoadIfNecessary: function( cat, name ) {
-      var defer = $.Deferred();
-      var self = this;
-      var loader;
-      var placeholder;
-      if (cat == 'plugin') {
-        placeholder = self.__plugins;
-      }
-      else if (cat == 'widget') {
-        placeholder = self.__widgets;
-      }
-      else {
-        throw new Error(cat + ' cannot be lazy loaded, sorry');
-      }
-      var thing = placeholder.get(name);
-
-      if (thing == null) {
-        defer.reject(name + ' does not exist');
-      }
-      else if (thing && thing.lazyLoad) { // load it
-        thing().done(function(cat, loadedModule) {
-          self._registerLoadedModules(cat, loadedModule);
-          defer.resolve();
-        });
-      }
-      else { // has already been loaded
-        defer.resolve();
-      }
-      return defer.promise();
     },
 
     _isBarbarianAlive: function (symbolicName) {

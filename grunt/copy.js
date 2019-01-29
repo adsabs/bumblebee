@@ -231,7 +231,8 @@ module.exports = function (grunt) {
       files: [{
         expand: true,
         src: [
-          './src/**'
+          './src/**',
+          '!./src/index.html'
         ],
         dest: 'dist/',
         rename: function(dest, src) {

@@ -6,6 +6,7 @@ define([
   'hbs!js/widgets/search_bar/templates/search_bar_template',
   'hbs!js/widgets/search_bar/templates/search_form_template',
   'hbs!js/widgets/search_bar/templates/option-dropdown',
+  'js/components/query_builder/plugin',
   'js/components/api_request',
   'js/components/api_targets',
   'js/components/api_feedback',
@@ -27,6 +28,7 @@ function (
   SearchBarTemplate,
   SearchFormTemplate,
   OptionDropdownTemplate,
+  QueryBuilderPlugin,
   ApiRequest,
   ApiTargets,
   ApiFeedback,
@@ -122,13 +124,25 @@ function (
 
     initialize: function (options) {
       _.bindAll(this, 'fieldInsert');
+      this.queryBuilder = new QueryBuilderPlugin();
       this.queryValidator = new QueryValidator();
       this.defaultDatabases = [];
     },
 
     activate: function (beehive) {
       this.setBeeHive(beehive);
+      this.queryBuilder.setQTreeGetter(QueryBuilderPlugin.buildQTreeGetter(beehive));
       var that = this;
+      this.queryBuilder.attachHeartBeat(function () {
+        that.onBuilderChange();
+      });
+    },
+
+    onBuilderChange: function () {
+      if (this.queryBuilder.isDirty(this.getFormVal())) {
+        var newQuery = this.queryBuilder.getQuery();
+        this.setFormVal(newQuery);
+      }
     },
 
     modelEvents: {
@@ -175,6 +189,8 @@ function (
       /*
             end code for select
            */
+
+      this.$('#search-gui').append(this.queryBuilder.$el);
 
       var $input = this.$('input.q');
       this.$input = $input;
@@ -387,6 +403,28 @@ function (
     },
 
     onShowForm: function () {
+      var formVal = this.getFormVal();
+      if (formVal.trim().length > 0) {
+        if (this.queryBuilder.isDirty(this.getFormVal()) || _.isEmpty(this.queryBuilder.getRules())) {
+          this.queryBuilder.updateQueryBuilder(formVal);
+        } else {
+          this.queryBuilder.setRules(this.queryBuilder.getRules());
+        }
+      } else { // display a default form
+        this.queryBuilder.setRules({
+          condition: 'AND',
+          rules: [
+            {
+              id: 'author',
+              field: 'author',
+              type: 'string',
+              input: 'text',
+              operator: 'is',
+              value: ''
+            }
+          ]
+        });
+      }
 
       // show the form
       this.specifyFormWidth();
@@ -598,6 +636,13 @@ function (
         analytics('send', 'event', 'interaction', 'unfielded-query-submitted-from-search-bar', query);
       }
 
+      // was querybuilder used?
+      if (this._queryBuilderUsed) {
+        analytics('send', 'event', 'interaction', 'querybuilder-used', query);
+      }
+
+      // reset
+      this._queryBuilderUsed = false;
     },
 
     clearBigquery: function () {
@@ -904,7 +949,7 @@ function (
 
       this.view.setFormVal(newQuery.get('q')[0]);
       this.setCurrentQuery(newQuery);
-      this.getPubSub().publish(this.getPubSub().NAVIGATE, 'search-page', {q: newQuery});
+      this.getPubSub().publish(this.getPubSub().START_SEARCH, newQuery);
     },
 
     openQueryAssistant: function (queryString) {
@@ -933,6 +978,7 @@ function (
     },
 
     onDestroy: function () {
+      this.view.queryBuilder.destroy();
       this.view.destroy();
     },
 

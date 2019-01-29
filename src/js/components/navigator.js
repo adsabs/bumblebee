@@ -55,11 +55,8 @@ function (
        * Responds to PubSubEvents.NAVIGATE signal
        */
     navigate: function (ev, arg1, arg2) {
-      var defer = $.Deferred();
-
       if (!this.router || !(this.router instanceof Backbone.Router)) {
-        defer.reject(new Error('Navigator must be given \'router\' instance'));
-        return defer.promise();
+        throw new Error('Navigator must be given \'router\' instance');
       }
 
       analytics('send', 'pageview', {
@@ -69,68 +66,44 @@ function (
       var transition = this.catalog.get(ev);
       if (!transition) {
         this.handleMissingTransition(arguments);
-        defer.reject(new Error('Missing route; going to 404'));
-        return defer.promise();
+        return;
       }
 
-      if (!transition.execute) { // do nothing
-        defer.resolve()
-        return defer.promise();
-      }
+      if (!transition.execute) return; // do nothing
 
-      var self = this;
-      var afterNavigation = function() {
-        // router can communicate directly with navigator to replace url
-        var replace = !!((transition.replace || arg1 && arg1.replace));
-
-        // don't reset the url if it is already correct, this could potentially
-        // cause a safari browser bug
-
-        if (decodeURI(window.location.hash) !== transition.route
-              && transition.route || transition.route === ''
-        ) {
-          // update the History object
-          self.router.navigate(
-            transition.route,
-            { trigger: transition.trigger || false, replace: replace }
-          );
-        }
-
-        // clear any metadata added to head on the previous page
-        $('head').find('meta[data-highwire]').remove();
-        // XXX:rca - this can probably go....anyways, shouldn't be here, is not generic
-        // and set the default title
-        document.title = 'ADS Search';
-      }
-
-      var p;
       try {
-        p = transition.execute.apply(transition, arguments);
-        if (p && typeof p.then == 'function') {
-          p.then(function() {
-            afterNavigation();
-            defer.resolve();
-          })
-        }
-        else {
-          afterNavigation();
-          defer.resolve();
-        }
+        transition.execute.apply(transition, arguments);
       } catch (e) {
         this.handleTransitionError(transition, e, arguments);
-        defer.reject(new Error('Error transitioning to route; going to 404'));
-        return defer.promise();
       }
 
-      return defer.promise();
+      // router can communicate directly with navigator to replace url
+      var replace = !!((transition.replace || arg1 && arg1.replace));
+
+      // don't reset the url if it is already correct, this could potentially
+      // cause a safari browser bug
+
+      if (decodeURI(window.location.hash) !== transition.route
+            && transition.route || transition.route === ''
+      ) {
+        // update the History object
+        this.router.navigate(
+          transition.route,
+          { trigger: transition.trigger || false, replace: replace }
+        );
+      }
+
+      // clear any metadata added to head on the previous page
+      $('head').find('meta[data-highwire]').remove();
+      // and set the default title
+      document.title = 'ADS Search';
     },
 
-    handleMissingTransition: function (transition) {
+    handleMissingTransition: function () {
       console.error('Cannot handle \'navigate\' event: ' + JSON.stringify(arguments));
       var ps = this.getPubSub();
       ps.publish(ps.BIG_FIRE, 'navigation-error', arguments);
-      if (this.catalog.get('404'))
-        ps.publish(ps.NAVIGATE, '404');
+      ps.publish(ps.NAVIGATE, '404');
     },
 
     handleTransitionError: function (transition, error, args) {
@@ -138,8 +111,7 @@ function (
       console.error(error.stack);
       var ps = this.getPubSub();
       ps.publish(ps.CITY_BURNING, 'navigation-error', arguments);
-      if (this.catalog.get('404'))
-        ps.publish(ps.NAVIGATE, '404');
+      ps.publish(ps.NAVIGATE, '404');
     },
 
     /**

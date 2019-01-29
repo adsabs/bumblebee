@@ -244,7 +244,7 @@ define([
           expect(w.widget.view.children.findByIndex(1).$el.find('button.btn-danger').length).to.eql(1);
           done();
         }, 500);
-      }).timeout(3000);
+      });
 
       it("merges ADS data before sending them to orcid", function(done) {
         var w = _getWidget();

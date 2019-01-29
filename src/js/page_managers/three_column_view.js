@@ -66,23 +66,23 @@ function (
     },
 
     displaySearchBar: function (show) {
-      $('#search-bar-row').toggle(show === undefined ? true : show);
+      $('#search-bar-row').toggle(show === null ? true : show);
     },
 
     displayLeftColumn: function (show) {
-      this.$('.s-left-col-container').toggle(show === undefined ? true : show);
+      this.$('.s-left-col-container').toggle(show === null ? true : show);
     },
 
     displayControlRow: function (show) {
-      this.$('#results-control-row').toggle(show === undefined ? true : show);
+      this.$('#results-control-row').toggle(show === null ? true : show);
     },
 
     displayRightColumn: function (show) {
-      this.$('.s-left-col-container').toggle(show === undefined ? true : show);
+      this.$('.s-left-col-container').toggle(show === null ? true : show);
     },
 
     displayMiddleColumn: function (show) {
-      this.$('.s-left-col-container').toggle(show === undefined ? true : show);
+      this.$('.s-left-col-container').toggle(show === null ? true : show);
     },
 
 

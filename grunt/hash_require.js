@@ -12,14 +12,9 @@ module.exports = {
       mapping: 'dist/jsmap.json',
       destBasePath: 'dist/',
       srcBasePath: 'dist/',
-      flatten: false,
-      clean: true,
-      prepend: true
+      flatten:false
     },
-    src: [
-      'dist/*.js',
-      'dist/js/**/*.js'
-    ]
+    src: ['dist/js/**/*.js']
   },
   css: {
     options: {

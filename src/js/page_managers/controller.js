@@ -66,86 +66,51 @@ function ($, _,
        * @param app
        */
     assemble: function (app) {
-      var defer = $.Deferred();
-      if (this.assembled) {
-        defer.resolve(this.view.el);
-        return defer.promise();
-      }
+      if (this.assembled) return this.view.el;
 
       this.assembled = true;
       this.view.render();
 
-      var self = this,
+      var that = this,
         el;
-      _.extend(self.widgetDoms, self.getWidgetsFromTemplate(self.view.$el));
-      var promises = [];
+      _.extend(that.widgetDoms, that.getWidgetsFromTemplate(that.view.$el));
 
-      _.each(self.widgetDoms, function (widgetDom, widgetName) {
+      _.each(that.widgetDoms, function (widgetDom, widgetName) {
         if (!app.hasWidget(widgetName)) {
-          delete self.widgetDoms[widgetName];
-          delete self.widgets[widgetName];
+          delete that.widgetDoms[widgetName];
+          delete that.widgets[widgetName];
           return;
         }
 
-        // TODO: right now the assemble method returns immediately, that might have
-        // bad effects when widgets get loaded (slowly) and get inserted into the dom
-        // after the whole thing was already rendered; do we want to make assemble
-        // asynchronous and wait for all promises to finish?
+        var widget = app._getWidget(widgetName);
+        if (this.persistentWidgets && this.persistentWidgets.indexOf(widgetName) > -1) {
+          // this increments the counter so the widget won't be de-referenced when this
+          // page manager is disassembled
+          app._getWidget(widgetName);
+        }
 
-        var promise = app._getWidget(widgetName).done(function(widget) {
-          if (self.persistentWidgets && self.persistentWidgets.indexOf(widgetName) > -1) {
-            // this increments the counter so the widget won't be de-referenced when this
-            // page manager is disassembled
-            app.incrRefCount('widget', widgetName);
+        if (widget) {
+          // maybe it is a page-manager (this is a security hole though!)
+          if (widget.assemble) {
+            widget.assemble(app);
           }
-  
-          if (widget) {
-            // maybe it is a page-manager (this is a security hole though!)
-            if (widget.assemble) {
-              widget.assemble(app).done(function() {
-                // in case the user passed data params on the dom element,
-                // create props on the widget
-                _.assign(widget, {
-                  componentParams: $(widgetDom).data()
-                });
-      
-                // reducing unneccessary rendering
-                if (widget.getEl) {
-                  el = widget.getEl();
-                } else {
-                  el = widget.render().el;
-                }
-                $(self.widgetDoms[widgetName]).empty().append(el);
-              })
-            }
-            else {
-              // reducing unneccessary rendering
-              if (widget.getEl) {
-                el = widget.getEl();
-              } else {
-                el = widget.render().el;
-              }
-              $(self.widgetDoms[widgetName]).empty().append(el);
-            }
-            self.widgets[widgetName] = widget;
-            
-          }
-        });
 
-        promises.push(promise);
-        
+          // in case the user passed data params on the dom element,
+          // create props on the widget
+          _.assign(widget, {
+            componentParams: $(widgetDom).data()
+          });
+
+          // reducing unneccessary rendering
+          if (widget.getEl) {
+            el = widget.getEl();
+          } else {
+            el = widget.render().el;
+          }
+          $(that.widgetDoms[widgetName]).empty().append(el);
+          that.widgets[widgetName] = widget;
+        }
       }, this);
-
-      var bigPromise = $.when.apply($, promises)
-        .then(function () {
-          defer.resolve();
-        })
-        .fail(function () {
-          console.error('Generic error - we were not successul in assembling page');
-          if (arguments.length) console.error(arguments);
-          defer.reject();
-        });
-      return defer.promise();
     },
 
     disAssemble: function (app) {

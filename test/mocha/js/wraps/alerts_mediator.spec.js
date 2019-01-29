@@ -43,10 +43,8 @@ define([
 
       var app = {
         getWidget: function(name) {
-          defer = $.Deferred()
           if (name == 'AlertsWidget')
-            defer.resolve(widget);
-          return defer.promise();
+            return widget;
         },
         getController: function(name) {
           if (name == 'AlertsController')
@@ -54,9 +52,7 @@ define([
         },
 
         _getWidget: function(){
-          defer = $.Deferred()
-          defer.resolve(widget);
-          return defer.promise();
+          return widget;
         }
       };
       m.activate(minsub.beehive, app);
