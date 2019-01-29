@@ -156,7 +156,7 @@ define([
 
         this.model.set({ graphics: graphics, linkSentence: response.get('header') });
       } else {
-        var title = response.get('response.docs[0][\'title\']');
+        var title = response.get('response.docs[0][\'title\']', false, '');
         title = (title && title.length) ? title[0] : '';
         this.model.set('title', title);
       }

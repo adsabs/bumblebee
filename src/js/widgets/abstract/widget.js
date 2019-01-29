@@ -46,7 +46,9 @@ function (
         'doi': undefined,
         'citation_count': undefined,
         'titleLink': undefined,
-        'pubnote': undefined
+        'pubnote': undefined,
+        'loading': true,
+        'error': false
       };
     },
 
@@ -268,6 +270,8 @@ function (
 
     activate: function (beehive) {
       this.setBeeHive(beehive);
+      this.activateWidget();
+      this.attachGeneralHandler(this.onApiFeedback);
       var pubsub = beehive.getService('PubSub');
 
       _.bindAll(this, ['onNewQuery', 'dispatchRequest', 'processResponse', 'onDisplayDocuments']);
@@ -275,6 +279,17 @@ function (
       pubsub.subscribe(pubsub.INVITING_REQUEST, this.dispatchRequest);
       pubsub.subscribe(pubsub.DELIVERING_RESPONSE, this.processResponse);
       pubsub.subscribe(pubsub.DISPLAY_DOCUMENTS, this.onDisplayDocuments);
+    },
+
+    onApiFeedback: function (feedback) {
+
+      // there was an error
+      if (feedback && feedback.error) {
+        this.model.set({
+          error: true,
+          loading: false
+        });
+      }
     },
 
     defaultQueryArguments: {
@@ -307,6 +322,12 @@ function (
 
     // bibcode is already in _docs
     displayBibcode: function (bibcode) {
+
+      // if _docs is empty, stop here
+      if (_.isEmpty(this._docs)) {
+        return;
+      }
+
       // wipe out the former values, because this new set of data
       // might not have every key
       this.model.clear({ silent: true });
@@ -377,13 +398,13 @@ function (
         }, this);
 
         if (apiResponse.has('responseHeader.params.__show')) {
-          bibcode = apiResponse.get('responseHeader.params.__show');
+          bibcode = apiResponse.get('responseHeader.params.__show', false, '');
           this.displayBibcode(bibcode);
         }
       }
 
-      this.trigger('page-manager-event', 'widget-ready',
-        { numFound: apiResponse.get('response.numFound') });
+      var numFound = apiResponse.get('response.numFound', false, 0);
+      this.trigger('page-manager-event', 'widget-ready', { numFound: numFound });
     }
 
   });
