@@ -171,7 +171,6 @@ function (
     },
 
     start: function (Router) {
-      var defer = $.Deferred();
       var app = this;
       var beehive = this.getBeeHive();
       var api = beehive.getService('Api');
@@ -192,40 +191,37 @@ function (
       if (!masterPageManager) complain('objects.MasterPageManager');
 
       // get together all pages and insert widgets there
-      masterPageManager.assemble(app).done(function() {
-        // attach the master page to the body
-        var container = $('div#body-template-container').empty();
-        $(masterPageManager.view.el).hide().appendTo(container).show();
+      masterPageManager.assemble(app);
+
+      // attach the master page to the body
+      var container = $('div#body-template-container').empty();
+      $(masterPageManager.view.el).hide().appendTo(container).show();
 
 
-        // kick off routing
-        app.router = new Router();
-        app.router.activate(beehive.getHardenedInstance());
+      // kick off routing
+      app.router = new Router();
+      app.router.activate(beehive.getHardenedInstance());
 
-        // get ready to handle navigation signals
-        navigator.start(app);
-        navigator.router = app.router; // this feels hackish
+      // get ready to handle navigation signals
+      navigator.start(this);
+      navigator.router = app.router; // this feels hackish
 
-        // Trigger the initial route and enable HTML5 History API support
-        Backbone.history.start(conf ? conf.routerConf : {});
+      // Trigger the initial route and enable HTML5 History API support
+      Backbone.history.start(conf ? conf.routerConf : {});
 
-        $(document).on('scroll', function () {
-          if ($('#landing-page-layout').length > 0) {
-            return;
-          }
-          // navbar is currently 40 px height
-          if ($(window).scrollTop() > 50) {
-            $('.s-quick-add').addClass('hidden');
-            $('.s-search-bar-full-width-container').addClass('s-search-bar-motion');
-          } else {
-            $('.s-search-bar-full-width-container').removeClass('s-search-bar-motion');
-            $('.s-quick-add').removeClass('hidden');
-          }
-        });
-        defer.resolve();
+      $(document).on('scroll', function () {
+        if ($('#landing-page-layout').length > 0) {
+          return;
+        }
+        // navbar is currently 40 px height
+        if ($(window).scrollTop() > 50) {
+          $('.s-quick-add').addClass('hidden');
+          $('.s-search-bar-full-width-container').addClass('s-search-bar-motion');
+        } else {
+          $('.s-search-bar-full-width-container').removeClass('s-search-bar-motion');
+          $('.s-quick-add').removeClass('hidden');
+        }
       });
-
-      return defer.promise();
     }
 
   };

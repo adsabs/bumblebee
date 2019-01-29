@@ -24,10 +24,7 @@ module.exports = {
     files: [{
       expand: true,
       cwd: 'dist',
-      src: [
-        '*.js',
-        'js/**/*.js'
-      ],
+      src: 'bumblebee_app.js',
       dest: 'dist'
     }]
   }

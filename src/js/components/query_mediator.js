@@ -301,7 +301,6 @@ function (
 
       this.shortDelayInMs ?
         setTimeout(startExecuting, this.shortDelayInMs) : startExecuting();
-
     },
 
 

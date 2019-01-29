@@ -69,9 +69,8 @@ define([
       $('#test').append($w); // watch out, if the form is not inserted in the page, the test gets reloaded
 
       var triggered = false;
-      minsub.on(minsub.NAVIGATE, function(route, apiQuery) {
-        if (route === 'search-page')
-          triggered = true;
+      minsub.on(minsub.START_SEARCH, function(apiQuery) {
+        triggered = true;
       });
 
       $w.find(".q").val("author:kurtz,m");
