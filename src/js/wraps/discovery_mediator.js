@@ -410,10 +410,18 @@ function (
             try {
               console.log('URL: ', storage.getCurrentQuery().url());
             } catch (e) {
-
+              // XXX:rca huh?
             }
           }
 
+          // because we might be dealing with promises (not always)
+          // we have to do this ugly hack (and I didn't want to turn
+          // the whole function into async; who knows what ill-gotten
+          // effects that would have on backbone execution...)
+          var stupidGoAhead = true;
+
+          // XXX:rca but when widgets are destroyed, there should be no data...
+          // XXX:rca verify this actually does what it is meant to do
           // ignore repeated queries (if the widgets are loaded with data)
           if (storage && storage.hasCurrentQuery()
               && apiQuery.url() == storage.getCurrentQuery().url()
@@ -423,26 +431,23 @@ function (
             // simply navigate to search results page, widgets are already stocked with data
             if (app.hasService('Navigator')) {
               app.getService('Navigator').navigate('results-page', { replace: true });
-              return;
+              stupidGoAhead = false;
             }
           }
 
           if (this.getCurrentPage() !== 'SearchPage' && app.getWidgetRefCount('Results') <= 0) {
             // switch immediately to the results page -make widgets listen to the START_SEARCH
-            app.getService('Navigator').navigate('results-page', { replace: false });
-
-            // another way to accomplish the same (however, this has the undesired effect of
-            // search bar temporarily disappearing - as it is snatched from the previous page
-            // and inserted into the other one)
-
-            // widget = app._getWidget('SearchPage');
-            // widget.assemble(app);
-            // setTimeout(function() {
-            //  app.returnWidget('SearchPage');
-            // }, 10000);
+            var argz = arguments;
+            app.getService('Navigator').navigate('results-page', { replace: false })
+              .then(function() {
+                qm.getQueryAndStartSearchCycle.apply(qm, argz);
+              })
+            stupidGoAhead = false;
           }
 
-          qm.getQueryAndStartSearchCycle.apply(qm, arguments);
+          if (stupidGoAhead)
+            qm.getQueryAndStartSearchCycle.apply(qm, arguments);
+
         }, this));
       },
 

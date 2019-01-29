@@ -162,7 +162,6 @@ require.config({
     // bumblebee components (here we'll lists simple names), paths are relative
     // to the config (the module that bootstraps our application; look at the html)
     // as a convention, all modules should be loaded using 'symbolic' names
-    'config': './discovery.config',
     'main': 'js/apps/discovery/main',
     'router': 'js/apps/discovery/router',
     'analytics': 'js/components/analytics',
@@ -358,10 +357,6 @@ require.config({
       exports: 'Cache'
     },
 
-    'jquery-querybuilder': {
-      deps: ['jquery']
-    },
-
     'filesaver': {
       exports: 'saveAs'
     },
@@ -381,6 +376,10 @@ require.config({
     'jquery-ui': {
       deps: ['jquery']
     },
+
+    //'jquery-querybuilder': {
+    //  deps: ['jquery']
+    //},
 
     'sprintf': {
       exports: 'sprintf'

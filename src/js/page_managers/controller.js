@@ -66,51 +66,86 @@ function ($, _,
        * @param app
        */
     assemble: function (app) {
-      if (this.assembled) return this.view.el;
+      var defer = $.Deferred();
+      if (this.assembled) {
+        defer.resolve(this.view.el);
+        return defer.promise();
+      }
 
       this.assembled = true;
       this.view.render();
 
-      var that = this,
+      var self = this,
         el;
-      _.extend(that.widgetDoms, that.getWidgetsFromTemplate(that.view.$el));
+      _.extend(self.widgetDoms, self.getWidgetsFromTemplate(self.view.$el));
+      var promises = [];
 
-      _.each(that.widgetDoms, function (widgetDom, widgetName) {
+      _.each(self.widgetDoms, function (widgetDom, widgetName) {
         if (!app.hasWidget(widgetName)) {
-          delete that.widgetDoms[widgetName];
-          delete that.widgets[widgetName];
+          delete self.widgetDoms[widgetName];
+          delete self.widgets[widgetName];
           return;
         }
 
-        var widget = app._getWidget(widgetName);
-        if (this.persistentWidgets && this.persistentWidgets.indexOf(widgetName) > -1) {
-          // this increments the counter so the widget won't be de-referenced when this
-          // page manager is disassembled
-          app._getWidget(widgetName);
-        }
+        // TODO: right now the assemble method returns immediately, that might have
+        // bad effects when widgets get loaded (slowly) and get inserted into the dom
+        // after the whole thing was already rendered; do we want to make assemble
+        // asynchronous and wait for all promises to finish?
 
-        if (widget) {
-          // maybe it is a page-manager (this is a security hole though!)
-          if (widget.assemble) {
-            widget.assemble(app);
+        var promise = app._getWidget(widgetName).done(function(widget) {
+          if (self.persistentWidgets && self.persistentWidgets.indexOf(widgetName) > -1) {
+            // this increments the counter so the widget won't be de-referenced when this
+            // page manager is disassembled
+            app.incrRefCount('widget', widgetName);
           }
-
-          // in case the user passed data params on the dom element,
-          // create props on the widget
-          _.assign(widget, {
-            componentParams: $(widgetDom).data()
-          });
-
-          // reducing unneccessary rendering
-          if (widget.getEl) {
-            el = widget.getEl();
-          } else {
-            el = widget.render().el;
+  
+          if (widget) {
+            // maybe it is a page-manager (this is a security hole though!)
+            if (widget.assemble) {
+              widget.assemble(app).done(function() {
+                // in case the user passed data params on the dom element,
+                // create props on the widget
+                _.assign(widget, {
+                  componentParams: $(widgetDom).data()
+                });
+      
+                // reducing unneccessary rendering
+                if (widget.getEl) {
+                  el = widget.getEl();
+                } else {
+                  el = widget.render().el;
+                }
+                $(self.widgetDoms[widgetName]).empty().append(el);
+              })
+            }
+            else {
+              // reducing unneccessary rendering
+              if (widget.getEl) {
+                el = widget.getEl();
+              } else {
+                el = widget.render().el;
+              }
+              $(self.widgetDoms[widgetName]).empty().append(el);
+            }
+            self.widgets[widgetName] = widget;
+            
           }
-          $(that.widgetDoms[widgetName]).empty().append(el);
-          that.widgets[widgetName] = widget;
-        }
+        });
+
+        promises.push(promise);
+        
       }, this);
+
+      var bigPromise = $.when.apply($, promises)
+        .then(function () {
+          defer.resolve();
+        })
+        .fail(function () {
+          console.error('Generic error - we were not successul in assembling page');
+          if (arguments.length) console.error(arguments);
+          defer.reject();
+        });
+      return defer.promise();
     },
 
     disAssemble: function (app) {

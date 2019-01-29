@@ -18,5 +18,16 @@ module.exports = {
         replacement: 'data-main="./bumblebee_app.js"'
       }]
     }
+  },
+  final: {
+    files: {
+      'dist/': 'dist/**/*.{js,html}'
+    },
+    options: {
+      replacements: [{
+        pattern: /es6!/ig,
+        replacement: ''
+      }]
+    }
   }
 };

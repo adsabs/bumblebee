@@ -6,7 +6,6 @@ define([
   'hbs!js/widgets/search_bar/templates/search_bar_template',
   'hbs!js/widgets/search_bar/templates/search_form_template',
   'hbs!js/widgets/search_bar/templates/option-dropdown',
-  'js/components/query_builder/plugin',
   'js/components/api_request',
   'js/components/api_targets',
   'js/components/api_feedback',
@@ -28,7 +27,6 @@ function (
   SearchBarTemplate,
   SearchFormTemplate,
   OptionDropdownTemplate,
-  QueryBuilderPlugin,
   ApiRequest,
   ApiTargets,
   ApiFeedback,
@@ -124,25 +122,13 @@ function (
 
     initialize: function (options) {
       _.bindAll(this, 'fieldInsert');
-      this.queryBuilder = new QueryBuilderPlugin();
       this.queryValidator = new QueryValidator();
       this.defaultDatabases = [];
     },
 
     activate: function (beehive) {
       this.setBeeHive(beehive);
-      this.queryBuilder.setQTreeGetter(QueryBuilderPlugin.buildQTreeGetter(beehive));
       var that = this;
-      this.queryBuilder.attachHeartBeat(function () {
-        that.onBuilderChange();
-      });
-    },
-
-    onBuilderChange: function () {
-      if (this.queryBuilder.isDirty(this.getFormVal())) {
-        var newQuery = this.queryBuilder.getQuery();
-        this.setFormVal(newQuery);
-      }
     },
 
     modelEvents: {
@@ -189,8 +175,6 @@ function (
       /*
             end code for select
            */
-
-      this.$('#search-gui').append(this.queryBuilder.$el);
 
       var $input = this.$('input.q');
       this.$input = $input;
@@ -315,13 +299,20 @@ function (
           .appendTo(ul);
       };
 
-      $input.keydown(function (event) {
-        if (event.keyCode == 8) {
-          performSearch = false; // backspace, do not perform the search
-        } else if (event.keyCode == 32) { // space, do not perform the search
+      $input.bind({
+        keydown: function (event) {
+          if (event.keyCode == 8) {
+            performSearch = false; // backspace, do not perform the search
+          } else if (event.keyCode == 32) { // space, do not perform the search
+            performSearch = false;
+          } else {
+            performSearch = true; // perform the search
+          }
+        },
+
+        // don't do anything on paste
+        paste: function () {
           performSearch = false;
-        } else {
-          performSearch = true; // perform the search
         }
       });
 
@@ -396,28 +387,6 @@ function (
     },
 
     onShowForm: function () {
-      var formVal = this.getFormVal();
-      if (formVal.trim().length > 0) {
-        if (this.queryBuilder.isDirty(this.getFormVal()) || _.isEmpty(this.queryBuilder.getRules())) {
-          this.queryBuilder.updateQueryBuilder(formVal);
-        } else {
-          this.queryBuilder.setRules(this.queryBuilder.getRules());
-        }
-      } else { // display a default form
-        this.queryBuilder.setRules({
-          condition: 'AND',
-          rules: [
-            {
-              id: 'author',
-              field: 'author',
-              type: 'string',
-              input: 'text',
-              operator: 'is',
-              value: ''
-            }
-          ]
-        });
-      }
 
       // show the form
       this.specifyFormWidth();
@@ -629,13 +598,6 @@ function (
         analytics('send', 'event', 'interaction', 'unfielded-query-submitted-from-search-bar', query);
       }
 
-      // was querybuilder used?
-      if (this._queryBuilderUsed) {
-        analytics('send', 'event', 'interaction', 'querybuilder-used', query);
-      }
-
-      // reset
-      this._queryBuilderUsed = false;
     },
 
     clearBigquery: function () {
@@ -753,7 +715,7 @@ function (
     },
 
     applyDefaultFilters: function (apiQuery) {
-      var dbfilters = this.defaultDatabases;
+      var dbfilters = this.defaultDatabases || [];
       if (dbfilters.length > 0) {
         var fqString = '{!type=aqp v=$fq_database}';
 
@@ -884,11 +846,18 @@ function (
       var currentQuery = this.getCurrentQuery();
 
       // make sure not to override an explicit sort if there is one
-      if (!query.has('sort') && (currentQuery && !currentQuery.has('sort'))) {
+      if (!query.has('sort')) {
         var queryVal = query.get('q')[0];
 
         // citations operator should be sorted by pubdate, so it isn't added here
-        var toMatch = ['trending(', 'instructive(', 'useful(', 'references(', 'reviews('];
+        var toMatch = [
+          'trending(',
+          'instructive(',
+          'useful(',
+          'references(',
+          'reviews(',
+          'similar('
+        ];
 
         // if there are multiple, this will just match the first operator
         var operator = _.find(toMatch, function (e) {
@@ -924,7 +893,7 @@ function (
       }
 
       // apply any default filters only if this is a new search
-      if (this.currentPage === 'index-page') {
+      if (this.currentPage === 'index-page' || !this.currentPage) {
         newQuery = this.applyDefaultFilters(newQuery);
       }
 
@@ -935,7 +904,7 @@ function (
 
       this.view.setFormVal(newQuery.get('q')[0]);
       this.setCurrentQuery(newQuery);
-      this.getPubSub().publish(this.getPubSub().START_SEARCH, newQuery);
+      this.getPubSub().publish(this.getPubSub().NAVIGATE, 'search-page', {q: newQuery});
     },
 
     openQueryAssistant: function (queryString) {
@@ -964,7 +933,6 @@ function (
     },
 
     onDestroy: function () {
-      this.view.queryBuilder.destroy();
       this.view.destroy();
     },
 

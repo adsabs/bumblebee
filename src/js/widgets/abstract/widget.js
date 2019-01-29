@@ -45,7 +45,8 @@ function (
         'pub_raw': undefined,
         'doi': undefined,
         'citation_count': undefined,
-        'titleLink': undefined
+        'titleLink': undefined,
+        'pubnote': undefined
       };
     },
 
@@ -127,6 +128,23 @@ function (
         doc.commentList = _.first(doc.comment, MAX_COMMENTS);
       }
 
+      if (doc.pubnote) {
+        if (!_.isArray(doc.pubnote)) {
+          doc.pubnote = [doc.pubnote];
+        }
+
+        var tmp = doc.pubnote;
+        // attempt to parse it out
+        try {
+          doc.pubnote = doc.pubnote[0].split(';');
+        } catch (e) {
+          // do nothing
+          doc.pubnote = tmp;
+        }
+        doc.hasExtraPubnotes = doc.pubnote.length > MAX_COMMENTS;
+        doc.pubnoteList = _.first(doc.pubnote, MAX_COMMENTS);
+      }
+
       return doc;
     }
   });
@@ -146,6 +164,8 @@ function (
     events: {
       'click #show-all-comments': 'showAllComments',
       'click #show-less-comments': 'showLessComments',
+      'click #show-all-pubnotes': 'showAllPubnotes',
+      'click #show-less-pubnotes': 'showLessPubnotes',
       'click #toggle-aff': 'toggleAffiliation',
       'click #toggle-more-authors': 'toggleMoreAuthors',
       'click a[data-target="more-authors"]': 'toggleMoreAuthors',
@@ -168,6 +188,24 @@ function (
       m.set({
         commentList: _.first(m.get('comment'), MAX_COMMENTS),
         showAllComments: false
+      });
+    },
+
+    showAllPubnotes: function (e) {
+      e.preventDefault();
+      var m = this.model;
+      m.set({
+        pubnoteList: m.get('comment'),
+        showAllPubnotes: true
+      });
+    },
+
+    showLessPubnotes: function (e) {
+      e.preventDefault();
+      var m = this.model;
+      m.set({
+        pubnoteList: _.first(m.get('pubnote'), MAX_COMMENTS),
+        showAllPubnotes: false
       });
     },
 
@@ -240,7 +278,7 @@ function (
     },
 
     defaultQueryArguments: {
-      fl: 'title,abstract,comment,bibcode,author,keyword,id,citation_count,[citations],pub,aff,volume,pubdate,doi,pub_raw,page',
+      fl: 'title,abstract,comment,bibcode,author,keyword,id,citation_count,[citations],pub,pubnote,aff,volume,pubdate,doi,pub_raw,page',
       rows: 1
     },
 

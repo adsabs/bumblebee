@@ -43,10 +43,11 @@ function (
       pubsub.subscribe(pubsub.ALERT, _.bind(this.onAlert, this));
       pubsub.subscribe(pubsub.NAVIGATE, _.bind(this.onNavigate, this));
 
-      var widget = this.getWidget();
-      if (!widget) {
-        throw new Error('If you want to use AlertController, you also need to have a Widget capable of displaying the messages (default: AlertsWidget)');
-      }
+      this.getWidget().fail(function() {
+        console.error('If you want to use AlertController, you also need to have a Widget capable of displaying the messages (default: AlertsWidget)');
+        pubsub.publish(pubsub.BIG_FIRE, "Alerts Widget not available");
+      });
+      
     },
 
     onNavigate: function (route) {
@@ -89,9 +90,8 @@ function (
             }
 
             // close the widget immediately
-            var widget = self.getWidget();
-            if (widget && widget.closeView) {
-              widget.closeView();
+            if (self._widget && self._widget.closeView) {
+              self._widget.closeView();
             }
           }
         });
@@ -99,21 +99,46 @@ function (
     },
 
     getWidget: function () {
-      if (this._widget) return this._widget;
-      this._widget = this.getApp()._getWidget(this.widgetName || 'AlertsWidget');
-      return this._widget;
+      var defer = $.Deferred();
+      var self = this;
+
+      if (this._widget) {
+        defer.resolve(this._widget);
+      }
+      else {
+        this.getApp()._getWidget(this.widgetName || 'AlertsWidget').done(function(widget) {
+          self._widget = widget;
+          defer.resolve(widget);
+        })
+        .fail(function() {
+          defer.reject();
+        })
+      } 
+      return defer.promise();
     },
 
     alert: function (apiFeedback) {
-      var w = this.getWidget();
-      if (!w) {
-        console.warn('"AlertsWidget" has disappeared, we cant display messages to the user');
-        var defer = $.Deferred();
-        defer.reject('AlertsWidget has disappeared');
-        return defer.promise();
-      }
-      // return promise
-      return w.alert(apiFeedback);
+      
+      var defer = $.Deferred();
+      this.getWidget().done(function(w) {
+        if (!w) {
+          console.warn('"AlertsWidget" has disappeared, we cant display messages to the user');
+          defer.reject('AlertsWidget has disappeared');
+        }
+        else {
+          // since alerts widget returns a promise that gets
+          // resolved once the widget rendered; we have to 
+          // wait little bit more
+          w.alert(apiFeedback).done(function() {
+            defer.resolve.apply(defer, arguments);
+          })
+        }
+      })
+      .fail(function() {
+        defer.reject('AlertsWidget not available');
+      })
+
+      return defer.promise();
     },
 
     hardenedInterface: {
