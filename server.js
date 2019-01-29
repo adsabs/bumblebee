@@ -34,7 +34,7 @@ let config = {
   proxy: {
     target: targets[process.env.TARGET || 'dev'],
     changeOrigin: true
-  }
+    }
 };
 
 if (process.env.SERVER_ENV === 'release') {
@@ -47,6 +47,20 @@ app.use('/', express.static(path.join(__dirname, config.root)));
 app.use('/test', express.static(path.join(__dirname, '/test')));
 app.use('/node_modules', express.static(path.join(__dirname, '/node_modules')));
 app.use('/bower_components', express.static(path.join(__dirname, '/bower_components')));
+
+
+// other custom proxy config:
+var customProxyConfig = {
+  target: 'http://localhost:5000',
+  changeOrigin: true,
+  logLevel: 'debug',
+  pathRewrite: function(path) {return path.replace('/v1/orcid','')},
+  onProxyReq: function (req) {
+    console.dir(req);
+  }
+};
+
+app.use('/v1/orcid', proxy(customProxyConfig));
 
 // proxy api calls to the api endpoint
 app.use(config.apiPath, proxy(config.proxy));

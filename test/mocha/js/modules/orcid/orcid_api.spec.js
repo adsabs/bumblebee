@@ -582,7 +582,10 @@ define([
             expect(JSON.stringify(work)).to.equal(JSON.stringify(orcidWork),
               'get our updated work back');
             done();
-          });
+          })
+          .fail(function () {
+              done();
+          })
       });
 
       it('getRecordInfo', function () {
@@ -639,115 +642,6 @@ define([
           check(rInfo, 'isCreatedByADS', false);
           check(rInfo, 'isCreatedByOthers', true);
           check(rInfo, 'isKnownToADS', false);
-        });
-      });
-
-      it('detects children entries', function () {
-        var oApi = getOrcidApi(this.minsub.beehive);
-        var createMockDB = function (entries) {
-          return _.reduce(entries, function (out, e) {
-            out['identifier:' + e[0]] = {
-              bibcode: e[1],
-              putcode: e[2]
-            };
-            return out;
-          }, {});
-        };
-
-        var mockDb = createMockDB([
-          ['A', '', '1'],
-          ['B', 'A', '2'], // child of A
-          ['C', '', '3'],
-          ['D', 'A', '4'], // child of A
-          ['E', 'B', '5'], // child of B
-          ['F', 'B', '6'], // child of B
-          ['G', '', '7'],
-          ['H', 'G', '8'] // child of G
-        ]);
-
-        oApi._combineDatabaseWorks(mockDb);
-
-        expect(['2', '4']).to.deep.equal(mockDb['identifier:A'].children);
-        expect(['5', '6']).to.deep.equal(mockDb['identifier:B'].children);
-        expect(['8']).to.deep.equal(mockDb['identifier:G'].children);
-        expect(undefined).to.eql(mockDb['identifier:H'].children);
-      });
-
-      it('reconcile profile works', function () {
-        var oApi = getOrcidApi(this.minsub.beehive);
-        createOrcidServer(oApi, this.minsub);
-        this.sb.stub(oApi, 'isSourcedByADS', function (work) {
-          return work.getSourceClientIdPath() === 'ADS';
-        });
-        var createMockProfile = function (groups) {
-          var out = { 'activities-summary': { 'works': {}}}
-          out['activities-summary']['works']['group'] = groups.map(function (entries) {
-            return {
-              'work-summary': entries.map(function (entry) {
-                return {
-                  'title': { title: { value: entry.title } },
-                  'source': { 'source-client-id': { path: entry.path }, 'source-name': { value: entry.title } },
-                  'external-ids': { 'external-id': [ { 'external-id-type': entry.type } ]}
-                };
-              })
-            };
-          });
-          return out;
-        }
-        var mockProfile = createMockProfile([
-          [
-            { title: 'A', path: '', type: 'other' }, // <-- since there are no better choices
-            { title: 'B', path: '', type: 'other' },
-            { title: 'C', path: '', type: 'other' }
-          ],
-          [
-            { title: 'A', path: '', type: 'other' },
-            { title: 'B', path: '', type: 'other' },
-            { title: 'C', path: '', type: 'doi' } // <-- has a doi
-          ],
-          [
-            { title: 'A', path: '', type: 'other' },
-            { title: 'B', path: '', type: 'bibcode' }, // <-- has a bibcode
-            { title: 'C', path: '', type: 'other' }
-          ],
-          [
-            { title: 'A', path: '', type: 'other' },
-            { title: 'B', path: 'ADS', type: 'other' }, // <-- source is ADS
-            { title: 'C', path: '', type: 'other' }
-          ],
-          [
-            { title: 'A', path: '', type: 'other' },
-            { title: 'B', path: '', type: 'doi' },
-            { title: 'C', path: '', type: 'bibcode' } // <-- bibcode beats doi
-          ],
-          [
-            { title: 'A', path: '', type: 'doi' },
-            { title: 'B', path: '', type: 'bibcode' }, // should take the first bibcode
-            { title: 'C', path: '', type: 'bibcode' }
-          ],
-          [
-            { title: 'A', path: '', type: 'bibcode' },
-            { title: 'B', path: '', type: 'doi' },
-            { title: 'C', path: 'ADS', type: '' } // <-- ADS beats anything
-          ]
-        ]);
-
-        var profile = oApi._reconcileProfileWorks(mockProfile);
-
-        // profile should be type Profile
-        expect(profile).to.be.instanceOf(Profile);
-
-        var expected = ['A', 'C', 'B', 'B', 'C', 'B', 'C'];
-        var actual = profile.works.map(function (w) {
-          return w.getSourceName();
-        });
-
-        // check that we get the right works in the final profile
-        expect(expected).to.deep.equal(actual);
-
-        // for good measure, check the source names, to make sure an array is there
-        _.forEach(profile.works, function (w) {
-          expect(['A', 'B', 'C']).to.deep.equal(w.sources);
         });
       });
 

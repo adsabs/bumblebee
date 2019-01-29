@@ -38,3 +38,5 @@ grunt/requirejs.js
 !.babelrc
 !.travis.yml
 !.eslintrc.json
+
+package-lock.json

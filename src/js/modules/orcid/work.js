@@ -3,7 +3,17 @@ define([
   'underscore',
   'jsonpath'
 ], function (_, jp) {
-  var PATHS = {
+  var ADSPATHS = {
+    status: '$.status',
+    title: '$.title',
+    publicationDateMonth: '$.pubmonth',
+    publicationDateYear: '$.pubyear',
+    lastModifiedDate: '$.updated',
+    sourceName: '$.source',
+    putCode: '$.putcode',
+    identifier: '$.identifier'
+  };
+  var ORCIDPATHS = {
     createdDate: '$["created-date"].value',
     lastModifiedDate: '$["last-modified-date"].value',
     sourceOrcidIdUri: '$.source["source-orcid"].uri',
@@ -42,20 +52,23 @@ define([
     externalIdUrl: '$["external-ids"]["external-id"]..["external-id-url"]',
     externalIdRelationship: '$["external-ids"]["external-id"]..["external-id-relationship"]',
     country: '$.country.value',
-    visibility: '$.visibility.value'
+    visibility: '$.visibility.value',
+    identifier: '$.identifier'
   };
 
   /**
    * Convenience class that allows easy conversion between ADS and ORCiD works.
    * @module Work
    * @param work
+   * @param useOrcidPaths
    * @constructor
    */
-  var Work = function Work(work, options) {
+  var Work = function Work(work, useOrcidPaths) {
     work = work || {};
+    this.useOrcidPaths = useOrcidPaths;
 
     // find the inner summary as the root
-    this._root = (work['work-summary']) ? work['work-summary'][0] : work;
+    this._root = work;
 
     this.sources = [];
 
@@ -104,12 +117,12 @@ define([
 
     /**
      * Returns the generated ORCiD work from the current _root object.
-     * The object will be based on the paths in PATHS
+     * The object will be based on the paths in ADSPATHS
      *
      * @returns {*} - ORCiD formatted object
      */
     this.getAsOrcid = function () {
-      return _.reduce(PATHS, _.bind(function (res, p) {
+      return _.reduce(ORCIDPATHS, _.bind(function (res, p) {
         var val = this.get(p);
         if (val) {
           if (_.isArray(val)) {
@@ -130,32 +143,25 @@ define([
      * @returns {*} - ADS formatted object
      */
     this.toADSFormat = function () {
-      var ids = this.getExternalIds();
-      if (ids.doi) {
-        ids.doi = [ids.doi];
+
+      var ids;
+      if (this.useOrcidPaths) {
+        ids = this.getExternalIds();
+        if (ids.doi) {
+          ids.doi = [ids.doi];
+        }
+        ids.identifier = _.values(ids)[0];
       }
-      return _.extend({}, ids, {
-        'author': this.getContributorName(),
+
+      return _.extend({}, {
         'title': [this.getTitle()],
         'formattedDate': this.getFormattedPubDate(),
-        'abstract': this.getShortDescription(),
         'source_name': this.getSources().join('; '),
-        'pub': this.getJournalTitle(),
+        'identifier': this.getIdentifier(),
         '_work': this
-      });
+      }, ids);
     };
-
-    /**
-     * Format publication date
-     *
-     * @returns {string} - formatted pub date
-     */
-    this.getFormattedPubDate = function () {
-      var year = this.getPublicationDateYear() || '????';
-      var month = this.getPublicationDateMonth() || '??';
-      return year + '/' + month;
-    };
-
+      
     /**
      * Creates an object containing all external ids
      * @example
@@ -179,34 +185,21 @@ define([
     };
 
     /**
-     * Convenience method for distinguishing a particular identifier by priority.
-     * Given a set of external ids, this will return the value of the identifier.
+     * Format publication date
      *
-     * @example
-     * pickIdentifier(['bibcode', 'doi']);
-     * // returns: "2018CNSNS..56..270Q"
-     *
-     * @example
-     * pickIdentifier(['doi', 'bibcode']);
-     * // returns: "10.1016/j.cnsns.2017.08.014"
-     *
-     * @param {String[]} props - priority of the chosen ids
-     * @returns {String} - value of the chosen identifier
+     * @returns {string} - formatted pub date
      */
-    this.pickIdentifier = function (props) {
-      var ids = this.getExternalIds();
-      var out = {};
-      _.eachRight(props, function (p) {
-        if (_.isString(ids[p])) {
-          out = ids[p];
-          return false;
-        }
-      });
-      return out;
+    this.getFormattedPubDate = function () {
+      var year = this.getPublicationDateYear() || '????';
+      var month = this.getPublicationDateMonth() || '??';
+      return year + '/' + month;
     };
 
+    // get correct set of paths based on options
+    var paths = this.useOrcidPaths ? ORCIDPATHS : ADSPATHS;
+
     // create getters for each of the PATHS
-    _.reduce(PATHS, function (obj, p, k) {
+    _.reduce(paths, function (obj, p, k) {
       if (_.isString(k) && k.slice) {
         var prop = k[0].toUpperCase() + k.slice(1);
         obj['get' + prop] = _.partial(obj.get, p);
@@ -252,9 +245,9 @@ define([
       if (_.isEmpty(val)) {
         return null;
       } if (_.isArray(val) && val.length <= 1) {
-        return val[0] || '';
+        return val[0];
       }
-      return val || '';
+      return val;
     };
     var work = {};
     var worktype = function (adsType) {
@@ -305,28 +298,28 @@ define([
         exIds.relationships.push('SELF');
       }
 
-      put(work, PATHS.publicationDateYear, get(ads.pubdate).split('-')[0]);
+      put(work, ORCIDPATHS.publicationDateYear, get(ads.pubdate).split('-')[0]);
       if (get(ads.pubdate).split('-')[1] === '00') {
-        put(work, PATHS.publicationDateMonth, null);
+        put(work, ORCIDPATHS.publicationDateMonth, null);
       } else {
-        put(work, PATHS.publicationDateMonth, get(ads.pubdate).split('-')[1]);
+        put(work, ORCIDPATHS.publicationDateMonth, get(ads.pubdate).split('-')[1]);
       }
-      put(work, PATHS.shortDescription, get(ads.abstract).slice(0, 4997) + '...');
-      put(work, PATHS.externalIdType, exIds.types);
-      put(work, PATHS.externalIdValue, exIds.values);
-      put(work, PATHS.externalIdRelationship, exIds.relationships);
-      put(work, PATHS.journalTitle, get(ads.pub));
-      put(work, PATHS.type, worktype(get(ads.type)));
+      put(work, ORCIDPATHS.shortDescription, get(ads.abstract).slice(0, 4997) + '...');
+      put(work, ORCIDPATHS.externalIdType, exIds.types);
+      put(work, ORCIDPATHS.externalIdValue, exIds.values);
+      put(work, ORCIDPATHS.externalIdRelationship, exIds.relationships);
+      put(work, ORCIDPATHS.journalTitle, get(ads.pub));
+      put(work, ORCIDPATHS.type, worktype(get(ads.type)));
       var author = get(ads.author);
       author = (_.isArray(author)) ? author : [author];
-      put(work, PATHS.contributorName, author);
+      put(work, ORCIDPATHS.contributorName, author);
       var roles = _.map(author, function () {
         return 'AUTHOR';
       });
-      put(work, PATHS.contributorRole, roles);
-      put(work, PATHS.title, get(ads.title));
+      put(work, ORCIDPATHS.contributorRole, roles);
+      put(work, ORCIDPATHS.title, get(ads.title));
       if (putCode) {
-        put(work, PATHS.putCode, putCode);
+        put(work, ORCIDPATHS.putCode, putCode);
       }
     } catch (e) {
       return null;
