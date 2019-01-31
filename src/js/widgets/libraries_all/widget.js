@@ -30,12 +30,12 @@ function (
     // this determines initial sort order
 
     defaults: {
-
+      loading: true,
+      error: false,
       sort: 'name',
       order: 'asc',
       type: 'string'
     }
-
   });
 
   var LibraryCollection = Backbone.Collection.extend({
@@ -97,8 +97,6 @@ function (
     regions: {
       container: '.all-libraries-container'
     }
-
-
   });
 
 
@@ -116,15 +114,30 @@ function (
       var that = this;
       this.setBeeHive(beehive);
       _.bindAll(this);
-      this.getPubSub().subscribe(this.getPubSub().LIBRARY_CHANGE, this.updateCollection);
+      var ps = this.getPubSub();
+      ps.subscribe(ps.LIBRARY_CHANGE, this.updateCollection);
+      ps.subscribe(ps.CUSTOM_EVENT, this.onCustomEvent);
 
       // initial data request
       this.getBeeHive().getObject('LibraryController').getLibraryMetadata().done(function (data) {
-        that.libraryCollection.reset(data);
+        that.updateCollection.call(that, data);
       });
     },
 
+    onCustomEvent: function (event) {
+      if (event === 'libraries:request:fail') {
+        this.libraryCollection.containerModel.set({
+          loading: false,
+          error: true
+        });
+      }
+    },
+
     updateCollection: function (data) {
+      this.libraryCollection.containerModel.set({
+        loading: false,
+        error: false
+      });
       this.libraryCollection.reset(data);
     },
 
@@ -133,7 +146,10 @@ function (
 
       switch (view) {
         case 'libraries':
-          var subView = new LibrariesView({ collection: this.libraryCollection, model: this.libraryCollection.containerModel });
+          var subView = new LibrariesView({
+            collection: this.libraryCollection,
+            model: this.libraryCollection.containerModel
+          });
           subView.on('all', this.handleSubViewEvents);
           this.view.container.show(subView);
           break;
