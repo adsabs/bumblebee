@@ -11,11 +11,23 @@ function (
   var Widget = MetricsWidget.extend({
 
     initialize: function (options) {
+      var name = 'ShowMetrics';
       this.on('page-manager-message', function (event, data) {
         if (event === 'broadcast-payload') {
-          this.ingestBroadcastedPayload(data);
+          this.payload = data;
+          this.canLoad = false;
+          this.trigger('page-manager-event', 'widget-ready', {
+            isActive: true,
+            widget: this
+          });
+        }
+
+        if (event === 'widget-selected' && data.idAttribute === name && !this.canLoad) {
+          this.canLoad = true;
+          this.ingestBroadcastedPayload(this.payload);
         }
       });
+
       MetricsWidget.prototype.initialize.apply(this, arguments);
     },
 

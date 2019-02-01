@@ -975,6 +975,10 @@ function (
         });
         return defer.promise();
       });
+      this.set('ShowSimilar', function (id, data) {
+        showDetail([id].concat(detailsPageAlwaysVisible), id);
+        this.route = data.href;
+      });
       this.set('ShowTableofcontents', function (id, data) {
         var defer = $.Deferred(),
           that = this;

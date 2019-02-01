@@ -128,6 +128,7 @@ require.config({
         ShowReferences: 'js/wraps/references',
         ShowCitations: 'js/wraps/citations',
         ShowCoreads: 'js/wraps/coreads',
+        ShowSimilar: 'js/wraps/similar',
         MetaTagsWidget: 'js/widgets/meta_tags/widget',
         //can't camel case because router only capitalizes first letter
         ShowTableofcontents: 'js/wraps/table_of_contents',

@@ -7,14 +7,16 @@ function (
 
   var Widget = DetailsWidget.extend({
     initialize: function () {
-      this.name = 'ShowCoreads';
+      this.name = 'ShowSimilar';
       return DetailsWidget.prototype.initialize.apply(this, arguments);
     },
     ingestBroadcastedPayload: function (data) {
-      var count = _.isNumber(data.read_count) ? data.read_count : 0;
+      var abstract = data.abstract;
+
+      // only show if there exists an abstract
       this.trigger('page-manager-event', 'widget-ready', {
-        numFound: count,
-        isActive: count > 0
+        numFound: abstract ? 1 : 0,
+        isActive: !!abstract
       });
       DetailsWidget.prototype.ingestBroadcastedPayload.apply(this, arguments);
     }
@@ -22,12 +24,10 @@ function (
 
   var exports = function () {
     var options = {
-      queryOperator: 'trending',
-      description: 'Papers also read by those who read',
+      queryOperator: 'similar',
+      description: 'Papers similar to',
       operator: true,
-      sortOrder: 'score desc',
-      // don't allow the record itself to be returned in trending search results
-      removeSelf: true
+      sortOrder: 'score desc'
     };
     return new Widget(options);
   }

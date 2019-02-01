@@ -71,10 +71,12 @@ define([
       ShowCoreads: {
         title: 'Co-Reads', path: 'coreads', category: 'view', showCount: false
       },
+      ShowSimilar: {
+        title: 'Similar Papers', path: 'similar', category: 'view', showCount: false
+      },
       ShowTableofcontents: {
         title: 'Volume Content', path: 'tableofcontents', category: 'view', showCount: false
       },
-      ShowSimilar: { title: 'Similar Papers', path: 'similar', category: 'view' },
       ShowGraphics: {
         title: 'Graphics', path: 'graphics', showCount: false, category: 'view'
       },

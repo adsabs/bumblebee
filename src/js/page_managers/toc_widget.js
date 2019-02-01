@@ -1,7 +1,6 @@
 define([
   'backbone',
   'marionette'
-
 ], function (
   Backbone,
   Marionette
@@ -48,6 +47,14 @@ define([
 
   var WidgetCollection = Backbone.Collection.extend({
     model: WidgetData,
+    initialize: function () {
+
+      // trigger when one of the models is selected, this ensures that
+      // we capture any initial load (like on page load, not directly clicked)
+      this.on('change:isSelected', function (model) {
+        this.trigger('widget-selected', model);
+      });
+    },
     selectOne: function (widgetId) {
       var s = null;
       this.each(function (m) {
@@ -84,6 +91,16 @@ define([
       this.collection = options.collection || new WidgetCollection();
       this.model = options.model || new WidgetModel();
       this.on('page-manager-message', this.onPageManagerMessage);
+
+      // if any of the models in the collection are selected, trigger an event here
+      this.listenTo(this.collection, 'widget-selected', function (model) {
+        var val = model.get('id').split('__');
+        var data = {
+          idAttribute: val[0],
+          subView: val.length > 1 ? val[1] : undefined
+        };
+        this.trigger('page-manager-event', 'widget-selected', data);
+      });
       if (!options.template) {
         // for testing
         this.template = function () { return ''; };
@@ -128,16 +145,11 @@ define([
       if (idAttribute !== this.$('.s-nav-selected').attr('data-widget-id')) {
         data.href = $t.attr('href');
 
-        var splitName = idAttribute.indexOf('__') > -1 ? idAttribute.split('__') : undefined;
-
-        if (splitName) {
-          data.idAttribute = splitName[0];
-          data.subView = splitName[1];
+        // we can just make sure to trigger a select event by updating the model
+        var model = this.collection.get(idAttribute);
+        if (model) {
+          model.set('isSelected', true);
         }
-
-        // click triggers event that is shared by the navigator, which is responsible for updating the nav view to
-        // the correct view
-        this.trigger('page-manager-event', 'widget-selected', data);
 
         // finally, close the mobile menu, which might be open
         this.$el.parent('.nav-container').removeClass('show');

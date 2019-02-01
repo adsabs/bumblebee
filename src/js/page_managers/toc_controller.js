@@ -97,6 +97,7 @@ function (_, Marionette, BasicPageManagerController, TOCWidget, analytics) {
         data.widgetId = widgetId;
         this.broadcast('page-manager-message', event, data);
       } else if (event == 'widget-selected') {
+        this.broadcast('page-manager-message', 'widget-selected', data);
         this.getPubSub().publish(this.getPubSub().NAVIGATE, data.idAttribute, data);
 
         var bibcode = widget.model.get('bibcode');
@@ -113,6 +114,8 @@ function (_, Marionette, BasicPageManagerController, TOCWidget, analytics) {
         data.func.apply(this);
       }
     },
+
+    onPageManagerMessage: _.noop,
 
     setActive: function (widgetName, subView) {
       // now inform the widget of the subView to show

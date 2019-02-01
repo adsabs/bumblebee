@@ -293,7 +293,7 @@ function (
     },
 
     defaultQueryArguments: {
-      fl: 'title,abstract,comment,bibcode,author,keyword,id,citation_count,[citations],pub,pubnote,aff,volume,pubdate,doi,pub_raw,page',
+      fl: '[citations],abstract,aff,author,bibcode,citation_count,comment,doi,id,keyword,page,property,pub,pub_raw,pubdate,pubnote,read_count,title,volume',
       rows: 1
     },
 
@@ -340,12 +340,16 @@ function (
 
       this.trigger('page-manager-event', 'broadcast-payload', {
         title: this._docs[bibcode].title,
+        abstract: this._docs[bibcode].abstract,
         // this should be superfluous, widgets already subscribe to display_documents
         bibcode: bibcode,
 
         // used by citation list widget
         citation_discrepancy: this._docs[bibcode].citation_count - resolved_citations,
-        citation_count: this._docs[bibcode].citation_count
+        citation_count: this._docs[bibcode].citation_count,
+        references_count: c.num_references,
+        read_count: this._docs[bibcode].read_count,
+        property: this._docs[bibcode].property
       });
     },
 

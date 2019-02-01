@@ -8,7 +8,20 @@ function (
   DetailsWidget
 ) {
   var Widget = DetailsWidget.extend({
-
+    initialize: function () {
+      this.name = 'ShowTableofcontents';
+      return DetailsWidget.prototype.initialize.apply(this, arguments);
+    },
+    ingestBroadcastedPayload: function (data) {
+      var hasTOC = data.property && data.property.indexOf('TOC') > -1;
+      if (hasTOC) {
+        this.trigger('page-manager-event', 'widget-ready', {
+          numFound: 1,
+          isActive: true
+        });
+        DetailsWidget.prototype.ingestBroadcastedPayload.apply(this, arguments);
+      }
+    },
     customizeQuery: function (apiQuery) {
       var bibcode = this.extractValueFromQuery(apiQuery, 'q', 'bibcode');
       if (!bibcode) {
@@ -30,11 +43,12 @@ function (
       }
       return q;
     }
-
   });
 
   function TOC() {
-    var options = { description: 'Papers in the same volume as' };
+    var options = {
+      description: 'Papers in the same volume as'
+    };
     return new Widget(options);
   }
 
