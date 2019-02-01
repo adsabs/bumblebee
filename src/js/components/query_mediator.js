@@ -354,7 +354,7 @@ function (
       cycle.inprogress[firstReqKey] = data;
 
       this._executeRequest(data.request, data.key)
-        .done(function (response, textStatus, jqXHR) {
+        .done(function (response) {
           if (data.request.__STALE) {
             return;
           }
@@ -376,6 +376,16 @@ function (
           }));
 
           self.displayTugboatMessages();
+          try {
+            // save the completed request somewhere as "recent queries"
+            // -- placing this here so we know for sure that the query we are
+            // storing completed successfully and is one that the user actually saw the results for
+            var userStore = self.getBeeHive().getObject('User');
+            userStore.addToRecentQueries(data.request.get('query'));
+          } catch (e) {
+            // this shouldn't break the search cycle
+          }
+
           // after we are done with the first query, start executing other queries
           var f = function () {
             _.each(_.keys(cycle.waiting), function (k) {

@@ -70,7 +70,8 @@ function (
         ],
         defaultExportFormat: 'BibTeX',
         defaultHideSidebars: 'Show',
-        customFormats: []
+        customFormats: [],
+        recentQueries: []
       };
     }
   });
@@ -131,7 +132,6 @@ function (
       }
     },
 
-
     // general persistent storage
     _persistModel: function () {
       var storage = this.getBeeHive().getService('PersistentStorage');
@@ -149,6 +149,31 @@ function (
     /* generic get localStorage function, gives you everything */
     getLocalStorage: function (obj) {
       return this.localStorageModel.toJSON();
+    },
+
+    // add a query to a recent queries list
+    addToRecentQueries: function (apiQuery) {
+      var MAX = 10;
+      try {
+        var recent = this.userModel.get('recentQueries');
+
+        // only allow a max number of recent queries
+        recent.length >= MAX && recent.pop();
+        recent.unshift(apiQuery.clone().toJSON());
+        this.userModel.set('recentQueries', recent);
+
+        // on set, attempt to synchronize with server
+        this.setUserData({
+          recentQueries: recent
+        });
+      } catch (e) {
+        recent = [];
+      }
+      return recent;
+    },
+
+    getRecentQueries: function () {
+      return this.userModel.get('recentQueries') || [];
     },
 
     /* orcid functions */
@@ -297,7 +322,7 @@ function (
         this.getBeeHive().getService('Api').request(new ApiRequest(requestData));
       }
 
-      return deferred;
+      return deferred.promise();
     },
 
     redirectIfNecessary: function () {
@@ -411,7 +436,6 @@ function (
       return !!this.userModel.get('user');
     },
 
-
     /*
        * POST an update to the myads user_data endpoint
        * (success will automatically update the user object's model of myads data)
@@ -421,14 +445,11 @@ function (
       return this.postData('USER_DATA', data);
     },
 
-
     /*
        * this function queries the myads open url configuration endpoint
        * and returns a promise that it resolves with the data
        * (it is only needed by the preferences widget)
        * */
-
-
     getOpenURLConfig: function () {
       return this.getSiteConfig('link_servers');
     },
@@ -468,6 +489,8 @@ function (
       getOpenURLConfig: 'get list of openurl endpoints',
       getUserData: 'myads data',
       setUserData: 'POST user data to myads endpoint',
+      getRecentQueries: 'get the 10 most recent queries as array',
+      addToRecentQueries: 'add a query to the set of recent queries',
       generateToken: 'PUT to token endpoint to make a new token',
       getToken: 'GET from token endpoint',
       deleteAccount: 'POST to delete account endpoint',
