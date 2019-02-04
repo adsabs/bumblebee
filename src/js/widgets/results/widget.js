@@ -69,6 +69,12 @@ function (
       this.minAuthorsPerResult = 3;
 
       this.model.on('change:makeSpace', _.bind(this.onMakeSpace, this));
+
+      // update the default fields with whatever the abstract page needs
+      var abstractFields = AbstractWidget.prototype.defaultQueryArguments.fl.split(',');
+      var resultsFields = this.defaultQueryArguments.fl.split(',');
+      resultsFields = _.union(abstractFields, resultsFields);
+      this.defaultQueryArguments.fl = resultsFields.join(',');
     },
 
     defaultQueryArguments: {

@@ -37,7 +37,9 @@ function (
     },
 
     setSubView: function (format) {
-      this.renderWidgetForListOfBibcodes([this.bibcode], { format: format });
+      if (this.bibcode && format) {
+        this.renderWidgetForListOfBibcodes([this.bibcode], { format: format });
+      }
     }
 
   });

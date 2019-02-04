@@ -112,7 +112,11 @@ function (
         deferred.resolve.apply(undefined, args);
       }
 
-      function fail() {
+      function fail(error) {
+
+        // on fail, send a custom event to alert library widgets
+        var ps = this.getPubSub();
+        ps.publish(ps.CUSTOM_EVENT, 'libraries:request:fail', error);
         deferred.reject.apply(undefined, arguments);
       }
 
@@ -130,7 +134,7 @@ function (
 
       this.getBeeHive().getService('Api').request(request);
 
-      return deferred;
+      return deferred.promise();
     },
 
     _executeApiRequest: function (apiQuery) {
@@ -146,7 +150,7 @@ function (
 
       pubsub.publish(pubsub.EXECUTE_REQUEST, req);
 
-      return defer;
+      return defer.promise();
     },
 
     _getBibcodes: function (options) {
@@ -347,7 +351,7 @@ function (
 
       var endpoint = ApiTargets.LIBRARIES;
       return this.composeRequest(endpoint, 'POST', { data: data })
-        .done(function (data) {
+        .done(function () {
           // refresh collection
           that._fetchAllMetadata();
         });

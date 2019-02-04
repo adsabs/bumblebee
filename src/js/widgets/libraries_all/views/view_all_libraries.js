@@ -4,6 +4,7 @@ define([
   'hbs!js/widgets/libraries_all/templates/library-item',
   'hbs!js/widgets/libraries_all/templates/no-libraries',
   'hbs!js/widgets/libraries_all/templates/loading-libraries',
+  'hbs!js/widgets/libraries_all/templates/error-libraries',
   'moment'
 ], function (
   Marionette,
@@ -11,6 +12,7 @@ define([
   LibraryItem,
   NoLibrariesTemplate,
   LoadingTemplate,
+  ErrorTemplate,
   moment
 
 ) {
@@ -93,15 +95,23 @@ define([
     },
 
     render: function () {
-      if (!this.collection.length) {
-        this.$el.html(NoLibrariesTemplate());
+      if (this.collection.length > 0) {
+        return Marionette.CompositeView.prototype.render.apply(this, arguments);
+      }
+
+      if (this.model.get('loading')) {
+        this.$el.html(LoadingTemplate());
         return this;
       }
 
+      if (this.model.get('error')) {
+        this.$el.html(ErrorTemplate());
+        return this;
+      }
 
-      return Marionette.CompositeView.prototype.render.apply(this, arguments);
+      this.$el.html(NoLibrariesTemplate());
+      return this;
     }
-
   });
 
   return LibraryCollectionView;

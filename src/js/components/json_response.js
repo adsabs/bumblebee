@@ -105,7 +105,7 @@ define(['underscore',
       return this.get(key, true);
     },
 
-    get: function (key, justCheck) {
+    get: function (key, justCheck, defaultValue) {
       // if key empty, return everything
       if (!key) {
         return this._clone(this.attributes);
@@ -132,6 +132,8 @@ define(['underscore',
               if (_.isNaN(ix) || pointer.length <= ix || ix < 0) {
                 if (justCheck) {
                   return false;
+                } else if (typeof defaultValue !== 'undefined') {
+                  return defaultValue;
                 }
                 throw new Error();
               }
@@ -140,18 +142,24 @@ define(['underscore',
             } catch (e) {
               if (justCheck) {
                 return false;
+              } else if (typeof defaultValue !== 'undefined') {
+                return defaultValue;
               }
               throw new Error('Can\'t find: ' + key + (found.length > 0 ? ' (worked up to: ' + found.join('.') + ')' : ''));
             }
           } else {
             if (justCheck) {
               return false;
+            } else if (typeof defaultValue !== 'undefined') {
+              return defaultValue;
             }
             throw new Error('Can\'t find: ' + key + (found.length > 0 ? ' (worked up to: ' + found.join('.') + ')' : ''));
           }
         } else {
           if (justCheck) {
             return false;
+          } else if (typeof defaultValue !== 'undefined') {
+            return defaultValue;
           }
           throw new Error('Can\'t find: ' + key + (found.length > 0 ? ' (worked up to: ' + found.join('.') + ')' : ''));
         }

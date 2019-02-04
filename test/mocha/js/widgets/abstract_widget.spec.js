@@ -75,9 +75,35 @@ define(['backbone', 'marionette', 'jquery', 'js/widgets/abstract/widget',
         var aw = new AbstractWidget();
         aw.activate(minsub.beehive.getHardenedInstance());
         $("#test").append(aw.render().el);
+        aw.model.set({
+          error: false,
+          loading: false
+        });
 
         expect($("article").text().trim().replace(/\s{2}/gi, "")).to.eql("Abstract Not FoundNo valid abstract selected for retrieval or abstract not yet indexed in ADS.")
+      });
 
+      it("should show an appropriate error page if there was an error", function(){
+
+        var aw = new AbstractWidget();
+        aw.activate(minsub.beehive.getHardenedInstance());
+        $("#test").append(aw.render().el);
+
+        aw.model.set({
+          error: true,
+          loading: false
+        });
+
+        expect($("article").text().trim().replace(/\s{2}/gi, "")).to.eql("Error loading abstract")
+      });
+
+      it("should show an appropriate loading page when first loaded", function(){
+
+        var aw = new AbstractWidget();
+        aw.activate(minsub.beehive.getHardenedInstance());
+        $("#test").append(aw.render().el);
+
+        expect($("article").text().trim().replace(/\s{2}/gi, "")).to.eql("Loading...")
       });
 
       it("should have a model that takes raw solr data and parses it to template-ready condition", function(){

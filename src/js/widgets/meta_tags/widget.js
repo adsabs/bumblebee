@@ -28,7 +28,7 @@ define([
       pubsub.subscribe(pubsub.DISPLAY_DOCUMENTS, this.onDisplayDocuments);
     },
     processResponse: function (apiResponse) {
-      var data = apiResponse.get('response.docs[0]');
+      var data = apiResponse.get('response.docs[0]', false, {});
       this.updateMetaTags(data);
     },
     getCachedDoc: function (bibcode) {
