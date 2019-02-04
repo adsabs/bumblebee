@@ -335,7 +335,10 @@ function (
 
       this._current = bibcode;
       // let other widgets know details
-      var c = this._docs[bibcode]['[citations]'];
+      var c = this._docs[bibcode]['[citations]'] || {
+        num_citations: 0,
+        num_references: 0
+      };
       var resolved_citations = c ? c.num_citations : 0;
 
       this.trigger('page-manager-event', 'broadcast-payload', {
@@ -356,7 +359,13 @@ function (
     onDisplayDocuments: function (apiQuery) {
       // check to see if a query is already in progress (the way bbb is set up, it will be)
       // if so, auto fill with docs initially requested by results widget
-      this.mergeStashedDocs(this.getBeeHive().getObject('DocStashController').getDocs());
+      try {
+        var stashedDocs = this.getBeeHive().getObject('DocStashController').getDocs();
+      } catch (e) {
+        stashedDocs = [];
+      } finally {
+        this.mergeStashedDocs(stashedDocs);
+      }
 
       var bibcode = apiQuery.get('q'),
         q;

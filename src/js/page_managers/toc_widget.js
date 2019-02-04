@@ -97,7 +97,8 @@ define([
         var val = model.get('id').split('__');
         var data = {
           idAttribute: val[0],
-          subView: val.length > 1 ? val[1] : undefined
+          subView: val.length > 1 ? val[1] : undefined,
+          href: 'abs/' + (this.model.get('bibcode') || '') + '/' + model.get('path')
         };
         this.trigger('page-manager-event', 'widget-selected', data);
       });

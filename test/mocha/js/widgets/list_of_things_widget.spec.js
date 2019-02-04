@@ -225,6 +225,9 @@ define(['marionette',
         minsub.beehive.addObject("User", fakeUserObject);
 
         var widget = new DetailsWidget();
+
+        // makes sure that dispatchRequest goes through without waiting
+        widget.canLoad = true;
         widget.activate(minsub.beehive.getHardenedInstance());
         var updatePagination = widget.updatePagination;
         widget.updatePagination = function (opts) {
@@ -277,6 +280,9 @@ define(['marionette',
         minsub.beehive.addObject("User", fakeUserObject);
 
         var widget = new DetailsWidget();
+
+        // makes sure that dispatchRequest goes through without waiting
+        widget.canLoad = true;
         //to test to make sure getLocalStorage was called
         widget.model.set("perPage", 0);
         widget.activate(minsub.beehive.getHardenedInstance());
@@ -361,6 +367,9 @@ define(['marionette',
         minsub.beehive.addObject("User", fakeUserObject);
 
         var widget = new DetailsWidget();
+
+        // makes sure that dispatchRequest goes through without waiting
+        widget.canLoad = true;
         widget.activate(minsub.beehive.getHardenedInstance());
 
         var updatePagination = widget.updatePagination;
@@ -443,6 +452,9 @@ define(['marionette',
         minsub.beehive.addObject("User", fakeUserObject);
 
         var widget = new DetailsWidget();
+
+        // makes sure that dispatchRequest goes through without waiting
+        widget.canLoad = true;
         widget.activate(minsub.beehive.getHardenedInstance());
 
         var updatePagination = widget.updatePagination;

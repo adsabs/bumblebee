@@ -31,7 +31,8 @@ define(['backbone', 'marionette', 'jquery', 'js/widgets/abstract/widget',
                 "title": ["Planetary Ephemerides <A href=\"test-url\">TEST</A>"],
                 "aff": ["Heidelberg, Universität, Heidelberg, Germany", "California Institute of Technology, Jet Propulsion Laboratory, Pasadena, CA"],
                 "citation_count" : 5,
-                "[citations]" : { num_citations : 3 }
+                "[citations]" : { num_citations : 3, num_references: 34 },
+                read_count: 30
               }
             ]}};
 
@@ -197,8 +198,10 @@ define(['backbone', 'marionette', 'jquery', 'js/widgets/abstract/widget',
           ],
           "citation_count": 5,
           "[citations]": {
-            "num_citations": 3
+            "num_citations": 3,
+            "num_references": 58
           },
+          read_count: 50,
           "hasAffiliation": 2,
           "authorAff": [
             [
@@ -260,14 +263,16 @@ define(['backbone', 'marionette', 'jquery', 'js/widgets/abstract/widget',
         $("#test").append(aw.view.render().el);
         minsub.publish(minsub.DISPLAY_DOCUMENTS, minsub.createQuery({'q': 'bibcode:foo'}));
 
-        expect(payload).to.eql({
-          "title": "Planetary Ephemerides",
-          "bibcode": "foo",
-          "citation_discrepancy": 2,
-          "citation_count": 5
-        });
-
-
+        expect(_.isEqual(_.keys(payload), [
+          "title",
+          "abstract",
+          "bibcode",
+          "citation_discrepancy",
+          "citation_count",
+          "references_count",
+          "read_count",
+          "property"
+        ])).to.eql(true);
       });
 
       it("should completely clear its (single) model before inserting the next page's data", function(){

@@ -62,6 +62,8 @@ define([
 
     it("Details LoT widget has certain methods", function() {
       var widget = new DetailsLoTWidget();
+      // makes sure that dispatchRequest goes through without waiting
+      widget.canLoad = true;
       expect(widget.extractValueFromQuery(new ApiQuery({'q': 'bibcode:foo'}), 'q', 'bibcode')).to.eql('foo');
       expect(widget.extractValueFromQuery(new ApiQuery({'q': '"bibcode:foo"'}), 'q', 'bibcode')).to.eql('foo');
     });
@@ -69,6 +71,8 @@ define([
     it("does not keep old records around in the hiddenCollection whenever the bibcode param is changed in the model", function(){
 
       var w = new DetailsLoTWidget();
+      // makes sure that dispatchRequest goes through without waiting
+      w.canLoad = true;
       w.hiddenCollection.add([{bibcode : 1}, {bibcode : 2}]);
       expect(JSON.stringify(w.hiddenCollection.toJSON())).to.eql('[{"bibcode":1,"resultsIndex":0,"emptyPlaceholder":false,"visible":false,"actionsVisible":true},{"bibcode":2,"resultsIndex":1,"emptyPlaceholder":false,"visible":false,"actionsVisible":true}]');
       //this will be triggered by TOC widget on a fresh "display_documents"
@@ -80,6 +84,9 @@ define([
     it("resets pagination values whenever the bibcode param is changed in the model", function(){
 
       var widget = new DetailsLoTWidget();
+
+      // makes sure that dispatchRequest goes through without waiting
+      widget.canLoad = true;
 
       var updatePagination = widget.updatePagination;
       widget.updatePagination = function (opts) {
@@ -104,6 +111,9 @@ define([
 
     it("Show citations", function(){
       var widget = new CitationWidget();
+
+      // makes sure that dispatchRequest goes through without waiting
+      widget.canLoad = true;
       widget.activate(minsub.beehive.getHardenedInstance());
 
       var $w = widget.render().$el;
@@ -118,6 +128,9 @@ define([
 
     it("Show references", function(done){
       var widget = new ReferencesWidget();
+
+      // makes sure that dispatchRequest goes through without waiting
+      widget.canLoad = true;
       widget.activate(minsub.beehive.getHardenedInstance());
 
       var $w = widget.render().$el;
@@ -133,19 +146,22 @@ define([
 
       expect($w.find(".s-list-description").text()).to.eql("Papers referenced by");
 
-      widget.trigger("page-manager-message", "broadcast-payload", {title: "foo"})
+      widget.trigger("page-manager-message", "broadcast-payload", { title: "foo" });
+      widget.trigger("page-manager-message", "widget-selected", { idAttribute: "ShowReferences" });
 
       expect($w.find("a:first").attr("href")).to.eql("#search/q=references(bibcode%3Abar)&sort=first_author%20asc");
 
       setTimeout(function(){
         expect($w.find(".s-article-title").text()).to.eql("foo");
         done()
-      }, 200)
-
+      }, 200);
     });
 
     it("Show coreads", function(done){
       var widget = new CoreadsWidget();
+
+      // makes sure that dispatchRequest goes through without waiting
+      widget.canLoad = true;
       widget.activate(minsub.beehive.getHardenedInstance());
 
       var $w = widget.render().$el;
@@ -153,14 +169,15 @@ define([
 
       var query =  widget.customizeQuery( new ApiQuery({'q': 'bibcode:bar'}));
 
-      expect(query.url()).to.eql( 'fl=title%2Cbibcode%2Cauthor%2Ckeyword%2Cpub%2Caff%2Cvolume%2Cyear%2C%5Bcitations%5D%2Cproperty%2Cpubdate%2Cabstract%2Cesources%2Cdata&q=trending(bibcode%3Abar)-bibcode%3Abar&rows=25&sort=date%20desc&start=0');
+      expect(query.url()).to.eql( 'fl=title%2Cbibcode%2Cauthor%2Ckeyword%2Cpub%2Caff%2Cvolume%2Cyear%2C%5Bcitations%5D%2Cproperty%2Cpubdate%2Cabstract%2Cesources%2Cdata&q=trending(bibcode%3Abar)-bibcode%3Abar&rows=25&sort=score%20desc&start=0');
 
       minsub.publish(minsub.DISPLAY_DOCUMENTS, new ApiQuery({'q': 'bibcode:bar'}));
       expect($w.find("label").length).to.equal(26);
 
       expect($w.find(".s-list-description").text()).to.eql("Papers also read by those who read");
 
-      widget.trigger("page-manager-message", "broadcast-payload", {title: "foo"})
+      widget.trigger("page-manager-message", "broadcast-payload", {title: "foo"});
+      widget.trigger("page-manager-message", "widget-selected", { idAttribute: "ShowCoreads" });
 
       setTimeout(function(){
         expect($w.find(".s-article-title").text()).to.eql("foo");
@@ -170,13 +187,16 @@ define([
 
       //should remove self from search results
 
-      expect($w.find("a:first").attr("href")).to.eql('#search/q=trending(bibcode%3Abar)%20-bibcode%3Abar&sort=date%20desc');
+      expect($w.find("a:first").attr("href")).to.eql('#search/q=trending(bibcode%3Abar)%20-bibcode%3Abar&sort=score%20desc');
 
 
     });
 
     it("Show TableOfContents", function(done){
       var widget = new TableOfContentsWidget();
+
+      // makes sure that dispatchRequest goes through without waiting
+      widget.canLoad = true;
       widget.activate(minsub.beehive.getHardenedInstance());
 
       var $w = widget.render().$el;
@@ -186,7 +206,8 @@ define([
 
       expect($w.find(".s-list-description").text()).to.eql("Papers in the same volume as");
 
-      widget.trigger("page-manager-message", "broadcast-payload", {title: "foo"})
+      widget.trigger("page-manager-message", "broadcast-payload", {title: "foo"});
+      widget.trigger("page-manager-message", "widget-selected", { idAttribute: "ShowTableofcontents" });
 
       setTimeout(function(){
         expect($w.find(".s-article-title").text()).to.eql("foo");

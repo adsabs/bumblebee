@@ -110,7 +110,7 @@ define([
               "date desc, bibcode desc"
             ],
             "fl": [
-              "title,abstract,comment,bibcode,author,keyword,id,citation_count,[citations],pub,pubnote,aff,volume,pubdate,doi,pub_raw,page,links_data,property,esources,data,email,doctype"
+              "[citations],abstract,aff,author,bibcode,citation_count,comment,doi,id,keyword,page,property,pub,pub_raw,pubdate,pubnote,read_count,title,volume,links_data,esources,data,email,doctype"
             ],
             "rows": [
               25
@@ -119,7 +119,7 @@ define([
               0
             ]
           });
-          expect(widget.model.get('currentQuery').url()).to.eql('fl=title%2Cabstract%2Ccomment%2Cbibcode%2Cauthor%2Ckeyword%2Cid%2Ccitation_count%2C%5Bcitations%5D%2Cpub%2Cpubnote%2Caff%2Cvolume%2Cpubdate%2Cdoi%2Cpub_raw%2Cpage%2Clinks_data%2Cproperty%2Cesources%2Cdata%2Cemail%2Cdoctype&q=star%20isbn%3A*%20*%3A*&rows=25&sort=date%20desc%2C%20bibcode%20desc&start=0');
+          expect(widget.model.get('currentQuery').url()).to.eql('fl=%5Bcitations%5D%2Cabstract%2Caff%2Cauthor%2Cbibcode%2Ccitation_count%2Ccomment%2Cdoi%2Cid%2Ckeyword%2Cpage%2Cproperty%2Cpub%2Cpub_raw%2Cpubdate%2Cpubnote%2Cread_count%2Ctitle%2Cvolume%2Clinks_data%2Cesources%2Cdata%2Cemail%2Cdoctype&q=star%20isbn%3A*%20*%3A*&rows=25&sort=date%20desc%2C%20bibcode%20desc&start=0');
           expect(widget.collection.length).to.eql(10);
           done();
         }, 50);
@@ -147,7 +147,7 @@ define([
               "date desc, bibcode desc"
             ],
             "fl": [
-              "title,abstract,comment,bibcode,author,keyword,id,citation_count,[citations],pub,pubnote,aff,volume,pubdate,doi,pub_raw,page,links_data,property,esources,data,email,doctype"
+              "[citations],abstract,aff,author,bibcode,citation_count,comment,doi,id,keyword,page,property,pub,pub_raw,pubdate,pubnote,read_count,title,volume,links_data,esources,data,email,doctype"
             ],
             "rows": [
               25
@@ -156,7 +156,7 @@ define([
               0
             ]
           });
-          expect(widget.model.get('currentQuery').url()).to.eql('fl=title%2Cabstract%2Ccomment%2Cbibcode%2Cauthor%2Ckeyword%2Cid%2Ccitation_count%2C%5Bcitations%5D%2Cpub%2Cpubnote%2Caff%2Cvolume%2Cpubdate%2Cdoi%2Cpub_raw%2Cpage%2Clinks_data%2Cproperty%2Cesources%2Cdata%2Cemail%2Cdoctype&q=star&rows=25&sort=date%20desc%2C%20bibcode%20desc&start=0');
+          expect(widget.model.get('currentQuery').url()).to.eql('fl=%5Bcitations%5D%2Cabstract%2Caff%2Cauthor%2Cbibcode%2Ccitation_count%2Ccomment%2Cdoi%2Cid%2Ckeyword%2Cpage%2Cproperty%2Cpub%2Cpub_raw%2Cpubdate%2Cpubnote%2Cread_count%2Ctitle%2Cvolume%2Clinks_data%2Cesources%2Cdata%2Cemail%2Cdoctype&q=star&rows=25&sort=date%20desc%2C%20bibcode%20desc&start=0');
           expect(widget.collection.length).to.eql(10);
           done();
         }, 50);
