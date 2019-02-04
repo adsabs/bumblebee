@@ -299,7 +299,8 @@ define([
         exIds.relationships.push('SELF');
       }
       var arxiv = get(ads.all_ids).find(function(element) {
-        return element.toLowerCase().startsWith('arxiv')});
+        return element.toLowerCase().startsWith('arxiv')
+      });
       if (arxiv) {
         arxiv = arxiv.substr(6);
         exIds.types.push('arxiv');
