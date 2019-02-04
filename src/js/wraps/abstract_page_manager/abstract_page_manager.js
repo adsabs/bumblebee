@@ -64,30 +64,69 @@ define([
 
     navConfig: {
       ShowAbstract: {
-        title: 'Abstract', path: 'abstract', showCount: false, isSelected: true, category: 'view', alwaysThere: 'true'
+        title: 'Abstract',
+        path: 'abstract',
+        showCount: false,
+        isSelected: true,
+        category: 'view',
+        alwaysThere: 'true',
+        order: 0
       },
-      ShowCitations: { title: 'Citations', path: 'citations', category: 'view' },
-      ShowReferences: { title: 'References', path: 'references', category: 'view' },
+      ShowCitations: {
+        title: 'Citations',
+        path: 'citations',
+        category: 'view',
+        order: 1
+      },
+      ShowReferences: {
+        title: 'References',
+        path: 'references',
+        category: 'view',
+        order: 2
+      },
       ShowCoreads: {
-        title: 'Co-Reads', path: 'coreads', category: 'view', showCount: false
+        title: 'Co-Reads',
+        path: 'coreads',
+        category: 'view',
+        showCount: false,
+        order: 3
       },
       ShowSimilar: {
-        title: 'Similar Papers', path: 'similar', category: 'view', showCount: false
+        title: 'Similar Papers',
+        path: 'similar',
+        category: 'view',
+        showCount: false,
+        order: 4
       },
       ShowTableofcontents: {
-        title: 'Volume Content', path: 'tableofcontents', category: 'view', showCount: false
+        title: 'Volume Content',
+        path: 'tableofcontents',
+        category: 'view',
+        showCount: false,
+        order: 5
       },
       ShowGraphics: {
-        title: 'Graphics', path: 'graphics', showCount: false, category: 'view'
+        title: 'Graphics',
+        path: 'graphics',
+        showCount: false,
+        category: 'view',
+        order: 6
       },
       ShowMetrics: {
-        title: 'Metrics', path: 'metrics', showCount: false, category: 'view'
+        title: 'Metrics',
+        path: 'metrics',
+        showCount: false,
+        category: 'view',
+        order: 7
       },
       ShowPaperExport__default: {
-        title: 'Export', path: 'export', category: 'export', alwaysThere: 'true'
+        title: 'Export',
+        path: 'export',
+        category: 'export',
+        alwaysThere: 'true',
+        order: 8
       }
     }
-
 
   });
   return PageManager;
