@@ -95,7 +95,7 @@ define([
     events: {
       'click a.page-control': 'changePageWithButton',
       'keyup input.page-control': 'tabOrEnterChangePageWithInput',
-      'click .per-page': 'changePerPage',
+      'change #per-page-select': 'changePerPage',
       'click #bulk-delete': 'bulkDelete',
       'click #select-all-docs': 'toggleAll'
     },

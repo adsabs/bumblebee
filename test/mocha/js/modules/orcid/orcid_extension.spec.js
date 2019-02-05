@@ -102,13 +102,14 @@ define([
         var widget = new Widget();
 
         minsub.beehive.addObject('User', {
-          getHardenedInstance: function() {return this},
-          isOrcidModeOn: function() {return true;}
+          getHardenedInstance: function () { return this; },
+          isOrcidModeOn: _.constant(true)
         });
 
         widget.activate(minsub.beehive.getHardenedInstance());
+        widget.canLoad = true;
         minsub.publish(minsub.DISPLAY_DOCUMENTS, minsub.createQuery({
-         q : "bibcode:star"
+          q : "bibcode:star"
         }));
 
         var $w = $(widget.render().el);

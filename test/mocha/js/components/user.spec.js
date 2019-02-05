@@ -187,6 +187,8 @@ define([
            "getOpenURLConfig",
            "getUserData",
            "setUserData",
+           "getRecentQueries",
+           "addToRecentQueries",
            "generateToken",
            "getToken",
            "deleteAccount",
@@ -202,9 +204,7 @@ define([
            "__facade__",
            "mixIn"
          ]
-
      )
-
    });
 
    describe("User Object: remote endpoint interaction", function() {
@@ -387,7 +387,8 @@ define([
         ],
         "defaultExportFormat": "BibTeX",
         "defaultHideSidebars": "Show",
-        "customFormats": []
+        "customFormats": [],
+        "recentQueries": []
       });
 
       expect(u.getUserName()).to.eql("foobly@gmail.com");

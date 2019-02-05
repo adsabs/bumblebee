@@ -25,12 +25,25 @@ function (
 
     initialize: function (options) {
       ListOfThings.prototype.initialize.call(this, options);
-
+      var title = '';
       // other widgets can send us data through page manager
       // here it is used just to get the title of the main article page
       this.on('page-manager-message', function (event, data) {
         if (event === 'broadcast-payload') {
+          this.canLoad = false;
+          title = data.title;
           this.ingestBroadcastedPayload(data);
+        }
+
+        if (event === 'widget-selected' && data.idAttribute === this.name && !this.canLoad) {
+          this.canLoad = true;
+          var self = this;
+
+          // update title here, with delay to account for issues with rendering
+          setTimeout(function () {
+            self.model.set('title', title);
+          }, 0);
+          this.dispatchRequest(this.currentQuery);
         }
       });
 
@@ -51,25 +64,26 @@ function (
     },
 
 
-    ingestBroadcastedPayload: function (data) {
-      // this interferes with the model reset  in list_of_things so delay by a tiny amount
-      // this needs to be refactored
-      var that = this;
-      setTimeout(function () {
-        that.model.set('title', data.title);
-      }, 100);
-    },
+    ingestBroadcastedPayload: _.noop,
 
     dispatchRequest: function (apiQuery) {
+
+      this.currentQuery = apiQuery;
+
+      // do not continue unless we have been selected
+      if (!this.canLoad) return;
+
       // reset the record
       try {
-        var bibcode = apiQuery.get('q')[0].match(/bibcode:(.*)/)[1];
+        var q = apiQuery.get('q');
+        if (q && q[0]) {
+          this.model.set('bibcode', q[0].match(/bibcode:(.*)/)[1]);
+        }
       } catch (e) {
         console.error('was unable to parse the bibcode!');
         return;
       }
 
-      this.model.set('bibcode', bibcode);
       // dispatch the request
       ListOfThings.prototype.dispatchRequest.apply(this, arguments);
     },

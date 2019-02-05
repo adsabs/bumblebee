@@ -18,7 +18,7 @@ define([
       ],
       types: [
         'abstract', 'citations', 'references',
-        'metrics', 'coreads', 'graphics', 'associated',
+        'metrics', 'coreads', 'similar', 'graphics', 'associated',
         [ 'tableofcontents', { redirectTo: 'toc' }]
       ],
       url: _.template('link_gateway/<%= bibcode %>/<%= target %>')

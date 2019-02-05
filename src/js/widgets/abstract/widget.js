@@ -293,7 +293,7 @@ function (
     },
 
     defaultQueryArguments: {
-      fl: 'title,abstract,comment,bibcode,author,keyword,id,citation_count,[citations],pub,pubnote,aff,volume,pubdate,doi,pub_raw,page',
+      fl: '[citations],abstract,aff,author,bibcode,citation_count,comment,doi,id,keyword,page,property,pub,pub_raw,pubdate,pubnote,read_count,title,volume',
       rows: 1
     },
 
@@ -335,24 +335,37 @@ function (
 
       this._current = bibcode;
       // let other widgets know details
-      var c = this._docs[bibcode]['[citations]'];
+      var c = this._docs[bibcode]['[citations]'] || {
+        num_citations: 0,
+        num_references: 0
+      };
       var resolved_citations = c ? c.num_citations : 0;
 
       this.trigger('page-manager-event', 'broadcast-payload', {
         title: this._docs[bibcode].title,
+        abstract: this._docs[bibcode].abstract,
         // this should be superfluous, widgets already subscribe to display_documents
         bibcode: bibcode,
 
         // used by citation list widget
         citation_discrepancy: this._docs[bibcode].citation_count - resolved_citations,
-        citation_count: this._docs[bibcode].citation_count
+        citation_count: this._docs[bibcode].citation_count,
+        references_count: c.num_references,
+        read_count: this._docs[bibcode].read_count,
+        property: this._docs[bibcode].property
       });
     },
 
     onDisplayDocuments: function (apiQuery) {
       // check to see if a query is already in progress (the way bbb is set up, it will be)
       // if so, auto fill with docs initially requested by results widget
-      this.mergeStashedDocs(this.getBeeHive().getObject('DocStashController').getDocs());
+      try {
+        var stashedDocs = this.getBeeHive().getObject('DocStashController').getDocs();
+      } catch (e) {
+        stashedDocs = [];
+      } finally {
+        this.mergeStashedDocs(stashedDocs);
+      }
 
       var bibcode = apiQuery.get('q'),
         q;

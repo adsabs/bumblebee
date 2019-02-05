@@ -176,7 +176,7 @@ define([
         promises.push(promise); // hack, so that $.when() always returns []
       }
 
-      
+
       var bigPromise = $.Deferred();
       $.when.apply($, promises)
         .then(function () {
