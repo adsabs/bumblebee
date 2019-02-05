@@ -225,7 +225,8 @@ define([
       'doi': '$.doi[0]',
       'author': '$.author[*]',
       'title': '$.title[0]',
-      'type': '$.doctype'
+      'type': '$.doctype',
+      'all_ids': '$.all_ids'
     };
 
     var put = function (obj, p, val) {
@@ -295,6 +296,15 @@ define([
       if (doi) {
         exIds.types.push('doi');
         exIds.values.push(doi);
+        exIds.relationships.push('SELF');
+      }
+      var arxiv = get(ads.all_ids).find(function(element) {
+        return element.toLowerCase().startsWith('arxiv')
+      });
+      if (arxiv) {
+        arxiv = arxiv.substr(6);
+        exIds.types.push('arxiv');
+        exIds.values.push(arxiv);
         exIds.relationships.push('SELF');
       }
 

@@ -78,7 +78,7 @@ function (
     },
 
     defaultQueryArguments: {
-      'fl': 'title,abstract,bibcode,author,keyword,id,links_data,property,esources,data,citation_count,[citations],pub,aff,email,volume,pubdate,doi,doctype',
+      'fl': 'title,abstract,bibcode,author,keyword,id,links_data,property,esources,data,citation_count,[citations],pub,aff,email,volume,pubdate,doi,doctype,identifier',
       'rows': 25,
       'start': 0
     },
