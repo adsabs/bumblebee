@@ -54,7 +54,7 @@
             `#local-reference`
             `` <- empty routes
           */
-          if (!href.match(/^(https?|$|#$|\/\/)/) &&
+          if (!href.match(/^(https?|$|#$|#[^\/]+$|\/\/)/) &&
             !ev.altKey &&
             !ev.ctrlKey &&
             !ev.metaKey &&
