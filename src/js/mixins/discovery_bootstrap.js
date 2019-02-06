@@ -206,8 +206,13 @@ function (
         navigator.start(app);
         navigator.router = app.router; // this feels hackish
 
+        var noPushState = location.search.indexOf('pushstate=false') > -1;
+
         // Trigger the initial route and enable HTML5 History API support
-        Backbone.history.start(conf ? conf.routerConf : {});
+        var newConf = _.defaults({
+          pushState: noPushState ? false : undefined
+        }, conf && conf.routerConf);
+        Backbone.history.start(newConf);
 
         $(document).on('scroll', function () {
           if ($('#landing-page-layout').length > 0) {

@@ -101,35 +101,6 @@ function (
         // XXX:rca - this can probably go....anyways, shouldn't be here, is not generic
         // and set the default title
         document.title = 'ADS Search';
-
-        if (!this.globalLinksHandled && Backbone.history.options.pushState) {
-          $(document).on('click', 'a', function (ev) {
-            var href = $(ev.currentTarget).attr('href');
-
-            /*
-              this should filter out hrefs that look like:
-              `http://mysite.com`
-              `//mysite.com`
-              `#`
-              `#local-reference`
-              `` <- empty routes
-            */
-            if (!href.match(/^(https?|$|#$|#\w|\/\/)/) &&
-              !ev.altKey &&
-              !ev.ctrlKey &&
-              !ev.metaKey &&
-              !ev.shiftKey &&
-              self.router && self.router.navigate
-            ) {
-              ev.preventDefault();
-              var url = href.replace(/^\/?#\/?/, '/');
-              self.router.navigate(url, { trigger: true, replace: true });
-              self.globalLinksHandled = false;
-              return false;
-            }
-          });
-          self.globalLinksHandled = true;
-        }
       }
 
       var p;
