@@ -39,22 +39,26 @@
   })();
 
   var setGlobalLinkHandler = function () {
+    var routes = [
+      'classic-form',
+      'paper-form',
+      'index',
+      'search',
+      'execute-query',
+      'abs',
+      'user',
+      'orcid-instructions',
+      'public-libraries'
+    ];
+    var regx = new RegExp('^#(\/?(' + routes.join('|') + ').*\/?)?$', 'i');
+
     // apply a global link handler for push state
     require(['jquery'], function ($) {
       $(document).on('click', 'a', function (ev) {
         if (Backbone.history.options.pushState) {
 
           var href = $(ev.currentTarget).attr('href');
-
-          /*
-            this should filter out hrefs that look like:
-            `http://mysite.com`
-            `//mysite.com`
-            `#`
-            `#local-reference`
-            `` <- empty routes
-          */
-          if (!href.match(/^(https?|$|#$|#[^\/]+$|\/\/)/) &&
+          if (regx.test(href) &&
             !ev.altKey &&
             !ev.ctrlKey &&
             !ev.metaKey &&
@@ -66,7 +70,7 @@
               var nav = bbb.getBeeHive().getService('Navigator');
               nav.router.navigate(url, { trigger: true, replace: true });
             } catch (e) {
-              console.log('error ', e);
+              console.error(e.message);
               return true;
             }
             return false;
