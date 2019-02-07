@@ -39,6 +39,7 @@
   })();
 
   var setGlobalLinkHandler = function () {
+
     var routes = [
       'classic-form',
       'paper-form',
@@ -54,26 +55,32 @@
 
     // apply a global link handler for push state
     require(['jquery'], function ($) {
-      $(document).on('click', 'a', function (ev) {
-        if (Backbone.history.options.pushState) {
 
-          var href = $(ev.currentTarget).attr('href');
-          if (regx.test(href) &&
-            !ev.altKey &&
-            !ev.ctrlKey &&
-            !ev.metaKey &&
-            !ev.shiftKey &&
-            window.bbb
-          ) {
-            var url = href.replace(/^\/?#\/?/, '/');
-            try {
-              var nav = bbb.getBeeHive().getService('Navigator');
-              nav.router.navigate(url, { trigger: true, replace: true });
-            } catch (e) {
-              console.error(e.message);
-              return true;
-            }
+      var $el = [];
+      $(document).on('mousedown', 'a', function (ev) {
+        if (!Backbone.history.options.pushState) return;
+        $el = $(ev.currentTarget);
+        var href = $el.attr('href');
+        if (regx.test(href)) {
+          var url = href.replace(/^\/?#\/?/, '/');
+          $el.attr('href', url);
+          return false;
+        }
+        $el = [];
+      });
+
+      $(document).on('click', 'a', function () {
+        if ($el.length && window.bbb) {
+          var href = $el.attr('href');
+
+          // clear it so we don't have one lingering around
+          $el = [];
+          try {
+            var nav = bbb.getBeeHive().getService('Navigator');
+            nav.router.navigate(href, { trigger: true, replace: true });
             return false;
+          } catch (e) {
+            console.error(e.message);
           }
         }
       });
