@@ -26,6 +26,7 @@ define([
     SET_TOTAL_RECS: 'SET_TOTAL_RECS',
     SET_SHOW_CLOSER: 'SET_SHOW_CLOSER',
     SET_PAGE: 'SET_PAGE',
+    SET_SORT: 'SET_SORT',
     SET_BATCH_SIZE: 'SET_BATCH_SIZE',
     TAKE_SNAPSHOT: 'TAKE_SNAPSHOT',
     RESET: 'RESET',
@@ -60,6 +61,7 @@ define([
   actions.setHasError = hasError => ({ type: actions.SET_HAS_ERROR, hasError });
   actions.setErrorMsg = errorMsg => ({ type: actions.SET_ERROR_MSG, errorMsg });
   actions.setPage = page => ({ type: actions.SET_PAGE, page });
+  actions.setSort = sort => ({ type: actions.SET_SORT, sort });
   actions.reset = () => ({ type: actions.RESET });
   actions.hardReset = () => ({ type: actions.HARD_RESET });
   actions.setOrigin = origin => ({ type: actions.SET_ORIGIN, origin });
@@ -96,7 +98,7 @@ define([
     const { exports, main } = getState();
     const { composeRequest } = widget;
     const {
-      requestIds, receiveIds, requestFailed, setTotalRecs, setHasError
+      requestIds, receiveIds, requestFailed, setTotalRecs, setHasError, setSort
     } = actions;
 
     // create a new query from the serialized params
@@ -122,9 +124,13 @@ define([
     prom.then((res) => {
       // pull out only the bibcodes
       const ids = _.map(res.get('response.docs'), 'bibcode');
+      const sort = res.get('responseHeader.params.sort', false, 'date desc');
 
       // update the ids on the state
       dispatch(receiveIds(ids));
+
+      // get the sort from the query
+      dispatch(setSort(sort));
 
       // set the total recs to based on the number of ids found
       dispatch(setTotalRecs(res.get('response.numFound')));
@@ -164,6 +170,7 @@ define([
     // setting up a new query using our current ids
     const q = new ApiQuery();
     q.set('bibcode', ids);
+    q.set('sort', exports.sort);
     if (format.value === 'custom' && exports.customFormatString.length > 0) {
       q.set('format', exports.customFormatString);
     } else if (format.value === 'custom' && exports.customFormatString.length <= 0) {

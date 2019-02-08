@@ -33,6 +33,7 @@ define([
     REQUEST_CANCELLED,
     TAKE_SNAPSHOT,
     SET_ORIGIN,
+    SET_SORT,
     RESET,
     HARD_RESET,
     SET_CUSTOM_FORMATS
@@ -87,6 +88,7 @@ define([
     output: '',
     progress: 0,
     ids: [],
+    sort: 'date desc',
     count: 0,
     page: 0,
     maxCount: ApiTargets._limits.ExportWidget.default,
@@ -152,6 +154,8 @@ define([
         };
       case SET_PAGE:
         return { ...state, page: action.page };
+      case SET_SORT:
+        return { ...state, sort: action.sort };
       case TAKE_SNAPSHOT:
         return { ...state, snapshot: action.snapshot };
       case RESET: {
