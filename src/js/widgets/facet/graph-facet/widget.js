@@ -80,6 +80,8 @@ function (
     handleConditionApplied: function (val) {
       var q = this.getCurrentQuery();
       val = this.facetField + ':' + val;
+      // wrap the current query, if necessary
+      q.set('q', this.queryUpdater.quoteIfNecessary(q.get('q')[0]));
       q = q.clone();
       var fieldName = 'q';
       this.queryUpdater.updateQuery(q, fieldName, 'limit', val);
