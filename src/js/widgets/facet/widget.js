@@ -11,7 +11,8 @@ define([
   'es6!./facet-container.jsx',
   './actions',
   './reducers',
-  './create_store'
+  './create_store',
+  'utils'
 ],
 function (Backbone,
   ApiQuery,
@@ -25,7 +26,9 @@ function (Backbone,
   ContainerComponent,
   createActionObject,
   Reducers,
-  createStore) {
+  createStore,
+  utils
+) {
   var FacetContainerView = Backbone.View.extend({
 
     render: function (store, actions) {
@@ -119,6 +122,9 @@ function (Backbone,
         request is only dispatched automatically if the facet is open by default!
        */
     dispatchRequest: function (apiQuery) {
+      if (this._sortChanged(apiQuery)) {
+        return;
+      }
       this.setCurrentQuery(apiQuery);
       this.store.dispatch(this.actions.reset_state());
       if (this.store.getState().config.openByDefault) {
@@ -127,16 +133,28 @@ function (Backbone,
       }
     },
 
-    _dispatchRequest: function (id) {
-      var pubsub = this.getPubSub(),
-        that = this;
+    _sortChanged: function (apiQuery) {
+      try {
+        // get the difference between the queries
+        var diff = utils.difference(apiQuery.toJSON(), this.getCurrentQuery().toJSON());
+      } catch (e) {
+        // continue
+      }
 
+      // make sure only 1 key on object, and that key is "sort"
+      return diff && diff.sort && _.keys(diff).length === 1;
+    },
+
+    _dispatchRequest: function (id) {
+      var pubsub = this.getPubSub();
+      var that = this;
+      var currentQuery = this.getCurrentQuery();
       this.store.dispatch(this.actions.data_requested(id));
       pubsub.subscribeOnce(pubsub.DELIVERING_RESPONSE, function (apiResponse) {
         that.store.dispatch(that.actions.data_received(apiResponse.toJSON(), id));
       });
 
-      var q = this.customizeQuery(this.getCurrentQuery());
+      var q = this.customizeQuery(currentQuery);
       var children = id ? this.store.getState().facets[id].children : this.store.getState().children;
       var offset = children.length || 0;
 
@@ -155,7 +173,7 @@ function (Backbone,
         throw new Error('we don\'t recognize this operator you\'re trying to filter on');
       }
 
-      var q = this.getCurrentQuery().clone();
+      var q = currentQuery.clone();
       q.unlock();
 
       var facetField = this.store.getState().config.facetField;
