@@ -87,10 +87,6 @@ function ($, _,
           return;
         }
 
-        // TODO: right now the assemble method returns immediately, that might have
-        // bad effects when widgets get loaded (slowly) and get inserted into the dom
-        // after the whole thing was already rendered; do we want to make assemble
-        // asynchronous and wait for all promises to finish?
 
         var promise = app._getWidget(widgetName).done(function(widget) {
           if (self.persistentWidgets && self.persistentWidgets.indexOf(widgetName) > -1) {
