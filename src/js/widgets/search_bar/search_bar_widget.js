@@ -878,6 +878,10 @@ function (
       }
     },
 
+    _onIndexPage: function () {
+      return this.currentPage === 'index-page' || !this.currentPage;
+    },
+
     navigate: function (newQuery) {
       var newQ = newQuery.toJSON();
       var oldQ = _.omit(this.getCurrentQuery().toJSON(), function (val, key) {
@@ -893,13 +897,16 @@ function (
       }
 
       // apply any default filters only if this is a new search
-      if (this.currentPage === 'index-page' || !this.currentPage) {
+      if (this._onIndexPage()) {
         newQuery = this.applyDefaultFilters(newQuery);
+        newQuery.set('__clearBigQuery', 'true');
       }
 
       // remove the bigquery from the query if the user cleared it
       if (newQuery.has('__clearBigQuery')) {
         newQuery.unset('__qid');
+      } else if (newQuery.has('__qid') && !this._onIndexPage()) {
+        newQuery.set('__saveBigQuery', 'true');
       }
 
       this.view.setFormVal(newQuery.get('q')[0]);
