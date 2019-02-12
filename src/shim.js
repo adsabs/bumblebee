@@ -16,11 +16,11 @@
     load = function () {
       // attempt to get bundle config
       require([paths[path] + '.config'], function() {
-        setTimeout(setGlobalLinkHandler, 1000);
+        setGlobalLinkHandler();
       }, function() {
         // on failure to load specific bundle; load generic one
         require(['discovery.config'], function() {
-          setTimeout(setGlobalLinkHandler, 1000);
+          setGlobalLinkHandler();
         });
       });
     };
@@ -28,7 +28,7 @@
     load = function () {
       // on errors, just fallback to normal config
       require(['discovery.config'], function() {
-        setTimeout(setGlobalLinkHandler, 1000);
+        setGlobalLinkHandler();
       });
     };
   }
