@@ -213,7 +213,6 @@ function (
     },
 
     changePageWithButton: function (e) {
-      e.preventDefault();
       var $target = $(e.currentTarget);
       if ($target.parent().hasClass('disabled')) return;
       var transform = $target.hasClass('next-page') ? 1 : -1;
@@ -221,6 +220,7 @@ function (
       this.trigger('pagination:select', pageVal);
 
       if (this.resultsWidget) { analytics('send', 'event', 'interaction', 'results-list-pagination', pageVal); }
+      return false;
     },
 
     tabOrEnterChangePageWithInput: function (e) {
