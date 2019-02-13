@@ -170,12 +170,8 @@ define([
         }
       }
 
-
-
-      if (promises.length == 1) {
-        promises.push(promise); // hack, so that $.when() always returns []
-      }
-
+      // hack, so that $.when() always returns []
+      promises.length === 1 && promises.push(promise);
 
       var bigPromise = $.Deferred();
       $.when.apply($, promises)
@@ -196,11 +192,7 @@ define([
           console.error('Generic error - we were not successul in loading all modules for config', config);
           if (arguments.length) console.error(arguments);
           bigPromise.reject.apply(bigPromise, arguments);
-          // throw new Error("We are screwed!"); do not throw errors because then .fail() callbacks cannot be used
         });
-      // .done(function() {
-      //  console.log('DONE loading', this, config);
-      // });
 
       return bigPromise.promise();
     },

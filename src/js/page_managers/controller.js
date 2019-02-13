@@ -18,6 +18,11 @@ function ($, _,
   PageManagerViewMixin,
   Dependon
 ) {
+
+  var PRIORITY_WIDGETS = [
+    'ShowAbstract'
+  ];
+
   var PageManagerController = BaseWidget.extend({
 
     initialize: function (options) {
@@ -28,7 +33,6 @@ function ($, _,
       this.assembled = false;
       _.extend(this, _.pick(options, ['debug', 'widgetId']));
     },
-
 
     /**
        * Necessary step: during activation we'll collect list of widgets
@@ -42,7 +46,6 @@ function ($, _,
       this.debug = beehive.getDebug(); // XXX:rca - think of st better
       this.view = this.createView({ debug: this.debug, widgets: this.widgets });
     },
-
 
     setWidgetId: function (n) {
       this.widgetId = n;
@@ -87,52 +90,38 @@ function ($, _,
           return;
         }
 
-
         var promise = app._getWidget(widgetName).done(function(widget) {
           if (self.persistentWidgets && self.persistentWidgets.indexOf(widgetName) > -1) {
             // this increments the counter so the widget won't be de-referenced when this
             // page manager is disassembled
             app.incrRefCount('widget', widgetName);
           }
-  
+
           if (widget) {
-            // maybe it is a page-manager (this is a security hole though!)
-            if (widget.assemble) {
-              widget.assemble(app).done(function() {
-                // in case the user passed data params on the dom element,
-                // create props on the widget
-                _.assign(widget, {
-                  componentParams: $(widgetDom).data()
-                });
-      
-                // reducing unneccessary rendering
-                if (widget.getEl) {
-                  el = widget.getEl();
-                } else {
-                  el = widget.render().el;
-                }
-                $(self.widgetDoms[widgetName]).empty().append(el);
-              })
-            }
-            else {
-              // reducing unneccessary rendering
-              if (widget.getEl) {
-                el = widget.getEl();
+            var doRender = function () {
+              // in case the user passed data params on the dom element,
+              // create props on the widget
+              _.assign(widget, { componentParams: $(widgetDom).data() });
+
+              if (window.__PRERENDERED && widget.view && PRIORITY_WIDGETS.indexOf(widgetName) > -1) {
+                var $el = $('*[data-widget="' + widgetName + '"]');
+                widget.view.handlePrerenderedContent($el);
+                window.__PRERENDERED = false;
               } else {
-                el = widget.render().el;
+                el = widget.getEl ? widget.getEl() : widget.render().el;
+                $(self.widgetDoms[widgetName]).html(el);
               }
-              $(self.widgetDoms[widgetName]).empty().append(el);
-            }
+            };
+
+            // maybe it is a page-manager (this is a security hole though!)
+            widget.assemble ? widget.assemble(app).done(doRender) : doRender();
             self.widgets[widgetName] = widget;
-            
           }
         });
-
         promises.push(promise);
-        
       }, this);
 
-      var bigPromise = $.when.apply($, promises)
+      $.when.apply($, promises)
         .then(function () {
           defer.resolve();
         })

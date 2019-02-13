@@ -243,6 +243,23 @@ function (
       this.trigger($(ev.target).attr('target'));
     },
 
+    handlePrerenderedContent: function ($el) {
+      this.$el = $(this.tagName + '.' + this.className, $el);
+      this.el = this.$el.get(0);
+      this.delegateEvents();
+
+      var _getTemplate = _.bind(this.getTemplate, this);
+      // replace the template function to manually set the content
+      this.getTemplate = _.bind(function () {
+        if (this.model.has('bibcode')) {
+          this.getTemplate = _getTemplate;
+          return this.template;
+        } else {
+          return $el.html();
+        }
+      }, this);
+    },
+
     onRender: function () {
       this.$('.icon-help').popover({ trigger: 'hover', placement: 'right', html: true });
 
@@ -250,8 +267,10 @@ function (
 
       // and set the title, maintain tags
       document.title = $('<div>' + this.model.get('title') + '</div>').text();
-      document.body.scrollTop = document.documentElement.scrollTop = 0;
-      $('#app-container').scrollTop(0);
+      if (!window.__PRERENDERED) {
+        document.body.scrollTop = document.documentElement.scrollTop = 0;
+        $('#app-container').scrollTop(0);
+      }
     }
   });
 

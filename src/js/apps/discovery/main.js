@@ -43,12 +43,11 @@ define(['discovery.config', 'module'], function (config, module) {
     });
 
     // load the objects/widgets/modules (using discovery.config.js)
-    var defer = app.loadModules(module.config());
+    var appPromise = app.loadModules(module.config());
 
     updateProgress(20, 'Starting Application');
 
-    // after they are loaded; we'll kick off the application
-    defer.done(function () {
+    var startApp = function () {
       updateProgress(50, 'Modules Loaded');
       var timeLoaded = Date.now();
 
@@ -144,16 +143,19 @@ define(['discovery.config', 'module'], function (config, module) {
               console.log('Application Started: ' + time + 'ms');
             }
           }
-        })
-
-      }).fail(function () {
-        analytics('send', 'event', 'introspection', 'failed-load', arguments);
-
-        if (!debug) {
-          app.redirect('500.html');
-        }
+        });
       });
-    }).fail(function () {
+    };
+
+    var failedLoad = function () {
+      analytics('send', 'event', 'introspection', 'failed-load', arguments);
+
+      if (!debug) {
+        app.redirect('500.html');
+      }
+    };
+
+    var failedReload = function () {
       analytics('send', 'event', 'introspection', 'failed-reloading', arguments);
 
       if (debug) {
@@ -162,6 +164,12 @@ define(['discovery.config', 'module'], function (config, module) {
       }
       // if we failed loading, retry *once again* (and give up eventually)
       app.reload('404.html');
-    });
+    };
+
+    // after they are loaded; we'll kick off the application
+    appPromise
+      .done(startApp)
+      .fail(failedLoad)
+      .fail(failedReload);
   });
 });

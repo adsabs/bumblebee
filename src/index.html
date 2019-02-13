@@ -109,11 +109,12 @@
           var progressValue = 0;
 
           window.__setAppLoadingProgress = function (val, msg) {
-              progressBar.setAttribute('aria-valuenow', val);
-              progressBar.style = 'width: ' + val + '%';
-              progressInner.innerText = val + '% Complete';
-              message.innerHTML = msg ? msg : message.innerHTML;
-              progressValue = val;
+            if (val < progressValue) return;
+            progressBar.setAttribute('aria-valuenow', val);
+            progressBar.style = 'width: ' + val + '%';
+            progressInner.innerText = val + '% Complete';
+            message.innerHTML = msg ? msg : message.innerHTML;
+            progressValue = val;
           };
           setTimeout(function () { window.__setAppLoadingProgress(10); }, 200);
           setTimeout(function () { window.__setAppLoadingProgress(15); }, 500);
