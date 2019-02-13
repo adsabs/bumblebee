@@ -109,14 +109,19 @@
           var progressValue = 0;
 
           window.__setAppLoadingProgress = function (val, msg) {
+            if (val < progressValue) return;
+            try {
               progressBar.setAttribute('aria-valuenow', val);
               progressBar.style = 'width: ' + val + '%';
               progressInner.innerText = val + '% Complete';
               message.innerHTML = msg ? msg : message.innerHTML;
               progressValue = val;
+            } catch (e) {
+              // do nothing
+            }
           };
-          setTimeout(function () { window.__setAppLoadingProgress(10); }, 200);
-          setTimeout(function () { window.__setAppLoadingProgress(15); }, 500);
+          setTimeout(__setAppLoadingProgress, 200, 10);
+          setTimeout(__setAppLoadingProgress, 500, 15);
           window.__setAppLoadingProgress(5, 'Downloading Assets');
           window.__PAGE_LOAD_TIMESTAMP = new Date();
 

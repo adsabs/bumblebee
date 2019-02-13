@@ -194,9 +194,14 @@ function (
       // get together all pages and insert widgets there
       masterPageManager.assemble(app).done(function() {
         // attach the master page to the body
-        var container = $('div#body-template-container').empty();
-        $(masterPageManager.view.el).hide().appendTo(container).show();
-
+        var $main = $('div#body-template-container');
+        if (window.__PRERENDERED) {
+          var $content = $('div#content-container');
+          $($content.selector, masterPageManager.view.el).html($content.html());
+          $main.html(masterPageManager.view.el);
+        } else {
+          $main.html(masterPageManager.view.el);
+        }
 
         // kick off routing
         app.router = new Router();
