@@ -12,24 +12,19 @@
   var load;
   try {
     var loc = window.location;
-    var path = loc[loc.pathname === '/' ? 'hash' : 'pathname'].split('/')[0].replace('#', '');
+    var parts = loc[loc.pathname === '/' ? 'hash' : 'pathname'].split('/');
+    var path = parts[+(parts.length > 1)].replace('#', '');
     load = function () {
       // attempt to get bundle config
-      require([paths[path] + '.config'], function() {
-        setGlobalLinkHandler();
-      }, function() {
+      require([paths[path] + '.config'], setGlobalLinkHandler, function() {
         // on failure to load specific bundle; load generic one
-        require(['discovery.config'], function() {
-          setGlobalLinkHandler();
-        });
+        require(['discovery.config'], setGlobalLinkHandler);
       });
     };
   } catch (e) {
     load = function () {
       // on errors, just fallback to normal config
-      require(['discovery.config'], function() {
-        setGlobalLinkHandler();
-      });
+      require(['discovery.config'], setGlobalLinkHandler);
     };
   }
 
@@ -37,9 +32,7 @@
     if (window.requirejs) {
       return load();
     }
-    else {
-      setTimeout(checkLoad, 10);
-    }
+    setTimeout(checkLoad, 10);
   })();
 
   var setGlobalLinkHandler = function () {
@@ -90,7 +83,4 @@
       });
     });
   };
-
-  
 })();
-
