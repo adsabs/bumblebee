@@ -237,14 +237,52 @@ define([
         done();
       });
 
-      it("should simply add q parameters to a bigquery if the bigquery is not overridden", function(done){
+      it("should simply add q parameters to a bigquery if the bigquery has saveBigQuery set", function(done){
 
         var qm =  createTestQM(this.beehive).qm;
 
         var publishSpy = sinon.spy(qm.getPubSub(), "publish");
 
         //as if previous query was a bigquery
-        qm.mostRecentQuery= new ApiQuery({
+        qm.mostRecentQuery = new ApiQuery({
+            "q": [
+              "*:*"
+            ],
+            "__qid": [
+              "fakeQueryID"
+            ]
+          });
+
+        qm.startSearchCycle( new ApiQuery({
+          q : 'star',
+          "__saveBigQuery": ["true"]
+        }), {getId : function(){ return 1 }});
+
+        expect(publishSpy.args[0][0]).to.eql("[PubSub]-Inviting-Request");
+
+        //it has just augmented the query with a new q parameter
+        expect(publishSpy.args[0][1].toJSON()).to.eql(
+          {
+            "q": [
+              "star"
+            ],
+            "__qid": [
+              "fakeQueryID"
+            ]
+          }
+        );
+        qm.destroy();
+        done();
+      });
+
+      it("it should clear any big query if not explicitly saved", function(done){
+
+        var qm =  createTestQM(this.beehive).qm;
+
+        var publishSpy = sinon.spy(qm.getPubSub(), "publish");
+
+        //as if previous query was a bigquery
+        qm.mostRecentQuery = new ApiQuery({
             "q": [
               "*:*"
             ],
@@ -264,9 +302,6 @@ define([
           {
             "q": [
               "star"
-            ],
-            "__qid": [
-              "fakeQueryID"
             ]
           }
         );

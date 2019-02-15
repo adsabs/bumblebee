@@ -173,7 +173,7 @@ function (Backbone,
         throw new Error('we don\'t recognize this operator you\'re trying to filter on');
       }
 
-      var q = currentQuery.clone();
+      var q = this.getCurrentQuery().clone();
       q.unlock();
 
       var facetField = this.store.getState().config.facetField;
