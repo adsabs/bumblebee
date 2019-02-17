@@ -341,12 +341,7 @@ function (
     },
 
     toggleClear: function () {
-      var display = Boolean(this.$input.val());
-      if (display) {
-        this.$('.icon-clear').removeClass('hidden');
-      } else {
-        this.$('.icon-clear').addClass('hidden');
-      }
+      this.$('.icon-clear').toggleClass('hidden', !!!this.$input.val());
     },
 
     onNewSearch: function () {
@@ -354,7 +349,7 @@ function (
     },
 
     clearInput: function () {
-      this.$input.val('');
+      this.$input.val('').focus();
       this.toggleClear();
     },
 
@@ -800,13 +795,13 @@ function (
     },
 
     /*
-         * when users return to index page, we should re-focus on the search bar
-         * */
+     * when users return to index page, we should re-focus on the search bar
+     * */
 
-    focusInput: function (page) {
-      if (page == 'index-page') {
+    focusInput: function () {
+      if (this._onIndexPage()) {
         this.clearBigQueryPill();
-        this.view.$('input.q').focus().val('');
+        this.view.clearInput();
       }
     },
 
@@ -879,6 +874,12 @@ function (
     },
 
     _onIndexPage: function () {
+
+      // pages are in the format of xxxx-xxxx, set as index page if it isn't in this form
+      if (this.currentPage && this.currentPage.split('-').length === 1) {
+        return true;
+      }
+
       return this.currentPage === 'index-page' || !this.currentPage;
     },
 
@@ -891,15 +892,14 @@ function (
           || /^__original_query$/.test(key);
       });
 
-      // if we aren't on the index page, only refine the current query, don't wipe it out
-      if (this.currentPage !== 'index-page') {
-        newQuery = new ApiQuery(_.assign(oldQ, newQ));
-      }
-
       // apply any default filters only if this is a new search
       if (this._onIndexPage()) {
         newQuery = this.applyDefaultFilters(newQuery);
         newQuery.set('__clearBigQuery', 'true');
+      } else {
+
+        // if we aren't on the index page, only refine the current query, don't wipe it out
+        newQuery = new ApiQuery(_.assign(oldQ, newQ));
       }
 
       // remove the bigquery from the query if the user cleared it
@@ -924,7 +924,7 @@ function (
     onShow: function () {
 
       // only focus on the index-page
-      if (this.currentPage === 'index-page') {
+      if (this._onIndexPage()) {
         var $input = this.view.$('input[name=q]');
 
         // attempt to focus a few times, firefox has some problems otherwise
