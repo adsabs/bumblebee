@@ -16,6 +16,7 @@ define([
      */
     const onSelect = (item, e) => {
       e.preventDefault();
+      e.stopPropagation();
       setSort(item);
     };
 
@@ -46,7 +47,7 @@ define([
             options.map(o => (
               <li key={o.get('id')}>
                 <a
-                  href="#"
+                  href="javascript:void(0)"
                   title={o.get('desc')}
                   onClick={e => onSelect(o, e)}
                 >{o.get('text')}</a>

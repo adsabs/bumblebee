@@ -58,15 +58,15 @@ function (
       'submit form': 'loadApiRequest'
     },
     loadApiRequest: function (ev) {
-      if (ev) ev.preventDefault();
       var data = $('input#api-request-input').val();
       if (data && _.isString(data) && data.trim().length > 0) {
         this.trigger('load-api-request', data);
       }
+      return false;
     },
     runApiRequest: function (ev) {
-      if (ev) ev.preventDefault();
       this.trigger('run-api-request');
+      return false;
     },
     updateInputBox: function (data) {
       this.$el.find('input#api-request-input').val(data);

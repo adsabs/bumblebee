@@ -52,16 +52,16 @@ function (
       this._changed = this.model.input != $('textarea#api-response-input').val();
     },
     _load: function (ev) {
-      ev.preventDefault();
       var data = this.$el.find('textarea#api-response-input').val();
       this.options.controller.triggerMethod('load', data);
+      return false;
     },
     _run: function (ev) {
-      ev.preventDefault();
       if (this._changed) {
         this._load(ev);
       }
       this.options.controller.triggerMethod('run', this.model.attributes);
+      return false;
     },
     _error: function (msg) {
       this.$el.find('#api-response-error').empty();

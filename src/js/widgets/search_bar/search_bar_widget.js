@@ -463,7 +463,6 @@ function (
     },
 
     fieldInsert: function (e) {
-      e.preventDefault();
       var newVal,
         operator,
         currentVal = this.getFormVal(),
@@ -512,15 +511,13 @@ function (
       }
 
       analytics('send', 'event', 'interaction', 'field-insert-button-pressed', df);
+      return false;
     },
 
     submitQuery: function (e) {
       var fields,
         fielded,
         query;
-
-      e.preventDefault();
-      e.stopPropagation();
 
       query = this.getFormVal();
 
@@ -587,12 +584,9 @@ function (
         }
       });
 
-      if (fielded) {
-        analytics('send', 'event', 'interaction', 'fielded-query-submitted-from-search-bar', query);
-      } else {
-        analytics('send', 'event', 'interaction', 'unfielded-query-submitted-from-search-bar', query);
-      }
-
+      var type = fielded ? 'fielded' : 'unfiielded';
+      analytics('send', 'event', 'interaction', type + '-query-submitted-from-search-bar', query);
+      return false;
     },
 
     clearBigquery: function () {

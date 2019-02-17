@@ -421,12 +421,12 @@ function (Marionette,
     },
 
     changeRows: function (e) {
-      e.preventDefault();
       var num = parseInt(this.$('.network-rows').val());
       this.$('.network-metadata').html(loadingTemplate);
       if (num) {
         this.model.set('userVal', _.min([this.model.get('max'), num]));
       }
+      return false;
     },
 
     modelEvents: {

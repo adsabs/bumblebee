@@ -235,9 +235,9 @@ function (
     },
 
     changePerPage: function (e) {
-      e.preventDefault();
       var val = parseInt(e.currentTarget ? e.currentTarget.value : 25);
       val !== this.model.get('perPage') && this.trigger('pagination:changePerPage', val);
+      return false;
     }
   });
 

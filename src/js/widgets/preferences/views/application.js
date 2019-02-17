@@ -138,7 +138,6 @@ define([
     },
 
     onSubmit: function (e) {
-      e.preventDefault();
       this.model.set({
         updateSucceeded: false,
         updateFailed: false,
@@ -155,11 +154,12 @@ define([
           return _.pick(i, ['id', 'name', 'code']);
         })
       });
+      return false;
     },
 
     onCancel: function (e) {
-      e.preventDefault();
       this.initialize();
+      return false;
     },
 
     onResetToDefaults: function () {
@@ -199,7 +199,6 @@ define([
     },
 
     onAddCustomFormat: function (e) {
-      e.preventDefault();
       var items = _.clone(this.model.get('addCustomFormatOptions'));
       var applyEditById = _.bind(this.applyEditById, this);
       items = _.map(items, function (i, idx) {
@@ -220,6 +219,7 @@ define([
       $msg.fadeIn('slow', function () {
         $msg.fadeOut('slow');
       });
+      return false;
     },
 
     updateCustomFormatEntry: function (_id, data, silent) {
@@ -237,7 +237,6 @@ define([
     },
 
     onEditCustomFormat: function (e) {
-      e.preventDefault();
       var id = this.$(e.currentTarget).data('id');
 
       // update the page
@@ -248,6 +247,7 @@ define([
       // apply some listeners
       var $name = $('#custom-format-name-' + id);
       $name.focus().select();
+      return false;
     },
 
     applyEditById: function (id, silent) {
@@ -261,21 +261,20 @@ define([
     },
 
     onConfirmEditCustomFormat: function (e) {
-      e.preventDefault();
       var id = this.$(e.currentTarget).data('id');
       this.applyEditById(id);
+      return false;
     },
 
     onCancelEditCustomFormat: function (e) {
-      e.preventDefault();
       var id = this.$(e.currentTarget).data('id');
       this.updateCustomFormatEntry(id, {
         editing: false
       });
+      return false;
     },
 
     onDeleteCustomFormat: function (e) {
-      e.preventDefault();
       var model = this.model;
       var id = this.$(e.currentTarget).data('id') + '';
       var items = _.clone(model.get('addCustomFormatOptions'));
@@ -283,6 +282,7 @@ define([
       this.$(e.currentTarget).closest('li').fadeOut(400, function () {
         model.set('addCustomFormatOptions', newList);
       });
+      return false;
     },
 
     onSortChange: function (e, ui) {

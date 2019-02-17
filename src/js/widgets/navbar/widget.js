@@ -59,12 +59,12 @@ define([
         this.trigger('navigate-to-orcid-link');
       },
       'click .orcid-logout': function (e) {
-        e.preventDefault();
         this.trigger('logout-only-orcid');
+        return false;
       },
       'click .logout': function (e) {
-        e.preventDefault();
         this.trigger('logout');
+        return false;
       },
       'click .login': function () {
         this.trigger('navigate-login');
@@ -122,8 +122,8 @@ define([
 
         // attach submit handler
         $('.feedback-form').submit(function (e) {
-          e.preventDefault();
           that.trigger('feedback-form-submit', $(e.target), $modal);
+          return false;
         });
 
         this.formAttached = true;

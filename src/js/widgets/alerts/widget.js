@@ -70,10 +70,6 @@ function (
         // create an event listener that resolves the promise
         // with the supplied data when there is the proper event
         var method = function (ev) {
-          if (ev) {
-            ev.preventDefault();
-            ev.stopPropagation();
-          }
           var promise = this.model.get('promise');
           var evts = this.model.get('events');
           if (evts[key]) {
@@ -85,6 +81,7 @@ function (
           if (!this.model.get('modal')) {
             this.model.set('msg', null);
           }
+          return false;
         };
 
         method = _.bind(method, self);

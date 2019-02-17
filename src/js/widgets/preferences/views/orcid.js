@@ -45,7 +45,6 @@ define([
     },
 
     submitForm: function (e) {
-      e.preventDefault();
       var data = {};
       data.currentAffiliation = this.$('#aff-input').val();
       data.authorizedUser = this.$('.authorized-ads-user').is(':checked');
@@ -58,6 +57,7 @@ define([
       // loading string will be removed when view is re-rendered
 
       this.trigger('orcid-form-submit', data);
+      return false;
     }
 
   });

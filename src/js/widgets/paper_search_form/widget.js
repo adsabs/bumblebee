@@ -117,12 +117,10 @@ define([
       }
 
       this.trigger('submit', terms.join(' '));
-      e.preventDefault();
+      return false;
     },
 
     submitBibcodeForm: function (e) {
-      e.preventDefault();
-
       this.$('.bibcode-form button[type=submit]').html('<i class="icon-loading"/>  Loading...');
       var terms = this.$('.bibcode-form textarea').val().split(/\s+/);
       terms = _.filter(terms, function (t) { if (t) { return t; } });
@@ -134,8 +132,8 @@ define([
       }
 
       this.trigger('submit-bigquery', terms);
+      return false;
     }
-
   });
 
   FormWidget = BaseWidget.extend({

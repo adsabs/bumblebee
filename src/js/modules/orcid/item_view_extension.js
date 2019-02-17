@@ -48,8 +48,6 @@ function (Backbone, _) {
     },
 
     orcidAction: function (e) {
-      e.preventDefault();
-      e.stopPropagation();
       var $c = $(e.currentTarget);
       var $orcidActions = this.$('.orcid-actions');
       $orcidActions.addClass('orcid-wait');
@@ -68,10 +66,10 @@ function (Backbone, _) {
         actionType: actionType,
         model: this.model.attributes,
         modelType: 'adsData'
-
       };
 
       this.trigger('OrcidAction', msg);
+      return false;
     }
   };
 });

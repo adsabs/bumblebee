@@ -119,8 +119,8 @@ define(['discovery.config', 'module'], function (config, module) {
           });
 
           // accessibility: skip to main content
-          $('body').on('click', '#skip-to-main-content', function (e) {
-            e.preventDefault();
+          $('body').on('click', '#skip-to-main-content', function () {
+            return false;
           });
 
           var dynConf = app.getObject('DynamicConfig');
