@@ -869,12 +869,9 @@ function (
 
     _onIndexPage: function () {
 
-      // pages are in the format of xxxx-xxxx, set as index page if it isn't in this form
-      if (this.currentPage && this.currentPage.split('-').length === 1) {
-        return true;
-      }
-
-      return this.currentPage === 'index-page' || !this.currentPage;
+      // look out for these names, or that the current page is undefined
+      return /(index-page|SearchWidget)/
+        .test(this.currentPage) || !this.currentPage;
     },
 
     navigate: function (newQuery) {
