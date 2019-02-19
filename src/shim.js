@@ -11,20 +11,24 @@
   };
   var load;
   try {
+    var version = APP_VERSION ? '.' + APP_VERSION : '';
     var loc = window.location;
-    var parts = loc[loc.pathname === '/' ? 'hash' : 'pathname'].split('/');
-    var path = parts[+(parts.length > 1)].replace('#', '');
+    var parts = loc[loc.pathname === '/' ? 'hash' : 'pathname'].replace(/#/g, '').split('/');
+    var path = parts.reverse().filter(function (p) {
+      return Object.keys(paths).indexOf(p) > -1;
+    });
+    path = path.length && path[0];
     load = function () {
       // attempt to get bundle config
-      require([paths[path] + '.config'], setGlobalLinkHandler, function() {
+      require([paths[path] + '.config' + version], function () {}, function() {
         // on failure to load specific bundle; load generic one
-        require(['discovery.config'], setGlobalLinkHandler);
+        require(['discovery.config' + version]);
       });
     };
   } catch (e) {
     load = function () {
       // on errors, just fallback to normal config
-      require(['discovery.config'], setGlobalLinkHandler);
+      require(['discovery.config' + version]);
     };
   }
 
@@ -34,57 +38,4 @@
     }
     setTimeout(checkLoad, 10);
   })();
-
-  var setGlobalLinkHandler = function () {
-
-    var routes = [
-      'classic-form',
-      'paper-form',
-      'index',
-      'search',
-      'execute-query',
-      'abs',
-      'user',
-      'orcid-instructions',
-      'public-libraries'
-    ];
-    var regx = new RegExp('^#(\/?(' + routes.join('|') + ').*\/?)?$', 'i');
-
-    // apply a global link handler for push state
-    require(['jquery'], function ($) {
-
-      var $el = [];
-      var transformHref = function (ev) {
-        if (!Backbone.history.options.pushState) return;
-        $el = $(ev.currentTarget);
-        var href = $el.attr('href');
-        if (regx.test(href)) {
-          var url = href.replace(/^\/?#\/?/, '/');
-          $el.attr('href', url);
-          return false;
-        }
-        $el = [];
-      };
-
-      var handleNavigation = function (el) {
-        if ($el.length && window.bbb) {
-          var href = $el.attr('href');
-
-          // clear it so we don't have one lingering around
-          $el = [];
-          try {
-            var nav = bbb.getBeeHive().getService('Navigator');
-            nav.router.navigate(href, { trigger: true, replace: true });
-            return false;
-          } catch (e) {
-            console.error(e.message);
-          }
-        }
-      };
-
-      $(document)
-        .on('mousedown', 'a', transformHref)
-        .on('click', 'a', handleNavigation);
-    });
-  };
 })();

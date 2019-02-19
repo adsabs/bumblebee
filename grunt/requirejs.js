@@ -1,15 +1,6 @@
-'use strict';
-/**
- * Options for the `requirejs` grunt task
- *
- * Task to minify modules/css; it should run only after files were
- * copied over to the 'dist' folder
- *
- * @module grunt/requirejs
- */
 
         // GENERATED FILE (edits will be overwritten)
-module.exports = {
+        module.exports = {
   "landing-page": {
     "options": {
       "waitSeconds": 0,
@@ -64,6 +55,7 @@ module.exports = {
       "name": "landing-page.bundle",
       "out": "dist/landing-page.bundle.js",
       "include": [
+        "common.config",
         "analytics",
         "backbone-validation",
         "backbone",
@@ -239,6 +231,7 @@ module.exports = {
       "name": "search-page.bundle",
       "out": "dist/search-page.bundle.js",
       "include": [
+        "common.config",
         "analytics",
         "cache",
         "discovery.vars",
@@ -429,6 +422,7 @@ module.exports = {
       "name": "abstract-page.bundle",
       "out": "dist/abstract-page.bundle.js",
       "include": [
+        "common.config",
         "analytics",
         "cache",
         "discovery.vars",
@@ -545,4 +539,5 @@ module.exports = {
       ]
     }
   }
-}
+};
+      

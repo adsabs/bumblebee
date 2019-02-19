@@ -21,8 +21,8 @@ module.exports = {
   latest_tag: {
     cmd: 'git describe --abbrev=0 | cat > git-latest-release-tag'
   },
-  git_describe: {
-    cmd: 'git describe | cat > git-describe'
+  git_current_tag: {
+    cmd: 'git describe --tags --abbrev=0 > .tag'
   },
   npm_install: {
     cmd: 'npm install --no-package-lock --no-shrinkwrap'

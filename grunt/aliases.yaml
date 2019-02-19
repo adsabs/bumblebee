@@ -98,7 +98,7 @@ release:
     # - 'clean:release'
     # - 'copy:release'
     - 'compile-handlebars:index'
-    - 'exec:git_describe'
+    - 'exec:git_current_tag'
     - 'optimize-build'
     - 'string-replace:final'
     # - 'imagemin'
