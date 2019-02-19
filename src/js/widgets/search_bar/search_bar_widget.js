@@ -336,16 +336,11 @@ function (
       'keyup .q': 'storeCursorInfo',
       'select .q': 'storeCursorInfo',
       'click .q': 'storeCursorInfo',
-      'click .bigquery-close': 'clearBigquery',
-      'click .back-button': 'onNewSearch'
+      'click .bigquery-close': 'clearBigquery'
     },
 
     toggleClear: function () {
       this.$('.icon-clear').toggleClass('hidden', !!!this.$input.val());
-    },
-
-    onNewSearch: function () {
-      this.trigger('new-search');
     },
 
     clearInput: function () {
@@ -639,8 +634,6 @@ function (
             ? query.get('__original_query')[0] : oldQueryString.join(' ');
         }
 
-        this.listenTo(this.view, 'new-search', this.newSearch);
-
         if (newQueryString) {
           this.view.setFormVal(newQueryString);
         }
@@ -648,11 +641,6 @@ function (
       });
 
       BaseWidget.prototype.initialize.call(this, options);
-    },
-
-    newSearch: function () {
-      var ps = this.getPubSub();
-      ps.publish(ps.NAVIGATE, 'index-page');
     },
 
     activate: function (beehive) {
