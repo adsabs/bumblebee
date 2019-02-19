@@ -175,6 +175,7 @@ function (
     dispatchRequest: function (apiQuery) {
       this.reset();
       this.setCurrentQuery(apiQuery);
+      this.model.set('loading', true);
       ListOfThingsWidget.prototype.dispatchRequest.call(this, apiQuery);
     },
 
@@ -342,6 +343,7 @@ function (
         pubsub.publish(pubsub.CUSTOM_EVENT, 'timing:results-loaded', +new Date() - this.queryTimer);
       }
 
+      this.model.set('loading', false);
       return docs;
     },
 

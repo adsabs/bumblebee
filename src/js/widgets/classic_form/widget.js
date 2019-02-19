@@ -170,6 +170,7 @@ define([
 
             qDict.q.push(field + ':(' + val.trim() + ')');
           } else {
+            var extra;
             logic = ' ' + logic + ' ';
             if (matchers[field]) {
               matcher = matchers[field];
@@ -178,9 +179,21 @@ define([
             }
             phrases = val.match(matcher);
 
+            // trim the phrases
+            phrases = phrases.map(Function.prototype.call, String.prototype.trim);
+
             phrases = _.filter(phrases, function (p) {
               return !/^(and|or)$/i.test(p);
             });
+
+            // look out for '$' at the end, remove it and add an extra condition
+            phrases = (field === 'author') ? _.map(phrases, function (p) {
+              if (/\$$/.test(p)) {
+                extra = 'author_count:1';
+                return p.replace(/^([^\$]*).*$/, '$1');
+              }
+              return p;
+            }) : phrases;
 
             // quote matches if field is author or object
             phrases = (field == 'author' || field == 'object')
@@ -192,7 +205,6 @@ define([
               }) : phrases;
 
             // use parentheses always (bc of = parsing issue)
-
             if (field === 'bibstem') {
               qDict.fq.push('{!type=aqp v=$fq_bibstem_facet}');
               qDict.fq_bibstem_facet = '(' + _.map(phrases, function (p) {
@@ -200,7 +212,8 @@ define([
               }).join(logic) + ')';
             } else {
               phrases = phrases.length > 1 ? phrases.join(logic) : phrases[0];
-              qDict.q.push(field + ':(' + phrases + ')');
+              extra = extra ? logic + extra : '';
+              qDict.q.push(field + ':(' + phrases + ')' + extra);
             }
           }
         }

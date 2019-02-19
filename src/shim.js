@@ -54,7 +54,7 @@
     require(['jquery'], function ($) {
 
       var $el = [];
-      $(document).on('mousedown', 'a', function (ev) {
+      var transformHref = function (ev) {
         if (!Backbone.history.options.pushState) return;
         $el = $(ev.currentTarget);
         var href = $el.attr('href');
@@ -64,9 +64,9 @@
           return false;
         }
         $el = [];
-      });
+      };
 
-      $(document).on('click', 'a', function () {
+      var handleNavigation = function (el) {
         if ($el.length && window.bbb) {
           var href = $el.attr('href');
 
@@ -80,7 +80,11 @@
             console.error(e.message);
           }
         }
-      });
+      };
+
+      $(document)
+        .on('mousedown', 'a', transformHref)
+        .on('click', 'a', handleNavigation);
     });
   };
 })();

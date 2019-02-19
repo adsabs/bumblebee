@@ -1,14 +1,12 @@
 define([
   'underscore',
-  'js/components/api_query',
-  'js/components/api_request',
+  'utils',
   'js/widgets/base/base_widget',
   'js/components/api_query_updater'
 ],
 function (
   _,
-  ApiQuery,
-  ApiRequest,
+  utils,
   BaseWidget,
   ApiQueryUpdater
 ) {
@@ -43,6 +41,9 @@ function (
       // custom dispatchRequest function goes here
       var pubsub = this.getPubSub();
       pubsub.subscribe(pubsub.INVITING_REQUEST, function (apiQuery) {
+        if (self._sortChanged.call(self, apiQuery)) {
+          return;
+        }
         self.isDone = false;
         self.setCurrentQuery.call(self, apiQuery);
         self.dispatchRequest.call(self, apiQuery);
@@ -50,6 +51,17 @@ function (
       pubsub.subscribe(pubsub.DELIVERING_RESPONSE, this.processResponse);
       this.activateWidget();
       this.attachGeneralHandler(this.onFeedback);
+    },
+
+    _sortChanged: function (apiQuery) {
+      try {
+        var diff = utils.difference(apiQuery.toJSON(), this.getCurrentQuery().toJSON());
+      } catch (e) {
+        // continue
+      }
+
+      // make sure only 1 key on object, and that key is "sort"
+      return diff && diff.sort && _.keys(diff).length === 1;
     },
 
     dispatchRequest: function (apiQuery) {
@@ -68,6 +80,8 @@ function (
     handleConditionApplied: function (val) {
       var q = this.getCurrentQuery();
       val = this.facetField + ':' + val;
+      // wrap the current query, if necessary
+      q.set('q', this.queryUpdater.quoteIfNecessary(q.get('q')[0]));
       q = q.clone();
       var fieldName = 'q';
       this.queryUpdater.updateQuery(q, fieldName, 'limit', val);

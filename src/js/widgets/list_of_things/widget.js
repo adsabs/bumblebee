@@ -413,7 +413,7 @@ define([
           var perPage = this.model.get('perPage');
           var currStart = this.model.get('start');
 
-          if (start >= numFound || (start !== currStart && currStart > 0)) return; // ignore this
+          if (!numFound || start >= numFound || (start !== currStart && currStart > 0)) return; // ignore this
 
           var q = this.model.get('currentQuery').clone();
           q.unset('hl');

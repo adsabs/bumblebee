@@ -228,16 +228,9 @@ function (
         this.getBeeHive().getObject('AppStorage').clearSelectedPapers();
       }
 
-      /*
-          if it's a pre-existing bigquery NOT supplanted by another bigquery,
-          and not forcibly clearing the current bigquery, then
-          keep it and just augment it rather than losing the bigquery
-          this is so that users can add q parameters to bigqueries, e.g. library exports
-         */
-      if (this.mostRecentQuery.get('__qid')
-         && !apiQuery.get('__qid')
-         && !apiQuery.get('__clearBigQuery')
-      ) {
+      // clear bigqueries by default when a new search cycle is started, unless
+      // explicitly saved by using "__saveBigQuery" flag
+      if (apiQuery.has('__saveBigQuery') && this.mostRecentQuery.has('__qid') && !apiQuery.has('__qid')) {
         this.mostRecentQuery.set('q', apiQuery.get('q'));
         apiQuery = this.mostRecentQuery;
       }

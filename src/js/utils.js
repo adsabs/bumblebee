@@ -30,8 +30,18 @@ define([
     return hash;
   };
 
+  const difference = function (obj, base) {
+    return _.transform(obj, function (result, value, key) {
+      if (!_.isEqual(value, base[key])) {
+        result[key] = _.isObject(value) && _.isObject(base[key]) ?
+          difference(value, base[key]) : value;
+      }
+    });
+  };
+
   return {
     qs: qs,
-    updateHash: updateHash
+    updateHash: updateHash,
+    difference: difference
   };
 });

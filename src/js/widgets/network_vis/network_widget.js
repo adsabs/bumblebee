@@ -15,6 +15,7 @@ define([
   'hbs!js/widgets/network_vis/templates/not-enough-data-template',
   'hbs!js/widgets/network_vis/templates/network_metadata',
   'hbs!js/widgets/network_vis/templates/loading-template',
+  'hbs!js/widgets/network_vis/templates/error-template',
   'hbs!js/widgets/network_vis/templates/default-details-template',
   'bootstrap'
 ],
@@ -34,6 +35,7 @@ function (Marionette,
   notEnoughDataTemplate,
   metadataTemplate,
   loadingTemplate,
+  errorTemplate,
   DefaultDetailsTemplate
 ) {
   function isInt(value) {
@@ -1261,6 +1263,19 @@ function (Marionette,
       // on initialization, store the current query
       if (this.getBeeHive().getObject('AppStorage')) {
         this.setOriginalQuery(this.getBeeHive().getObject('AppStorage').getCurrentQuery());
+      }
+
+      this.activateWidget();
+      this.attachGeneralHandler(this.onApiFeedback);
+    },
+
+    onApiFeedback: function (feedback) {
+      if (feedback.error) {
+        var self = this;
+        // on error, wait a small timeout and then exit
+        setTimeout(function () {
+          self.broadcastClose();
+        }, 1000);
       }
     },
 

@@ -20,15 +20,24 @@ define([
       'click button.create-library': function () {
         function createLib() {
           var that = this;
+
+          // prompt the user for the name of the new library
+          var name = window.prompt('Enter name for new library: ');
+
+          // if user cancels the prompt, just kill it here
+          if (name === null) return;
+
+          // don't allow a super long string
+          name = name.slice(0, 30);
+
           this.getBeeHive().getObject('LibraryController')
-            .createLibrary()
+            .createLibrary({ name: name })
             .done(function (data) {
               that.getPubSub().publish(that.getPubSub().NAVIGATE, 'IndividualLibraryWidget', { sub: 'library', id: data.id });
             });
         }
         this.trigger('page-manager-event', 'apply-function', { func: createLib });
       }
-
     },
 
     createView: function (options) {
