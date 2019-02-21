@@ -93,13 +93,14 @@ module.exports = function (grunt) {
       var addConfig = function (name, cfg) {
         config[name] = {};
         config[name].options = _.extend({}, baseConfig, {
-          name: name + '.bundle',
-          out: 'dist/' + name + '.bundle.js'
+          name: `${name}.bundle`,
+          out: `dist/${name}.bundle.js`
         }, cfg);
       }
 
       addConfig('landing-page', {
         include: [
+          "common.config",
           "analytics",
           "backbone-validation",
           "backbone",
@@ -223,6 +224,7 @@ module.exports = function (grunt) {
 
       addConfig('search-page', {
         include: [
+          "common.config",
           "analytics",
           "cache",
           "discovery.vars",
@@ -361,6 +363,7 @@ module.exports = function (grunt) {
 
       addConfig('abstract-page', {
         include: [
+          "common.config",
           "analytics",
           "cache",
           "discovery.vars",
@@ -480,7 +483,7 @@ module.exports = function (grunt) {
       writeOutConfig(config, done);
     });
 
-    grunt.registerTask('applyIncludesToConfig', function () {
+    var getDiscoveryConfig = function () {
       var content = grunt.file.read('dist/discovery.config.js');
       var cfg = {};
       (function () {
@@ -489,29 +492,144 @@ module.exports = function (grunt) {
         };
         eval(content.toString());
       })();
+      return cfg;
+    }
 
-      _.forEach(fullConfig, function (bundle, name) {
-        var _cfg = _.extend({}, cfg);
-        _.forEach(bundle.options.include, function (path) {
-          _cfg.paths[path] = bundle.options.name;
-        });
+    var getRevvedPaths = function () {
+      return {
+        js: grunt.file.readJSON('dist/jsmap.json'),
+        css: grunt.file.readJSON('dist/cssmap.json')
+      };
+    };
 
-        var out = `
+    var updateFile = _.curry(function (path, cb, altPath) {
+      grunt.file.write(altPath || path, cb(grunt.file.read(path)));
+      grunt.log.writeln((altPath || path) + ' updated.');
+    }, 2);
+
+    var generateConfigFileString = function (name, cnts) {
+      return `
 /**
  * GENERATED FILE (edits will be overwritten):
  * This is the configuration for ${name}.
  */
-require.config(${JSON.stringify(_cfg, null, 2)});
-        `;
-        grunt.file.write(`dist/${name}.config.js`, out);
-        grunt.log.writeln(`${name}.config.js has been created`);
+requirejs.config(${ JSON.stringify(cnts, null, 2) });
+`;
+    };
+
+    grunt.registerTask('applyIncludesToConfig', function () {
+      var cfg = getDiscoveryConfig();
+      var paths = getRevvedPaths();
+      var tag = grunt.file.read('.tag').replace(/(\r\n|\n|\r)/gm, '').trim();
+
+      // update index.html
+      updateFile('dist/index.html', function (cnts) {
+        return cnts
+          .replace(/shim\.js/g, paths.js['shim.js'])
+          .replace(/APP_VERSION=\'[v0-9\.]*\';/, `APP_VERSION='${tag}';`);
+      });
+
+      // replace the .js from each of the revved files
+      var jsPaths = _.reduce(paths.js, function (acc, val, key) {
+        acc[key.replace(/\.(js|html)$/, '')] = val.replace(/\.(js|html)$/, '');
+        return acc;
+      }, {});
+
+      var bundleNames = _.map(fullConfig, function (b) { return b.options.name; });
+
+      // update discovery.config
+      updateFile('dist/discovery.config.js', function () {
+        var _cfg = _.extend({}, cfg, {
+
+          // set the dependency to the revved path
+          deps: [
+            jsPaths['common.config'],
+            jsPaths['js/apps/discovery/main']
+          ],
+
+          // update paths
+          paths: _.extend({},
+            cfg.paths,
+
+            // omit certain modules, and all bundles
+            _.omit(jsPaths, [
+              'js/apps/discovery/router',
+              'js/components/analytics',
+              'js/utils'
+            ], bundleNames),
+
+            // explicitly add in some paths
+            {
+              router: jsPaths['js/apps/discovery/router'],
+              analytics: jsPaths['js/components/analytics'],
+              utils: jsPaths['js/utils'],
+              'discovery.config': `discovery.config.${tag}`
+            }
+          ),
+
+          // update the config portion with paths
+          config: _.reduce(_.keys(cfg.config), function (acc, key) {
+            if (jsPaths[key]) {
+              acc[jsPaths[key]] = cfg.config[key];
+            }
+            return acc;
+          }, {})
+        });
+        return generateConfigFileString(`dist/discovery.config.${tag}.js`, _cfg);
+      }, `dist/discovery.config.${tag}.js`);
+
+      // generate the rest of the bundles
+      _.forEach(fullConfig, function (bundle, name) {
+        var _cfg = _.extend({}, cfg, {
+
+          // set the main dependency to the bundle name
+          deps: [jsPaths[bundle.options.name]],
+
+          // update the paths config with new revved names
+          paths: _.extend({},
+            cfg.paths,
+
+            // pull out bundles and any other unnecessary modules
+            _.omit(jsPaths, [
+              'js/apps/discovery/router',
+              'js/components/analytics',
+              'js/utils'
+            ], bundleNames),
+
+            // add all additional revved filenames to the paths
+            _.reduce(bundle.options.include, function (acc, p) {
+              acc[p] = jsPaths[bundle.options.name];
+              return acc;
+            }, {}),
+
+            // some explicit path changes
+            {
+              'discovery.config': jsPaths[bundle.options.name],
+              utils: jsPaths['js/utils']
+            }
+          ),
+
+          // update the config portion with new paths
+          config: _.reduce(_.keys(cfg.config), function (acc, key) {
+            acc[jsPaths[key]] = cfg.config[key];
+            return acc;
+          }, {})
+        });
+
+        var out = generateConfigFileString(`dist/${name}.config.${tag}.js`, _cfg);
+        grunt.file.write(`dist/${name}.config.${tag}.js`, out);
+        grunt.log.writeln(`${name}.config.${tag}.js has been created`);
       });
     });
 
-    grunt.task.run(['clean:release', 'copy:release', 'generateConfig', 'requirejs']);
-    grunt.task.run('applyIncludesToConfig');
-    // grunt.task.run('hash_require'); // still have to completely figure out
-    grunt.task.run(['babel', 'uglify']);
+    grunt.task.run([
+      'clean:release', 'copy:release', 'generateConfig', 'requirejs', 'hash_require'
+    ]);
+    grunt.task.run(['applyIncludesToConfig']);
+    grunt.task.run([
+      'babel',
+      'uglify'
+    ]);
   });
 
   return {

@@ -15,7 +15,6 @@ define([
   'hbs!js/widgets/network_vis/templates/not-enough-data-template',
   'hbs!js/widgets/network_vis/templates/network_metadata',
   'hbs!js/widgets/network_vis/templates/loading-template',
-  'hbs!js/widgets/network_vis/templates/error-template',
   'hbs!js/widgets/network_vis/templates/default-details-template',
   'bootstrap'
 ],
@@ -35,7 +34,6 @@ function (Marionette,
   notEnoughDataTemplate,
   metadataTemplate,
   loadingTemplate,
-  errorTemplate,
   DefaultDetailsTemplate
 ) {
   function isInt(value) {
