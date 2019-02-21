@@ -24,9 +24,9 @@
     "requirejs": "^2.3.5"
   },
   "devDependencies": {
-    "async": "^2.5.0",
     "@babel/core": "^7.2.2",
     "@babel/preset-react": "^7.0.0",
+    "async": "^2.5.0",
     "browserify": "^14.4.0",
     "chalk": "~0.4.0",
     "compression": "^1.7.2",
@@ -64,6 +64,7 @@
     "grunt-sass": "^1.0.0",
     "grunt-saucelabs": "~8.6.1",
     "grunt-string-replace": "^1.2.0",
+    "grunt-sw-precache": "^1.0.3",
     "http-proxy-middleware": "^0.18.0",
     "istanbul": "^0.4.5",
     "jsonpath": "^0.2.12",

@@ -495,18 +495,6 @@ module.exports = function (grunt) {
       return cfg;
     }
 
-    var getRevvedPaths = function () {
-      return {
-        js: grunt.file.readJSON('dist/jsmap.json'),
-        css: grunt.file.readJSON('dist/cssmap.json')
-      };
-    };
-
-    var updateFile = _.curry(function (path, cb, altPath) {
-      grunt.file.write(altPath || path, cb(grunt.file.read(path)));
-      grunt.log.writeln((altPath || path) + ' updated.');
-    }, 2);
-
     var generateConfigFileString = function (name, cnts) {
       return `
 /**
@@ -519,111 +507,39 @@ requirejs.config(${ JSON.stringify(cnts, null, 2) });
 
     grunt.registerTask('applyIncludesToConfig', function () {
       var cfg = getDiscoveryConfig();
-      var paths = getRevvedPaths();
-      var tag = grunt.file.read('.tag').replace(/(\r\n|\n|\r)/gm, '').trim();
-
-      // update index.html
-      updateFile('dist/index.html', function (cnts) {
-        return cnts
-          .replace(/shim\.js/g, paths.js['shim.js'])
-          .replace(/APP_VERSION=\'[v0-9\.]*\';/, `APP_VERSION='${tag}';`);
-      });
-
-      // replace the .js from each of the revved files
-      var jsPaths = _.reduce(paths.js, function (acc, val, key) {
-        acc[key.replace(/\.(js|html)$/, '')] = val.replace(/\.(js|html)$/, '');
-        return acc;
-      }, {});
-
-      var bundleNames = _.map(fullConfig, function (b) { return b.options.name; });
-
-      // update discovery.config
-      updateFile('dist/discovery.config.js', function () {
-        var _cfg = _.extend({}, cfg, {
-
-          // set the dependency to the revved path
-          deps: [
-            jsPaths['common.config'],
-            jsPaths['js/apps/discovery/main']
-          ],
-
-          // update paths
-          paths: _.extend({},
-            cfg.paths,
-
-            // omit certain modules, and all bundles
-            _.omit(jsPaths, [
-              'js/apps/discovery/router',
-              'js/components/analytics',
-              'js/utils'
-            ], bundleNames),
-
-            // explicitly add in some paths
-            {
-              router: jsPaths['js/apps/discovery/router'],
-              analytics: jsPaths['js/components/analytics'],
-              utils: jsPaths['js/utils'],
-              'discovery.config': `discovery.config.${tag}`
-            }
-          ),
-
-          // update the config portion with paths
-          config: _.reduce(_.keys(cfg.config), function (acc, key) {
-            if (jsPaths[key]) {
-              acc[jsPaths[key]] = cfg.config[key];
-            }
-            return acc;
-          }, {})
-        });
-        return generateConfigFileString(`dist/discovery.config.${tag}.js`, _cfg);
-      }, `dist/discovery.config.${tag}.js`);
 
       // generate the rest of the bundles
       _.forEach(fullConfig, function (bundle, name) {
         var _cfg = _.extend({}, cfg, {
 
           // set the main dependency to the bundle name
-          deps: [jsPaths[bundle.options.name]],
+          deps: [bundle.options.name],
 
           // update the paths config with new revved names
           paths: _.extend({},
             cfg.paths,
 
-            // pull out bundles and any other unnecessary modules
-            _.omit(jsPaths, [
-              'js/apps/discovery/router',
-              'js/components/analytics',
-              'js/utils'
-            ], bundleNames),
-
             // add all additional revved filenames to the paths
             _.reduce(bundle.options.include, function (acc, p) {
-              acc[p] = jsPaths[bundle.options.name];
+              acc[p] = bundle.options.name;
               return acc;
             }, {}),
 
             // some explicit path changes
             {
-              'discovery.config': jsPaths[bundle.options.name],
-              utils: jsPaths['js/utils']
+              'discovery.config': bundle.options.name
             }
-          ),
-
-          // update the config portion with new paths
-          config: _.reduce(_.keys(cfg.config), function (acc, key) {
-            acc[jsPaths[key]] = cfg.config[key];
-            return acc;
-          }, {})
+          )
         });
 
-        var out = generateConfigFileString(`dist/${name}.config.${tag}.js`, _cfg);
-        grunt.file.write(`dist/${name}.config.${tag}.js`, out);
-        grunt.log.writeln(`${name}.config.${tag}.js has been created`);
+        var out = generateConfigFileString(`dist/${name}.config.js`, _cfg);
+        grunt.file.write(`dist/${name}.config.js`, out);
+        grunt.log.writeln(`${name}.config.js has been created`);
       });
     });
 
     grunt.task.run([
-      'clean:release', 'copy:release', 'generateConfig', 'requirejs', 'hash_require'
+      'clean:release', 'copy:release', 'generateConfig', 'requirejs'
     ]);
     grunt.task.run(['applyIncludesToConfig']);
     grunt.task.run([
