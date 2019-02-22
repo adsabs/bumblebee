@@ -176,46 +176,42 @@ function (
     },
 
     showAllComments: function (e) {
-      e.preventDefault();
       var m = this.model;
       m.set({
         commentList: m.get('comment'),
         showAllComments: true
       });
+      return false;
     },
 
     showLessComments: function (e) {
-      e.preventDefault();
       var m = this.model;
       m.set({
         commentList: _.first(m.get('comment'), MAX_COMMENTS),
         showAllComments: false
       });
+      return false;
     },
 
     showAllPubnotes: function (e) {
-      e.preventDefault();
       var m = this.model;
       m.set({
         pubnoteList: m.get('comment'),
         showAllPubnotes: true
       });
+      return false;
     },
 
     showLessPubnotes: function (e) {
-      e.preventDefault();
       var m = this.model;
       m.set({
         pubnoteList: _.first(m.get('pubnote'), MAX_COMMENTS),
         showAllPubnotes: false
       });
+      return false;
     },
 
-    toggleMoreAuthors: function (ev) {
-      if (ev) {
-        ev.stopPropagation();
-      }
-
+    toggleMoreAuthors: function () {
       this.$('.author.extra').toggleClass('hide');
       this.$('.author.extra-dots').toggleClass('hide');
       if (this.$('.author.extra').hasClass('hide')) {
@@ -223,24 +219,22 @@ function (
       } else {
         this.$('#toggle-more-authors').text('Hide authors');
       }
+      return false;
     },
 
     toggleAffiliation: function (ev) {
-      if (ev) {
-        ev.preventDefault();
-      }
-
       this.$('.affiliation').toggleClass('hide');
       if (this.$('.affiliation').hasClass('hide')) {
         this.$('#toggle-aff').text('Show affiliations');
       } else {
         this.$('#toggle-aff').text('Hide affiliations');
       }
+      return false;
     },
 
     onClick: function (ev) {
-      ev.preventDefault();
       this.trigger($(ev.target).attr('target'));
+      return false;
     },
 
     handlePrerenderedContent: function ($el) {

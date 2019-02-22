@@ -99,25 +99,27 @@ function (
     },
 
     showAllAuthors: function (e) {
-      e.preventDefault();
       this.$('.s-results-authors.less-authors').addClass('hidden');
       this.$('.s-results-authors.all-authors').removeClass('hidden');
+      return false;
     },
 
     showLessAuthors: function (e) {
-      e.preventDefault();
       this.$('.s-results-authors.less-authors').removeClass('hidden');
       this.$('.s-results-authors.all-authors').addClass('hidden');
+      return false;
     },
 
     showFullAbstract: function () {
       this.$('.short-abstract').addClass('hidden');
       this.$('.full-abstract').removeClass('hidden');
+      return false;
     },
 
     hideFullAbstract: function () {
       this.$('.short-abstract').removeClass('hidden');
       this.$('.full-abstract').addClass('hidden');
+      return false;
     },
 
     toggleSelect: function () {
@@ -199,10 +201,8 @@ function (
     },
 
     orcidAction: function (e) {
-      if (!e) return;
+      if (!e) return false;
 
-      e.preventDefault();
-      e.stopPropagation();
       var $target = $(e.currentTarget);
 
       var msg = {
@@ -212,6 +212,7 @@ function (
         target: $target
       };
       this.trigger('OrcidAction', msg);
+      return false;
     }
   });
 

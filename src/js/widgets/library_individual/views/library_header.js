@@ -100,7 +100,6 @@ define([
     },
 
     submitEdit: function (e) {
-      e.preventDefault();
       var formSelector = 'form[data-field="' + this.currentEditField + '"]';
       var val = $(formSelector).find('input, textarea').val();
       var data = {};
@@ -114,18 +113,18 @@ define([
       data[this.currentEditField] = val;
       this.trigger('updateVal', data);
       $(e.target).html('<i class=\"fa fa-spinner fa-pulse\"></i>');
+      return false;
     },
 
     cancelEdit: function (e) {
-      e.preventDefault();
       var $target = $(e.currentTarget),
         $form = $target.parent();
 
       $form.find('input').val(this.model.get('name'));
       $form.find('textarea').val(this.model.get('description'));
       $form.addClass('hidden');
+      return false;
     },
-
 
     triggerSubviewNavigate: function (e) {
       var $current = $(e.currentTarget),

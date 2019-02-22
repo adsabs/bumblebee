@@ -52,8 +52,8 @@ function (
       }
     },
     removeItem: function (ev) {
-      ev.preventDefault();
       this.trigger('remove-clicked', this.model);
+      return false;
     }
   });
 
@@ -68,18 +68,17 @@ function (
       'submit form': 'loadApiQuery'
     },
     addNewItem: function (ev) {
-      if (ev) ev.preventDefault();
       this.trigger('add-new-item', this);
+      return false;
     },
     loadApiQuery: function (ev) {
-      if (ev) ev.preventDefault();
       var data = this.$el.find('input#api-query-input').val();
       if (data && _.isString(data) && data.trim().length > 0) {
         this.trigger('load-api-query', data);
       }
+      return false;
     },
     runApiQuery: function (ev) {
-      if (ev) ev.preventDefault();
       var q = new ApiQuery();
       _.map(this.collection.models, function (a) {
         var attr = a.attributes;
@@ -89,6 +88,7 @@ function (
       });
       this.$el.find('#api-query-result').text(q.url());
       this.trigger('run-api-query', q);
+      return false;
     },
     updateInputBox: function (data) {
       this.$el.find('input#api-query-input').val(data);

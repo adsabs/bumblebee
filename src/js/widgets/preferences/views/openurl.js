@@ -66,7 +66,6 @@ define([
     },
 
     changeLinkServer: function (e) {
-      e.preventDefault();
       var newVal = this.$('#set-link-server').val();
 
       // check for a re-apply
@@ -79,6 +78,7 @@ define([
       // otherwise, trigger the update
       this.trigger('change:link_server', newVal);
       this.model.set('editing', false);
+      return false;
     },
 
     onCancelLinkServer: function () {

@@ -51,12 +51,12 @@ function (
       'click': 'onClick'
     },
     onClick: function (ev) {
-      ev.preventDefault();
       this.trigger('item-click', this.model);
+      return false;
     },
     onRemove: function (ev) {
-      ev.preventDefault();
       this.trigger('item-remove', this.model);
+      return false;
     }
   });
 

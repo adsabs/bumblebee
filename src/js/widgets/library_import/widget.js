@@ -62,22 +62,16 @@ define([
     },
 
     authenticate: function (e) {
-      e.preventDefault();
 
       var data = this.$('form').serializeArray();
-
       var toReturn = {};
-
       data.forEach(function (obj) {
         toReturn[obj.name] = obj.value;
       });
-
       this.trigger('submit-credentials', toReturn);
+      return false;
     }
-
-
   });
-
 
   var ContainerView = Marionette.LayoutView.extend({
 

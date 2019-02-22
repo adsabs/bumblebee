@@ -45,7 +45,6 @@ define([
     },
 
     submitForm: function (e) {
-      e.preventDefault();
       var queryDict = this.serializeClassic();
       if (!queryDict.q.length) {
         // allow searching of just dates (which is a filter)
@@ -60,6 +59,7 @@ define([
           $el.html(currHtml);
         }, 3000);
       });
+      return false;
     },
 
     serializeClassic: function () {

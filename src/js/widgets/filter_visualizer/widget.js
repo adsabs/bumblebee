@@ -50,11 +50,11 @@ function (
       'click button': 'onClick'
     },
     onClick: function (ev) {
-      ev.preventDefault();
       var $t = $(ev.target);
       this.trigger('filter-event', $t.attr('value')
         ? $t.attr('value')
         : $t.parent().attr('value'));
+      return false;
     }
   });
 

@@ -56,8 +56,8 @@ function (Marionette, BaseWidget, dropdownTemplate, dropdownItemTemplate) {
     },
 
     setSelected: function (e) {
-      e.preventDefault();
       this.model.set('selected', true);
+      return false;
     },
     template: dropdownItemTemplate
   });

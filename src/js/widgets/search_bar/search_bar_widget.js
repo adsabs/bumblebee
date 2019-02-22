@@ -336,25 +336,15 @@ function (
       'keyup .q': 'storeCursorInfo',
       'select .q': 'storeCursorInfo',
       'click .q': 'storeCursorInfo',
-      'click .bigquery-close': 'clearBigquery',
-      'click .back-button': 'onNewSearch'
+      'click .bigquery-close': 'clearBigquery'
     },
 
     toggleClear: function () {
-      var display = Boolean(this.$input.val());
-      if (display) {
-        this.$('.icon-clear').removeClass('hidden');
-      } else {
-        this.$('.icon-clear').addClass('hidden');
-      }
-    },
-
-    onNewSearch: function () {
-      this.trigger('new-search');
+      this.$('.icon-clear').toggleClass('hidden', !!!this.$input.val());
     },
 
     clearInput: function () {
-      this.$input.val('');
+      this.$input.val('').focus();
       this.toggleClear();
     },
 
@@ -468,7 +458,6 @@ function (
     },
 
     fieldInsert: function (e) {
-      e.preventDefault();
       var newVal,
         operator,
         currentVal = this.getFormVal(),
@@ -517,15 +506,13 @@ function (
       }
 
       analytics('send', 'event', 'interaction', 'field-insert-button-pressed', df);
+      return false;
     },
 
     submitQuery: function (e) {
       var fields,
         fielded,
         query;
-
-      e.preventDefault();
-      e.stopPropagation();
 
       query = this.getFormVal();
 
@@ -592,12 +579,9 @@ function (
         }
       });
 
-      if (fielded) {
-        analytics('send', 'event', 'interaction', 'fielded-query-submitted-from-search-bar', query);
-      } else {
-        analytics('send', 'event', 'interaction', 'unfielded-query-submitted-from-search-bar', query);
-      }
-
+      var type = fielded ? 'fielded' : 'unfiielded';
+      analytics('send', 'event', 'interaction', type + '-query-submitted-from-search-bar', query);
+      return false;
     },
 
     clearBigquery: function () {
@@ -650,8 +634,6 @@ function (
             ? query.get('__original_query')[0] : oldQueryString.join(' ');
         }
 
-        this.listenTo(this.view, 'new-search', this.newSearch);
-
         if (newQueryString) {
           this.view.setFormVal(newQueryString);
         }
@@ -659,11 +641,6 @@ function (
       });
 
       BaseWidget.prototype.initialize.call(this, options);
-    },
-
-    newSearch: function () {
-      var ps = this.getPubSub();
-      ps.publish(ps.NAVIGATE, 'index-page');
     },
 
     activate: function (beehive) {
@@ -800,13 +777,13 @@ function (
     },
 
     /*
-         * when users return to index page, we should re-focus on the search bar
-         * */
+     * when users return to index page, we should re-focus on the search bar
+     * */
 
-    focusInput: function (page) {
-      if (page == 'index-page') {
+    focusInput: function () {
+      if (this._onIndexPage()) {
         this.clearBigQueryPill();
-        this.view.$('input.q').focus().val('');
+        this.view.clearInput();
       }
     },
 
@@ -879,7 +856,10 @@ function (
     },
 
     _onIndexPage: function () {
-      return this.currentPage === 'index-page' || !this.currentPage;
+
+      // look out for these names, or that the current page is undefined
+      return /(index-page|SearchWidget)/
+        .test(this.currentPage) || !this.currentPage;
     },
 
     navigate: function (newQuery) {
@@ -891,15 +871,14 @@ function (
           || /^__original_query$/.test(key);
       });
 
-      // if we aren't on the index page, only refine the current query, don't wipe it out
-      if (this.currentPage !== 'index-page') {
-        newQuery = new ApiQuery(_.assign(oldQ, newQ));
-      }
-
       // apply any default filters only if this is a new search
       if (this._onIndexPage()) {
         newQuery = this.applyDefaultFilters(newQuery);
         newQuery.set('__clearBigQuery', 'true');
+      } else {
+
+        // if we aren't on the index page, only refine the current query, don't wipe it out
+        newQuery = new ApiQuery(_.assign(oldQ, newQ));
       }
 
       // remove the bigquery from the query if the user cleared it
@@ -924,7 +903,7 @@ function (
     onShow: function () {
 
       // only focus on the index-page
-      if (this.currentPage === 'index-page') {
+      if (this._onIndexPage()) {
         var $input = this.view.$('input[name=q]');
 
         // attempt to focus a few times, firefox has some problems otherwise
