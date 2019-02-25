@@ -215,7 +215,7 @@ define([
 
         oApi.signIn();
 
-        expect(JSON.stringify(this.beehive.getService("PubSub").publish.args[0])).to.eql('[{},"[App]-Exit",{"type":"orcid","url":"undefined?scope=/orcid-profile/read-limited%20/orcid-works/create%20/orcid-works/update&response_type=code&access_type=offline&show_login=true&client_id=APP-P5ANJTQRRTMA6GXZ&redirect_uri=http%3A%2F%2Flocalhost%3A8000%2F%23%2Fuser%2Forcid"}]');
+        expect(JSON.stringify(this.beehive.getService("PubSub").publish.args[0])).to.eql('[{},"[App]-Exit",{"type":"orcid","url":"undefined?scope=/orcid-profile/read-limited%20/orcid-works/create%20/orcid-works/update&response_type=code&access_type=offline&show_login=true&client_id=APP-P5ANJTQRRTMA6GXZ&redirect_uri=http%3A%2F%2Flocalhost%3A8000%2Fuser%2Forcid"}]');
         expect(JSON.stringify(this.beehive.getService("PubSub").publish.args[1])).to.eql('[{},"[PubSub]-Orcid-Announcement","login"]')
       });
 

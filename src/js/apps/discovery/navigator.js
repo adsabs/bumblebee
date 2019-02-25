@@ -181,7 +181,7 @@ function (
               app.getWidget('SettingsPage').done(function (widget) {
                 widget.setActive(widgetName, subView);
               });
-    
+
               self.route = '#user/settings/' + subView;
               publishPageChange('settings-page');
               defer.resolve();
@@ -330,7 +330,7 @@ function (
           if (widget.reset) widget.reset();
           else if (widget.resetWidget) widget.resetWidget();
         }).done(function() {
-          
+
           // just stick the empty views in there, otherwise the interface lags as the lib controller
           // paginates through the library bibcodes
           if (!(widgetName === 'ExportWidget' && format === 'classic')) { // export to classic opens a new tab, nothing to update here
@@ -356,7 +356,7 @@ function (
           else {
             defer.resolve();
           }
-        })   
+        })
         return defer.promise();
       } // end navToLibrarySubview
 
@@ -486,10 +486,10 @@ function (
                 }
                 return;
               }
-    
+
               // first, open central panel
               publishFeedback({ code: ApiFeedback.CODES.MAKE_SPACE });
-    
+
               // is a special case, it opens in a new tab
               if (options.onlySelected && storage.hasSelectedPapers()) {
                 widget.renderWidgetForListOfBibcodes(storage.getSelectedPapers(), { format: format });
@@ -516,7 +516,7 @@ function (
               } else {
                 var alerts = app.getController('AlertsController');
                 alerts.alert({ msg: 'There are no records to export yet (please search or select some)' });
-                self.get('results-page')(); // XXX:rca - .execute?, also 
+                self.get('results-page')(); // XXX:rca - .execute?, also
               }
             })
             .done(function() {
@@ -575,7 +575,7 @@ function (
         // once the solr search has been received
         if (data.page)
           widgetName = _.map(data.page.split('-').slice(1), function (w) { return w[0].toUpperCase() + w.slice(1); }).join('');
-        
+
 
         if (widgetName && possibleSearchSubPages.indexOf(widgetName) > -1) {
           pages = [widgetName].concat(searchPageAlwaysVisible.slice(1));
@@ -632,7 +632,7 @@ function (
 
         var token = data.token,
           subView = data.subView;
-      
+
         function fail(jqXHR, status, errorThrown) {
           self.get('index-page').execute().then(function() {
             var error = (jqXHR.responseJSON && jqXHR.responseJSON.error) ? jqXHR.responseJSON.error : 'error unknown';
@@ -643,7 +643,7 @@ function (
             defer.reject();
           })
         }
-        
+
 
         if (subView === 'register') {
           failTitle = 'Registration failed.';
@@ -662,7 +662,7 @@ function (
                 defer.resolve();
               })
             }).fail(function() {
-              this.apply(fail, arguments); // XXX:rca - infinite loop? 
+              this.apply(fail, arguments); // XXX:rca - infinite loop?
             });
           };
         } else if (subView === 'change-email') {
@@ -752,7 +752,7 @@ function (
             .fail(function () {
               user.setOrcidMode(false);
               console.warn('Unsuccessful login to ORCID');
-              
+
               var alerter = app.getController('AlertsController');
               alerter.alert(new ApiFeedback({
                 code: ApiFeedback.CODES.ALERT,
@@ -766,7 +766,7 @@ function (
         }
         else if (orcidApi.hasAccess()) {
 
-          // XXX:rca = this block is async; showing modals even if the page under may be 
+          // XXX:rca = this block is async; showing modals even if the page under may be
           // changing; likely not intended to be doing that but not sure...
 
           if (persistentStorage.get('orcidAuthenticating')) {
@@ -796,7 +796,7 @@ function (
           app.getObject('MasterPageManager').show('OrcidPage',
             ['OrcidBigWidget', 'SearchWidget']).then(function() {
             // go to the orcidbigwidget
-            that.route = '#user/orcid';
+            that.route = '/user/orcid';
             defer.resolve();
             })
         } else {
@@ -821,10 +821,10 @@ function (
         var widgetName = _.map(command.split('-').slice(1), function (w) { return w[0].toUpperCase() + w.slice(1); }).join('');
         app.getObject('MasterPageManager').show('SearchPage',
           [widgetName].concat(searchPageAlwaysVisible.slice(1))).done(function() {
-            
+
             var route = '#search/' + queryUpdater.clean(q.clone()).url()
                             + '/' + command.split('-').slice(1).join('-');
-    
+
             // show selected, need to explicitly tell widget to show bibcodes
             if (options && options.onlySelected) {
               app.getWidget(widgetName).done(function (w) {
@@ -887,7 +887,7 @@ function (
           })
         return defer.promise();
       };
-      
+
       this.set('verify-abstract', function() {
         // XXX:rca - moved from router; not in a working state
         // check we are using the canonical bibcode and redirect to it if necessary

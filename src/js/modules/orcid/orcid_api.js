@@ -164,7 +164,7 @@ function (
         type: 'orcid',
         url: this.config.loginUrl
           + '&redirect_uri=' + encodeURIComponent(this.config.redirectUrlBase
-          + (targetRoute || '/#/user/orcid'))
+          + (targetRoute || '/user/orcid'))
       });
 
       // make sure to redirect to the proper page after sign in
