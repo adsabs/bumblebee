@@ -14,6 +14,7 @@ function (
     route: false,
     trigger: false,
     replace: false,
+    title: false,
     execute: function () {
       throw new Error('You must override this method');
     }

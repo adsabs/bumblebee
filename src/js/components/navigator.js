@@ -100,7 +100,7 @@ function (
         $('head').find('meta[data-highwire]').remove();
         // XXX:rca - this can probably go....anyways, shouldn't be here, is not generic
         // and set the default title
-        document.title = 'ADS Search';
+        document.title = (transition.title ? transition.title + ' - ' : '') + 'NASA/ADS Search';
       }
 
       var p;
