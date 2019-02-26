@@ -186,21 +186,19 @@ $sciencewise-color: rgb(179, 27, 27);
 
 
 .s-abstract-dl-horizontal{
-
   dt {
-    display: inline-block;
+    @media only screen and (min-width: $screen-md-min) {
+      display: inline-block;
+    }
     width: 18%;
-
-
   }
 
-dd {
-  display: inline-block;
-  width: 80%;
-  vertical-align: top;
-  margin-bottom: 12px;
-}
-
+  dd {
+    display: inline-block;
+    width: 80%;
+    vertical-align: top;
+    margin-bottom: 12px;
+  }
 }
 
 

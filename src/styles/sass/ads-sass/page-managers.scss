@@ -212,6 +212,15 @@ Styles for Abstract Page
   padding: 5%;
   margin-bottom: 10px;
 
+  @media only screen and (max-width: $screen-md-max) {
+    font-size: smaller;
+    margin-right: 20px;
+  }
+
+  @media only screen and (max-width: $screen-sm-max) {
+    margin: 0px 20px 0px 20px;
+  }
+
   li {
     margin: 0 0 1% 6%;
   }
