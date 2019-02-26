@@ -64,7 +64,7 @@ function (
       var options = options || {};
       // this tells navigator not to create 2 history entries, which causes
       // problems with the back button
-      _.extend(options, { replace: true });
+      _.extend({ replace: false }, options);
       this.getPubSub().publish(this.getPubSub().NAVIGATE, route, options);
     },
 
@@ -107,12 +107,12 @@ function (
     },
 
     search: function (query, widgetName) {
-      
+
       if (query) {
         try {
           var q = new ApiQuery().load(query);
-          this.routerNavigate('search-page', {q: q, page: 'show-' + widgetName})
-          
+          this.routerNavigate('search-page', {q: q, page: 'show-' + widgetName, replace: true })
+
         } catch (e) {
           console.error('Error parsing query from a string: ', query, e);
           this.getPubSub().publish(this.getPubSub().NAVIGATE, 'index-page');

@@ -92,7 +92,7 @@ function (
           // update the History object
           self.router.navigate(
             transition.route,
-            { trigger: transition.trigger || false, replace: replace }
+            { trigger: true, replace: replace }
           );
         }
 

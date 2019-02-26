@@ -32,8 +32,7 @@ define([
     assemble: function (app) {
       var self = this;
       return PageManagerController.prototype.assemble.apply(this, arguments).done(function() {
-        var storage = app.getObject('AppStorage');
-        if (storage && storage.hasCurrentQuery()) self.addQuery(storage.getCurrentQuery());
+        self.addQuery(self.getCurrentQuery());
       })
     },
 
@@ -43,8 +42,11 @@ define([
 
     show: function (pageName) {
       var ret = PageManagerController.prototype.show.apply(this, arguments);
-      if (this.view.model && this.view.model.has('query')) {
-        ret.$el.find('.s-back-button-container').empty().html('<a href="#search/' + this.view.model.get('query') + '" class="back-button btn btn-sm btn-default"> <i class="fa fa-arrow-left"></i> Back to results</a>');
+      var href = this.getCurrentQuery().url();
+
+      if (!_.isEmpty(href)) {
+        ret.$el.find('.s-back-button-container').empty()
+          .html('<a href="#search/' + href + '" class="back-button btn btn-sm btn-default"> <i class="fa fa-arrow-left"></i> Back to results</a>');
       }
 
       // when arriving at the abstract page, scroll back to the top
