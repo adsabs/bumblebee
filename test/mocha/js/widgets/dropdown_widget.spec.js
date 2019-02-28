@@ -86,25 +86,12 @@ define([
 
       expect(widget.getPubSub().publish.args[0][2]).to.eql({onlySelected: true});
 
-      $("input[name=papers-Visualize]").click();
-      $("#test").find("li:first").click();
+      $('input[value=all]', '#test').click();
+      $("li:first", "#test").click();
 
       expect(widget.getPubSub().publish.callCount).to.eql(2);
       expect(widget.getPubSub().publish.args[0][1]).to.eql('show-author-network');
       expect(widget.getPubSub().publish.args[1][2]).to.eql({onlySelected: false});
-
-
-      //now the user decides that even though there are selected docs, he/she wants to see all of them
-
-
-
-
-
-
     })
-
-
   })
-
-
 })

@@ -117,10 +117,9 @@ function (Marionette, BaseWidget, dropdownTemplate, dropdownItemTemplate) {
       },
 
       'click .dropdown-menu label': function (e) {
-        e.stopPropagation();
+        e.stopPropagation && e.stopPropagation();
       }
     }
-
   });
 
   var DropdownWidget = BaseWidget.extend({

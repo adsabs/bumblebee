@@ -92,7 +92,7 @@ function (
           // update the History object
           self.router.navigate(
             transition.route,
-            { trigger: transition.trigger || false, replace: replace }
+            { trigger: true, replace: replace }
           );
         }
 
@@ -100,7 +100,7 @@ function (
         $('head').find('meta[data-highwire]').remove();
         // XXX:rca - this can probably go....anyways, shouldn't be here, is not generic
         // and set the default title
-        document.title = 'ADS Search';
+        document.title = (transition.title ? transition.title + ' - ' : '') + 'NASA/ADS Search';
       }
 
       var p;

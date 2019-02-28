@@ -28,21 +28,17 @@ define([
       beehive.addService("PubSub", fakePubSub);
 
       r.activate(beehive.getHardenedInstance());
-    
+
 
       r.routerNavigate('foo')
       expect(fakePubSub.publish.lastCall.args[1]).to.eql(fakePubSub.NAVIGATE);
       expect(fakePubSub.publish.lastCall.args[2]).to.eql("foo");
-      expect(fakePubSub.publish.lastCall.args[3]).to.eql({
-        'replace': true
-      })
+      expect(fakePubSub.publish.lastCall.args[3]).to.eql({})
 
       r.index('foo')
       expect(fakePubSub.publish.lastCall.args[1]).to.eql(fakePubSub.NAVIGATE);
       expect(fakePubSub.publish.lastCall.args[2]).to.eql("index-page");
-      expect(fakePubSub.publish.lastCall.args[3]).to.eql({
-        'replace': true
-      })
+      expect(fakePubSub.publish.lastCall.args[3]).to.eql({})
 
       r.classicForm();
       expect(fakePubSub.publish.lastCall.args[1]).to.eql(fakePubSub.NAVIGATE);
@@ -62,22 +58,22 @@ define([
       expect(fakePubSub.publish.lastCall.args[1]).to.eql(fakePubSub.NAVIGATE);
       expect(fakePubSub.publish.lastCall.args[2]).to.eql("execute-query");
       expect(fakePubSub.publish.lastCall.args[3]).to.eql('queryid');
-      
+
       r.view('bibcooode', 'metrics')
       expect(fakePubSub.publish.lastCall.args[1]).to.eql(fakePubSub.NAVIGATE);
       expect(fakePubSub.publish.lastCall.args[2]).to.eql("ShowMetrics");
       expect(fakePubSub.publish.lastCall.args[3]).to.eql({
-        href: "#abs/bibcooode/metrics", 
-        bibcode: "bibcooode", 
-        replace: true})
-      
-      
+        href: "#abs/bibcooode/metrics",
+        bibcode: "bibcooode",
+      })
+
+
       r.routeToVerifyPage('subview', 'token')
       expect(fakePubSub.publish.lastCall.args[1]).to.eql(fakePubSub.NAVIGATE);
       expect(fakePubSub.publish.lastCall.args[2]).to.eql("user-action");
       expect(fakePubSub.publish.lastCall.args[3]).to.eql({
-        subView: "subview", 
-        token: "token", 
+        subView: "subview",
+        token: "token",
       })
 
       r.orcidPage()
@@ -91,7 +87,7 @@ define([
     })
 
 
-    
+
   })
 
 });
