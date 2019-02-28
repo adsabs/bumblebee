@@ -18,7 +18,7 @@ define([
     'js/components/beehive',
     'js/services/pubsub'
   ],
-  function( 
+  function(
     _,
     $,
     Marionette,
@@ -95,29 +95,29 @@ define([
           app.loadModules(config).done(function() {
 
             app._getWidget("PageManager").done(function(pageManager) {
-              
+
               app.activate();
               pageManager.assemble(app).done(function() {
 
                 //$('#test').append(pageManager.view.el);
                 expect(_.keys(pageManager.widgets).length).to.be.gt(1);
-    
+
                 var $w = pageManager.view.$el;
                 expect($w.find('[data-widget="ShowAbstract"]').children().length).to.be.equal(1);
                 expect($w.find('[data-widget="SearchWidget"]').children().length).to.be.equal(1);
-    
+
                 // normally called by master page-manager
                 expect(pageManager.assembled).to.eql(true);
                 expect(app.__widgets['widget:SearchWidget']).to.be.defined;
-    
+
                 pageManager.disAssemble(app);
                 expect(app.returnWidget('PageManager')).to.eql(0);
                 expect(pageManager.assembled).to.eql(false);
-    
+
                 expect(app.__widgets['widget:SearchWidget']).to.be.undefined;
                 done();
               })
-  
+
             })
           });
         }).timeout(1000);
@@ -154,7 +154,7 @@ define([
         });
       });
 
-      
+
 
       describe("Master page manager", function() {
         it("swapping of page managers in/out manually", function(done) {
@@ -165,13 +165,13 @@ define([
 
           app.loadModules(config).done(function() {
 
-            
+
 
             var navigator = app.getObject('Navigator');
             navigator.router = new Backbone.Router();
 
             app.getWidget("FirstPageManager", "SecondPageManager").done(function(w) {
-              var firstPageManager = w['FirstPageManager'], 
+              var firstPageManager = w['FirstPageManager'],
                 secondPageManager = w['SecondPageManager'];
 
               app.activate();
@@ -183,32 +183,32 @@ define([
 
                 //var $body = $('#test');
                 var $body = $('<div/>');
-    
+
                 navigator.set('show-stuff', function() {
                   $body.children().detach();
                   app.getWidget('SecondPageManager').done(function(w) {
                     $body.append(w.show().el);
                   })
                 });
-    
-    
+
+
                 $body.append(firstPageManager.show().el);
-    
+
                 $body.find('[data-widget="SearchWidget"] input.q').val('foo');
                 expect($body.find('[data-widget="SearchWidget"] input.q').val()).to.be.equal('foo');
                 expect($body.find('[data-widget="ShowAbstract"]').length).to.be.equal(1);
-    
+
                 var pubsub = app.getService('PubSub').getHardenedInstance();
                 pubsub.publish(pubsub.NAVIGATE, 'show-stuff');
-    
+
                 expect($body.find('[data-widget="SearchWidget"] input.q').val()).to.be.equal('foo');
                 expect($body.find('[data-widget="AuthorFacet"]').length).to.be.equal(0);
-    
+
                 done();
               })
-  
+
             })
-            
+
 
 
           });
@@ -247,21 +247,21 @@ define([
               masterPageManager.view.$el.find('[data-widget="SearchWidget"] input.q').val('foo');
               expect(masterPageManager.view.$el.find('[data-widget="SearchWidget"] input.q').val()).to.be.equal('foo');
               expect(masterPageManager.view.$el.find('[data-widget="ShowAbstract"]').length).to.be.equal(1);
-  
+
               var pubsub = app.getService('PubSub').getHardenedInstance();
               pubsub.publish(pubsub.NAVIGATE, 'show-stuff');
-  
+
               expect(masterPageManager.view.$el.find('[data-widget="SearchWidget"] input.q').val()).to.be.equal('foo');
               expect(masterPageManager.view.$el.find('[data-widget="ShowAbstract"]').length).to.be.equal(0);
-  
+
               var secondChild = masterPageManager.getCurrentActiveChild();
               sinon.spy(secondChild, 'disAssemble');
               expect(_.keys(secondChild.widgets).length).to.gt(0);
               masterPageManager.show('FirstPageManager').done(function() {
-                
+
                 expect(_.keys(secondChild.widgets).length).to.eql(0);
                 expect(secondChild.disAssemble.called).to.eql(true);
-    
+
                 // would happen only if the master is nested
                 _.each(masterPageManager.collection.models, function(model) {
                   expect(model.get('object')).to.not.eql(null);

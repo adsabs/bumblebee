@@ -81,7 +81,7 @@ function (Marionette,
     template: ResultsContainerTemplate,
 
     fetchMore: function (ev) {
-      if (ev) ev.stopPropagation();
+      if (ev) ev.stopPropagation && ev.stopPropagation();
       this.trigger('fetchMore', this.$('.results-item').filter('.hide').length);
     },
 

@@ -175,6 +175,8 @@ define([
               pageManager.addQuery(new ApiQuery({q: "bibcode:foo"}));
               expect(pageManager.view.model.get("query")).to.eql('q=bibcode%3Afoo');
 
+              pageManager.getCurrentQuery = sinon.stub().returns(new ApiQuery({q: "bibcode:foo"}));
+
               //testing back button
               var view = pageManager.show();
               expect(view.$el.find('.s-back-button-container').html()).to.eql('<a href="#search/q=bibcode%3Afoo" class="back-button btn btn-sm btn-default"> <i class="fa fa-arrow-left"></i> Back to results</a>');

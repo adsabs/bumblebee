@@ -82,7 +82,7 @@ define([
         return true;
       }
 
-      e.stopPropagation();
+      e && e.stopPropagation && e.stopPropagation();
     },
 
     orcidSignIn: function () {
