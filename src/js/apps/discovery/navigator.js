@@ -757,7 +757,10 @@ function (
               alerter.alert(new ApiFeedback({
                 code: ApiFeedback.CODES.ALERT,
                 msg: 'Error getting OAuth code to access ORCID',
-                modal: true
+                modal: true,
+                events: {
+                  'click': 'button[data-dismiss=modal]'
+                }
               })).done(function() {
                 self.get('index-page').execute(); // after modal is closed
               })

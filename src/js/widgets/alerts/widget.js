@@ -45,6 +45,11 @@ function (
       * this allows for custom events to be added to the alert views
       * when the events happen, a promise is resolved with the name of the event
       * NOTE: this assumes there is only 1 event per alert view
+      *
+      * Need to add events object to apiFeedback passed into alerts:
+      * events: {
+      *   'click': 'button[data-dismiss=modal]'
+      * }
       * */
 
   function delegateAdditionalEvents() {
