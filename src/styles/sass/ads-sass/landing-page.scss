@@ -14,8 +14,10 @@ $landing-page-hero-background : desaturate(lighten($brand-info, 20%), 15%);
 }
 
 .s-logo-header {
-
-  font-size: 40px;
+  font-size: 22px;
+  @media only screen and (min-width: $screen-sm-min) {
+    font-size: 40px;
+  }
   color: white;
   -webkit-font-smoothing: antialiased;
   font-weight: 300;
@@ -91,7 +93,6 @@ $landing-page-hero-background : desaturate(lighten($brand-info, 20%), 15%);
 }
 
 .s-search-bar-rows-container {
-
   margin: auto;
   max-width: 750px;
 
@@ -152,11 +153,12 @@ $landing-page-hero-background : desaturate(lighten($brand-info, 20%), 15%);
 .s-landing-page-layout {
 
   .s-search-bar-rows-container {
-
     border-radius: $border-radius-large;
     background-color: #fff;
     margin: 0 auto;
-
+    @media only screen and (max-width: $screen-sm-max) {
+      padding: 0px 25px 0px 25px;
+    }
   }
 
   .s-message-control-row {

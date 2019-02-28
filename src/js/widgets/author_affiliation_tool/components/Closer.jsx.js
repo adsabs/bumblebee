@@ -14,7 +14,7 @@ define([
   const Closer = ({ onClick }) => {
     const handleClick = (e) => {
       e.preventDefault();
-      e.stopPropagation();
+      e.stopPropagation && e.stopPropagation();
       onClick();
     };
 

@@ -16,7 +16,7 @@ define([
      */
     const onSelect = (item, e) => {
       e.preventDefault();
-      e.stopPropagation();
+      e.stopPropagation && e.stopPropagation();
       setSort(item);
     };
 

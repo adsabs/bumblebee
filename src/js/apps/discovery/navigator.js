@@ -121,6 +121,7 @@ function (
 
       this.set('ClassicSearchForm', function () {
         var defer = $.Deferred();
+        var self = this;
         app.getObject('MasterPageManager').show('LandingPage', ['ClassicSearchForm']).then(function() {
           app.getWidget('LandingPage').done(function (widget) { widget.setActive('ClassicSearchForm'); });
           self.route = '#classic-form';
@@ -131,6 +132,7 @@ function (
 
       this.set('PaperSearchForm', function () {
         var defer = $.Deferred();
+        var self = this;
         app.getObject('MasterPageManager').show('LandingPage', ['PaperSearchForm']).then(function() {
           app.getWidget('LandingPage').done(function (widget) { widget.setActive('PaperSearchForm'); });
           self.route = '#paper-form';
@@ -394,6 +396,7 @@ function (
             app.getWidget('Authentication').done(function (w) {
               w.setSubView(subView);
                 that.route = '#user/account/' + subView;
+                that.title = subView === 'login' ? 'Sign In' : 'Register';
                 defer.resolve();
               });
             })
@@ -454,6 +457,7 @@ function (
               route += ('&__qid=' + q.get('__qid')[0]);
             }
 
+            self.title = q && q.get('q').length && q.get('q')[0];
             self.route = route;
             publishFeedback({ code: ApiFeedback.CODES.UNMAKE_SPACE });
             defer.resolve();
@@ -935,11 +939,20 @@ function (
 
       this.set('ShowAbstract', function (id, data) {
         var defer = $.Deferred(),
-          that = this;
+        that = this;
 
         showDetail([id].concat(detailsPageAlwaysVisible), id).then(function() {
-          if (data.bibcode) // new search
-            self.getPubSub().publish(self.getPubSub().DISPLAY_DOCUMENTS, new ApiQuery({ q: 'bibcode:' + data.bibcode }))
+          // new search
+          if (data.bibcode) {
+            self.getPubSub().publish(self.getPubSub().DISPLAY_DOCUMENTS, new ApiQuery({ q: 'bibcode:' + data.bibcode }));
+          }
+
+          // get the title from the list of stashed docs, if available
+          var doc = _.find(self.getBeeHive().getObject('DocStashController').getDocs() || [], { bibcode: data.bibcode });
+          if (doc) {
+            that.title = doc.title && doc.title[0];
+          }
+
           that.route = data.href;
           defer.resolve();
         })

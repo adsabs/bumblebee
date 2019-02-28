@@ -189,18 +189,25 @@ define([
      * @returns {ApiQuery|*}
      */
     getCurrentQuery: function () {
-      var currQuery,
-        beehive;
-      if (this._currentQuery instanceof ApiQuery) {
-        currQuery = this._currentQuery;
-      } else if (_.isFunction(this.getBeeHive)) {
-        beehive = this.getBeeHive();
-        if (beehive.hasObject('AppStorage')) {
-          currQuery = beehive.getObject('AppStorage').getCurrentQuery();
+      var currQuery = new ApiQuery({});
+      var beehive;
+      try {
+        if (this._currentQuery instanceof ApiQuery) {
+          currQuery = this._currentQuery;
+        } else if (_.isFunction(this.getBeeHive)) {
+          beehive = this.getBeeHive();
+          if (beehive.hasObject('AppStorage')) {
+            var q = beehive.getObject('AppStorage').getCurrentQuery();
+            if (q instanceof ApiQuery) {
+              currQuery = q;
+            }
+          }
         }
+      } catch (e) {
+        console.error(e.message);
+      } finally {
+        return currQuery;
       }
-
-      return (currQuery instanceof ApiQuery) ? currQuery : new ApiQuery();
     },
 
     /**
