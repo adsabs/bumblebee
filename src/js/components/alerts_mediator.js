@@ -47,7 +47,7 @@ function (
         console.error('If you want to use AlertController, you also need to have a Widget capable of displaying the messages (default: AlertsWidget)');
         pubsub.publish(pubsub.BIG_FIRE, "Alerts Widget not available");
       });
-      
+
     },
 
     onNavigate: function (route) {
@@ -113,12 +113,12 @@ function (
         .fail(function() {
           defer.reject();
         })
-      } 
+      }
       return defer.promise();
     },
 
     alert: function (apiFeedback) {
-      
+
       var defer = $.Deferred();
       this.getWidget().done(function(w) {
         if (!w) {
@@ -127,7 +127,7 @@ function (
         }
         else {
           // since alerts widget returns a promise that gets
-          // resolved once the widget rendered; we have to 
+          // resolved once the widget rendered; we have to
           // wait little bit more
           w.alert(apiFeedback).done(function() {
             defer.resolve.apply(defer, arguments);
