@@ -73,7 +73,7 @@ define([], function () {
         $el = [];
         try {
           var nav = bbb.getBeeHive().getService('Navigator');
-          nav.router.navigate(href, { trigger: true, replace: true });
+          nav.router.navigate(href, { trigger: true, replace: false });
           return false;
         } catch (e) {
           console.error(e.message);
