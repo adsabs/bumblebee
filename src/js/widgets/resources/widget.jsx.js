@@ -55,6 +55,7 @@ define([
       this.activateWidget();
       const pubsub = this.getPubSub();
       pubsub.subscribe(pubsub.DISPLAY_DOCUMENTS, function (apiQuery) {
+        dispatch(ui.reset());
         if (apiQuery && _.isFunction(apiQuery.toJSON)) {
           dispatch(api.displayDocuments(apiQuery.toJSON()));
         } else {
@@ -62,6 +63,7 @@ define([
         }
       });
       pubsub.subscribe(pubsub.DELIVERING_RESPONSE, function (apiResponse) {
+        dispatch(ui.reset());
         if (apiResponse && _.isFunction(apiResponse.toJSON)) {
           dispatch(api.processResponse(apiResponse.toJSON()));
         } else {
