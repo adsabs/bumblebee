@@ -8,13 +8,15 @@ define([
   './widget',
   'js/mixins/add_stable_index_to_collection',
   'js/mixins/link_generator_mixin',
-  'js/mixins/papers_utils'
+  'js/mixins/papers_utils',
+  'js/components/api_query'
 ],
 function (
   ListOfThings,
   PaginationMixin,
   LinkGenerator,
-  PapersUtilsMixin
+  PapersUtilsMixin,
+  ApiQuery
 ) {
   var DetailsWidget = ListOfThings.extend({
     defaultQueryArguments: {
@@ -43,7 +45,7 @@ function (
           setTimeout(function () {
             self.model.set('title', title);
           }, 0);
-          this.dispatchRequest(this.currentQuery);
+          this.dispatchRequest(data.bibcode);
         }
       });
 
@@ -66,9 +68,12 @@ function (
 
     ingestBroadcastedPayload: _.noop,
 
-    dispatchRequest: function (apiQuery) {
+    dispatchRequest: function (bibcodeOrQuery) {
 
-      this.currentQuery = apiQuery;
+      var apiQuery = bibcodeOrQuery;
+      if (!(bibcodeOrQuery instanceof ApiQuery) && _.isString(bibcodeOrQuery)) {
+        apiQuery = new ApiQuery({ q: 'bibcode:' + bibcodeOrQuery });
+      }
 
       // do not continue unless we have been selected
       if (!this.canLoad) return;
@@ -85,7 +90,7 @@ function (
       }
 
       // dispatch the request
-      ListOfThings.prototype.dispatchRequest.apply(this, arguments);
+      ListOfThings.prototype.dispatchRequest.call(this, apiQuery);
     },
 
     customizeQuery: function () {

@@ -78,7 +78,9 @@ define([
     defaults: function () {
       return {
         bibcode: undefined,
-        query: undefined
+        query: undefined,
+        selectedPath: undefined,
+        idAttribute: undefined
       };
     }
   });
@@ -95,12 +97,14 @@ define([
       // if any of the models in the collection are selected, trigger an event here
       this.listenTo(this.collection, 'widget-selected', function (model) {
         var val = model.get('id').split('__');
-        var data = {
+        this.model.set({
+          path: model.get('path'),
           idAttribute: val[0],
-          subView: val.length > 1 ? val[1] : undefined,
-          href: 'abs/' + (this.model.get('bibcode') || '') + '/' + model.get('path')
-        };
-        this.trigger('page-manager-event', 'widget-selected', data);
+          subView: val.length > 1 ? val[1] : undefined
+        });
+
+        // trigger when collection selection is made
+        this.triggerSelection();
       });
       if (!options.template) {
         // for testing
@@ -178,18 +182,29 @@ define([
      */
     resetActiveStates: function () {
       this.collection.each(function (model) {
-        //        //nothing is selected at the moment
-        //        model.set("isSelected", false);
-
-        // abstract and all export options
-        // reset only widgets that aren't there 100% of the time
-        if (!model.get('alwaysThere')) {
-          model.set('isActive', false);
-          model.set('numFound', 0);
-        } else {
-          model.set('isActive', true);
-        }
+        model.set({
+          isSelected: false,
+          isActive: true,
+          numFound: 0
+        });
       });
+
+      // trigger on bibcode update
+      this.triggerSelection();
+    },
+
+    triggerSelection: function () {
+
+      // only trigger if bibcode is present, and add it to payload
+      if (this.model.has('bibcode')) {
+        var data = {
+          idAttribute: this.model.get('idAttribute'),
+          subView: this.model.get('subView'),
+          href: 'abs/' + (this.model.get('bibcode') || '') + '/' + (this.model.get('path') || 'abstract'),
+          bibcode: this.model.get('bibcode')
+        };
+        this.trigger('page-manager-event', 'widget-selected', data);
+      }
     },
 
     onPageManagerMessage: function (event, data) {
