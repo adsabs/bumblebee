@@ -111,43 +111,42 @@ define([
                   var references = w['ShowReferences'];
 
                   var r = new ApiResponse(testData());
-                  r.setApiQuery(new ApiQuery({q: 'foo'}));
+                  r.setApiQuery(new ApiQuery({q: 'bibcode:foo'}));
 
                   abstract.processResponse(r);
 
                   app.getWidget("TOCWidget").done(function(widget) {
 
-                    widget.resetActiveStates();
                     // the navigation must turn active
                     expect(pageManager.view.$el.find('[data-widget-id="ShowAbstract"]>div').hasClass('s-nav-inactive')).to.be.false;
                     expect(pageManager.view.$el.find('[data-widget-id="ShowReferences"]>div').hasClass('s-nav-inactive')).to.be.true;
 
                     // simulated late arrival
                     references.processResponse(r);
+                    pageManager.broadcast('page-manager-event', 'broadcast-payload', {
+                      bibcode: 'foo',
+                      references_count: 841359
+                    });
                     expect(pageManager.view.$el.find('[data-widget-id="ShowAbstract"]>div').hasClass('s-nav-inactive')).to.be.false;
-                    expect(pageManager.view.$el.find('[data-widget-id="ShowReferences>div"]').hasClass('s-nav-inactive')).to.be.false;
+                    expect(pageManager.view.$el.find('[data-widget-id="ShowReferences"]>div').hasClass('s-nav-inactive')).to.be.false;
 
                     // click on the link (NAVIGATE event should be triggered)
+
                     var pubsub = app.getService('PubSub').getHardenedInstance();
                     var spy = sinon.spy();
                     pubsub.subscribe(pubsub.NAVIGATE, spy);
                     pageManager.view.$el.find('[data-widget-id="ShowReferences"]').click();
-                    expect(spy.callCount).to.be.eql(1);
+                    expect(spy.callCount).to.be.gt(0);
 
                     // it has to be selected and contain numcount
                     //the navigator is what actually selects the nav so I removed that test
                     expect(pageManager.view.$el.find('[data-widget-id="ShowReferences"] span').eq(1).text().trim()).to.eql('(841359)');
                     done();
-
                 })
               })
             })
-
-
           })
-
         });
-
       });
 
       it("has a wrap (details manager) which listens to pubsub.DISPLAY_DOCUMENTS and places the current bibcode in the model of the TOC Widget", function (done) {
@@ -166,7 +165,10 @@ define([
 
               var pubsub = app.getService('PubSub').getHardenedInstance();
               pubsub.publish(pubsub.DISPLAY_DOCUMENTS, new ApiQuery({q: "bibcode:foo"}));
-
+              pageManager.broadcast('page-manager-event', 'broadcast-payload', {
+                bibcode: 'foo',
+                references_count: 0
+              });
               expect(pageManager.widgets.tocWidget.model.get("bibcode")).to.eql("foo");
               expect(pageManager.widgets.tocWidget.collection.get("ShowReferences").get("numFound")).to.eql(0)
               expect(pageManager.widgets.tocWidget.collection.get("ShowReferences").get("isActive")).to.eql(false);
@@ -183,12 +185,12 @@ define([
 
               //testing toc widget reset
               pageManager.widgets.tocWidget.resetActiveStates();
-              expect(view.$("[data-widget-id='ShowAbstract']>div").hasClass("s-nav-selected")).to.be.true;
-              expect(view.$("[data-widget-id='ShowReferences]>div']").hasClass("s-nav-selected")).to.be.false;
+              expect(view.$('[data-widget-id="ShowAbstract"]>div').hasClass("s-nav-selected")).to.be.true;
+              expect(view.$('[data-widget-id="ShowReferences"]>div').hasClass("s-nav-selected")).to.be.false;
 
               pageManager.widgets.tocWidget.collection.selectOne("ShowReferences");
-              expect(view.$("[data-widget-id='ShowAbstract']>div").hasClass("s-nav-selected")).to.be.false;
-              expect(view.$("[data-widget-id='ShowReferences']>div").hasClass("s-nav-selected")).to.be.true;
+              expect(view.$('[data-widget-id="ShowAbstract"]>div').hasClass("s-nav-selected")).to.be.false;
+              expect(view.$('[data-widget-id="ShowReferences"]>div').hasClass("s-nav-selected")).to.be.true;
               done();
             });  // assemble
           }); // getWidget
@@ -211,6 +213,9 @@ define([
             pageManager.assemble(app).done(function() {
 
               var view = pageManager.show();
+              pageManager.broadcast('page-manager-event', 'broadcast-payload', {
+                bibcode: 'foo'
+              });
 
               expect(pageManager.widgets.tocWidget.collection.get("ShowPaperExport__default").get("category")).to.eql("export");
 
@@ -223,9 +228,9 @@ define([
 
               view.$("a[data-widget-id=ShowPaperExport__default]").click();
 
-              expect(spy.args[0][0]).to.eql("ShowPaperExport");
-              expect(spy.args[0][1]["idAttribute"]).to.eql("ShowPaperExport");
-              expect(spy.args[0][1]["href"]).to.eql("abs//export");
+              expect(spy.args[1][0]).to.eql("ShowPaperExport");
+              expect(spy.args[1][1]["idAttribute"]).to.eql("ShowPaperExport");
+              expect(spy.args[1][1]["href"]).to.eql("abs/foo/export");
 
               pageManager.widgets.ShowPaperExport.setSubView = sinon.spy();
 

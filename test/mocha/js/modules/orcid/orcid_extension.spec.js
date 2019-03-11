@@ -72,8 +72,7 @@ define([
                 isCreatedByOthers: true,
                 isKnownToADS: true
               })
-            }
-            else {
+            } else {
               defer.resolve({
                 isCreatedByADS: false,
                 isCreatedByOthers: false
@@ -201,7 +200,7 @@ define([
         oApi.getRecordInfo = _.constant(d.promise());
 
         minsub.publish(minsub.DISPLAY_DOCUMENTS, minsub.createQuery({
-          q: "bibcode:star"
+          q: "bibcode:2008PhDT.......169R"
         }));
 
         // widgets are in the 'loading' state
@@ -228,7 +227,7 @@ define([
         oApi.getRecordInfo = _.constant(d.promise());
 
         minsub.publish(minsub.DISPLAY_DOCUMENTS, minsub.createQuery({
-          q: "bibcode:star"
+          q: "bibcode:2008PhDT.......169R"
         }));
 
         // widgets are in the 'loading' state

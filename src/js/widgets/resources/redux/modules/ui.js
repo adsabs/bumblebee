@@ -5,7 +5,8 @@ define([], function () {
     SET_HAS_ERROR: '[ui] SET_HAS_ERROR',
     SET_NO_RESULTS: '[ui] SET_NO_RESULTS',
     SET_FULL_TEXT_SOURCES: '[ui] SET_FULL_TEXT_SOURCES',
-    SET_DATA_PRODUCTS: '[ui] SET_DATA_PRODUCTS'
+    SET_DATA_PRODUCTS: '[ui] SET_DATA_PRODUCTS',
+    RESET: '[ui] RESET'
   };
 
   const initialState = {
@@ -30,6 +31,8 @@ define([], function () {
         return {
           ...initialState, hasError: action.result, noResults: true, loading: false
         };
+      case actions.RESET:
+        return { ...initialState };
       default:
         return state;
     }
@@ -38,12 +41,14 @@ define([], function () {
   // action creators
   const handleLinkClick = result => ({ type: actions.LINK_CLICKED, result });
   const setError = result => ({ type: actions.SET_HAS_ERROR, result });
+  const reset = () => ({ type: actions.RESET });
 
   return {
     reducer,
     initialState,
     actions,
     handleLinkClick,
-    setError
+    setError,
+    reset
   };
 });

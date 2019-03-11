@@ -199,15 +199,17 @@ define([
 
       g.onDisplayDocuments(new minsub.createQuery({q : "bibcode:fakeBibcode2"}));
 
-      //did not send a "widget ready" event
-      expect(eventSpy.callCount).to.eql(1);
+      expect(eventSpy.callCount).to.eql(3);
+      expect(eventSpy.args[1][1]).to.eql({
+        shouldReset: true,
+        isActive: false,
+        widget: g
+      });
 
       //model has been emptied
       expect(g.model.toJSON()).to.eql({
         "title": "Deep Circulation in Red Giant Stars: A Solution to the Carbon and Oxygen Isotope Puzzles?"
       });
-
-
     });
 
     it("by default renders a grid of images", function(){
@@ -255,13 +257,6 @@ define([
 
       expect(spy.args[0][0]).to.eql("[Router]-Navigate-With-Trigger");
       expect(spy.args[0][1]).to.eql("ShowGraphics");
-
-
     });
-
-
   });
-
-
-
-})
+});

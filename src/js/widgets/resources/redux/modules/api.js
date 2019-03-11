@@ -12,13 +12,16 @@ define([
   };
 
   const initialState = {
-    linkServer: null
+    linkServer: null,
+    query: null
   };
 
   const reducer = (state = initialState, action) => {
     switch (action.type) {
       case actions.SET_LINK_SERVER:
         return { ...state, linkServer: action.result };
+      case actions.CURRENT_QUERY_UPDATED:
+        return { ...state, query: action.result }
       default:
         return state;
     }
