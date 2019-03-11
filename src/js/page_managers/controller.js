@@ -82,6 +82,7 @@ function ($, _,
         el;
       _.extend(self.widgetDoms, self.getWidgetsFromTemplate(self.view.$el));
       var promises = [];
+      var domsToRender = {};
 
       _.each(self.widgetDoms, function (widgetDom, widgetName) {
         if (!app.hasWidget(widgetName)) {
@@ -109,7 +110,7 @@ function ($, _,
                 window.__PRERENDERED = false;
               } else {
                 el = widget.getEl ? widget.getEl() : widget.render().el;
-                $(self.widgetDoms[widgetName]).html(el);
+                domsToRender[widgetName] = el;
               }
             };
 
@@ -123,6 +124,11 @@ function ($, _,
 
       $.when.apply($, promises)
         .then(function () {
+
+          // wait until everything has assembled before swapping out doms
+          _.forEach(domsToRender, function (v, k) {
+            $(self.widgetDoms[k]).html(v);
+          });
           defer.resolve();
         })
         .fail(function () {
