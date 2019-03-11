@@ -40,7 +40,6 @@ define([
         numFound: 0,
         showCount: true,
         alwaysThere: false
-
       };
     }
   });
@@ -52,7 +51,11 @@ define([
       // trigger when one of the models is selected, this ensures that
       // we capture any initial load (like on page load, not directly clicked)
       this.on('change:isSelected', function (model) {
-        this.trigger('widget-selected', model);
+
+        // only trigger if going from false -> true
+        if (model.get('isSelected')) {
+          this.trigger('widget-selected', model);
+        }
       });
     },
     selectOne: function (widgetId) {
@@ -78,7 +81,9 @@ define([
     defaults: function () {
       return {
         bibcode: undefined,
-        query: undefined
+        query: undefined,
+        path: undefined,
+        idAttribute: undefined
       };
     }
   });
@@ -95,12 +100,14 @@ define([
       // if any of the models in the collection are selected, trigger an event here
       this.listenTo(this.collection, 'widget-selected', function (model) {
         var val = model.get('id').split('__');
-        var data = {
+        this.model.set({
+          path: model.get('path'),
           idAttribute: val[0],
-          subView: val.length > 1 ? val[1] : undefined,
-          href: 'abs/' + (this.model.get('bibcode') || '') + '/' + model.get('path')
-        };
-        this.trigger('page-manager-event', 'widget-selected', data);
+          subView: val.length > 1 ? val[1] : undefined
+        });
+
+        // trigger when collection selection is made
+        this.triggerSelection();
       });
       if (!options.template) {
         // for testing
@@ -146,11 +153,8 @@ define([
       if (idAttribute !== this.$('.s-nav-selected').attr('data-widget-id')) {
         data.href = $t.attr('href');
 
-        // we can just make sure to trigger a select event by updating the model
-        var model = this.collection.get(idAttribute);
-        if (model) {
-          model.set('isSelected', true);
-        }
+        // make sure only a single element is selected
+        this.collection.selectOne(idAttribute);
 
         // finally, close the mobile menu, which might be open
         this.$el.parent('.nav-container').removeClass('show');
@@ -178,18 +182,31 @@ define([
      */
     resetActiveStates: function () {
       this.collection.each(function (model) {
-        //        //nothing is selected at the moment
-        //        model.set("isSelected", false);
-
-        // abstract and all export options
-        // reset only widgets that aren't there 100% of the time
-        if (!model.get('alwaysThere')) {
-          model.set('isActive', false);
-          model.set('numFound', 0);
-        } else {
-          model.set('isActive', true);
-        }
+        model.set({
+          isSelected: false,
+          isActive: true,
+          numFound: 0
+        });
       });
+
+      // trigger on bibcode update
+      this.triggerSelection();
+    },
+
+    triggerSelection: function () {
+
+      // if nothing is selected, select the abstract element and return
+      if (this.collection.where({ isSelected: true }).length === 0) {
+        return this.collection.selectOne('ShowAbstract');
+      }
+
+      var data = {
+        idAttribute: this.model.get('idAttribute') || 'showAbstract',
+        subView: this.model.get('subView') || '',
+        href: 'abs/' + (this.model.get('bibcode') || '') + '/' + (this.model.get('path') || 'abstract'),
+        bibcode: this.model.get('bibcode')
+      };
+      this.trigger('page-manager-event', 'widget-selected', data);
     },
 
     onPageManagerMessage: function (event, data) {
@@ -221,6 +238,14 @@ define([
         _.defaults(data, { isActive: !!data.numFound });
         if (model) {
           model.set(_.pick(data, model.keys()));
+        }
+
+        // if the widget should reset, switch to the abstract view
+        if (data.shouldReset) {
+          if (model && model.get('isSelected')) {
+            this.collection.selectOne('ShowAbstract');
+          }
+          model && model.set('isActive', false);
         }
       } else if (event === 'broadcast-payload') {
         this.model.set('bibcode', data.bibcode);

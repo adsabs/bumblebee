@@ -54,7 +54,10 @@ define([], function () {
 
     var $el = [];
     var transformHref = function (ev) {
-      if (!Backbone.history.options.pushState) return;
+      if (!Backbone.history
+        || !Backbone.history.options
+        || !Backbone.history.options.pushState
+      ) return;
       $el = $(ev.currentTarget);
       var href = $el.attr('href');
       if (regx.test(href)) {
@@ -73,7 +76,7 @@ define([], function () {
         $el = [];
         try {
           var nav = bbb.getBeeHive().getService('Navigator');
-          nav.router.navigate(href, { trigger: true, replace: true });
+          nav.router.navigate(href, { trigger: true, replace: false });
           return false;
         } catch (e) {
           console.error(e.message);

@@ -16,6 +16,7 @@ define([
     initialize: function (options) {
       this.options = options || {};
       this.view = new View();
+      this._bibcode = null;
     },
     activate: function (beehive) {
       this.setBeeHive(beehive);
@@ -63,6 +64,11 @@ define([
       return null;
     },
     onDisplayDocuments: function (apiQuery) {
+      var currentQuery = this.getCurrentQuery();
+      if (_.isEqual(currentQuery.toJSON(), apiQuery.toJSON())) {
+        return;
+      }
+      this.setCurrentQuery(apiQuery);
       var bibcode = apiQuery.get('q');
       if (bibcode && /bibcode:/.test(bibcode[0])) {
         bibcode = bibcode[0].replace(/bibcode:/, '');
