@@ -82,7 +82,11 @@ function (
       try {
         var q = apiQuery.get('q');
         if (q && q[0]) {
-          this.model.set('bibcode', q[0].match(/bibcode:(.*)/)[1]);
+          var bibcode = q[0].match(/bibcode:(.*)/)[1];
+          if (this.model.get('bibcode') === bibcode) {
+            return;
+          }
+          this.model.set('bibcode', bibcode);
         }
       } catch (e) {
         console.error('was unable to parse the bibcode!');

@@ -10,13 +10,16 @@ define([], function () {
   };
 
   const initialState = {
-    bibcode: null
+    bibcode: null,
+    query: null
   };
 
   const reducer = (state = initialState, action) => {
     switch (action.type) {
       case actions.SET_BIBCODE:
         return { ...state, bibcode: action.result };
+      case actions.CURRENT_QUERY_UPDATED:
+        return { ...state, query: action.result };
       default:
         return state;
     }

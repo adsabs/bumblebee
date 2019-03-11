@@ -51,19 +51,27 @@ define([
     },
     activate: function (beehive) {
       const { dispatch } = this.store;
+      const self = this;
       this.setBeeHive(beehive);
       this.activateWidget();
       const pubsub = this.getPubSub();
       pubsub.subscribe(pubsub.DISPLAY_DOCUMENTS, function (apiQuery) {
-        dispatch(ui.reset());
+        const { query: currentQuery } = self.store.getState().api;
+
         if (apiQuery && _.isFunction(apiQuery.toJSON)) {
-          dispatch(api.displayDocuments(apiQuery.toJSON()));
+          var query = apiQuery.toJSON();
+
+          // break out early if the currentQuery is different than the incoming one
+          if (_.isEqual(currentQuery, query)) {
+            return;
+          }
+          dispatch(ui.reset());
+          dispatch(api.displayDocuments(query));
         } else {
           dispatch(ui.setError('did not receive query'));
         }
       });
       pubsub.subscribe(pubsub.DELIVERING_RESPONSE, function (apiResponse) {
-        dispatch(ui.reset());
         if (apiResponse && _.isFunction(apiResponse.toJSON)) {
           dispatch(api.processResponse(apiResponse.toJSON()));
         } else {
