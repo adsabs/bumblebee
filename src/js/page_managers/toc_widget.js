@@ -240,8 +240,8 @@ define([
           model.set(_.pick(data, model.keys()));
         }
 
-        // if the widget is closing, switch to the abstract view
-        if (data.closing) {
+        // if the widget should reset, switch to the abstract view
+        if (data.shouldReset) {
           if (model && model.get('isSelected')) {
             this.collection.selectOne('ShowAbstract');
           }

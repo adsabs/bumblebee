@@ -116,9 +116,6 @@ define([
                   abstract.processResponse(r);
 
                   app.getWidget("TOCWidget").done(function(widget) {
-                    window.app = app;
-                    // set the bibcode on the model
-                    var w = pageManager.widgets.tocWidget;
 
                     // the navigation must turn active
                     expect(pageManager.view.$el.find('[data-widget-id="ShowAbstract"]>div').hasClass('s-nav-inactive')).to.be.false;

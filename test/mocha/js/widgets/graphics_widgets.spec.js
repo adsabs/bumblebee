@@ -201,7 +201,7 @@ define([
 
       expect(eventSpy.callCount).to.eql(3);
       expect(eventSpy.args[1][1]).to.eql({
-        closing: true,
+        shouldReset: true,
         isActive: false,
         widget: g
       });
@@ -257,13 +257,6 @@ define([
 
       expect(spy.args[0][0]).to.eql("[Router]-Navigate-With-Trigger");
       expect(spy.args[0][1]).to.eql("ShowGraphics");
-
-
     });
-
-
   });
-
-
-
-})
+});

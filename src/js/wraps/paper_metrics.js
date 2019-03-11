@@ -61,7 +61,7 @@ function (
         self.trigger('page-manager-event', 'widget-ready', {
           isActive: false,
           widget: self,
-          closing: true
+          shouldReset: true
         });
       });
     },

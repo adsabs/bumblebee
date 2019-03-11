@@ -96,7 +96,9 @@ define([
         });
         this.getResponseDeferred().fail(function () {
           self.trigger('page-manager-event', 'widget-ready', {
-            closing: bibcode !== this._bibcode,
+
+            // this will set us to inActive and navigate to ShowAbstract
+            shouldReset: bibcode !== this._bibcode,
             isActive: false,
             widget: self
           });
