@@ -28,9 +28,6 @@ function (
       var child = mpm.getCurrentActiveChild();
       if (child.view && child.view.showCols) {
         child.view.showCols({ right: false, left: false });
-        // open the view again
-        this.getBeeHive().getService('PubSub').once(this.getPubSub().START_SEARCH,
-          _.once(function () { child.view.showCols({ right: true }); }));
       }
     }
     this.getBeeHive().getService('PubSub').once(this.getPubSub().DELIVERING_REQUEST, _.bind(function (apiRequest, psk) {
@@ -428,11 +425,7 @@ function (
               && app.getPluginOrWidgetName(senderKey.getId()) != 'widget:SearchWidget'
               && app.getWidgetRefCount('Results') >= 1
           ) {
-            // simply navigate to search results page, widgets are already stocked with data
-            if (app.hasService('Navigator')) {
-              app.getService('Navigator').navigate('results-page', { replace: true });
-              stupidGoAhead = false;
-            }
+            stupidGoAhead = false;
           }
 
           if (this.getCurrentPage() !== 'SearchPage' && app.getWidgetRefCount('Results') <= 0) {

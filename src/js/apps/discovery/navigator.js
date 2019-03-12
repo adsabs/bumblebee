@@ -875,8 +875,7 @@ function (
       this.set('visualization-closed', this.get('results-page'));
 
       var showResultsPage = function (pages, toActivate) {
-        return app.getObject('MasterPageManager').show('SearchPage',
-          pages)
+        return app.getObject('MasterPageManager').show('SearchPage', pages);
       };
 
       /*
