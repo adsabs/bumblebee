@@ -199,14 +199,18 @@ define([
       if (this.collection.where({ isSelected: true }).length === 0) {
         return this.collection.selectOne('ShowAbstract');
       }
+      var path = this.model.get('path') || 'abstract';
 
-      var data = {
-        idAttribute: this.model.get('idAttribute') || 'showAbstract',
-        subView: this.model.get('subView') || '',
-        href: 'abs/' + (this.model.get('bibcode') || '') + '/' + (this.model.get('path') || 'abstract'),
-        bibcode: this.model.get('bibcode')
-      };
-      this.trigger('page-manager-event', 'widget-selected', data);
+      // only trigger if the bibcode is present or we are not on an abstract page
+      if (this.model.has('bibcode') || path.startsWith('user')) {
+        var data = {
+          idAttribute: this.model.get('idAttribute') || 'showAbstract',
+          subView: this.model.get('subView') || '',
+          href: 'abs/' + (this.model.get('bibcode') || '') + '/' + path,
+          bibcode: this.model.get('bibcode')
+        };
+        this.trigger('page-manager-event', 'widget-selected', data);
+      }
     },
 
     onPageManagerMessage: function (event, data) {
