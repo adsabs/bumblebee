@@ -28,9 +28,6 @@ function (
       var child = mpm.getCurrentActiveChild();
       if (child.view && child.view.showCols) {
         child.view.showCols({ right: false, left: false });
-        // open the view again
-        this.getBeeHive().getService('PubSub').once(this.getPubSub().START_SEARCH,
-          _.once(function () { child.view.showCols({ right: true }); }));
       }
     }
     this.getBeeHive().getService('PubSub').once(this.getPubSub().DELIVERING_REQUEST, _.bind(function (apiRequest, psk) {
@@ -55,7 +52,6 @@ function (
     this._tmp.cycle_started = true;
 
     var app = this.getApp();
-
     if (feedback.query) {
       app.getObject('AppStorage').setCurrentQuery(feedback.query);
       app.getObject('AppStorage').setCurrentNumFound(feedback.numFound);
@@ -63,7 +59,13 @@ function (
       app.getObject('AppStorage').setCurrentQuery(null);
     }
 
-    this.getPubSub().publish(this.getPubSub().NAVIGATE, 'results-page');
+    var stopNavigation = feedback.query
+      && feedback.query.has('__stopNavigation')
+      && feedback.query.get('__stopNavigation')[0];
+    feedback.query && feedback.query.unset('__stopNavigation');
+    if (!stopNavigation) {
+      this.getPubSub().publish(this.getPubSub().NAVIGATE, 'results-page');
+    }
 
     if (feedback.request && feedback.request.get('target').indexOf('search') > -1 && feedback.query && !feedback.numFound) {
       var q = feedback.query;
@@ -414,38 +416,6 @@ function (
             }
           }
 
-          // because we might be dealing with promises (not always)
-          // we have to do this ugly hack (and I didn't want to turn
-          // the whole function into async; who knows what ill-gotten
-          // effects that would have on backbone execution...)
-          var stupidGoAhead = true;
-
-          // XXX:rca but when widgets are destroyed, there should be no data...
-          // XXX:rca verify this actually does what it is meant to do
-          // ignore repeated queries (if the widgets are loaded with data)
-          if (storage && storage.hasCurrentQuery()
-              && apiQuery.url() == storage.getCurrentQuery().url()
-              && app.getPluginOrWidgetName(senderKey.getId()) != 'widget:SearchWidget'
-              && app.getWidgetRefCount('Results') >= 1
-          ) {
-            // simply navigate to search results page, widgets are already stocked with data
-            if (app.hasService('Navigator')) {
-              app.getService('Navigator').navigate('results-page', { replace: true });
-              stupidGoAhead = false;
-            }
-          }
-
-          if (this.getCurrentPage() !== 'SearchPage' && app.getWidgetRefCount('Results') <= 0) {
-            // switch immediately to the results page -make widgets listen to the START_SEARCH
-            var argz = arguments;
-            app.getService('Navigator').navigate('results-page', { replace: false })
-              .then(function() {
-                qm.getQueryAndStartSearchCycle.apply(qm, argz);
-              })
-            stupidGoAhead = false;
-          }
-
-          if (stupidGoAhead)
             qm.getQueryAndStartSearchCycle.apply(qm, arguments);
 
         }, this));

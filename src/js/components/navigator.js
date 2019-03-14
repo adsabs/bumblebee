@@ -74,52 +74,37 @@ function (
       }
 
       if (!transition.execute) { // do nothing
-        defer.resolve()
-        return defer.promise();
+        return defer.resolve().promise();
       }
 
-      var self = this;
-      var afterNavigation = function() {
+      var afterNavigation = _.bind(function() {
         // router can communicate directly with navigator to replace url
         var replace = !!((transition.replace || arg1 && arg1.replace));
 
-        // don't reset the url if it is already correct, this could potentially
-        // cause a safari browser bug
-
-        if (decodeURI(window.location.hash) !== transition.route
-              && transition.route || transition.route === ''
-        ) {
-          // update the History object
-          self.router.navigate(
-            transition.route,
-            { trigger: true, replace: replace }
-          );
+        if (transition.route === '' || transition.route) {
+          var route = transition.route === '' ? '/' : transition.route;
+          this.router.navigate(route, { trigger: false, replace: replace });
         }
 
         // clear any metadata added to head on the previous page
         $('head').find('meta[data-highwire]').remove();
-        // XXX:rca - this can probably go....anyways, shouldn't be here, is not generic
-        // and set the default title
-        document.title = (transition.title ? transition.title + ' - ' : '') + 'NASA/ADS Search';
-      }
+        var title = transition.title;
+        var appTitle = 'NASA/ADS Search';
+        if (document.title.indexOf(appTitle) > 0 && (!title || title === appTitle)) {
+          title = document.title.split(' - ')[0];
+        }
+        document.title = (title ? title + ' - ' : '') + appTitle;
+        defer.resolve();
+      }, this);
 
       var p;
       try {
         p = transition.execute.apply(transition, arguments);
-        if (p && typeof p.then == 'function') {
-          p.then(function() {
-            afterNavigation();
-            defer.resolve();
-          })
-        }
-        else {
-          afterNavigation();
-          defer.resolve();
-        }
+        (p && _.isFunction(p.then)) ? p.then(afterNavigation) : afterNavigation();
       } catch (e) {
         this.handleTransitionError(transition, e, arguments);
-        defer.reject(new Error('Error transitioning to route; going to 404'));
-        return defer.promise();
+        var err = new Error('Error transitioning to route; going to 404');
+        return defer.reject(err).promise();
       }
 
       return defer.promise();

@@ -459,6 +459,7 @@ function (
 
             self.title = q && q.get('q').length && q.get('q')[0];
             self.route = route;
+            self.replace = true;
             publishFeedback({ code: ApiFeedback.CODES.UNMAKE_SPACE });
             defer.resolve();
           })
@@ -569,31 +570,27 @@ function (
 
       this.set('search-page', function (endPoint, data) {
         var defer = $.Deferred();
-        var possibleSearchSubPages = ['Metrics', 'AuthorNetwork', 'PaperNetwork',
-        'ConceptCloud', 'BubbleChart'];
 
-        var widgetName, pages;
+        showResultsPage(searchPageAlwaysVisible).then(_.bind(function() {
+          var fragment = Backbone.history.getFragment();
 
-        // convention is that a navigate command for search page widget starts with "show-"
-        // waits for the navigate to results page emitted by the discovery_mediator
-        // once the solr search has been received
-        if (data.page)
-          widgetName = _.map(data.page.split('-').slice(1), function (w) { return w[0].toUpperCase() + w.slice(1); }).join('');
-
-
-        if (widgetName && possibleSearchSubPages.indexOf(widgetName) > -1) {
-          pages = [widgetName].concat(searchPageAlwaysVisible.slice(1));
-        }
-        else {
-          console.error('Results page subpage not recognized:', widgetName);
-          pages = searchPageAlwaysVisible;
-        }
-
-
-        showResultsPage(pages).then(function() {
+          // check if we are coming from a search page
+          if (fragment.match(/^search\//)) {
+            this.route = fragment;
+          } else {
+            this.route = '#search/' + data.q.url();
+          }
+          this.replace = false;
+          if (data.page) {
+            data.q.set('__stopNavigation', 1);
+            self.getPubSub().publish(self.getPubSub().START_SEARCH, data.q);
+            self.get(data.page).execute(data.page).then(function () {
+              defer.resolve();
+            });
+          }
           self.getPubSub().publish(self.getPubSub().START_SEARCH, data.q);
           defer.resolve();
-        })
+        }, this));
         return defer.promise();
       });
 
@@ -823,12 +820,12 @@ function (
       function showResultsPageWidgetWithUniqueUrl(command, options) {
         var defer = $.Deferred(),
           that = this;
-        var q = app.getObject('AppStorage').getCurrentQuery();
-        publishFeedback({ code: ApiFeedback.CODES.MAKE_SPACE });
+        var q;
         var widgetName = _.map(command.split('-').slice(1), function (w) { return w[0].toUpperCase() + w.slice(1); }).join('');
-        app.getObject('MasterPageManager').show('SearchPage',
-          [widgetName].concat(searchPageAlwaysVisible.slice(1))).done(function() {
-
+        var showView = function () {
+          app.getObject('MasterPageManager').show('SearchPage',
+          [widgetName].concat(searchPageAlwaysVisible.slice(1))).done(function () {
+            publishFeedback({ code: ApiFeedback.CODES.MAKE_SPACE });
             var route = '#search/' + queryUpdater.clean(q.clone()).url()
                             + '/' + command.split('-').slice(1).join('-');
 
@@ -849,7 +846,19 @@ function (
                 defer.resolve();
               });
             }
-          })
+          });
+        };
+        (function check(c) {
+          q = app.getObject('AppStorage').getCurrentQuery();
+          if (q && c > 0) {
+            return showView();
+          } else if (c <= 0) {
+            self.get('results-page').execute().then(function () {
+              defer.resolve();
+            });
+          }
+          setTimeout(check, 100, --c);
+        })(50);
         return defer.promise();
       }
 
