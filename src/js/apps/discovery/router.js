@@ -70,8 +70,8 @@ function (
 
     routes: {
       '': 'index',
-      'classic-form': 'classicForm',
-      'paper-form': 'paperForm',
+      'classic-form(/)': 'classicForm',
+      'paper-form(/)': 'paperForm',
       'index/(:query)': 'index',
       'search/(:query)(/)(:widgetName)': 'search',
       'execute-query/(:query)': 'executeQuery',
