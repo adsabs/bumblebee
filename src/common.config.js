@@ -38,7 +38,7 @@ define([], function () {
   });
 
   // apply a global link handler for push state
-  require(['jquery'], function ($) {
+  require(['jquery', 'backbone'], function ($, Backbone) {
     var routes = [
       'classic-form',
       'paper-form',
@@ -82,11 +82,14 @@ define([], function () {
           console.error(e.message);
         }
       }
+      return true;
     };
 
-    $(document)
-      .on('mousedown', 'a', transformHref)
-      .on('click', 'a', handleNavigation);
+        
+      $(document)
+        .on('mousedown', 'a', transformHref)
+        .on('click', 'a', handleNavigation);
+    
   });
 
   window.GoogleAnalyticsObject = '__ga__';
