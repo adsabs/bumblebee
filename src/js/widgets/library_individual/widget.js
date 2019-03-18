@@ -84,6 +84,9 @@ function (
             loggedIn: loggedIn
           }
         ));
+
+        // force headerModel to change (render)
+        this.headerModel.trigger('change', this.headerModel);
       }.bind(this);
 
       this.getBeeHive()
