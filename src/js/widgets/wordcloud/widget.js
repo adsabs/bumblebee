@@ -445,6 +445,7 @@ define([
         // query.set("rows", "1000");
         // this.getPubSub().publish(this.getPubSub().DELIVERING_REQUEST, this.composeRequest(query));
       } else {
+        this.setCurrentQuery(query);
         var request = new ApiRequest({
           target: Marionette.getOption(this, 'endpoint') || ApiTargets.SERVICE_WORDCLOUD,
           query: this.customizeQuery(query),
@@ -453,7 +454,6 @@ define([
             contentType: 'application/json'
           }
         });
-
         this.getPubSub().publish(this.getPubSub().DELIVERING_REQUEST, request);
       }
     },
@@ -468,6 +468,7 @@ define([
       query.set('q', 'bibcode:(' + bibcodes.join(' OR ') + ')');
       query.set('rows', this.max_rows);
 
+      this.setCurrentQuery(query);
       var request = new ApiRequest({
         target: Marionette.getOption(this, 'endpoint') || ApiTargets.SERVICE_WORDCLOUD,
         query: new ApiQuery({ query: JSON.stringify(query.toJSON()) }),
@@ -476,6 +477,7 @@ define([
           contentType: 'application/json'
         }
       });
+
       this.getPubSub().publish(this.getPubSub().EXECUTE_REQUEST, request);
     },
 
