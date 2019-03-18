@@ -255,32 +255,35 @@ function (
           that.title = metadata.name;
           // inform library list widget about the data
           app.getWidget('LibraryListWidget').done(function (widget) {
+
+            // make sure that the widget doesn't get killed off before the content loads
+            app.incrRefCount('widget', 'LibraryListWidget');
+
+            // pass the metadata to the widget to initialize the biblib search
             widget.setData(data);
 
-            if (data.publicView) {
-              app.getWidget('IndividualLibraryWidget').done(function (widget) {
-                widget.setSubView(data);
-                // then, show library page manager
-                app.getObject('MasterPageManager').show('PublicLibrariesPage',
-                  ['IndividualLibraryWidget', 'LibraryListWidget']).then(function() {
-                    defer.resolve();
-                  });
+            if (redirectIfNotSignedIn()) { defer.resolve(); }
+
+            app.getWidget('IndividualLibraryWidget').done(function (widget) {
+
+              // increasing ref count to make sure this widget lives
+              app.incrRefCount('widget', 'IndividualLibraryWidget');
+
+              // pass the metadata to the component to setup the library header
+              widget.setSubView(data);
+              var pub = data.publicView;
+
+              app.getObject('MasterPageManager').show(
+                pub ? 'PublicLibrariesPage' : 'LibrariesPage',
+                pub
+                ? ['IndividualLibraryWidget', 'LibraryListWidget']
+                : ['IndividualLibraryWidget', 'LibraryListWidget', 'UserNavbarWidget']
+              ).done(function () {
+                if (pub) publishPageChange('libraries-page');
+              }).always(function () {
+                defer.resolve();
               });
-            }
-            // make sure user is signed in
-            else if (!redirectIfNotSignedIn()) {
-              app.getWidget('IndividualLibraryWidget').done(function (widget) {
-                widget.setSubView(data);
-                app.getObject('MasterPageManager').show('LibrariesPage',
-                  ['IndividualLibraryWidget', 'LibraryListWidget', 'UserNavbarWidget']).then(function() {
-                    publishPageChange('libraries-page');
-                    defer.resolve();
-                  });
-              });
-            }
-            else {
-              defer.resolve();
-            }
+            });
           });
         });
         return defer.promise();
