@@ -46,11 +46,7 @@ function (
         if (!t.widget) {
           throw new Error('Missing "widget" for: ' + t.title + ' [' + i + ']');
         }
-        if (t['default']) {
-          t.widget.trigger('active');
-        } else {
-          t.widget.trigger('hidden');
-        }
+        t.widget.trigger(t['default'] ? 'active' : 'hidden');
         return t.widget;
       });
       this.on('active', this.onActive);
