@@ -41,7 +41,7 @@ function (
           title: undefined,
           // assuming there will always be abstracts
           showAbstract: 'closed',
-          makeSpace: false,
+          hideSidebars: false,
           // often they won't exist
           showHighlights: 'closed',
           pagination: true
@@ -68,13 +68,14 @@ function (
       this.listenTo(this.view, 'toggle-all', this.triggerBulkAction);
       this.minAuthorsPerResult = 3;
 
-      this.model.on('change:makeSpace', _.bind(this.onMakeSpace, this));
+      this.model.on('change:hideSidebars', _.bind(this._onToggleSideBars, this));
 
       // update the default fields with whatever the abstract page needs
       var abstractFields = AbstractWidget.prototype.defaultQueryArguments.fl.split(',');
       var resultsFields = this.defaultQueryArguments.fl.split(',');
       resultsFields = _.union(abstractFields, resultsFields);
       this.defaultQueryArguments.fl = resultsFields.join(',');
+      this.on('page-manager-message', _.bind(this.onPageManagerMessage, this));
     },
 
     defaultQueryArguments: {
@@ -94,6 +95,12 @@ function (
       pubsub.subscribe(pubsub.CUSTOM_EVENT, this.onCustomEvent);
       pubsub.subscribe(pubsub.START_SEARCH, this.onStartSearch);
       this.queryTimer = +new Date();
+    },
+
+    onPageManagerMessage: function (event, data) {
+      if (event === 'side-bars-update') {
+        this._onSideBarsUpdate(data);
+      }
     },
 
     _clearResults: function () {
@@ -139,10 +146,12 @@ function (
       this.queryTimer = +new Date();
     },
 
-    onMakeSpace: function () {
-      var pubsub = this.getPubSub();
-      var code = this.model.get('makeSpace') ? 'MAKE_SPACE' : 'UNMAKE_SPACE';
-      pubsub.publish(pubsub.FEEDBACK, new ApiFeedback({ code: ApiFeedback.CODES[code] }));
+    _onToggleSideBars: function () {
+      this.trigger('page-manager-event', 'side-bars-update', this.model.get('hideSidebars'));
+    },
+
+    _onSideBarsUpdate: function (value) {
+      this.model.set('hideSidebars', value);
     },
 
     onUserAnnouncement: function (message, data) {
@@ -161,7 +170,6 @@ function (
         this.view.collection.reset(this.hiddenCollection.getVisibleModels());
       }
       this.updateMinAuthorsFromUserData();
-      this.updateSidebarsFromUserData();
     },
 
     onCustomEvent: function (event) {
@@ -228,23 +236,6 @@ function (
       }
     },
 
-    updateSidebarsFromUserData: _.debounce(function () {
-      var userData = this.getUserData();
-
-      // grab the negated current value
-      var makeSpace = !this.model.get('makeSpace') ? 'SHOW' : 'HIDE';
-
-      // get the state from user data or take the current value
-      var sideBarsState = (_.has(userData, 'defaultHideSidebars') ?
-        userData.defaultHideSidebars : makeSpace).toUpperCase();
-
-      // compare them, we don't have to update if nothing is changing
-      if (makeSpace !== sideBarsState) {
-        this.model.set('makeSpace', sideBarsState === 'HIDE');
-        this.model.trigger('change:makeSpace');
-      }
-    }, 300),
-
     processDocs: function (apiResponse, docs, paginationInfo) {
       var params = apiResponse.get('responseHeader.params');
       var start = params.start || 0;
@@ -254,7 +245,6 @@ function (
       var userData = this.getBeeHive().getObject('User').getUserData('USER_DATA');
       var link_server = userData.link_server;
       this.updateMinAuthorsFromUserData();
-      this.updateSidebarsFromUserData();
 
       var appStorage = null;
       if (this.hasBeeHive() && this.getBeeHive().hasObject('AppStorage')) {

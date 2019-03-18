@@ -56,6 +56,7 @@ function (
         showAbstract: 'closed',
         // often they won't exist
         showHighlights: false,
+        hideSidebars: false,
         pagination: true,
         start: 0,
         highlightsLoaded: false
@@ -136,7 +137,7 @@ function (
     events: {
       'click .show-highlights': 'toggleHighlights',
       'click .show-abstract': 'toggleAbstract',
-      'click .toggle-make-space': 'toggleMakeSpace',
+      'click .toggle-sidebars': 'toggleHideSidebars',
       'click #go-to-bottom': 'goToBottom',
       'click #backToTopBtn': 'goToTop',
       'click a.page-control': 'changePageWithButton',
@@ -165,9 +166,9 @@ function (
       }
     },
 
-    toggleMakeSpace: function () {
-      var val = !this.model.get('makeSpace');
-      this.model.set('makeSpace', val);
+    toggleHideSidebars: function () {
+      var val = !this.model.get('hideSidebars');
+      this.model.set('hideSidebars', val);
       analytics('send', 'event', 'interaction', 'sidebars-toggled-' + val ? 'on' : 'off');
     },
 
