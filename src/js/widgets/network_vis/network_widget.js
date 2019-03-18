@@ -1316,7 +1316,11 @@ function (Marionette,
 
       var request = new ApiRequest({
         target: Marionette.getOption(this, 'endpoint'),
-        query: new ApiQuery({ bibcodes: bibcodes }),
+        query: new ApiQuery({
+
+          // endpoint caps at 1000
+          bibcodes: bibcodes.slice(0, 1000)
+        }),
         options: {
           type: 'POST',
           contentType: 'application/json'
