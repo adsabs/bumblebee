@@ -202,7 +202,7 @@ function (
       }
 
       // check if this is an "object:" query
-      else if (apiQuery.get('q')[0].indexOf('object:') > -1) {
+      else if (apiQuery.has('q') && apiQuery.get('q')[0].indexOf('object:') > -1) {
         // we have an "object:" query as part of the query
         // first define a callback function to process the response of the micro service
         // and bind it to "this" so that we can use the trigger
@@ -223,6 +223,15 @@ function (
        * Happens at the beginning of the new search cycle. This is the 'race started' signal
        */
     startSearchCycle: function (apiQuery, senderKey) {
+
+      // If we are passed a blank query, it will fail below this
+      // set the q param to make sure we at least can start cycle
+      if (!(apiQuery instanceof ApiQuery)) {
+        apiQuery = new ApiQuery({ q: '*:*' });
+      } else if (!apiQuery.has('q')) {
+        apiQuery.set('q', '*:*');
+      }
+
       // we have to clear selected records in app storage here too
       if (this.getBeeHive().getObject('AppStorage')) {
         this.getBeeHive().getObject('AppStorage').clearSelectedPapers();
