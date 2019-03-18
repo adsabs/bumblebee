@@ -71,7 +71,6 @@ define([
       this.$('[data-toggle="tooltip"]').tooltip();
     },
 
-
     formatDate: function (d) {
       return moment.utc(d).local().format('MMM D YYYY, h:mma');
     },
