@@ -80,7 +80,6 @@ function (
 
       var self = this;
       var afterNavigation = function() {
-        console.log('afterNavigation', transition, arg1);
 
         // router can communicate directly with navigator to replace url
         var replace = !!((transition.replace || arg1 && arg1.replace));

@@ -130,7 +130,7 @@ define(['discovery.config', 'module'], function (config, module) {
           }
 
             // apply a global link handler for push state
-  
+
           var routes = [
             'classic-form',
             'paper-form',
@@ -184,27 +184,6 @@ define(['discovery.config', 'module'], function (config, module) {
                 .on('mousedown', 'a', transformHref)
                 .on('click', 'a', handleNavigation);
             }
-          
-          Backbone.history.on("all", function() {
-            console.log('all-history', arguments);
-          })
-
-          Backbone.$(window).on('popstate', function() {
-            console.log('pop-state', arguments);
-          });
-          
-          Backbone.$(window).on('hashchange', function() {
-            console.log('hash-change', arguments);
-          });
-
-          var oldUrl;
-          setInterval(function() {
-            if (oldUrl !== location.href) {
-              console.log('oldUrl=', oldUrl, 'newUrl=', location.href)
-              oldUrl = location.href;
-            }
-          }, 20);
-
 
           // app is loaded, send timing event
 

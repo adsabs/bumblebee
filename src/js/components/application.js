@@ -265,7 +265,6 @@ define([
       _.each(_.pairs(modules), function (m) {
         key = m[0], module = m[1];
         if (hasKey(key)) {
-          //console.warn('Replacing (existing) object in [' + section + ']: ' + key);
           removeKey(key);
         }
         var inst = createInstance(key, module);
