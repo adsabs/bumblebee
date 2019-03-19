@@ -176,7 +176,7 @@ require.config({
     'async': 'libs/requirejs-plugins/async',
     'babel': 'libs/requirejs-babel-plugin/babel-5.8.34.min',
     'backbone': [
-      '//cdnjs.cloudflare.com/ajax/libs/backbone.js/1.1.2/backbone-min',
+      //'//cdnjs.cloudflare.com/ajax/libs/backbone.js/1.1.2/backbone-min',
       'libs/backbone/backbone'
     ],
     'backbone-validation': [
