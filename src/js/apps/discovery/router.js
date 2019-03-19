@@ -69,6 +69,7 @@ function (
     },
 
     routes: {
+      '/': 'index',
       '': 'index',
       'classic-form': 'classicForm',
       'paper-form': 'paperForm',

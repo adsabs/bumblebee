@@ -589,9 +589,10 @@ function (
           pages = searchPageAlwaysVisible;
         }
 
-
+        var that = this;
         showResultsPage(pages).then(function() {
           self.getPubSub().publish(self.getPubSub().START_SEARCH, data.q);
+          that.route = '#search/' + queryUpdater.clean(data.q).url();
           defer.resolve();
         })
         return defer.promise();
