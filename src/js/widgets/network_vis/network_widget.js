@@ -1387,7 +1387,8 @@ function (Marionette,
       newQuery.set('__bigquery', allBibs);
 
       this.resetWidget();
-      this.getPubSub().publish(this.getPubSub().START_SEARCH, newQuery);
+      var ps = this.getPubSub();
+      ps.publish(ps.NAVIGATE, 'search-page', { q: newQuery });
     },
 
     broadcastClose: function () {
