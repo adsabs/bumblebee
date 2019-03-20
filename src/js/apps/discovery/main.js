@@ -129,62 +129,6 @@ define(['discovery.config', 'module'], function (config, module) {
             window.bbb = app;
           }
 
-            // apply a global link handler for push state
-
-          var routes = [
-            'classic-form',
-            'paper-form',
-            'index',
-            'search',
-            'execute-query',
-            'abs',
-            'user',
-            'orcid-instructions',
-            'public-libraries'
-          ];
-          var regx = new RegExp('^#(\/?(' + routes.join('|') + ').*\/?)?$', 'i');
-
-          var $el = [];
-          var transformHref = function (ev) {
-            if (!Backbone.history
-              || !Backbone.history.options
-              || !Backbone.history.options.pushState
-            ) return;
-            $el = $(ev.currentTarget);
-            var href = $el.attr('href');
-            if (regx.test(href)) {
-              var url = href.replace(/^\/?#\/?/, '/');
-              $el.attr('href', url);
-              return false;
-            }
-            $el = [];
-          };
-
-          var handleNavigation = function (el) {
-            if ($el.length && window.bbb) {
-              var href = $el.attr('href');
-
-              // clear it so we don't have one lingering around
-              $el = [];
-              try {
-                var nav = bbb.getBeeHive().getService('Navigator');
-                nav.router.navigate(href, { trigger: true, replace: false });
-                return false;
-              } catch (e) {
-                console.error(e.message);
-              }
-            }
-            return true;
-          };
-
-          if (Backbone.history
-            && Backbone.history.options
-            && Backbone.history.options.pushState) {
-              $(document)
-                .on('mousedown', 'a', transformHref)
-                .on('click', 'a', handleNavigation);
-            }
-
           // app is loaded, send timing event
 
           if (__PAGE_LOAD_TIMESTAMP) {
