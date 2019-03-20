@@ -577,24 +577,33 @@ function (
         // convention is that a navigate command for search page widget starts with "show-"
         // waits for the navigate to results page emitted by the discovery_mediator
         // once the solr search has been received
-        if (data.page)
-          widgetName = _.map(data.page.split('-').slice(1), function (w) { return w[0].toUpperCase() + w.slice(1); }).join('');
-
+        if (data.page) {
+          widgetName = _.map(data.page.split('-').slice(1), function (w) {
+            return w[0].toUpperCase() + w.slice(1);
+          }).join('');
+        }
 
         if (widgetName && possibleSearchSubPages.indexOf(widgetName) > -1) {
           pages = [widgetName].concat(searchPageAlwaysVisible.slice(1));
-        }
-        else {
+        } else {
           console.error('Results page subpage not recognized:', widgetName);
           pages = searchPageAlwaysVisible;
         }
 
         var that = this;
-        showResultsPage(pages).then(function() {
+        showResultsPage(pages).then(function () {
           self.getPubSub().publish(self.getPubSub().START_SEARCH, data.q);
           that.route = '#search/' + queryUpdater.clean(data.q).url();
-          defer.resolve();
-        })
+          that.title = data.q.get('q').length && data.q.get('q')[0];
+
+          // check if there is a subpage, if so execute that handler w/ our current context
+          if (data.page) {
+            var exec = _.bind(self.get(data.page).execute, that, data.page, { q: data.q });
+            exec(data.page).then(function () { defer.resolve(); });
+          } else {
+            defer.resolve();
+          }
+        });
         return defer.promise();
       });
 
@@ -824,7 +833,13 @@ function (
       function showResultsPageWidgetWithUniqueUrl(command, options) {
         var defer = $.Deferred(),
           that = this;
+        options = options || {};
         var q = app.getObject('AppStorage').getCurrentQuery();
+        if (!q && options.q) {
+          q = options.q;
+        } else {
+          return defer.resolve().promise();
+        }
         publishFeedback({ code: ApiFeedback.CODES.MAKE_SPACE });
         var widgetName = _.map(command.split('-').slice(1), function (w) { return w[0].toUpperCase() + w.slice(1); }).join('');
         app.getObject('MasterPageManager').show('SearchPage',
