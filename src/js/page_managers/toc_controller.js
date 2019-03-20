@@ -97,15 +97,7 @@ function (_, Marionette, BasicPageManagerController, TOCWidget, analytics) {
         data.widgetId = widgetId;
         this.broadcast('page-manager-message', event, data);
       } else if (event == 'widget-selected') {
-        this.broadcast('page-manager-message', 'widget-selected', data);
-        this.getPubSub().publish(this.getPubSub().NAVIGATE, data.idAttribute, data);
-
-        var bibcode = widget.model.get('bibcode');
-        var target = data.idAttribute.toLowerCase().replace('show', '');
-        analytics('send', 'event', 'interaction', 'toc-link-followed', {
-          target: target,
-          bibcode: bibcode
-        });
+        this.onWidgetSelected.apply(this, arguments);
       } else if (event == 'broadcast-payload') {
         this.broadcast('page-manager-message', event, data);
       } else if (event == 'navigate') { // XXX:rca - why to almost equal events?
@@ -113,6 +105,17 @@ function (_, Marionette, BasicPageManagerController, TOCWidget, analytics) {
       } else if (event == 'apply-function') { // XXX:rca - to remove
         data.func.apply(this);
       }
+    },
+
+    onWidgetSelected: function (widget, event, data) {
+      var bibcode = widget.model.get('bibcode');
+      var target = data.idAttribute.toLowerCase().replace('show', '');
+      analytics('send', 'event', 'interaction', 'toc-link-followed', {
+        target: target,
+        bibcode: bibcode
+      });
+      this.broadcast('page-manager-message', 'widget-selected', data);
+      this.getPubSub().publish(this.getPubSub().NAVIGATE, data.idAttribute, data);
     },
 
     onPageManagerMessage: _.noop,

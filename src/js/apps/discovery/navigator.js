@@ -577,24 +577,33 @@ function (
         // convention is that a navigate command for search page widget starts with "show-"
         // waits for the navigate to results page emitted by the discovery_mediator
         // once the solr search has been received
-        if (data.page)
-          widgetName = _.map(data.page.split('-').slice(1), function (w) { return w[0].toUpperCase() + w.slice(1); }).join('');
-
+        if (data.page) {
+          widgetName = _.map(data.page.split('-').slice(1), function (w) {
+            return w[0].toUpperCase() + w.slice(1);
+          }).join('');
+        }
 
         if (widgetName && possibleSearchSubPages.indexOf(widgetName) > -1) {
           pages = [widgetName].concat(searchPageAlwaysVisible.slice(1));
-        }
-        else {
+        } else {
           console.error('Results page subpage not recognized:', widgetName);
           pages = searchPageAlwaysVisible;
         }
 
         var that = this;
-        showResultsPage(pages).then(function() {
+        showResultsPage(pages).then(function () {
           self.getPubSub().publish(self.getPubSub().START_SEARCH, data.q);
           that.route = '#search/' + queryUpdater.clean(data.q).url();
-          defer.resolve();
-        })
+          that.title = data.q.get('q').length && data.q.get('q')[0];
+
+          // check if there is a subpage, if so execute that handler w/ our current context
+          if (data.page) {
+            var exec = _.bind(self.get(data.page).execute, that, data.page, { q: data.q });
+            exec(data.page).then(function () { defer.resolve(); });
+          } else {
+            defer.resolve();
+          }
+        });
         return defer.promise();
       });
 
@@ -824,7 +833,13 @@ function (
       function showResultsPageWidgetWithUniqueUrl(command, options) {
         var defer = $.Deferred(),
           that = this;
+        options = options || {};
         var q = app.getObject('AppStorage').getCurrentQuery();
+        if (!q && options.q) {
+          q = options.q;
+        } else {
+          return defer.resolve().promise();
+        }
         publishFeedback({ code: ApiFeedback.CODES.MAKE_SPACE });
         var widgetName = _.map(command.split('-').slice(1), function (w) { return w[0].toUpperCase() + w.slice(1); }).join('');
         app.getObject('MasterPageManager').show('SearchPage',
@@ -889,8 +904,7 @@ function (
         app.getObject('MasterPageManager').show('DetailsPage',
           pages).then(function() {
             return app.getWidget('DetailsPage').then(function (w) {
-              w.setActive(toActivate);
-              defer.resolve();
+              defer.resolve(w);
             });
           })
         return defer.promise();
@@ -942,10 +956,11 @@ function (
         var defer = $.Deferred(),
         that = this;
 
-        showDetail([id].concat(detailsPageAlwaysVisible), id).then(function() {
+        showDetail([id].concat(detailsPageAlwaysVisible), id).then(function (w) {
           // new search
           if (data.bibcode) {
             self.getPubSub().publish(self.getPubSub().DISPLAY_DOCUMENTS, new ApiQuery({ q: 'bibcode:' + data.bibcode }));
+            w.setActive(id);
           }
 
           // get the title from the list of stashed docs, if available
@@ -956,77 +971,98 @@ function (
 
           that.route = data.href;
           defer.resolve();
-        })
+        });
         return defer.promise();
       });
       this.set('ShowCitations', function (id, data) {
         var defer = $.Deferred(),
           that = this;
-        showDetail([id].concat(detailsPageAlwaysVisible), id).then(function() {
-          if (data.bibcode) // new search
-            self.getPubSub().publish(self.getPubSub().DISPLAY_DOCUMENTS, new ApiQuery({ q: 'bibcode:' + data.bibcode }))
+        showDetail([id].concat(detailsPageAlwaysVisible), id).then(function (w) {
+          if (data.bibcode) {
+            self.getPubSub().publish(self.getPubSub().DISPLAY_DOCUMENTS, new ApiQuery({ q: 'bibcode:' + data.bibcode }));
+            w.setActive(id);
+          }
           that.route = data.href;
           defer.resolve();
-          })
-          return defer.promise();
+        });
+        return defer.promise();
       });
       this.set('ShowReferences', function (id, data) {
         var defer = $.Deferred(),
           that = this;
-        showDetail([id].concat(detailsPageAlwaysVisible), id).then(function() {
-          if (data.bibcode) // new search
-            self.getPubSub().publish(self.getPubSub().DISPLAY_DOCUMENTS, new ApiQuery({ q: 'bibcode:' + data.bibcode }))
+        showDetail([id].concat(detailsPageAlwaysVisible), id).then(function (w) {
+          if (data.bibcode) {
+            self.getPubSub().publish(self.getPubSub().DISPLAY_DOCUMENTS, new ApiQuery({ q: 'bibcode:' + data.bibcode }));
+            w.setActive(id);
+          }
           that.route = data.href;
           defer.resolve();
-          })
-          return defer.promise();
+        });
+        return defer.promise();
       });
       this.set('ShowCoreads', function (id, data) {
         var defer = $.Deferred(),
           that = this;
-        showDetail([id].concat(detailsPageAlwaysVisible), id).then(function() {
-          if (data.bibcode) // new search
-            self.getPubSub().publish(self.getPubSub().DISPLAY_DOCUMENTS, new ApiQuery({ q: 'bibcode:' + data.bibcode }))
+        showDetail([id].concat(detailsPageAlwaysVisible), id).then(function (w) {
+          if (data.bibcode) {
+            self.getPubSub().publish(self.getPubSub().DISPLAY_DOCUMENTS, new ApiQuery({ q: 'bibcode:' + data.bibcode }));
+            w.setActive(id);
+          }
           that.route = data.href;
           defer.resolve();
         });
         return defer.promise();
       });
       this.set('ShowSimilar', function (id, data) {
-        showDetail([id].concat(detailsPageAlwaysVisible), id);
-        this.route = data.href;
+        var defer = $.Deferred(),
+          that = this;
+        showDetail([id].concat(detailsPageAlwaysVisible), id).then(function (w) {
+          if (data.bibcode) {
+            self.getPubSub().publish(self.getPubSub().DISPLAY_DOCUMENTS, new ApiQuery({ q: 'bibcode:' + data.bibcode }));
+            w.setActive(id);
+          }
+          that.route = data.href;
+          defer.resolve();
+        });
+        return defer.promise();
       });
       this.set('ShowTableofcontents', function (id, data) {
         var defer = $.Deferred(),
           that = this;
-        showDetail([id].concat(detailsPageAlwaysVisible), id).then(function() {
-          if (data.bibcode) // new search
-            self.getPubSub().publish(self.getPubSub().DISPLAY_DOCUMENTS, new ApiQuery({ q: 'bibcode:' + data.bibcode }))
+        showDetail([id].concat(detailsPageAlwaysVisible), id).then(function (w) {
+          if (data.bibcode) {
+            self.getPubSub().publish(self.getPubSub().DISPLAY_DOCUMENTS, new ApiQuery({ q: 'bibcode:' + data.bibcode }));
+            w.setActive(id);
+          }
           that.route = data.href;
           defer.resolve();
-          })
+        });
         return defer.promise();
       });
       this.set('ShowSimilar', function (id, data) {
         var defer = $.Deferred(),
           that = this;
-        showDetail([id].concat(detailsPageAlwaysVisible), id).then(function() {
-          if (data.bibcode) // new search
-            self.getPubSub().publish(self.getPubSub().DISPLAY_DOCUMENTS, new ApiQuery({ q: 'bibcode:' + data.bibcode }))
+        showDetail([id].concat(detailsPageAlwaysVisible), id).then(function (w) {
+          if (data.bibcode) {
+            self.getPubSub().publish(self.getPubSub().DISPLAY_DOCUMENTS, new ApiQuery({ q: 'bibcode:' + data.bibcode }));
+            w.setActive(id);
+          }
           that.route = data.href;
           defer.resolve();
-          })
+        });
         return defer.promise();
       });
       this.set('ShowMetrics', function (id, data) {
         var defer = $.Deferred(),
           that = this;
-        showDetail([id].concat(detailsPageAlwaysVisible), id).then(function() {
-          if (data.bibcode) // new search
-            self.getPubSub().publish(self.getPubSub().DISPLAY_DOCUMENTS, new ApiQuery({ q: 'bibcode:' + data.bibcode }))
+        showDetail([id].concat(detailsPageAlwaysVisible), id).then(function (w) {
+          if (data.bibcode) {
+            self.getPubSub().publish(self.getPubSub().DISPLAY_DOCUMENTS, new ApiQuery({ q: 'bibcode:' + data.bibcode }));
+            w.setActive(id);
+          }
           that.route = data.href;
           defer.resolve();
-          })
+        })
         return defer.promise();
       });
       this.set('ShowPaperExport', function (id, data) {
@@ -1045,12 +1081,14 @@ function (
       this.set('ShowGraphics', function (id, data) {
         var defer = $.Deferred(),
           that = this;
-        showDetail([id].concat(detailsPageAlwaysVisible), id).then(function() {
-          if (data.bibcode) // new search
-            self.getPubSub().publish(self.getPubSub().DISPLAY_DOCUMENTS, new ApiQuery({ q: 'bibcode:' + data.bibcode }))
+        showDetail([id].concat(detailsPageAlwaysVisible), id).then(function (w) {
+          if (data.bibcode) {
+            self.getPubSub().publish(self.getPubSub().DISPLAY_DOCUMENTS, new ApiQuery({ q: 'bibcode:' + data.bibcode }));
+            w.setActive(id);
+          }
           that.route = data.href;
           defer.resolve();
-        })
+        });
         return defer.promise();
       });
       this.set('show-author-affiliation-tool', function (id, options) {
