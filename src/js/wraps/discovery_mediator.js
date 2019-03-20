@@ -427,6 +427,7 @@ function (
               && apiQuery.url() == storage.getCurrentQuery().url()
               && app.getPluginOrWidgetName(senderKey.getId()) != 'widget:SearchWidget'
               && app.getWidgetRefCount('Results') >= 1
+              && app.getObject('DocStashController').getDocs().length
           ) {
             // simply navigate to search results page, widgets are already stocked with data
             if (app.hasService('Navigator')) {
