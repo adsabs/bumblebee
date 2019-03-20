@@ -27,25 +27,31 @@ function (
 
     initialize: function (options) {
       ListOfThings.prototype.initialize.call(this, options);
-      var title = '';
+
       // other widgets can send us data through page manager
       // here it is used just to get the title of the main article page
       this.on('page-manager-message', function (event, data) {
         if (event === 'broadcast-payload') {
+
+          // set the current title
+          this.model.set('title', data.title);
           this.canLoad = false;
-          title = data.title;
           this.ingestBroadcastedPayload(data);
         }
 
         if (event === 'widget-selected' && data.idAttribute === this.name && !this.canLoad) {
-          this.canLoad = true;
-          var self = this;
+          var doDispatch = _.bind(function () {
+            this.canLoad = true;
 
-          // update title here, with delay to account for issues with rendering
-          setTimeout(function () {
-            self.model.set('title', title);
-          }, 0);
-          this.dispatchRequest(data.bibcode);
+            // have to delay this so the view has to time to initialize
+            setTimeout(_.bind(function (title) {
+              this.model.set('title', title);
+            }, this), 0, this.model.get('title'));
+            this.dispatchRequest(data.bibcode);
+          }, this);
+
+          this.model.has('title') ? doDispatch() :
+            this.model.once('change:title', doDispatch);
         }
       });
 
