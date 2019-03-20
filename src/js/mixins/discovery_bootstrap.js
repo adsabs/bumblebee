@@ -20,6 +20,68 @@ function (
   HandleBars,
   ApiTargets
 ) {
+
+  var startGlobalHandler = function () {
+    var routes = [
+      'classic-form',
+      'paper-form',
+      'index',
+      'search',
+      'execute-query',
+      'abs',
+      'user',
+      'orcid-instructions',
+      'public-libraries'
+    ];
+    var regx = new RegExp('^#(\/?(' + routes.join('|') + ').*\/?)?$', 'i');
+
+    var isPushState = function () {
+      return Backbone.history
+        || Backbone.history.options
+        || Backbone.history.options.pushState;
+    };
+
+    var transformHref = _.memoize(function (href) {
+      return regx.test(href) ? href.replace(/^\/?#\/?/, '/') : false;
+    });
+
+    var navigate = function (ev) {
+      if (window.bbb) {
+        try {
+          var nav = bbb.getBeeHive().getService('Navigator');
+          nav.router.navigate(ev.data.url, { trigger: true, replace: false });
+          return false;
+        } catch (e) {
+          console.error(e.message);
+        }
+      } else {
+        console.error('cannot find application object');
+      }
+    };
+
+    var handleNavigation = function () {
+      if (!isPushState) return;
+      var $el = $(this);
+      var url = transformHref($el.attr('href'));
+      if (url) {
+        var old = $el.attr('href');
+
+        // update the href on the element
+        $el.attr('href', url);
+
+        // add the click handler (run once)
+        $el.one('click', { url: url }, navigate);
+
+        // reset to the old url
+        $el.one('mouseup blur', function () {
+          $el.attr('href', old);
+        });
+        return false;
+      }
+    };
+    $(document).on('mousedown focus', 'a', handleNavigation);
+  };
+
   var Mixin = {
 
     configure: function () {
@@ -218,6 +280,9 @@ function (
           pushState: noPushState ? false : undefined
         }, conf && conf.routerConf);
         Backbone.history.start(newConf);
+
+        // apply a global link handler for push state (after router is started)
+        startGlobalHandler();
 
         $(document).on('scroll', function () {
           if ($('#landing-page-layout').length > 0) {
