@@ -56,6 +56,7 @@ function (
        */
     navigate: function (ev, arg1, arg2) {
       var defer = $.Deferred();
+      var self = this;
 
       if (!this.router || !(this.router instanceof Backbone.Router)) {
         defer.reject(new Error('Navigator must be given \'router\' instance'));
@@ -74,82 +75,38 @@ function (
       }
 
       if (!transition.execute) { // do nothing
-        defer.resolve()
-        return defer.promise();
+        return defer.resolve().promise();
       }
 
-      var self = this;
-      var afterNavigation = function() {
+      var afterNavigation = _.bind(function() {
 
         // router can communicate directly with navigator to replace url
         var replace = !!((transition.replace || arg1 && arg1.replace));
 
-        // don't reset the url if it is already correct, this could potentially
-        // cause a safari browser bug
-
-        if (decodeURI(window.location.hash) !== transition.route
-              && transition.route || transition.route === ''
-        ) {
-          // update the History object
-          self.router.navigate(
-            transition.route,
-            { trigger: false, replace: replace }
-          );
+        if (transition.route === '' || transition.route) {
+          var route = transition.route === '' ? '/' : transition.route;
+          this.router.navigate(route, { trigger: false, replace: replace });
         }
 
         // clear any metadata added to head on the previous page
         $('head').find('meta[data-highwire]').remove();
-        // XXX:rca - this can probably go....anyways, shouldn't be here, is not generic
-        // and set the default title
-        document.title = (transition.title ? transition.title + ' - ' : '') + 'NASA/ADS Search';
-
-        if (!this.globalLinksHandled && Backbone.history.options.pushState) {
-          $(document).on('click', 'a', function (ev) {
-            var href = $(ev.currentTarget).attr('href');
-
-            /*
-              this should filter out hrefs that look like:
-              `http://mysite.com`
-              `//mysite.com`
-              `#`
-              `#local-reference`
-              `` <- empty routes
-            */
-            if (!href.match(/^(https?|$|#$|#\w|\/\/)/) &&
-              !ev.altKey &&
-              !ev.ctrlKey &&
-              !ev.metaKey &&
-              !ev.shiftKey &&
-              self.router && self.router.navigate
-            ) {
-              ev.preventDefault();
-              var url = href.replace(/^\/?#\/?/, '/');
-              self.router.navigate(url, { trigger: true, replace: true });
-              self.globalLinksHandled = false;
-              return false;
-            }
-          });
-          self.globalLinksHandled = true;
+        var title = transition.title;
+        var appTitle = 'NASA/ADS Search';
+        if (document.title.indexOf(appTitle) > 0 && (!title || title === appTitle)) {
+          title = document.title.split(' - ')[0];
         }
-      }
+        document.title = (title ? title + ' - ' : '') + appTitle;
+        defer.resolve();
+      }, this);
 
       var p;
       try {
         p = transition.execute.apply(transition, arguments);
-        if (p && typeof p.then == 'function') {
-          p.then(function() {
-            afterNavigation();
-            defer.resolve();
-          })
-        }
-        else {
-          afterNavigation();
-          defer.resolve();
-        }
+        (p && _.isFunction(p.then)) ? p.then(afterNavigation) : afterNavigation();
       } catch (e) {
         this.handleTransitionError(transition, e, arguments);
-        defer.reject(new Error('Error transitioning to route; going to 404'));
-        return defer.promise();
+        var err = new Error('Error transitioning to route; going to 404');
+        return defer.reject(err).promise();
       }
 
       return defer.promise();
