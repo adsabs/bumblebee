@@ -83,7 +83,7 @@ define([
 
       if (database.length > 0) {
         var dbStr = database.length === 1 ? database[0] : '(astronomy or physics)';
-        qDict.fq.push('database: ' + dbStr);
+        qDict.__fq_database = ["AND", dbStr];
         qDict.fq.push('{!type=aqp v=$fq_database}');
         qDict.fq_database = 'database: ' + dbStr;
       }
@@ -95,7 +95,7 @@ define([
 
       if (property.length > 0) {
         var str = property.length === 1 ? property[0] : '(refereed or notrefereed)';
-        qDict.fq.push('property: ' + str);
+        qDict.__fq_property = ["AND", str];
         qDict.fq.push('{!type=aqp v=$fq_property}');
         qDict.fq_property = 'property: ' + str;
       }
@@ -210,6 +210,7 @@ define([
               qDict.fq_bibstem_facet = '(' + _.map(phrases, function (p) {
                 return 'bibstem_facet:"' + p + '"';
               }).join(logic) + ')';
+              qDict.__fq_bibstem_facet = ["AND", "selected publications"]
             } else {
               phrases = phrases.length > 1 ? phrases.join(logic) : phrases[0];
               extra = extra ? logic + extra : '';
@@ -304,7 +305,10 @@ define([
       });
 
       newQuery = new ApiQuery(newQuery);
-      this.getPubSub().publish(this.getPubSub().START_SEARCH, newQuery);
+      var ps = this.getPubSub();
+      
+      ps.publish(ps.NAVIGATE, 'search-page', { q: newQuery, page: 'classic-form' });
+      
 
       analytics('send', 'event', 'interaction', 'classic-form-submit', JSON.stringify(queryDict));
     },
