@@ -19051,8 +19051,8 @@ define([
       $("#test").find(".apply-filter").click();
 
       expect(paperNetwork.getPubSub().publish.called).to.be.true;
-      expect(paperNetwork.getPubSub().publish.args[0][0]).to.eql("[PubSub]-New-Query");
-      expect(paperNetwork.getPubSub().publish.args[0][1].toJSON()).to.eql({
+      expect(paperNetwork.getPubSub().publish.args[0][0]).to.eql("[Router]-Navigate-With-Trigger");
+      expect(paperNetwork.getPubSub().publish.args[0][2].q.toJSON()).to.eql({
         "q": [
           "original search"
         ],

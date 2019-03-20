@@ -6050,25 +6050,8 @@ define([
       bubble.model.set("selectedBibs", ["2000hst..prop.8482L","1999AJ....117..343R" ]);
       bubble.view.$(".submit").click();
 
-      expect(bubble.getPubSub().publish.args[0][0]).to.eql("[PubSub]-New-Query");
-      expect(bubble.getPubSub().publish.args[0][1].toJSON()).to.eql({
-        "q": [
-          "fake"
-        ],
-        "fq_bubble_chart": [
-          "(bibcode:(2000hst..prop.8482L OR 1999AJ....117..343R))"
-        ],
-        "__bubble_chart_fq_bubble_chart": [
-          "AND",
-          "bibcode:(2000hst..prop.8482L OR 1999AJ....117..343R)"
-        ],
-        "fq": [
-          "{!type=aqp v=$fq_bubble_chart}"
-        ],
-        "sort": [
-          "date desc, bibcode desc"
-        ]
-      });
+      expect(bubble.getPubSub().publish.args[0][0]).to.eql("[Router]-Navigate-With-Trigger");
+      expect(JSON.stringify(bubble.getPubSub().publish.args[0][2].q.toJSON())).to.eql('{"q":["fake"],"fq_bubble_chart":["(bibcode:(2000hst..prop.8482L OR 1999AJ....117..343R))"],"__bubble_chart_fq_bubble_chart":["AND","bibcode:(2000hst..prop.8482L OR 1999AJ....117..343R)"],"fq":["{!type=aqp v=$fq_bubble_chart}"]}');
 
     });
 
