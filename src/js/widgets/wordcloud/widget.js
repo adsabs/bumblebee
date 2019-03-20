@@ -537,7 +537,8 @@ define([
         var newQ = filterList.map(function (x) { return qu.quoteIfNecessary(x); }).join(' OR ');
 
         this._updateFq(q, newQ);
-        this.getPubSub().publish(this.getPubSub().START_SEARCH, q);
+        var ps = this.getPubSub();
+        ps.publish(ps.NAVIGATE, 'search-page', { q: q });
       }
     },
 

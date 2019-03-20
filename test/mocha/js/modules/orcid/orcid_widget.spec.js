@@ -272,8 +272,8 @@ define([
 
          $("button.search-author-name").click();
 
-          expect(publishStub.args[0][0]).to.eql("[PubSub]-New-Query");
-          expect(publishStub.args[0][1].toJSON()).to.eql({
+          expect(publishStub.args[0][0]).to.eql("[Router]-Navigate-With-Trigger");
+          expect(publishStub.args[0][2].q.toJSON()).to.eql({
             "q": [
               "author:(\"Name, Variation 1\" OR \"Name, Variation 2\" OR \"Hostetler, Tim\")"
             ],

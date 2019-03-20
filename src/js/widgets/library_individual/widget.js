@@ -230,7 +230,7 @@ function (
               __bigquerySource: 'Library: ' + that.headerModel.get('name'),
               sort: 'date desc'
             });
-            pubsub.publish(pubsub.START_SEARCH, query);
+            pubsub.publish(pubsub.NAVIGATE, 'search-page', { q: query });
           });
       }
     }

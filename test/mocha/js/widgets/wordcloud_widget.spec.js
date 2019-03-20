@@ -1701,7 +1701,7 @@ define([
 
         //clicking submit button
         $(".apply-vis-facet").click();
-        expect(spy.args[0][1].toJSON()).to.eql({
+        expect(spy.args[0][2].q.toJSON()).to.eql({
           "fq_wordcloud": [
             "(fakeA OR fakeB)"
           ],

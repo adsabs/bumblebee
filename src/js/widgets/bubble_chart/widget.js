@@ -985,7 +985,8 @@ define([
 
       newQuery.unlock();
       this._updateFq(newQuery, newQ);
-      this.getPubSub().publish(this.getPubSub().START_SEARCH, newQuery);
+      var ps = this.getPubSub();
+      ps.publish(ps.NAVIGATE, 'search-page', { q: newQuery });
     },
 
     _updateFq: function (q, value) {

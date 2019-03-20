@@ -77,7 +77,7 @@ define([
       this.listenTo(this.view, 'search-author-name', function (searchTerm) {
         var pubsub = this.getPubSub(),
           query = new ApiQuery({ q: searchTerm, sort: 'date desc' });
-        pubsub.publish(pubsub.START_SEARCH, query);
+        pubsub.publish(pubsub.NAVIGATE, 'search-page', { q: query });
       });
     },
 
