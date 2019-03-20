@@ -904,8 +904,7 @@ function (
         app.getObject('MasterPageManager').show('DetailsPage',
           pages).then(function() {
             return app.getWidget('DetailsPage').then(function (w) {
-              w.setActive(toActivate);
-              defer.resolve();
+              defer.resolve(w);
             });
           })
         return defer.promise();
@@ -957,10 +956,11 @@ function (
         var defer = $.Deferred(),
         that = this;
 
-        showDetail([id].concat(detailsPageAlwaysVisible), id).then(function() {
+        showDetail([id].concat(detailsPageAlwaysVisible), id).then(function (w) {
           // new search
           if (data.bibcode) {
             self.getPubSub().publish(self.getPubSub().DISPLAY_DOCUMENTS, new ApiQuery({ q: 'bibcode:' + data.bibcode }));
+            w.setActive(id);
           }
 
           // get the title from the list of stashed docs, if available
@@ -971,77 +971,98 @@ function (
 
           that.route = data.href;
           defer.resolve();
-        })
+        });
         return defer.promise();
       });
       this.set('ShowCitations', function (id, data) {
         var defer = $.Deferred(),
           that = this;
-        showDetail([id].concat(detailsPageAlwaysVisible), id).then(function() {
-          if (data.bibcode) // new search
-            self.getPubSub().publish(self.getPubSub().DISPLAY_DOCUMENTS, new ApiQuery({ q: 'bibcode:' + data.bibcode }))
+        showDetail([id].concat(detailsPageAlwaysVisible), id).then(function (w) {
+          if (data.bibcode) {
+            self.getPubSub().publish(self.getPubSub().DISPLAY_DOCUMENTS, new ApiQuery({ q: 'bibcode:' + data.bibcode }));
+            w.setActive(id);
+          }
           that.route = data.href;
           defer.resolve();
-          })
-          return defer.promise();
+        });
+        return defer.promise();
       });
       this.set('ShowReferences', function (id, data) {
         var defer = $.Deferred(),
           that = this;
-        showDetail([id].concat(detailsPageAlwaysVisible), id).then(function() {
-          if (data.bibcode) // new search
-            self.getPubSub().publish(self.getPubSub().DISPLAY_DOCUMENTS, new ApiQuery({ q: 'bibcode:' + data.bibcode }))
+        showDetail([id].concat(detailsPageAlwaysVisible), id).then(function (w) {
+          if (data.bibcode) {
+            self.getPubSub().publish(self.getPubSub().DISPLAY_DOCUMENTS, new ApiQuery({ q: 'bibcode:' + data.bibcode }));
+            w.setActive(id);
+          }
           that.route = data.href;
           defer.resolve();
-          })
-          return defer.promise();
+        });
+        return defer.promise();
       });
       this.set('ShowCoreads', function (id, data) {
         var defer = $.Deferred(),
           that = this;
-        showDetail([id].concat(detailsPageAlwaysVisible), id).then(function() {
-          if (data.bibcode) // new search
-            self.getPubSub().publish(self.getPubSub().DISPLAY_DOCUMENTS, new ApiQuery({ q: 'bibcode:' + data.bibcode }))
+        showDetail([id].concat(detailsPageAlwaysVisible), id).then(function (w) {
+          if (data.bibcode) {
+            self.getPubSub().publish(self.getPubSub().DISPLAY_DOCUMENTS, new ApiQuery({ q: 'bibcode:' + data.bibcode }));
+            w.setActive(id);
+          }
           that.route = data.href;
           defer.resolve();
         });
         return defer.promise();
       });
       this.set('ShowSimilar', function (id, data) {
-        showDetail([id].concat(detailsPageAlwaysVisible), id);
-        this.route = data.href;
+        var defer = $.Deferred(),
+          that = this;
+        showDetail([id].concat(detailsPageAlwaysVisible), id).then(function (w) {
+          if (data.bibcode) {
+            self.getPubSub().publish(self.getPubSub().DISPLAY_DOCUMENTS, new ApiQuery({ q: 'bibcode:' + data.bibcode }));
+            w.setActive(id);
+          }
+          that.route = data.href;
+          defer.resolve();
+        });
+        return defer.promise();
       });
       this.set('ShowTableofcontents', function (id, data) {
         var defer = $.Deferred(),
           that = this;
-        showDetail([id].concat(detailsPageAlwaysVisible), id).then(function() {
-          if (data.bibcode) // new search
-            self.getPubSub().publish(self.getPubSub().DISPLAY_DOCUMENTS, new ApiQuery({ q: 'bibcode:' + data.bibcode }))
+        showDetail([id].concat(detailsPageAlwaysVisible), id).then(function (w) {
+          if (data.bibcode) {
+            self.getPubSub().publish(self.getPubSub().DISPLAY_DOCUMENTS, new ApiQuery({ q: 'bibcode:' + data.bibcode }));
+            w.setActive(id);
+          }
           that.route = data.href;
           defer.resolve();
-          })
+        });
         return defer.promise();
       });
       this.set('ShowSimilar', function (id, data) {
         var defer = $.Deferred(),
           that = this;
-        showDetail([id].concat(detailsPageAlwaysVisible), id).then(function() {
-          if (data.bibcode) // new search
-            self.getPubSub().publish(self.getPubSub().DISPLAY_DOCUMENTS, new ApiQuery({ q: 'bibcode:' + data.bibcode }))
+        showDetail([id].concat(detailsPageAlwaysVisible), id).then(function (w) {
+          if (data.bibcode) {
+            self.getPubSub().publish(self.getPubSub().DISPLAY_DOCUMENTS, new ApiQuery({ q: 'bibcode:' + data.bibcode }));
+            w.setActive(id);
+          }
           that.route = data.href;
           defer.resolve();
-          })
+        });
         return defer.promise();
       });
       this.set('ShowMetrics', function (id, data) {
         var defer = $.Deferred(),
           that = this;
-        showDetail([id].concat(detailsPageAlwaysVisible), id).then(function() {
-          if (data.bibcode) // new search
-            self.getPubSub().publish(self.getPubSub().DISPLAY_DOCUMENTS, new ApiQuery({ q: 'bibcode:' + data.bibcode }))
+        showDetail([id].concat(detailsPageAlwaysVisible), id).then(function (w) {
+          if (data.bibcode) {
+            self.getPubSub().publish(self.getPubSub().DISPLAY_DOCUMENTS, new ApiQuery({ q: 'bibcode:' + data.bibcode }));
+            w.setActive(id);
+          }
           that.route = data.href;
           defer.resolve();
-          })
+        })
         return defer.promise();
       });
       this.set('ShowPaperExport', function (id, data) {
@@ -1060,12 +1081,14 @@ function (
       this.set('ShowGraphics', function (id, data) {
         var defer = $.Deferred(),
           that = this;
-        showDetail([id].concat(detailsPageAlwaysVisible), id).then(function() {
-          if (data.bibcode) // new search
-            self.getPubSub().publish(self.getPubSub().DISPLAY_DOCUMENTS, new ApiQuery({ q: 'bibcode:' + data.bibcode }))
+        showDetail([id].concat(detailsPageAlwaysVisible), id).then(function (w) {
+          if (data.bibcode) {
+            self.getPubSub().publish(self.getPubSub().DISPLAY_DOCUMENTS, new ApiQuery({ q: 'bibcode:' + data.bibcode }));
+            w.setActive(id);
+          }
           that.route = data.href;
           defer.resolve();
-        })
+        });
         return defer.promise();
       });
       this.set('show-author-affiliation-tool', function (id, options) {
