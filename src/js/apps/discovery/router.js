@@ -112,8 +112,11 @@ function (
       if (query) {
         try {
           var q = new ApiQuery().load(query);
-          this.routerNavigate('search-page', {q: q, page: 'show-' + widgetName, replace: true })
-
+          this.routerNavigate('search-page', {
+            q: q,
+            page: widgetName && 'show-' + widgetName,
+            replace: true
+          });
         } catch (e) {
           console.error('Error parsing query from a string: ', query, e);
           this.getPubSub().publish(this.getPubSub().NAVIGATE, 'index-page');
