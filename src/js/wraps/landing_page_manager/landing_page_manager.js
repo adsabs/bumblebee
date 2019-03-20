@@ -2,12 +2,14 @@ define([
   'js/page_managers/toc_controller',
   'js/page_managers/one_column_view',
   'hbs!js/wraps/landing_page_manager/landing-page-layout',
-  'hbs!js/wraps/landing_page_manager/landing-page-nav'
+  'hbs!js/wraps/landing_page_manager/landing-page-nav',
+  'analytics'
 ], function (
   PageManagerController,
   PageManagerView,
   PageManagerTemplate,
-  TOCTemplate
+  TOCTemplate,
+  analytics
 ) {
   var PageManager = PageManagerController.extend({
 

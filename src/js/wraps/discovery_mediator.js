@@ -28,9 +28,6 @@ function (
       var child = mpm.getCurrentActiveChild();
       if (child.view && child.view.showCols) {
         child.view.showCols({ right: false, left: false });
-        // open the view again
-        this.getBeeHive().getService('PubSub').once(this.getPubSub().START_SEARCH,
-          _.once(function () { child.view.showCols({ right: true }); }));
       }
     }
     this.getBeeHive().getService('PubSub').once(this.getPubSub().DELIVERING_REQUEST, _.bind(function (apiRequest, psk) {
@@ -55,15 +52,12 @@ function (
     this._tmp.cycle_started = true;
 
     var app = this.getApp();
-
     if (feedback.query) {
       app.getObject('AppStorage').setCurrentQuery(feedback.query);
       app.getObject('AppStorage').setCurrentNumFound(feedback.numFound);
     } else {
       app.getObject('AppStorage').setCurrentQuery(null);
     }
-
-    //this.getPubSub().publish(this.getPubSub().NAVIGATE, 'results-page');
 
     if (feedback.request && feedback.request.get('target').indexOf('search') > -1 && feedback.query && !feedback.numFound) {
       var q = feedback.query;
@@ -446,8 +440,9 @@ function (
             stupidGoAhead = false;
           }
 
-          if (stupidGoAhead)
+          if (stupidGoAhead) {
             qm.getQueryAndStartSearchCycle.apply(qm, arguments);
+          }
 
         }, this));
       },

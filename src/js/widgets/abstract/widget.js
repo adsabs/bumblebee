@@ -260,7 +260,9 @@ function (
       if (MathJax) MathJax.Hub.Queue(['Typeset', MathJax.Hub, this.el]);
 
       // and set the title, maintain tags
-      document.title = $('<div>' + this.model.get('title') + '</div>').text();
+      if (this.model.has('title')) {
+        document.title = $('<div>' + this.model.get('title') + '</div>').text() + ' - NASA/ADS Search';
+      }
       if (!window.__PRERENDERED) {
         document.body.scrollTop = document.documentElement.scrollTop = 0;
         $('#app-container').scrollTop(0);

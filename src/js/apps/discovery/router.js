@@ -62,9 +62,6 @@ function (
 
     routerNavigate: function (route, options) {
       var options = options || {};
-      // this tells navigator not to create 2 history entries, which causes
-      // problems with the back button
-      _.extend({ replace: false }, options);
       this.getPubSub().publish(this.getPubSub().NAVIGATE, route, options);
     },
 
@@ -112,7 +109,10 @@ function (
       if (query) {
         try {
           var q = new ApiQuery().load(query);
-          this.routerNavigate('search-page', {q: q, page: 'show-' + widgetName, replace: true })
+          this.routerNavigate('search-page', {
+            q: q,
+            page: widgetName && 'show-' + widgetName
+          });
 
         } catch (e) {
           console.error('Error parsing query from a string: ', query, e);

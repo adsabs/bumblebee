@@ -45,6 +45,8 @@ define([
         throw new Error('You must save ApiQuery instance');
       }
       this.set('currentQuery', apiQuery);
+      var ps = this.hasPubSub() && this.getPubSub();
+      ps.publish(ps.UPDATE_CURRENT_QUERY, apiQuery);
       // save to storage
       if (this.getBeeHive().hasService('PersistentStorage')) {
         this.getBeeHive().getService('PersistentStorage').set('currentQuery', apiQuery.toJSON());

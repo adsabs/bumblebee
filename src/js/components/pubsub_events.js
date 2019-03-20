@@ -167,7 +167,9 @@ define([], function () {
     * */
     STORAGE_PAPER_UPDATE: '[User]-Paper-Update',
 
-    LIBRARY_CHANGE: '[PubSub]-Library-Change'
+    LIBRARY_CHANGE: '[PubSub]-Library-Change',
+
+    'UPDATE_CURRENT_QUERY': '[User]-Update-Current-Query'
 
   };
 

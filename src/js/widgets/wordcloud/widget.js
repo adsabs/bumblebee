@@ -538,6 +538,7 @@ define([
 
         this._updateFq(q, newQ);
         this.getPubSub().publish(this.getPubSub().START_SEARCH, q);
+        this.closeWidget();
       }
     },
 

@@ -67,7 +67,7 @@ define([
           m.set('isSelected', false, { silent: true });
         }
       });
-      s.set('isSelected', true);
+      s ? s.set('isSelected', true) : this.first().set('isSelected', true);
     },
 
     comparator: function (m) {
@@ -201,16 +201,13 @@ define([
       }
       var path = this.model.get('path') || 'abstract';
 
-      // only trigger if the bibcode is present or we are not on an abstract page
-      if (this.model.has('bibcode') || path.startsWith('user')) {
-        var data = {
-          idAttribute: this.model.get('idAttribute') || 'showAbstract',
-          subView: this.model.get('subView') || '',
-          href: 'abs/' + (this.model.get('bibcode') || '') + '/' + path,
-          bibcode: this.model.get('bibcode')
-        };
-        this.trigger('page-manager-event', 'widget-selected', data);
-      }
+      var data = {
+        idAttribute: this.model.get('idAttribute') || 'showAbstract',
+        subView: this.model.get('subView') || '',
+        href: 'abs/' + (this.model.get('bibcode') || '') + '/' + path,
+        bibcode: this.model.get('bibcode')
+      };
+      this.trigger('page-manager-event', 'widget-selected', data);
     },
 
     onPageManagerMessage: function (event, data) {

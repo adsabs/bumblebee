@@ -706,9 +706,9 @@ function (
     newQuery.set('__bigquery', filterBibcodes);
 
     this.resetWidget();
-    this.getPubSub().publish(this.getPubSub().START_SEARCH, newQuery);
+    var ps = this.getPubSub();
+    ps.publish(ps.NAVIGATE, 'search-page', { q: newQuery });
   };
-
 
   options.widgetName = 'PaperNetwork';
 

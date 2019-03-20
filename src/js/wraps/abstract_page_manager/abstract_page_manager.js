@@ -2,12 +2,14 @@ define([
   'js/page_managers/toc_controller',
   'js/page_managers/three_column_view',
   'hbs!js/wraps/abstract_page_manager/abstract-page-layout',
-  'hbs!js/wraps/abstract_page_manager/abstract-nav'
+  'hbs!js/wraps/abstract_page_manager/abstract-nav',
+  'analytics'
 ], function (
   PageManagerController,
   PageManagerView,
   PageManagerTemplate,
-  TOCTemplate
+  TOCTemplate,
+  analytics
 ) {
   var PageManager = PageManagerController.extend({
 
@@ -33,7 +35,7 @@ define([
       var self = this;
       return PageManagerController.prototype.assemble.apply(this, arguments).done(function() {
         self.addQuery(self.getCurrentQuery());
-      })
+      });
     },
 
     addQuery: function (apiQuery) {
@@ -62,6 +64,17 @@ define([
         bibcode = bibcode[0].replace('bibcode:', '');
         this.widgets.tocWidget.model.set('bibcode', bibcode);
       }
+    },
+
+    onWidgetSelected: function (widget, event, data) {
+      var bibcode = widget.model.get('bibcode');
+      var target = data.idAttribute.toLowerCase().replace('show', '');
+      analytics('send', 'event', 'interaction', 'toc-link-followed', {
+        target: target,
+        bibcode: bibcode
+      });
+
+      PageManagerController.prototype.onWidgetSelected.apply(this, arguments);
     },
 
     navConfig: {
