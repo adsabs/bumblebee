@@ -74,7 +74,8 @@ define([
         bibcode: bibcode
       });
 
-      PageManagerController.prototype.onWidgetSelected.apply(this, arguments);
+      // do not navigate, only broadcast
+      this.broadcast('page-manager-message', 'widget-selected', data);
     },
 
     navConfig: {
