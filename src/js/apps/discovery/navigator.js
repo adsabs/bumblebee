@@ -121,10 +121,11 @@ function (
 
       this.set('ClassicSearchForm', function () {
         var defer = $.Deferred();
-        var self = this;
+        var that = this;
         app.getObject('MasterPageManager').show('LandingPage', ['ClassicSearchForm']).then(function() {
           app.getWidget('LandingPage').done(function (widget) { widget.setActive('ClassicSearchForm'); });
-          self.route = '#classic-form';
+          that.route = '#classic-form';
+          that.title = 'Classic Form';
           defer.resolve();
         })
         return defer.promise();
@@ -132,16 +133,18 @@ function (
 
       this.set('PaperSearchForm', function () {
         var defer = $.Deferred();
-        var self = this;
+        var that = this;
         app.getObject('MasterPageManager').show('LandingPage', ['PaperSearchForm']).then(function() {
           app.getWidget('LandingPage').done(function (widget) { widget.setActive('PaperSearchForm'); });
-          self.route = '#paper-form';
+          that.route = '#paper-form';
+          that.title = 'Paper Form';
           defer.resolve();
         })
         return defer.promise();
       });
 
       this.set('LibraryImport', function (page, data) {
+        var that = this;
         var defer = $.Deferred();
         if (redirectIfNotSignedIn()) {
           defer.resolve();
@@ -153,7 +156,8 @@ function (
             app.getWidget('SettingsPage')
               .done(function (widget) {
                 widget.setActive('LibraryImport');
-                self.route = '#user/settings/libraryimport';
+                that.route = '#user/settings/libraryimport';
+                that.title = 'Library Import';
                 publishPageChange('settings-page');
                 defer.resolve();
               });
@@ -163,9 +167,10 @@ function (
       });
 
 
-      function settingsPreferencesView(widgetName, defaultView) {
+      function settingsPreferencesView(widgetName, defaultView, title) {
         return function (page, data) {
           var defer = $.Deferred();
+          var that = this;
 
           if (redirectIfNotSignedIn()) {
             defer.resolve();
@@ -184,7 +189,8 @@ function (
                 widget.setActive(widgetName, subView);
               });
 
-              self.route = '#user/settings/' + subView;
+              that.route = '#user/settings/' + subView;
+              that.title = 'Settings' + (title ? ' | ' + title : '');
               publishPageChange('settings-page');
               defer.resolve();
             })
@@ -196,10 +202,11 @@ function (
       this.set('UserSettings', settingsPreferencesView('UserSettings', undefined));
 
       // request for the widget
-      this.set('UserPreferences', settingsPreferencesView('UserPreferences', 'librarylink'));
+      this.set('UserPreferences', settingsPreferencesView('UserPreferences', 'librarylink', 'Library Link Server'));
 
       this.set('AllLibrariesWidget', function (widget, subView) {
         var defer = $.Deferred();
+        var that = this;
 
         if (redirectIfNotSignedIn()) {
           defer.resolve();
@@ -211,7 +218,8 @@ function (
           ['AllLibrariesWidget', 'UserNavbarWidget']).then(function() {
             app.getWidget('AllLibrariesWidget').done(function (widget) {
               widget.setSubView({ view: subView });
-              self.route = '#user/libraries/';
+              that.route = '#user/libraries/';
+              that.title = 'My Libraries';
               publishPageChange('libraries-page');
             });
             defer.resolve();
@@ -242,11 +250,12 @@ function (
 
         data.publicView = data.publicView ? data.publicView : false;
 
-        self.route = data.publicView ? '#/public-libraries/' + data.id : '#user/libraries/' + data.id;
+        var that = this;
+        this.route = data.publicView ? '#/public-libraries/' + data.id : '#user/libraries/' + data.id;
 
         app.getObject('LibraryController').getLibraryMetadata(data.id).done(function (metadata) {
-          data.editRecords = _.contains(['write', 'admin', 'owner'], metadata.permission)
-                                  && !data.publicView;
+          data.editRecords = _.contains(['write', 'admin', 'owner'], metadata.permission) && !data.publicView;
+          that.title = data.publicView ? 'Public' : 'Private' + ' Library | ' + metadata.name;
           // inform library list widget about the data
           app.getWidget('LibraryListWidget').done(function (widget) {
             widget.setData(data);
@@ -340,7 +349,7 @@ function (
               app.getObject('MasterPageManager').show('PublicLibrariesPage',
                 ['IndividualLibraryWidget', widgetName]).then(function() {
                   renderLibrarySub(id).done(function() {
-                    self.route = '#/public-libraries/' + data.id; // XXX:rca - i think this should be that.route
+                    that.route = '#/public-libraries/' + data.id; // XXX:rca - i think this should be that.route
                     defer.resolve();
                   })
                 })
@@ -348,7 +357,7 @@ function (
               app.getObject('MasterPageManager').show('LibrariesPage',
                 ['IndividualLibraryWidget', 'UserNavbarWidget', widgetName]).then(function() {
                   renderLibrarySub(id).done(function() {
-                    self.route = '#user/libraries/' + data.id;
+                    that.route = '#user/libraries/' + data.id;
                     publishPageChange('libraries-page');
                     defer.resolve();
                   })
@@ -405,7 +414,7 @@ function (
       });
 
       this.set('results-page', function (widget, args) {
-        var self = this;
+        var that = this;
         var defer = $.Deferred();
 
         app.getObject('MasterPageManager').show('SearchPage',
@@ -457,8 +466,8 @@ function (
               route += ('&__qid=' + q.get('__qid')[0]);
             }
 
-            self.title = q && q.get('q').length && q.get('q')[0];
-            self.route = route;
+            that.title = q && q.get('q').length && q.get('q')[0];
+            that.route = route;
             publishFeedback({ code: ApiFeedback.CODES.UNMAKE_SPACE });
             defer.resolve();
           })
@@ -814,14 +823,15 @@ function (
             ['OrcidBigWidget', 'SearchWidget']).then(function() {
             // go to the orcidbigwidget
             that.route = '/user/orcid';
+            that.title = 'My Orcid';
             defer.resolve();
-            })
+          });
         } else {
           // just redirect to index page, no orcid access
           self.get('index-page').execute().then(function() {
             that.route = '';
             defer.resolve();
-          })
+          });
         }
         return defer.promise();
       });
@@ -960,13 +970,20 @@ function (
           // new search
           if (data.bibcode) {
             self.getPubSub().publish(self.getPubSub().DISPLAY_DOCUMENTS, new ApiQuery({ q: 'bibcode:' + data.bibcode }));
-            w.setActive(id);
           }
+          w.setActive(id);
 
           // get the title from the list of stashed docs, if available
           var doc = _.find(self.getBeeHive().getObject('DocStashController').getDocs() || [], { bibcode: data.bibcode });
           if (doc) {
             that.title = doc.title && doc.title[0];
+          }
+
+          // we can grab the current title from storage and just add our prefix from there
+          var title = that.title || app.getObject('AppStorage').getDocumentTitle();
+          var prefix = 'Abstract';
+          if (title && title.indexOf(prefix) === -1) {
+            that.title = prefix + ' | ' + title;
           }
 
           that.route = data.href;
@@ -980,8 +997,16 @@ function (
         showDetail([id].concat(detailsPageAlwaysVisible), id).then(function (w) {
           if (data.bibcode) {
             self.getPubSub().publish(self.getPubSub().DISPLAY_DOCUMENTS, new ApiQuery({ q: 'bibcode:' + data.bibcode }));
-            w.setActive(id);
           }
+          w.setActive(id);
+
+          // we can grab the current title from storage and just add our prefix from there
+          var title = app.getObject('AppStorage').getDocumentTitle();
+          var prefix = 'Citations';
+          if (title && title.indexOf(prefix) === -1) {
+            that.title = prefix + ' | ' + title;
+          }
+
           that.route = data.href;
           defer.resolve();
         });
@@ -993,7 +1018,14 @@ function (
         showDetail([id].concat(detailsPageAlwaysVisible), id).then(function (w) {
           if (data.bibcode) {
             self.getPubSub().publish(self.getPubSub().DISPLAY_DOCUMENTS, new ApiQuery({ q: 'bibcode:' + data.bibcode }));
-            w.setActive(id);
+          }
+          w.setActive(id);
+
+          // we can grab the current title from storage and just add our prefix from there
+          var title = app.getObject('AppStorage').getDocumentTitle();
+          var prefix = 'References';
+          if (title && title.indexOf(prefix) === -1) {
+            that.title = prefix + ' | ' + title;
           }
           that.route = data.href;
           defer.resolve();
@@ -1006,7 +1038,14 @@ function (
         showDetail([id].concat(detailsPageAlwaysVisible), id).then(function (w) {
           if (data.bibcode) {
             self.getPubSub().publish(self.getPubSub().DISPLAY_DOCUMENTS, new ApiQuery({ q: 'bibcode:' + data.bibcode }));
-            w.setActive(id);
+          }
+          w.setActive(id);
+
+          // we can grab the current title from storage and just add our prefix from there
+          var title = app.getObject('AppStorage').getDocumentTitle();
+          var prefix = 'Co-Reads';
+          if (title && title.indexOf(prefix) === -1) {
+            that.title = prefix + ' | ' + title;
           }
           that.route = data.href;
           defer.resolve();
@@ -1019,8 +1058,15 @@ function (
         showDetail([id].concat(detailsPageAlwaysVisible), id).then(function (w) {
           if (data.bibcode) {
             self.getPubSub().publish(self.getPubSub().DISPLAY_DOCUMENTS, new ApiQuery({ q: 'bibcode:' + data.bibcode }));
-            w.setActive(id);
           }
+          w.setActive(id);
+
+         // we can grab the current title from storage and just add our prefix from there
+         var title = app.getObject('AppStorage').getDocumentTitle();
+         var prefix = 'Similar Papers';
+         if (title && title.indexOf(prefix) === -1) {
+           that.title = prefix + ' | ' + title;
+         }
           that.route = data.href;
           defer.resolve();
         });
@@ -1032,20 +1078,14 @@ function (
         showDetail([id].concat(detailsPageAlwaysVisible), id).then(function (w) {
           if (data.bibcode) {
             self.getPubSub().publish(self.getPubSub().DISPLAY_DOCUMENTS, new ApiQuery({ q: 'bibcode:' + data.bibcode }));
-            w.setActive(id);
           }
-          that.route = data.href;
-          defer.resolve();
-        });
-        return defer.promise();
-      });
-      this.set('ShowSimilar', function (id, data) {
-        var defer = $.Deferred(),
-          that = this;
-        showDetail([id].concat(detailsPageAlwaysVisible), id).then(function (w) {
-          if (data.bibcode) {
-            self.getPubSub().publish(self.getPubSub().DISPLAY_DOCUMENTS, new ApiQuery({ q: 'bibcode:' + data.bibcode }));
-            w.setActive(id);
+          w.setActive(id);
+
+          // we can grab the current title from storage and just add our prefix from there
+          var title = app.getObject('AppStorage').getDocumentTitle();
+          var prefix = 'Volume Content';
+          if (title && title.indexOf(prefix) === -1) {
+            that.title = prefix + ' | ' + title;
           }
           that.route = data.href;
           defer.resolve();
@@ -1058,7 +1098,14 @@ function (
         showDetail([id].concat(detailsPageAlwaysVisible), id).then(function (w) {
           if (data.bibcode) {
             self.getPubSub().publish(self.getPubSub().DISPLAY_DOCUMENTS, new ApiQuery({ q: 'bibcode:' + data.bibcode }));
-            w.setActive(id);
+          }
+          w.setActive(id);
+
+          // we can grab the current title from storage and just add our prefix from there
+          var title = app.getObject('AppStorage').getDocumentTitle();
+          var prefix = 'Metrics';
+          if (title && title.indexOf(prefix) === -1) {
+            that.title = prefix + ' | ' + title;
           }
           that.route = data.href;
           defer.resolve();
@@ -1068,14 +1115,21 @@ function (
       this.set('ShowPaperExport', function (id, data) {
         var defer = $.Deferred(),
           that = this;
-        var format = data.subView;
-        app.getObject('MasterPageManager').show('DetailsPage',
-          [id].concat(detailsPageAlwaysVisible)).done(function() {
-            app.getWidget('DetailsPage').done(function (w) {
-              w.setActive(id, format);
-              defer.resolve();
-            });
-          })
+        showDetail([id].concat(detailsPageAlwaysVisible), id).then(function (w) {
+          if (data.bibcode) {
+            self.getPubSub().publish(self.getPubSub().DISPLAY_DOCUMENTS, new ApiQuery({ q: 'bibcode:' + data.bibcode }));
+          }
+          w.setActive(id);
+
+          // we can grab the current title from storage and just add our prefix from there
+          var title = app.getObject('AppStorage').getDocumentTitle();
+          var prefix = 'Export Citation';
+          if (title && title.indexOf(prefix) === -1) {
+            that.title = prefix + ' | ' + title;
+          }
+          that.route = data.href;
+          defer.resolve();
+        });
         return defer.promise();
       });
       this.set('ShowGraphics', function (id, data) {

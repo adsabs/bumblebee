@@ -258,13 +258,6 @@ function (
       this.$('.icon-help').popover({ trigger: 'hover', placement: 'right', html: true });
 
       if (MathJax) MathJax.Hub.Queue(['Typeset', MathJax.Hub, this.el]);
-
-      // and set the title, maintain tags
-      document.title = $('<div>' + this.model.get('title') + '</div>').text();
-      if (!window.__PRERENDERED) {
-        document.body.scrollTop = document.documentElement.scrollTop = 0;
-        $('#app-container').scrollTop(0);
-      }
     }
   });
 
@@ -367,6 +360,11 @@ function (
         read_count: this._docs[bibcode].read_count,
         property: this._docs[bibcode].property
       });
+
+      if (this.hasPubSub()) {
+        var ps = this.getPubSub();
+        ps.publish(ps.CUSTOM_EVENT, 'update-document-title', this._docs[bibcode].title);
+      }
     },
 
     onDisplayDocuments: function (apiQuery) {

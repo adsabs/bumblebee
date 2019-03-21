@@ -31,6 +31,11 @@ function (
   TransitionCatalog,
   analytics
 ) {
+
+  // Document Title Constants
+  var APP_TITLE = 'NASA/ADS';
+  var TITLE_SEP = ' - ';
+
   var Navigator = GenericModule.extend({
 
     initialize: function (options) {
@@ -47,8 +52,16 @@ function (
        */
     activate: function (beehive) {
       this.setBeeHive(beehive);
+      this.storage = beehive.getObject('AppStorage');
       var pubsub = this.getPubSub();
       pubsub.subscribe(pubsub.NAVIGATE, _.bind(this.navigate, this));
+      pubsub.subscribe(pubsub.CUSTOM_EVENT, _.bind(this._onCustomEvent, this));
+    },
+
+    _onCustomEvent: function (ev, data) {
+      if (ev === 'update-document-title') {
+        this._updateDocumentTitle(data);
+      }
     },
 
     /**
@@ -90,12 +103,7 @@ function (
 
         // clear any metadata added to head on the previous page
         $('head').find('meta[data-highwire]').remove();
-        var title = transition.title;
-        var appTitle = 'NASA/ADS Search';
-        if (document.title.indexOf(appTitle) > 0 && (!title || title === appTitle)) {
-          title = document.title.split(' - ')[0];
-        }
-        document.title = (title ? title + ' - ' : '') + appTitle;
+        this._updateDocumentTitle(transition.title);
         defer.resolve();
       }, this);
 
@@ -110,6 +118,20 @@ function (
       }
 
       return defer.promise();
+    },
+
+    _updateDocumentTitle: function (title) {
+      if (_.isUndefined(title) || title === false) return;
+      var currTitle = this.storage.getDocumentTitle();
+      var setDocTitle = _.bind(function (t) {
+        document.title = t + TITLE_SEP + APP_TITLE;
+        this.storage.setDocumentTitle(t);
+      }, this);
+
+      // title is defined and it is different from the current one, it should be updated
+      if (title !== currTitle) {
+        setDocTitle(title);
+      }
     },
 
     handleMissingTransition: function (transition) {
