@@ -41,7 +41,7 @@ function (
           title: undefined,
           // assuming there will always be abstracts
           showAbstract: 'closed',
-          hideSidebars: false,
+          showSidebars: true,
           // often they won't exist
           showHighlights: 'closed',
           pagination: true
@@ -68,7 +68,7 @@ function (
       this.listenTo(this.view, 'toggle-all', this.triggerBulkAction);
       this.minAuthorsPerResult = 3;
 
-      this.model.on('change:hideSidebars', _.bind(this._onToggleSideBars, this));
+      this.model.on('change:showSidebars', _.bind(this._onToggleSidebars, this));
 
       // update the default fields with whatever the abstract page needs
       var abstractFields = AbstractWidget.prototype.defaultQueryArguments.fl.split(',');
@@ -99,7 +99,7 @@ function (
 
     onPageManagerMessage: function (event, data) {
       if (event === 'side-bars-update') {
-        this._onSideBarsUpdate(data);
+        this._onSidebarsUpdate(data);
       }
     },
 
@@ -146,12 +146,12 @@ function (
       this.queryTimer = +new Date();
     },
 
-    _onToggleSideBars: function () {
-      this.trigger('page-manager-event', 'side-bars-update', this.model.get('hideSidebars'));
+    _onToggleSidebars: function () {
+      this.trigger('page-manager-event', 'side-bars-update', this.model.get('showSidebars'));
     },
 
-    _onSideBarsUpdate: function (value) {
-      this.model.set('hideSidebars', value);
+    _onSidebarsUpdate: function (value) {
+      this.model.set('showSidebars', value);
     },
 
     onUserAnnouncement: function (message, data) {
@@ -372,8 +372,15 @@ function (
     triggerBulkAction: function (flag) {
       var bibs = this.collection.pluck('bibcode');
       this.getPubSub().publish(this.getPubSub().BULK_PAPER_SELECTION, bibs, flag);
-    }
+    },
 
+    reset: function () {
+
+      // persist the sidebar state through resets
+      var sidebarState = this.model.get('showSidebars');
+      ListOfThingsWidget.prototype.reset.apply(this, arguments);
+      this.model.set('showSidebars', sidebarState);
+    }
   });
 
   _.extend(ResultsWidget.prototype, LinkGenerator);
