@@ -91,6 +91,7 @@ function (
             return app.getWidget('LandingPage').then(function (widget) {
               widget.setActive('SearchWidget');
               that.route = '';
+              that.title = '';
               defer.resolve();
             });
           }
@@ -106,6 +107,7 @@ function (
         var exec = _.bind(self.get('index-page').execute, this);
         exec().then(function() {
           that.route = '';
+          that.title = '';
           defer.resolve();
         });
         return defer.promise();
@@ -375,9 +377,12 @@ function (
 
       this.set('home-page', function () {
         var defer = $.Deferred();
+        var that = this;
         app.getObject('MasterPageManager').show('HomePage',
           []).then(function() {
             publishPageChange('home-page');
+            that.title = '';
+            that.route = '';
             defer.resolve();
           })
         return defer.promise();
@@ -973,13 +978,6 @@ function (
           var doc = _.find(self.getBeeHive().getObject('DocStashController').getDocs() || [], { bibcode: data.bibcode });
           if (doc) {
             that.title = doc.title && doc.title[0];
-          }
-
-          // we can grab the current title from storage and just add our prefix from there
-          var title = that.title || app.getObject('AppStorage').getDocumentTitle();
-          var prefix = 'Abstract';
-          if (title && title.indexOf(prefix) === -1) {
-            that.title = prefix + ' | ' + title;
           }
 
           that.route = data.href;

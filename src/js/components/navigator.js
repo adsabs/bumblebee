@@ -124,7 +124,7 @@ function (
       if (_.isUndefined(title) || title === false) return;
       var currTitle = this.storage.getDocumentTitle();
       var setDocTitle = _.bind(function (t) {
-        document.title = t + TITLE_SEP + APP_TITLE;
+        document.title = t === '' ? APP_TITLE : t + TITLE_SEP + APP_TITLE;
         this.storage.setDocumentTitle(t);
       }, this);
 
