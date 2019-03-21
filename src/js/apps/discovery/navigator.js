@@ -91,6 +91,7 @@ function (
             return app.getWidget('LandingPage').then(function (widget) {
               widget.setActive('SearchWidget');
               that.route = '';
+              that.title = '';
               defer.resolve();
             });
           }
@@ -103,21 +104,24 @@ function (
         // another function that sets a route
         var that = this;
         var defer = $.Deferred();
-        self.get('index-page').execute().then(function() {
+        var exec = _.bind(self.get('index-page').execute, this);
+        exec().then(function() {
           that.route = '';
-          defer.resolve();
-        })
-        return defer.promise();
-      });
-
-      this.set('404', function () {
-        var defer = $.Deferred();
-        app.getObject('MasterPageManager').show('ErrorPage').then(function() {
+          that.title = '';
           defer.resolve();
         });
         return defer.promise();
       });
 
+      this.set('404', function () {
+        var defer = $.Deferred();
+        var that = this;
+        app.getObject('MasterPageManager').show('ErrorPage').then(function() {
+          that.route = '404';
+          defer.resolve();
+        });
+        return defer.promise();
+      });
 
       this.set('ClassicSearchForm', function () {
         var defer = $.Deferred();
@@ -127,7 +131,7 @@ function (
           that.route = '#classic-form';
           that.title = 'Classic Form';
           defer.resolve();
-        })
+        });
         return defer.promise();
       });
 
@@ -146,6 +150,7 @@ function (
       this.set('LibraryImport', function (page, data) {
         var that = this;
         var defer = $.Deferred();
+        var that = this;
         if (redirectIfNotSignedIn()) {
           defer.resolve();
           return defer.promise();
@@ -165,7 +170,6 @@ function (
 
         return defer.promise();
       });
-
 
       function settingsPreferencesView(widgetName, defaultView, title) {
         return function (page, data) {
@@ -223,71 +227,65 @@ function (
               publishPageChange('libraries-page');
             });
             defer.resolve();
-          })
+          });
         return defer.promise();
       });
 
       this.set('LibraryAdminView', function (widget) {
         var defer = $.Deferred();
+        var that = this;
         // this is NOT navigable from outside, so library already has data
         // only setting a nav event to hide previous widgets
-        app.getWidget('IndividualLibraryWidget').done(function (widget) {
-          widget.setSubView({ subView: 'admin' });
-          app.getObject('MasterPageManager').show('LibrariesPage',
-            ['IndividualLibraryWidget', 'UserNavbarWidget']).then(function() {
-              publishPageChange('libraries-page');
-              defer.resolve();
-            })
+        app.getObject('MasterPageManager').show('LibrariesPage',
+          ['IndividualLibraryWidget', 'UserNavbarWidget']).then(function() {
+          app.getWidget('IndividualLibraryWidget').done(function (widget) {
+            widget.setSubView({ subView: 'admin' });
+          });
+          publishPageChange('libraries-page');
+          defer.resolve();
         });
+
         return defer.promise();
       });
 
       this.set('IndividualLibraryWidget', function (widget, data) {
         var defer = $.Deferred();
+        var that = this;
+
+        if (redirectIfNotSignedIn()) {
+          return defer.resolve().promise();
+        }
 
         // where view is an object in the form
         // {subView: subView, id: id, publicView : false}
 
         data.publicView = data.publicView ? data.publicView : false;
-
-        var that = this;
         this.route = data.publicView ? '#/public-libraries/' + data.id : '#user/libraries/' + data.id;
 
-        app.getObject('LibraryController').getLibraryMetadata(data.id).done(function (metadata) {
-          data.editRecords = _.contains(['write', 'admin', 'owner'], metadata.permission) && !data.publicView;
-          that.title = data.publicView ? 'Public' : 'Private' + ' Library | ' + metadata.name;
-          // inform library list widget about the data
-          app.getWidget('LibraryListWidget').done(function (widget) {
-            widget.setData(data);
+        var pub = data.publicView;
 
-            if (data.publicView) {
-              app.getWidget('IndividualLibraryWidget').done(function (widget) {
-                widget.setSubView(data);
-                // then, show library page manager
-                app.getObject('MasterPageManager').show('PublicLibrariesPage',
-                  ['IndividualLibraryWidget', 'LibraryListWidget']).then(function() {
-                    defer.resolve();
-                  });
-              });
-            }
-            // make sure user is signed in
-            else if (!redirectIfNotSignedIn()) {
-              app.getWidget('IndividualLibraryWidget').done(function (widget) {
-                widget.setSubView(data);
-                app.getObject('MasterPageManager').show('LibrariesPage',
-                  ['IndividualLibraryWidget', 'LibraryListWidget', 'UserNavbarWidget']).then(function() {
-                    publishPageChange('libraries-page');
-                    defer.resolve();
-                  });
-              });
-            }
-            else {
+        app.getObject('MasterPageManager').show(
+          pub ? 'PublicLibrariesPage' : 'LibrariesPage',
+          pub ?
+            ['IndividualLibraryWidget', 'LibraryListWidget']
+            : ['IndividualLibraryWidget', 'LibraryListWidget', 'UserNavbarWidget']
+        ).then(function () {
+
+          app.getObject('LibraryController').getLibraryMetadata(data.id).done(function (metadata) {
+            data.editRecords = _.contains(['write', 'admin', 'owner'], metadata.permission) && !data.publicView;
+            that.title = data.publicView ? 'Public' : 'Private' + ' Library | ' + metadata.name;
+
+            app.getWidget('LibraryListWidget', 'IndividualLibraryWidget').then(function (w) {
+              w['LibraryListWidget'].setData(data);
+              w['IndividualLibraryWidget'].setSubView(data);
+              if (pub) publishPageChange('libraries-page');
+
               defer.resolve();
-            }
+            });
           });
         });
-        return defer.promise();
 
+        return defer.promise();
       });
 
       // for external widgets shown by library
@@ -379,9 +377,12 @@ function (
 
       this.set('home-page', function () {
         var defer = $.Deferred();
+        var that = this;
         app.getObject('MasterPageManager').show('HomePage',
           []).then(function() {
             publishPageChange('home-page');
+            that.title = '';
+            that.route = '';
             defer.resolve();
           })
         return defer.promise();
@@ -847,7 +848,7 @@ function (
         var q = app.getObject('AppStorage').getCurrentQuery();
         if (!q && options.q) {
           q = options.q;
-        } else {
+        } else if (!q && !options.q) {
           return defer.resolve().promise();
         }
         publishFeedback({ code: ApiFeedback.CODES.MAKE_SPACE });
@@ -979,18 +980,12 @@ function (
             that.title = doc.title && doc.title[0];
           }
 
-          // we can grab the current title from storage and just add our prefix from there
-          var title = that.title || app.getObject('AppStorage').getDocumentTitle();
-          var prefix = 'Abstract';
-          if (title && title.indexOf(prefix) === -1) {
-            that.title = prefix + ' | ' + title;
-          }
-
           that.route = data.href;
           defer.resolve();
         });
         return defer.promise();
       });
+
       this.set('ShowCitations', function (id, data) {
         var defer = $.Deferred(),
           that = this;
@@ -1012,6 +1007,7 @@ function (
         });
         return defer.promise();
       });
+
       this.set('ShowReferences', function (id, data) {
         var defer = $.Deferred(),
           that = this;
@@ -1032,6 +1028,7 @@ function (
         });
         return defer.promise();
       });
+
       this.set('ShowCoreads', function (id, data) {
         var defer = $.Deferred(),
           that = this;
@@ -1052,6 +1049,7 @@ function (
         });
         return defer.promise();
       });
+
       this.set('ShowSimilar', function (id, data) {
         var defer = $.Deferred(),
           that = this;
@@ -1072,6 +1070,7 @@ function (
         });
         return defer.promise();
       });
+
       this.set('ShowTableofcontents', function (id, data) {
         var defer = $.Deferred(),
           that = this;
@@ -1092,6 +1091,7 @@ function (
         });
         return defer.promise();
       });
+
       this.set('ShowMetrics', function (id, data) {
         var defer = $.Deferred(),
           that = this;
@@ -1112,26 +1112,30 @@ function (
         })
         return defer.promise();
       });
-      this.set('ShowPaperExport', function (id, data) {
+
+      this.set('ShowPaperexport', function (id, data) {
         var defer = $.Deferred(),
           that = this;
-        showDetail([id].concat(detailsPageAlwaysVisible), id).then(function (w) {
-          if (data.bibcode) {
-            self.getPubSub().publish(self.getPubSub().DISPLAY_DOCUMENTS, new ApiQuery({ q: 'bibcode:' + data.bibcode }));
-          }
-          w.setActive(id);
 
-          // we can grab the current title from storage and just add our prefix from there
-          var title = app.getObject('AppStorage').getDocumentTitle();
-          var prefix = 'Export Citation';
-          if (title && title.indexOf(prefix) === -1) {
-            that.title = prefix + ' | ' + title;
-          }
-          that.route = data.href;
-          defer.resolve();
-        });
+        // the default subView should be `default`
+        var format = data.subView || 'default';
+        app.getObject('MasterPageManager').show('DetailsPage',
+          [id].concat(detailsPageAlwaysVisible)).done(function() {
+            app.getWidget('DetailsPage').done(function (w) {
+              if (data.bibcode) {
+                self.getPubSub().publish(self.getPubSub().DISPLAY_DOCUMENTS, new ApiQuery({ q: 'bibcode:' + data.bibcode }));
+
+                // guarantees the bibcode is set on the widget
+                w.widgets[id].ingestBroadcastedPayload(_.pick(data, 'bibcode'));
+                w.setActive(id, format);
+              }
+              that.route = data.href;
+              defer.resolve();
+            });
+          });
         return defer.promise();
       });
+
       this.set('ShowGraphics', function (id, data) {
         var defer = $.Deferred(),
           that = this;
@@ -1145,6 +1149,7 @@ function (
         });
         return defer.promise();
       });
+
       this.set('show-author-affiliation-tool', function (id, options) {
         var defer = $.Deferred(),
           that = this;
@@ -1163,7 +1168,7 @@ function (
             that.route = '#search/' + queryUpdater.clean(q).url();
             defer.resolve();
           });
-        })
+        });
         return defer.promise();
       });
     }
