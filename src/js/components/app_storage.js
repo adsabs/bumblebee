@@ -152,6 +152,14 @@ define([
       return JSON.parse(JSON.stringify(this.get('dynamicConfig')));
     },
 
+    setDocumentTitle: function (title) {
+      this.set('documentTitle', title);
+    },
+
+    getDocumentTitle: function () {
+      return this.get('documentTitle');
+    },
+
     hardenedInterface: {
       getNumSelectedPapers: 'getNumSelectedPapers',
       isPaperSelected: 'isPaperSelected',
@@ -160,13 +168,13 @@ define([
       clearSelectedPapers: 'clearSelectedPapers',
       getCurrentQuery: 'getCurrentQuery',
       hasCurrentQuery: 'hasCurrentQuery',
+      setDocumentTitle: 'setDocumentTitle',
+      getDocumentTitle: 'getDocumentTitle',
       getConfigCopy: 'get read-only copy of dynamic config',
       set: 'set a value into app storage',
       get: 'get a val from app storage'
-
     }
-  }
-  );
+  });
 
   _.extend(AppStorage.prototype, Hardened, Dependon.BeeHive);
   return AppStorage;
