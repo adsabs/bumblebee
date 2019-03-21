@@ -49,7 +49,7 @@ define([
             TOCWidget: 'js/page_managers/toc_widget',
             ShowAbstract: 'js/widgets/abstract/widget',
             ShowReferences: 'js/wraps/references',
-            ShowPaperExport: 'js/wraps/paper_export',
+            ShowPaperexport: 'js/wraps/paper_export',
 
             PageManager: 'js/page_managers/controller'
           }
@@ -217,7 +217,7 @@ define([
                 bibcode: 'foo'
               });
 
-              expect(pageManager.widgets.tocWidget.collection.get("ShowPaperExport__default").get("category")).to.eql("export");
+              expect(pageManager.widgets.tocWidget.collection.get("ShowPaperexport__default").get("category")).to.eql("export");
 
               var spy = sinon.spy();
               var pubsub = app.getService('PubSub').getHardenedInstance();
@@ -226,19 +226,19 @@ define([
 
               pageManager.widgets.tocWidget.resetActiveStates();
 
-              view.$("a[data-widget-id=ShowPaperExport__default]").click();
+              view.$("a[data-widget-id=ShowPaperexport__default]").click();
 
-              expect(spy.args[1][0]).to.eql("ShowPaperExport");
-              expect(spy.args[1][1]["idAttribute"]).to.eql("ShowPaperExport");
+              expect(spy.args[1][0]).to.eql("ShowPaperexport");
+              expect(spy.args[1][1]["idAttribute"]).to.eql("ShowPaperexport");
               expect(spy.args[1][1]["href"]).to.eql("abs/foo/export");
 
-              pageManager.widgets.ShowPaperExport.setSubView = sinon.spy();
+              pageManager.widgets.ShowPaperexport.setSubView = sinon.spy();
 
               //should both set the toc nav collection properly, and tell the export widget which view to show
-              pageManager.setActive("ShowPaperExport", "default");
+              pageManager.setActive("ShowPaperexport", "default");
 
-              expect(pageManager.widgets.ShowPaperExport.setSubView.calledWith("default")).to.eql(true);
-              expect(pageManager.widgets.tocWidget.collection.get("ShowPaperExport__default").get("isSelected")).to.eql(true);
+              expect(pageManager.widgets.ShowPaperexport.setSubView.calledWith("default")).to.eql(true);
+              expect(pageManager.widgets.tocWidget.collection.get("ShowPaperexport__default").get("isSelected")).to.eql(true);
               done();
             })
 
