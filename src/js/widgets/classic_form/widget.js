@@ -259,6 +259,8 @@ define([
           // add placeholder to get the comma-and-space at the end
           terms.push('');
           this.value = terms.join(', ');
+
+          event.preventDefault(); // necessary to stop hash change from #classic-form to #
           return false;
         }
       }).data('ui-autocomplete')._renderItem = function (ul, item) {
