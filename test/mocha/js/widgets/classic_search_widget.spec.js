@@ -35,16 +35,18 @@ define([
       w.view.$("div[data-field=author]").find("textarea").val(val);
       w.view.$("div[data-field=author]").find("textarea").trigger("input");
       w.view.$("button[type=submit]").eq(0).click();
-      expect(publishSpy.args[0][2].toJSON()).to.eql({
+      expect(publishSpy.args[0][3]["q"].toJSON()).to.eql({
         "q": [
           "author:(=\"Accomazzi, a\" AND =\"Kurtz, M\")"
         ],
         "fq": [
-          "database: astronomy",
           "{!type=aqp v=$fq_database}"
         ],
         "fq_database": [
           "database: astronomy"
+        ],
+        "__fq_database": [
+          "AND", "astronomy"
         ],
         "sort": [
           "date desc"
@@ -101,25 +103,32 @@ define([
       w.view.$("button[type=submit]").eq(0).click();
 
 
-      expect(publishSpy.args[0][2].toJSON()).to.eql({
+      expect(publishSpy.args[0][3]["q"].toJSON()).to.eql({
         "q": [
           "pubdate:[2010-10 TO 9999-12] author:(\"Accomazzi,a\" AND \"Kurtz,M\") title:(star OR planet OR \"gliese 581\") abs:(-\"hawaii star\")"
         ],
         "fq": [
-          "database: (astronomy or physics)",
           "{!type=aqp v=$fq_database}",
-          "property: (refereed or notrefereed)",
           "{!type=aqp v=$fq_property}",
           "{!type=aqp v=$fq_bibstem_facet}"
         ],
         "fq_database": [
           "database: (astronomy or physics)"
         ],
+        "__fq_database": [
+          "AND", "(astronomy or physics)"
+        ],
         "fq_property": [
           "property: (refereed or notrefereed)"
         ],
+        "__fq_property": [
+          "AND", "(refereed or notrefereed)"
+        ],
         "fq_bibstem_facet": [
           "(bibstem_facet:\"apj\" OR bibstem_facet:\"mnras\")"
+        ],
+        "__fq_bibstem_facet": [
+          "AND", "selected publications"
         ],
         "sort": [
           "date desc"
@@ -150,25 +159,32 @@ define([
 
       w.view.$("button[type=submit]").eq(0).click();
 
-      expect(publishSpy.args[1][2].toJSON()).to.eql({
+      expect(publishSpy.args[1][3]["q"].toJSON()).to.eql({
         "q": [
           "pubdate:[2010-10 TO 2012-12] author:(\"Accomazzi,a\") title:(star OR planet OR \"gliese 581\") abs:(-\"hawaii star\")"
         ],
         "fq": [
-          "database: astronomy",
           "{!type=aqp v=$fq_database}",
-          "property: refereed",
           "{!type=aqp v=$fq_property}",
           "{!type=aqp v=$fq_bibstem_facet}"
         ],
         "fq_database": [
           "database: astronomy"
         ],
+        "__fq_database": [
+          "AND", "astronomy"
+        ],
         "fq_property": [
           "property: refereed"
         ],
+        "__fq_property": [
+          "AND", "refereed"
+        ],
         "fq_bibstem_facet": [
           "(bibstem_facet:\"apj\")"
+        ],
+        "__fq_bibstem_facet": [
+          "AND", "selected publications"
         ],
         "sort": [
           "date desc"
@@ -216,12 +232,11 @@ define([
       setLogic('author', 'BOOLEAN');
       submitForm();
 
-      expect(publishSpy.args[0][2].toJSON()).to.eql({
+      expect(publishSpy.args[0][3]["q"].toJSON()).to.eql({
         "q": [
           "author:(-\"Accomazzi, a\" +author2 -author3 +author4)"
         ],
         "fq": [
-          "database: astronomy",
           "{!type=aqp v=$fq_database}"
         ],
         "fq_database": [
@@ -229,7 +244,10 @@ define([
         ],
         "sort": [
           "date desc"
-        ]
+        ],
+        "__fq_database": [
+          "AND", "astronomy"
+        ],
       });
 
       w.view.render();
@@ -246,12 +264,11 @@ define([
       setLogic('author', 'BOOLEAN');
       submitForm();
 
-      expect(publishSpy.args[1][2].toJSON()).to.eql({
+      expect(publishSpy.args[1][3]["q"].toJSON()).to.eql({
         "q": [
           "author:(+\"t e s t\" +testing -\" test\" +test +testing -testing)"
         ],
         "fq": [
-          "database: astronomy",
           "{!type=aqp v=$fq_database}"
         ],
         "fq_database": [
@@ -259,7 +276,10 @@ define([
         ],
         "sort": [
           "date desc"
-        ]
+        ],
+        "__fq_database": [
+          "AND", "astronomy"
+        ],
       });
     });
   });

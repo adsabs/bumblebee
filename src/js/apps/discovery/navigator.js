@@ -597,7 +597,7 @@ function (
           that.title = data.q.get('q').length && data.q.get('q')[0];
 
           // check if there is a subpage, if so execute that handler w/ our current context
-          if (data.page) {
+          if (data.page && self.get(data.page)) {
             var exec = _.bind(self.get(data.page).execute, that, data.page, { q: data.q });
             exec(data.page).then(function () { defer.resolve(); });
           } else {
