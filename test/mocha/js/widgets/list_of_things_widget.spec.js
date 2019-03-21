@@ -327,7 +327,7 @@ define(['marionette',
         widget.trigger("pagination:changePerPage", 50);
         expect(widget.model.get("perPage")).to.eql(50);
 
-        expect(JSON.stringify(widget.model.toJSON())).to.eql('{"mainResults":false,"showAbstract":"closed","showHighlights":"closed","hideSidebars":false,"pagination":true,"start":0,"highlightsLoaded":false,"perPage":50,"numFound":100,"currentQuery":{"q":["foo:bar"]},"pageData":{"perPage":50,"totalPages":2,"currentPage":1,"previousPossible":false,"nextPossible":true},"page":0,"showRange":[0,49],"query":false,"loading":false}');
+        expect(JSON.stringify(widget.model.toJSON())).to.eql('{"mainResults":false,"showAbstract":"closed","showHighlights":"closed","showSidebars":true,"pagination":true,"start":0,"highlightsLoaded":false,"perPage":50,"numFound":100,"currentQuery":{"q":["foo:bar"]},"pageData":{"perPage":50,"totalPages":2,"currentPage":1,"previousPossible":false,"nextPossible":true},"page":0,"showRange":[0,49],"query":false,"loading":false}');
 
         expect($("#per-page-select>option:selected").text().trim()).to.eql("50");
         expect($("input.page-control").val()).to.eql("1");
