@@ -56,7 +56,7 @@ function (
         showAbstract: 'closed',
         // often they won't exist
         showHighlights: false,
-        hideSidebars: false,
+        showSidebars: true,
         pagination: true,
         start: 0,
         highlightsLoaded: false
@@ -137,7 +137,7 @@ function (
     events: {
       'click .show-highlights': 'toggleHighlights',
       'click .show-abstract': 'toggleAbstract',
-      'click .toggle-sidebars': 'toggleHideSidebars',
+      'click .toggle-sidebars': 'toggleShowSidebars',
       'click #go-to-bottom': 'goToBottom',
       'click #backToTopBtn': 'goToTop',
       'click a.page-control': 'changePageWithButton',
@@ -166,9 +166,9 @@ function (
       }
     },
 
-    toggleHideSidebars: function () {
-      var val = !this.model.get('hideSidebars');
-      this.model.set('hideSidebars', val);
+    toggleShowSidebars: function () {
+      var val = !this.model.get('showSidebars');
+      this.model.set('showSidebars', val);
       analytics('send', 'event', 'interaction', 'sidebars-toggled-' + val ? 'on' : 'off');
     },
 
@@ -241,7 +241,6 @@ function (
       return false;
     }
   });
-
 
   return ListOfThingsView;
 });

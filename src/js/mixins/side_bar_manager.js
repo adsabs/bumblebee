@@ -8,33 +8,45 @@ define([
 
   var state = new (Backbone.Model.extend({
     defaults: {
-      hide: true
+      show: true
     }
   }));
 
   var SideBarManager = {
+
+    /**
+     * Try to get the current sidebar state from user data
+     * This will be the value coming from user settings
+     */
     _getUpdateFromUserData: function () {
       try {
         var ud = this.getBeeHive().getObject('User').getUserData();
         if (!ud) return false;
-
-        return /hide/i.test(ud.defaultHideSidebars);
+        return /show/i.test(ud.defaultHideSidebars);
       } catch (e) {
         return false;
       }
     },
 
+    /**
+     * Initialize the manager
+     * this will start subscriptions and do an initial check on user data
+     */
     init: function () {
-      state.set('hide', this._getUpdateFromUserData());
-      _.bindAll(this, ['_onFeedback', '_onUserAnnouncement', '_update']);
+      this.setSidebarState(this._getUpdateFromUserData());
+      _.bindAll(this, ['_onFeedback', '_onUserAnnouncement', '_updateSidebarState']);
       var ps = this.getPubSub();
       if (!ps) return;
       ps.subscribe(ps.FEEDBACK, this._onFeedback);
       ps.subscribe(ps.USER_ANNOUNCEMENT, this._onUserAnnouncement);
-      state.on('change:hide', this._update);
+      state.on('change:show', this._updateSidebarState);
     },
 
-    _update: function () {
+    /**
+     * Update the sidebar state, this will trigger/broadcast the change
+     * and update the view to actually spread the middle panel to full screen
+     */
+    _updateSidebarState: _.throttle(function () {
       var val = this.getSidebarState();
       var view = this.view;
       if (view && view.showCols) {
@@ -42,31 +54,51 @@ define([
       }
       this.broadcast('page-manager-message', 'side-bars-update', val);
       this.trigger('page-manager-message', 'side-bars-update', val);
-    },
+    }, 100),
 
+    /**
+     * On user announcement (user data change) update the sidebar state
+     */
     _onUserAnnouncement: function () {
-      state.set('hide', this._getUpdateFromUserData());
+      this.setSidebarState(this._getUpdateFromUserData());
     },
 
+    /**
+     * Feedback handler
+     * this will update the state when either of the *_SPACE events are called
+     * @param {ApiFeedback} feedback
+     */
     _onFeedback: function (feedback) {
       switch(feedback.code) {
         case ApiFeedback.CODES.MAKE_SPACE:
         case ApiFeedback.CODES.UNMAKE_SPACE:
-          this._update();
+          this._updateSidebarState();
       };
     },
 
+    /**
+     * Toggle the current state
+     */
     toggleSidebarState: function () {
       this.setSidebarState(!this.getSidebarState());
     },
 
+    /**
+     * Set the sidebar state to a new value
+     * this will trigger an update even if the value doesn't change
+     * @param {Boolean} value - the new state value
+     */
     setSidebarState: function (value) {
-      state.set('hide', value);
-      state.trigger('change:hide');
+      state.set('show', value);
+      state.trigger('change:show');
     },
 
+    /**
+     * get the current sidebar state
+     * @returns {Boolean} - the current state
+     */
     getSidebarState: function () {
-      return state.get('hide');
+      return state.get('show');
     }
   };
 
