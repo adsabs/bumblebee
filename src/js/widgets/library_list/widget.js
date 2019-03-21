@@ -175,6 +175,7 @@ define([
         'libraryID': data.id,
         'editRecords': data.editRecords
       });
+      this.dispatchRequest();
     },
 
     initialize: function (options) {
@@ -228,7 +229,7 @@ define([
     },
 
     onShow: function () {
-      this.dispatchRequest();
+      
     },
 
     composeRequest: function (apiQuery) {

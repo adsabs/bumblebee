@@ -234,14 +234,15 @@ function (
         var that = this;
         // this is NOT navigable from outside, so library already has data
         // only setting a nav event to hide previous widgets
-        app.getWidget('IndividualLibraryWidget').done(function (widget) {
-          widget.setSubView({ subView: 'admin' });
-          app.getObject('MasterPageManager').show('LibrariesPage',
+        app.getObject('MasterPageManager').show('LibrariesPage',
           ['IndividualLibraryWidget', 'UserNavbarWidget']).then(function() {
-            publishPageChange('libraries-page');
-            defer.resolve();
+          app.getWidget('IndividualLibraryWidget').done(function (widget) {
+            widget.setSubView({ subView: 'admin' });
           });
+          publishPageChange('libraries-page');
+          defer.resolve();
         });
+
         return defer.promise();
       });
 
@@ -249,44 +250,39 @@ function (
         var defer = $.Deferred();
         var that = this;
 
+        if (redirectIfNotSignedIn()) {
+          return defer.resolve().promise();
+        }
+
         // where view is an object in the form
         // {subView: subView, id: id, publicView : false}
 
         data.publicView = data.publicView ? data.publicView : false;
-
-        var that = this;
         this.route = data.publicView ? '#/public-libraries/' + data.id : '#user/libraries/' + data.id;
 
-        app.getObject('LibraryController').getLibraryMetadata(data.id).done(function (metadata) {
-          data.editRecords = _.contains(['write', 'admin', 'owner'], metadata.permission) && !data.publicView;
-          that.title = data.publicView ? 'Public' : 'Private' + ' Library | ' + metadata.name;
-          // inform library list widget about the data
-          app.getWidget('LibraryListWidget').done(function (widget) {
-            widget.setData(data);
+        var pub = data.publicView;
 
-            if (data.publicView) {
-              app.getWidget('IndividualLibraryWidget').done(function (widget) {
-                widget.setSubView(data);
-                // then, show library page manager
-                app.getObject('MasterPageManager').show('PublicLibrariesPage',
-                  ['IndividualLibraryWidget', 'LibraryListWidget']).then(function() {
-                    defer.resolve();
-                  });
-              });
-            }
-            // make sure user is signed in
-            else if (!redirectIfNotSignedIn()) {
-              app.getWidget('IndividualLibraryWidget').done(function (widget) {
-                widget.setSubView(data);
-                app.getObject('MasterPageManager').show('LibrariesPage',
-                  ['IndividualLibraryWidget', 'LibraryListWidget', 'UserNavbarWidget']).then(function() {
-                    publishPageChange('libraries-page');
-                    defer.resolve();
-                  });
-              });
-            }
+        app.getObject('MasterPageManager').show(
+          pub ? 'PublicLibrariesPage' : 'LibrariesPage',
+          pub ?
+            ['IndividualLibraryWidget', 'LibraryListWidget']
+            : ['IndividualLibraryWidget', 'LibraryListWidget', 'UserNavbarWidget']
+        ).then(function () {
+
+          app.getObject('LibraryController').getLibraryMetadata(data.id).done(function (metadata) {
+            data.editRecords = _.contains(['write', 'admin', 'owner'], metadata.permission) && !data.publicView;
+            that.title = data.publicView ? 'Public' : 'Private' + ' Library | ' + metadata.name;
+
+            app.getWidget('LibraryListWidget', 'IndividualLibraryWidget').then(function (w) {
+              w['LibraryListWidget'].setData(data);
+              w['IndividualLibraryWidget'].setSubView(data);
+              if (pub) publishPageChange('libraries-page');
+
+              defer.resolve();
+            });
           });
         });
+
         return defer.promise();
       });
 

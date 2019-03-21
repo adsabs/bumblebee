@@ -80,7 +80,7 @@ define([
       var data = this.model.toJSON();
       data.date_last_modified = this.formatDate(data.date_last_modified);
       data.date_created = this.formatDate(data.date_created);
-      if (this.model.get('num_documents') >= 2000) {
+      if (this.model.get('num_documents') >= 200) { // careful, must be lower than server GET limits (incl all other headers that we are sending)
         // show a warning when user exports library that it might take a while
         data.largeLibrary = true;
       }
