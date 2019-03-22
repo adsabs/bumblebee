@@ -43,7 +43,7 @@ define([
     },
 
     onRender: function (e) {
-      var $inputs = this.$('.paper-form input:not(#pub-input), .bibcode-form textarea', this.$el);
+      var $inputs = this.$('.paper-form input:not(#pub-input)', this.$el);
       $inputs.keyup(function (e) {
         if (e.keyCode === 13) {
           $(this).trigger('enter');
