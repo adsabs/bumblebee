@@ -45,6 +45,7 @@ define([
     },
 
     submitForm: function (e) {
+      e.preventDefault();
       var queryDict = this.serializeClassic();
       if (!queryDict.q.length) {
         // allow searching of just dates (which is a filter)
@@ -206,11 +207,20 @@ define([
 
             // use parentheses always (bc of = parsing issue)
             if (field === 'bibstem') {
-              qDict.fq.push('{!type=aqp v=$fq_bibstem_facet}');
-              qDict.fq_bibstem_facet = '(' + _.map(phrases, function (p) {
-                return 'bibstem_facet:"' + p + '"';
-              }).join(logic) + ')';
-              qDict.__fq_bibstem_facet = ["AND", "selected publications"]
+
+              // split the bibstems into two groups
+              var groups = _.reduce(phrases, function (acc, p) {
+                /^\-/.test(p) ?
+                  acc.neg.push(p.replace(/^\-/, '')) : acc.pos.push(p);
+                return acc;
+              }, { neg: [], pos: [] });
+
+              if (groups.neg.length) {
+                qDict.q.push('-bibstem:(' + groups.neg.join(' OR ') + ')');
+              }
+              if (groups.pos.length) {
+                qDict.q.push('bibstem:(' + groups.pos.join(' OR ') + ')');
+              }
             } else {
               phrases = phrases.length > 1 ? phrases.join(logic) : phrases[0];
               extra = extra ? logic + extra : '';
@@ -224,7 +234,10 @@ define([
 
     onRender: function (e) {
       var getLastTerm = function (term) {
-        return _.last(term.split(/(,\s|;\s|[,;])/));
+        var t = _.last(term.split(/(,\s|;\s|[,;])/));
+
+        // ignore any leading `-`
+        return t.replace(/^\-/, '');
       };
       this.$('input[name=bibstem]').autocomplete({
         minLength: 1,
@@ -252,10 +265,13 @@ define([
         },
         select: function (event, ui) {
           var terms = split(this.value);
+
           // remove the current input
-          terms.pop();
+          var t = terms.pop();
+
           // add the selected item
-          terms.push(ui.item.value);
+          terms.push((t.startsWith('-') ? '-' : '') + ui.item.value);
+
           // add placeholder to get the comma-and-space at the end
           terms.push('');
           this.value = terms.join(', ');
@@ -273,7 +289,10 @@ define([
           );
         }
         var $li = $('<li/>').appendTo(ul);
-        $('<a/>').attr('href', '#').html(label).appendTo($li);
+        $('<a/>').attr('href', 'javascript:void(0)')
+          .html(label).appendTo($li).on('click', function (e) {
+            e.preventDefault();
+          });
         return $li;
       };
     }
@@ -308,9 +327,9 @@ define([
 
       newQuery = new ApiQuery(newQuery);
       var ps = this.getPubSub();
-      
+
       ps.publish(ps.NAVIGATE, 'search-page', { q: newQuery, page: 'classic-form' });
-      
+
 
       analytics('send', 'event', 'interaction', 'classic-form-submit', JSON.stringify(queryDict));
     },
