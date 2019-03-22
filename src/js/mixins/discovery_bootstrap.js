@@ -37,8 +37,8 @@ function (
 
     var isPushState = function () {
       return Backbone.history
-        || Backbone.history.options
-        || Backbone.history.options.pushState;
+        && Backbone.history.options
+        && Backbone.history.options.pushState;
     };
 
     var transformHref = _.memoize(function (href) {
@@ -60,7 +60,7 @@ function (
     };
 
     var handleNavigation = function () {
-      if (!isPushState) return;
+      if (!isPushState()) return;
       var $el = $(this);
       var url = transformHref($el.attr('href'));
       if (url) {
