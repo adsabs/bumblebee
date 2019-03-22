@@ -226,14 +226,15 @@ define([
 
     template: DeleteAccountTemplate,
     className: 'delete-account',
+    events: {
+      'click #delete-account': 'confirm'
+    },
 
-    triggerSubmit: function () {
-      // manually close the modal, for some reason just the close markup
-      // only works some of the time
-      this.$('.modal').modal('hide');
-      $('body').removeClass('modal-open');
-      $('.modal-backdrop').remove();
-      FormFunctions.triggerSubmit.apply(this, arguments);
+    confirm: function () {
+      var msg = 'This action cannot be reversed\n\nAre you sure?';
+      if (confirm(msg)) {
+        FormFunctions.triggerSubmit.call(this);
+      }
     }
   });
 
