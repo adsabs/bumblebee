@@ -34,10 +34,12 @@ define([
       'keyup .paper-form input': 'checkPaperFormDisabled',
       'enter .paper-form input': 'submitPaperForm',
       'click .paper-form button[type=submit]': 'submitPaperForm',
+      'click .paper-form button[type=reset]': 'clearPaperForm',
 
       'keyup .bibcode-form textarea': 'checkBibcodeFormDisabled',
       'enter .bibcode-form textarea': 'submitBibcodeForm',
-      'click .bibcode-form button[type=submit]': 'submitBibcodeForm'
+      'click .bibcode-form button[type=submit]': 'submitBibcodeForm',
+      'click .bibcode-form button[type=reset]': 'clearBibcodeForm'
     },
 
     onRender: function (e) {
@@ -76,6 +78,16 @@ define([
         $('<a/>').html(label).appendTo($li);
         return $li;
       };
+    },
+
+    clearPaperForm: function () {
+      this.$('.paper-form input').val('').first().focus();
+      return false;
+    },
+
+    clearBibcodeForm: function () {
+      this.$('.bibcode-form textarea').val('').focus();
+      return false;
     },
 
     checkPaperFormDisabled: function () {
