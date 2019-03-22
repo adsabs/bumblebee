@@ -38,9 +38,6 @@ define([
       var ret = PageManagerController.prototype.show.apply(this, arguments);
       var button = '<a href="#" class="back-button btn btn-sm btn-default"> <i class="fa fa-arrow-left"></i> Start New Search</a>';
       ret.$el.find('.s-back-button-container').empty().html(button);
-
-      // after assembly call the sidebar updater
-      this.setSidebarState(this._getUpdateFromUserData());
       return ret;
     },
 

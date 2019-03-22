@@ -70,9 +70,8 @@ define([
      */
     _onFeedback: function (feedback) {
       switch(feedback.code) {
-        case ApiFeedback.CODES.MAKE_SPACE:
-        case ApiFeedback.CODES.UNMAKE_SPACE:
-          this._updateSidebarState();
+        case ApiFeedback.CODES.MAKE_SPACE: this.setSidebarState(false); break;
+        case ApiFeedback.CODES.UNMAKE_SPACE: this.setSidebarState(true);
       };
     },
 
