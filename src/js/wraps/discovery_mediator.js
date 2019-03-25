@@ -22,33 +22,13 @@ function (
 ) {
   var handlers = {};
 
-  handlers[ApiFeedback.CODES.MAKE_SPACE] = function (feedback) {
-    var mpm = this.getApp().getObject('MasterPageManager');
-    if (mpm) {
-      var child = mpm.getCurrentActiveChild();
-      if (child.view && child.view.showCols) {
-        child.view.showCols({ right: false, left: false });
-        // open the view again
-        this.getBeeHive().getService('PubSub').once(this.getPubSub().START_SEARCH,
-          _.once(function () { child.view.showCols({ right: true }); }));
-      }
-    }
+  handlers[ApiFeedback.CODES.MAKE_SPACE] = function () {
     this.getBeeHive().getService('PubSub').once(this.getPubSub().DELIVERING_REQUEST, _.bind(function (apiRequest, psk) {
       if (this._tmp.callOnce[psk.getId()]) {
         return;
       }
       this._tmp.callOnce[psk.getId()] = true;
     }, this));
-  };
-
-  handlers[ApiFeedback.CODES.UNMAKE_SPACE] = function (feedback) {
-    var mpm = this.getApp().getObject('MasterPageManager');
-    if (mpm) {
-      var child = mpm.getCurrentActiveChild();
-      if (child.view && child.view.showCols) {
-        child.view.showCols({ right: true, left: true });
-      }
-    }
   };
 
   handlers[ApiFeedback.CODES.SEARCH_CYCLE_STARTED] = function (feedback) {
