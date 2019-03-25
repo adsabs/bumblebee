@@ -77,21 +77,17 @@ define([
 
     initialize: function (options) {
       this.classicView = new ImportView({ endpoint: CLASSIC });
-      this.ads2View = new ImportView({ endpoint: ADS2 });
     },
 
     regions: {
-      classic: '#' + CLASSIC + '-import-tab',
-      ads2: '#' + ADS2 + '-import-tab'
+      classic: '#' + CLASSIC + '-import-tab'
     },
 
     template: TabContainerTemplate,
 
     onRender: function () {
       this.classic.show(this.classicView);
-      this.ads2.show(this.ads2View);
     }
-
   });
 
 
@@ -133,10 +129,6 @@ define([
 
       this.view.classicView.on('submit-credentials', function (data) {
         submitCredentials(ApiTargets.LIBRARY_IMPORT_CLASSIC_AUTH, that.view.classicView, data);
-      });
-
-      this.view.ads2View.on('submit-credentials', function (data) {
-        submitCredentials(ApiTargets.LIBRARY_IMPORT_ADS2_AUTH, that.view.ads2View, data);
       });
 
       /*
@@ -184,29 +176,6 @@ define([
       this.view.classicView.on('library-import', function () {
         importLibraries(CLASSIC, that.view.classicView);
       });
-
-      this.view.ads2View.on('library-import', function () {
-        importLibraries(ADS2, that.view.ads2View);
-      });
-
-      // finally, attach listener for zotero/mendeley import event
-      this.view.ads2View.on('bibtex-import', function (data) {
-        // right now, zotero or mendeley
-        var target = 'LIBRARY_IMPORT_' + data.target.toUpperCase();
-
-        that.getBeeHive().getService('Api').request(new ApiRequest({
-          target: ApiTargets[target],
-          options: {
-            done: function () {
-              var iframe = '<iframe style="display:none;" src="' + arguments[0].url + '"></iframe>';
-              $(document.body).append(iframe);
-              setTimeout(function () {
-                $(iframe).remove();
-              }, 1000);
-            }
-          }
-        }));
-      });
     },
 
     activate: function (beehive) {
@@ -247,7 +216,6 @@ define([
                * {"classic_email": "fake@fakitifake.com", "classic_mirror": "mirror", "twopointoh_email": "fakeads2@gmail.com"}
                */
             that.view.classicView.model.set(data);
-            that.view.ads2View.model.set(data);
           },
           fail: function (response, status) {
             // if user hasnt registered yet

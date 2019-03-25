@@ -97,8 +97,6 @@ ApiTargets
 
       $("#test").append( new LibraryImportWidget().render().el);
       expect($("div.tab-pane.active").attr("id")).to.eql("classic-import-tab");
-      $("a[href=#twopointoh-import-tab]").click();
-      expect($("div.tab-pane.active").attr("id")).to.eql("twopointoh-import-tab");
 
     });
 
@@ -127,7 +125,7 @@ ApiTargets
       expect(requestSpy.args[1][0].toJSON().target).to.eql( "harbour/user" );
     //check that both forms show the correct authentication text
       expect($(".library-import-form>div:first-of-type").text().replace(/\s/g, "")).to
-          .eql("Youarecurrentlyauthenticatedasfake@fakitifake.comwithmirrorsitemirror.Youarecurrentlyauthenticatedasfakeads2@gmail.com.")
+          .eql("Youarecurrentlyauthenticatedasfake@fakitifake.comwithmirrorsitemirror.")
 
     });
 
@@ -148,16 +146,8 @@ ApiTargets
       expect(requestSpy.args[2][0].get("options").data).to.eql({classic_email: "Alex", classic_password: "Foo", classic_mirror: "classic_mirror_2"});
       expect(requestSpy.args[2][0].get("target")).to.eql(ApiTargets.LIBRARY_IMPORT_CLASSIC_AUTH);
 
-
-      $("input#twopointoh-username").val("AlexH");
-      $("input#twopointoh-password").val("Foo2");
-      $("#twopointoh-import-tab button.submit-credentials").click();
-
-      expect(requestSpy.args[3][0].get("options").data).to.eql({twopointoh_email: "AlexH", twopointoh_password: "Foo2"});
-      expect(requestSpy.args[3][0].get("target")).to.eql(ApiTargets.LIBRARY_IMPORT_ADS2_AUTH);
-
-      //now both forms should show the authenticated view (which has the import-all-libraries button)
-      expect($(".import-all-libraries").get().length).to.eql(2);
+      //now the form should show the authenticated view (which has the import-all-libraries button)
+      expect($(".import-all-libraries").get().length).to.eql(1);
 
     });
 
@@ -176,39 +166,6 @@ ApiTargets
       expect(importLibraries.args[0][0]).to.eql("classic");
 
       expect($("#classic-import-tab .status").text().trim().replace(/\s+/g, " ")).to.eql("× Success! The following libraries were successfully imported for the first time: Name Name2");
-      expect($("#twopointoh-import-tab .status").text().trim()).to.eql("");
-
-
-      $("#twopointoh-import-tab .import-all-libraries").click();
-
-      expect(importLibraries.args[1][0]).to.eql("twopointoh");
-
-      expect($("#twopointoh-import-tab .status").text().trim().replace(/\s+/g, " ")).to.eql('× Success! The following libraries were successfully imported for the first time: a library anotherlibrary');
-
     });
-
-    it("should offer in 2.0 view option to download all libraries as zotero bibtex", function(){
-
-      alreadyAuthorized = true;
-
-      var l = new LibraryImportWidget();
-      l.activate(minsub.beehive.getHardenedInstance());
-
-      $("#test").append( l.render().el);
-      
-      $("#twopointoh-import-tab .bibtex-import[data-target=zotero]").click();
-
-      expect(requestSpy.args[2][0].toJSON().target).to.eql("harbour/export/twopointoh/zotero");
-
-      $("#twopointoh-import-tab .bibtex-import[data-target=mendeley]").click();
-
-      expect(requestSpy.args[3][0].toJSON().target).to.eql("harbour/export/twopointoh/mendeley");
-
-
-    });
-
   });
-
-
-
 });
