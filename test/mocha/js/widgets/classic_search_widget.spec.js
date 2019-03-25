@@ -92,7 +92,7 @@ define([
       w.view.$("div[data-field=abs]").find("input[type=text]").val('-hawaii star');
       w.view.$("div[data-field=abs] input[name=abstract-logic]").val("BOOLEAN")
 
-      w.view.$("div[data-field=bibstem]").find("input[name=bibstem]").val("apj,mnras,");
+      w.view.$("div[data-field=bibstem]").find("input[name=bibstem]").val("apj,mnras,-aj,-bpj");
 
       w.view.$("div[data-field=property]").find("input[name=refereed]").click();
       w.view.$("div[data-field=property]").find("input[name=article]").click();
@@ -103,37 +103,7 @@ define([
       w.view.$("button[type=submit]").eq(0).click();
 
 
-      expect(publishSpy.args[0][3]["q"].toJSON()).to.eql({
-        "q": [
-          "pubdate:[2010-10 TO 9999-12] author:(\"Accomazzi,a\" AND \"Kurtz,M\") title:(star OR planet OR \"gliese 581\") abs:(-\"hawaii star\")"
-        ],
-        "fq": [
-          "{!type=aqp v=$fq_database}",
-          "{!type=aqp v=$fq_property}",
-          "{!type=aqp v=$fq_bibstem_facet}"
-        ],
-        "fq_database": [
-          "database: (astronomy or physics)"
-        ],
-        "__fq_database": [
-          "AND", "(astronomy or physics)"
-        ],
-        "fq_property": [
-          "property: (refereed or notrefereed)"
-        ],
-        "__fq_property": [
-          "AND", "(refereed or notrefereed)"
-        ],
-        "fq_bibstem_facet": [
-          "(bibstem_facet:\"apj\" OR bibstem_facet:\"mnras\")"
-        ],
-        "__fq_bibstem_facet": [
-          "AND", "selected publications"
-        ],
-        "sort": [
-          "date desc"
-        ]
-      });
+      expect(JSON.stringify(publishSpy.args[0][3]["q"].toJSON())).to.eql('{"q":["pubdate:[2010-10 TO 9999-12] author:(\\"Accomazzi,a\\" AND \\"Kurtz,M\\") title:(star OR planet OR \\"gliese 581\\") abs:(-\\"hawaii star\\") -bibstem:(aj OR bpj) bibstem:(apj OR mnras)"],"fq":["{!type=aqp v=$fq_database}","{!type=aqp v=$fq_property}"],"__fq_database":["AND","(astronomy or physics)"],"fq_database":["database: (astronomy or physics)"],"__fq_property":["AND","(refereed or notrefereed)"],"fq_property":["property: (refereed or notrefereed)"],"sort":["date desc"]}');
 
       //one more
 
@@ -159,37 +129,7 @@ define([
 
       w.view.$("button[type=submit]").eq(0).click();
 
-      expect(publishSpy.args[1][3]["q"].toJSON()).to.eql({
-        "q": [
-          "pubdate:[2010-10 TO 2012-12] author:(\"Accomazzi,a\") title:(star OR planet OR \"gliese 581\") abs:(-\"hawaii star\")"
-        ],
-        "fq": [
-          "{!type=aqp v=$fq_database}",
-          "{!type=aqp v=$fq_property}",
-          "{!type=aqp v=$fq_bibstem_facet}"
-        ],
-        "fq_database": [
-          "database: astronomy"
-        ],
-        "__fq_database": [
-          "AND", "astronomy"
-        ],
-        "fq_property": [
-          "property: refereed"
-        ],
-        "__fq_property": [
-          "AND", "refereed"
-        ],
-        "fq_bibstem_facet": [
-          "(bibstem_facet:\"apj\")"
-        ],
-        "__fq_bibstem_facet": [
-          "AND", "selected publications"
-        ],
-        "sort": [
-          "date desc"
-        ]
-      });
+      expect(JSON.stringify(publishSpy.args[1][3]["q"].toJSON())).to.eql('{"q":["pubdate:[2010-10 TO 2012-12] author:(\\"Accomazzi,a\\") title:(star OR planet OR \\"gliese 581\\") abs:(-\\"hawaii star\\") bibstem:(apj)"],"fq":["{!type=aqp v=$fq_database}","{!type=aqp v=$fq_property}"],"__fq_database":["AND","astronomy"],"fq_database":["database: astronomy"],"__fq_property":["AND","refereed"],"fq_property":["property: refereed"],"sort":["date desc"]}');
 
     });
 
