@@ -92,8 +92,8 @@ define(['underscore', 'js/mixins/openurl_generator'], function (_, OpenURLGenera
       shortName: 'CDS',
       description: 'Strasbourg Astronomical Data Center'
     },
-    CXO: {
-      shortName: 'CXO',
+    Chandra: {
+      shortName: 'Chandra',
       description: 'Chandra X-Ray Observatory'
     },
     ESA: {
