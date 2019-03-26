@@ -174,6 +174,9 @@ define([
         step: 1,
         slide: function (event, ui) {
           that.model.set({ currentSliderVal: ui.value });
+        },
+        create: function (event) {
+          $('a', event.target).attr('href', 'javascript:void(0)');
         }
       });
     },

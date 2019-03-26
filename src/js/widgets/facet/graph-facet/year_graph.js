@@ -356,8 +356,10 @@ function (
             ui2 = ui.values[1];
           that.$('.show-slider-data-first').val(ui1);
           that.$('.show-slider-data-second').val(ui2);
+        },
+        create: function (event) {
+          $('a', event.target).attr('href', 'javascript:void(0)');
         }
-
       });
       this.$('.show-slider-data-first').val(min);
       this.$('.show-slider-data-second').val(max);

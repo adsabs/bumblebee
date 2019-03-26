@@ -334,8 +334,10 @@ function (BaseGraphView,
         },
         slide: function (event, ui) {
           that.$('.show-slider-data-first').val(ui.value);
+        },
+        create: function (event) {
+          $('a', event.target).attr('href', 'javascript:void(0)');
         }
-
       });
 
       this.$('.show-slider-data-first').val(max);
