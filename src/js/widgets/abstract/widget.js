@@ -196,7 +196,7 @@ function (
     showAllPubnotes: function (e) {
       var m = this.model;
       m.set({
-        pubnoteList: m.get('comment'),
+        pubnoteList: m.get('pubnote'),
         showAllPubnotes: true
       });
       return false;
