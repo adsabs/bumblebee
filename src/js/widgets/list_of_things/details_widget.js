@@ -34,7 +34,12 @@ function (
         if (event === 'broadcast-payload') {
 
           // set the current title
-          this.model.set('title', data.title);
+          this.model.set({
+            title: data.title,
+
+            // hide checkboxes on abstract sub-pages
+            showCheckboxes: false
+          });
           this.canLoad = false;
           this.ingestBroadcastedPayload(data);
         }
