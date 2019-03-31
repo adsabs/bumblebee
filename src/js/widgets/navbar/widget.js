@@ -126,10 +126,17 @@ define([
           return false;
         });
 
+        // timeout to make sure element is available to attach event listener
+        setTimeout(function () {
+          var $dropdown = $('.account-dropdown');
+          $('a', $dropdown).click(function () {
+            $('.dropdown-toggle', $dropdown).dropdown('toggle');
+          });
+        }, 300);
+
         this.formAttached = true;
       }
     }
-
   });
 
   NavWidget = BaseWidget.extend({
