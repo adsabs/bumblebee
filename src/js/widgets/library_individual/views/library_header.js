@@ -71,7 +71,6 @@ define([
       this.$('[data-toggle="tooltip"]').tooltip();
     },
 
-
     formatDate: function (d) {
       return moment.utc(d).local().format('MMM D YYYY, h:mma');
     },
@@ -91,6 +90,11 @@ define([
       }
 
       return data;
+    },
+
+    onSearchStarted: function () {
+      this.$('.bigquery-export i').css('display', 'inline-block');
+      this.$('.bigquery-export .icon-loading').css('display', 'none');
     },
 
     showForm: function (e) {
