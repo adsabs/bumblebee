@@ -281,6 +281,7 @@ define([
 
         var widget  = _getWidget();
         var $w = widget.render().$el;
+        widget.model.set('showCheckboxes', true);
 
         s.addSelectedPapers('2013arXiv1305.3460H');
         minsub.publish(minsub.START_SEARCH, new ApiQuery({'q': 'foo:bar'}));

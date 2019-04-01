@@ -74,8 +74,8 @@ define([
   const parseItems = (items, bibcode) => {
     const parseUrl = (url) => {
       try {
-        // decode and rip the "/#abs..." part off the url
-        return decodeURIComponent(url.slice(url.indexOf(':') + 1));
+        // decode and rip the "/#abs..." part off the url and any leading slash
+        return decodeURIComponent(url.slice(url.indexOf(':') + 1)).replace(/^\//, '');
       } catch (e) {
         return url;
       }

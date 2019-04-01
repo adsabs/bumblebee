@@ -53,7 +53,7 @@ define([
 
   // simple button
   const ShowAllBtn = ({ onClick }) => (
-    <button className="btn btn-default btn-xs" onClick={e => onClick()}>Show All</button>
+    <button className="btn btn-default btn-xs" onClick={e => onClick(e)}>Show All</button>
   );
 
   // Associated Articles Widget
@@ -67,7 +67,8 @@ define([
     }
 
     // remove the button and update the items to show everything
-    onShowAll() {
+    onShowAll(e) {
+      e.preventDefault();
       this.setState({
         showAllBtn: false,
         items: this.props.items
@@ -95,7 +96,7 @@ define([
           <Container>
             <Title>Associated Works ({this.props.items.length})</Title>
             <Links items={items} onClick={handleLinkClick} />
-            {showAllBtn && <ShowAllBtn onClick={e => this.onShowAll()} />}
+            {showAllBtn && <ShowAllBtn onClick={e => this.onShowAll(e)} />}
           </Container>
         );
       }

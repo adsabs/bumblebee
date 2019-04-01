@@ -231,6 +231,7 @@ function (
               sort: 'date desc'
             });
             pubsub.publish(pubsub.NAVIGATE, 'search-page', { q: query });
+            that.headerView.triggerMethod('search:started');
           });
       }
     }

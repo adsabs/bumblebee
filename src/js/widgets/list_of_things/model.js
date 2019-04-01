@@ -24,7 +24,8 @@ function (
         'links_data': undefined,
         'resultsIndex': undefined,
         'visible': false,
-        'actionsVisible': true
+        'actionsVisible': true,
+        'showCheckbox': true
       };
     },
     idAttribute: 'resultsIndex'

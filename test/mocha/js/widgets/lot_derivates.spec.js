@@ -74,7 +74,7 @@ define([
       // makes sure that dispatchRequest goes through without waiting
       w.canLoad = true;
       w.hiddenCollection.add([{bibcode : 1}, {bibcode : 2}]);
-      expect(JSON.stringify(w.hiddenCollection.toJSON())).to.eql('[{"bibcode":1,"resultsIndex":0,"emptyPlaceholder":false,"visible":false,"actionsVisible":true},{"bibcode":2,"resultsIndex":1,"emptyPlaceholder":false,"visible":false,"actionsVisible":true}]');
+      expect(JSON.stringify(w.hiddenCollection.toJSON())).to.eql('[{"bibcode":1,"resultsIndex":0,"emptyPlaceholder":false,"visible":false,"actionsVisible":true,"showCheckbox":true},{"bibcode":2,"resultsIndex":1,"emptyPlaceholder":false,"visible":false,"actionsVisible":true,"showCheckbox":true}]');
       //this will be triggered by TOC widget on a fresh "display_documents"
       w.model.set('bibcode', 'new_bibcode');
       expect(JSON.stringify(w.hiddenCollection.toJSON())).to.eql("[]")

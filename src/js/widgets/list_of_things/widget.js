@@ -166,13 +166,15 @@ define([
         ? apiResponse.get('response.start') : this.model.get('start');
       var pagination = this.getPaginationInfo(apiResponse, docs);
       docs = this.processDocs(apiResponse, docs, pagination);
+      var self = this;
 
       if (docs && docs.length) {
 
         // make sure the new docs close highlights if they aren't there
         var newDocs = _.map(docs, function (d) {
           return _.extend(d, {
-            showHighlights: !_.isEmpty(d.highlights)
+            showHighlights: !_.isEmpty(d.highlights),
+            showCheckbox: !!self.model.get('showCheckboxes')
           });
         });
 
@@ -185,7 +187,6 @@ define([
         if (hasHighlights.length === 0) {
           this.view.model.set('showHighlights', 'closed');
         }
-
 
         if (pagination.showRange) {
           // we must update the model before updating collection because the showRange

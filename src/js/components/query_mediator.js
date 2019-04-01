@@ -766,32 +766,36 @@ function (
 
     // display tugboat messages if they exist
     displayTugboatMessages: function () {
+      var TUGBOAT_MESSAGES = {
+        AUTHOR_ANDED_WARNING: 'Author search terms combined with AND rather than OR',
+        ENTRY_DATE_OFFSET_ERROR: 'Can not combine a date and offset (negative value) for the Entry Date',
+        ENTRY_DATE_NON_NUMERIC_ERROR: 'found a non numeric value in the Entry Date',
+        UNRECOGNIZABLE_VALUE: 'Unrecognizeable Value'
+      }
+
       if (!this.original_url) {
         // without the original url there can be no messages to display
         return;
       }
 
-      // pull out message components and merge them together
-      messages = [];
+      var messages = [].concat(
+        utils.qs('error_message', this.original_url, false) || [],
+        utils.qs('warning_message', this.original_url, false) || [],
+        utils.qs('unprocessed_parameter', this.original_url, false) || []
+      );
 
-      err = utils.qs('error_message', this.original_url, '  ');
-      if (err) {
-        messages.push(err);
-      }
+      messages = _.reduce(messages, function (acc, msg) {
+        msg = msg.toUpperCase();
+        if (_.has(TUGBOAT_MESSAGES, msg)) {
+          acc.push(TUGBOAT_MESSAGES[msg]);
+        }
+        return acc;
+      }, []);
 
-      warn = utils.qs('warning_message', this.original_url, '  ');
-      if (warn) {
-        messages.push(warn);
-      }
-
-      unprocessed = utils.qs('unprocessed_parameter', this.original_url, '  ');
-      if (unprocessed) {
-        messages.push(unprocessed);
-      }
-
+      var message;
       if (messages.length > 0) {
         messages.push('See our <a style="text-decoration: underline; font-weight: bold" href="http://adsabs.github.io/help/faq/#classic-search-translator">docs</a> for more information');
-        message = messages.join('<br>');
+        message = messages.join('<br/>');
         this.getAlerter().alert(new ApiFeedback({
           type: Alerts.TYPE.INFO,
           msg: message

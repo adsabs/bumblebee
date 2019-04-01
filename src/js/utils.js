@@ -14,8 +14,14 @@ define([
       for (var i = 0 ; i < match.length ; i++) {
         clean.push(match[i].replace(new RegExp('(^|[\\?&])' +  k + '='), ''));
       }
-      msg = clean.join(separator);  // works even if separator is undefined
-      return decodeURIComponent(msg.replace(/\+/g, " "));
+      if (separator) {
+        var msg = clean.join(separator);  // works even if separator is undefined
+        return decodeURIComponent(msg.replace(/\+/g, " "));
+      } else if (separator === false) {
+        return _.map(clean, function (msg) {
+          return decodeURIComponent(msg.replace(/\+/g, " "));
+        });
+      }
     }
   };
 

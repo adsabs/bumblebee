@@ -119,6 +119,10 @@ define([
       }
     },
 
+    emptyViewOptions: function () {
+      return { model: this.model };
+    },
+
     childEvents: {
       removeRecord: 'removeRecord'
     },
@@ -229,7 +233,7 @@ define([
     },
 
     onShow: function () {
-      
+
     },
 
     composeRequest: function (apiQuery) {
