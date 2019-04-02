@@ -381,8 +381,8 @@ function (
         app.getObject('MasterPageManager').show('HomePage',
           []).then(function() {
             publishPageChange('home-page');
-            that.title = '';
-            that.route = '';
+            that.title = 'Home';
+            that.route = '#user/home';
             defer.resolve();
           })
         return defer.promise();
