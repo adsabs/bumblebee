@@ -134,7 +134,7 @@ require.config({
         ShowAssociated: 'es6!js/widgets/associated/widget.jsx',
         ShowRecommender: 'js/widgets/recommender/widget',
         ShowMetrics: 'js/wraps/paper_metrics',
-        ShowPaperexport: 'js/wraps/paper_export',
+        ShowExportcitation: 'js/wraps/paper_export',
         ShowLibraryAdd: 'js/wraps/abstract_page_library_add/widget',
 
         IndividualLibraryWidget: 'js/widgets/library_individual/widget',
