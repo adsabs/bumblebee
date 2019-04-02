@@ -55,6 +55,10 @@ if ('serviceWorker' in navigator && location.hostname !== 'localhost' && locatio
     // *Don't* register service worker file in, e.g., a scripts/ sub-directory!
     // See https://github.com/slightlyoff/ServiceWorker/issues/468
     navigator.serviceWorker.register('sw.js').then(function(reg) {
+
+      // update the service worker on a regular schedule (every hour)
+      setInterval(reg.update, 3.6e+6);
+
       // updatefound is fired if service-worker.js changes.
       reg.onupdatefound = function() {
         // The updatefound event implies that reg.installing is set; see
@@ -68,9 +72,6 @@ if ('serviceWorker' in navigator && location.hostname !== 'localhost' && locatio
                 // At this point, the old content will have been purged and the fresh content will
                 // have been added to the cache.
                 console.log('New or updated content is available.');
-
-                // reload the page
-                window.location.reload();
               } else {
                 // At this point, everything has been precached.
                 console.log('Content is now available offline!');
