@@ -741,9 +741,11 @@ function (
       });
 
       this.set('orcid-instructions', function () {
+        var that = this;
         var defer = $.Deferred();
         app.getObject('MasterPageManager').show('OrcidInstructionsPage').then(function() {
           that.route = '#orcid-instructions';
+          that.title = 'Orcid Instructions';
         })
         return defer.promise();
       });
