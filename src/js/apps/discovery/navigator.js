@@ -381,8 +381,8 @@ function (
         app.getObject('MasterPageManager').show('HomePage',
           []).then(function() {
             publishPageChange('home-page');
-            that.title = '';
-            that.route = '';
+            that.title = 'Home';
+            that.route = '#user/home';
             defer.resolve();
           })
         return defer.promise();
@@ -741,9 +741,11 @@ function (
       });
 
       this.set('orcid-instructions', function () {
+        var that = this;
         var defer = $.Deferred();
         app.getObject('MasterPageManager').show('OrcidInstructionsPage').then(function() {
           that.route = '#orcid-instructions';
+          that.title = 'Orcid Instructions';
         })
         return defer.promise();
       });
@@ -1113,7 +1115,7 @@ function (
         return defer.promise();
       });
 
-      this.set('ShowPaperexport', function (id, data) {
+      this.set('ShowExportcitation', function (id, data) {
         var defer = $.Deferred(),
           that = this;
 

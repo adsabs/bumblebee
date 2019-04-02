@@ -168,7 +168,8 @@ define([
         sort: ['date desc']
       });
 
-      this.getPubSub().publish(this.getPubSub().START_SEARCH, newQuery);
+      var ps = this.getPubSub();
+      ps.publish(ps.NAVIGATE, 'search-page', { q: newQuery });
     },
 
     submitBigQuery: function (bibcodes) {
@@ -177,7 +178,8 @@ define([
         sort: ['date desc']
       });
 
-      this.getPubSub().publish(this.getPubSub().START_SEARCH, newQuery);
+      var ps = this.getPubSub();
+      ps.publish(ps.NAVIGATE, 'search-page', { q: newQuery });
     },
 
     onShow: function () {
