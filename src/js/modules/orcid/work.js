@@ -299,12 +299,11 @@ define([
         exIds.relationships.push('SELF');
       }
       var all_ids = get(ads.all_ids);
-      if (Array.isArray(all_ids)) {
-        var arxiv = all_ids.find(function (element) {
+      var arxiv = false;
+      if (_.isArray(all_ids)) {
+        arxiv = all_ids.find(function (element) {
           return element.toLowerCase().startsWith('arxiv')
           });
-      } else {
-        var arxiv = false;
       }
       if (arxiv) {
         arxiv = arxiv.substr(6);
