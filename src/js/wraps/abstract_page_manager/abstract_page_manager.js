@@ -122,9 +122,9 @@ define([
         category: 'view',
         order: 7
       },
-      ShowPaperexport__default: {
+      ShowExportcitation__default: {
         title: 'Export',
-        path: 'paperexport',
+        path: 'exportcitation',
         category: 'export',
         alwaysThere: 'true',
         order: 8

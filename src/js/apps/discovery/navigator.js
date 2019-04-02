@@ -1115,7 +1115,7 @@ function (
         return defer.promise();
       });
 
-      this.set('ShowPaperexport', function (id, data) {
+      this.set('ShowExportcitation', function (id, data) {
         var defer = $.Deferred(),
           that = this;
 
