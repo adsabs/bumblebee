@@ -140,13 +140,13 @@ function (
     },
 
     view: function (bibcode, subPage) {
-      var navigateString,
-              href;
+      var navigateString, href;
       if (!subPage) {
         navigateString = 'ShowAbstract';
+        href = '#abs/' + encodeURIComponent(bibcode) + '/abstract';
       } else {
         navigateString = 'Show' + subPage[0].toUpperCase() + subPage.slice(1);
-        href = '#abs/' + bibcode + '/' + subPage;
+        href = '#abs/' + encodeURIComponent(bibcode) + '/' + subPage;
       }
       this.routerNavigate(navigateString, { href: href, bibcode: bibcode });
     },
