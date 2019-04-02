@@ -84,6 +84,11 @@ function (
       q.set('q', this.queryUpdater.quoteIfNecessary(q.get('q')[0]));
       q = q.clone();
       var fieldName = 'q';
+      var oldVal = q.get('__' + this.facetField + '_' + fieldName);
+      if (oldVal && oldVal.length > 0) {
+        this.queryUpdater.updateQuery(q, fieldName, 'remove', _.last(oldVal));
+      }
+
       this.queryUpdater.updateQuery(q, fieldName, 'limit', val);
       this.dispatchNewQuery(q);
     },
