@@ -1014,6 +1014,7 @@ function (
           }
 
           that.route = data.href;
+          that.replace = true;
           defer.resolve();
         });
         return defer.promise();
@@ -1036,6 +1037,7 @@ function (
           }
 
           that.route = data.href;
+          that.replace = true;
           defer.resolve();
         });
         return defer.promise();
@@ -1057,6 +1059,7 @@ function (
             that.title = prefix + ' | ' + title;
           }
           that.route = data.href;
+          that.replace = true;
           defer.resolve();
         });
         return defer.promise();
@@ -1078,6 +1081,7 @@ function (
             that.title = prefix + ' | ' + title;
           }
           that.route = data.href;
+          that.replace = true;
           defer.resolve();
         });
         return defer.promise();
@@ -1099,6 +1103,7 @@ function (
            that.title = prefix + ' | ' + title;
          }
           that.route = data.href;
+          that.replace = true;
           defer.resolve();
         });
         return defer.promise();
@@ -1120,6 +1125,7 @@ function (
             that.title = prefix + ' | ' + title;
           }
           that.route = data.href;
+          that.replace = true;
           defer.resolve();
         });
         return defer.promise();
@@ -1141,6 +1147,7 @@ function (
             that.title = prefix + ' | ' + title;
           }
           that.route = data.href;
+          that.replace = true;
           defer.resolve();
         })
         return defer.promise();
@@ -1163,6 +1170,7 @@ function (
                 w.setActive(id, format);
               }
               that.route = data.href;
+              that.replace = true;
               defer.resolve();
             });
           });
@@ -1178,6 +1186,7 @@ function (
             w.setActive(id);
           }
           that.route = data.href;
+          that.replace = true;
           defer.resolve();
         });
         return defer.promise();

@@ -203,11 +203,12 @@ define([
         return this.collection.selectOne('ShowAbstract');
       }
       var path = this.model.get('path') || 'abstract';
+      var encodedId = encodeURIComponent(this.model.get('bibcode'));
 
       var data = {
         idAttribute: this.model.get('idAttribute') || 'showAbstract',
         subView: this.model.get('subView') || '',
-        href: 'abs/' + (this.model.get('bibcode') || '') + '/' + path,
+        href: 'abs/' + (encodedId || '') + '/' + path,
         bibcode: this.model.get('bibcode')
       };
       this.trigger('page-manager-event', 'widget-selected', data);

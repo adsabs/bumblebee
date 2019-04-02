@@ -57,7 +57,9 @@ if ('serviceWorker' in navigator && location.hostname !== 'localhost' && locatio
     navigator.serviceWorker.register('sw.js').then(function(reg) {
 
       // update the service worker on a regular schedule (every hour)
-      setInterval(reg.update, 3.6e+6);
+      setInterval(function () {
+        reg.update();
+      }, 3.6e+6);
 
       // updatefound is fired if service-worker.js changes.
       reg.onupdatefound = function() {
