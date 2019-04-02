@@ -602,17 +602,48 @@ function (
 
         var that = this;
         showResultsPage(pages).then(function () {
-          self.getPubSub().publish(self.getPubSub().START_SEARCH, data.q);
-          that.route = '#search/' + queryUpdater.clean(data.q).url();
-          that.title = data.q.get('q').length && data.q.get('q')[0];
+          var handler = function () {
+            // the current query should have been updated, use that instead
+            var query = self.getBeeHive().getObject('AppStorage').getCurrentQuery();
+            if (!query) {
+              query = data.q;
+            }
 
-          // check if there is a subpage, if so execute that handler w/ our current context
-          if (data.page && self.get(data.page)) {
-            var exec = _.bind(self.get(data.page).execute, that, data.page, { q: data.q });
-            exec(data.page).then(function () { defer.resolve(); });
-          } else {
-            defer.resolve();
-          }
+            var cleaned = queryUpdater.clean(query);
+
+            // re-apply the qid if was lost
+            if (query.has('__qid')) {
+              cleaned.set('__qid', query.get('__qid'));
+            }
+
+            that.route = '#search/' + cleaned.url();
+            if (query.has('__bigquerySource')) {
+              that.title = query.get('__bigquerySource')[0];
+            } else {
+              that.title = query.get('q').length && query.get('q')[0];
+            }
+
+            // check if there is a subpage, if so execute that handler w/ our current context
+            if (data.page && self.get(data.page)) {
+              var exec = _.bind(self.get(data.page).execute, that, data.page, { q: query });
+              exec(data.page).then(function () { defer.resolve(); });
+            } else {
+              defer.resolve();
+            }
+          };
+
+          // subscribe to the search cycle finished event
+          // so that we know that the current query has been set
+          var onFeedback = function (feedback) {
+            if (feedback && feedback.code === ApiFeedback.CODES.SEARCH_CYCLE_FINISHED) {
+              handler();
+              ps.unsubscribe(ps.FEEDBACK, onFeedback);
+            }
+          };
+
+          var ps = self.getPubSub();
+          ps.subscribe(ps.FEEDBACK, onFeedback);
+          ps.publish(ps.START_SEARCH, data.q);
         });
         return defer.promise();
       });

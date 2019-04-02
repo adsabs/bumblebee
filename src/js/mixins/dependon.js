@@ -76,7 +76,7 @@ define([
           publish: function () { this._exec('publish', arguments); },
           subscribe: function () { this._exec('subscribe', arguments); },
           subscribeOnce: function () { this._exec('subscribeOnce', arguments); },
-          unpublish: function () { this._exec('unpublish', arguments); },
+          unsubscribe: function () { this._exec('unsubscribe', arguments); },
           getCurrentPubSubKey: function () { return this._key; }
         };
         _.extend(this.__ctx.pubsub, PubSubEvents);
