@@ -62,6 +62,11 @@ function (
     var handleNavigation = function () {
       if (!isPushState()) return;
       var $el = $(this);
+
+      // elements can set `data-dont-handle="true"` to explicitly tell handler to skip
+      if ($el.data().dontHandle) {
+        return;
+      }
       var url = transformHref($el.attr('href'));
       if (url) {
         var old = $el.attr('href');

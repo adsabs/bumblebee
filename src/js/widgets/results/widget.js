@@ -42,6 +42,7 @@ function (
           // assuming there will always be abstracts
           showAbstract: 'closed',
           showSidebars: true,
+          showCheckboxes: true,
           // often they won't exist
           showHighlights: 'closed',
           pagination: true
