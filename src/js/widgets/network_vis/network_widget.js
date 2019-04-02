@@ -1296,12 +1296,13 @@ function (Marionette,
     resetWidget: function () {
       // close graphView
       if (this.view && this.view.graphView) {
+        this.view.$('.network-metadata').empty();
         this.view.graphView.$el.empty();
         this.view.graphView.stopListening();
       }
       this.filterCollection.reset(null, { silent: true });
       // reset model
-      this.model.set(_.result(this.model, 'defaults'), { silent: true });
+      this.model.set(_.result(this.model, 'defaults'));
     },
 
     // for now, called to show vis for library
