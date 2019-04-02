@@ -125,7 +125,6 @@ define(['discovery.config', 'module'], function (config, module) {
 
           var dynConf = app.getObject('DynamicConfig');
           if (dynConf && dynConf.debugExportBBB) {
-            console.log('Exposing Bumblebee as global object: window.bbb');
             window.bbb = app;
           }
 
