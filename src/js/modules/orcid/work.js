@@ -298,9 +298,13 @@ define([
         exIds.values.push(doi);
         exIds.relationships.push('SELF');
       }
-      var arxiv = get(ads.all_ids).find(function(element) {
-        return element.toLowerCase().startsWith('arxiv')
-      });
+      var all_ids = get(ads.all_ids);
+      var arxiv = false;
+      if (_.isArray(all_ids)) {
+        arxiv = all_ids.find(function (element) {
+          return element.toLowerCase().startsWith('arxiv')
+          });
+      }
       if (arxiv) {
         arxiv = arxiv.substr(6);
         exIds.types.push('arxiv');
