@@ -769,8 +769,8 @@ function (
       var TUGBOAT_MESSAGES = {
         AUTHOR_ANDED_WARNING: 'Author search terms combined with AND rather than OR',
         ENTRY_DATE_OFFSET_ERROR: 'Can not combine a date and offset (negative value) for the Entry Date',
-        ENTRY_DATE_NON_NUMERIC_ERROR: 'found a non numeric value in the Entry Date',
-        UNRECOGNIZABLE_VALUE: 'Unrecognizeable Value'
+        ENTRY_DATE_NON_NUMERIC_ERROR: 'Found a non numeric value in the Entry Date',
+        UNRECOGNIZABLE_VALUE: 'Invalid value for {} supplied'
       }
 
       if (!this.original_url) {
@@ -780,14 +780,20 @@ function (
 
       var messages = [].concat(
         utils.qs('error_message', this.original_url, false) || [],
-        utils.qs('warning_message', this.original_url, false) || [],
-        utils.qs('unprocessed_parameter', this.original_url, false) || []
+        utils.qs('warning_message', this.original_url, false) || []
       );
+
+      var uParams = utils.qs('unprocessed_parameter', this.original_url, false) || [];
 
       messages = _.reduce(messages, function (acc, msg) {
         msg = msg.toUpperCase();
         if (_.has(TUGBOAT_MESSAGES, msg)) {
-          acc.push(TUGBOAT_MESSAGES[msg]);
+          var updatedMsg = TUGBOAT_MESSAGES[msg];
+          if (msg === 'UNRECOGNIZABLE_VALUE' && uParams.length > 0) {
+            var param = encodeURIComponent(uParams.pop());
+            updatedMsg = updatedMsg.replace('{}', /^\w+$/.test(param) ? param : 'parameter');
+          }
+          acc.push(updatedMsg);
         }
         return acc;
       }, []);
