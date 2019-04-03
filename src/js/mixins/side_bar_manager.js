@@ -8,9 +8,10 @@ define([
 
   var state = new (Backbone.Model.extend({
     defaults: {
+      recent: true,
       show: true
     }
-  }));
+  }))();
 
   var SideBarManager = {
 
@@ -70,9 +71,31 @@ define([
      */
     _onFeedback: function (feedback) {
       switch(feedback.code) {
-        case ApiFeedback.CODES.MAKE_SPACE: this.setSidebarState(false); break;
-        case ApiFeedback.CODES.UNMAKE_SPACE: this.setSidebarState(true);
+        case ApiFeedback.CODES.MAKE_SPACE: return this.onMakeSpace();
+        case ApiFeedback.CODES.UNMAKE_SPACE: return this.onUnMakeSpace();
       };
+    },
+
+    /**
+     * Save the current state and
+     * set the sidebar state to `false`
+     */
+    onMakeSpace: function () {
+      state.set('recent', this.getSidebarState());
+      this.setSidebarState(false);
+    },
+
+    /**
+     * if the saved state is set, then update the side bar to that value
+     * and unset the saved state.
+     *
+     * only "unmake space" if "make space" was called previously
+     */
+    onUnMakeSpace: function () {
+      if (state.has('recent')) {
+        this.setSidebarState(state.get('recent'));
+        state.unset('recent');
+      }
     },
 
     /**
