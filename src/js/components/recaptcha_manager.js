@@ -15,17 +15,12 @@ function (
   Hardened,
   Dependon
 ) {
-  var grecaptchaDeferred = $.Deferred();
 
-  // this has to be global
-  onRecaptchaLoad = function () {
-    grecaptchaDeferred.resolve();
-  };
 
   var RecaptchaManager = GenericModule.extend({
 
     initialize: function () {
-      this.grecaptchaDeferred = grecaptchaDeferred;
+      this.grecaptchaDeferred = window.__grecaptcha__;
       this.siteKeyDeferred = $.Deferred();
       this.when = $.when(this.siteKeyDeferred, this.grecaptchaDeferred);
     },
