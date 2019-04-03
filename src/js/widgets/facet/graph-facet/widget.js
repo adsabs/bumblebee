@@ -77,18 +77,28 @@ function (
       }
     },
 
+    removeAnyOldConditions: function (query, fieldName) {
+      var q = query.clone();
+      var oldField = q.get('__' + this.facetField + '_' + fieldName);
+
+      // check for field on current query
+      if (oldField && oldField.length > 0) {
+
+        // grab the last value and check to make sure it is actually in the query string
+        var oldVal = _.last(oldField);
+        if (q.get(fieldName)[0].indexOf(oldVal) > -1) {
+          this.queryUpdater.updateQuery(q, fieldName, 'remove', oldVal);
+        }
+      }
+      return q;
+    },
+
     handleConditionApplied: function (val) {
+      var fieldName = 'q';
       var q = this.getCurrentQuery();
       val = this.facetField + ':' + val;
-      // wrap the current query, if necessary
-      q.set('q', this.queryUpdater.quoteIfNecessary(q.get('q')[0]));
       q = q.clone();
-      var fieldName = 'q';
-      var oldVal = q.get('__' + this.facetField + '_' + fieldName);
-      if (oldVal && oldVal.length > 0) {
-        this.queryUpdater.updateQuery(q, fieldName, 'remove', _.last(oldVal));
-      }
-
+      q = this.removeAnyOldConditions(q, fieldName);
       this.queryUpdater.updateQuery(q, fieldName, 'limit', val);
       this.dispatchNewQuery(q);
     },
