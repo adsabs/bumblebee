@@ -116,8 +116,11 @@ define([
       minsub.publish(minsub.START_SEARCH, x.qError);
 
 
-      minsub.subscribeOnce(minsub.START_SEARCH, function() {
-        done()}); // if this fires, query was resurrected
+      minsub.subscribeOnce(minsub.NAVIGATE, function (route, data) {
+        expect(route).to.eql('search-page');
+        expect(data.q).to.be.instanceof(ApiQuery);
+        done();
+      }); // if this fires, query was resurrected
 
       x.app.getPluginOrWidgetName = sinon.stub().returns(null);
       x.app = _.extend(x.app, {

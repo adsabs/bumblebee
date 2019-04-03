@@ -501,7 +501,9 @@ function (
       var newQuery = this.createModifiedQuery(value);
 
       var ps = this.getBeeHive().getService('PubSub');
-      if (ps) ps.publish(ps.START_SEARCH, newQuery);
+      if (ps) {
+        ps.publish(ps.NAVIGATE, 'search-page', { q: newQuery });
+      }
     }
 
   });

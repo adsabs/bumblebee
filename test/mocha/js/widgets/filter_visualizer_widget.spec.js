@@ -53,48 +53,54 @@ define([
         var $w = $(widget.render());
 
         $('#test').append($w);
+        var q = minsub.createQuery({
+          "q": [
+            "star"
+          ],
+          "sort": [
+            "date desc"
+          ],
+          "fq_author": [
+            "((author_facet_hier:\"0/Wang, J\") NOT author_facet_hier:\"0/Chen, H\" NOT author_facet_hier:\"0/Zhang, Z\")"
+          ],
+          "fq": [
+            "{!type=aqp cache=false cost=150 v=$fq_author}",
+            "{!type=aqp v=$fq_database}"
+          ],
+          "__author_facet_hier_fq_author": [
+            "NOT",
+            "(author_facet_hier:\"0/Wang, J\")",
+            "author_facet_hier:\"0/Chen, H\"",
+            "author_facet_hier:\"0/Zhang, Z\""
+          ],
+          "fq_database": [
+            "(database:physics AND database:astronomy)"
+          ],
+          "__database_fq_database": [
+            "AND",
+            "database:physics",
+            "database:astronomy"
+          ]
+        });
 
         widget.processFeedback(minsub.createFeedback({
           code: minsub.T.FEEDBACK.CODES.SEARCH_CYCLE_STARTED,
           numFound: 100,
-          query: minsub.createQuery({
-            "q": [
-              "star"
-            ],
-            "sort": [
-              "date desc"
-            ],
-            "fq_author": [
-              "((author_facet_hier:\"0/Wang, J\") NOT author_facet_hier:\"0/Chen, H\" NOT author_facet_hier:\"0/Zhang, Z\")"
-            ],
-            "fq": [
-              "{!type=aqp cache=false cost=150 v=$fq_author}",
-              "{!type=aqp v=$fq_database}"
-            ],
-            "__author_facet_hier_fq_author": [
-              "NOT",
-              "(author_facet_hier:\"0/Wang, J\")",
-              "author_facet_hier:\"0/Chen, H\"",
-              "author_facet_hier:\"0/Zhang, Z\""
-            ],
-            "fq_database": [
-              "(database:physics AND database:astronomy)"
-            ],
-            "__database_fq_database": [
-              "AND",
-              "database:physics",
-              "database:astronomy"
-            ]
-          })
+          query: q
         }));
 
 
         expect($w.find('#filter-visualizer .filter-topic-group').length).to.equal(5);
         expect($w.find('#filter-visualizer').text().indexOf('Wang, J')).to.be.gt(-1);
 
-        minsub.subscribeOnce(minsub.START_SEARCH, function() {
-            done()}
-        ); // if this fires, query was issued
+        minsub.subscribeOnce(minsub.NAVIGATE, function (route, data) {
+          expect(route).to.eql('search-page');
+          expect(data.q).to.be.instanceof(ApiQuery);
+
+          // should be 1 less
+          expect(data.q.get('__author_facet_hier_fq_author').length).to.eql(3);
+          done();
+        }); // if this fires, query was issued
 
         // click on the first
         $w.find('button.filter-operand-remove:first').click();
@@ -147,9 +153,14 @@ define([
         expect($w.find('#filter-visualizer .filter-topic-group').length).to.equal(2);
         expect($w.find('#filter-visualizer').text().indexOf('Wang, J')).to.be.gt(-1);
 
-        minsub.subscribeOnce(minsub.START_SEARCH, function() {
-          done()}
-        ); // if this fires, query was issued
+        minsub.subscribeOnce(minsub.NAVIGATE, function (route, data) {
+          expect(route).to.eql('search-page');
+          expect(data.q).to.be.instanceof(ApiQuery);
+
+          // should be 1 less
+          expect(data.q.get('__author_facet_hier_fq_author').length).to.eql(3);
+          done();
+        }); // if this fires, query was issued
 
         // click on the first
         $w.find('button.filter-operand-remove:first').click();
