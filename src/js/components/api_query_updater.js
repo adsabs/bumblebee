@@ -24,7 +24,7 @@ define(['underscore', 'js/components/api_query'], function (_, ApiQuery) {
     this.defaultOperator = ' ';
     this.operators = [' ', 'AND', 'OR', 'NOT', 'NEAR'];
     this.defaultMode = 'limit';
-    this.operationModes = ['limit', 'exclude', 'expand', 'replace'];
+    this.operationModes = ['limit', 'exclude', 'expand', 'replace', 'remove'];
     this.impossibleString = '\uFFFC\uFFFC\uFFFC';
     _.extend(this, options);
   };
@@ -49,37 +49,10 @@ define(['underscore', 'js/components/api_query'], function (_, ApiQuery) {
       options = _.defaults({}, options, {
         prefix: '__'
       });
-
+      
       if (!field || !_.isString(field)) {
         throw new Error('You must tell us what parameter to update in the ApiQuery');
       }
-
-      queryCondition = this._sanitizeConditionAsArray(queryCondition);
-      mode = this._sanitizeMode(mode);
-
-      var operator;
-      if (mode == 'limit') {
-        operator = 'AND';
-      } else if (mode == 'exclude') {
-        operator = 'NOT';
-      } else if (mode == 'expand') {
-        operator = 'OR';
-      } else if (mode == 'replace') {
-        this._closeExistingVals(apiQuery, this._n(field, options.prefix));
-        apiQuery.set(this._n(field, options.prefix), ['AND', queryCondition[0]]);
-        return apiQuery.set(field, queryCondition[0]);
-      } else {
-        throw new Error('Unsupported mode/operator:', mode);
-      }
-
-      if (!(apiQuery.has(field))) {
-        var conditions = [operator].concat(queryCondition);
-        apiQuery.set(field, this._buildQueryFromConditions(conditions));
-        apiQuery.set(this._n(field, options.prefix), conditions);
-        return;
-      }
-
-
       // globalOperator = this._sanitizeOperator(globalOperator);
 
       // local name
@@ -95,6 +68,35 @@ define(['underscore', 'js/components/api_query'], function (_, ApiQuery) {
 
       // first check if we have any existing conditions
       existingConditions = this._getExistingVals(apiQuery, n);
+      
+      queryCondition = this._sanitizeConditionAsArray(queryCondition);
+      mode = this._sanitizeMode(mode);
+
+      var operator;
+      if (mode == 'limit') {
+        operator = 'AND';
+      } else if (mode == 'exclude') {
+        operator = 'NOT';
+      } else if (mode == 'expand') {
+        operator = 'OR';
+      } else if (mode == 'replace') {
+        this._closeExistingVals(apiQuery, this._n(field, options.prefix));
+        apiQuery.set(this._n(field, options.prefix), ['AND', queryCondition[0]]);
+        return apiQuery.set(field, queryCondition[0]);
+      }  else if (mode == 'remove') {
+        operator = existingConditions[0];
+      } else {
+        throw new Error('Unsupported mode/operator:', mode);
+      }
+
+      if (!(apiQuery.has(field))) {
+        var conditions = [operator].concat(queryCondition);
+        apiQuery.set(field, this._buildQueryFromConditions(conditions));
+        apiQuery.set(this._n(field, options.prefix), conditions);
+        return;
+      }
+
+
 
       if (existingConditions) {
         // if the operators differ, it means we cannot safely update the query
@@ -171,6 +173,21 @@ define(['underscore', 'js/components/api_query'], function (_, ApiQuery) {
           apiQuery.set(n, newConditions);
           return;
         }
+      }
+
+      else if (mode == 'remove') {
+        newConditions = _.difference(existingConditions, queryCondition);	        
+        newConditionAsString = this._buildQueryFromConditions(newConditions); // we'll be deleting	
+
+        var testq = _.clone(q);
+        // try to find the pre-condition and replace it with a new value
+        if (this._modifyArrayReplaceString(testq, oldConditionAsString, newConditionAsString)) {
+          apiQuery.set(field, testq); // success
+          // save the values inside the query (so that we can use them if we are called next time)
+          apiQuery.set(n, newConditions);
+          return;
+        }       
+        
       }
 
 
