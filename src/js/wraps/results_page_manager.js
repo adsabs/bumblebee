@@ -47,6 +47,8 @@ define([
         _.each(_.keys(self.widgets), function (w) {
           self.listenTo(self.widgets[w], 'page-manager-event', _.bind(self.onPageManagerEvent, self, self.widgets[w]));
         }, self);
+
+        self.setSidebarState(self._getUpdateFromUserData());
       });
     },
 

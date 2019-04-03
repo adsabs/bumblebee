@@ -144,9 +144,6 @@ s-search-bar-motion is applied */
 
 .s-results-page-layout {
 
-  .s-results-column {
-    transition : width .5s ease-out, padding .5s ease-out;
-  }
   .s-left-col-container {
     @extend .s-ads-card;
     padding: 5px;
