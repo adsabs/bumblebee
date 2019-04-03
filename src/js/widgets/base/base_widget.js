@@ -110,7 +110,7 @@ define([
       // remove the arguments that are useful only to this widget
       _.each(this.defaultQueryArguments, function (v, k) { apiQuery.unset(k); });
       var pubsub = this.getPubSub();
-      pubsub.publish(pubsub.START_SEARCH, apiQuery);
+      pubsub.publish(pubsub.NAVIGATE, 'search-page', { q: apiQuery });
     },
 
     /**

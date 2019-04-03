@@ -109,7 +109,7 @@ define([
       // don't do anything if we weren't able to find a query
       if (query) {
         query.sort = [newSort];
-        pubsub.publish(pubsub.START_SEARCH, new ApiQuery(query));
+        pubsub.publish(pubsub.NAVIGATE, 'search-page', { q: new ApiQuery(query) });
         analytics('send', 'event', 'interaction', 'sort-applied', newSort);
       }
     },

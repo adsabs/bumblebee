@@ -142,7 +142,10 @@ function (
                 done: function () {
                 // we've recovered - restart the search cycle
                   app.getController('QueryMediator').resetFailures();
-                  self.getPubSub().publish(self.getPubSub().START_SEARCH, apiRequest.get('query'));
+                  var ps = self.getPubSub();
+                  if (ps) {
+                    ps.publish(ps.NAVIGATE, 'search-page', { q: apiRequest.get('query') });
+                  }
                 },
                 fail: function () {
                   analytics('send', 'event', 'error', 'unauthorized', 'request=' + apiRequest.url() + ' token=...' + getAccessTokenStump());
