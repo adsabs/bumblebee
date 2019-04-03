@@ -177,7 +177,10 @@ define([
       this.model.set({
         'public': data.publicView,
         'libraryID': data.id,
-        'editRecords': data.editRecords
+        'editRecords': data.editRecords,
+
+        // do not show checkboxes on public libraries
+        'showCheckboxes': !data.publicView
       });
       this.dispatchRequest();
     },
@@ -230,10 +233,6 @@ define([
       sortWidget.store.dispatch(SortActions.setSort(sortStr.sort, true));
       sortWidget.store.dispatch(SortActions.setDirection(sortStr.direction, true));
       sortWidget.store.dispatch(SortActions.setLocked(false));
-    },
-
-    onShow: function () {
-
     },
 
     composeRequest: function (apiQuery) {
@@ -308,7 +307,6 @@ define([
 
       _.each(docs, function (d, i) {
         d.identifier = d.bibcode ? d.bibcode : d.identifier;
-        d.noCheckbox = true;
 
         var maxAuthorNames = 3;
 
