@@ -252,14 +252,13 @@ function (
         var defer = $.Deferred();
         var that = this;
 
-        if (redirectIfNotSignedIn()) {
+        // data in form of { subView: subView, id: id, publicView: false }
+        data.publicView = data.publicView ? data.publicView : false;
+
+        // only check for logged in user if not public library
+        if (!data.publicView && redirectIfNotSignedIn()) {
           return defer.resolve().promise();
         }
-
-        // where view is an object in the form
-        // {subView: subView, id: id, publicView : false}
-
-        data.publicView = data.publicView ? data.publicView : false;
         this.route = data.publicView ? '#/public-libraries/' + data.id : '#user/libraries/' + data.id;
 
         var pub = data.publicView;

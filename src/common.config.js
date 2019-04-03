@@ -193,4 +193,19 @@ define([], function () {
       }
     })();
   });
+
+  // recaptcha stuff
+  require(['jquery'], function ($) {
+
+    // make a global deferred that will be used by the recaptcha_manager
+    window.__grecaptcha__ = $.Deferred();
+
+    // add the global handler which will be called by the recaptcha script
+    window.onRecaptchaLoad = function () {
+      window.__grecaptcha__.resolve();
+    };
+
+    // finally make the request for recaptcha
+    require(['google-recaptcha']);
+  });
 });
