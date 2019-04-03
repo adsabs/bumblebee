@@ -83,10 +83,10 @@ function (
       'user/account/verify/(:subView)/(:token)': 'routeToVerifyPage',
       'user/settings(/)(:subView)(/)': 'settingsPage',
       'user/libraries(/)(:id)(/)(:subView)(/)(:subData)(/)': 'librariesPage',
-      'user/home': 'homePage',
+      'user/home(/)': 'homePage',
       /* end user routes */
 
-      'orcid-instructions': 'orcidInstructions',
+      'orcid-instructions(/)': 'orcidInstructions',
 
       'public-libraries/(:id)(/)': 'publicLibraryPage',
       '*invalidRoute': 'noPageFound'
