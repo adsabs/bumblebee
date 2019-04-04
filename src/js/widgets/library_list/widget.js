@@ -149,6 +149,7 @@ define([
     },
 
     resetBulkDelete: function () {
+      this.trigger('selectAllRecords', 'remove');
       this.model.set({
         numSelected: false,
         allSelected: false
