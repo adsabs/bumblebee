@@ -1004,7 +1004,7 @@ function (
         showDetail([id].concat(detailsPageAlwaysVisible), id).then(function (w) {
           // new search
           if (data.bibcode) {
-            self.getPubSub().publish(self.getPubSub().DISPLAY_DOCUMENTS, new ApiQuery({ q: 'bibcode:' + data.bibcode }));
+            self.getPubSub().publish(self.getPubSub().DISPLAY_DOCUMENTS, new ApiQuery({ q: 'identifier:' + data.bibcode }));
           }
           w.setActive(id);
 
@@ -1026,7 +1026,7 @@ function (
           that = this;
         showDetail([id].concat(detailsPageAlwaysVisible), id).then(function (w) {
           if (data.bibcode) {
-            self.getPubSub().publish(self.getPubSub().DISPLAY_DOCUMENTS, new ApiQuery({ q: 'bibcode:' + data.bibcode }));
+            self.getPubSub().publish(self.getPubSub().DISPLAY_DOCUMENTS, new ApiQuery({ q: 'identifier:' + data.bibcode }));
           }
           w.setActive(id);
 
@@ -1049,7 +1049,7 @@ function (
           that = this;
         showDetail([id].concat(detailsPageAlwaysVisible), id).then(function (w) {
           if (data.bibcode) {
-            self.getPubSub().publish(self.getPubSub().DISPLAY_DOCUMENTS, new ApiQuery({ q: 'bibcode:' + data.bibcode }));
+            self.getPubSub().publish(self.getPubSub().DISPLAY_DOCUMENTS, new ApiQuery({ q: 'identifier:' + data.bibcode }));
           }
           w.setActive(id);
 
@@ -1071,7 +1071,7 @@ function (
           that = this;
         showDetail([id].concat(detailsPageAlwaysVisible), id).then(function (w) {
           if (data.bibcode) {
-            self.getPubSub().publish(self.getPubSub().DISPLAY_DOCUMENTS, new ApiQuery({ q: 'bibcode:' + data.bibcode }));
+            self.getPubSub().publish(self.getPubSub().DISPLAY_DOCUMENTS, new ApiQuery({ q: 'identifier:' + data.bibcode }));
           }
           w.setActive(id);
 
@@ -1093,7 +1093,7 @@ function (
           that = this;
         showDetail([id].concat(detailsPageAlwaysVisible), id).then(function (w) {
           if (data.bibcode) {
-            self.getPubSub().publish(self.getPubSub().DISPLAY_DOCUMENTS, new ApiQuery({ q: 'bibcode:' + data.bibcode }));
+            self.getPubSub().publish(self.getPubSub().DISPLAY_DOCUMENTS, new ApiQuery({ q: 'identifier:' + data.bibcode }));
           }
           w.setActive(id);
 
@@ -1115,7 +1115,7 @@ function (
           that = this;
         showDetail([id].concat(detailsPageAlwaysVisible), id).then(function (w) {
           if (data.bibcode) {
-            self.getPubSub().publish(self.getPubSub().DISPLAY_DOCUMENTS, new ApiQuery({ q: 'bibcode:' + data.bibcode }));
+            self.getPubSub().publish(self.getPubSub().DISPLAY_DOCUMENTS, new ApiQuery({ q: 'identifier:' + data.bibcode }));
           }
           w.setActive(id);
 
@@ -1137,7 +1137,7 @@ function (
           that = this;
         showDetail([id].concat(detailsPageAlwaysVisible), id).then(function (w) {
           if (data.bibcode) {
-            self.getPubSub().publish(self.getPubSub().DISPLAY_DOCUMENTS, new ApiQuery({ q: 'bibcode:' + data.bibcode }));
+            self.getPubSub().publish(self.getPubSub().DISPLAY_DOCUMENTS, new ApiQuery({ q: 'identifier:' + data.bibcode }));
           }
           w.setActive(id);
 
@@ -1164,7 +1164,7 @@ function (
           [id].concat(detailsPageAlwaysVisible)).done(function() {
             app.getWidget('DetailsPage').done(function (w) {
               if (data.bibcode) {
-                self.getPubSub().publish(self.getPubSub().DISPLAY_DOCUMENTS, new ApiQuery({ q: 'bibcode:' + data.bibcode }));
+                self.getPubSub().publish(self.getPubSub().DISPLAY_DOCUMENTS, new ApiQuery({ q: 'identifier:' + data.bibcode }));
 
                 // guarantees the bibcode is set on the widget
                 w.widgets[id].ingestBroadcastedPayload(_.pick(data, 'bibcode'));
@@ -1183,7 +1183,7 @@ function (
           that = this;
         showDetail([id].concat(detailsPageAlwaysVisible), id).then(function (w) {
           if (data.bibcode) {
-            self.getPubSub().publish(self.getPubSub().DISPLAY_DOCUMENTS, new ApiQuery({ q: 'bibcode:' + data.bibcode }));
+            self.getPubSub().publish(self.getPubSub().DISPLAY_DOCUMENTS, new ApiQuery({ q: 'identifier:' + data.bibcode }));
             w.setActive(id);
           }
           that.route = data.href;

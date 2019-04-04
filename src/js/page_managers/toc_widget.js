@@ -214,6 +214,18 @@ define([
       this.trigger('page-manager-event', 'widget-selected', data);
     },
 
+    selectDefaultNavItem: function () {
+      var tocConfig = Marionette.getOption(this, 'navConfig');
+      var found = tocConfig[0];
+      _.each(tocConfig, function (v, k) {
+        if (v.isSelected) {
+          found = k;
+          return false;
+        }
+      });
+      this.collection.selectOne(found);
+    },
+
     onPageManagerMessage: function (event, data) {
       if (event == 'new-widget') {
         // building the toc collection
@@ -239,16 +251,22 @@ define([
           }, this);
         }
       } else if (event == 'widget-ready') {
+
+        // if there are no docs then go to the default view and exit here
+        if (data.noDocs) {
+          return this.selectDefaultNavItem();
+        }
+
         var model = this.collection.get(data.widgetId);
         _.defaults(data, { isActive: !!data.numFound });
         if (model) {
           model.set(_.pick(data, model.keys()));
         }
 
-        // if the widget should reset, switch to the abstract view
+        // if the widget should reset, switch to the default view
         if (data.shouldReset) {
           if (model && model.get('isSelected')) {
-            this.collection.selectOne('ShowAbstract');
+            this.selectDefaultNavItem();
           }
           model && model.set('isActive', false);
         }
