@@ -640,6 +640,8 @@ function (
             }
           };
 
+          // make sure that we unfold sidebars
+          publishFeedback({ code: ApiFeedback.CODES.UNMAKE_SPACE });
           var ps = self.getPubSub();
           ps.subscribe(ps.FEEDBACK, onFeedback);
           ps.publish(ps.START_SEARCH, data.q);
