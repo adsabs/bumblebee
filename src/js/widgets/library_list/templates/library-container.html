@@ -5,8 +5,10 @@
     {{#if hasRecords}}
       <div class="row">
         <div class="col-sm-1" style="padding-left: 12.5px">
+        {{#unless public}}
           <label for="select-all-docs" class="sr-only">Select All Docs</label>
           <input type="checkbox" id="select-all-docs" name="select-all-docs" title="select all docs" {{#if allSelected}} checked {{/if}}>
+        {{/unless}}
         </div>
         <div class="col-sm-3">
           <button
