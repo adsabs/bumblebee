@@ -478,6 +478,7 @@ function (
     WidgetClass.prototype._findWorkByModel = function (model, _profile) {
       var $dd = $.Deferred();
       var oApi = this.getBeeHive().getService('OrcidApi');
+      var exId = _.pick(model.attributes, ['identifier']);
       var exIds = _.pick(model.attributes, ['all_ids']);
       var oldOrcid = _.clone(model.get('orcid') || {});
       var profile = null;
@@ -487,12 +488,19 @@ function (
 
       var success = function (profile) {
         var works = profile.getWorks();
+        var noUpdate = true;
+        var putCode = null;
         var matchedWork = _.find(works, function (w) {
           var wIds = w.getIdentifier();
-
+          noUpdate = (exId.identifier === wIds);
+          putCode = w.getPutCode();
           return _.contains(exIds.all_ids, wIds);
         });
         if (matchedWork) {
+          if (!noUpdate) {
+            var work = Work.adsToOrcid(model.attributes, putCode);
+            oApi.updateWork(work)
+          }
           $dd.resolve(matchedWork);
         } else {
           $dd.reject();
