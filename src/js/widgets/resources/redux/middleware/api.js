@@ -29,7 +29,7 @@ define([
     next(action);
     if (action.type === FETCH_DATA) {
       const query = {
-        q: `bibcode:${action.result}`
+        q: `identifier:${action.result}`
       };
       dispatch({ type: FETCHING_DATA, result: query });
       dispatch({ type: SET_LOADING, result: true });
@@ -50,11 +50,11 @@ define([
 
       // check the query
       if (_.isPlainObject(query)) {
-        let bibcode = query.q;
-        if (_.isArray(bibcode) && bibcode.length > 0) {
-          if (/^bibcode:/.test(bibcode[0])) {
-            bibcode = bibcode[0].split(':')[1];
-            dispatch({ type: FETCH_DATA, result: bibcode });
+        let identifier = query.q;
+        if (_.isArray(identifier) && identifier.length > 0) {
+          if (/^(identifier|bibcode):/.test(identifier[0])) {
+            identifier = identifier[0].replace(/^(identifier|bibcode):/, '');
+            dispatch({ type: FETCH_DATA, result: identifier });
             ctx.trigger('page-manager-event', 'widget-ready', { isActive: true });
           } else {
             dispatch({ type: SET_HAS_ERROR, result: 'unable to parse bibcode from query' });

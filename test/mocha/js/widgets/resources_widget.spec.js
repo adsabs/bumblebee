@@ -55,7 +55,7 @@ define([
       it('fires off request for sources after display docs', function (done) {
         const w = new Widget();
         w.activate(this.pubsub.beehive);
-        const mockQuery = { toJSON: _.constant({ q: ['bibcode:foo'] })};
+        const mockQuery = { toJSON: _.constant({ q: ['identifier:foo'] })};
         this.pubsub.publish(this.pubsub.DISPLAY_DOCUMENTS, mockQuery);
         const rSpy = this.pubsub.request;
         expect(rSpy.calledOnce).to.eql(true);
@@ -90,7 +90,7 @@ define([
       it('fully updates state after getting bibcode/query', function (done) {
         const w = new Widget();
         w.activate(this.pubsub.beehive);
-        const mockQuery = { toJSON: _.constant({ q: ['bibcode:foo'] })};
+        const mockQuery = { toJSON: _.constant({ q: ['identifier:foo'] })};
         this.pubsub.publish(this.pubsub.DISPLAY_DOCUMENTS, mockQuery);
         expect(this.state(w).ui.loading).to.eql(true);
         expect(this.state(w).ui.noResults).to.eql(false);

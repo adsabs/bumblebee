@@ -291,15 +291,12 @@ function (
 
       // there was an error
       if (feedback && feedback.error) {
-        this.model.set({
-          error: true,
-          loading: false
-        });
+        this.showError();
       }
     },
 
     defaultQueryArguments: {
-      fl: '[citations],abstract,aff,author,bibcode,citation_count,comment,doi,id,keyword,page,property,pub,pub_raw,pubdate,pubnote,read_count,title,volume',
+      fl: 'identifier,[citations],abstract,aff,author,bibcode,citation_count,comment,doi,id,keyword,page,property,pub,pub_raw,pubdate,pubnote,read_count,title,volume',
       rows: 1
     },
 
@@ -381,9 +378,9 @@ function (
       var bibcode = apiQuery.get('q'),
         q;
 
-      if (bibcode.length > 0 && bibcode[0].indexOf('bibcode:') > -1) {
+      if (bibcode.length > 0 && /(bibcode|identifier):/.test(bibcode[0])) {
         // redefine bibcode
-        var bibcode = bibcode[0].replace('bibcode:', '');
+        var bibcode = bibcode[0].replace(/(bibcode|identifier):/, '');
       }
       if (this._docs[bibcode]) { // we have already loaded it
         this.displayBibcode(bibcode);
@@ -413,22 +410,43 @@ function (
 
     processResponse: function (apiResponse) {
       var r = apiResponse.toJSON();
-      var d,
-        bibcode;
+      var self = this;
       if (r.response && r.response.docs) {
-        _.each(r.response.docs, function (doc) {
-          d = this.model.parse(doc, this.maxAuthors);
-          this._docs[d.bibcode] = d;
-        }, this);
+        var docs = r.response.docs;
+        var __show = apiResponse.get('responseHeader.params.__show', false, '');
+        _.each(docs, function (doc) {
+          var d = self.model.parse(doc, self.maxAuthors);
+          var ids = d.identifier;
 
-        if (apiResponse.has('responseHeader.params.__show')) {
-          bibcode = apiResponse.get('responseHeader.params.__show', false, '');
-          this.displayBibcode(bibcode);
+          // if __show is defined and it is found in the list of identifiers or only a single document
+          // was provided - then set the __show value to the bibcode of the document
+          if (__show && (
+            (ids && ids.length > 0 && _.contains(ids, __show)) || docs.length === 1
+          )) {
+            __show = d.bibcode;
+          }
+          self._docs[d.bibcode] = d;
+        });
+
+        if (__show) {
+          this.displayBibcode(__show);
         }
       }
 
-      var numFound = apiResponse.get('response.numFound', false, 0);
-      this.trigger('page-manager-event', 'widget-ready', { numFound: numFound });
+      var msg = {};
+      msg.numFound = apiResponse.get('response.numFound', false, 0);
+      if (msg.numFound === 0) {
+        this.showError();
+        msg.noDocs = true;
+      }
+      this.trigger('page-manager-event', 'widget-ready', msg);
+    },
+
+    showError: function () {
+      this.model.set({
+        error: true,
+        loading: false
+      });
     }
 
   });

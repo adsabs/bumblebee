@@ -32,7 +32,8 @@ define(['backbone', 'marionette', 'jquery', 'js/widgets/abstract/widget',
                 "aff": ["Heidelberg, Universität, Heidelberg, Germany", "California Institute of Technology, Jet Propulsion Laboratory, Pasadena, CA"],
                 "citation_count" : 5,
                 "[citations]" : { num_citations : 3, num_references: 34 },
-                read_count: 30
+                read_count: 30,
+                identifier: ["foo"]
               }
             ]}};
 
