@@ -96,6 +96,7 @@ function (
     handleConditionApplied: function (val) {
       var fieldName = 'q';
       var q = this.getCurrentQuery();
+      q.set('q', '(' + q.get('q')[0] + ')');
       val = this.facetField + ':' + val;
       q = q.clone();
       q = this.removeAnyOldConditions(q, fieldName);
