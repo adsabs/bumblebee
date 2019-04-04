@@ -421,7 +421,7 @@ function (
           // if __show is defined and it is found in the list of identifiers or only a single document
           // was provided - then set the __show value to the bibcode of the document
           if (__show && (
-            (ids.length > 0 && _.contains(ids, __show)) || docs.length === 1
+            (ids && ids.length > 0 && _.contains(ids, __show)) || docs.length === 1
           )) {
             __show = d.bibcode;
           }
