@@ -229,7 +229,9 @@ define([
           }
         }
       });
-      return qDict;
+
+      // remove any items that are empty
+      return _.omit(qDict, _.isEmpty);
     },
 
     onRender: function (e) {
