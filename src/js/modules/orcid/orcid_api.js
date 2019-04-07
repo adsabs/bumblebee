@@ -195,12 +195,29 @@ function (
      * @returns {*|jQuery.Promise}
      */
     getADSUserData: function () {
+      var self = this;
       var url = this.getBeeHive().getService('Api').url
         + ApiTargets.ORCID_PREFERENCES + '/' + this.authData.orcid;
       var request = this.createRequest(url);
       request.fail(function () {
-        var msg = 'ADS ORCiD preferences could not be retrieved';
-        console.error.apply(console, [msg].concat(arguments));
+        self.signOut();
+        self.getBeeHive().getObject('User').setOrcidMode(0);
+        var title = 'Expired ORCID login';
+          var msg = [
+            'Your ORCID login has expired.',
+            'Please reload the page and sign in again to access the page.',
+            '',
+            '<button onclick="location.reload()" class="btn btn-primary" role="button">Reload</button>'
+          ];
+          var pubSub = self.getPubSub();
+          pubSub.publish(pubSub.ALERT, new ApiFeedback({
+            title: title,
+            msg: msg.join('<br/>'),
+            modal: true,
+            type: 'warning'
+          }));
+
+
       });
       return request;
     },
