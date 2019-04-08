@@ -184,9 +184,11 @@ define([
      the widget will show the appropriate defaults
      */
     resetActiveStates: function () {
+      var path = this.model.get('path');
       this.collection.each(function (model) {
+        // if idAttr is set, then set that one as selected
         model.set({
-          isSelected: false,
+          isSelected: path === model.get('path'),
           isActive: true,
           numFound: 0
         });
