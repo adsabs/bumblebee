@@ -223,6 +223,10 @@ div[data-field=date] {
       left: 93px;
     }
   }
+
+  #classic-author, #classic-object {
+    resize: vertical;
+  }
 }
 
 .unobtrusive-landing-page-alert {

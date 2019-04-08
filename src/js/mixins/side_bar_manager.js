@@ -60,8 +60,12 @@ define([
     /**
      * On user announcement (user data change) update the sidebar state
      */
-    _onUserAnnouncement: function () {
-      this.setSidebarState(this._getUpdateFromUserData());
+    _onUserAnnouncement: function (ev, changed) {
+
+      // only update if the changed key was defaultHideSidebars
+      if (_.contains('defaultHideSidebars', _.keys(changed))) {
+        this.setSidebarState(this._getUpdateFromUserData());
+      }
     },
 
     /**
