@@ -557,7 +557,7 @@ function (
           type: 'info',
           fade: true
         }));
-        return;
+        return false;
       }
       this.trigger('start_search', newQuery);
 
