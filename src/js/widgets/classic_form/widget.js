@@ -112,10 +112,10 @@ define([
       // pubdate
       var pd = data.pubdate;
       var date = [
-        '[', pd.month_from, '-', pd.year_from, ' TO ', pd.month_to, '-', pd.year_to, ']'
+        '[', pd.year_from, '-', pd.month_from, ' TO ', pd.year_to, '-', pd.month_to, ']'
       ].join('');
       if (!_.isEqual(pd, this.defaults.pubdate)) {
-        query.q.push(date);
+        query.q.push('pubdate:' + date);
       }
 
       // authors
@@ -191,7 +191,7 @@ define([
         acc[key] = _.isArray(val) ? val : [val];
         return acc;
       }, {}));
-    }, 100)
+    }, 50)
   });
 
   var FormView = Marionette.ItemView.extend({
@@ -202,50 +202,48 @@ define([
 
     events: {
       'click button[type=submit]': 'submitForm',
-      'input input': 'checkValid',
-      'input textarea': 'checkValid',
       'change input[name$="-logic"]': 'updateLogic',
-      'keyup textarea': 'textareaUpdate',
+      'input textarea': 'textareaUpdate',
       'change div[data-field="database"] input': 'updateCollection',
       'change div[data-field="property"] input': 'updateProperty',
       'input input[name="title"],input[name="abs"],input[name="bibstem"]': 'inputUpdate',
       'input input[name^="month"],input[name^="year"]': 'dateUpdate'
     },
 
-    updateLogic: _.debounce(function (e) {
+    updateLogic: function (e) {
       var $el = this.$(e.currentTarget);
       this.model.set($el.attr('name'), $el.val().trim());
-    }, 300),
+    },
 
-    textareaUpdate: _.debounce(function (e) {
+    textareaUpdate: function (e) {
       var $el = this.$(e.currentTarget);
       var vals = _.filter($el.val().split(/\n/), function (v) {
          return !_.isEmpty(v);
       });
       vals = vals.map(Function.prototype.call, String.prototype.trim);
       this.model.set($el.attr('name'), vals);
-    }, 300),
+    },
 
-    updateCollection: _.debounce(function (e) {
+    updateCollection: function (e) {
       var $el = this.$(e.currentTarget);
       var data = {};
       data[$el.attr('name')] = $el.prop('checked');
       this.model.set('collections', _.extend({}, this.model.get('collections'), data));
-    }, 300),
+    },
 
-    updateProperty: _.debounce(function (e) {
+    updateProperty: function (e) {
       var $el = this.$(e.currentTarget);
       var data = {};
       data[$el.attr('name')] = $el.prop('checked');
       this.model.set('property', _.extend({}, this.model.get('property'), data));
-    }, 300),
+    },
 
-    inputUpdate: _.debounce(function (e) {
+    inputUpdate: function (e) {
       var $el = this.$(e.currentTarget);
       this.model.set($el.attr('name'), $el.val().trim());
-    }, 300),
+    },
 
-    dateUpdate: _.debounce(function (e) {
+    dateUpdate: function (e) {
       var $el = this.$(e.currentTarget);
       var name = $el.attr('name');
       var val = $el.val().trim();
@@ -253,15 +251,6 @@ define([
       val = val === '' ? this.model.defaults.pubdate[name] : val;
       data[name] = val;
       this.model.set('pubdate', _.extend({}, this.model.get('pubdate'), data));
-    }, 300),
-
-    checkValid: function () {
-      var allVals = this.$('input[type=text], textarea').map(function () { return $(this).val(); }).get().join('');
-      if (allVals) {
-        this.$('button[type=submit]').prop('disabled', false);
-      } else {
-        this.$('button[type=submit]').prop('disabled', true);
-      }
     },
 
     submitForm: function (e) {

@@ -7,6 +7,36 @@ define([
     MinimalPubSub
   ){
 
+  var generateQuery = function (field, selector) {
+    return function () {
+      return $(selector, 'div[data-field=' + field + ']');
+    };
+  };
+
+  var $Q = {
+    dbAstronomy: generateQuery('database', 'input[name="astronomy"]'),
+    dbPhysics: generateQuery('database', 'input[name="physics"]'),
+    authorLogic: generateQuery('author', 'input[name="author-logic"]'),
+    author: generateQuery('author', 'textarea[name="author-names"]'),
+    objectLogic: generateQuery('object', 'input[name="object-logic"]'),
+    object: generateQuery('object', 'textarea[name="object-names"]'),
+    titleLogic: generateQuery('title', 'input[name="title-logic"]'),
+    title: generateQuery('title', 'input[name="title"]'),
+    absLogic: generateQuery('abs', 'input[name="abstract-logic"]'),
+    abs: generateQuery('abs', 'input[name="abs"]'),
+    date: generateQuery('date', 'input'),
+    propertyRefereed: generateQuery('property', 'input[name="refereed"]'),
+    propertyArticle: generateQuery('property', 'input[name="article"]'),
+    bibstem: generateQuery('bibstem', 'input[name="bibstem"]')
+  };
+
+  var triggerChanges = function () {
+    _.forEach($Q, function (v) {
+      v().trigger('input');
+      v().parent().parent().find(':checked').trigger('change');
+    });
+  };
+
   describe("Classic Form (UI Widget)", function(){
 
     afterEach(function(){
@@ -34,28 +64,31 @@ define([
       ].join('\n');
       w.view.$("div[data-field=author]").find("textarea").val(val);
       w.view.$("div[data-field=author]").find("textarea").trigger("input");
-      w.view.$("button[type=submit]").eq(0).click();
-      expect(publishSpy.args[0][3]["q"].toJSON()).to.eql({
-        "q": [
-          "author:(=\"Accomazzi, a\" AND =\"Kurtz, M\")"
-        ],
-        "fq": [
-          "{!type=aqp v=$fq_database}"
-        ],
-        "fq_database": [
-          "database: astronomy"
-        ],
-        "__fq_database": [
-          "AND", "astronomy"
-        ],
-        "sort": [
-          "date desc"
-        ]
-      });
-      done();
+      setTimeout(function () {
+        w.view.$("button[type=submit]").eq(0).click();
+        expect(publishSpy.args[0][3]["q"].toJSON()).to.eql({
+          "q": [
+            "author:(=\"Accomazzi, a\" =\"Kurtz, M\")"
+          ],
+          "fq": [
+            "{!type=aqp v=$fq_database}"
+          ],
+          "__fq_database": [
+            "AND",
+            "astronomy"
+          ],
+          "fq_database": [
+            "database: astronomy"
+          ],
+          "sort": [
+            "date desc"
+          ]
+        });
+        done();
+      }, 300);
     });
 
-    it("should turn a classic form into an apiQuery on submit", function(){
+    it("should turn a classic form into an apiQuery on submit", function (done) {
 
 
       var w = new ClassicForm();
@@ -75,65 +108,92 @@ define([
 
       w.onShow();
 
-      expect($("button[type=submit]").prop("disabled")).to.eql(true);
+      // update fields
+      $Q.dbPhysics().attr('checked', true);
+      $Q.author().val('a, a\nb, m\n-j, a\n+b, b\n=w,w\n\n\nl,l');
+      $Q.object().val('a, a\nb, m\n-j, a\n+b, b\n=w,w\n\n\nl,l');
+      $($Q.date()[0]).val(10);
+      $($Q.date()[1]).val(2010);
+      $Q.title().val('a, b, c, d, +e, -f, =g, +"h", -"i"');
+      $Q.abs().val('a, b, c, d, +e, -f, =g, +"h", -"i"');
+      $Q.bibstem().val('a, b, c, d, +e, -f, =g, +"h", -"i"');
+      triggerChanges();
 
-      w.view.$("div[data-field=database]").find("input").attr("checked", true);
-      w.view.$("div[data-field=author]").find("textarea").val("Accomazzi,a\rKurtz,M");
-      w.view.$("div[data-field=author]").find("textarea").trigger("input");
+      setTimeout(function () {
+        console.log(w.model.toJSON());
+        expect(w.model.get('query')).to.eql({
+          "q": [
+            "pubdate:[2010-10 TO 9999-12]",
+            "author:(\"a, a\" \"b, m\" -\"j, a\" +\"b, b\" =w,w l,l)",
+            "object:(\"a, a\" \"b, m\" -\"j, a\" +\"b, b\" =w,w l,l)",
+            "title:(a b c d +e -f =g +\"h\" -\"i\")",
+            "abs:(a b c d +e -f =g +\"h\" -\"i\")",
+            "-bibstem:(f OR \"i\")",
+            "bibstem:(a OR b OR c OR d OR \"+e\" OR =g OR \"+\\\"h\\\"\")"
+          ],
+          "fq": [
+            "{!type=aqp v=$fq_database}"
+          ],
+          "__fq_database": [
+            "AND",
+            "(astronomy OR physics)"
+          ],
+          "fq_database": [
+            "database: (astronomy OR physics)"
+          ]
+        });
+        $Q.dbPhysics().prop('checked', true);
+        $($Q.authorLogic()[1]).prop('checked', true);
+        $($Q.objectLogic()[1]).prop('checked', true);
+        $($Q.titleLogic()[1]).prop('checked', true);
+        $($Q.absLogic()[1]).prop('checked', true);
+        $Q.author().val('a, a\nb, m\n-j, a\n+b, b\n=w,w\n\n\nl,l');
+        $Q.object().val('a, a\nb, m\n-j, a\n+b, b\n=w,w\n\n\nl,l');
+        $($Q.date()[0]).val(10);
+        $($Q.date()[1]).val(2010);
+        $Q.title().val('a, b, c, d, +e, -f, =g, +"h", -"i"');
+        $Q.abs().val('a, b, c, d, +e, -f, =g, +"h", -"i"');
+        $Q.bibstem().val('a, b, c, d, +e, -f, =g, +"h", -"i"');
+        $Q.propertyRefereed().prop('checked', true);
+        $Q.propertyArticle().prop('checked', true);
+        triggerChanges();
 
-      w.view.$("div[data-field=date]").find("input[name=month_from]").val(10);
-      w.view.$("div[data-field=date]").find("input[name=year_from]").val(2010);
-
-      w.view.$("div[data-field=title]").find("input[type=text]").val('star planet "gliese 581"');
-
-      //setting input[value=OR] prop "checked" to true isn't working in phantomjs for some reason :(
-      w.view.$("div[data-field=title] input[name=title-logic]").val("OR")
-
-      w.view.$("div[data-field=abs]").find("input[type=text]").val('-hawaii star');
-      w.view.$("div[data-field=abs] input[name=abstract-logic]").val("BOOLEAN")
-
-      w.view.$("div[data-field=bibstem]").find("input[name=bibstem]").val("apj,mnras,-aj,-bpj");
-
-      w.view.$("div[data-field=property]").find("input[name=refereed]").click();
-      w.view.$("div[data-field=property]").find("input[name=article]").click();
-
-      expect(w.view.$("button[type=submit]").prop("disabled")).to.eql(false);
-
-
-      w.view.$("button[type=submit]").eq(0).click();
-
-
-      expect(JSON.stringify(publishSpy.args[0][3]["q"].toJSON())).to.eql('{"q":["pubdate:[2010-10 TO 9999-12] author:(\\"Accomazzi,a\\" AND \\"Kurtz,M\\") title:(star OR planet OR \\"gliese 581\\") abs:(-\\"hawaii star\\") -bibstem:(aj OR bpj) bibstem:(apj OR mnras)"],"fq":["{!type=aqp v=$fq_database}","{!type=aqp v=$fq_property}"],"__fq_database":["AND","(astronomy or physics)"],"fq_database":["database: (astronomy or physics)"],"__fq_property":["AND","(refereed or notrefereed)"],"fq_property":["property: (refereed or notrefereed)"],"sort":["date desc"]}');
-
-      //one more
-
-      w.view.render();
-
-      w.view.$("div[data-field=author]").find("textarea").val("Accomazzi,a");
-      w.view.$("div[data-field=author]").find("textarea").trigger("input");
-
-      w.view.$("div[data-field=date]").find("input[name=month_from]").val(10);
-      w.view.$("div[data-field=date]").find("input[name=year_from]").val(2010);
-      w.view.$("div[data-field=date]").find("input[name=year_to]").val(2012);
-
-      w.view.$("div[data-field=title]").find("input[type=text]").val('star planet "gliese 581"');
-      //setting input[value=OR] prop "checked" to true isn't working in phantomjs for some reason :(
-      w.view.$("div[data-field=title] input[name=title-logic]").val("OR")
-
-      w.view.$("div[data-field=abs]").find("input[type=text]").val('-hawaii star');
-      w.view.$("div[data-field=abs] input[name=abstract-logic]").val("BOOLEAN")
-
-      w.view.$("div[data-field=bibstem]").find("input[name=bibstem]").val("    apj,     ");
-
-      w.view.$("div[data-field=property]").find("input[name=refereed]").click();
-
-      w.view.$("button[type=submit]").eq(0).click();
-
-      expect(JSON.stringify(publishSpy.args[1][3]["q"].toJSON())).to.eql('{"q":["pubdate:[2010-10 TO 2012-12] author:(\\"Accomazzi,a\\") title:(star OR planet OR \\"gliese 581\\") abs:(-\\"hawaii star\\") bibstem:(apj)"],"fq":["{!type=aqp v=$fq_database}","{!type=aqp v=$fq_property}"],"__fq_database":["AND","astronomy"],"fq_database":["database: astronomy"],"__fq_property":["AND","refereed"],"fq_property":["property: refereed"],"sort":["date desc"]}');
-
+        setTimeout(function () {
+          expect(w.model.get('query')).to.eql({
+            "q": [
+              "pubdate:[2010-10 TO 9999-12]",
+              "author:(\"a, a\" OR \"b, m\" OR -\"j, a\" OR +\"b, b\" OR =w,w OR l,l)",
+              "object:(\"a, a\" OR \"b, m\" OR -\"j, a\" OR +\"b, b\" OR =w,w OR l,l)",
+              "title:(a OR b OR c OR d OR +e OR -f OR =g OR +\"h\" OR -\"i\")",
+              "abs:(a OR b OR c OR d OR +e OR -f OR =g OR +\"h\" OR -\"i\")",
+              "-bibstem:(f OR \"i\")",
+              "bibstem:(a OR b OR c OR d OR \"+e\" OR =g OR \"+\\\"h\\\"\")"
+            ],
+            "fq": [
+              "{!type=aqp v=$fq_database}",
+              "{!type=aqp v=$fq_property}"
+            ],
+            "__fq_database": [
+              "AND",
+              "(astronomy OR physics)"
+            ],
+            "fq_database": [
+              "database: (astronomy OR physics)"
+            ],
+            "__fq_property": [
+              "AND",
+              "(refereed OR article)"
+            ],
+            "fq_property": [
+              "property: (refereed OR article)"
+            ]
+          });
+          done();
+        }, 100);
+      }, 100);
     });
 
-    it('Boolean logic text area correctly parses the input', function () {
+    it('Boolean logic text area correctly parses the input', function (done) {
       var w = new ClassicForm();
 
       var minsub = new (MinimalPubSub.extend({
@@ -170,57 +230,63 @@ define([
       // try simple combination
       authorInput("-Accomazzi, a\n+author2\n-author3\nauthor4");
       setLogic('author', 'BOOLEAN');
-      submitForm();
+      setTimeout(function () {
+        submitForm();
 
-      expect(publishSpy.args[0][3]["q"].toJSON()).to.eql({
-        "q": [
-          "author:(-\"Accomazzi, a\" +author2 -author3 +author4)"
-        ],
-        "fq": [
-          "{!type=aqp v=$fq_database}"
-        ],
-        "fq_database": [
-          "database: astronomy"
-        ],
-        "sort": [
-          "date desc"
-        ],
-        "__fq_database": [
-          "AND", "astronomy"
-        ],
-      });
+        expect(publishSpy.args[0][3]["q"].toJSON()).to.eql({
+          "q": [
+            "author:(-\"Accomazzi, a\" +author2 -author3 author4)"
+          ],
+          "fq": [
+            "{!type=aqp v=$fq_database}"
+          ],
+          "__fq_database": [
+            "AND",
+            "astronomy"
+          ],
+          "fq_database": [
+            "database: astronomy"
+          ],
+          "sort": [
+            "date desc"
+          ]
+        });
 
-      w.view.render();
+        w.view.render();
 
-      // try some crappy input
-      authorInput([
-        't e s t',
-        '    testing    ',
-        ' - test ',
-        'test',
-        '+testing',
-        '-testing'
-      ]);
-      setLogic('author', 'BOOLEAN');
-      submitForm();
-
-      expect(publishSpy.args[1][3]["q"].toJSON()).to.eql({
-        "q": [
-          "author:(+\"t e s t\" +testing -\" test\" +test +testing -testing)"
-        ],
-        "fq": [
-          "{!type=aqp v=$fq_database}"
-        ],
-        "fq_database": [
-          "database: astronomy"
-        ],
-        "sort": [
-          "date desc"
-        ],
-        "__fq_database": [
-          "AND", "astronomy"
-        ],
-      });
+        // try some crappy input
+        authorInput([
+          't e s t',
+          '    testing    ',
+          ' - test ',
+          'test',
+          '+testing',
+          '-testing'
+        ]);
+        setLogic('author', 'BOOLEAN');
+        setTimeout(function () {
+          submitForm();
+          expect(publishSpy.args[1][3]["q"].toJSON()).to.eql({
+            "q": [
+              "author:(\"t e s t\" testing -\" test\" test +testing -testing)"
+            ],
+            "fq": [
+              "{!type=aqp v=$fq_database}"
+            ],
+            "__fq_database": [
+              "AND",
+              "astronomy"
+            ],
+            "fq_database": [
+              "database: astronomy"
+            ],
+            "sort": [
+              "date desc"
+            ]
+          });
+          done();
+        }, 100);
+      }, 100);
     });
   });
 });
