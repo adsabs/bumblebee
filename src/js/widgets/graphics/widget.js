@@ -89,8 +89,8 @@ define([
     onDisplayDocuments: function (apiQuery) {
       var bibcode = apiQuery.get('q');
       var self = this;
-      if (bibcode.length > 0 && /(identifier|bibcode):/.test(bibcode[0])) {
-        bibcode = bibcode[0].replace(/(identifier|bibcode):/, '');
+      if (bibcode.length > 0 && /^(identifier|bibcode):/.test(bibcode[0])) {
+        bibcode = bibcode[0].replace(/^(identifier|bibcode):/, '');
         this.loadBibcodeData(bibcode).done(function () {
           self.trigger('page-manager-event', 'widget-ready', { isActive: true, widget: self });
         });

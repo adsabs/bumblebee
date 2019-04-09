@@ -59,8 +59,8 @@ define([
 
     onDisplayDocuments: function (apiQuery) {
       var bibcode = apiQuery.get('q');
-      if (bibcode.length > 0 && bibcode[0].indexOf('bibcode:') > -1 && this.widgets.tocWidget) {
-        bibcode = bibcode[0].replace('bibcode:', '');
+      if (bibcode.length > 0 && /^(identifier|bibcode):/.test(bibcode[0]) && this.widgets.tocWidget) {
+        bibcode = bibcode[0].replace(/^(identifier|bibcode):/, '');
         this.widgets.tocWidget.model.set('bibcode', bibcode);
       }
     },
