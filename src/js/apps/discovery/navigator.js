@@ -600,7 +600,8 @@ function (
         }
 
         var that = this;
-        showResultsPage(pages).then(function () {
+        var ctx = (data && data.context) || {};
+        showResultsPage(pages, ctx).then(function () {
           var handler = function () {
             // the current query should have been updated, use that instead
             var query = self.getBeeHive().getObject('AppStorage').getCurrentQuery();
@@ -935,9 +936,8 @@ function (
 
       this.set('visualization-closed', this.get('results-page'));
 
-      var showResultsPage = function (pages, toActivate) {
-        return app.getObject('MasterPageManager').show('SearchPage',
-          pages)
+      var showResultsPage = function (pages, ctx) {
+        return app.getObject('MasterPageManager').show('SearchPage', pages, ctx);
       };
 
       /*
