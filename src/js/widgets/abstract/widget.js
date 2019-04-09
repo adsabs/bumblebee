@@ -378,9 +378,9 @@ function (
       var bibcode = apiQuery.get('q'),
         q;
 
-      if (bibcode.length > 0 && /(bibcode|identifier):/.test(bibcode[0])) {
+      if (bibcode.length > 0 && /^(identifier|bibcode):/.test(bibcode[0])) {
         // redefine bibcode
-        var bibcode = bibcode[0].replace(/(bibcode|identifier):/, '');
+        var bibcode = bibcode[0].replace(/^(identifier|bibcode):/, '');
       }
       if (this._docs[bibcode]) { // we have already loaded it
         this.displayBibcode(bibcode);

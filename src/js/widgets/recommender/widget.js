@@ -69,8 +69,8 @@ define([
 
     onDisplayDocuments: function (apiQuery) {
       var bibcode = apiQuery.get('q');
-      if (bibcode.length > 0 && bibcode[0].indexOf('bibcode:') > -1) {
-        bibcode = bibcode[0].replace('bibcode:', '');
+      if (bibcode.length > 0 && /^(identifier|bibcode):/.test(bibcode)) {
+        bibcode = bibcode[0].replace(/^(identifier|bibcode):/, '');
         this.loadBibcodeData(bibcode);
       }
     },
