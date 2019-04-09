@@ -80,7 +80,7 @@ define([
 
     triggerSubmit: function () {
       this.model.unset('user');
-      FormFunctions.triggerSubmit.apply(this, arguments);
+      return FormFunctions.triggerSubmit.apply(this, arguments);
     },
 
     // for the view
@@ -94,6 +94,10 @@ define([
           .html('')
           .addClass('no-show');
       }
+    },
+
+    events: {
+      'click button[type=submit]': 'triggerSubmit'
     },
 
     bindings: {
@@ -120,7 +124,6 @@ define([
     onRender: function () {
       this.activateValidation();
     }
-
   });
 
   var ChangePasswordView,
