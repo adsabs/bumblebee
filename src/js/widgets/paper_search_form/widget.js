@@ -169,7 +169,12 @@ define([
       });
 
       var ps = this.getPubSub();
-      ps.publish(ps.NAVIGATE, 'search-page', { q: newQuery });
+      ps.publish(ps.NAVIGATE, 'search-page', {
+        q: newQuery,
+        context: {
+          referrer: 'PaperSearchForm'
+        }
+      });
     },
 
     submitBigQuery: function (bibcodes) {
@@ -179,7 +184,12 @@ define([
       });
 
       var ps = this.getPubSub();
-      ps.publish(ps.NAVIGATE, 'search-page', { q: newQuery });
+      ps.publish(ps.NAVIGATE, 'search-page', {
+        q: newQuery,
+        context: {
+          referrer: 'PaperSearchForm'
+        }
+      });
     },
 
     onShow: function () {

@@ -11,6 +11,11 @@ define([
 ) {
   var PageManager = PageManagerController.extend({
 
+    initialize: function () {
+      PageManagerController.prototype.initialize.apply(this, arguments);
+      this._referrer = null;
+    },
+
     persistentWidgets: [
       'PubtypeFacet', 'SearchWidget', 'BreadcrumbsWidget', 'Sort',
       'ExportDropdown', 'VisualizationDropdown', 'AffiliationFacet', 'AuthorFacet',
@@ -36,9 +41,23 @@ define([
 
     show: function () {
       var ret = PageManagerController.prototype.show.apply(this, arguments);
-      var button = '<a href="#" class="back-button btn btn-sm btn-default"> <i class="fa fa-arrow-left"></i> Start New Search</a>';
-      ret.$el.find('.s-back-button-container').empty().html(button);
+      var self = this;
+      var button = '<a href="javascript:void(0);" class="back-button btn btn-sm btn-default"> <i class="fa fa-arrow-left"></i> Start New Search</a>';
+      var $btn = ret.$el.find('.s-back-button-container');
+      $btn.empty().off('click').html(button);
+      $btn.click(function () {
+        var ps = self.getPubSub();
+        ps.publish(ps.NAVIGATE, self._referrer || 'index-page');
+        self._referrer = null;
+        return false;
+      });
       return ret;
+    },
+
+    provideContext: function (ctx) {
+      if (ctx.referrer) {
+        this._referrer = ctx.referrer;
+      }
     },
 
     assemble: function () {

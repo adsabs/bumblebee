@@ -413,8 +413,8 @@ define([
       var ps = this.getPubSub();
       var options = {
         q: newQuery,
-        data: {
-          referrer: 'classic-form'
+        context: {
+          referrer: 'ClassicSearchForm'
         }
       };
       ps.publish(ps.NAVIGATE, 'search-page', options);
