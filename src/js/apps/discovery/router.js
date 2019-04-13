@@ -176,9 +176,11 @@ function (
       // possible subViews: "token", "password", "email", "preferences"
       if (_.contains(['token', 'password', 'email', 'delete'], subView)) {
         this.routerNavigate('UserSettings', { subView: subView });
-      } else if (_.contains(['librarylink', 'orcid', 'libraryimport', 'application'], subView)) {
+      } else if (_.contains(['librarylink', 'orcid', 'application'], subView)) {
         // show preferences if no subview provided
         this.routerNavigate('UserPreferences', { subView: subView });
+      } else if (_.contains(['libraryimport'], subView)) {
+        this.routerNavigate('LibraryImport');
       } else {
         // just default to showing the library link page for now
         this.routerNavigate('UserPreferences', { subView: undefined });
