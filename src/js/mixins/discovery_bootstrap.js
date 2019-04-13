@@ -59,7 +59,8 @@ function (
       }
     };
 
-    var handleNavigation = function () {
+    var metaKey = false;
+    var handleNavigation = function (event) {
       if (!isPushState()) return;
       var $el = $(this);
 
@@ -73,6 +74,16 @@ function (
 
         // update the href on the element
         $el.attr('href', url);
+
+        // handle metakey presses
+        if (event.metaKey) {
+          metaKey = true;
+          return;
+        } else if (metaKey && event.type === 'focusin') {
+          metaKey = false;
+          return;
+        }
+        metaKey = false;
 
         // add the click handler (run once)
         $el.one('click', { url: url }, navigate);
