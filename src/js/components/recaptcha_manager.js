@@ -45,10 +45,46 @@ function (
        * @param view to render recaptcha on
        */
     activateRecaptcha: function (view) {
-      this.when.done(_.partial(this.renderRecaptcha, view));
+      if (this.when.state() !== 'resolved') {
+        this.renderLoading(view);
+      }
+
+      var self = this;
+      clearTimeout(this.to);
+      this.to = setTimeout(function () {
+        if (self.when.state() !== 'resolved') {
+          self.renderError(view);
+        }
+      }, 5000);
+
+      this.when
+        .done(_.partial(_.bind(this.renderRecaptcha, this), view))
+        .fail(function () {
+          self.renderError(view);
+        });
+    },
+
+    renderLoading: function (view) {
+      view.$('.g-recaptcha').html(
+        '<p><i class="fa fa-spinner fa-spin"></i></p>'
+      );
+      this.enableSubmit(view, false);
+    },
+
+    enableSubmit: function (view, bool) {
+      view.$('button[type=submit],input[type=submit]').attr('disabled', !bool);
+    },
+
+    renderError: function (view) {
+      var msg = 'Error loading ReCAPTCHA, please try again';
+      view.$('.g-recaptcha').html(
+        '<p class="text-danger">' + msg + '</p>'
+      );
+      this.enableSubmit(view, false);
     },
 
     renderRecaptcha: function (view, siteKey, undefined) {
+      view.$('.g-recaptcha').empty();
       grecaptcha.render(view.$('.g-recaptcha')[0],
         {
           sitekey: siteKey,
@@ -61,6 +97,7 @@ function (
             }
           }
         });
+      this.enableSubmit(view, true);
     },
 
     hardenedInterface: {
