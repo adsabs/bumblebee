@@ -183,6 +183,60 @@ define([
 
     });
 
+    it('should perform library actions properly', function (done) {
+      var lc = new LibraryController();
+      var minsub = new (MinSub.extend({
+        request: _.constant({})
+      }))({ verbose: false });
+      lc.activate(minsub.beehive.getHardenedInstance());
+      var ctx = {
+        composeRequest: sinon.stub()
+      };
+      ctx.composeRequest.returns($.Deferred().resolve().promise());
+
+      var test = function () {
+        var args = arguments;
+        return function () {
+          lc.performLibraryOperation.apply(ctx, args);
+        }
+      }
+      var ep = function (t) { return 'biblib/libraries/operations/' + t; };
+      var method = 'POST';
+
+      expect(test()).to.throw();
+      expect(test('test', null)).to.throw();
+      expect(test(false, {})).to.throw();
+      expect(test(3, 2)).to.throw();
+      expect(test('test', {})).to.throw();
+      expect(test('test', { action: 'none' })).to.throw();
+      expect(test('test', { action: 'union', libraries: 'foo' })).to.throw();
+      expect(test('test', { action: 'copy', libraries: [] })).to.throw();
+      expect(test('test', { action: 'copy', libraries: ['foo', 'bar'] })).to.throw();
+
+      var check = function (data, cb) {
+        ctx.composeRequest.reset();
+        var args = [ep('test'), method, { data: data }];
+        test('test', data)();
+        if (cb) {
+          return cb(args);
+        }
+        expect(ctx.composeRequest.args[0]).to.eql(args);
+      }
+
+      check({ action: 'union', libraries: [], name: undefined });
+      check({ action: 'union', libraries: ['foo'], name: undefined  });
+      check({ action: 'intersection', libraries: ['foo'], name: undefined  });
+      check({ action: 'difference', libraries: ['foo'], name: undefined  });
+      check({ action: 'copy', libraries: ['foo'] });
+      check({ action: 'empty' });
+      check({ action: 'difference', libraries: ['foo', 'foo', 'foo', 'bar'], name: undefined }, function (args) {
+        args[2].data = _.extend(args[2].data, { libraries: ['foo', 'bar'] })
+        expect(ctx.composeRequest.args[0]).to.eql(args);
+      });
+
+      done();
+    });
+
     it("should allow widgets to get a list of bibcodes from a library", function(){
 
       var l = new LibraryController();
