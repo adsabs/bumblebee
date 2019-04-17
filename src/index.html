@@ -68,7 +68,7 @@
      <!--this is where bbb discovery gets inserted -->
       <div id="body-template-container">
 
-        <div class="loading-screen">
+        <div class="loading-screen" style="display: none">
             <div class="row">
                 <div class="col-xs-8 col-xs-offset-2">
                     <div class="logo__astrophysics">astrophysics</div>
@@ -104,10 +104,16 @@
 
         // Progress Bar
         (function () {
+          var loadingContainer = document.querySelector('.loading-screen');
           var progressBar = document.getElementById('app_loading_progress');
           var message = document.getElementById('app_loading_message');
           var progressInner = document.querySelector('#app_loading_progress>div');
           var progressValue = 0;
+
+          // show nothing for the first 3 seconds
+          setTimeout(function () {
+            loadingContainer.setAttribute('style', '');
+          }, 3000);
 
           window.__setAppLoadingProgress = function (val, msg) {
             if (val < progressValue) return;
