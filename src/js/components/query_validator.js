@@ -62,7 +62,7 @@ define([
      * @returns {boolean}
      */
     var completeValidation = function (res) {
-      return !!res;
+      return res !== null;
     };
 
     /**
@@ -100,7 +100,6 @@ define([
       // any confirmed match will make query invalid
       var validators = [
         completeValidation,
-        new Validator(/^$/), // matches -> ``
         new Validator(/^""$/), // matches -> `foo:""`
         new Validator(/^\(\)$/), // matches -> `foo:()`
         new Validator(/^\(\^\)$/), // matches -> `foo:(^)`
