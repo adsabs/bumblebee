@@ -156,5 +156,13 @@ define([
       expect(res).to.be.instanceOf(Object);
       expect(res.result).to.eql(true);
     });
+
+    it('correctly allows through non-fielded searches with colons', function () {
+      var q = getMockQuery('tests:  ', 'title: ', 'abs:');
+      var res = qv.validate(q);
+
+      expect(res).to.be.instanceOf(Object);
+      expect(res.result).to.eql(true);
+    });
   });
 });
