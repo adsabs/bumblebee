@@ -1,12 +1,12 @@
 language: node_js
-node_js: "6.11.2"
+node_js: "11.14.0"
 cache: npm
 before_install: npm install -g grunt-cli
 install: npm install
 deployg: grunt release
 before_script: grunt setup
 script:
-  - if [ "$TRAVIS_PULL_REQUEST" != "false" ]; then echo "grunt test coverage"; grunt test coverage; fi
+  - if [ "$TRAVIS_PULL_REQUEST" != "false" ]; then echo "grunt test"; grunt test; fi
   #- if [ "$TRAVIS_PULL_REQUEST" = "false" ]; then echo "grunt sauce"; grunt sauce; fi
 env:
   global:

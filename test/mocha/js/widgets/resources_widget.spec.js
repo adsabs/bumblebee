@@ -1,7 +1,7 @@
 
 define([
   'jquery',
-  'es6!js/widgets/resources/widget.jsx',
+  'js/widgets/resources/widget.jsx',
   'js/widgets/base/base_widget',
   'js/bugutils/minimal_pubsub'
 ], function ($, Widget, BaseWidget, MinPubSub) {

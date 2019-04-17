@@ -7,9 +7,9 @@ define([
   'react-redux',
   'js/components/api_query',
   'js/bugutils/minimal_pubsub',
-  'es6!js/widgets/author_affiliation_tool/constants/actionNames',
-  'es6!js/widgets/author_affiliation_tool/widget.jsx',
-  'es6!js/widgets/author_affiliation_tool/containers/App.jsx'
+  'js/widgets/author_affiliation_tool/constants/actionNames',
+  'js/widgets/author_affiliation_tool/widget.jsx',
+  'js/widgets/author_affiliation_tool/containers/App.jsx'
 ], function (
   Moment, $, React, Enzyme, ReactRedux, ApiQuery,
   MinPubSub, ACTIONS, AuthorAffiliationWidget, App

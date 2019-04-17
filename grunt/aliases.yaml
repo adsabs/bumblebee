@@ -68,26 +68,24 @@ css:
   - 'autoprefixer'
 
 # Testing
-test:
-  - 'server:once'
-  - 'mocha-runner:all'
-
-'test:release':
-  - 'server:release:once'
-  - 'mocha-runner:all'
-
-coverage:
-  - 'clean:coverage'
-  - 'exec:nyc-instrument'
-  - 'mocha-runner:coverage'
-  - 'coverage-report:coveralls'
-  - 'exec:coveralls-report'
-
 # Initial Setup
 setup:
   - 'assets'
   - 'copy:discovery_vars'
   - 'sass'
+
+test:
+  - 'clean:coverage'
+  - 'clean:release'
+  - 'copy:release'
+  - 'compile-handlebars:index'
+  - 'babel'
+  - 'string-replace:final'
+  - 'exec:nyc-instrument'
+  - 'server:once'
+  - 'puppet:all'
+  - 'coverage-report:coveralls'
+  - 'exec:coveralls-report'
 
 # Release
 release:
