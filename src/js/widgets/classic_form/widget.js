@@ -407,13 +407,27 @@ define([
       this.view.$('input,textarea').val('');
     },
 
+    /**
+     * quick loop that waits for the element to be actually visible before
+     * setting the focus
+     * @param {string} selector
+     */
+    setFocus: function (selector) {
+      var $_ = _.bind(this.view.$, this.view);
+      (function check(c) {
+        var $el = $_(selector);
+        if ($el.is(':visible') || c <= 0) return $el.focus();
+        setTimeout(check, 100, --c);
+      })(10);
+    },
+
     onShow: function () {
       // clear the loading button
       this.view.$('button[type=submit]').each(function () {
         $(this).html('<i class="fa fa-search"></i> Search');
       });
       // set focus to author field
-      this.view.$('#classic-author').focus();
+      this.setFocus('#classic-author');
     },
 
     submitForm: function (queryDict) {

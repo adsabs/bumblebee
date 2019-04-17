@@ -160,6 +160,18 @@ define([
 
     activate: function (beehive) {
       this.setBeeHive(beehive);
+      var ps = this.getPubSub();
+      var self = this;
+      ps.subscribe(ps.CUSTOM_EVENT, function (ev) {
+        if (ev === 'start-new-search') {
+          self.onNewSearch();
+        }
+      });
+    },
+
+    onNewSearch: function () {
+      this.model.set(this.model.defaults());
+      this.view.$('input,textarea').val('');
     },
 
     submitForm: function (query) {
@@ -192,11 +204,25 @@ define([
       });
     },
 
+    /**
+     * quick loop that waits for the element to be actually visible before
+     * setting the focus
+     * @param {string} selector
+     */
+    setFocus: function (selector) {
+      var $_ = _.bind(this.view.$, this.view);
+      (function check(c) {
+        var $el = $_(selector);
+        if ($el.is(':visible') || c <= 0) return $el.focus();
+        setTimeout(check, 100, --c);
+      })(10);
+    },
+
     onShow: function () {
       var loggedIn = this.getBeeHive().getObject('User').isLoggedIn();
       this.model.set({ loggedIn: loggedIn });
       this.view.render();
-      this.view.$('input#pub-input').focus();
+      this.setFocus('input#pub-input');
     }
 
   });
