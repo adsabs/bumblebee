@@ -24,7 +24,7 @@ function (
     var options = {
       queryOperator: 'citations',
       sortOrder: 'date desc',
-      description: 'Papers which cite',
+      description: 'Papers that cite',
       operator: true
     };
     return new Widget(options);
