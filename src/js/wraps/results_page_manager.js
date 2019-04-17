@@ -47,6 +47,7 @@ define([
       $btn.empty().off('click').html(button);
       $btn.click(function () {
         var ps = self.getPubSub();
+        ps.publish(ps.CUSTOM_EVENT, 'start-new-search');
         ps.publish(ps.NAVIGATE, self._referrer || 'index-page');
         self._referrer = null;
         return false;

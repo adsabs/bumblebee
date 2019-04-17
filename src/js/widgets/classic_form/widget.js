@@ -393,6 +393,18 @@ define([
 
     activate: function (beehive) {
       this.setBeeHive(beehive);
+      var ps = this.getPubSub();
+      var self = this;
+      ps.subscribe(ps.CUSTOM_EVENT, function (ev) {
+        if (ev === 'start-new-search') {
+          self.onNewSearch();
+        }
+      });
+    },
+
+    onNewSearch: function () {
+      this.model.set(this.model.defaults);
+      this.view.$('input,textarea').val('');
     },
 
     onShow: function () {
