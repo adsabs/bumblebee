@@ -338,47 +338,6 @@ define([
           });
         return $li;
       };
-
-      var resizeMenu = function () {
-        this.menu.element.outerHeight(300);
-        this.menu.element.attr('style', this.menu.element.attr('style') + ' overflow-x: hidden; position: relative;');
-      };
-
-      var onSelect = function (e, ui) {
-        var data = {};
-        data[$(this).attr('name')] = ui.item.value;
-        var val = _.extend({}, self.model.get('pubdate'), data);
-        self.model.set('pubdate', val);
-        this.value = ui.item.value;
-        e.preventDefault();
-        return false;
-      };
-
-      this.$('input[name="month_from"], input[name="month_to"]').autocomplete({
-        source: MONTHS,
-        minLength: 0,
-        select: onSelect
-      })
-      .click(showOnFocus)
-      .focus(showOnFocus);
-
-      this.$('input[name="year_from"]').autocomplete({
-        source: YEARS,
-        minLength: 0,
-        select: onSelect
-      })
-      .click(showOnFocus)
-      .focus(showOnFocus)
-      .data('ui-autocomplete')._resizeMenu = resizeMenu;
-
-      this.$('input[name="year_to"]').autocomplete({
-        source: YEARS,
-        minLength: 0,
-        select: onSelect
-      })
-      .click(showOnFocus)
-      .focus(showOnFocus)
-      .data('ui-autocomplete')._resizeMenu = resizeMenu;
     }
   });
 
@@ -393,6 +352,32 @@ define([
 
     activate: function (beehive) {
       this.setBeeHive(beehive);
+      var ps = this.getPubSub();
+      var self = this;
+      ps.subscribe(ps.CUSTOM_EVENT, function (ev) {
+        if (ev === 'start-new-search') {
+          self.onNewSearch();
+        }
+      });
+    },
+
+    onNewSearch: function () {
+      this.model.set(this.model.defaults);
+      this.view.$('input,textarea').val('');
+    },
+
+    /**
+     * quick loop that waits for the element to be actually visible before
+     * setting the focus
+     * @param {string} selector
+     */
+    setFocus: function (selector) {
+      var $_ = _.bind(this.view.$, this.view);
+      (function check(c) {
+        var $el = $_(selector);
+        if ($el.is(':visible') || c <= 0) return $el.focus();
+        setTimeout(check, 100, --c);
+      })(10);
     },
 
     onShow: function () {
@@ -401,7 +386,7 @@ define([
         $(this).html('<i class="fa fa-search"></i> Search');
       });
       // set focus to author field
-      this.view.$('#classic-author').focus();
+      this.setFocus('#classic-author');
     },
 
     submitForm: function (queryDict) {
