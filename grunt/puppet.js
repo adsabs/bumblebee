@@ -16,9 +16,7 @@ module.exports = function (grunt) {
 
     // create a progress bar to show
     const bar = new progresscli.Bar({
-      format: '[{bar}] {percentage}% | {value}/{total} tests | {duration_formatted}',
-      barCompleteChar: '\u2588',
-      barIncompleteChar: '\u2591'
+      format: '[{bar}] {percentage}% | {value}/{total} tests | {duration_formatted}'
     }, progresscli.Presets.shades_classic);
 
     // grab all the test files
