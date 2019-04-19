@@ -147,6 +147,18 @@ function (
         doc.pubnoteList = _.first(doc.pubnote, MAX_COMMENTS);
       }
 
+      if (doc.identifier) {
+        var id = _.find(doc.identifier, function (d) {
+          return d.toLowerCase().startsWith('arxiv');
+        });
+        if (id) {
+          doc.arxiv = {
+            id: id,
+            href: LinkGeneratorMixin.createUrlByType(doc.bibcode, 'arxiv', id.split(':')[1])
+          }
+        }
+      }
+
       return doc;
     }
   });

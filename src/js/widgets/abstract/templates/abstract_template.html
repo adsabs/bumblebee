@@ -86,6 +86,16 @@
     </dd>
     {{/if}}
 
+    {{#if arxiv}}
+    <dt>arXiv:</dt>
+    <dd>
+        <span>
+            <a href="{{arxiv.href}}" target="_blank" rel="noopener">{{arxiv.id}}</a>
+            <i class="fa fa-external-link"></i>
+        </span>
+    </dd>
+    {{/if}}
+
     <dt>Bibcode:</dt>
     <dd>
       <a href="#abs/{{bibcode}}/abstract">
