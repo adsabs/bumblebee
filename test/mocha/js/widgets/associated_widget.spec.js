@@ -2,7 +2,7 @@
 define([
   'underscore',
   'jquery',
-  'es6!js/widgets/associated/widget.jsx',
+  'js/widgets/associated/widget.jsx',
   'js/widgets/base/base_widget',
   'js/bugutils/minimal_pubsub'
 ], function (_, $, Widget, BaseWidget, MinPubSub) {

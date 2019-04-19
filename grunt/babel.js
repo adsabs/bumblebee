@@ -12,5 +12,13 @@ module.exports = {
       src: '**/*.js',
       dest: 'dist/js'
     }]
+  },
+  temp: {
+    files: [{
+      expand: true,
+      cwd: 'src/js',
+      src: '**/*.js',
+      dest: '_tmp/js'
+    }]
   }
 };

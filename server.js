@@ -47,7 +47,7 @@ app.use('/', express.static(path.join(__dirname, config.root)));
 app.use('/test', express.static(path.join(__dirname, '/test')));
 app.use('/node_modules', express.static(path.join(__dirname, '/node_modules')));
 app.use('/bower_components', express.static(path.join(__dirname, '/bower_components')));
-
+app.use('/_tmp', express.static(path.join(__dirname, '/_tmp')));
 
 // other custom proxy config:
 var customProxyConfig = {

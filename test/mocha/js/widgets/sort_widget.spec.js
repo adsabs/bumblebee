@@ -6,8 +6,8 @@ define([
     'js/components/api_request',
     'js/components/api_query',
     'js/bugutils/minimal_pubsub',
-    'es6!js/widgets/sort/widget.jsx',
-    'es6!js/widgets/sort/redux/modules/sort-app',
+    'js/widgets/sort/widget.jsx',
+    'js/widgets/sort/redux/modules/sort-app',
     'js/components/api_feedback'
     ],
   function($, _, ApiResponse, ApiRequest, ApiQuery, MinimalPubSub, SortWidget, SortApp, ApiFeedback) {

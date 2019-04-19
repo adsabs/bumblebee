@@ -1,7 +1,7 @@
 define([
   'underscore',
   'js/bugutils/minimal_pubsub',
-  'es6!js/widgets/orcid-selector/widget.jsx'
+  'js/widgets/orcid-selector/widget.jsx'
 ], function (_, MinPubSub, Widget) {
 
   var init = function () {

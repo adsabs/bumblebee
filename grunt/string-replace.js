@@ -29,5 +29,16 @@ module.exports = {
         replacement: ''
       }]
     }
+  },
+  temp: {
+    files: {
+      '_tmp/': '_tmp/**/*.{js,html}'
+    },
+    options: {
+      replacements: [{
+        pattern: /es6!/ig,
+        replacement: ''
+      }]
+    }
   }
 };
