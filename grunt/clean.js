@@ -34,5 +34,8 @@ module.exports = {
   },
   coverage: {
     src: ['test/coverage']
+  },
+  temp: {
+    src: ['_tmp']
   }
 };

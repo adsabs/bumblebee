@@ -31,7 +31,6 @@
     "browserify": "^14.4.0",
     "chai": "^4.2.0",
     "chalk": "~0.4.0",
-    "cli-progress": "^2.1.1",
     "compression": "^1.7.2",
     "coveralls": "^2.13.1",
     "enzyme": "^2.9.1",

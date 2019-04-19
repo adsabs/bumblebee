@@ -5,19 +5,15 @@
  * @module grunt/puppet
  */
 module.exports = function (grunt) {
-
   grunt.registerMultiTask('puppet', 'find and run tests headlessly', async function () {
     const done = this.async();
     const COVERAGE_COLLECTION_FILE = 'test/coverage/coverage.json'
     const path = require('path');
     const puppeteer = require('puppeteer');
-    const progresscli = require('cli-progress');
-    console.log();
-
-    // create a progress bar to show
-    const bar = new progresscli.Bar({
-      format: '[{bar}] {percentage}% | {value}/{total} tests | {duration_formatted}'
-    }, progresscli.Presets.shades_classic);
+    const options = this.options({
+      env: 'production',
+      launchOptions: { headless: true }
+    });
 
     // grab all the test files
     let specs = grunt.file.expand({
@@ -36,38 +32,41 @@ module.exports = function (grunt) {
     // grab all the "coverage" mappings from dist, this way all the files
     // will already be transpiled/processed and we will be testing on stuff
     // closer to prod
-    let coverageMappings = grunt.file.expand({
-      cwd: path.resolve('dist/js')
-    }, ['**/*.js']).reduce((acc, m) => {
-      m = m.replace(/^/, 'js/').replace(/.js$/, '');
-      acc[m] = m.replace(/^js\//, 'test/coverage/instrument/');
-      return acc;
-    }, {});
+    let mappings = {};
+    if (options.env === 'production') {
+      mappings = grunt.file.expand({
+        cwd: path.resolve('dist/js')
+      }, ['**/*.js']).reduce((acc, m) => {
+        m = m.replace(/^/, 'js/').replace(/.js$/, '');
+        acc[m] = m.replace(/^js\//, 'test/coverage/instrument/');
+        return acc;
+      }, {});
+    } else {
+      mappings = grunt.file.expand({
+        cwd: path.resolve('_tmp/js')
+      }, ['**/*.js']).reduce((acc, m) => {
+        m = m.replace(/^/, 'js/').replace(/.js$/, '');
+        acc[m] = m.replace(/^js\//, '_tmp/js/');
+        return acc;
+      }, {});
+    }
 
     // start a headless browser session
-    const browser = await puppeteer.launch({ headless: true, devtools: false });
+    const browser = await puppeteer.launch(options.launchOptions);
     const page = await browser.newPage();
     await page.goto('http://localhost:8000/test/mocha/tests.html', { waitUntil: 'networkidle0' });
+    await page.on('console', async (msg) => {
+      const args = await Promise.all(msg.args().map(async a => await a.jsonValue()));
+      console[msg.type()].apply(console, args);
+    });
 
-    // expose some helper functions for handling update of the progress bar
-    // and logging at the node level
-    await page.exposeFunction('_start_', (...args) => bar.start.apply(bar, args));
-    await page.exposeFunction('_increment_', (...args) => bar.increment.apply(bar, args));
-    await page.exposeFunction('_stop_', (...args) => bar.stop.apply(bar, args));
-    await page.exposeFunction('_setTotal_', (...args) => bar.setTotal.apply(bar, args));
-    await page.exposeFunction('_log_', (...args) => console.log.apply(console, args));
-    await page.exposeFunction('_err_', (...args) => console.error.apply(console, args));
-
-    // gather everything, load up tests and run mocha
-    const result = await page.evaluate((specs, coverageMappings) => {
+    // get the dependencies for testing, and setup globals
+    await page.evaluate(() => {
       return new Promise(resolve => {
-
-        // load up dependencies for testing
         require([
           'mocha', 'chai', 'sinon',
           '../../node_modules/es5-shim/es5-shim.min'
         ], (mocha, chai) => {
-
           // expose chai globals
           window.expect = chai.expect;
           window.assert = chai.assert;
@@ -84,54 +83,46 @@ module.exports = function (grunt) {
             window.sessionStorage.clear();
           });
 
-          // using the coverage mappings generated earlier, configure requirejs
-          // to point to those instead
-          require({
-            baseUrl: '/',
-            paths: coverageMappings,
-            config: {
-              'test/coverage/instrument/components/persistent_storage': {
-                namespace: 'bumblebee'
-              }
-            }
-          }, specs, () => {
+          // overwrite mocha's stdout to make sure it doesn't throw errors
+          Mocha.process.stdout.write = () => {};
+          resolve();
+        });
+      })
+    });
 
-            // overwrite mocha's stdout to make sure it doesn't throw errors
-            Mocha.process.stdout.write = () => {};
+    let config = {
+      baseUrl: '/',
+      paths: mappings
+    };
+    if (options.env === 'production') {
+      config = {
+        ...config,
+        config: {
+          'test/coverage/instrument/components/persistent_storage': {
+            namespace: 'bumblebee'
+          }
+        }
+      }
+    }
 
-            // recurse through suites to find the total number of tests
-            const testCount = (function getCount(suite, tests) {
-              tests += suite.tests.reduce((acc, t) => t.pending ? acc : acc + 1, 0);
-              tests += suite.suites.reduce((acc, s) => acc + getCount(s, 0), 0);
-              return tests;
-            })(mocha.suite, 0);
+    // gather everything, load up tests and run mocha
+    const result = await page.evaluate((specs, config) => {
+      return new Promise(resolve => {
 
-            // run tests
-            const runner = mocha.run();
-
-            // create a new Base reporter, this does alot of the display work
-            const base = new Mocha.reporters.Base(runner);
-            _start_(testCount, 0);
-
-            // increment the progress bar after each tests
-            runner.on('test end', (test) => !test.pending && _increment_());
-            runner.on('end', () => {
-
-              // stop progress, and allow the base reporter to show epilogue (summary)
-              _stop_();
-              console.log = (...args) => _log_.apply(null, args);
-              base.epilogue();
-              resolve(runner.stats.failures === 0);
-            });
-          });
+        // using the coverage mappings generated earlier, configure requirejs
+        // to point to those instead
+        require(config, specs, () => {
+          const runner = mocha.run();
+          new Mocha.reporters.Spec(runner);
+          runner.on('end', () => resolve(runner.stats.failures === 0));
         });
       });
-    }, specs, coverageMappings);
+    }, specs, config);
 
     // drop out if the result is false (tests failed) otherwise continue with coverage
     if (!result) {
       grunt.fail.fatal('Tests Failing', -1);
-    } else {
+    } else if (options.env === 'production') {
 
       // grab the coverage result from the global object
       const coverage = await page.evaluateHandle('__coverage__');
@@ -155,9 +146,21 @@ module.exports = function (grunt) {
   });
 
   return {
-    options: {
-      env: 'production'
+    prod: {
+      options: {
+        env: 'production'
+      }
     },
-    all: {}
+    dev: {
+      options: {
+        env: 'development'
+      }
+    },
+    debug: {
+      options: {
+        env: 'development',
+        launchOptions: { headless: false, devtools: true }
+      }
+    }
   }
 };

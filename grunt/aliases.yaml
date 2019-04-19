@@ -74,7 +74,7 @@ setup:
   - 'copy:discovery_vars'
   - 'sass'
 
-test:
+test:prod:
   - 'clean:coverage'
   - 'clean:release'
   - 'copy:release'
@@ -83,9 +83,16 @@ test:
   - 'string-replace:final'
   - 'exec:nyc-instrument'
   - 'server:once'
-  - 'puppet:all'
+  - 'puppet:prod'
   - 'coverage-report:coveralls'
   - 'exec:coveralls-report'
+
+test:
+  - babel:temp
+  - string-replace:temp
+  - server:once
+  - puppet:dev
+  - clean:temp
 
 # Release
 release:
