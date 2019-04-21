@@ -12,7 +12,7 @@
       paths: {
         'underscore': '//cdnjs.cloudflare.com/ajax/libs/lodash.js/2.4.2/lodash.min',
         'google-analytics': [
-          '//www.google-analytics.com/analytics',
+          'libs/g',
           'data:application/javascript,'
         ],
         'analytics': 'js/components/analytics',
@@ -21,24 +21,19 @@
       shim: {
         'google-analytics': {
           exports: '__ga__'
-        },
-        'analytics': {
-          deps: ['google-analytics']
         }
       },
       callback: function () {
-        require(['discovery.vars'], function (config) {
+        window.GoogleAnalyticsObject = '__ga__';
 
-          // google analytics config
-          window.GoogleAnalyticsObject = '__ga__';
-          window.__ga__ = {
-            q: [
-              ['create', config.googleTrackingCode || '', config.googleTrackingOptions ||
-                'auto'
-              ]
-            ],
-            l: Date.now()
-          };
+        require(['discovery.vars'], function(config) {
+          setTimeout(function () {
+            require(['google-analytics', 'analytics'], function () {
+              var qa = window[window.GoogleAnalyticsObject];
+              qa.l = Date.now();
+              qa('create', config.googleTrackingCode || '', config.googleTrackingOptions);
+            });
+          }, 0);
         });
       }
     });

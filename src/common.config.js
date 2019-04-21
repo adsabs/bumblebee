@@ -39,10 +39,16 @@ define([], function () {
 
   window.GoogleAnalyticsObject = '__ga__';
 
-  require(['discovery.vars', 'google-analytics', 'analytics'], function(config) {
-    var qa = window[window.GoogleAnalyticsObject];
-    qa.l = Date.now();
-    qa('create', config.googleTrackingCode || '', config.googleTrackingOptions);
+  require(['discovery.vars'], function(config) {
+
+    // make sure that google analytics never blocks app load
+    setTimeout(function () {
+      require(['google-analytics', 'analytics'], function () {
+        var qa = window[window.GoogleAnalyticsObject];
+        qa.l = Date.now();
+        qa('create', config.googleTrackingCode || '', config.googleTrackingOptions);
+      });
+    }, 0);
   });
 
   // set up handlebars helpers
