@@ -13,7 +13,6 @@ module.exports = function (grunt) {
     'd3': 'empty:',
     'es5-shim': 'empty:',
     'filesaver': 'empty:',
-    'google-analytics': 'empty:',
     'google-recaptcha': 'empty:',
     'jquery': 'empty:',
     'jquery-ui' : 'empty:',
@@ -543,7 +542,7 @@ requirejs.config(${ JSON.stringify(cnts, null, 2) });
     ]);
     grunt.task.run(['applyIncludesToConfig']);
     grunt.task.run([
-      'babel',
+      'babel:release',
       'uglify'
     ]);
   });

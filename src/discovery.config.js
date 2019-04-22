@@ -229,7 +229,7 @@ require.config({
       'libs/file-saver/index'
     ],
     'google-analytics': [
-      '//google-analytics.com/analytics',
+      'libs/g',
       'data:application/javascript,'
     ],
     'google-recaptcha': [
@@ -346,10 +346,6 @@ require.config({
     marionette: {
       deps: ['jquery', 'underscore', 'backbone'],
       exports: 'Marionette'
-    },
-
-    analytics: {
-      'deps': ['google-analytics']
     },
 
     cache: {
