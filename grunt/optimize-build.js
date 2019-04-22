@@ -14,6 +14,7 @@ module.exports = function (grunt) {
     'es5-shim': 'empty:',
     'filesaver': 'empty:',
     'google-recaptcha': 'empty:',
+    'google-analytics': 'empty:',
     'jquery': 'empty:',
     'jquery-ui' : 'empty:',
     'jquery-querybuilder': 'empty:',
