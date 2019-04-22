@@ -234,6 +234,7 @@ require.config({
     ],
     'google-recaptcha': [
       '//google.com/recaptcha/api.js?&render=explicit&onload=onRecaptchaLoad',
+      '//recaptcha.net/recaptcha/api.js?&render=explicit&onload=onRecaptchaLoad',
       'data:application/javascript,'
     ],
     'hbs': 'libs/require-handlebars-plugin/hbs',

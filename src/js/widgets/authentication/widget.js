@@ -12,8 +12,7 @@ define([
   'hbs!js/widgets/authentication/templates/reset-password-2',
   'js/components/user',
   'backbone-validation',
-  'backbone.stickit',
-  'google-recaptcha'
+  'backbone.stickit'
 
 ], function (Marionette,
   BaseWidget,
