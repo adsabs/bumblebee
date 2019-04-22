@@ -54,12 +54,17 @@ function (
     },
 
     activate: function (beehive) {
+      var self = this;
       this.setBeeHive(beehive.getHardenedInstance());
       var pubsub = this.getBeeHive().getService('PubSub');
 
       pubsub.subscribe(pubsub.INVITING_REQUEST, _.bind(this.updateCurrentQuery, this));
       pubsub.subscribe(pubsub.USER_ANNOUNCEMENT, _.bind(this.handleUserAnnouncement, this));
-
+      pubsub.subscribe(pubsub.CUSTOM_EVENT, function (event) {
+        if (event === 'invalidate-library-metadata') {
+          self._metadataLoaded = false;
+        }
+      });
       /*
          * the three events that come from changing a collection:
          * -change if a model's contents were changed
@@ -401,6 +406,46 @@ function (
         });
     },
 
+    performLibraryOperation: function (libId, options) {
+      if (!options) {
+        throw new Error('must provide options object with action and set of secondary libraries (if necessary)');
+      }
+      var data = {};
+      var action = options.action && options.action.toLowerCase();
+      var libraries = options.libraries;
+      var name = options.name;
+      var isAdvancedAction = /^(union|intersection|difference)$/.test(action);
+      var isCopyAction = /^copy$/.test(action);
+      var isEmptyAction = /^empty$/.test(action);
+
+      if (!_.isString(action) || (!isAdvancedAction && !isCopyAction && !isEmptyAction)) {
+        throw new Error(action +' is not one of the defined actions');
+      }
+      if (!_.isString(libId)) {
+        throw new Error('must pass library ID as first parameter');
+      }
+      if (isAdvancedAction && (!_.isArray(libraries))) {
+        throw new Error('libraries must be an array');
+      }
+      if (isCopyAction && (!_.isArray(libraries) || libraries.length !== 1)) {
+        throw new Error('for copy action, libraries must have exactly 1 entry');
+      }
+
+      // make sure that we don't send duplicate library ids
+      libraries = _.unique(libraries);
+
+      _.extend(data, { action });
+      if (isAdvancedAction) {
+        _.extend(data, { libraries, name });
+      } else if (isCopyAction) {
+        _.extend(data, { libraries });
+      }
+
+      var endpoint = ApiTargets.LIBRARIES + '/operations/' + libId;
+      return this.composeRequest(endpoint, 'POST', { data: data });
+    },
+
+
     //      /*
     //      * email, permission, value
     //      * */
@@ -529,7 +574,9 @@ function (
 
       // currently called by library individual widget to get
       // lists of bibs to pass to export, metrics, vis widgets etc
-      getLibraryBibcodes: 'getLibraryBibcodes'
+      getLibraryBibcodes: 'getLibraryBibcodes',
+
+      performLibraryOperation: 'performLibraryOperation'
     }
 
   });

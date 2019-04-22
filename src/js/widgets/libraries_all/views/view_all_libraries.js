@@ -64,7 +64,8 @@ define([
     },
 
     events: {
-      'click thead button': 'sortCollection'
+      'click thead button': 'sortCollection',
+      'click #library-actions': 'triggerActionsView'
     },
 
 
@@ -84,6 +85,10 @@ define([
 
     triggerNavigate: function (childView) {
       this.trigger('navigate:library', childView.model.get('id'));
+    },
+
+    triggerActionsView: function () {
+      this.trigger('navigate:library-actions');
     },
 
     sortCollection: function (e) {

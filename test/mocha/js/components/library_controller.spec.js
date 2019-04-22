@@ -47,6 +47,7 @@ define([
         "updateLibraryMetadata",
         "importLibraries",
         "getLibraryBibcodes",
+        "performLibraryOperation",
         "__facade__",
         "mixIn"
       ]);
@@ -180,6 +181,60 @@ define([
 
       expect(JSON.stringify(l.getBeeHive().getService("PubSub").publish.args[0])).to.eql('["[PubSub]-Library-Change",[{"name":"Aliens Among Us","id":"1","description":"Are you one of them?","permission":"owner","num_documents":300,"date_created":"2015-04-03 04:30:04","date_last_modified":"2015-04-09 06:30:04","public":false,"num_users":1,"title":""},{"name":"Everything Sun","id":"2","description":"Where would we be without the sun?","num_documents":0,"permission":"admin","date_created":"2014-01-03 04:30:04","date_last_modified":"2015-01-09 06:30:04","public":false,"num_users":1,"title":""},{"name":"Space Travel and You","id":"7","description":"","permission":"write","num_documents":4000,"date_created":"2013-06-03 04:30:04","date_last_modified":"2015-06-09 06:30:04","public":false,"num_users":1,"title":""},{"name":"Space Travel and Me","id":"3","description":"interesting","permission":"read","num_documents":400,"date_created":"2012-06-03 05:30:04","date_last_modified":"2015-07-09 06:30:04","public":false,"num_users":1,"title":""}],{"ev":"reset"}]');
 
+    });
+
+    it('should perform library actions properly', function (done) {
+      var lc = new LibraryController();
+      var minsub = new (MinSub.extend({
+        request: _.constant({})
+      }))({ verbose: false });
+      lc.activate(minsub.beehive.getHardenedInstance());
+      var ctx = {
+        composeRequest: sinon.stub()
+      };
+      ctx.composeRequest.returns($.Deferred().resolve().promise());
+
+      var test = function () {
+        var args = arguments;
+        return function () {
+          lc.performLibraryOperation.apply(ctx, args);
+        }
+      }
+      var ep = function (t) { return 'biblib/libraries/operations/' + t; };
+      var method = 'POST';
+
+      expect(test()).to.throw();
+      expect(test('test', null)).to.throw();
+      expect(test(false, {})).to.throw();
+      expect(test(3, 2)).to.throw();
+      expect(test('test', {})).to.throw();
+      expect(test('test', { action: 'none' })).to.throw();
+      expect(test('test', { action: 'union', libraries: 'foo' })).to.throw();
+      expect(test('test', { action: 'copy', libraries: [] })).to.throw();
+      expect(test('test', { action: 'copy', libraries: ['foo', 'bar'] })).to.throw();
+
+      var check = function (data, cb) {
+        ctx.composeRequest.reset();
+        var args = [ep('test'), method, { data: data }];
+        test('test', data)();
+        if (cb) {
+          return cb(args);
+        }
+        expect(ctx.composeRequest.args[0]).to.eql(args);
+      }
+
+      check({ action: 'union', libraries: [], name: undefined });
+      check({ action: 'union', libraries: ['foo'], name: undefined  });
+      check({ action: 'intersection', libraries: ['foo'], name: undefined  });
+      check({ action: 'difference', libraries: ['foo'], name: undefined  });
+      check({ action: 'copy', libraries: ['foo'] });
+      check({ action: 'empty' });
+      check({ action: 'difference', libraries: ['foo', 'foo', 'foo', 'bar'], name: undefined }, function (args) {
+        args[2].data = _.extend(args[2].data, { libraries: ['foo', 'bar'] })
+        expect(ctx.composeRequest.args[0]).to.eql(args);
+      });
+
+      done();
     });
 
     it("should allow widgets to get a list of bibcodes from a library", function(){
