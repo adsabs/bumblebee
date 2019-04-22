@@ -1,6 +1,6 @@
 
-        // GENERATED FILE (edits will be overwritten)
-        module.exports = {
+// GENERATED FILE (edits will be overwritten)
+module.exports = {
   "landing-page": {
     "options": {
       "waitSeconds": 0,
@@ -25,6 +25,7 @@
         "es5-shim": "empty:",
         "filesaver": "empty:",
         "google-recaptcha": "empty:",
+        "google-analytics": "empty:",
         "jquery": "empty:",
         "jquery-ui": "empty:",
         "jquery-querybuilder": "empty:",
@@ -200,6 +201,7 @@
         "es5-shim": "empty:",
         "filesaver": "empty:",
         "google-recaptcha": "empty:",
+        "google-analytics": "empty:",
         "jquery": "empty:",
         "jquery-ui": "empty:",
         "jquery-querybuilder": "empty:",
@@ -390,6 +392,7 @@
         "es5-shim": "empty:",
         "filesaver": "empty:",
         "google-recaptcha": "empty:",
+        "google-analytics": "empty:",
         "jquery": "empty:",
         "jquery-ui": "empty:",
         "jquery-querybuilder": "empty:",
