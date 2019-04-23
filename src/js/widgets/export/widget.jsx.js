@@ -231,16 +231,19 @@ define([
     renderWidgetForListOfBibcodes: function (recs, data) {
       const { dispatch } = this.store;
       const {
-        receiveIds, findAndSetFormat, fetchUsingIds, hardReset,
+        receiveIds, findAndSetFormat, fetchUsingIds, hardReset, setSort,
         setCount, setTotalRecs, takeSnapshot, setOrigin, setCustomFormats
       } = actions;
 
       const format = data.format === 'default' || data.format === 'other' ?
         this.getDefaultFormatFromUserData() : data.format;
 
+      const sort = data.sort || 'data desc';
+
       dispatch(hardReset());
       const customFormats = this.getCustomFormatsFromUserData();
       dispatch(setCustomFormats(customFormats));
+      dispatch(setSort(sort));
       dispatch(setOrigin(this.componentParams && this.componentParams.origin));
       dispatch(receiveIds(recs));
       dispatch(findAndSetFormat(format.toLowerCase()));
