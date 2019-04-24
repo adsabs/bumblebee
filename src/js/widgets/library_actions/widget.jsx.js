@@ -68,12 +68,15 @@ define([
             }
 
             // only allow libraries where user has owner/admin/write permission
-            const libs = _.reduce(data, (acc, d) => {
+            let libs = _.reduce(data, (acc, d) => {
               if (/^(owner|admin|write)$/i.test(d.permission)) {
                 acc.push(_.pick(d, ['id', 'name']));
               }
               return acc;
             }, []);
+
+            // sort library items by name
+            libs = _.sortBy(libs, 'name');
 
             this.model.set({
               items: libs,
