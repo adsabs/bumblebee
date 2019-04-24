@@ -248,7 +248,7 @@ define([
           request: { export: 'TEST' },
           forBibcodes: {
             recs: ['test_0', 'test_1', 'test_2', 'test_3', 'test_4'],
-            data: { format: 'bibtex' }
+            data: { format: 'bibtex', sort: 'citation_count desc' }
           }
         };
         this.request.returns(mocks.request);
@@ -258,7 +258,8 @@ define([
           count: 5,
           ids: ['test_0', 'test_1', 'test_2', 'test_3', 'test_4'],
           output: 'TEST',
-          isFetching: false
+          isFetching: false,
+          sort: 'citation_count desc'
         };
         const actual = _.pick(w.store.getState().exports, _.keys(expected));
         expect(expected).to.deep.equal(actual);

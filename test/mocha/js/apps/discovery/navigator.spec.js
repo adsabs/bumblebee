@@ -9,7 +9,7 @@ define([
     MinPubSub,
     ApiFeedback,
     Session
-    
+
 ){
 
   describe("Navigator", function(){
@@ -152,7 +152,6 @@ define([
 
     it("should have endpoints for library-export, library-metrics, and library-visualization", function(done){
 
-
       var n = new Navigator();
 
       n.getPubSub = function(){
@@ -196,6 +195,11 @@ define([
           if (obj === "IndividualLibraryWidget"){
             d.resolve(Library);
           }
+
+          // we only grab this for the sort prop on the model
+          if (obj === 'LibraryListWidget') {
+            d.resolve({ model: { get: _.constant('date desc') }});
+          }
           return d;
         }
       };
@@ -221,10 +225,11 @@ define([
             "3"
           ],
           {
-            "format": "bibtex"
+            "format": "bibtex",
+            "sort": "date desc"
           }
         ]);
-  
+
         expect(Library.setSubView.callCount).to.eql(1);
         expect(Library.setSubView.args[0]).to.eql([
           {
@@ -233,7 +238,7 @@ define([
             "id": "1"
           }
         ]);
-  
+
         expect(MasterPageManager.show.callCount).to.eql(1)
         expect(MasterPageManager.show.args[0]).to.eql([
           "LibrariesPage",
@@ -245,11 +250,6 @@ define([
         ]);
         done();
       })
-
-
-
-
-
     });
 
     it("should handle the three verify routes which are contained in email links, passing verify token to servers ", function(done){
@@ -260,10 +260,10 @@ define([
                         request: function() {
                             return $.Deferred().promise();
                           }
-  
+
                       }
                     });
-        
+
       var navigator = new Navigator();
       var fakeSession = new Session();
       var beehive = minsub.beehive;
@@ -300,8 +300,8 @@ define([
         "code": 0,
         "msg": "<p>You have been successfully registered with the username</p> <p><b>foo</b></p>"
       })
-  
-        
+
+
       // pretend verification failed
       fakeApi.request.args[0][0].get("options").fail.call(navigator, {responseJSON : {error : "fakeError"}});
       expect(navigator.get('index-page').execute.callCount).to.eql(2);
@@ -309,7 +309,7 @@ define([
         "code": 0,
         "msg": " <b>fakeError</b> <br/><p>Please try again, or contact <b> adshelp@cfa.harvard.edu for support </b></p>"
       })
-  
+
       fakeApi.request.reset();
       fakePubSub.publish.reset();
       navigator.getApiAccess.reset();
@@ -331,7 +331,7 @@ define([
         "msg": "Your new ADS email is <b>foo2</b>"
       })
 
-      
+
 
       fakeApi.request.args[0][0].get("options").fail.call(navigator, {responseJSON : {error : "fakeError2"}});
       expect(navigator.get('index-page').execute.callCount).to.eql(2);
@@ -339,20 +339,20 @@ define([
         "code": 0,
         "msg": " <b>fakeError2</b> <br/>Please try again, or contact adshelp@cfa.harvard.edu for support"
       })
-  
-  
-  
+
+
+
       fakeApi.request.reset();
       fakePubSub.publish.reset();
       navigator.getApiAccess.reset();
       navigator.get('index-page').execute.reset();
-  
-  
+
+
       //3. reset password is slightly more complicated, should redirect to part 2 of the form in authentication widget
       p = navigator.get('user-action').execute('user-action', {subView: "reset-password", token: "fakeToken3"});
       expect(fakeApi.request.args[0][0].toJSON().target).to.eql("accounts/reset-password/fakeToken3");
       fakeApi.request.args[0][0].get("options").done.call(navigator);
-  
+
       //store the change token for re-submittal after user fills out second form
       expect(fakeSession.setChangeToken.args[0][0]).to.eql("fakeToken3");
       expect(fakePubSub.publish.args[0].slice(1)).to.eql([
@@ -362,19 +362,19 @@ define([
           "subView": "reset-password-2"
         }
       ]);
-  
+
       fakeApi.request.args[0][0].get("options").fail.call(navigator, {responseJSON : {error : "fakeErrorX"}});
       expect(navigator.get('index-page').execute.callCount).to.eql(1);
       expect(fakePubSub.publish.args[1][2].toJSON()).to.eql({
         "code": 0,
         "msg": " <b>fakeErrorX</b> <br/>Reset password token was invalid."
       })
-  
+
       done();
       })
 
 
-    
+
 
   });
 
