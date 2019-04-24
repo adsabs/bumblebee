@@ -50,7 +50,9 @@ function (
 
             // have to delay this so the view has to time to initialize
             setTimeout(_.bind(function (title) {
-              this.model.set('title', title);
+              if (!this.model.has('title')) {
+                this.model.set('title', title);
+              }
             }, this), 0, this.model.get('title'));
             this.dispatchRequest(data.bibcode);
           }, this);
