@@ -108,7 +108,8 @@ define([
         let message = '';
         if (id && name) {
           message += `<u><a href="#/user/libraries/${id}">${name}</a></u> created`;
-          this.model.set('items', [ ...this.model.get('items'), { id, name } ]);
+          const libs =  _.sortBy([ ...this.model.get('items'), { id, name } ], 'name');
+          this.model.set('items', libs);
         }
 
         updateStatus({ result: 'success', message });

@@ -97,13 +97,13 @@ define([
     message: null
   }
 
-  const Input = ({ label, onInput, hasError, helpBlock='Invalid Input' }) => {
+  const Input = ({ label, onInput, hasError, helpBlock='Invalid Input', onKeyDown }) => {
     const id = flattenString(label);
 
     return (
       <div className={`form-group ${hasError ? 'has-error' : ''}`}>
         <label htmlFor={id} className="control-label">{label}</label>
-        <input id={id} type="text" className="form-control" onInput={onInput}></input>
+        <input id={id} type="text" className="form-control" onInput={onInput} onKeyDown={onKeyDown}></input>
         {hasError &&
           <span className="help-block">{helpBlock}</span>
         }
@@ -125,6 +125,7 @@ define([
       };
       this.state = { ...this.initialState };
       this.onTargetInput = this.onTargetInput.bind(this);
+      this.onKeyDown = this.onKeyDown.bind(this);
     }
 
     componentDidMount() {
@@ -164,6 +165,14 @@ define([
         return this.setState({ targetInvalid: true });
       }
       this.setState({ target, targetInvalid: false });
+    }
+
+    onKeyDown (e) {
+      if (e.key === 'Enter') {
+        e.preventDefault();
+        e.stopPropagation();
+        this.onSubmit(e);
+      }
     }
 
     onSubmit (e) {
@@ -239,6 +248,7 @@ define([
             { action !== 'empty' && action !== 'copy' &&
               <Input label="New Library Name"
                 onInput={this.onTargetInput}
+                onKeyDown={this.onKeyDown}
                 hasError={targetInvalid}
                 helpBlock="New library name must be unique.  Change name, or leave blank and one will be generated."
               />
