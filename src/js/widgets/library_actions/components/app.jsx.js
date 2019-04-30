@@ -152,7 +152,7 @@ define([
         actions,
         action: action || actions[0],
         source: source || items.length > 0 && items[0].id,
-        secondary: secondary.length > 0 || [items.length > 0 && items[0].id],
+        secondary: secondary.length > 0 ? secondary : [items.length > 0 && items[0].id],
         status: status
       }));
     }
