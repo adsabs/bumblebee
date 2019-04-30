@@ -157,7 +157,7 @@ function (
      * Redirects to ORCID where the user logs in and ORCID will forward
      * user back to us
      *
-     * @param {String} [targetRoute='/#/user/orcid'] targetRoute
+     * @param {String} [targetRoute='#user/orcid'] targetRoute
      */
     signIn: function (targetRoute) {
       this.getPubSub().publish(this.getPubSub().APP_EXIT, {

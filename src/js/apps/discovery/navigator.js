@@ -279,7 +279,7 @@ function (
         if (!data.publicView && redirectIfNotSignedIn()) {
           return defer.resolve().promise();
         }
-        this.route = data.publicView ? '#/public-libraries/' + data.id : '#user/libraries/' + data.id;
+        this.route = data.publicView ? '#public-libraries/' + data.id : '#user/libraries/' + data.id;
 
         var pub = data.publicView;
 
@@ -369,7 +369,7 @@ function (
               app.getObject('MasterPageManager').show('PublicLibrariesPage',
                 ['IndividualLibraryWidget', widgetName]).then(function() {
                   renderLibrarySub(id).done(function() {
-                    that.route = '#/public-libraries/' + data.id; // XXX:rca - i think this should be that.route
+                    that.route = '#public-libraries/' + data.id; // XXX:rca - i think this should be that.route
                     defer.resolve();
                   })
                 })
