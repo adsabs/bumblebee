@@ -277,6 +277,25 @@ define(['underscore', 'js/mixins/openurl_generator'], function (_, OpenURLGenera
       }
     });
 
+    // if no arxiv link is present, check links_data as well to make sure
+    const hasEprint = _.find(fullTextSources, { name: LINK_TYPES.EPRINT_PDF.name });
+    if (!hasEprint && _.isArray(data.links_data)) {
+      _.forEach(data.links_data, function (linkData) {
+        const link = JSON.parse(linkData);
+        if (/preprint/i.test(link.type)) {
+          const info = LINK_TYPES.EPRINT_PDF;
+          fullTextSources.push({
+            url: link.url,
+            open: true,
+            shortName: (info && info.shortName) || link.type,
+            name: (info && info.name) || link.type,
+            type: (info && info.type) || 'HTML',
+            description: info && info.description
+          });
+        }
+      });
+    }
+
     // reorder the full text sources based on our default ordering
     fullTextSources = _.sortBy(fullTextSources, function (source) {
       const rank = DEFAULT_ORDERING.indexOf(source.name);
