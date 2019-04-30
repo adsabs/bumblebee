@@ -87,7 +87,7 @@ define([
         <div className={`alert alert-${type} alert-dismissable text-center`}>
           <a href="javascript:void(0)" className="close" onClick={e => this.onClick(e)} aria-label="close">&times;</a>
           <p><strong>{title}</strong></p>
-          <p>{message}</p>
+          <p dangerouslySetInnerHTML={{ __html: message }}></p>
         </div>
       )
     }
@@ -262,7 +262,7 @@ define([
             }
 
             { status && status.result === 'success' &&
-              <Alert type="info" title="Operation Completed Successfully" onClose={() => this.setState({ status: null })} />
+              <Alert type="info" title="Operation Completed Successfully" message={status.message} onClose={() => this.setState({ status: null })} />
             }
 
             { status && status.result === 'error' &&

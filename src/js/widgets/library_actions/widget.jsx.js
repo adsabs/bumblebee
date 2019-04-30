@@ -102,10 +102,14 @@ define([
         libraries: secondary,
         name: target || undefined
       })
-      .done(() => {
+      .done((data) => {
         var ps = this.getPubSub();
         ps.publish(ps.CUSTOM_EVENT, 'invalidate-library-metadata');
-        updateStatus({ result: 'success' });
+        let message = '';
+        if (data && data.id && data.name) {
+          message += `<u><a href="#/user/libraries/${data.id}">${data.name}</a></u> created`;
+        }
+        updateStatus({ result: 'success', message });
       })
       .fail((ev) => {
         const message = (ev.responseJSON && ev.responseJSON.message) || '';
