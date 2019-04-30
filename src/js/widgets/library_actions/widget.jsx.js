@@ -102,13 +102,20 @@ define([
         libraries: secondary,
         name: target || undefined
       })
-      .done(() => {
+      .done(({ id, name }) => {
         var ps = this.getPubSub();
         ps.publish(ps.CUSTOM_EVENT, 'invalidate-library-metadata');
-        updateStatus({ result: 'success' });
+        let message = '';
+        if (id && name) {
+          message += `<u><a href="#/user/libraries/${id}">${name}</a></u> created`;
+          const libs =  _.sortBy([ ...this.model.get('items'), { id, name } ], 'name');
+          this.model.set('items', libs);
+        }
+
+        updateStatus({ result: 'success', message });
       })
       .fail((ev) => {
-        const message = (ev.responseJSON && ev.responseJSON.message) || '';
+        const message = (ev.responseJSON && ev.responseJSON.error) || '';
         updateStatus({ result: 'error', message });
       })
       .always(() => {

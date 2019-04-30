@@ -87,7 +87,7 @@ define([
         <div className={`alert alert-${type} alert-dismissable text-center`}>
           <a href="javascript:void(0)" className="close" onClick={e => this.onClick(e)} aria-label="close">&times;</a>
           <p><strong>{title}</strong></p>
-          <p>{message}</p>
+          <p dangerouslySetInnerHTML={{ __html: message }}></p>
         </div>
       )
     }
@@ -97,13 +97,13 @@ define([
     message: null
   }
 
-  const Input = ({ label, onInput, hasError, helpBlock='Invalid Input' }) => {
+  const Input = ({ label, onInput, hasError, helpBlock='Invalid Input', onKeyDown }) => {
     const id = flattenString(label);
 
     return (
       <div className={`form-group ${hasError ? 'has-error' : ''}`}>
         <label htmlFor={id} className="control-label">{label}</label>
-        <input id={id} type="text" className="form-control" onInput={onInput}></input>
+        <input id={id} type="text" className="form-control" onInput={onInput} onKeyDown={onKeyDown}></input>
         {hasError &&
           <span className="help-block">{helpBlock}</span>
         }
@@ -125,6 +125,7 @@ define([
       };
       this.state = { ...this.initialState };
       this.onTargetInput = this.onTargetInput.bind(this);
+      this.onKeyDown = this.onKeyDown.bind(this);
     }
 
     componentDidMount() {
@@ -152,7 +153,7 @@ define([
         actions,
         action: action || actions[0],
         source: source || items.length > 0 && items[0].id,
-        secondary: secondary.length > 0 || [items.length > 0 && items[0].id],
+        secondary: secondary.length > 0 ? secondary : [items.length > 0 && items[0].id],
         status: status
       }));
     }
@@ -164,6 +165,14 @@ define([
         return this.setState({ targetInvalid: true });
       }
       this.setState({ target, targetInvalid: false });
+    }
+
+    onKeyDown (e) {
+      if (e.key === 'Enter') {
+        e.preventDefault();
+        e.stopPropagation();
+        this.onSubmit(e);
+      }
     }
 
     onSubmit (e) {
@@ -239,6 +248,7 @@ define([
             { action !== 'empty' && action !== 'copy' &&
               <Input label="New Library Name"
                 onInput={this.onTargetInput}
+                onKeyDown={this.onKeyDown}
                 hasError={targetInvalid}
                 helpBlock="New library name must be unique.  Change name, or leave blank and one will be generated."
               />
@@ -262,7 +272,7 @@ define([
             }
 
             { status && status.result === 'success' &&
-              <Alert type="info" title="Operation Completed Successfully" onClose={() => this.setState({ status: null })} />
+              <Alert type="info" title="Operation Completed Successfully" message={status.message} onClose={() => this.setState({ status: null })} />
             }
 
             { status && status.result === 'error' &&
