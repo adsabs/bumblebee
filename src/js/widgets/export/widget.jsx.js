@@ -238,7 +238,7 @@ define([
       const format = data.format === 'default' || data.format === 'other' ?
         this.getDefaultFormatFromUserData() : data.format;
 
-      const sort = data.sort || 'data desc';
+      const sort = data.sort || 'date desc';
 
       dispatch(hardReset());
       const customFormats = this.getCustomFormatsFromUserData();
