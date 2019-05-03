@@ -7,11 +7,11 @@ define([
 ], function (_, React, MultiControl, Select, RadioGroup) {
 
   const descriptions = {
-    'union': 'Take the union of the primary and the secondary libraries. The result is saved to a new library',
-    'intersection': 'Take the intersection of the primary and the secondary libraries. The result is saved to a new library',
-    'difference': 'Take the difference between the primary and the secondary libraries. The result is saved to a new library',
-    'copy': 'Copy the contents of the primary library into the secondary library. The secondary library is not emptied first; use the empty operation on the secondary library first in order to create a duplicate of the primary library in the secondary library',
-    'empty': 'Empty the primary library of its contents (no secondary library ID is needed)'
+    'union': 'Take the union of the source and the secondary libraries. This finds all records contained in any of the input libraries. The result is saved to a new library',
+    'intersection': 'Take the intersection of the source and the secondary libraries. This finds any records contained in all of the input libraries. The result is saved to a new library',
+    'difference': 'Take the difference between the source and the secondary libraries. This finds all records contained in the source library but in none of the secondary libraries. The result is saved to a new library',
+    'copy': 'Copy the contents of the source library into the target library. The target library is not emptied first; use the empty operation on the target library first in order to create a duplicate of the source library in the target library',
+    'empty': 'Empty the source library of its contents'
   }
 
   const AppStyles = {
