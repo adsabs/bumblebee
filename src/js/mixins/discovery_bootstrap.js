@@ -76,7 +76,7 @@ function (
         $el.attr('href', url);
 
         // handle metakey presses
-        if (event.metaKey) {
+        if (event.metaKey || event.ctrlKey) {
           metaKey = true;
           return;
         } else if (metaKey && event.type === 'focusin') {
