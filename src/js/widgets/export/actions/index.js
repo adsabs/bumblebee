@@ -273,7 +273,9 @@ define([
     const blob = new Blob([state.exports.output], {
       type: 'text/plain;charset=utf-8'
     });
-    saveAs(blob, `export-${state.format.value}.${state.format.ext}`);
+
+    // save Blob to file, passing true to not automatically add BOM
+    saveAs(blob, `export-${state.format.value}.${state.format.ext}`, true);
   };
 
   return actions;
