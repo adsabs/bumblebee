@@ -124,7 +124,7 @@ define([
         expect(w.model.get('query')).to.eql({
           "q": [
             "pubdate:[2010-10 TO 9999-12]",
-            "author:(\"a, a\" \"b, m\" -\"j, a\" +\"b, b\" =w,w l,l)",
+            "author:(\"a, a\" \"b, m\" -\"j, a\" +\"b, b\" =\"w,w\" \"l,l\")",
             "object:(\"a, a\" \"b, m\" -\"j, a\" +\"b, b\" =w,w l,l)",
             "title:(a b c d +e -f =g +\"h\" -\"i\")",
             "abs:(a b c d +e -f =g +\"h\" -\"i\")",
@@ -162,7 +162,7 @@ define([
           expect(w.model.get('query')).to.eql({
             "q": [
               "pubdate:[2010-10 TO 9999-12]",
-              "author:(\"a, a\" OR \"b, m\" OR -\"j, a\" OR +\"b, b\" OR =w,w OR l,l)",
+              "author:(\"a, a\" OR \"b, m\" OR -\"j, a\" OR +\"b, b\" OR =\"w,w\" OR \"l,l\")",
               "object:(\"a, a\" OR \"b, m\" OR -\"j, a\" OR +\"b, b\" OR =w,w OR l,l)",
               "title:(a OR b OR c OR d OR +e OR -f OR =g OR +\"h\" OR -\"i\")",
               "abs:(a OR b OR c OR d OR +e OR -f OR =g OR +\"h\" OR -\"i\")",
@@ -235,7 +235,7 @@ define([
 
         expect(publishSpy.args[0][3]["q"].toJSON()).to.eql({
           "q": [
-            "author:(-\"Accomazzi, a\" +author2 -author3 author4)"
+            "author:(-\"Accomazzi, a\" +\"author2\" -\"author3\" \"author4\")"
           ],
           "fq": [
             "{!type=aqp v=$fq_database}"
@@ -268,7 +268,7 @@ define([
           submitForm();
           expect(publishSpy.args[1][3]["q"].toJSON()).to.eql({
             "q": [
-              "author:(\"t e s t\" testing -\" test\" test +testing -testing)"
+              "author:(\"t e s t\" \"testing\" -\" test\" \"test\" +\"testing\" -\"testing\")"
             ],
             "fq": [
               "{!type=aqp v=$fq_database}"
