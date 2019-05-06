@@ -131,7 +131,7 @@ define([
           restrictAuthors = true;
           name = name.substr(0, name.length - 1);
         }
-        return prefix + updater.quoteIfNecessary(name);
+        return prefix + '"' + name + '"';
       });
       var result = 'author:(' + authors.join(authorLogic) + ')';
       if (restrictAuthors) {
