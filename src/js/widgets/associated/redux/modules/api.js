@@ -6,7 +6,8 @@ define([], function () {
     QUERY_PROVIDED: '[api] QUERY_PROVIDED',
     RECEIVED_RESPONSE: '[api] RECEIVED_RESPONSE',
     SEND_ANALYTICS: '[api] SEND_ANALYTICS',
-    SET_BIBCODE: '[api] SET_BIBCODE'
+    SET_BIBCODE: '[api] SET_BIBCODE',
+    FALLBACK_ON_ERROR: '[api] FALLBACK_ON_ERROR'
   };
 
   const initialState = {
@@ -28,12 +29,14 @@ define([], function () {
   // action creators
   const displayDocuments = result => ({ type: actions.QUERY_PROVIDED, result });
   const processResponse = result => ({ type: actions.RECEIVED_RESPONSE, result });
+  const fallbackOnError = result => ({ type: actions.FALLBACK_ON_ERROR });
 
   return {
     reducer,
     initialState,
     actions,
     displayDocuments,
-    processResponse
+    processResponse,
+    fallbackOnError
   };
 });

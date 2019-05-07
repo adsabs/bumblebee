@@ -10,7 +10,8 @@ define([
     FETCH_DATA,
     FETCHING_DATA,
     SEND_ANALYTICS,
-    SET_BIBCODE
+    SET_BIBCODE,
+    FALLBACK_ON_ERROR
   } = api.actions;
 
   const {
@@ -27,7 +28,7 @@ define([
     next(action);
     if (action.type === FETCH_DATA) {
       const query = {
-        q: `bibcode:${action.result}`
+        q: `identifier:${action.result}`
       };
       dispatch({ type: FETCHING_DATA, result: query });
       dispatch({ type: SET_LOADING, result: true });
@@ -50,7 +51,7 @@ define([
       if (_.isPlainObject(query)) {
         let bibcode = query.q;
         if (_.isArray(bibcode) && bibcode.length > 0) {
-          if (/^bibcode:/.test(bibcode[0])) {
+          if (/^(identifier|bibcode):/.test(bibcode[0])) {
             bibcode = bibcode[0].split(':')[1];
             dispatch({ type: SET_BIBCODE, result: bibcode });
             dispatch({ type: FETCH_DATA, result: bibcode });
@@ -75,7 +76,7 @@ define([
     const parseUrl = (url) => {
       try {
         // decode and rip the "/#abs..." part off the url and any leading slash
-        return decodeURIComponent(url.slice(url.indexOf(':') + 1)).replace(/^\//, '');
+        return decodeURIComponent(url.slice(url.indexOf(':') + 1)).replace(/^\//, '#');
       } catch (e) {
         return url;
       }
@@ -117,6 +118,24 @@ define([
   };
 
   /**
+   * In the case of an error, attempt to fallback on the data we already retrieved
+   * If there is no data, then do nothing and the widget will not show
+   */
+  const fallbackOnError = (ctx, { dispatch, getState }) => next => (action) => {
+    next(action);
+    if (action.type === FALLBACK_ON_ERROR) {
+      const { bibcode } = getState().api;
+      const { items } = getState().ui;
+      if (_.isArray(items) && items.length > 0) {
+        dispatch({ type: SET_ITEMS, result: parseItems(items.map(i => ({
+          url: i.rawUrl,
+          title: i.name
+        })), bibcode) });
+      }
+    }
+  };
+
+  /**
    * Emit an analytics event
    */
   const sendAnalytics = (ctx, { dispatch, getState }) => next => (action) => {
@@ -137,6 +156,7 @@ define([
     displayDocuments,
     processResponse,
     fetchData,
-    sendAnalytics
+    sendAnalytics,
+    fallbackOnError
   );
 });
