@@ -100,6 +100,7 @@ define([
       const { dispatch } = this.store;
       if (_.isPlainObject(feedback.error)) {
         dispatch(ui.setError(feedback.error));
+        dispatch(api.fallbackOnError());
       }
     }
   });
