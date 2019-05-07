@@ -85,7 +85,14 @@ define([
       });
     },
     serialize: _.debounce(function () {
-      var genericMatcher = /[=+-]?"[^"]+"|[=+-]?\w+/g;
+
+      /*
+       * Matches on:
+       * `gamma-ray burst` -> hyphenated and non-hyphenated tokens
+       * `-test +test =test` -> operator-prefixed without quotes
+       * `-"test" +"test" ="test" -> operator-prefixed with quotes
+       */
+      var genericMatcher = /[=+-]?(\w+-\w+|"[^"]+"|\w+)/g;
       var updater = this.updater;
       var data = this.toJSON();
       var query = {
