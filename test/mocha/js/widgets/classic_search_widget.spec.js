@@ -88,7 +88,7 @@ define([
       }, 300);
     });
 
-    it("should turn a classic form into an apiQuery on submit", function (done) {
+    it.only("should turn a classic form into an apiQuery on submit", function (done) {
 
 
       var w = new ClassicForm();
@@ -114,7 +114,7 @@ define([
       $Q.object().val('a, a\nb, m\n-j, a\n+b, b\n=w,w\n\n\nl,l');
       $($Q.date()[0]).val(10);
       $($Q.date()[1]).val(2010);
-      $Q.title().val('a, b, c, d, +e, -f, =g, +"h", -"i"');
+      $Q.title().val('a, b, c, d, +e, -f, =g, +"h", -"i", i-i, +i-i, -"i-i"');
       $Q.abs().val('a, b, c, d, +e, -f, =g, +"h", -"i"');
       $Q.bibstem().val('a, b, c, d, +e, -f, =g, +"h", -"i"');
       triggerChanges();
@@ -126,7 +126,7 @@ define([
             "pubdate:[2010-10 TO 9999-12]",
             "author:(\"a, a\" \"b, m\" -\"j, a\" +\"b, b\" =\"w,w\" \"l,l\")",
             "object:(\"a, a\" \"b, m\" -\"j, a\" +\"b, b\" =w,w l,l)",
-            "title:(a b c d +e -f =g +\"h\" -\"i\")",
+            "title:(a b c d +e -f =g +\"h\" -\"i\" \"i-i\" +\"i-i\" -\"i-i\")",
             "abs:(a b c d +e -f =g +\"h\" -\"i\")",
             "-bibstem:(f OR \"i\")",
             "bibstem:(a OR b OR c OR d OR \"+e\" OR =g OR \"+\\\"h\\\"\")"
@@ -151,7 +151,7 @@ define([
         $Q.object().val('a, a\nb, m\n-j, a\n+b, b\n=w,w\n\n\nl,l');
         $($Q.date()[0]).val(10);
         $($Q.date()[1]).val(2010);
-        $Q.title().val('a, b, c, d, +e, -f, =g, +"h", -"i"');
+        $Q.title().val('a, b, c, d, +e, -f, =g, +"h", -"i", i-i, +i-i, -"i-i"');
         $Q.abs().val('a, b, c, d, +e, -f, =g, +"h", -"i"');
         $Q.bibstem().val('a, b, c, d, +e, -f, =g, +"h", -"i"');
         $Q.propertyRefereed().prop('checked', true);
@@ -164,7 +164,7 @@ define([
               "pubdate:[2010-10 TO 9999-12]",
               "author:(\"a, a\" OR \"b, m\" OR -\"j, a\" OR +\"b, b\" OR =\"w,w\" OR \"l,l\")",
               "object:(\"a, a\" OR \"b, m\" OR -\"j, a\" OR +\"b, b\" OR =w,w OR l,l)",
-              "title:(a OR b OR c OR d OR +e OR -f OR =g OR +\"h\" OR -\"i\")",
+              "title:(a OR b OR c OR d OR +e OR -f OR =g OR +\"h\" OR -\"i\" OR \"i-i\" OR +\"i-i\" OR -\"i-i\")",
               "abs:(a OR b OR c OR d OR +e OR -f OR =g OR +\"h\" OR -\"i\")",
               "-bibstem:(f OR \"i\")",
               "bibstem:(a OR b OR c OR d OR \"+e\" OR =g OR \"+\\\"h\\\"\")"
