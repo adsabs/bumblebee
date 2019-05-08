@@ -34,6 +34,11 @@ define([
             .createLibrary({ name: name })
             .done(function (data) {
               that.getPubSub().publish(that.getPubSub().NAVIGATE, 'IndividualLibraryWidget', { sub: 'library', id: data.id });
+            })
+            .fail(function (res) {
+              if (res.responseJSON && res.responseJSON.error) {
+                alert('Library Not Created\n' + res.responseJSON.error);
+              }
             });
         }
         this.trigger('page-manager-event', 'apply-function', { func: createLib });
