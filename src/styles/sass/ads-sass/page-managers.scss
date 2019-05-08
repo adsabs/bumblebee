@@ -233,7 +233,9 @@ Styles for Abstract Page
 }
 
 #app-container {
-overflow-x: hidden;
+  overflow-x: hidden;
+  overflow-y: scroll;
+  -webkit-overflow-scrolling: touch;
 }
 #main-content:focus { outline: none; }
 
