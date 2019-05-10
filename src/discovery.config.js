@@ -37,7 +37,8 @@ require.config({
           QueryMediator: 'js/components/query_mediator',
           Diagnostics: 'js/bugutils/diagnostics',
           AlertsController: 'js/wraps/alerts_mediator',
-          Orcid: 'js/modules/orcid/module'
+          Orcid: 'js/modules/orcid/module',
+          SecondOrderController: 'js/components/second_order_controller'
         },
         services: {
           Api: 'js/services/api',
@@ -55,7 +56,7 @@ require.config({
           RecaptchaManager: 'js/components/recaptcha_manager',
           CSRFManager: "js/components/csrf_manager",
           LibraryController: 'js/components/library_controller',
-          DocStashController: 'js/components/doc_stash_controller'
+          DocStashController: 'js/components/doc_stash_controller',
         },
         modules: {
           FacetFactory: 'js/widgets/facet/factory'
