@@ -21,7 +21,10 @@ function (Marionette, BaseWidget, dropdownTemplate, dropdownItemTemplate) {
         selected: false,
         href: undefined,
         description: undefined,
-        navEvent: undefined
+        navEvent: undefined,
+        pubsubEvent: undefined,
+        section: undefined,
+        hideIfNoItemsSelected: false
       };
     }
   });
@@ -49,8 +52,6 @@ function (Marionette, BaseWidget, dropdownTemplate, dropdownItemTemplate) {
 
   var DropdownItemView = Marionette.ItemView.extend({
 
-    tagName: 'li',
-
     events: {
       click: 'setSelected'
     },
@@ -59,7 +60,12 @@ function (Marionette, BaseWidget, dropdownTemplate, dropdownItemTemplate) {
       this.model.set('selected', true);
       return false;
     },
-    template: dropdownItemTemplate
+    template: dropdownItemTemplate,
+    onRender: function () {
+
+      // force the element to unwrap, so we can control the root element
+      this.setElement(this.el.innerHTML);
+    }
   });
 
   var ContainerModel = Backbone.Model.extend({
@@ -135,7 +141,18 @@ function (Marionette, BaseWidget, dropdownTemplate, dropdownItemTemplate) {
       this.model = new ContainerModel({ selectedOption: this.options.selectedOption });
       this.collection = new DropdownCollection(this.options.links);
       this.view = new DropdownView(_.extend({ collection: this.collection, model: this.model }, this.options));
-      this.listenTo(this.collection, 'change:selected', this.emitNavigateEvent);
+      this.listenTo(this.collection, 'change:selected', (model, value) => {
+        if (model.has('navEvent')) {
+          this.emitNavigateEvent(model, value);
+        } else if (model.has('pubsubEvent')) {
+
+          const onlySelected = this.getOnlySelected();
+
+          // if the item has pubsubEvent, call the event
+          this.getPubSub().publish(this.getPubSub().CUSTOM_EVENT, model.get('pubsubEvent'), { onlySelected });
+        }
+        model.set('selected', false);
+      });
     },
 
     activate: function (beehive) {
@@ -164,15 +181,19 @@ function (Marionette, BaseWidget, dropdownTemplate, dropdownItemTemplate) {
       var userData = this.getUserData();
       var links = this.options.updateLinks(userData, this.options.links) || this.options.links;
       this.options.links = links;
-      this.collection.reset(links);
+      this.collection.reset(this.options.links);
     },
 
     onStoragePaperChange: function (numSelected) {
-      numSelected ? this.model.set('selectedPapers', true) : this.model.set('selectedPapers', false);
+      this.model.set('selectedPapers', !!numSelected);
+    },
+
+    getOnlySelected: function () {
+      return (this.model.get('selectedOption') && this.model.get('selectedPapers') && this.model.get('onlySelected'));
     },
 
     emitNavigateEvent: function (model, value) {
-      var onlySelected = (this.model.get('selectedOption') && this.model.get('selectedPapers') && this.model.get('onlySelected'));
+      var onlySelected = this.getOnlySelected();
       if (value) {
         var args = _.extend({ onlySelected: onlySelected }, model.get('params'));
         this.getPubSub().publish(this.getPubSub().NAVIGATE, model.get('navEvent'), args);
