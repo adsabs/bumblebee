@@ -88,7 +88,7 @@ define([
       }, 300);
     });
 
-    it.only("should turn a classic form into an apiQuery on submit", function (done) {
+    it("should turn a classic form into an apiQuery on submit", function (done) {
 
 
       var w = new ClassicForm();
