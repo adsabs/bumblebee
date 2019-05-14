@@ -94,6 +94,13 @@ test:
   - puppet:dev
   - clean:temp
 
+test:debug:
+  - babel:temp
+  - string-replace:temp
+  - server:once
+  - puppet:debug
+  - clean:temp
+
 # Release
 release:
   description: 'Build the assets and prepare for a release'
