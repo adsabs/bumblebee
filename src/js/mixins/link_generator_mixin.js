@@ -128,6 +128,10 @@ define(['underscore', 'js/mixins/openurl_generator'], function (_, OpenURLGenera
       shortName: 'INES',
       description: 'IUE Newly Extracted Spectra'
     },
+    IRSA: {
+      shortName: 'IRSA',
+      description: 'NASA/IPAC Infrared Science Archive'
+    },
     ISO: {
       shortName: 'ISO',
       description: 'Infrared Space Observatory'
