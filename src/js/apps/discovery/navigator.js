@@ -118,6 +118,7 @@ function (
         var that = this;
         app.getObject('MasterPageManager').show('ErrorPage').then(function() {
           that.route = '404';
+          that.replace = true;
           defer.resolve();
         });
         return defer.promise();
