@@ -73,11 +73,15 @@ function (
         'MetaTagsWidget'
       ];
 
-      function redirectIfNotSignedIn() {
+      function redirectIfNotSignedIn(next) {
         var loggedIn = app.getBeeHive().getObject('User').isLoggedIn();
         if (!loggedIn) {
           // redirect to authentication page
-          app.getService('Navigator').navigate('authentication-page', { subView: 'login' });
+          app.getService('Navigator').navigate('authentication-page', { 
+            subView: 'login',
+            redirect: true,
+            next
+          });
           return true;
         }
         return false;
@@ -152,7 +156,7 @@ function (
         var that = this;
         var defer = $.Deferred();
         var that = this;
-        if (redirectIfNotSignedIn()) {
+        if (redirectIfNotSignedIn(that.endpoint)) {
           defer.resolve();
           return defer.promise();
         }
@@ -177,7 +181,7 @@ function (
           var defer = $.Deferred();
           var that = this;
 
-          if (redirectIfNotSignedIn()) {
+          if (redirectIfNotSignedIn(that.endpoint)) {
             defer.resolve();
             return defer.promise();
           };
@@ -212,7 +216,7 @@ function (
       this.set('LibraryActionsWidget', function () {
         var $dd = $.Deferred();
         var that = this;
-        if (redirectIfNotSignedIn()) {
+        if (redirectIfNotSignedIn(that.endpoint)) {
           return $dd.resolve().promise();
         };
 
@@ -232,7 +236,7 @@ function (
         var defer = $.Deferred();
         var that = this;
 
-        if (redirectIfNotSignedIn()) {
+        if (redirectIfNotSignedIn(that.endpoint)) {
           defer.resolve();
           return defer.promise();
         }
@@ -277,7 +281,7 @@ function (
         data.publicView = data.publicView ? data.publicView : false;
 
         // only check for logged in user if not public library
-        if (!data.publicView && redirectIfNotSignedIn()) {
+        if (!data.publicView && redirectIfNotSignedIn(that.endpoint)) {
           return defer.resolve().promise();
         }
         this.route = data.publicView ? '#public-libraries/' + data.id : '#user/libraries/' + data.id;
@@ -401,6 +405,9 @@ function (
       this.set('home-page', function () {
         var defer = $.Deferred();
         var that = this;
+        if (redirectIfNotSignedIn(that.endpoint)) {
+          return defer.resolve().promise();
+        };
         app.getObject('MasterPageManager').show('HomePage',
           []).then(function() {
             publishPageChange('home-page');
@@ -424,9 +431,17 @@ function (
             defer.resolve();
           })
         } else {
+
+          // redirect will be set if we are redirecting from an internal page
+          if (data.redirect) {
+            that.replace = true;
+          }
           app.getObject('MasterPageManager').show('AuthenticationPage',
           ['Authentication']).then(function() {
             app.getWidget('Authentication').done(function (w) {
+              if (data.next) {
+                w.setNextNavigation(data.next);
+              }
               w.setSubView(subView);
                 that.route = '#user/account/' + subView;
                 that.title = subView === 'login' ? 'Sign In' : 'Register';

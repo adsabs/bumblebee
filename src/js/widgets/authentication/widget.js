@@ -425,6 +425,8 @@ define([
       this.listenTo(this.view, 'navigateToResetPassword1Form', this.navigateToResetPassword1Form);
       this.listenTo(this.view, 'activate-recaptcha', this.activateRecaptcha);
 
+      this.nextNav = null;
+
       if (options.test) window.grecaptcha = null;
     },
 
@@ -499,18 +501,12 @@ define([
         _.extend(data, { verify_url: location.origin + '/#user/account/verify/' + ApiTargets.REGISTER });
         this.getBeeHive().getObject('Session').register(model.toJSON());
       } else if (model.target == 'USER') {
-        // only show success message if login initiated from auth widget
-        // (if you showed it every time user logged in, you'd show it
-        // redundantly on start up of bumblebee)
-        this.getBeeHive().getObject('Session').login(model.toJSON()).done(function () {
-          // this currently doesnt work with the way the alerts widget hides itself
-          // after navigate
-          // var pubsub = that.getPubSub();
-          // pubsub.publish(pubsub.ALERT, new ApiFeedback({
-          //  code: ApiFeedback.CODES.ALERT,
-          //  msg: "Logged in to ADS",
-          //  type: "success",
-          // }));
+        this.getBeeHive().getObject('Session').login(model.toJSON()).done(() => {
+          if (this.nextNav) {
+            const ps = this.getPubSub();
+            ps.publish(ps.NAVIGATE, this.nextNav);
+            this.nextNav = null;
+          }
         });
       } else if (model.target == 'RESET_PASSWORD' && model.method === 'POST') {
         // add base_url to data so email redirects to right url
@@ -518,6 +514,10 @@ define([
       } else if (model.target == 'RESET_PASSWORD' && model.method === 'PUT') {
         this.getBeeHive().getObject('Session').resetPassword2(data);
       }
+    },
+
+    setNextNavigation: function (nav) {
+      this.nextNav = nav;
     },
 
     onShow: function () {
