@@ -245,7 +245,10 @@ function (
         }
 
         // replace the current query with our operator
-        const newQuery = new ApiQuery({ q: `${ field }(docs(${ qid }))` });
+        const newQuery = new ApiQuery({ 
+          q: `${ field }(docs(${ qid }))`,
+          sort: 'score desc'
+        });
         ps.publish(ps.NAVIGATE, 'search-page', { q: newQuery });
 
         this.submitAnalyticsEvent(field);

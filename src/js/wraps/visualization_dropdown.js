@@ -15,12 +15,12 @@ define([
     { description: 'Paper Network', navEvent: 'show-paper-network' },
     { description: 'Concept Cloud', navEvent: 'show-concept-cloud' },
     { description: 'Results Graph', navEvent: 'show-bubble-chart' },
-    { divider: true, hideIfNoItemsSelected: true },
-    { section: 'Operations', hideIfNoItemsSelected: true },
-    { description: 'Also-read()', hideIfNoItemsSelected: true, pubsubEvent: 'second-order-search/trending' },
-    { description: 'Citations()', hideIfNoItemsSelected: true, pubsubEvent: 'second-order-search/citations' },
-    { description: 'References()', hideIfNoItemsSelected: true, pubsubEvent: 'second-order-search/references' },
-    { description: 'Similar()', hideIfNoItemsSelected: true, pubsubEvent: 'second-order-search/similar' }
+    { divider: true },
+    { section: 'Operations' },
+    { description: 'Co-reads', pubsubEvent: 'second-order-search/trending' },
+    { description: 'Citations', pubsubEvent: 'second-order-search/citations' },
+    { description: 'References', pubsubEvent: 'second-order-search/references' },
+    { description: 'Similar', pubsubEvent: 'second-order-search/similar' }
   ];
 
   var btnType = 'btn-primary-faded';
