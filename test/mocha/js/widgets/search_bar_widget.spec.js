@@ -573,7 +573,7 @@ define([
 
       waitOnValueUpdate($search)
       .done(function (val) {
-        expect(val).to.eql('pubdate:[2000-01-01 TO 2010-01-01]');
+        expect(val).to.eql('pubdate:[2000-01 TO 2010-01]');
         done();
       })
       .fail(done);

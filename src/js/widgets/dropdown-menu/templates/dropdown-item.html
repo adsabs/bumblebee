@@ -1,2 +1,13 @@
-<a href="{{this.href}}">{{this.description}}</a>
+
+{{#if section}}
+<li role="presentation" class="dropdown-header no-hover-style">{{section}}</li>
+{{else}}
+  {{#if divider}}
+  <li role="presentation" class="divider"></li>
+  {{else}}
+  <li role="presentation">
+    <a role="menuitem" tabindex="-1" href="{{this.href}}">{{this.description}}</a>
+  </li>
+  {{/if}}
+{{/if}}
 
