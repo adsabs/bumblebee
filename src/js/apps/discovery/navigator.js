@@ -634,7 +634,6 @@ function (
         if (widgetName && possibleSearchSubPages.indexOf(widgetName) > -1) {
           pages = [widgetName].concat(searchPageAlwaysVisible.slice(1));
         } else {
-          console.error('Results page subpage not recognized:', widgetName);
           pages = searchPageAlwaysVisible;
         }
 

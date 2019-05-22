@@ -53,7 +53,7 @@ require.config({
           DynamicConfig: 'discovery.vars',
           MasterPageManager: 'js/page_managers/master',
           AppStorage: 'js/components/app_storage',
-          RecaptchaManager: 'js/components/recaptcha_manager',
+          RecaptchaManager: 'recaptcha!js/components/recaptcha_manager',
           CSRFManager: "js/components/csrf_manager",
           LibraryController: 'js/components/library_controller',
           DocStashController: 'js/components/doc_stash_controller',
@@ -233,11 +233,6 @@ require.config({
       'libs/g',
       'data:application/javascript,'
     ],
-    'google-recaptcha': [
-      '//google.com/recaptcha/api.js?&render=explicit&onload=onRecaptchaLoad',
-      '//recaptcha.net/recaptcha/api.js?&render=explicit&onload=onRecaptchaLoad',
-      'data:application/javascript,'
-    ],
     'hbs': 'libs/require-handlebars-plugin/hbs',
     'immutable': 'libs/immutable/index',
     'jquery': [
@@ -290,6 +285,7 @@ require.config({
       '//cdnjs.cloudflare.com/ajax/libs/react-redux/4.4.5/react-redux.min',
       'libs/react-redux/index'
     ],
+    'recaptcha': 'js/plugins/recaptcha',
     'redux': [
       '//cdnjs.cloudflare.com/ajax/libs/redux/3.5.2/redux.min',
       'libs/redux/index'
