@@ -315,8 +315,8 @@ define([
       n.activate(minsub.beehive.getHardenedInstance());
 
       $("form.feedback-form").find("textarea").val("test comment");
+      $('form.feedback-form').append('<input type="hidden" name="g-recaptcha-response" value="success"></input>');
       $("form.feedback-form").submit();
-
       expect(requestStub.args[0][0].toJSON().target).to.eql("feedback/slack");
       expect(requestStub.args[0][0].toJSON().options.dataType).to.eql("json");
 

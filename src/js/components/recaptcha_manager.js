@@ -45,6 +45,7 @@ function (
        * @param view to render recaptcha on
        */
     activateRecaptcha: function (view) {
+
       if (this.when.state() !== 'resolved') {
         this.renderLoading(view);
       }
@@ -64,30 +65,40 @@ function (
         });
     },
 
+    getEl: function (view) {
+      return view.$('.g-recaptcha');
+    },
+
     renderLoading: function (view) {
-      view.$('.g-recaptcha').html(
+      this.getEl(view).html(
         '<p><i class="fa fa-spinner fa-spin"></i></p>'
       );
       this.enableSubmit(view, false);
     },
 
     enableSubmit: function (view, bool) {
-      view.$('button[type=submit],input[type=submit]').attr('disabled', !bool);
+      view.$('button[type=submit],input[type=submit]')
+        .attr('disabled', !bool)
+        .on('click', function () {
+          grecaptcha.execute();
+        });
     },
 
     renderError: function (view) {
       var msg = 'Error loading ReCAPTCHA, please try again';
-      view.$('.g-recaptcha').html(
+      this.getEl(view).html(
         '<p class="text-danger">' + msg + '</p>'
       );
       this.enableSubmit(view, false);
     },
 
     renderRecaptcha: function (view, siteKey, undefined) {
-      view.$('.g-recaptcha').empty();
-      grecaptcha.render(view.$('.g-recaptcha')[0],
+      this.getEl(view).empty();
+      grecaptcha.render(this.getEl(view)[0],
         {
           sitekey: siteKey,
+          size: 'invisible',
+          badge: 'inline',
           callback: function (response) {
             // this might need to be inserted into the model.
             // or in the case of feedback form, it just needs
