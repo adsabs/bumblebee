@@ -379,15 +379,27 @@ define([
       this.container.show(view);
     },
 
-    showResetPasswordForm1: function () {
+    showResetPasswordForm1: function (error) {
       var view = new ResetPassword1View({ model: this.resetPassword1Model });
+
+      // show error message
+      if (error) {
+        view.model.set({ hasError: true, errorMsg: error });
+      }
+
       view.on('submit-form', this.forwardSubmit, this);
       view.on('activate-recaptcha', _.bind(this.forwardActivateRecaptcha, this, view));
       this.container.show(view);
     },
 
-    showResetPasswordForm2: function () {
+    showResetPasswordForm2: function (error) {
       var view = new ResetPassword2View({ model: this.resetPassword2Model });
+
+      // show error message
+      if (error) {
+        view.model.set({ hasError: true, errorMsg: error });
+      }
+
       view.on('submit-form', this.forwardSubmit, this);
       this.container.show(view);
     },
@@ -478,10 +490,13 @@ define([
           this.view.showRegisterForm(msg);
           break;
         case 'reset_password_1_success':
-          this.view.showResetPasswordSuccessView();
+          this.view.showResetPasswordSuccessView(msg);
           break;
         case 'reset_password_1_fail':
-          this.view.showResetPasswordForm1();
+          this.view.showResetPasswordForm1(msg);
+          break;
+        case 'reset_password_2_fail': 
+          this.view.showResetPasswordForm2(msg);
           break;
       }
     },

@@ -249,11 +249,11 @@ define([
     resetPassword1Fail: function (xhr, status, errorThrown) {
       var pubsub = this.getPubSub();
       var error = (xhr.responseJSON && xhr.responseJSON.error) ? xhr.responseJSON.error : 'error unknown';
-      var message = 'password reset step 1 was unsucessful (' + error + ')';
+      var message = 'password reset step 1 was unsuccessful (' + error + ')';
       pubsub.publish(pubsub.ALERT, new ApiFeedback({
         code: 0, msg: message, type: 'danger', fade: true
       }));
-      pubsub.publish(pubsub.USER_ANNOUNCEMENT, 'reset_password_1_fail');
+      pubsub.publish(pubsub.USER_ANNOUNCEMENT, 'reset_password_1_fail', message);
     },
 
     resetPassword2Success: function (response, status, jqXHR) {
@@ -266,17 +266,18 @@ define([
       pubsub = this.getPubSub();
       promise.done(function () {
         pubsub.publish(pubsub.USER_ANNOUNCEMENT, 'reset_password_2_success');
+        var message = 'Your password has been successfully reset!';
         // navigate to home page
         pubsub.publish(pubsub.NAVIGATE, 'index-page');
-        var message = 'Your password has been successfully reset!';
         pubsub.publish(pubsub.ALERT, new ApiFeedback({
           code: 0, msg: message, type: 'success', modal: true
         }));
       });
 
-      promise.fail(function () {
-        pubsub.publish(pubsub.USER_ANNOUNCEMENT, 'reset_password_2_fail');
-        var message = 'Your password was not successfully reset. Please try to follow the link from the email you received again.';
+      promise.fail(function (xhr) {
+        var error = (xhr.responseJSON && xhr.responseJSON.error) ? xhr.responseJSON.error : 'error unknown';
+        var message = 'Your password was not successfully reset. Please try to follow the link from the email you received again.\n\n(' + error + ')';
+        pubsub.publish(pubsub.USER_ANNOUNCEMENT, 'reset_password_2_fail', message);
         pubsub.publish(pubsub.ALERT, new ApiFeedback({
           code: 0, msg: message, type: 'danger', modal: true
         }));
@@ -286,11 +287,11 @@ define([
     resetPassword2Fail: function (xhr, status, errorThrown) {
       var pubsub = this.getPubSub();
       var error = (xhr.responseJSON && xhr.responseJSON.error) ? xhr.responseJSON.error : 'error unknown';
-      var message = 'password reset step 2 was unsucessful (' + error + ')';
+      var message = 'password reset step 2 was unsuccessful (' + error + ')';
       pubsub.publish(pubsub.ALERT, new ApiFeedback({
         code: 0, msg: message, type: 'danger', fade: true
       }));
-      pubsub.publish(pubsub.USER_ANNOUNCEMENT, 'reset_password_2_fail');
+      pubsub.publish(pubsub.USER_ANNOUNCEMENT, 'reset_password_2_fail', message);
     },
 
 
