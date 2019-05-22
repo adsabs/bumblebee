@@ -217,7 +217,7 @@ define([
     },
 
     submitForm: function ($form, $modal) {
-      setTimeout(() => {
+      const submit = () => {
         var data = $form.serialize();
         // record the user agent string
         data += '&user-agent-string=' + encodeURIComponent(navigator.userAgent);
@@ -254,9 +254,10 @@ define([
           }
 
         });
-
         this.getBeeHive().getService('Api').request(request);
-      }, 2000);
+      }
+
+      $form.serializeArray().map(i => i.name).includes('g-recaptcha-response') ? submit() : setTimeout(submit, 2000);
     },
 
     navigateToOrcidLink: function () {

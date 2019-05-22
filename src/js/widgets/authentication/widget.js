@@ -493,10 +493,9 @@ define([
     },
 
     triggerCorrectSubmit: function (model) {
-      var data = model.toJSON(),
-        that = this;
 
-      setTimeout(() => {
+      const submit = () => {
+        var data = model.toJSON();
         if (model.target == 'REGISTER') {
           // add verify_url to data so email redirects to right url
           _.extend(data, { verify_url: location.origin + '/#user/account/verify/' + ApiTargets.REGISTER });
@@ -515,7 +514,9 @@ define([
         } else if (model.target == 'RESET_PASSWORD' && model.method === 'PUT') {
           this.getBeeHive().getObject('Session').resetPassword2(data);
         }
-      }, 2000);
+      };
+
+      model.toJSON()['g-recaptcha-response'] ? submit() : setTimeout(submit, 2000);
     },
 
     setNextNavigation: function (nav) {
