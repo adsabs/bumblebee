@@ -1,5 +1,5 @@
 define([
-  "js/components/recaptcha_manager",
+  "recaptcha!js/components/recaptcha_manager",
   'js/bugutils/minimal_pubsub'
 ], function(
   RecaptchaManager,
@@ -15,7 +15,7 @@ define([
       var r = new RecaptchaManager();
 
       r.renderRecaptcha = sinon.spy();
-      
+
       var testView = new Backbone.View();
 
       r.activateRecaptcha(testView);
