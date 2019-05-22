@@ -496,24 +496,26 @@ define([
       var data = model.toJSON(),
         that = this;
 
-      if (model.target == 'REGISTER') {
-        // add verify_url to data so email redirects to right url
-        _.extend(data, { verify_url: location.origin + '/#user/account/verify/' + ApiTargets.REGISTER });
-        this.getBeeHive().getObject('Session').register(model.toJSON());
-      } else if (model.target == 'USER') {
-        this.getBeeHive().getObject('Session').login(model.toJSON()).done(() => {
-          if (this.nextNav) {
-            const ps = this.getPubSub();
-            ps.publish(ps.NAVIGATE, this.nextNav);
-            this.nextNav = null;
-          }
-        });
-      } else if (model.target == 'RESET_PASSWORD' && model.method === 'POST') {
-        // add base_url to data so email redirects to right url
-        this.getBeeHive().getObject('Session').resetPassword1(data);
-      } else if (model.target == 'RESET_PASSWORD' && model.method === 'PUT') {
-        this.getBeeHive().getObject('Session').resetPassword2(data);
-      }
+      setTimeout(() => {
+        if (model.target == 'REGISTER') {
+          // add verify_url to data so email redirects to right url
+          _.extend(data, { verify_url: location.origin + '/#user/account/verify/' + ApiTargets.REGISTER });
+          this.getBeeHive().getObject('Session').register(model.toJSON());
+        } else if (model.target == 'USER') {
+          this.getBeeHive().getObject('Session').login(model.toJSON()).done(() => {
+            if (this.nextNav) {
+              const ps = this.getPubSub();
+              ps.publish(ps.NAVIGATE, this.nextNav);
+              this.nextNav = null;
+            }
+          });
+        } else if (model.target == 'RESET_PASSWORD' && model.method === 'POST') {
+          // add base_url to data so email redirects to right url
+          this.getBeeHive().getObject('Session').resetPassword1(data);
+        } else if (model.target == 'RESET_PASSWORD' && model.method === 'PUT') {
+          this.getBeeHive().getObject('Session').resetPassword2(data);
+        }
+      }, 2000);
     },
 
     setNextNavigation: function (nav) {

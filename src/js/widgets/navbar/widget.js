@@ -217,43 +217,46 @@ define([
     },
 
     submitForm: function ($form, $modal) {
-      var data = $form.serialize();
-      // record the user agent string
-      data += '&user-agent-string=' + encodeURIComponent(navigator.userAgent);
+      setTimeout(() => {
+        var data = $form.serialize();
+        // record the user agent string
+        data += '&user-agent-string=' + encodeURIComponent(navigator.userAgent);
 
-      function beforeSend() {
-        $form.find('button[type=submit]')
-          .html('<i class="icon-loading"></i> Sending form...');
-      }
-
-      function done(data) {
-        $form.find('button[type=submit]')
-          .html('<i class="icon-success"></i> Message sent!');
-
-        setTimeout(function () {
-          $modal.modal('hide');
-        }, 500);
-      }
-
-      function fail(err) {
-        $form.find('button[type=submit]')
-          .addClass('btn-danger')
-          .html('<i class="icon-danger"></i> There was an error!');
-      }
-
-      var request = new ApiRequest({
-        target: ApiTargets.FEEDBACK,
-        options: {
-          method: 'POST',
-          data: data,
-          dataType: 'json',
-          done: done,
-          fail: fail,
-          beforeSend: beforeSend
+        function beforeSend() {
+          $form.find('button[type=submit]')
+            .html('<i class="icon-loading"></i> Sending form...');
         }
 
-      });
-      this.getBeeHive().getService('Api').request(request);
+        function done(data) {
+          $form.find('button[type=submit]')
+            .html('<i class="icon-success"></i> Message sent!');
+
+          setTimeout(function () {
+            $modal.modal('hide');
+          }, 500);
+        }
+
+        function fail(err) {
+          $form.find('button[type=submit]')
+            .addClass('btn-danger')
+            .html('<i class="icon-danger"></i> There was an error!');
+        }
+
+        var request = new ApiRequest({
+          target: ApiTargets.FEEDBACK,
+          options: {
+            method: 'POST',
+            data: data,
+            dataType: 'json',
+            done: done,
+            fail: fail,
+            beforeSend: beforeSend
+          }
+
+        });
+
+        this.getBeeHive().getService('Api').request(request);
+      }, 2000);
     },
 
     navigateToOrcidLink: function () {
