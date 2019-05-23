@@ -369,8 +369,15 @@ define([
     },
 
     onNewSearch: function () {
+      this.resetForm();
+    },
+
+    resetForm: function () {
       this.model.set(this.model.defaults);
-      this.view.$('input,textarea').val('');
+      const v = this.view;
+      v.$('input,textarea').val('');
+      v.$('input[type="checkbox"]').prop('checked', false);
+      v.$('input[name="astronomy"]').prop('checked', true);
     },
 
     /**
