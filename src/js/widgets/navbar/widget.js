@@ -257,7 +257,19 @@ define([
         this.getBeeHive().getService('Api').request(request);
       }
 
-      $form.serializeArray().map(i => i.name).includes('g-recaptcha-response') ? submit() : setTimeout(submit, 2000);
+      const has = (el) => {
+        let res = false;
+        $form.serializeArray().forEach(i => {
+          if (i.name === el && !_.isEmpty(i.value)) {
+            return res = true;
+          }
+        });
+        return res;
+      };
+
+      has('g-recaptcha-response')
+        ? submit()
+        : this.getBeeHive().getObject('RecaptchaManager').execute().then(submit);
     },
 
     navigateToOrcidLink: function () {

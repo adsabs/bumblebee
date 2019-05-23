@@ -23,6 +23,7 @@ function (
       this.grecaptchaDeferred = window.__grecaptcha__;
       this.siteKeyDeferred = $.Deferred();
       this.when = $.when(this.siteKeyDeferred, this.grecaptchaDeferred);
+      this.execPromise = $.Deferred();
     },
 
     activate: function (beehive) {
@@ -69,6 +70,12 @@ function (
       return view.$('.g-recaptcha');
     },
 
+    execute: function () {
+      this.execPromise = $.Deferred();
+      grecaptcha.execute();
+      return this.execPromise.promise();
+    },
+
     renderLoading: function (view) {
       this.getEl(view).html(
         '<p><i class="fa fa-spinner fa-spin"></i></p>'
@@ -77,11 +84,7 @@ function (
     },
 
     enableSubmit: function (view, bool) {
-      view.$('button[type=submit],input[type=submit]')
-        .attr('disabled', !bool)
-        .on('click', function () {
-          grecaptcha.execute();
-        });
+      view.$('button[type=submit],input[type=submit]').attr('disabled', !bool);
     },
 
     renderError: function (view) {
@@ -93,26 +96,31 @@ function (
     },
 
     renderRecaptcha: function (view, siteKey, undefined) {
-      this.getEl(view).empty();
-      grecaptcha.render(this.getEl(view)[0],
+      const $el = this.getEl(view);
+      const msg = $('<div class="form-group"></div>')
+        .append('<small class="recaptcha-msg">This site is protected by reCAPTCHA and the Google Privacy Policy and Terms of Service apply.</small>');
+      $el.closest('form').append(msg);
+      grecaptcha.render($el[0],
         {
           sitekey: siteKey,
           size: 'invisible',
           badge: 'inline',
-          callback: function (response) {
+          callback: (response) => {
             // this might need to be inserted into the model.
             // or in the case of feedback form, it just needs
             // to be in the serialized form
             if (view.model) {
               view.model.set('g-recaptcha-response', response);
             }
+            this.execPromise.resolve(response);
           }
         });
       this.enableSubmit(view, true);
     },
 
     hardenedInterface: {
-      activateRecaptcha: 'activateRecaptcha'
+      activateRecaptcha: 'activateRecaptcha',
+      execute: 'execute'
     }
 
   });

@@ -45,7 +45,19 @@ define([
 
     activateValidation: FormFunctions.activateValidation,
     checkValidationState: FormFunctions.checkValidationState,
-    triggerSubmit: FormFunctions.triggerSubmit,
+    triggerSubmit: function (ev) {
+      ev.preventDefault();
+
+      // simple check if we need to get the recaptcha token
+      if (this.$el.find('.g-recaptcha').length > 0 && !this.model.has('g-recaptcha-response')) {
+        this.model.once('change:g-recaptcha-response', () => {
+          FormFunctions.triggerSubmit.apply(this, arguments)
+        });
+        this.trigger('get-recaptcha-token');
+      } else {
+        FormFunctions.triggerSubmit.apply(this, arguments);
+      }
+    },
     dissmissError: function () {
       this.model.set(this.model.defaults());
       this.render();
@@ -376,6 +388,7 @@ define([
 
       view.on('submit-form', this.forwardSubmit, this);
       view.on('activate-recaptcha', _.bind(this.forwardActivateRecaptcha, this, view));
+      view.on('get-recaptcha-token', _.bind(this.forwardGetRecaptchaToken, this, view));
       this.container.show(view);
     },
 
@@ -389,6 +402,7 @@ define([
 
       view.on('submit-form', this.forwardSubmit, this);
       view.on('activate-recaptcha', _.bind(this.forwardActivateRecaptcha, this, view));
+      view.on('get-recaptcha-token', _.bind(this.forwardGetRecaptchaToken, this, view));
       this.container.show(view);
     },
 
@@ -420,8 +434,11 @@ define([
 
     forwardActivateRecaptcha: function (view) {
       this.trigger('activate-recaptcha', view);
-    }
+    },
 
+    forwardGetRecaptchaToken: function () {
+      this.trigger('get-recaptcha-token');
+    }
   });
 
   var AuthenticationWidget = BaseWidget.extend({
@@ -436,6 +453,7 @@ define([
       this.listenTo(this.view, 'navigateToRegisterForm', this.navigateToRegisterForm);
       this.listenTo(this.view, 'navigateToResetPassword1Form', this.navigateToResetPassword1Form);
       this.listenTo(this.view, 'activate-recaptcha', this.activateRecaptcha);
+      this.listenTo(this.view, 'get-recaptcha-token', this.getRecaptchaToken);
 
       this.nextNav = null;
 
@@ -495,7 +513,7 @@ define([
         case 'reset_password_1_fail':
           this.view.showResetPasswordForm1(msg);
           break;
-        case 'reset_password_2_fail': 
+        case 'reset_password_2_fail':
           this.view.showResetPasswordForm2(msg);
           break;
       }
@@ -508,30 +526,28 @@ define([
     },
 
     triggerCorrectSubmit: function (model) {
-
-      const submit = () => {
-        var data = model.toJSON();
-        if (model.target == 'REGISTER') {
-          // add verify_url to data so email redirects to right url
-          _.extend(data, { verify_url: location.origin + '/#user/account/verify/' + ApiTargets.REGISTER });
-          this.getBeeHive().getObject('Session').register(model.toJSON());
-        } else if (model.target == 'USER') {
-          this.getBeeHive().getObject('Session').login(model.toJSON()).done(() => {
+      const session = this.getBeeHive().getObject('Session');
+      switch(model.target) {
+        case 'REGISTER':
+          session.register(_.extend({}, model.toJSON(), {
+            verify_url: location.origin + '/#user/account/verify/' + ApiTargets.REGISTER,
+          }));
+          break;
+        case 'USER':
+          session.login(model.toJSON()).done(() => {
             if (this.nextNav) {
               const ps = this.getPubSub();
               ps.publish(ps.NAVIGATE, this.nextNav);
               this.nextNav = null;
             }
           });
-        } else if (model.target == 'RESET_PASSWORD' && model.method === 'POST') {
-          // add base_url to data so email redirects to right url
-          this.getBeeHive().getObject('Session').resetPassword1(data);
-        } else if (model.target == 'RESET_PASSWORD' && model.method === 'PUT') {
-          this.getBeeHive().getObject('Session').resetPassword2(data);
+          break;
+        case 'RESET_PASSWORD': {
+          model.method === 'POST'
+            ? session.resetPassword1(model.toJSON())
+            : session.resetPassword2(model.toJSON())
         }
-      };
-
-      model.toJSON()['g-recaptcha-response'] ? submit() : setTimeout(submit, 2000);
+      }
     },
 
     setNextNavigation: function (nav) {
@@ -545,8 +561,11 @@ define([
 
     activateRecaptcha: function (view) {
       this.getBeeHive().getObject('RecaptchaManager').activateRecaptcha(view);
-    }
+    },
 
+    getRecaptchaToken: function () {
+      this.getBeeHive().getObject('RecaptchaManager').execute();
+    }
   });
 
   return AuthenticationWidget;
