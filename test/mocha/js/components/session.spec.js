@@ -147,12 +147,12 @@ define([
       s.resetPassword1Fail(fakeXHR);
 
       expect(pubsub.publish.args[4][0]).to.eql("[Alert]-Message");
-      expect(pubsub.publish.args[5]).to.eql(["[PubSub]-User-Announcement", "reset_password_1_fail"]);
+      expect(pubsub.publish.args[5]).to.eql(["[PubSub]-User-Announcement", "reset_password_1_fail", "password reset step 1 was unsuccessful (error unknown)"]);
 
       s.resetPassword2Fail(fakeXHR);
 
       expect(pubsub.publish.args[6][0]).to.eql("[Alert]-Message");
-      expect(pubsub.publish.args[7]).to.eql(["[PubSub]-User-Announcement", "reset_password_2_fail"]);
+      expect(pubsub.publish.args[7]).to.eql(["[PubSub]-User-Announcement", "reset_password_2_fail", "password reset step 2 was unsuccessful (error unknown)"]);
 
 
     });
