@@ -3,6 +3,10 @@
 }
 @media print {
 
+  *, *:before, *:after {
+    overflow: visible !important;
+  }
+
   //THIS IS SUPER IMPORTANT otherwise page breaks don't work
   #app-container {
     overflow-x: visible !important;
