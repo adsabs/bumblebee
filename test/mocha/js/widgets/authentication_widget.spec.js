@@ -161,7 +161,7 @@ function(
 
       //i have removed the green success validation states because they were a little ugly
       //and because they didnt trigger properly when browser auto filled the form
-
+      a.view.registerModel.set("g-recaptcha-response", "foo");
       $("#test").find("button[type=submit]").click();
 
       $("#test").find("input[name=email]").val("aholachek@gmail.com");
@@ -186,14 +186,6 @@ function(
       $("#test").find("input[name=password2]").trigger("change");
 
       expect($("#test").find("input[name=password2]").parent().hasClass("has-error")).to.be.false;
-
-      //finally,  fake the g-recaptcha-response
-      a.view.registerModel.set("g-recaptcha-response", "foo");
-
-      $("#test").find("button[type=submit]").click();
-      expect(triggerStub.callCount).to.eql(1);
-
-
     });
 
 
