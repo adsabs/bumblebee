@@ -1302,7 +1302,7 @@ function (Marionette,
       }
       this.filterCollection.reset(null, { silent: true });
       // reset model
-      this.model.set(_.result(this.model, 'defaults'));
+      this.model.set(_.result(this.model, 'defaults'), { silent: true });
     },
 
     // for now, called to show vis for library
