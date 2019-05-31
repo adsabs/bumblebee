@@ -539,11 +539,10 @@ requirejs.config(${ JSON.stringify(cnts, null, 2) });
     });
 
     grunt.task.run([
-      'clean:release', 'copy:release', 'generateConfig', 'requirejs'
+      'clean:release', 'copy:release', 'generateConfig', 'babel:release', 'requirejs'
     ]);
     grunt.task.run(['applyIncludesToConfig']);
     grunt.task.run([
-      'babel:release',
       'uglify'
     ]);
   });
