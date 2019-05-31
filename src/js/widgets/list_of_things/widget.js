@@ -366,12 +366,14 @@ define([
       var numFound = _.isNumber(update.numFound) ? update.numFound : this.model.get('numFound');
 
       // once the hash is updated, this is called again, return here so we don't recompute, and only on results page
-      const frag = Backbone.history.getFragment();
+      const frag = Backbone.history && Backbone.history.getFragment &&
+        Backbone.history.getFragment();
       if (('' + page) !== (_.isArray(pageParam) && pageParam[0]) &&
         opts.updateHash && /search/.test(frag) &&
         utils.qs('p_', frag) !== ('' + page)
       ) {
-        Backbone.history.navigate(utils.updateHash('p_', page, frag));
+        Backbone.history && Backbone.history.navigate &&
+          Backbone.history.navigate(utils.updateHash('p_', page, frag));
       }
 
       // compute the new start and pageData values
