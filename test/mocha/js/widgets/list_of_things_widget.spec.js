@@ -36,6 +36,8 @@ define(['marionette',
 
       beforeEach(function () {
         this.sb = sinon.sandbox.create();
+        this.frag = sinon.stub(Backbone.history, 'getFragment');
+        this.frag.returns('/');
       })
 
       afterEach(function (done) {
@@ -45,6 +47,7 @@ define(['marionette',
         }
         location.hash = '';
         this.sb.restore();
+        this.frag.restore();
         done();
       });
 

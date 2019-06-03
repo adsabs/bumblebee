@@ -77,7 +77,7 @@ function (
         var loggedIn = app.getBeeHive().getObject('User').isLoggedIn();
         if (!loggedIn) {
           // redirect to authentication page
-          app.getService('Navigator').navigate('authentication-page', { 
+          app.getService('Navigator').navigate('authentication-page', {
             subView: 'login',
             redirect: true,
             next
@@ -659,6 +659,36 @@ function (
               that.title = query.get('__bigquerySource')[0];
             } else {
               that.title = query.get('q').length && query.get('q')[0];
+            }
+
+            let q = query;
+            if (q instanceof ApiQuery) {
+              var update = {};
+              var par = function (str) {
+                if (_.isString(str)) {
+                  try {
+                    return parseInt(str);
+                  } catch (e) {
+                    // do nothing
+                  }
+                }
+                return false;
+              };
+
+              if (q.has('p_')) {
+                var page = par(q.get('p_')[0]);
+                update.page = page;
+              } else {
+                that.route += '&p_=0';
+              }
+
+              if (!_.isEmpty(update)) {
+                app.getWidget('Results').then(function (w) {
+                  if (_.isFunction(w.updatePagination)) {
+                    w.updatePagination(update);
+                  }
+                });
+              }
             }
 
             // check if there is a subpage, if so execute that handler w/ our current context

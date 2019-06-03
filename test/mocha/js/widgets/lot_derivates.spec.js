@@ -31,6 +31,7 @@ define([
 
     beforeEach(function(){
       counter = 0;
+      this.frag = sinon.stub(Backbone.history, 'getFragment');
       minsub = new (MinPubSub.extend({
         request: function(apiRequest) {
           counter++;
@@ -50,6 +51,9 @@ define([
       }))({verbose: false});
     });
 
+    afterEach(function () {
+      this.frag.restore();
+    });
 
 
     it("Extends Details LoT widget", function() {
