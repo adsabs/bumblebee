@@ -2,7 +2,12 @@
 	"presets": [
     "@babel/react",
 		["@babel/preset-env", {
-      "targets": "> 0.25%, not dead",
+      "targets": {
+        "browsers": [
+          "last 2 versions",
+          "ie >= 11"
+        ]
+      },
       "modules": false
     }]
   ]
