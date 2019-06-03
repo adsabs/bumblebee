@@ -334,6 +334,7 @@ function (
       'submit form[name=main-query]': 'submitQuery',
       'click .icon-clear': 'clearInput',
       'keyup .q': 'storeCursorInfo',
+      'keydown .q': 'onKeyDown',
       'select .q': 'storeCursorInfo',
       'click .q': 'storeCursorInfo',
       'click .bigquery-close': 'clearBigquery'
@@ -509,6 +510,16 @@ function (
       return false;
     },
 
+    // capture cmd/ctrl presses so we can open new tabs on search
+    onKeyDown: function (e) {
+      if (e.metaKey || e.ctrlKey) {
+        this.metaKeyPressed = true;
+        if (e.keyCode === 13) {
+          this.submitQuery(e);
+        }
+      }
+    },
+
     submitQuery: function (e) {
       var fields,
         fielded,
@@ -559,7 +570,6 @@ function (
         }));
         return false;
       }
-      this.trigger('start_search', newQuery);
 
       // let analytics know what type of query it was
       fields = _.chain(autocompleteArray)
@@ -581,6 +591,14 @@ function (
 
       var type = fielded ? 'fielded' : 'unfiielded';
       analytics('send', 'event', 'interaction', type + '-query-submitted-from-search-bar', query);
+
+      // if the metakey is pressed, then open the search in a new tab
+      if (this.metaKeyPressed) {
+        window.open(`${ location.origin }/search/${ newQuery.url() }`, '_blank');
+      } else {
+        this.trigger('start_search', newQuery);
+      }
+
       return false;
     },
 
