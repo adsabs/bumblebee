@@ -1,3 +1,4 @@
+'use strict';
 (function () {
   /*
     Dynamically pick which configuration to use based on the url.
@@ -12,7 +13,6 @@
 
   var load;
   try {
-    var version = APP_VERSION ? '.' + APP_VERSION : '';
     var loc = window.location;
     var parts = loc[loc.pathname === '/' ? 'hash' : 'pathname'].replace(/#/g, '').split('/');
     var path = parts.reverse().filter(function (p) {
@@ -21,15 +21,15 @@
     path = path.length && path[0];
     load = function () {
       // attempt to get bundle config
-      require([paths[path] + '.config' + version], function () {}, function() {
+      require([paths[path] + '.config'], function () {}, function() {
         // on failure to load specific bundle; load generic one
-        require(['discovery.config' + version]);
+        require(['discovery.config']);
       });
     };
   } catch (e) {
     load = function () {
       // on errors, just fallback to normal config
-      require(['discovery.config' + version]);
+      require(['discovery.config']);
     };
   }
 
@@ -43,7 +43,6 @@
 /**
  * Copyright 2015 Google Inc. All rights reserved.
 /* eslint-env browser */
-'use strict';
 
 if ('serviceWorker' in navigator && location.hostname !== 'localhost' && location.hostname !== '127.0.0.1') {
   // Delay registration until after the page has loaded, to ensure that our
