@@ -112,4 +112,8 @@ release:
     - 'string-replace:final'
     - 'cssmin'
     - 'htmlmin'
-    - 'sw-precache'
+    - 'gulp'                          # build the precache/service worker
+    - 'exec:git_current_version'
+    - 'readLatestTag'
+    - 'string-replace:latest_version'
+    - 'clean:git_current_version'

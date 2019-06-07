@@ -1,6 +1,6 @@
 
-// GENERATED FILE (edits will be overwritten)
-module.exports = {
+        // GENERATED FILE (edits will be overwritten)
+        module.exports = {
   "landing-page": {
     "options": {
       "waitSeconds": 0,
