@@ -448,15 +448,19 @@ function (
       var msg = {};
       msg.numFound = apiResponse.get('response.numFound', false, 0);
       if (msg.numFound === 0) {
-        this.showError();
+        this.showError({ noDocs: true });
         msg.noDocs = true;
       }
       this.trigger('page-manager-event', 'widget-ready', msg);
     },
 
-    showError: function () {
+    showError: function (opts) {
+
+      const options = opts || {};
+
+      // if noDocs, do not set error
       this.model.set({
-        error: true,
+        error: !options.noDocs,
         loading: false
       });
     }
