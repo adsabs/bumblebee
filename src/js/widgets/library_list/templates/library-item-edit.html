@@ -18,7 +18,11 @@
         </div>
         <div class="col-sm-2 col-xs-6 s-top-row-col" title="citation count">
             {{#if num_citations}}
-            <a href="#abs/{{bibcode}}/citations">cited: {{num_citations}}</a>
+                {{#if normCiteSort}}
+                <a href="#abs/{{bibcode}}/citations">cited (n): {{num_citations}}</a>
+                {{else}}
+                <a href="#abs/{{bibcode}}/citations">cited: {{num_citations}}</a>
+                {{/if}}
             {{/if}}
         </div>
         <div class="col-sm-4">

@@ -306,8 +306,14 @@ define([
       var start = params.start || (paginationInfo.start || 0);
       docs = PaginationMixin.addPaginationToDocs(docs, start);
 
+      // check for normalized citation count, this will change display of "cited:N"
+      const sortStr = this.view.sortWidget.store.getState().get('SortApp').get('sort').get('id');
+      const normCiteSort = /citation_count_norm/gi.test(sortStr);
+
       _.each(docs, function (d, i) {
         d.identifier = d.bibcode ? d.bibcode : d.identifier;
+
+        d.normCiteSort = normCiteSort;
 
         var maxAuthorNames = 3;
 

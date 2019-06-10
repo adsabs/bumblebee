@@ -252,11 +252,17 @@ function (
         appStorage = this.getBeeHive().getObject('AppStorage');
       }
 
+      // check for normalized citation count, this will change display of "cited:N"
+      const normCiteSort = /citation_count_norm/gi.test(params.sort);
+
       // stash docs so other widgets can access them
       this.getBeeHive().getObject('DocStashController').stashDocs(docs);
 
       // any preprocessing before adding the resultsIndex is done here
       docs = _.map(docs, function (d) {
+
+        d.normCiteSort = normCiteSort;
+
         // used by link generator mixin
         d.link_server = link_server;
         d.identifier = d.bibcode ? d.bibcode : d.identifier;

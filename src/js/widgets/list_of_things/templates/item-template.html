@@ -19,7 +19,11 @@
     </div>
     <div class="col-xs-3 col-sm-4 col-md-2 s-top-row-col">
         {{#if citation_count }}
-        <a href="#abs/{{encodedIdentifier}}/citations" title="citation count" class="citations-redirect-link">cited: {{citation_count}}</a>
+            {{#if normCiteSort}}
+            <a href="#abs/{{encodedIdentifier}}/citations" title="citation count" class="citations-redirect-link">cited (n): {{citation_count}}</a>
+            {{else}}
+            <a href="#abs/{{encodedIdentifier}}/citations" title="citation count" class="citations-redirect-link">cited: {{citation_count}}</a>
+            {{/if}}
         {{/if}}
     </div>
     <div class="col-xs-4 col-sm-4 pull-right">
