@@ -13,13 +13,13 @@
                 {{identifier}}
             </a>
         </div>
-        <div class="col-sm-2 s-top-row-col" aria-label="date published">
+        <div class="col-sm-1 s-top-row-col" aria-label="date published">
             {{formattedDate}}
         </div>
-        <div class="col-sm-2 col-xs-6 s-top-row-col" title="citation count">
+        <div class="col-sm-3 col-xs-6 s-top-row-col" title="citation count">
             {{#if num_citations}}
                 {{#if normCiteSort}}
-                <a href="#abs/{{bibcode}}/citations">cited (n): {{num_citations}}</a>
+                <a href="#abs/{{bibcode}}/citations">cited (n): {{num_citations}}.00</a>
                 {{else}}
                 <a href="#abs/{{bibcode}}/citations">cited: {{num_citations}}</a>
                 {{/if}}
