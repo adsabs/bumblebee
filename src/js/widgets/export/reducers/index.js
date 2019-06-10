@@ -88,7 +88,7 @@ define([
     output: '',
     progress: 0,
     ids: [],
-    sort: 'date desc',
+    sort: 'date desc, bibcode desc',
     count: 0,
     page: 0,
     maxCount: ApiTargets._limits.ExportWidget.default,
