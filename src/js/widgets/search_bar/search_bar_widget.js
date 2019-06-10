@@ -325,6 +325,15 @@ function (
       });
 
       this.$('[data-toggle="tooltip"]').tooltip();
+
+      // this is for search examples, sets form value on click
+      this.$('.search-quick-links button').on('click', (e) => {
+        const value = e.currentTarget.innerText.trim();
+
+        if (value) {
+          this.setFormVal(value);
+        }
+      });
     },
 
     events: {
