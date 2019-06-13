@@ -40,16 +40,5 @@ module.exports = {
         replacement: ''
       }]
     }
-  },
-  latest_version: {
-    files: {
-      'dist/index.html': 'dist/index.html'
-    },
-    options: {
-      replacements: [{
-        pattern: /APP_VERSION=".*";/ig,
-        replacement: `APP_VERSION="<%= appVersion %>";`
-      }]
-    }
   }
 };
