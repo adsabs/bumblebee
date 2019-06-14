@@ -544,7 +544,10 @@ function (
 
               // is a special case, it opens in a new tab
               if (options.onlySelected && storage.hasSelectedPapers()) {
-                widget.renderWidgetForListOfBibcodes(storage.getSelectedPapers(), { format: format });
+                widget.renderWidgetForListOfBibcodes(storage.getSelectedPapers(), {
+                  format: format,
+                  sort: storage.hasCurrentQuery() && storage.getCurrentQuery().get('sort')[0]
+                });
               }
               // all records specifically requested
               else if (options.onlySelected === false && storage.hasCurrentQuery()) {
