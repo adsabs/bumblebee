@@ -240,11 +240,10 @@ define(['underscore', 'js/mixins/openurl_generator'], function (_, OpenURLGenera
       // Create an OpenURL
       // Only create an openURL if the following is true:
       //   - The article HAS an Identifier (doi, issn, isbn)
-      //   - There is NO open access available
       //   - There is NO scan available from the ADS
       //   - The user is authenticated
       //   - the user HAS a library link server
-      if (identifier && linkServer && !hasHTMLOpenAccess && !hasScan && countOpenUrls < 1) {
+      if (identifier && linkServer && !hasScan && countOpenUrls < 1) {
         const openUrl = new OpenURLGenerator(data, linkServer);
         openUrl.createOpenURL();
         fullTextSources.push({
