@@ -14,12 +14,16 @@
             {{identifier}}
         </a>
     </div>
-    <div class="col-xs-2 col-md-2 col-md-offset-0 s-top-row-col" aria-label="date published">
+    <div class="col-xs-1 col-md-1 col-md-offset-0 s-top-row-col" aria-label="date published">
         {{formattedDate}}
     </div>
-    <div class="col-xs-3 col-sm-4 col-md-2 s-top-row-col">
+    <div class="col-xs-4 col-sm-5 col-md-3 s-top-row-col">
         {{#if citation_count }}
-        <a href="#abs/{{encodedIdentifier}}/citations" title="citation count" class="citations-redirect-link">cited: {{citation_count}}</a>
+            {{#if normCiteSort}}
+            <a href="#abs/{{encodedIdentifier}}/citations" title="citation count" class="citations-redirect-link">cited (n): {{citation_count}}.00</a>
+            {{else}}
+            <a href="#abs/{{encodedIdentifier}}/citations" title="citation count" class="citations-redirect-link">cited: {{citation_count}}</a>
+            {{/if}}
         {{/if}}
     </div>
     <div class="col-xs-4 col-sm-4 pull-right">
