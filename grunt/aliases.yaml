@@ -113,7 +113,3 @@ release:
     - 'cssmin'
     - 'htmlmin'
     - 'sw-precache'
-    - 'exec:git_current_version'
-    - 'readLatestTag'
-    - 'string-replace:latest_version'
-    - 'clean:git_current_version'
