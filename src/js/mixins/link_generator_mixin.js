@@ -227,24 +227,20 @@ define(['underscore', 'js/mixins/openurl_generator'], function (_, OpenURLGenera
     let dataProducts = [];
     let countOpenUrls = 0;
     const property = data.property;
-    const hasHTMLOpenAccess = _.contains(property, 'PUB_OPENACCESS');
 
     // check the esources property
     _.forEach(data.esources, function (el, ids, sources) {
       const parts = el.split('_');
       const linkInfo = LINK_TYPES[el];
-      const hasScan = _.contains(sources, 'ADS_SCAN');
       const linkServer = data.link_server;
       const identifier = data.doi || data.issn || data.isbn;
 
       // Create an OpenURL
       // Only create an openURL if the following is true:
       //   - The article HAS an Identifier (doi, issn, isbn)
-      //   - There is NO open access available
-      //   - There is NO scan available from the ADS
       //   - The user is authenticated
       //   - the user HAS a library link server
-      if (identifier && linkServer && !hasHTMLOpenAccess && !hasScan && countOpenUrls < 1) {
+      if (identifier && linkServer && countOpenUrls < 1) {
         const openUrl = new OpenURLGenerator(data, linkServer);
         openUrl.createOpenURL();
         fullTextSources.push({
