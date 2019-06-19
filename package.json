@@ -63,6 +63,7 @@
     "grunt-include-bootstrap": "~0.1.1",
     "grunt-processhtml": "~0.2.0",
     "grunt-purifycss": "^0.1.1",
+    "grunt-rev": "git+https://git@github.com/thostetler/grunt-rev.git",
     "grunt-sass": "^1.0.0",
     "grunt-saucelabs": "~8.6.1",
     "grunt-string-replace": "^1.2.0",

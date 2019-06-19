@@ -7852,6 +7852,11 @@
       "integrity": "sha1-SPSETnbfXNKRYpq7I1gyb8U8DKU=",
       "dev": true
     },
+    "grunt-rev": {
+      "version": "git+https://git@github.com/thostetler/grunt-rev.git#85c023597ef6e5e08147aabcd17db4eba0bbb32a",
+      "from": "git+https://git@github.com/thostetler/grunt-rev.git",
+      "dev": true
+    },
     "grunt-sass": {
       "version": "1.2.1",
       "resolved": "https://registry.npmjs.org/grunt-sass/-/grunt-sass-1.2.1.tgz",

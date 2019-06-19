@@ -71,6 +71,35 @@ module.exports = function (grunt) {
       return urls;
     };
 
+    var _revPaths = null;
+    var getRevPath = function (path, cfgPath = 'rev-pre', clear) {
+      if (!_revPaths || clear === true) {
+        _revPaths = _.reduce(grunt.file.readJSON(`dist/${ cfgPath }.json`), function (out, v, k) {
+          var p = k.replace('dist/', '').replace(/.js$/, '').split(/(\/)(?!.*\/)/);
+          out[p.join('')] = p.length > 1 ? (`${ p[0] }/${ v.replace(/.js$/, '') }`) : (v.replace(/.js$/, ''));
+          return out;
+        }, {});
+      }
+      return _revPaths[path] || path;
+    }
+
+    var getDiscoveryConfig = function () {
+      var content = grunt.file.read(`dist/${ getRevPath('discovery.config') }.js`);
+      var cfg = {};
+      (function () {
+        var require = requirejs = {
+          config: function (data) { cfg = data; }
+        };
+        eval(content.toString());
+      })();
+      return cfg;
+    }
+
+    var writeDiscoveryConfig = function (cfg) {
+      var str = `require.config(${ JSON.stringify(cfg, null, 2) })`;
+      grunt.file.write(`dist/${ getRevPath('discovery.config') }.js`, str);
+    }
+
     var writeOutConfig = function (config, done) {
       var output = `
         // GENERATED FILE (edits will be overwritten)
@@ -85,14 +114,29 @@ module.exports = function (grunt) {
         }
         setTimeout(check, 500, ++i);
       })(0);
+
+      var disConfig = getDiscoveryConfig();
+      disConfig.paths = _.extend(disConfig.paths, _.omit(_revPaths, [
+        'js/apps/discovery/router',
+        'js/components/analytics',
+        'js/utils'
+      ]), {
+        'router': getRevPath('js/apps/discovery/router'),
+        'analytics': getRevPath('js/components/analytics'),
+        'utils': getRevPath('js/utils'),
+        'recaptcha': getRevPath('js/plugins/recaptcha')
+      });
+      writeDiscoveryConfig(disConfig);
     };
 
     grunt.registerTask('generateConfig', function () {
       var config = {};
       var done = this.async();
+
       var addConfig = function (name, cfg) {
         config[name] = {};
         config[name].options = _.extend({}, baseConfig, {
+          mainConfigFile: `dist/${ getRevPath('discovery.config') }.js`,
           name: `${name}.bundle`,
           out: `dist/${name}.bundle.js`
         }, cfg);
@@ -483,18 +527,6 @@ module.exports = function (grunt) {
       writeOutConfig(config, done);
     });
 
-    var getDiscoveryConfig = function () {
-      var content = grunt.file.read('dist/discovery.config.js');
-      var cfg = {};
-      (function () {
-        var require = requirejs = {
-          config: function (data) { cfg = data; }
-        };
-        eval(content.toString());
-      })();
-      return cfg;
-    }
-
     var generateConfigFileString = function (name, cnts) {
       return `
 /**
@@ -508,12 +540,15 @@ requirejs.config(${ JSON.stringify(cnts, null, 2) });
     grunt.registerTask('applyIncludesToConfig', function () {
       var cfg = getDiscoveryConfig();
 
+      // get an updated list
+      getRevPath('', 'rev-bundles', true);
+
       // generate the rest of the bundles
       _.forEach(fullConfig, function (bundle, name) {
         var _cfg = _.extend({}, cfg, {
 
           // set the main dependency to the bundle name
-          deps: [bundle.options.name],
+          deps: [getRevPath(bundle.options.name)],
 
           // update the paths config with new revved names
           paths: _.extend({},
@@ -521,13 +556,13 @@ requirejs.config(${ JSON.stringify(cnts, null, 2) });
 
             // add all additional revved filenames to the paths
             _.reduce(bundle.options.include, function (acc, p) {
-              acc[p] = bundle.options.name;
+              acc[p] = getRevPath(bundle.options.name);
               return acc;
             }, {}),
 
             // some explicit path changes
             {
-              'discovery.config': bundle.options.name
+              'discovery.config': getRevPath(bundle.options.name)
             }
           )
         });
@@ -538,11 +573,37 @@ requirejs.config(${ JSON.stringify(cnts, null, 2) });
       });
     });
 
+    grunt.registerTask('revStringReplace', function () {
+
+      getRevPath('', 'rev-pre', true);
+      var htmls = grunt.file.expand('dist/*.html');
+      htmls.forEach(function (p) {
+        var cnts = grunt.file.read(p);
+        _.forEach(_revPaths, function (v, k) {
+          var rgx = new RegExp(k, 'ig');
+          cnts = cnts.replace(rgx, v);
+        });
+        grunt.file.write(p, cnts);
+      });
+
+      // shim.js
+      var shimPath = `dist/${ getRevPath('shim', 'rev-pre', true) }.js`;
+      var cnts = grunt.file.read(shimPath);
+      getRevPath('', 'rev-post', true);
+      _.forEach(_revPaths, function (v, k) {
+        var rgx = new RegExp(k.replace('.config', ''), 'ig');
+        cnts = cnts.replace(rgx, v.replace('.config', ''));
+      });
+      grunt.file.write(shimPath, cnts);
+    });
+
     grunt.task.run([
-      'clean:release', 'copy:release', 'generateConfig', 'babel:release', 'requirejs'
+      'clean:release', 'copy:release', 'rev:pre', 'generateConfig', 'babel:release', 'string-replace:es6', 'requirejs'
     ]);
-    grunt.task.run(['applyIncludesToConfig']);
+    grunt.task.run(['rev:bundles', 'applyIncludesToConfig']);
+    grunt.task.run(['rev:post', 'revStringReplace']);
     grunt.task.run([
+      'babel:release',
       'uglify'
     ]);
   });

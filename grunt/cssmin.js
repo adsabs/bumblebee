@@ -6,8 +6,10 @@
  */
 module.exports = {
   'release': {
-    files: {
-      'dist/styles/css/styles.css': 'dist/styles/css/styles.css'
-    }
+    files: [{
+      expand: true,
+      cwd: 'dist/styles/css',
+      src: ['*.css']
+    }]
   }
 };

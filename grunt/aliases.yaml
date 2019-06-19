@@ -80,7 +80,7 @@ test:prod:
   - 'copy:release'
   - 'compile-handlebars:index'
   - 'babel'
-  - 'string-replace:final'
+  - 'string-replace:es6'
   - 'exec:nyc-instrument'
   - 'server:once'
   - 'puppet:prod'
@@ -109,7 +109,7 @@ release:
     - 'assets'
     - 'compile-handlebars:index'
     - 'optimize-build'
-    - 'string-replace:final'
+    - 'string-replace:es6'
     - 'cssmin'
     - 'htmlmin'
     - 'gulp'                          # build the precache/service worker

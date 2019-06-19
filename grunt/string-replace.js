@@ -19,7 +19,7 @@ module.exports = {
       }]
     }
   },
-  final: {
+  es6: {
     files: {
       'dist/': 'dist/**/*.{js,html}'
     },
