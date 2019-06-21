@@ -37,5 +37,8 @@ module.exports = {
   },
   temp: {
     src: ['_tmp']
+  },	
+  git_current_version: {	
+    src: ['.git-current-version']	
   }
 };

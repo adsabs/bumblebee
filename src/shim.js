@@ -1,3 +1,4 @@
+'use strict';
 (function () {
   /*
     Dynamically pick which configuration to use based on the url.
@@ -20,8 +21,8 @@
     });
     path = path.length && path[0];
     load = function () {
-      // attempt to get bundle config
-      require([paths[path] + '.config' + version], function () {}, function() {
+        // attempt to get bundle config
+        require([paths[path] + '.config' + version], function () {}, function() {
         // on failure to load specific bundle; load generic one
         require(['discovery.config' + version]);
       });
