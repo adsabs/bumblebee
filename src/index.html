@@ -103,7 +103,7 @@
           waitSeconds: 30,
           // this will append a query string to requests for resources, uses the current
           // version for production and the current time for development
-          urlArgs: 'v=' + APP_VERSION.length > 0 ? APP_VERSION : (new Date()).getTime(),
+          urlArgs: APP_VERSION.length > 0 ? 'v='+APP_VERSION : 'v='+(new Date()).getTime(),
         };
 
         // Progress Bar
