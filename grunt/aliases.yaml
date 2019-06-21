@@ -112,4 +112,3 @@ release:
     - 'string-replace:final'
     - 'cssmin'
     - 'htmlmin'
-    - 'gulp'                          # build the precache/service worker
