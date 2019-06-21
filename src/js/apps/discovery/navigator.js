@@ -87,6 +87,14 @@ function (
         return false;
       }
 
+      function makeProxyHandler(id) {
+        return function () {
+          var proxy = self.get(id);
+          var args = Array.prototype.slice.call(arguments, 1);
+          return proxy.execute.apply(proxy, [id].concat(args));
+        }
+      };
+
       this.set('index-page', function () {
         var that = this;
         var defer = $.Deferred();
@@ -1181,6 +1189,8 @@ function (
         return defer.promise();
       });
 
+      // proxy to ShowTableofcontents
+      this.set('ShowToc', makeProxyHandler('ShowTableofcontents'));
       this.set('ShowTableofcontents', function (id, data) {
         var defer = $.Deferred(),
           that = this;
