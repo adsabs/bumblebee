@@ -91,6 +91,12 @@ define([
       var self = this;
       if (bibcode.length > 0 && /^(identifier|bibcode):/.test(bibcode[0])) {
         bibcode = bibcode[0].replace(/^(identifier|bibcode):/, '');
+
+      // bibcode will be null if initial request in navigator finds nothing
+      if (bibcode === 'null') {
+        return;
+      }
+
         this.loadBibcodeData(bibcode).done(function () {
           self.trigger('page-manager-event', 'widget-ready', { isActive: true, widget: self });
         });

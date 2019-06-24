@@ -30,9 +30,9 @@ function (
       ExportWidget.prototype.activate.call(this, beehive);
     },
 
-    ingestBroadcastedPayload: function (data) {
-      if (data.bibcode) {
-        this.bibcode = data.bibcode;
+    ingestBroadcastedPayload: function (bibcode) {
+      if (bibcode) {
+        this.bibcode = bibcode;
       }
     },
 

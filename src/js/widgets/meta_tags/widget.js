@@ -70,9 +70,15 @@ define([
       }
       this.setCurrentQuery(apiQuery);
       var bibcode = apiQuery.get('q');
-      if (bibcode && /bibcode:/.test(bibcode[0])) {
-        bibcode = bibcode[0].replace(/bibcode:/, '');
+      if (bibcode && /(identifier|bibcode):/.test(bibcode[0])) {
+        bibcode = bibcode[0].replace(/(identifier|bibcode):/, '');
       }
+
+      // bibcode will be null if initial request in navigator finds nothing
+      if (bibcode === 'null') {
+        return;
+      }
+
       var doc = this.getCachedDoc(bibcode);
 
       if (doc) {

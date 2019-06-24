@@ -50,6 +50,12 @@ function (
       var bibcode = apiQuery.get('q');
       if (bibcode.length > 0 && /^(identifier|bibcode):/.test(bibcode[0])) {
         bibcode = bibcode[0].replace(/^(identifier|bibcode):/, '');
+
+        // bibcode will be null if initial request in navigator finds nothing
+        if (bibcode === 'null') {
+          return;
+        }
+
         this._bibcode = bibcode;
       }
     }

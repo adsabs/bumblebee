@@ -85,7 +85,7 @@ function (
 
       var apiQuery = bibcodeOrQuery;
       if (!(bibcodeOrQuery instanceof ApiQuery) && _.isString(bibcodeOrQuery)) {
-        apiQuery = new ApiQuery({ q: 'bibcode:' + bibcodeOrQuery });
+        apiQuery = new ApiQuery({ q: 'identifier:' + bibcodeOrQuery });
       }
 
       // do not continue unless we have been selected
@@ -95,7 +95,7 @@ function (
       try {
         var q = apiQuery.get('q');
         if (q && q[0]) {
-          var bibcode = q[0].match(/bibcode:(.*)/)[1];
+          var bibcode = q[0].match(/(identifier|bibcode):(.*)/)[1];
           if (this.model.get('bibcode') === bibcode) {
             return;
           }
