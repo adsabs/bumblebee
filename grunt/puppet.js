@@ -7,8 +7,7 @@
 module.exports = function (grunt) {
   grunt.registerMultiTask('puppet', 'find and run tests headlessly', async function () {
     const done = this.async();
-    const COVERAGE_COLLECTION_FILE = 'test/coverage/coverage.json'
-    const path = require('path');
+    const COVERAGE_COLLECTION_FILE = 'test/coverage/coverage.json';
     const puppeteer = require('puppeteer');
     const options = this.options({
       env: 'production',
@@ -58,6 +57,12 @@ module.exports = function (grunt) {
     await page.on('console', async (msg) => {
       const args = await Promise.all(msg.args().map(async a => await a.jsonValue()));
       console[msg.type()].apply(console, args);
+    });
+
+    await page.on('pageerror', async (error) => {
+      if (error.message.indexOf('require is not defined') > -1) {
+        console.log('\n\n', 'Restart the dev server using `grunt server` instead of `./server`');
+      }
     });
 
     // get the dependencies for testing, and setup globals
