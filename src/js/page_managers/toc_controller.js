@@ -15,7 +15,10 @@ function (_, Marionette, BasicPageManagerController, TOCWidget, analytics) {
       BasicPageManagerController.prototype.initialize.apply(this, arguments);
 
       // debounce this method to keep from double navigating
-      this.onWidgetSelected = _.debounce(_.bind(this.onWidgetSelected, this), 100);
+
+      if (!window.__BUMBLEBEE_TESTING_MODE__) {
+        this.onWidgetSelected = _.debounce(_.bind(this.onWidgetSelected, this), 100);
+      }
     },
 
     createView: function (options) {

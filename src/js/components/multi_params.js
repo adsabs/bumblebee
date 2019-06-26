@@ -31,6 +31,10 @@ define(['backbone', 'underscore', 'jquery'], function (Backbone, _, $) {
       return new this.constructor(this.attributes);
     },
 
+    hasVal: function (key) {
+      return !_.isEmpty(this.get(key));
+    },
+
     // we allow only strings and numbers; instead of sending
     // signal we throw a direct error
     _validate: function (attributes, options) {

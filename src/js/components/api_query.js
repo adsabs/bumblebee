@@ -29,6 +29,7 @@ define([
     set: 'set (replace existing)',
     get: 'get values',
     has: 'has a key',
+    hasVal: 'more specific `has` using _.isEmpty',
     url: 'url string of the params',
     load: 'loads query as a string',
     clear: 'clears all values',

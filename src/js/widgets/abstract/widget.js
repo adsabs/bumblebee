@@ -387,12 +387,7 @@ function (
         this.mergeStashedDocs(stashedDocs);
       }
 
-      var bibcode = apiQuery.get('q'), q;
-
-      if (bibcode.length > 0 && /^(identifier|bibcode):/.test(bibcode[0])) {
-        // redefine bibcode
-        bibcode = bibcode[0].replace(/^(identifier|bibcode):/, '');
-      }
+      const bibcode = this.parseIdentifierFromQuery(apiQuery);
 
       if (bibcode === 'null') {
         var msg = { numFound: 0, noDocs: true };

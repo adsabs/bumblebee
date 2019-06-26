@@ -87,30 +87,27 @@ define([
     },
 
     onDisplayDocuments: function (apiQuery) {
-      var bibcode = apiQuery.get('q');
       var self = this;
-      if (bibcode.length > 0 && /^(identifier|bibcode):/.test(bibcode[0])) {
-        bibcode = bibcode[0].replace(/^(identifier|bibcode):/, '');
 
-      // bibcode will be null if initial request in navigator finds nothing
+      const bibcode = this.parseIdentifierFromQuery(apiQuery);
+
       if (bibcode === 'null') {
         return;
       }
 
-        this.loadBibcodeData(bibcode).done(function () {
-          self.trigger('page-manager-event', 'widget-ready', { isActive: true, widget: self });
-        });
-        this.getResponseDeferred().fail(function () {
-          self.trigger('page-manager-event', 'widget-ready', {
+      this.loadBibcodeData(bibcode).done(function () {
+        self.trigger('page-manager-event', 'widget-ready', { isActive: true, widget: self });
+      });
+      this.getResponseDeferred().fail(function () {
+        self.trigger('page-manager-event', 'widget-ready', {
 
-            // this will set us to inActive and navigate to ShowAbstract
-            shouldReset: bibcode !== this._bibcode,
-            isActive: false,
-            widget: self
-          });
-          this._bibcode = bibcode;
+          // this will set us to inActive and navigate to ShowAbstract
+          shouldReset: bibcode !== this._bibcode,
+          isActive: false,
+          widget: self
         });
-      }
+        this._bibcode = bibcode;
+      });
     },
 
     // load data, return a promise

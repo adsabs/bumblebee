@@ -262,8 +262,27 @@ define([
 
     render: function () {
       return this.view.render();
-    }
+    },
 
+    /**
+     * Extracts identifier from a query object
+     *
+     * @param {ApiQuery} apiQuery
+     */
+    parseIdentifierFromQuery: function (apiQuery) {
+      if (!apiQuery.hasVal('q')) {
+        throw 'no query';
+      }
+      const q = apiQuery.get('q')[0];
+      try {
+        if (/^(?:identifier|bibcode):(.*)$/.test(q)) {
+          return q.split(':')[1];
+        }
+      } catch (e) {
+        throw 'unable to parse bibcode';
+      }
+      throw 'query must be in the format of identifer:foo or bibcode:foo';
+    }
 
   }, { mixin: WidgetMixin });
 

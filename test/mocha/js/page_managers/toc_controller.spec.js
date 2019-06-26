@@ -44,20 +44,20 @@ define([
         }).done(function() {
 
           expect(toc.widgets.SearchWidget).to.be.defined;
-  
+
           toc.widgets.SearchWidget.trigger('page-manager-event', 'widget-ready');
   //        console.log(JSON.stringify(toc.broadcast.lastCall.args))
           expect(toc.broadcast.lastCall.args).to.eql(["page-manager-message","widget-ready",{"widgetId":"SearchWidget","isActive":false}]);
-  
+
           toc.widgets.SearchWidget.trigger('page-manager-event', 'widget-selected', {idAttribute: 'foo'});
           expect(allSpy.lastCall.args.slice(0, 3)).to.eql(["[Router]-Navigate-With-Trigger","foo",{"idAttribute":"foo"}]);
-  
+
           toc.widgets.SearchWidget.trigger('page-manager-event', 'broadcast-payload', {title: 'foo'});
           expect(toc.broadcast.lastCall.args).to.eql(["page-manager-message","broadcast-payload",{"title":"foo"}]);
-  
+
           //console.log(JSON.stringify(toc.broadcast.lastCall.args))
           //console.log(JSON.stringify(allSpy.lastCall.args))
-  
+
           done();
         })
 

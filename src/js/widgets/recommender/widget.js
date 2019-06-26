@@ -68,17 +68,12 @@ define([
     },
 
     onDisplayDocuments: function (apiQuery) {
-      var bibcode = apiQuery.get('q');
-      if (bibcode.length > 0 && /^(identifier|bibcode):/.test(bibcode)) {
-        bibcode = bibcode[0].replace(/^(identifier|bibcode):/, '');
+      const bibcode = this.parseIdentifierFromQuery(apiQuery);
 
-        // bibcode will be null if initial request in navigator finds nothing
-        if (bibcode === 'null') {
-          return;
-        }
-
-        this.loadBibcodeData(bibcode);
+      if (bibcode === 'null') {
+        return;
       }
+      this.loadBibcodeData(bibcode);
     },
 
     loadBibcodeData: function (bibcode) {

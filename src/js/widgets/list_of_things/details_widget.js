@@ -95,8 +95,8 @@ function (
       try {
         var q = apiQuery.get('q');
         if (q && q[0]) {
-          var bibcode = q[0].match(/(identifier|bibcode):(.*)/)[1];
-          if (this.model.get('bibcode') === bibcode) {
+          const bibcode = this.parseIdentifierFromQuery(apiQuery);
+          if (bibcode === 'null' || this.model.get('bibcode') === bibcode) {
             return;
           }
           this.model.set('bibcode', bibcode);
