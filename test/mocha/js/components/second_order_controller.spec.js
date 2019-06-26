@@ -48,7 +48,7 @@ define([
       this.addAppStorage(['foo', 'bar']);
       this.minsub.pubsub.publish = sinon.spy();
       const ti = this.createTestItem();
-      ti.transform('references', { onlySelected: true });
+      ti.transform('useful', { onlySelected: true });
       const req = this.minsub.pubsub.publish.lastCall.args[2];
       expect(req).is.instanceof(ApiRequest);
       expect(req.get('target')).to.eql('vault/query');
@@ -69,95 +69,34 @@ define([
       });
     });
 
-    it('requests first N papers using the currentQuery', function () {
+    it('transforms current query into a fielded query', function () {
       this.addAppStorage(['foo', 'bar'], { q: 'star' });
       const pubSpy = sinon.spy();
       this.minsub.pubsub.publish = pubSpy;
       const ti = this.createTestItem();
-      const docsResponse = {
-        response: { 
-          docs: [
-            { bibcode: 'foo' },
-            { bibcode: 'bar' },
-            { bibcode: 'baf' }
-          ],
-          numFound: 100
-        }
-      }
-      const qidPromise = $.Deferred().resolve(999).promise();
-      const docsPromise = $.Deferred().resolve(docsResponse).promise();
-      ti.getBigQueryResponse = sinon.stub().returns(qidPromise);
-      ti.sendQuery = sinon.stub().returns(docsPromise);
-      ti.transform('references');
-      expect(ti.sendQuery.calledOnce).to.eql(true);
-      expect(ti.sendQuery.lastCall.args[0].toJSON()).to.eql({
-        "q": [
-          "star"
-        ],
-        "fl": [
-          "bibcode"
-        ],
-        "start": [
-          0
-        ],
-        "rows": [
-          1000
-        ]
+      _.forEach(_.values(ti.FIELDS), (field) => {
+        ti.transformCurrentQuery(field);
+        const args = pubSpy.lastCall.args;
+        expect(args[2]).to.eql('search-page');
+        expect(args[3].q.toJSON()).to.eql({
+          q: [`${field}((star))`]
+        });
       });
-      expect(ti.getBigQueryResponse.lastCall.args[0]).to.eql(['foo', 'bar', 'baf']);
     });
 
-    it('properly paginates currentQuery to a set max', function () {
-      this.addAppStorage(['foo', 'bar'], { q: 'star' });
+    it('transforms complex current query into a fielded query', function () {
+      this.addAppStorage(['foo', 'bar'], {"filter_property_fq_property":["AND","property:\"notrefereed\""],"fq":["{!type=aqp v=$fq_database}","{!type=aqp v=$fq_author}","{!type=aqp v=$fq_property}","{!type=aqp v=$fq_bibstem_facet}"],"fq_author":["((author_facet_hier:\"0/Geller, M\" OR author_facet_hier:\"0/Mould, J\") NOT author_facet_hier:\"0/Madore, B\")"],"fq_bibstem_facet":["(*:* NOT bibstem_facet:\"yCat\" NOT bibstem_facet:\"AAS\" NOT bibstem_facet:\"IAUS\")"],"fq_database":["(database:astronomy)"],"fq_property":["(property:\"notrefereed\")"],"q":["author:\"huchra, john\""],"sort":["date desc, bibcode desc"],"p_":["0"]});
+      const pubSpy = sinon.spy();
+      this.minsub.pubsub.publish = pubSpy;
       const ti = this.createTestItem();
-      const docsResponse = {
-        response: { 
-          docs: [
-            { bibcode: 'foo' }
-          ],
-          numFound: 10000
-        }
-      };
-      const qidPromise = $.Deferred().resolve(999).promise();
-      const docsPromise = $.Deferred().resolve(docsResponse).promise();
-      ti.getBigQueryResponse = sinon.stub().returns(qidPromise);
-      ti.sendQuery = sinon.stub().returns(docsPromise);
-      ti.transform('references');
-      expect(ti.sendQuery.callCount).to.eql(6);
-      expect(_.invoke(_.flatten(ti.sendQuery.args), 'toJSON')).to.eql([
-        {"q":["star"],"fl":["bibcode"],"start":[0],"rows":[1000]},
-        {"q":["star"],"fl":["bibcode"],"start":[1000],"rows":[1000]},
-        {"q":["star"],"fl":["bibcode"],"start":[2000],"rows":[1000]},
-        {"q":["star"],"fl":["bibcode"],"start":[3000],"rows":[1000]},
-        {"q":["star"],"fl":["bibcode"],"start":[4000],"rows":[1000]},
-        {"q":["star"],"fl":["bibcode"],"start":[5000],"rows":[1000]}
-      ]);
-      expect(ti.getBigQueryResponse.lastCall.args[0]).to.eql(['foo', 'foo', 'foo', 'foo', 'foo', 'foo']);
-    });
-
-    it('pagination will stop short, if records are below max', function () {
-      this.addAppStorage(['foo', 'bar'], { q: 'star' });
-      const ti = this.createTestItem();
-      const docsResponse = {
-        response: { 
-          docs: [
-            { bibcode: 'foo' }
-          ],
-          numFound: 2594
-        }
-      };
-      const qidPromise = $.Deferred().resolve(999).promise();
-      const docsPromise = $.Deferred().resolve(docsResponse).promise();
-      ti.getBigQueryResponse = sinon.stub().returns(qidPromise);
-      ti.sendQuery = sinon.stub().returns(docsPromise);
-      ti.transform('references');
-      expect(ti.sendQuery.callCount).to.eql(3);
-      expect(_.invoke(_.flatten(ti.sendQuery.args), 'toJSON')).to.eql([
-        {"q":["star"],"fl":["bibcode"],"start":[0],"rows":[1000]},
-        {"q":["star"],"fl":["bibcode"],"start":[1000],"rows":[1000]},
-        {"q":["star"],"fl":["bibcode"],"start":[2000],"rows":[1000]}
-      ]);
-      expect(ti.getBigQueryResponse.lastCall.args[0]).to.eql(['foo', 'foo', 'foo']);
+      _.forEach(_.values(ti.FIELDS), (field) => {
+        ti.transformCurrentQuery(field);
+        const args = pubSpy.lastCall.args;
+        expect(args[2]).to.eql('search-page');
+        expect(args[3].q.toJSON()).to.eql({
+          q: [`${field}((author:"huchra, john") AND (database:astronomy) AND ((author_facet_hier:"0/Geller, M" OR author_facet_hier:"0/Mould, J") NOT author_facet_hier:"0/Madore, B") AND (property:"notrefereed") AND (*:* NOT bibstem_facet:"yCat" NOT bibstem_facet:"AAS" NOT bibstem_facet:"IAUS"))`]
+        });
+      });
     });
 
     it('uses qid and field to create new query, and navigates to search-page', function () {
@@ -176,25 +115,7 @@ define([
         expect(args[3].q.toJSON()).to.eql({
           q: [`${field}(docs(999))`]
         });
-      })
-    });
-
-    it('will throw error if no records are found', function () {
-      this.addAppStorage(['foo', 'bar'], { q: 'star' });
-      const ti = this.createTestItem();
-      const docsResponse = {
-        response: { 
-          docs: [],
-          numFound: 0
-        }
-      };
-      const docsPromise = $.Deferred().resolve(docsResponse).promise();
-      ti.sendQuery = sinon.stub().returns(docsPromise);
-      expect(ti.transform.bind(ti, 'references')).to.throw('no records found');
-      expect(ti.sendQuery.callCount).to.eql(1);
-      expect(_.invoke(_.flatten(ti.sendQuery.args), 'toJSON')).to.eql([
-        {"q":["star"],"fl":["bibcode"],"start":[0],"rows":[1000]}
-      ]);
+      });
     });
 
     it('throws if field is invalid', function () {
@@ -209,7 +130,7 @@ define([
       const ti = this.createTestItem();
       const promise = $.Deferred().resolve(undefined).promise();
       ti.getBigQueryResponse = sinon.stub().returns(promise);
-      expect(ti.transform.bind(ti, 'references', { onlySelected: true })).to.throw('no qid from vault');
+      expect(ti.transform.bind(ti, 'useful', { onlySelected: true })).to.throw('no qid from vault');
     });
 
     it('throws error if an error occurred during request to vault', function () {
@@ -218,7 +139,7 @@ define([
       const errResponse = { responseJSON: { error: 'something bad happened' }};
       const promise = $.Deferred().reject(errResponse).promise();
       ti.getBigQueryResponse = sinon.stub().returns(promise);
-      expect(ti.transform.bind(ti, 'references', { onlySelected: true })).to.throw(errResponse.error);
+      expect(ti.transform.bind(ti, 'useful', { onlySelected: true })).to.throw(errResponse.error);
     });
   });
 });

@@ -174,60 +174,6 @@ function (
     },
 
     /**
-     * Get the current query and then request additional rows
-     * until the MAX_QUERY_ROWS are reached.
-     */
-    getIdsFromCurrentQuery: function () {
-      const $dd = $.Deferred();
-      const query = this.getCurrentQuery().clone();
-      const promises = [];
-      const getIds = ({ response }) => {
-        return response.docs.map((r) => r.bibcode);
-      }
-      let max = this.options.maxQueryRows;
-
-      // send an initial query to get the total results, and begin paging
-      query.set({ fl: 'bibcode', start: 0, rows: 1000 });
-      this.sendQuery(query).then((res) => {
-
-        // get the numfound and update our max
-        const totalRecords = res.response.numFound;
-        if (totalRecords < max && totalRecords > 0) {
-          max = totalRecords;
-        } else if (totalRecords === 0) {
-          return $dd.reject({
-            responseJSON: { error: 'no records found' }
-          });
-        }
-
-        // set max as our stopping point, and start at the end of our initial request (1000)
-        for(let i = 1000; i < max; i+= 1000) {
-          let q = query.clone();
-          q.set({ fl: 'bibcode', start: i, rows: 1000 });
-          promises.push(this.sendQuery(q));
-        }
-
-        // if we don't have any promises to wait for, then just use what we received already
-        if (promises.length > 0) {
-          $.when.apply($, promises).then((...responses) => {
-            $dd.resolve(_.flatten([
-              ...getIds(res),
-              ...responses.map(getIds)
-            ]));
-          }, (err) => {
-            $dd.reject(err);
-          });
-        } else {
-          $dd.resolve(getIds(res));
-        }
-
-      }).fail((err) => {
-        $dd.reject(err);
-      });
-      return $dd.promise();
-    },
-
-    /**
      * Wrap the current query and pull together all filter queries into
      * the selected field.
      *
@@ -247,7 +193,7 @@ function (
 
       const newQuery = new ApiQuery({
         q: `${ field }(${ q.join(' AND ') })`,
-        sort: query.get('sort')
+        sort: query.get('sort') || 'score desc'
       });
       ps.publish(ps.NAVIGATE, 'search-page', { q: newQuery });
     },

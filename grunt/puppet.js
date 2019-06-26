@@ -9,6 +9,7 @@ module.exports = function (grunt) {
     const done = this.async();
     const COVERAGE_COLLECTION_FILE = 'test/coverage/coverage.json';
     const puppeteer = require('puppeteer');
+    const path = require('path');
     const options = this.options({
       env: 'production',
       launchOptions: { headless: true }
