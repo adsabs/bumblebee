@@ -18,8 +18,8 @@ define([
     { divider: true },
     { section: 'Operations' },
     { description: 'Co-reads', pubsubEvent: 'second-order-search/trending' },
-    { description: 'Citations', pubsubEvent: 'second-order-search/citations' },
-    { description: 'References', pubsubEvent: 'second-order-search/references' },
+    { description: 'Reviews', pubsubEvent: 'second-order-search/reviews' },
+    { description: 'Useful', pubsubEvent: 'second-order-search/useful' },
     { description: 'Similar', pubsubEvent: 'second-order-search/similar' }
   ];
 

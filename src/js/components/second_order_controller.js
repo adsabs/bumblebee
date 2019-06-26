@@ -165,7 +165,7 @@ function (
     },
 
     /**
-     * General error handler 
+     * General error handler
      */
     handleError: function (ev) {
       if (ev.responseJSON && ev.responseJSON.error) {
@@ -187,7 +187,7 @@ function (
         return response.docs.map((r) => r.bibcode);
       }
       let max = this.options.maxQueryRows;
-      
+
       // send an initial query to get the total results, and begin paging
       query.set({ fl: 'bibcode', start: 0, rows: 1000 });
       this.sendQuery(query).then((res) => {
@@ -213,7 +213,7 @@ function (
         if (promises.length > 0) {
           $.when.apply($, promises).then((...responses) => {
             $dd.resolve(_.flatten([
-              ...getIds(res), 
+              ...getIds(res),
               ...responses.map(getIds)
             ]));
           }, (err) => {
@@ -222,7 +222,7 @@ function (
         } else {
           $dd.resolve(getIds(res));
         }
-        
+
       }).fail((err) => {
         $dd.reject(err);
       });
@@ -230,9 +230,9 @@ function (
     },
 
     /**
-     * Send the ids to vault get a qid, which we then use to generate 
+     * Send the ids to vault get a qid, which we then use to generate
      * the final query.
-     * 
+     *
      * This will navigate to the search page when done
      */
     getQidAndStartSearch: function (field, ids) {
@@ -245,7 +245,7 @@ function (
         }
 
         // replace the current query with our operator
-        const newQuery = new ApiQuery({ 
+        const newQuery = new ApiQuery({
           q: `${ field }(docs(${ qid }))`,
           sort: 'score desc'
         });
@@ -257,10 +257,10 @@ function (
   });
 
   SecondOrderController.FIELDS = {
-    REFERENCES: 'references',
+    USEFUL: 'useful',
     SIMILAR: 'similar',
     TRENDING: 'trending',
-    CITATIONS: 'citations'
+    REVIEWS: 'reviews'
   };
 
   _.extend(SecondOrderController.prototype, Dependon.BeeHive);
