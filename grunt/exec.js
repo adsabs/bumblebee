@@ -24,8 +24,8 @@ module.exports = {
   git_current_tag: {
     cmd: 'git describe --tags --abbrev=0 > .tag'
   },
-  git_current_version: {	
-    cmd: 'curl https://api.github.com/repos/adsabs/bumblebee/releases/latest -s | jq .tag_name -r > .git-current-version'	
+  git_current_version: {
+    cmd: 'curl https://api.github.com/repos/adsabs/bumblebee/releases/latest -s | jq .tag_name -r | xargs echo > .git-current-version'
   },
   npm_install: {
     cmd: 'npm install --no-package-lock --no-shrinkwrap'
