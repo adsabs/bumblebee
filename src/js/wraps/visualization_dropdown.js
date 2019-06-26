@@ -16,7 +16,12 @@ define([
     { description: 'Concept Cloud', navEvent: 'show-concept-cloud' },
     { description: 'Results Graph', navEvent: 'show-bubble-chart' },
     { divider: true },
-    { section: 'Operations' },
+    { section: 'Operations', icon: {
+        class: 'icon-help',
+        href: 'https://adsabs.github.io/img/operators.png',
+        description: 'What are second-order operations?'
+      }
+    },
     { description: 'Co-reads', pubsubEvent: 'second-order-search/trending' },
     { description: 'Reviews', pubsubEvent: 'second-order-search/reviews' },
     { description: 'Useful', pubsubEvent: 'second-order-search/useful' },

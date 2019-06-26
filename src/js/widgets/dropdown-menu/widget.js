@@ -125,6 +125,12 @@ function (Marionette, BaseWidget, dropdownTemplate, dropdownItemTemplate) {
       'click .dropdown-menu label': function (e) {
         e.stopPropagation && e.stopPropagation();
       }
+    },
+
+    onRender: function () {
+      this.$('.dropdown-helper-icon').off().click((e) => {
+        window.open(e.currentTarget.href, '_blank');
+      });
     }
   });
 

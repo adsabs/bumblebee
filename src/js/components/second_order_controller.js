@@ -156,9 +156,7 @@ function (
       const selectedIds = this.getSelectedIds();
 
       if (selectedIds.length === 0 || !options.onlySelected) {
-        this.getIdsFromCurrentQuery()
-          .then((ids) => this.getQidAndStartSearch(field, ids))
-          .fail(this.handleError);
+        this.transformCurrentQuery(field);
       } else {
         this.getQidAndStartSearch(field, selectedIds);
       }
@@ -227,6 +225,31 @@ function (
         $dd.reject(err);
       });
       return $dd.promise();
+    },
+
+    /**
+     * Wrap the current query and pull together all filter queries into
+     * the selected field.
+     *
+     * This will navigate to the search page when done
+     */
+    transformCurrentQuery: function (field) {
+      const ps = this.getPubSub();
+      const query = this.getCurrentQuery().clone();
+      let q = [];
+
+      q.push(`(${ query.get('q') })`);
+      _.forEach(query.toJSON(), (val, key) => {
+        if (key.startsWith('fq_')) {
+          q.push(query.get(key));
+        }
+      });
+
+      const newQuery = new ApiQuery({
+        q: `${ field }(${ q.join(' AND ') })`,
+        sort: query.get('sort')
+      });
+      ps.publish(ps.NAVIGATE, 'search-page', { q: newQuery });
     },
 
     /**
