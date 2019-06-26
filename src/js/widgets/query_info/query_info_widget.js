@@ -55,7 +55,8 @@ function (Marionette,
     },
 
     triggers: {
-      'click .clear-selected': 'clear-selected'
+      'click .clear-selected': 'clear-selected',
+      'click .limit-to-selected': 'limit-to-selected'
     },
 
     events: {
@@ -141,6 +142,7 @@ function (Marionette,
 
     viewEvents: {
       'clear-selected': 'clearSelected',
+      'limit-to-selected': 'limitToSelected',
       'library-add': 'libraryAddSubmit',
       'library-create': 'libraryCreateSubmit',
     },
@@ -191,6 +193,12 @@ function (Marionette,
 
     clearSelected: function () {
       this.getBeeHive().getObject('AppStorage').clearSelectedPapers();
+    },
+
+    limitToSelected: function () {
+      const ps = this.getPubSub();
+      console.log('limit to selected');
+      ps.publish(ps.CUSTOM_EVENT, 'second-order-search/limit');
     },
 
     libraryAddSubmit: function (data) {

@@ -155,7 +155,8 @@ function (
       // get the selected records from appStorage
       const selectedIds = this.getSelectedIds();
 
-      if (selectedIds.length === 0 || !options.onlySelected) {
+      // if field is 'limit' it should generate qid from selection
+      if (selectedIds.length === 0 || !options.onlySelected && field !== 'limit') {
         this.transformCurrentQuery(field);
       } else {
         this.getQidAndStartSearch(field, selectedIds);
@@ -213,11 +214,23 @@ function (
           throw 'no qid from vault';
         }
 
-        // replace the current query with our operator
-        const newQuery = new ApiQuery({
-          q: `${ field }(docs(${ qid }))`,
-          sort: 'score desc'
-        });
+        let newQuery;
+        if (field === 'limit') {
+
+          // if field is limit, only do docs and retain the current sort
+          newQuery = new ApiQuery({
+            q: `docs(${ qid })`,
+            sort: this.getCurrentQuery().get('sort') || 'score desc'
+          });
+        } else {
+
+          // replace the current query with our operator
+          newQuery = new ApiQuery({
+            q: `${ field }(docs(${ qid }))`,
+            sort: 'score desc'
+          });
+        }
+
         ps.publish(ps.NAVIGATE, 'search-page', { q: newQuery });
 
         this.submitAnalyticsEvent(field);
@@ -229,7 +242,8 @@ function (
     USEFUL: 'useful',
     SIMILAR: 'similar',
     TRENDING: 'trending',
-    REVIEWS: 'reviews'
+    REVIEWS: 'reviews',
+    LIMIT: 'limit'
   };
 
   _.extend(SecondOrderController.prototype, Dependon.BeeHive);
