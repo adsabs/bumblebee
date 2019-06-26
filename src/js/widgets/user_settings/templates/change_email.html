@@ -31,5 +31,8 @@
             </div>
             <button class="btn btn-primary-faded initial-submit" type="submit">Change my email</button>
         </div>
+        {{#if hasError}}
+          <div class="error-block alert alert-danger">Server Error: {{hasError}}</div>
+        {{/if}}
     </form>
 </div>

@@ -78,9 +78,21 @@ define([
     template: EmailTemplate,
     className: 'change-email',
 
-    triggerSubmit: function () {
+    onShow: function () {
+      setTimeout(() => this.model.set('hasError', null), 10000);
+    },
+
+    triggerSubmit: function (e) {
+      e.preventDefault();
       this.model.unset('user');
+      this.listenToOnce(this.model, 'change:hasError', function () {
+        this.resetPage('email');
+      });
       return FormFunctions.triggerSubmit.apply(this, arguments);
+    },
+
+    resetPage: function (page) {
+      this.trigger('resetpage', page);
     },
 
     // for the view
@@ -98,6 +110,10 @@ define([
 
     events: {
       'click button[type=submit]': 'triggerSubmit'
+    },
+
+    modelEvents: {
+      'change:hasError': 'render'
     },
 
     bindings: {
@@ -291,6 +307,7 @@ define([
       }
 
       this.listenToOnce(viewToShow, 'submit-form', this.forwardSubmit);
+      this.listenToOnce(viewToShow, 'resetpage', this.resetPage);
       this.content.show(viewToShow);
     },
 
@@ -301,6 +318,16 @@ define([
 
     forwardSubmit: function (model) {
       this.trigger('submit-form', model);
+    },
+
+    resetPage: function (page) {
+
+      // grab current model
+      const model = this.content.currentView.model.toJSON();
+      this.setSubView(page);
+
+      // update the new view's model
+      this.content.currentView.model.set(model);
     }
 
   });
@@ -385,7 +412,12 @@ define([
       } else if (model instanceof this.config.delete.model) {
         User.deleteAccount();
       } else if (model instanceof this.config.email.model) {
-        User.changeEmail(model.toJSON());
+        User.changeEmail(model.toJSON())
+          .fail((err) => {
+            if (err && err.responseJSON) {
+              model.set('hasError', err.responseJSON.message);
+            }
+          });
       } else if (model instanceof this.config.password.model) {
         User.changePassword(model.toJSON())
           .done(function () {
@@ -393,7 +425,6 @@ define([
           });
       }
     }
-
   });
 
   return UserSettings;
