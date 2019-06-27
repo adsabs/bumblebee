@@ -1,6 +1,11 @@
 
 {{#if section}}
-<li role="presentation" class="dropdown-header no-hover-style">{{section}}</li>
+<li role="presentation" class="dropdown-header no-hover-style">
+  {{section}}
+  {{#if icon}}
+    <a href="{{icon.href}}" class="pull-right dropdown-helper-icon" target="_blank" rel="noopener" title="{{icon.description}}"><i class="{{icon.class}}"></i></a>
+  {{/if}}
+</li>
 {{else}}
   {{#if divider}}
   <li role="presentation" class="divider"></li>
@@ -10,4 +15,3 @@
   </li>
   {{/if}}
 {{/if}}
-

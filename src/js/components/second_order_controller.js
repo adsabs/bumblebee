@@ -156,16 +156,14 @@ function (
       const selectedIds = this.getSelectedIds();
 
       if (selectedIds.length === 0 || !options.onlySelected) {
-        this.getIdsFromCurrentQuery()
-          .then((ids) => this.getQidAndStartSearch(field, ids))
-          .fail(this.handleError);
+        this.transformCurrentQuery(field);
       } else {
         this.getQidAndStartSearch(field, selectedIds);
       }
     },
 
     /**
-     * General error handler 
+     * General error handler
      */
     handleError: function (ev) {
       if (ev.responseJSON && ev.responseJSON.error) {
@@ -176,63 +174,34 @@ function (
     },
 
     /**
-     * Get the current query and then request additional rows
-     * until the MAX_QUERY_ROWS are reached.
+     * Wrap the current query and pull together all filter queries into
+     * the selected field.
+     *
+     * This will navigate to the search page when done
      */
-    getIdsFromCurrentQuery: function () {
-      const $dd = $.Deferred();
+    transformCurrentQuery: function (field) {
+      const ps = this.getPubSub();
       const query = this.getCurrentQuery().clone();
-      const promises = [];
-      const getIds = ({ response }) => {
-        return response.docs.map((r) => r.bibcode);
-      }
-      let max = this.options.maxQueryRows;
-      
-      // send an initial query to get the total results, and begin paging
-      query.set({ fl: 'bibcode', start: 0, rows: 1000 });
-      this.sendQuery(query).then((res) => {
+      let q = [];
 
-        // get the numfound and update our max
-        const totalRecords = res.response.numFound;
-        if (totalRecords < max && totalRecords > 0) {
-          max = totalRecords;
-        } else if (totalRecords === 0) {
-          return $dd.reject({
-            responseJSON: { error: 'no records found' }
-          });
+      q.push(`(${ query.get('q') })`);
+      _.forEach(query.toJSON(), (val, key) => {
+        if (key.startsWith('fq_')) {
+          q.push(query.get(key));
         }
-
-        // set max as our stopping point, and start at the end of our initial request (1000)
-        for(let i = 1000; i < max; i+= 1000) {
-          let q = query.clone();
-          q.set({ fl: 'bibcode', start: i, rows: 1000 });
-          promises.push(this.sendQuery(q));
-        }
-
-        // if we don't have any promises to wait for, then just use what we received already
-        if (promises.length > 0) {
-          $.when.apply($, promises).then((...responses) => {
-            $dd.resolve(_.flatten([
-              ...getIds(res), 
-              ...responses.map(getIds)
-            ]));
-          }, (err) => {
-            $dd.reject(err);
-          });
-        } else {
-          $dd.resolve(getIds(res));
-        }
-        
-      }).fail((err) => {
-        $dd.reject(err);
       });
-      return $dd.promise();
+
+      const newQuery = new ApiQuery({
+        q: `${ field }(${ q.join(' AND ') })`,
+        sort: query.get('sort') || 'score desc'
+      });
+      ps.publish(ps.NAVIGATE, 'search-page', { q: newQuery });
     },
 
     /**
-     * Send the ids to vault get a qid, which we then use to generate 
+     * Send the ids to vault get a qid, which we then use to generate
      * the final query.
-     * 
+     *
      * This will navigate to the search page when done
      */
     getQidAndStartSearch: function (field, ids) {
@@ -245,7 +214,7 @@ function (
         }
 
         // replace the current query with our operator
-        const newQuery = new ApiQuery({ 
+        const newQuery = new ApiQuery({
           q: `${ field }(docs(${ qid }))`,
           sort: 'score desc'
         });
@@ -257,10 +226,10 @@ function (
   });
 
   SecondOrderController.FIELDS = {
-    REFERENCES: 'references',
+    USEFUL: 'useful',
     SIMILAR: 'similar',
     TRENDING: 'trending',
-    CITATIONS: 'citations'
+    REVIEWS: 'reviews'
   };
 
   _.extend(SecondOrderController.prototype, Dependon.BeeHive);
