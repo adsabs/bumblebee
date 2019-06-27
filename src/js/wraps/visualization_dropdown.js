@@ -18,8 +18,8 @@ define([
     { divider: true },
     { section: 'Operations', icon: {
         class: 'icon-help',
-        href: 'https://adsabs.github.io/img/operators.png',
-        description: 'What are second-order operations?'
+        href: '//adsabs.github.io/help/search/second-order',
+        description: 'Discover more about second-order operators'
       }
     },
     { description: 'Co-reads', pubsubEvent: 'second-order-search/trending' },
