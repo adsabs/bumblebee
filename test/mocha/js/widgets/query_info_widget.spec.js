@@ -48,7 +48,7 @@ define([
 
       $("#test").append(w.render().el);
 
-      expect($(".currently-selected").text().trim()).to.eql('0 selected');
+      expect($(".currently-selected").text().trim()).to.eql('');
 
       minsub.publish(minsub.STORAGE_PAPER_UPDATE, 10);
 

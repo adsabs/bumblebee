@@ -38,7 +38,7 @@ define([
     it('properly splits the field information from the pubsub event', function () {
       const ti = this.createTestItem();
       ti.transform = sinon.spy();
-      _.forEach(_.values(ti.FIELDS), (field) => {
+      _.forEach(_.omit(_.values(ti.FIELDS), 'LIMIT'), (field) => {
         this.minsub.publish('second-order-search/' + field);
         expect(ti.transform.lastCall.lastArg[0]).to.eql(field);
       });
@@ -74,7 +74,7 @@ define([
       const pubSpy = sinon.spy();
       this.minsub.pubsub.publish = pubSpy;
       const ti = this.createTestItem();
-      _.forEach(_.values(ti.FIELDS), (field) => {
+      _.forEach(_.omit(_.values(ti.FIELDS), 'LIMIT'), (field) => {
         ti.transformCurrentQuery(field);
         const args = pubSpy.lastCall.args;
         expect(args[2]).to.eql('search-page');
@@ -89,7 +89,7 @@ define([
       const pubSpy = sinon.spy();
       this.minsub.pubsub.publish = pubSpy;
       const ti = this.createTestItem();
-      _.forEach(_.values(ti.FIELDS), (field) => {
+      _.forEach(_.omit(_.values(ti.FIELDS), 'LIMIT'), (field) => {
         ti.transformCurrentQuery(field);
         const args = pubSpy.lastCall.args;
         expect(args[2]).to.eql('search-page');
@@ -108,13 +108,29 @@ define([
       ti.getBigQueryResponse = sinon.stub().returns(promise);
 
       // run each field through it to make sure they make it
-      _.forEach(_.values(ti.FIELDS), (field) => {
+      _.forEach(_.omit(_.values(ti.FIELDS), 'LIMIT'), (field) => {
         ti.transform(field);
         const args = pubSpy.lastCall.args;
         expect(args[2]).to.eql('search-page');
         expect(args[3].q.toJSON()).to.eql({
           q: [`${field}(docs(999))`]
         });
+      });
+    });
+
+    it('if passed "limit" field, just make a straight docs(*) query', function () {
+      this.addAppStorage(['foo', 'bar'], { q: 'test', sort: 'date desc' });
+      const pubSpy = sinon.spy();
+      this.minsub.pubsub.publish = pubSpy;
+      const ti = this.createTestItem();
+      const promise = $.Deferred().resolve(999).promise();
+      ti.getBigQueryResponse = sinon.stub().returns(promise);
+      ti.transform('limit');
+      const args = pubSpy.lastCall.args;
+      expect(args[2]).to.eql('search-page');
+      expect(args[3].q.toJSON()).to.eql({
+        q: ['docs(999)'],
+        sort: ['date desc']
       });
     });
 
