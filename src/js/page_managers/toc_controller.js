@@ -11,7 +11,15 @@ function (_, Marionette, BasicPageManagerController, TOCWidget, analytics) {
      * */
 
   var PageManagerController = BasicPageManagerController.extend({
+    initialize: function () {
+      BasicPageManagerController.prototype.initialize.apply(this, arguments);
 
+      // debounce this method to keep from double navigating
+
+      if (!window.__BUMBLEBEE_TESTING_MODE__) {
+        this.onWidgetSelected = _.debounce(_.bind(this.onWidgetSelected, this), 100);
+      }
+    },
 
     createView: function (options) {
       if (this.pageConfig) {

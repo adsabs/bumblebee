@@ -1076,115 +1076,140 @@ function (
         this.getPubSub().publish(this.getPubSub().EXECUTE_REQUEST, req);
       });
 
-      this.set('ShowAbstract', function (id, data) {
-        var defer = $.Deferred(),
-        that = this;
+      // translate identifier to bibcode, this only sends a request if the identifier is NOT bibcode-like
+      const translateIdentifier = function (id) {
+        const $dd = $.Deferred();
+        const ps = self.getPubSub();
 
-        showDetail([id].concat(detailsPageAlwaysVisible), id).then(function (w) {
-          // new search
-          if (data.bibcode) {
-            self.getPubSub().publish(self.getPubSub().DISPLAY_DOCUMENTS, new ApiQuery({ q: 'identifier:' + data.bibcode }));
+        // super naive bibcode confirmation
+        if (id.length === 19 && /^\d{4}[A-z].*\d[A-z]$/.test(id)) {
+          return $dd.resolve(id).promise();
+        }
+
+        const request = new ApiRequest({
+          target: ApiTargets.SEARCH,
+          query: new ApiQuery({
+            q: 'identifier:' + id,
+            fl: 'bibcode',
+            rows: 1
+          }),
+          options: {
+            done: (res) => {
+              if (res && res.response && res.response.numFound > 0) {
+                $dd.resolve(res.response.docs[0].bibcode);
+              }
+              $dd.resolve('null');
+            },
+            fail: () => {
+              $dd.resolve('null');
+            }
           }
-          w.setActive(id);
+        });
+        ps.publish(ps.EXECUTE_REQUEST, request);
+        return $dd.promise();
+      };
 
+      const showDetailsSubPage = function ({ id, bibcode, page, prefix }) {
+        const ps = self.getPubSub();
+        ps.publish(ps.DISPLAY_DOCUMENTS, new ApiQuery({ q: 'identifier:' + bibcode }));
+        page.setActive(id);
+
+        if (prefix) {
+          // we can grab the current title from storage and just add our prefix from there
+          const title = app.getObject('AppStorage').getDocumentTitle();
+          if (title && title.indexOf(prefix) === -1) {
+            this.title = prefix + ' | ' + title;
+          }
+        } else {
           // get the title from the list of stashed docs, if available
-          var doc = _.find(self.getBeeHive().getObject('DocStashController').getDocs() || [], { bibcode: data.bibcode });
+          const doc = _.find(self.getBeeHive().getObject('DocStashController').getDocs() || [], { bibcode: bibcode });
           if (doc) {
-            that.title = doc.title && doc.title[0];
+            this.title = doc.title && doc.title[0];
+          }
+        }
+      };
+
+      this.set('ShowAbstract', function (id, data) {
+        var defer = $.Deferred()
+        showDetail([id].concat(detailsPageAlwaysVisible), id).then((page) => {
+          if (!data.bibcode) {
+            return;
           }
 
-          that.route = data.href;
-          that.replace = true;
-          defer.resolve();
+          translateIdentifier(data.bibcode).then((bibcode) => {
+            showDetailsSubPage.call(this, { id, bibcode, page });
+            this.route = data.href;
+            this.replace = true;
+            defer.resolve();
+          });
         });
         return defer.promise();
       });
 
       this.set('ShowCitations', function (id, data) {
-        var defer = $.Deferred(),
-          that = this;
-        showDetail([id].concat(detailsPageAlwaysVisible), id).then(function (w) {
-          if (data.bibcode) {
-            self.getPubSub().publish(self.getPubSub().DISPLAY_DOCUMENTS, new ApiQuery({ q: 'identifier:' + data.bibcode }));
-          }
-          w.setActive(id);
-
-          // we can grab the current title from storage and just add our prefix from there
-          var title = app.getObject('AppStorage').getDocumentTitle();
-          var prefix = 'Citations';
-          if (title && title.indexOf(prefix) === -1) {
-            that.title = prefix + ' | ' + title;
+        var defer = $.Deferred()
+        showDetail([id].concat(detailsPageAlwaysVisible), id).then((page) => {
+          if (!data.bibcode) {
+            return;
           }
 
-          that.route = data.href;
-          that.replace = true;
-          defer.resolve();
+          translateIdentifier(data.bibcode).then((bibcode) => {
+            showDetailsSubPage.call(this, { id, bibcode, page, prefix: 'Citations' });
+            this.route = data.href;
+            this.replace = true;
+            defer.resolve();
+          });
         });
         return defer.promise();
       });
 
       this.set('ShowReferences', function (id, data) {
-        var defer = $.Deferred(),
-          that = this;
-        showDetail([id].concat(detailsPageAlwaysVisible), id).then(function (w) {
-          if (data.bibcode) {
-            self.getPubSub().publish(self.getPubSub().DISPLAY_DOCUMENTS, new ApiQuery({ q: 'identifier:' + data.bibcode }));
+        var defer = $.Deferred()
+        showDetail([id].concat(detailsPageAlwaysVisible), id).then((page) => {
+          if (!data.bibcode) {
+            return;
           }
-          w.setActive(id);
 
-          // we can grab the current title from storage and just add our prefix from there
-          var title = app.getObject('AppStorage').getDocumentTitle();
-          var prefix = 'References';
-          if (title && title.indexOf(prefix) === -1) {
-            that.title = prefix + ' | ' + title;
-          }
-          that.route = data.href;
-          that.replace = true;
-          defer.resolve();
+          translateIdentifier(data.bibcode).then((bibcode) => {
+            showDetailsSubPage.call(this, { id, bibcode, page, prefix: 'References' });
+            this.route = data.href;
+            this.replace = true;
+            defer.resolve();
+          });
         });
         return defer.promise();
       });
 
       this.set('ShowCoreads', function (id, data) {
-        var defer = $.Deferred(),
-          that = this;
-        showDetail([id].concat(detailsPageAlwaysVisible), id).then(function (w) {
-          if (data.bibcode) {
-            self.getPubSub().publish(self.getPubSub().DISPLAY_DOCUMENTS, new ApiQuery({ q: 'identifier:' + data.bibcode }));
+        var defer = $.Deferred()
+        showDetail([id].concat(detailsPageAlwaysVisible), id).then((page) => {
+          if (!data.bibcode) {
+            return;
           }
-          w.setActive(id);
 
-          // we can grab the current title from storage and just add our prefix from there
-          var title = app.getObject('AppStorage').getDocumentTitle();
-          var prefix = 'Co-Reads';
-          if (title && title.indexOf(prefix) === -1) {
-            that.title = prefix + ' | ' + title;
-          }
-          that.route = data.href;
-          that.replace = true;
-          defer.resolve();
+          translateIdentifier(data.bibcode).then((bibcode) => {
+            showDetailsSubPage.call(this, { id, bibcode, page, prefix: 'Co-Reads' });
+            this.route = data.href;
+            this.replace = true;
+            defer.resolve();
+          });
         });
         return defer.promise();
       });
 
       this.set('ShowSimilar', function (id, data) {
-        var defer = $.Deferred(),
-          that = this;
-        showDetail([id].concat(detailsPageAlwaysVisible), id).then(function (w) {
-          if (data.bibcode) {
-            self.getPubSub().publish(self.getPubSub().DISPLAY_DOCUMENTS, new ApiQuery({ q: 'identifier:' + data.bibcode }));
+        var defer = $.Deferred()
+        showDetail([id].concat(detailsPageAlwaysVisible), id).then((page) => {
+          if (!data.bibcode) {
+            return;
           }
-          w.setActive(id);
 
-         // we can grab the current title from storage and just add our prefix from there
-         var title = app.getObject('AppStorage').getDocumentTitle();
-         var prefix = 'Similar Papers';
-         if (title && title.indexOf(prefix) === -1) {
-           that.title = prefix + ' | ' + title;
-         }
-          that.route = data.href;
-          that.replace = true;
-          defer.resolve();
+          translateIdentifier(data.bibcode).then((bibcode) => {
+            showDetailsSubPage.call(this, { id, bibcode, page, prefix: 'Similar Papers' });
+            this.route = data.href;
+            this.replace = true;
+            defer.resolve();
+          });
         });
         return defer.promise();
       });
@@ -1192,84 +1217,84 @@ function (
       // proxy to ShowTableofcontents
       this.set('ShowToc', makeProxyHandler('ShowTableofcontents'));
       this.set('ShowTableofcontents', function (id, data) {
-        var defer = $.Deferred(),
-          that = this;
-        showDetail([id].concat(detailsPageAlwaysVisible), id).then(function (w) {
-          if (data.bibcode) {
-            self.getPubSub().publish(self.getPubSub().DISPLAY_DOCUMENTS, new ApiQuery({ q: 'identifier:' + data.bibcode }));
+        var defer = $.Deferred()
+        showDetail([id].concat(detailsPageAlwaysVisible), id).then((page) => {
+          if (!data.bibcode) {
+            return;
           }
-          w.setActive(id);
 
-          // we can grab the current title from storage and just add our prefix from there
-          var title = app.getObject('AppStorage').getDocumentTitle();
-          var prefix = 'Volume Content';
-          if (title && title.indexOf(prefix) === -1) {
-            that.title = prefix + ' | ' + title;
-          }
-          that.route = data.href;
-          that.replace = true;
-          defer.resolve();
+          translateIdentifier(data.bibcode).then((bibcode) => {
+            showDetailsSubPage.call(this, { id, bibcode, page, prefix: 'Volume Content' });
+            this.route = data.href;
+            this.replace = true;
+            defer.resolve();
+          });
         });
         return defer.promise();
       });
 
       this.set('ShowMetrics', function (id, data) {
-        var defer = $.Deferred(),
-          that = this;
-        showDetail([id].concat(detailsPageAlwaysVisible), id).then(function (w) {
-          if (data.bibcode) {
-            self.getPubSub().publish(self.getPubSub().DISPLAY_DOCUMENTS, new ApiQuery({ q: 'identifier:' + data.bibcode }));
+        var defer = $.Deferred()
+        showDetail([id].concat(detailsPageAlwaysVisible), id).then((page) => {
+          if (!data.bibcode) {
+            return;
           }
-          w.setActive(id);
 
-          // we can grab the current title from storage and just add our prefix from there
-          var title = app.getObject('AppStorage').getDocumentTitle();
-          var prefix = 'Metrics';
-          if (title && title.indexOf(prefix) === -1) {
-            that.title = prefix + ' | ' + title;
-          }
-          that.route = data.href;
-          that.replace = true;
-          defer.resolve();
-        })
+          translateIdentifier(data.bibcode).then((bibcode) => {
+            showDetailsSubPage.call(this, { id, bibcode, page, prefix: 'Metrics' });
+            this.route = data.href;
+            this.replace = true;
+            defer.resolve();
+          });
+        });
         return defer.promise();
       });
 
       this.set('ShowExportcitation', function (id, data) {
-        var defer = $.Deferred(),
-          that = this;
+        var defer = $.Deferred();
 
         // the default subView should be `default`
         var format = data.subView || 'default';
         app.getObject('MasterPageManager').show('DetailsPage',
-          [id].concat(detailsPageAlwaysVisible)).done(function() {
-            app.getWidget('DetailsPage').done(function (w) {
-              if (data.bibcode) {
-                self.getPubSub().publish(self.getPubSub().DISPLAY_DOCUMENTS, new ApiQuery({ q: 'identifier:' + data.bibcode }));
+          [id].concat(detailsPageAlwaysVisible)).done(() => {
+            app.getWidget('DetailsPage').done((page) => {
+
+              if (!data.bibcode) {
+                return;
+              }
+
+              translateIdentifier(data.bibcode).then((bibcode) => {
+                self.getPubSub().publish(self.getPubSub().DISPLAY_DOCUMENTS, new ApiQuery({ q: 'identifier:' + bibcode }));
+
+                if (bibcode === 'null') {
+                  return page.setActive(null);
+                }
 
                 // guarantees the bibcode is set on the widget
-                w.widgets[id].ingestBroadcastedPayload(_.pick(data, 'bibcode'));
-                w.setActive(id, format);
-              }
-              that.route = data.href;
-              that.replace = true;
-              defer.resolve();
+                page.widgets[id].ingestBroadcastedPayload(bibcode);
+                page.setActive(id, format);
+                this.route = data.href;
+                this.replace = true;
+                defer.resolve();
+              });
             });
           });
         return defer.promise();
       });
 
       this.set('ShowGraphics', function (id, data) {
-        var defer = $.Deferred(),
-          that = this;
-        showDetail([id].concat(detailsPageAlwaysVisible), id).then(function (w) {
-          if (data.bibcode) {
-            self.getPubSub().publish(self.getPubSub().DISPLAY_DOCUMENTS, new ApiQuery({ q: 'identifier:' + data.bibcode }));
-            w.setActive(id);
+        var defer = $.Deferred();
+        showDetail([id].concat(detailsPageAlwaysVisible), id).then((page) => {
+          if (!data.bibcode) {
+            return;
           }
-          that.route = data.href;
-          that.replace = true;
-          defer.resolve();
+
+          translateIdentifier(data.bibcode).then((bibcode) => {
+            showDetailsSubPage.call(this, { bibcode, page, id, prefix: 'Graphics' });
+            this.route = data.href;
+            this.replace = true;
+            defer.resolve();
+          });
         });
         return defer.promise();
       });

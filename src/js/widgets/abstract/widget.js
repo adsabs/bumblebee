@@ -387,13 +387,15 @@ function (
         this.mergeStashedDocs(stashedDocs);
       }
 
-      var bibcode = apiQuery.get('q'),
-        q;
+      const bibcode = this.parseIdentifierFromQuery(apiQuery);
 
-      if (bibcode.length > 0 && /^(identifier|bibcode):/.test(bibcode[0])) {
-        // redefine bibcode
-        var bibcode = bibcode[0].replace(/^(identifier|bibcode):/, '');
+      if (bibcode === 'null') {
+        var msg = { numFound: 0, noDocs: true };
+        this.showError({ noDocs: true });
+        this.trigger('page-manager-event', 'widget-ready', msg);
+        return;
       }
+
       if (this._docs[bibcode]) { // we have already loaded it
         this.displayBibcode(bibcode);
       } else {

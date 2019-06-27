@@ -47,11 +47,13 @@ function (
     },
 
     onDisplayDocuments: function (apiQuery) {
-      var bibcode = apiQuery.get('q');
-      if (bibcode.length > 0 && /^(identifier|bibcode):/.test(bibcode[0])) {
-        bibcode = bibcode[0].replace(/^(identifier|bibcode):/, '');
-        this._bibcode = bibcode;
+      const id = this.parseIdentifierFromQuery(apiQuery);
+
+      if (id === 'null') {
+        return;
       }
+
+      this._bibcode = id;
     }
   });
 

@@ -94,7 +94,12 @@
     </script>
     <!-- {{/each}} -->
     <script>
-        APP_VERSION="";
+        var APP_VERSION = '';
+        var LOCALDOMAINS = ['localhost', '127.0.0.1'];
+        var urlArgs;
+        if (LOCALDOMAINS.indexOf(window.location.hostname) === -1) {
+          urlArgs = 'v=' + (APP_VERSION.length > 0 ? APP_VERSION : (new Date()).getTime());
+        }
 
         // define waitSeconds above require script tag
         // to override the default, until main.js loads
@@ -103,7 +108,7 @@
           waitSeconds: 30,
           // this will append a query string to requests for resources, uses the current
           // version for production and the current time for development
-          urlArgs: APP_VERSION.length > 0 ? 'v='+APP_VERSION : 'v='+(new Date()).getTime(),
+          urlArgs: urlArgs,
         };
 
         // Progress Bar

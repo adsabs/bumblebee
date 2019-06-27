@@ -79,6 +79,9 @@ module.exports = function (grunt) {
           window.should = chai.should;
           window.normalizeSpace = (str) => str.replace(/\s+/g, ' ').trim();
 
+          // set testing global
+          window.__BUMBLEBEE_TESTING_MODE__ = true;
+
           // setup mocha
           mocha.setup('bdd').reporter('html');
           mocha.suite.afterEach(function () {

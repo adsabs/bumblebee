@@ -58,11 +58,12 @@ define([
     },
 
     onDisplayDocuments: function (apiQuery) {
-      var bibcode = apiQuery.get('q');
-      if (bibcode.length > 0 && /^(identifier|bibcode):/.test(bibcode[0]) && this.widgets.tocWidget) {
-        bibcode = bibcode[0].replace(/^(identifier|bibcode):/, '');
-        this.widgets.tocWidget.model.set('bibcode', bibcode);
+      const bibcode = this.parseIdentifierFromQuery(apiQuery);
+
+      if (bibcode === 'null') {
+        return;
       }
+      this.widgets.tocWidget.model.set('bibcode', bibcode);
     },
 
     navConfig: {

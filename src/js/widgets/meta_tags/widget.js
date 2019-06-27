@@ -69,10 +69,12 @@ define([
         return;
       }
       this.setCurrentQuery(apiQuery);
-      var bibcode = apiQuery.get('q');
-      if (bibcode && /bibcode:/.test(bibcode[0])) {
-        bibcode = bibcode[0].replace(/bibcode:/, '');
+      const bibcode = this.parseIdentifierFromQuery(apiQuery);
+
+      if (bibcode === 'null') {
+        return;
       }
+
       var doc = this.getCachedDoc(bibcode);
 
       if (doc) {

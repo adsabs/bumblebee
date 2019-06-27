@@ -53,6 +53,12 @@ define([
         if (_.isArray(bibcode) && bibcode.length > 0) {
           if (/^(identifier|bibcode):/.test(bibcode[0])) {
             bibcode = bibcode[0].split(':')[1];
+
+            // bibcode will be null if initial request in navigator finds nothing
+            if (bibcode === 'null') {
+              return dispatch({ type: SET_HAS_ERROR, result: 'no docs found' });
+            }
+
             dispatch({ type: SET_BIBCODE, result: bibcode });
             dispatch({ type: FETCH_DATA, result: bibcode });
           } else {
