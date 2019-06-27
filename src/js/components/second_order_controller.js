@@ -194,7 +194,7 @@ function (
 
       const newQuery = new ApiQuery({
         q: `${ field }(${ q.join(' AND ') })`,
-        sort: query.get('sort') || 'score desc'
+        sort: 'score desc'
       });
       ps.publish(ps.NAVIGATE, 'search-page', { q: newQuery });
     },
