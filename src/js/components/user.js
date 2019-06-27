@@ -380,22 +380,23 @@ function (
     changeEmail: function (data) {
       var new_email = data.email;
 
-      function onDone() {
+      const onDone = () => {
         // publish alert
-        function alertSuccess() {
-          var message = '<p>Please check <b>' + new_email + '</b> for further instructions</p><p>(If you don\'t see the email, please <b>check your spam folder</b>)</p>';
-          this.getPubSub().publish(this.getPubSub().ALERT, new ApiFeedback({
-            code: 0, msg: message, type: 'success', title: 'Success', modal: true
-          }));
+        const alertSuccess = () => {
+          setTimeout(() => {
+            var message = '<p>Please check <b>' + new_email + '</b> for further instructions</p><p>(If you don\'t see the email, please <b>check your spam folder</b>)</p>';
+            this.getPubSub().publish(this.getPubSub().ALERT, new ApiFeedback({
+              code: 0, msg: message, type: 'success', title: 'Success', modal: true
+            }));
+          }, 100);
         }
         // need to do it this way so the alert doesnt get lost after page is changed
-        this.getPubSub().subscribeOnce(this.getPubSub().NAVIGATE, _.bind(alertSuccess, this));
-        this.getBeeHive().getObject('Session').logout();
+        this.getPubSub().subscribeOnce(this.getPubSub().NAVIGATE, alertSuccess);
+        this.getPubSub().publish(this.getPubSub().NAVIGATE, 'index-page');
       }
 
       data = _.extend(data, { csrf: true });
-
-      return this.postData('CHANGE_EMAIL', data).done(_.bind(onDone, this));
+      return this.postData('CHANGE_EMAIL', data).done(onDone);
     },
 
     changePassword: function (data) {
