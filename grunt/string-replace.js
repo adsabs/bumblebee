@@ -41,15 +41,15 @@ module.exports = {
       }]
     }
   },
-  latest_version: {	
-    files: {	
-      'dist/index.html': 'dist/index.html'	
-    },	
-    options: {	
-      replacements: [{	
-        pattern: /APP_VERSION=".*";/ig,	
-        replacement: `APP_VERSION="<%= appVersion %>";`	
-      }]	
-    }	
+  latest_version: {
+    files: {
+      'dist/index.html': 'dist/index.html'
+    },
+    options: {
+      replacements: [{
+        pattern: /APP_VERSION\s+=\s+['"]+.*['"];/ig,
+        replacement: `APP_VERSION="<%= appVersion %>";`
+      }]
+    }
   }
 };
