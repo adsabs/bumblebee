@@ -100,42 +100,58 @@ define([
       this.render();
     },
 
-    onRender: function () {
-      var that = this;
+    _onRender: _.debounce(function () {
 
-      if (!this.formAttached) {
-        // attach modal
-        $('body').append(FeedbackTemplate());
+      $('body').append(FeedbackTemplate());
+      const $modal = $('#feedback-modal');
+      const $optionList = $('#feedback-select-group', $modal);
+      const $generalForm = $('#feedback-general-form', $modal);
+      const $feedbackBackBtn = $('#feedback-back-btn', $modal);
 
-        var $modal = $('#feedback-modal');
+      const showListView = () => {
+        $optionList.show();
+        $generalForm.hide();
+        $feedbackBackBtn.hide();
+      }
 
-        function clearForm() {
-          $modal.find('.modal-body').html($(FeedbackTemplate()).find('form'));
-        }
+      const hideListView = () => {
+        $optionList.hide();
+        $generalForm.show();
+        $feedbackBackBtn.show();
+        $feedbackBackBtn.off().click(() => showListView());
+      };
 
-        // make sure to clear the form when the modal closes
-        $modal.on('hidden.bs.modal', clearForm);
+      $modal.on('hidden.bs.modal', () => {
+        $('input', $modal).val('');
+        showListView();
+      });
 
-        $modal.on('shown.bs.modal', function () {
-          that.trigger('activate-recaptcha');
-        });
+      $modal.on('shown.bs.modal', () => {
+        this.trigger('activate-recaptcha');
 
-        // attach submit handler
-        $('.feedback-form').submit(function (e) {
-          that.trigger('feedback-form-submit', $(e.target), $modal);
+        $generalForm.off().submit((e) => {
+          e.preventDefault();
+          this.trigger('feedback-form-submit', $(e.target), $modal);
           return false;
         });
 
-        // timeout to make sure element is available to attach event listener
-        setTimeout(function () {
-          var $dropdown = $('.account-dropdown');
-          $('a', $dropdown).click(function () {
-            $('.dropdown-toggle', $dropdown).dropdown('toggle');
-          });
-        }, 300);
+        $('#open-general-feedback').off().click(() => {
+          hideListView();
+          $('input[name=name]', $generalForm).focus();
+          return false;
+        });
+      });
 
-        this.formAttached = true;
-      }
+      setTimeout(() => {
+        $('a', '.account-dropdown').click(() => {
+          $('.dropdown-toggle', '.account-dropdown').dropdown('toggle');
+        });
+      }, 300);
+
+    }, 500),
+
+    onRender: function () {
+      this._onRender.call(this, arguments);
     }
   });
 
@@ -383,6 +399,12 @@ define([
 
 
     activateRecaptcha: function () {
+
+      if (this._activated) {
+        return;
+      }
+      this._activated = true;
+
       // right now, modal is not part of main view.$el because it has to be inserted at the bottom of the page
       var view = new Marionette.ItemView({ el: '#feedback-modal' });
       this.getBeeHive().getObject('RecaptchaManager').activateRecaptcha(view);
