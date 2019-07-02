@@ -23,7 +23,7 @@ function (
       }
     },
     customizeQuery: function (apiQuery) {
-      var bibcode = this.extractValueFromQuery(apiQuery, 'q', 'bibcode');
+      var bibcode = this.parseIdentifierFromQuery(apiQuery);
       if (!bibcode) {
         return; // ignore
       }
