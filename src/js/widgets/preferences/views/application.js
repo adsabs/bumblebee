@@ -32,6 +32,15 @@ define([
     addCustomFormatOptions: []
   };
 
+  const watchedProps = [
+    'numAuthorsSelected',
+    'externalLinksSelected',
+    'databaseSelected',
+    'exportFormatSelected',
+    'hideSideBarsSelected',
+    'addCustomFormatOptions'
+  ];
+
   var ApplicationView = Marionette.ItemView.extend({
 
     initialize: function () {
@@ -68,6 +77,8 @@ define([
         addCustomFormatOptions: _.clone(addCustomFormatOptions)
       });
       this.model.trigger('change');
+
+      this.render = _.debounce(_.bind(this.render), 280);
     },
 
     template: ApplicationTemplate,
@@ -137,7 +148,7 @@ define([
       this.model.set(update);
     },
 
-    onSubmit: function (e) {
+    onSubmit: function () {
       this.model.set({
         updateSucceeded: false,
         updateFailed: false,
@@ -183,7 +194,7 @@ define([
         loading: false
       });
       setTimeout(function () {
-        model.set('updateFailed', false);
+        model.set('updateFailed', false, { silent: true });
       }, 5000);
     },
 
@@ -194,8 +205,8 @@ define([
         loading: false
       });
       setTimeout(function () {
-        model.set('updateSucceeded', false);
-      }, 5000);
+        model.set('updateSucceeded', false, { silent: true });
+      }, 1000);
     },
 
     onAddCustomFormat: function (e) {
@@ -231,12 +242,18 @@ define([
       }
       if (!silent) {
         this.model.set('addCustomFormatOptions', items);
-        this.model.trigger('change');
+        this.model.trigger('change', { addCustomFormatOptions: items });
       }
       return items;
     },
 
     onEditCustomFormat: function (e) {
+
+      // do not allow editing multiple items at once
+      if (this.isEditing()) {
+        return false;
+      }
+
       var id = this.$(e.currentTarget).data('id');
 
       // update the page
@@ -253,6 +270,7 @@ define([
     applyEditById: function (id, silent) {
       var name = this.$('#custom-format-name-' + id).val();
       var code = this.$('#custom-format-code-' + id).val();
+      this._forceUpdate = true;
       return this.updateCustomFormatEntry(id, {
         editing: false,
         name: name,
@@ -275,6 +293,12 @@ define([
     },
 
     onDeleteCustomFormat: function (e) {
+      
+      // do not allow deletion if editing
+      if (this.isEditing()) {
+        return false;
+      }
+
       var model = this.model;
       var id = this.$(e.currentTarget).data('id') + '';
       var items = _.clone(model.get('addCustomFormatOptions'));
@@ -299,14 +323,13 @@ define([
       this.model.set('addCustomFormatOptions', items);
     },
 
+    isEditing: function () {
+      return _.any(this.model.get('addCustomFormatOptions'), { editing: true });
+    },
+
     onRender: function () {
-      this.$('form input.custom-format-edit').on('keydown', _.bind(function (e) {
-        if (e.keyCode === 13) {
-          this.onConfirmEditCustomFormat(e);
-        }
-      }, this));
       var onSortChange = _.bind(this.onSortChange, this);
-      setTimeout(function () {
+      setTimeout(() => {
         $('#addCustomFormat').sortable({
           axis: 'y',
           items: '.list-group-item',
@@ -316,6 +339,27 @@ define([
           scrollSpeed: 3
         });
       }, 100);
+
+      // check if any of the watched props matched the ones changed
+      _.forEach(watchedProps, (p) => {
+        if (this.model.changed[p]) {
+
+          // check if the prop is custom format
+          if (p === 'addCustomFormatOptions') {
+            const isEditing = this.isEditing();
+            
+
+            // we don't want to submit if we're editing a custom format, just continue
+            if (isEditing) {
+              return true;
+            }
+          }
+
+          // execute submit
+          this.onSubmit();
+          return false;
+        }
+      });
     }
   });
 
