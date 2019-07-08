@@ -64,14 +64,6 @@ define([
       expect(new TableOfContentsWidget()).to.be.instanceof(DetailsLoTWidget);
     });
 
-    it("Details LoT widget has certain methods", function() {
-      var widget = new DetailsLoTWidget();
-      // makes sure that dispatchRequest goes through without waiting
-      widget.canLoad = true;
-      expect(widget.extractValueFromQuery(new ApiQuery({'q': 'bibcode:foo'}), 'q', 'bibcode')).to.eql('foo');
-      expect(widget.extractValueFromQuery(new ApiQuery({'q': '"bibcode:foo"'}), 'q', 'bibcode')).to.eql('foo');
-    });
-
     it("does not keep old records around in the hiddenCollection whenever the bibcode param is changed in the model", function(){
 
       var w = new DetailsLoTWidget();

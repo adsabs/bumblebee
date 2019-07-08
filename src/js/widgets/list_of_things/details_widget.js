@@ -131,18 +131,6 @@ function (
       return q;
     },
 
-    extractValueFromQuery: function (apiQuery, key, indexName) {
-      if (apiQuery.has(key)) {
-        var v = apiQuery.get(key);
-        for (var i = 0; i < v.length; i++) {
-          if (v[i].indexOf(indexName + ':') > -1) {
-            var w = v[i].replace(new RegExp(indexName + ':', 'g'), '');
-            return w.replace(/\\?\"/g, '');
-          }
-        }
-      }
-    },
-
     processDocs: function (apiResponse, docs, paginationInfo) {
       var self = this;
       var params = apiResponse.get('response');
