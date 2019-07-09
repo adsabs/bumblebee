@@ -42,18 +42,22 @@ define([
               return false;
             }
           });
+          
+          if (match === 0) {
+            return links;
+          }
 
           var newVal = _.assign({}, links[0], {
             description: 'in ' + format,
             params: _.assign({}, links[0].params, { format: formatVal })
           });
+
           return match ?
             [newVal]
-              .concat(links.slice(1, match))
-              .concat(links[0])
+              .concat(links.slice(0, match))
               .concat(links.slice(match + 1)) :
             [newVal]
-              .concat(links.slice(1));
+              .concat(links.slice(0));
         }
         return links;
       }
