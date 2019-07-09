@@ -66,10 +66,14 @@ define([
       bibstem: '',
       query: null
     },
-    _makeFqStr: function (data) {
+    _makeFqStr: function (data, fullSet) {
+      var keys = _.keys(data);
       var trues = _(data).pick(_.identity).keys().value();
       if (trues.length > 1) {
-        return '(' + _.keys(data).join(' OR ') + ')';
+        if (fullSet && keys.length === trues.length) {
+          return '(' + keys.join(' AND ') + ')'
+        }
+        return '(' + keys.join(' OR ') + ')';
       }
       return trues[0];
     },
@@ -109,7 +113,7 @@ define([
       }
 
       // refereed/article
-      var str = this._makeFqStr(data.property);
+      var str = this._makeFqStr(data.property, true);
       if (str) {
         query.__fq_property = ['AND', str];
         query.fq.push('{!type=aqp v=$fq_property}');
