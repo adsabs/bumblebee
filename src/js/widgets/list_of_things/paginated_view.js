@@ -116,13 +116,20 @@ function (
 
     emptyViewOptions: function (model) {
       var query = this.model.get('query');
+      var isTugboat = this.model.get('isTugboat');
       var error = this.model.get('error');
       this.model.unset('error', { silent: true });
 
       if (_.isArray(query)) {
-        model.set('query', query[0]);
+        model.set({
+          query: query[0],
+          showTugboatMessage: isTugboat
+        });
       } else if (_.has('query', query)) {
-        model.set('query', query.query[0]);
+        model.set({
+          query: query.query[0],
+          showTugboatMessage: isTugboat
+        });
       } else if (error) {
         model.set('error', error);
       }

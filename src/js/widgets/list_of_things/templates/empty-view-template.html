@@ -2,17 +2,23 @@
   <div class="h4">
     Sorry no results were found for <code>{{query}}</code>
   </div>
-  <ul>
-    <li>Try broadening your search</li>
-    <li>Disable any filters that may be applied</li>
-    <li><a href="#">Check out some examples</a></li>
-    <li><a href="https://adsabs.github.io/help/search/search-syntax" target="_blank" rel="noopener">Read our help pages</a></li>
-  </ul>
-  <span>
-    Not seeing something that should be here? Let us know!
-    <button class="btn btn-primary-faded results-feedback-button" data-toggle="modal" data-target="#feedback-modal">
-      <i class="fa fa-comment"></i>
-      Leave Feedback
-    </button>
-  </span>
+  {{#if showTugboatMessage}}
+    <div>
+      Using the ADS classic query translator? view the <a href="//adsabs.github.io/help/faq/#classic-search-translator" rel="noopener" target="_blank">docs</a>.
+    </div>
+  {{else}}
+    <ul>
+      <li>Try broadening your search</li>
+      <li>Disable any filters that may be applied</li>
+      <li><a href="#">Check out some examples</a></li>
+      <li><a href="https://adsabs.github.io/help/search/search-syntax" target="_blank" rel="noopener">Read our help pages</a></li>
+    </ul>
+    <span>
+      Not seeing something that should be here? Let us know!
+      <button class="btn btn-primary-faded results-feedback-button" data-toggle="modal" data-target="#feedback-modal">
+        <i class="fa fa-comment"></i>
+        Leave Feedback
+      </button>
+    </span>
+  {{/if}}
 </div>
