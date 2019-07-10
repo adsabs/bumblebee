@@ -120,7 +120,6 @@ define([
       triggerChanges();
 
       setTimeout(function () {
-        console.log(w.model.toJSON());
         expect(w.model.get('query')).to.eql({
           "q": [
             "pubdate:[2010-10 TO 9999-12]",
@@ -182,10 +181,10 @@ define([
             ],
             "__fq_property": [
               "AND",
-              "(refereed OR article)"
+              "(refereed AND article)"
             ],
             "fq_property": [
-              "property: (refereed OR article)"
+              "property: (refereed AND article)"
             ]
           });
           done();
