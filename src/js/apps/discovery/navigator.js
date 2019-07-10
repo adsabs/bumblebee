@@ -627,6 +627,10 @@ function (
       });
 
       this.set('search-page', function (endPoint, data) {
+        let isTugboat = false;
+        try {
+          isTugboat = document.referrer.indexOf('tugboat/adsabs') > -1;
+        } catch (e) {}
         var defer = $.Deferred();
         var possibleSearchSubPages = ['Metrics', 'AuthorNetwork', 'PaperNetwork',
         'ConceptCloud', 'BubbleChart'];
@@ -652,6 +656,7 @@ function (
         var ctx = (data && data.context) || {};
         showResultsPage(pages, ctx).then(function () {
           var handler = function () {
+
             // the current query should have been updated, use that instead
             var query = self.getBeeHive().getObject('AppStorage').getCurrentQuery();
             if (!query) {
@@ -670,6 +675,10 @@ function (
               that.title = query.get('__bigquerySource')[0];
             } else {
               that.title = query.get('q').length && query.get('q')[0];
+            }
+
+            if (isTugboat) {
+              that.route += '&__tb=1';
             }
 
             let q = query;

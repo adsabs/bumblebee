@@ -197,6 +197,8 @@ define([
         this.view.collection.reset(this.hiddenCollection.getVisibleModels());
         this.view.model.set('query', false);
       } else {
+        var params = apiResponse.get('responseHeader.params');
+        this.view.model.set('isTugboat', !!params['__tb']);
         this.view.model.set('query', this._getCurrentQueryString(apiResponse));
       }
 
