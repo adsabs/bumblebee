@@ -197,6 +197,7 @@ require.config({
       '//ajax.aspnetcdn.com/ajax/bootstrap/3.3.5/bootstrap.min',
       'libs/bootstrap/bootstrap'
     ],
+    'bowser': '//cdn.jsdelivr.net/npm/bowser@2.4.0/bundled',  
     'cache': 'libs/dsjslib/lib/Cache',
     'chai': '../bower_components/chai/chai',
     'classnames': [

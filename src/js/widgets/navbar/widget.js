@@ -8,7 +8,8 @@ define([
   'js/components/api_query',
   'js/components/api_request',
   'js/components/api_targets',
-  'bootstrap'
+  'utils',
+  'bootstrap',
 ], function (
   _,
   Marionette,
@@ -19,7 +20,7 @@ define([
   ApiQuery,
   ApiRequest,
   ApiTargets,
-  Bootstrap
+  utils
 ) {
   var NavView,
     NavModel,
@@ -100,6 +101,27 @@ define([
       this.render();
     },
 
+    _hiddenTmpl: _.template('<input type="hidden" name="<%= name %>" value="<%= value %>" />'),
+
+    // appends a hidden input to the general form
+    appendToForm: function (name, value) {
+      if (_.isUndefined(value)) { return; }
+
+      const $form = $('#feedback-general-form', '#feedback-modal');
+      const $el = $(`input[type=hidden][name="${ name }"]`, $form);
+      
+      // check if the element exists
+      if ($el.length > 0) {
+
+        // update the value
+        $el.attr('value', value);
+      } else {
+
+        // no element exists, create a new one
+        $form.append(this._hiddenTmpl({ name, value }));
+      }
+    },
+
     _onRender: _.debounce(function () {
 
       $('body').append(FeedbackTemplate());
@@ -130,6 +152,37 @@ define([
       $modal.on('shown.bs.modal', () => {
         this.trigger('activate-recaptcha');
 
+        $generalForm.off().submit((e) => {
+          e.preventDefault();
+          this.trigger('feedback-form-submit', $(e.target), $modal);
+          return false;
+        });
+
+        $('#open-general-feedback').off().click(() => {
+          hideListView();
+          $('input[name=name]', $generalForm).focus();
+          return false;
+        });
+
+        if (this.model.has('browser')) {
+          const { browser, platform, engine, os } = this.model.get('browser');
+          this.appendToForm('browser.name', browser.name);
+          this.appendToForm('browser.version', browser.version);
+          this.appendToForm('engine', engine.name);
+          this.appendToForm('platform', platform.type);
+          this.appendToForm('os', os.name);
+        }
+
+        if (this.model.has('page')) {
+          this.appendToForm('current_page', this.model.get('page'));
+        }
+
+        this.appendToForm('url', window.location.href);
+
+        if (this.model.has('currentQuery')) {
+          this.appendToForm('current_query', this.model.get('currentQuery'));
+        }
+
         if (this.model.get('page') === 'ShowAbstract' && this.model.has('bibcode')) {
 
           // update the submit abstract url with the current bibcode, only if we are on an abstract page
@@ -144,18 +197,6 @@ define([
             return url.replace(/\?.*$/, '');
           });
         }
-
-        $generalForm.off().submit((e) => {
-          e.preventDefault();
-          this.trigger('feedback-form-submit', $(e.target), $modal);
-          return false;
-        });
-
-        $('#open-general-feedback').off().click(() => {
-          hideListView();
-          $('input[name=name]', $generalForm).focus();
-          return false;
-        });
       });
 
       setTimeout(() => {
@@ -178,20 +219,32 @@ define([
       this.view = new NavView({ model: this.model });
       BaseWidget.prototype.initialize.apply(this, arguments);
       this.qUpdater = new ApiQueryUpdater('NavBar');
+
+      // get the current browser information
+      utils.getBrowserInfo().then((data) => {
+        this.model.set('browser', data);
+      }).catch(() => {
+        this.model.set('browser', null);
+      });
     },
 
     activate: function (beehive) {
       this.setBeeHive(beehive);
-      _.bindAll(this, ['handleUserAnnouncement', 'getOrcidUserInfo', 'storeLatestPage', 'onCustomEvent']);
+      _.bindAll(this, ['handleUserAnnouncement', 'getOrcidUserInfo', 'storeLatestPage', 'onCustomEvent', 'onStartSearch']);
       var pubsub = this.getPubSub();
       pubsub.subscribe(pubsub.USER_ANNOUNCEMENT, this.handleUserAnnouncement);
       pubsub.subscribe(pubsub.APP_STARTED, this.getOrcidUserInfo);
       pubsub.subscribe(pubsub.NAVIGATE, this.storeLatestPage);
       pubsub.subscribe(pubsub.CUSTOM_EVENT, this.onCustomEvent);
+      pubsub.subscribe(pubsub.START_SEARCH, this.onStartSearch);
       this.setInitialVals();
       if (!this.model.get('timer')) {
         this.resetOrcidTimer();
       }
+    },
+
+    onStartSearch: function (apiQuery) {
+      this.model.set('currentQuery', apiQuery.url());
     },
 
     onCustomEvent: function (ev, data) {
@@ -304,7 +357,7 @@ define([
         });
         return res;
       };
-
+      
       has('g-recaptcha-response')
         ? submit()
         : this.getBeeHive().getObject('RecaptchaManager').execute().then(submit);
