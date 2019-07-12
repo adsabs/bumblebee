@@ -6,6 +6,7 @@ module.exports = function (grunt) {
     'backbone.wreqr': 'empty:',
     'backbone': 'empty:',
     'bootstrap': 'empty:',
+    'bowser': 'empty:',
     'classnames': 'empty:',
     'clipboard': 'empty:',
     'create-react-class': 'empty:',
