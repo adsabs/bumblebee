@@ -107,6 +107,7 @@ define([
       const $optionList = $('#feedback-select-group', $modal);
       const $generalForm = $('#feedback-general-form', $modal);
       const $feedbackBackBtn = $('#feedback-back-btn', $modal);
+      const $submitAbstractLink = $('a#feedback_submit_abstract_link', $optionList);
 
       const showListView = () => {
         $optionList.show();
@@ -129,6 +130,21 @@ define([
       $modal.on('shown.bs.modal', () => {
         this.trigger('activate-recaptcha');
 
+        if (this.model.get('page') === 'ShowAbstract' && this.model.has('bibcode')) {
+
+          // update the submit abstract url with the current bibcode, only if we are on an abstract page
+          $submitAbstractLink.attr('href', (i, url) => {
+            if (url.indexOf('?') > -1) { return url; }
+            return url += '?bibcode=' + this.model.get('bibcode');
+          });
+        } else {
+
+          // otherwise, clear the query string off the url
+          $submitAbstractLink.attr('href', (i, url) => {
+            return url.replace(/\?.*$/, '');
+          });
+        }
+
         $generalForm.off().submit((e) => {
           e.preventDefault();
           this.trigger('feedback-form-submit', $(e.target), $modal);
@@ -147,7 +163,6 @@ define([
           $('.dropdown-toggle', '.account-dropdown').dropdown('toggle');
         });
       }, 300);
-
     }, 500),
 
     onRender: function () {
@@ -179,16 +194,23 @@ define([
       }
     },
 
-    onCustomEvent: function (ev) {
+    onCustomEvent: function (ev, data) {
       if (ev === 'orcid-action') {
         this.resetOrcidTimer();
+      } else if (ev === 'latest-abstract-data') {
+        this.onNewAbstractData(data);
       }
     },
 
     storeLatestPage: function (page) {
       // to know whether to orcid redirect
       this._latestPage = page;
+      this.model.set('page', page);
     },
+
+    onNewAbstractData: _.debounce(function (data) {
+      this.model.set('bibcode', data.bibcode);
+    }, 500),
 
     resetOrcidTimer: function () {
       var timer = this.model.get('timer');
