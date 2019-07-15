@@ -6,7 +6,7 @@ define([], function () {
           value: 'bibtex',
           label: 'BibTeX',
           help: 'BibTeX format',
-          ext: 'bbl'
+          ext: 'bib'
         }, {
           value: 'ads',
           label: 'ADS',
@@ -16,7 +16,7 @@ define([], function () {
           value: 'bibtexabs',
           label: 'BibTeX ABS',
           help: 'BibTeX with abstracts',
-          ext: 'bbl'
+          ext: 'bib'
         }, {
           value: 'endnote',
           label: 'EndNote',
