@@ -373,6 +373,7 @@ function (
       if (this.hasPubSub()) {
         var ps = this.getPubSub();
         ps.publish(ps.CUSTOM_EVENT, 'update-document-title', this._docs[bibcode].title);
+        ps.publish(ps.CUSTOM_EVENT, 'latest-abstract-data', this._docs[bibcode]);
       }
     },
 

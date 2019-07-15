@@ -8,7 +8,8 @@ define([
   'js/components/api_query',
   'js/components/api_request',
   'js/components/api_targets',
-  'bootstrap'
+  'utils',
+  'bootstrap',
 ], function (
   _,
   Marionette,
@@ -19,7 +20,7 @@ define([
   ApiQuery,
   ApiRequest,
   ApiTargets,
-  Bootstrap
+  utils
 ) {
   var NavView,
     NavModel,
@@ -42,7 +43,11 @@ define([
 
 
   NavView = Marionette.ItemView.extend({
-
+    initialize: function () {
+      if (!window.__BUMBLEBEE_TESTING_MODE__) {
+        this.onRender = _.debounce(this.onRender, 500);
+      }
+    },
     template: NavBarTemplate,
 
     modelEvents: {
@@ -100,42 +105,112 @@ define([
       this.render();
     },
 
+    _hiddenTmpl: _.template('<input type="hidden" name="<%= name %>" value="<%= value %>" />'),
+
+    // appends a hidden input to the general form
+    appendToForm: function (name, value) {
+      if (_.isUndefined(value)) { return; }
+
+      const $form = $('#feedback-general-form', '#feedback-modal');
+      const $el = $(`input[type=hidden][name="${ name }"]`, $form);
+      
+      // check if the element exists
+      if ($el.length > 0) {
+
+        // update the value
+        $el.attr('value', value);
+      } else {
+
+        // no element exists, create a new one
+        $form.append(this._hiddenTmpl({ name, value }));
+      }
+    },
+
     onRender: function () {
-      var that = this;
 
-      if (!this.formAttached) {
-        // attach modal
+      // only append a single time
+      if ($('#feedback-modal').length === 0) {
         $('body').append(FeedbackTemplate());
+      }
+      const $modal = $('#feedback-modal');
+      const $optionList = $('#feedback-select-group', $modal);
+      const $generalForm = $('#feedback-general-form', $modal);
+      const $feedbackBackBtn = $('#feedback-back-btn', $modal);
+      const $submitAbstractLink = $('a#feedback_submit_abstract_link', $optionList);
 
-        var $modal = $('#feedback-modal');
+      const showListView = () => {
+        $optionList.show();
+        $generalForm.hide();
+        $feedbackBackBtn.hide();
+      }
 
-        function clearForm() {
-          $modal.find('.modal-body').html($(FeedbackTemplate()).find('form'));
-        }
+      const hideListView = () => {
+        $optionList.hide();
+        $generalForm.show();
+        $feedbackBackBtn.show();
+        $feedbackBackBtn.off().click(() => showListView());
+      };
 
-        // make sure to clear the form when the modal closes
-        $modal.on('hidden.bs.modal', clearForm);
+      $modal.on('hidden.bs.modal', () => {
+        $('input, textarea', $modal).val('');
+        showListView();
+      });
 
-        $modal.on('shown.bs.modal', function () {
-          that.trigger('activate-recaptcha');
-        });
+      $modal.on('shown.bs.modal', () => {
+        this.trigger('activate-recaptcha');
 
-        // attach submit handler
-        $('.feedback-form').submit(function (e) {
-          that.trigger('feedback-form-submit', $(e.target), $modal);
+        $generalForm.off().submit((e) => {
+          e.preventDefault();
+          this.trigger('feedback-form-submit', $(e.target), $modal);
           return false;
         });
 
-        // timeout to make sure element is available to attach event listener
-        setTimeout(function () {
-          var $dropdown = $('.account-dropdown');
-          $('a', $dropdown).click(function () {
-            $('.dropdown-toggle', $dropdown).dropdown('toggle');
-          });
-        }, 300);
+        $('#open-general-feedback').off().click(() => {
+          hideListView();
+          $('input[name=name]', $generalForm).focus();
+          return false;
+        });
 
-        this.formAttached = true;
-      }
+        if (this.model.has('browser')) {
+          const { browser, platform, engine, os } = this.model.get('browser');
+          this.appendToForm('browser.name', browser.name);
+          this.appendToForm('browser.version', browser.version);
+          this.appendToForm('engine', engine.name);
+          this.appendToForm('platform', platform.type);
+          this.appendToForm('os', os.name);
+        }
+
+        if (this.model.has('page')) {
+          this.appendToForm('current_page', this.model.get('page'));
+        }
+
+        this.appendToForm('url', window.location.href);
+
+        if (this.model.has('currentQuery')) {
+          this.appendToForm('current_query', this.model.get('currentQuery'));
+        }
+
+        if (this.model.get('page') === 'ShowAbstract' && this.model.has('bibcode')) {
+
+          // update the submit abstract url with the current bibcode, only if we are on an abstract page
+          $submitAbstractLink.attr('href', (i, url) => {
+            if (url.indexOf('?') > -1) { return url; }
+            return url += '?bibcode=' + this.model.get('bibcode');
+          });
+        } else {
+
+          // otherwise, clear the query string off the url
+          $submitAbstractLink.attr('href', (i, url) => {
+            return url.replace(/\?.*$/, '');
+          });
+        }
+      });
+
+      setTimeout(() => {
+        $('a', '.account-dropdown').click(() => {
+          $('.dropdown-toggle', '.account-dropdown').dropdown('toggle');
+        });
+      }, 300);
     }
   });
 
@@ -147,32 +222,51 @@ define([
       this.view = new NavView({ model: this.model });
       BaseWidget.prototype.initialize.apply(this, arguments);
       this.qUpdater = new ApiQueryUpdater('NavBar');
+
+      // get the current browser information
+      utils.getBrowserInfo().then((data) => {
+        this.model.set('browser', data);
+      }).catch(() => {
+        this.model.set('browser', null);
+      });
     },
 
     activate: function (beehive) {
       this.setBeeHive(beehive);
-      _.bindAll(this, ['handleUserAnnouncement', 'getOrcidUserInfo', 'storeLatestPage', 'onCustomEvent']);
+      _.bindAll(this, ['handleUserAnnouncement', 'getOrcidUserInfo', 'storeLatestPage', 'onCustomEvent', 'onStartSearch']);
       var pubsub = this.getPubSub();
       pubsub.subscribe(pubsub.USER_ANNOUNCEMENT, this.handleUserAnnouncement);
       pubsub.subscribe(pubsub.APP_STARTED, this.getOrcidUserInfo);
       pubsub.subscribe(pubsub.NAVIGATE, this.storeLatestPage);
       pubsub.subscribe(pubsub.CUSTOM_EVENT, this.onCustomEvent);
+      pubsub.subscribe(pubsub.START_SEARCH, this.onStartSearch);
       this.setInitialVals();
       if (!this.model.get('timer')) {
         this.resetOrcidTimer();
       }
     },
 
-    onCustomEvent: function (ev) {
+    onStartSearch: function (apiQuery) {
+      this.model.set('currentQuery', apiQuery.url());
+    },
+
+    onCustomEvent: function (ev, data) {
       if (ev === 'orcid-action') {
         this.resetOrcidTimer();
+      } else if (ev === 'latest-abstract-data') {
+        this.onNewAbstractData(data);
       }
     },
 
     storeLatestPage: function (page) {
       // to know whether to orcid redirect
       this._latestPage = page;
+      this.model.set('page', page);
     },
+
+    onNewAbstractData: _.debounce(function (data) {
+      this.model.set('bibcode', data.bibcode);
+    }, 500),
 
     resetOrcidTimer: function () {
       var timer = this.model.get('timer');
@@ -266,7 +360,7 @@ define([
         });
         return res;
       };
-
+      
       has('g-recaptcha-response')
         ? submit()
         : this.getBeeHive().getObject('RecaptchaManager').execute().then(submit);
@@ -383,6 +477,12 @@ define([
 
 
     activateRecaptcha: function () {
+
+      if (this._activated) {
+        return;
+      }
+      this._activated = true;
+
       // right now, modal is not part of main view.$el because it has to be inserted at the bottom of the page
       var view = new Marionette.ItemView({ el: '#feedback-modal' });
       this.getBeeHive().getObject('RecaptchaManager').activateRecaptcha(view);
