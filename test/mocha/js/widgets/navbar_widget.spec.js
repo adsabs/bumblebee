@@ -287,33 +287,32 @@ define([
 
     });
 
-    it("feedback form should make an ajax request upon submit, display status, and clear itself on close", function(done){
+    it("feedback form should make an ajax request upon submit, display status, and clear itself on close", function(){
       $("#feedback-modal").remove();
       var n = new NavBarWidget();
       $("#test").append(n.view.render().el);
-
-      $("#feedback-modal").modal("show");
-
+      
       var minsub = new (MinSub.extend({
-        request: function (apiRequest) {
+        request: function () {
         }
       }))({verbose: false});
-
       n.setInitialVals = function(){};
-
+      
       var fakeRecaptchaManager = {getHardenedInstance : function(){return this}, activateRecaptcha: function(){}};
-
+      
       minsub.beehive.addObject("RecaptchaManager", fakeRecaptchaManager);
-
+      
       var api = new Api();
       var requestStub = sinon.stub(Api.prototype, "request", function(apiRequest){
         apiRequest.toJSON().options.done();
       });
       minsub.beehive.removeService("Api");
       minsub.beehive.addService("Api", api);
-
+      
       n.activate(minsub.beehive.getHardenedInstance());
 
+      // force handlers to be added in case modal doesn't actually fire
+      $("#feedback-modal").trigger('shown.bs.modal');
       $("form.feedback-form").find("textarea").val("test comment");
       $('form.feedback-form').append('<input type="hidden" name="g-recaptcha-response" value="success"></input>');
       $("form.feedback-form").submit();
@@ -322,20 +321,14 @@ define([
 
       expect(requestStub.args[0][0].toJSON().options.method).to.eql("POST");
       expect(requestStub.args[0][0].toJSON().options.data.match(/comments=test\+comment/)).to.exist;
+      $("#feedback-modal").trigger('hidden.bs.modal');
 
-      setTimeout(function(){
-        //form should be emptied
-        expect($("form.feedback-form textarea").val()).to.eql('');
-        //modal should be closed
-        expect(  $("#feedback-modal").is(':visible')).to.be.false;
-
-        done();
-
-      }, 1800);
+      //form should be emptied
+      expect($("form.feedback-form textarea").val()).to.eql('');
+      //modal should be closed
+      expect($("#feedback-modal").is(':visible')).to.be.false;
 
       requestStub.restore();
     });
-
   });
-
 });

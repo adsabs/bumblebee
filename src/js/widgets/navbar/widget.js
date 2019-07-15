@@ -43,7 +43,11 @@ define([
 
 
   NavView = Marionette.ItemView.extend({
-
+    initialize: function () {
+      if (!window.__BUMBLEBEE_TESTING_MODE__) {
+        this.onRender = _.debounce(this.onRender, 500);
+      }
+    },
     template: NavBarTemplate,
 
     modelEvents: {
@@ -122,9 +126,12 @@ define([
       }
     },
 
-    _onRender: _.debounce(function () {
+    onRender: function () {
 
-      $('body').append(FeedbackTemplate());
+      // only append a single time
+      if ($('#feedback-modal').length === 0) {
+        $('body').append(FeedbackTemplate());
+      }
       const $modal = $('#feedback-modal');
       const $optionList = $('#feedback-select-group', $modal);
       const $generalForm = $('#feedback-general-form', $modal);
@@ -145,7 +152,7 @@ define([
       };
 
       $modal.on('hidden.bs.modal', () => {
-        $('input', $modal).val('');
+        $('input, textarea', $modal).val('');
         showListView();
       });
 
@@ -204,10 +211,6 @@ define([
           $('.dropdown-toggle', '.account-dropdown').dropdown('toggle');
         });
       }, 300);
-    }, 500),
-
-    onRender: function () {
-      this._onRender.call(this, arguments);
     }
   });
 
