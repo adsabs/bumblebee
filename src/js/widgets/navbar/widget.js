@@ -113,7 +113,7 @@ define([
 
       const $form = $('#feedback-general-form', '#feedback-modal');
       const $el = $(`input[type=hidden][name="${ name }"]`, $form);
-      
+
       // check if the element exists
       if ($el.length > 0) {
 
@@ -133,6 +133,7 @@ define([
         $('body').append(FeedbackTemplate());
       }
       const $modal = $('#feedback-modal');
+      const $modalTitle = $('#feedback-modal-title', $modal);
       const $optionList = $('#feedback-select-group', $modal);
       const $generalForm = $('#feedback-general-form', $modal);
       const $feedbackBackBtn = $('#feedback-back-btn', $modal);
@@ -142,17 +143,21 @@ define([
         $optionList.show();
         $generalForm.hide();
         $feedbackBackBtn.hide();
+        $modalTitle.text('How may we help you today?');
       }
 
       const hideListView = () => {
         $optionList.hide();
         $generalForm.show();
+        $modalTitle.text('General Feedback');
         $feedbackBackBtn.show();
         $feedbackBackBtn.off().click(() => showListView());
       };
 
       $modal.on('hidden.bs.modal', () => {
         $('input, textarea', $modal).val('');
+        const $fg = $('button[type=submit]').closest('.form-group');
+        $fg.html('<button class="btn btn-success" type="submit" value="Send">Submit</button>');
         showListView();
       });
 
@@ -350,7 +355,6 @@ define([
         });
         this.getBeeHive().getService('Api').request(request);
       }
-
       const has = (el) => {
         let res = false;
         $form.serializeArray().forEach(i => {
@@ -360,7 +364,7 @@ define([
         });
         return res;
       };
-      
+
       has('g-recaptcha-response')
         ? submit()
         : this.getBeeHive().getObject('RecaptchaManager').execute().then(submit);
