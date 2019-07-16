@@ -138,6 +138,9 @@
                 <p>
                     Edit your saved custom formats
                 </p>
+                <p>
+                  Check out our <a href="//adsabs.github.io/help/actions/export" rel="noopener" target="_blank">docs</a> for more information.
+                </p>
               </div>
             </div>
           </p>
@@ -154,10 +157,10 @@
 
                   {{#if editing}}
                     <div class="col-xs-3">
-                      <input type="text" class="form-control custom-format-edit" id="custom-format-name-{{id}}" value="{{name}}" data-id="{{id}}">
+                      <input type="text" class="form-control custom-format-edit" id="custom-format-name-{{id}}" placeholder="My New Format" value="{{name}}" data-id="{{id}}">
                     </div>
                     <div class="col-xs-6">
-                      <input type="text" class="form-control custom-format-edit" id="custom-format-code-{{id}}" value="{{code}}" data-id="{{id}}">
+                      <input type="text" class="form-control custom-format-edit" placeholder="%l (%Y), %j, %V, %p.\n" id="custom-format-code-{{id}}" value="{{code}}" data-id="{{id}}">
                     </div>
                     <span class="col-xs-2 text-right">
                       <button id="addCustomFormatConfirmEdit" role="button" data-id="{{id}}" class="btn-link">

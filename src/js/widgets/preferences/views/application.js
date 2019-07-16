@@ -227,8 +227,8 @@ define([
       var id = _.uniqueId('format-');
       items.unshift({
         id: id,
-        name: 'My New Format',
-        code: '<---- Format ---->',
+        name: '',
+        code: '',
         editing: true
       });
       this.model.set('addCustomFormatOptions', items);
@@ -278,6 +278,12 @@ define([
     applyEditById: function (id, silent) {
       var name = this.$('#custom-format-name-' + id).val();
       var code = this.$('#custom-format-code-' + id).val();
+
+      // don't apply the edit if either input is empty
+      if (name === '' || code === '') {
+        return;
+      }
+
       this._forceUpdate = true;
       return this.updateCustomFormatEntry(id, {
         editing: false,
@@ -304,6 +310,10 @@ define([
 
       // do not allow deletion if editing
       if (this.isEditing()) {
+        return false;
+      }
+
+      if (!confirm('Are you sure?')) {
         return false;
       }
 
