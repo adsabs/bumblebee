@@ -193,8 +193,9 @@ define([
         updateFailed: true,
         loading: false
       });
-      setTimeout(function () {
+      setTimeout(() => {
         model.set('updateFailed', false, { silent: true });
+        this.hideMessage();
       }, 5000);
     },
 
@@ -204,9 +205,16 @@ define([
         updateSucceeded: true,
         loading: false
       });
-      setTimeout(function () {
+      setTimeout(() => {
         model.set('updateSucceeded', false, { silent: true });
-      }, 1000);
+        this.hideMessage();
+      }, 3000);
+    },
+
+    hideMessage: function () {
+      $('#app-settings-msg').fadeOut(500, function () {
+        $(this).empty();
+      });
     },
 
     onAddCustomFormat: function (e) {
@@ -293,7 +301,7 @@ define([
     },
 
     onDeleteCustomFormat: function (e) {
-      
+
       // do not allow deletion if editing
       if (this.isEditing()) {
         return false;
@@ -347,7 +355,7 @@ define([
           // check if the prop is custom format
           if (p === 'addCustomFormatOptions') {
             const isEditing = this.isEditing();
-            
+
 
             // we don't want to submit if we're editing a custom format, just continue
             if (isEditing) {

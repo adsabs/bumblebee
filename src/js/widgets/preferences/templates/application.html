@@ -234,29 +234,24 @@
             {{/each}}
           </select>
         </div>
-
-        <hr class="hr">
-        <button class="btn btn-primary" role="submit" id="appSettingsSubmit">Save</button>
-        <button class="btn btn-default" role="reset" id="appSettingsCancel">Cancel</button>
-        <a href="javascript:void(0)" class="link" id="appSettingsReset">Reset To Defaults</a>
       </form>
 
-      <div class="col-md-6 col-md-offset-3 text-center">
+      <div class="col-md-6 col-md-offset-3 text-center" id="app-settings-msg">
         {{#if loading}}
           <i class="text-muted fa fa-refresh fa-spin fa-3x"></i>
         {{/if}}
 
         {{#if updateSucceeded}}
-          <div class="alert alert-success fade in">
+          <div class="alert alert-success fade in h4" role="alert">
             <i class="fa fa-check fa-2x"></i>
-            <strong>Settings updated successfully</strong>
+            Settings updated successfully
           </div>
         {{/if}}
 
         {{#if updateFailed}}
-          <div class="alert alert-danger fade in">
+          <div class="alert alert-danger fade in h4" role="alert">
             <i class="fa fa-times fa-3x"></i>
-            <strong>Settings not updated, please try again.</strong>
+            Settings not updated, please try again.
           </div>
         {{/if}}
       </div>
