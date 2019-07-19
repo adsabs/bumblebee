@@ -233,7 +233,6 @@ module.exports = function (grunt) {
           "hbs/handlebars",
           "hbs/json2",
           "hbs/underscore",
-          "immutable",
           "js/apps/discovery/main",
           "js/apps/discovery/navigator",
           "js/bugutils/diagnostics",
@@ -356,7 +355,6 @@ module.exports = function (grunt) {
           "js/wraps/visualization_dropdown",
           "js/wraps/vizier_facet",
           "libs/select2/matcher",
-          "redux-immutable",
           "router",
           "utils"
         ]

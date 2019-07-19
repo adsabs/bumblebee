@@ -231,7 +231,7 @@ define([
       // get the current browser information
       utils.getBrowserInfo().then((data) => {
         this.model.set('browser', data);
-      }).catch(() => {
+      }).fail(() => {
         this.model.set('browser', null);
       });
     },

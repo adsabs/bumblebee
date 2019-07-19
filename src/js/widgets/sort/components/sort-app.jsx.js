@@ -4,9 +4,7 @@ define([
   'react-prop-types'
 ], function (React, PropTypes) {
   const SortApp = ({ setSort, setDirection, app }) => {
-    const options = app.get('options');
-    const sort = app.get('sort');
-    const direction = app.get('direction');
+    const { options, sort, direction } = app;
 
     /**
      * Call the handler after a selection is made from the dropdown
@@ -40,17 +38,17 @@ define([
           data-toggle="dropdown"
           title="Select a sort option"
           >
-          {sort.get('text')} <span className="caret" aria-hidden="true"/>
+          {sort.text} <span className="caret" aria-hidden="true"/>
         </button>
         <ul className="dropdown-menu" role="menu">
           {
             options.map(o => (
-              <li key={o.get('id')}>
+              <li key={o.id}>
                 <a
                   href="javascript:void(0)"
-                  title={o.get('desc')}
+                  title={o.desc}
                   onClick={e => onSelect(o, e)}
-                >{o.get('text')}</a>
+                >{o.text}</a>
               </li>
             ))
           }

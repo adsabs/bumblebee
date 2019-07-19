@@ -13,7 +13,6 @@ module.exports = {
   convert: [
     'exec:convert_enzyme',
     'exec:convert_dsjslib',
-    'exec:convert_redux_immutable',
     'exec:convert_requirejs'
   ],
   hash_require: [

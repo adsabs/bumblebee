@@ -48,15 +48,16 @@ define([
 
     componentWillReceiveProps(next) {
       // if nothing incoming, just reset
-      if (next.app.get('selected').length === 0) {
+      if (next.app.selected.length === 0) {
         this.setState(initialState);
       }
     }
 
     render() {
-      const len = this.props.app.get('selected').length;
+      const { app } = this.props;
+      const len = app.selected.length;
 
-      if (this.props.app.get('mode')) {
+      if (app.mode) {
         return (
           <div className="s-right-col-widget-container container-fluid">
             <div className="row">
