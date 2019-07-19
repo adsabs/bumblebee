@@ -1,16 +1,13 @@
 
 define([
     'jquery',
-    'underscore',
-    'js/components/api_response',
-    'js/components/api_request',
     'js/components/api_query',
     'js/bugutils/minimal_pubsub',
     'js/widgets/sort/widget.jsx',
     'js/widgets/sort/redux/modules/sort-app',
     'js/components/api_feedback'
     ],
-  function($, _, ApiResponse, ApiRequest, ApiQuery, MinimalPubSub, SortWidget, SortApp, ApiFeedback) {
+  function($, ApiQuery, MinimalPubSub, SortWidget, SortApp, ApiFeedback) {
 
     var init = function () {
       var minsub = new (MinimalPubSub.extend({
@@ -21,7 +18,7 @@ define([
       this.w = new SortWidget();
       this.w.activate(minsub.beehive.getHardenedInstance());
       this.getState = _.bind(function () {
-        return this.w.store.getState().get('SortApp');
+        return this.w.store.getState();
       }, this);
     };
 
@@ -51,7 +48,7 @@ define([
         }));
 
         _.defer(function () {
-          var actual = self.getState().toJS();
+          var actual = self.getState();
           var expected = {
             "sort": {
               "id": "citation_count",
@@ -85,7 +82,7 @@ define([
         }));
 
         _.defer(function () {
-          var actual = self.getState().toJS();
+          var actual = self.getState();
           var expected = {
             "locked": true
           };
@@ -106,7 +103,7 @@ define([
         }));
 
         _.defer(function () {
-          var actual = self.getState().toJS();
+          var actual = self.getState();
           var expected = {
             "locked": false
           };
@@ -127,7 +124,7 @@ define([
         }));
 
         _.defer(function () {
-          var actual = self.getState().toJS();
+          var actual = self.getState();
           var expected = {
             "locked": false
           };
