@@ -152,17 +152,24 @@ define([
         $modalTitle.text('General Feedback');
         $feedbackBackBtn.show();
         $feedbackBackBtn.off().click(() => showListView());
+        $('input[name=name]', $generalForm).focus();
       };
 
       $modal.on('hidden.bs.modal', () => {
         $('input, textarea', $modal).val('');
-        const $fg = $('button[type=submit]').closest('.form-group');
+        const $fg = $('button[type=submit]', $modal).closest('.form-group');
         $fg.html('<button class="btn btn-success" type="submit" value="Send">Submit</button>');
         showListView();
       });
 
-      $modal.on('shown.bs.modal', () => {
+      $modal.on('shown.bs.modal', (e) => {
         this.trigger('activate-recaptcha');
+
+        // grab view if available
+        const view = $(e.relatedTarget).data('feedbackView')
+        if (view === 'general') {
+          hideListView();
+        }
 
         $generalForm.off().submit((e) => {
           e.preventDefault();
