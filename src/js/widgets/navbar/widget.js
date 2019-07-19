@@ -152,7 +152,9 @@ define([
         $modalTitle.text('General Feedback');
         $feedbackBackBtn.show();
         $feedbackBackBtn.off().click(() => showListView());
-        $('input[name=name]', $generalForm).focus();
+        $modal.one('shown.bs.modal', () => {
+          $('input[name=name]', $generalForm).focus();
+        });
       };
 
       $modal.on('hidden.bs.modal', () => {
@@ -162,14 +164,18 @@ define([
         showListView();
       });
 
-      $modal.on('shown.bs.modal', (e) => {
-        this.trigger('activate-recaptcha');
-
+      // run just before showing the modal
+      $modal.on('show.bs.modal', (e) => {
         // grab view if available
         const view = $(e.relatedTarget).data('feedbackView')
         if (view === 'general') {
           hideListView();
         }
+      });
+
+      // just after it has been shown
+      $modal.on('shown.bs.modal', () => {
+        this.trigger('activate-recaptcha');
 
         $generalForm.off().submit((e) => {
           e.preventDefault();
@@ -182,6 +188,14 @@ define([
           $('input[name=name]', $generalForm).focus();
           return false;
         });
+
+        if (this.model.has('currentUser')) {
+          const user = this.model.get('currentUser');
+          $('input[name=_replyto]', $generalForm).val(user);
+          this.appendToForm('currentuser', user);
+        } else {
+          this.appendToForm('currentuser', 'anonymous');
+        }
 
         if (this.model.has('browser')) {
           const { browser, platform, engine, os } = this.model.get('browser');
