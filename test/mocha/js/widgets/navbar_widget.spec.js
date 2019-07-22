@@ -282,33 +282,35 @@ define([
       $("#test").append(n.view.render().el);
       expect($("form.feedback-form").length).to.eql(1);
 
-      expect($("#test button[data-target=#feedback-modal]").length).to.eql(1);
+      // there are two buttons
+      expect($("#test a[data-target=#feedback-modal]").length).to.eql(2);
 
-
+      expect($("#test a[data-target=#feedback-modal]:first").data('feedbackView')).to.eql('list');
+      expect($("#test a[data-target=#feedback-modal]:last").data('feedbackView')).to.eql('general');
     });
 
     it("feedback form should make an ajax request upon submit, display status, and clear itself on close", function(){
       $("#feedback-modal").remove();
       var n = new NavBarWidget();
       $("#test").append(n.view.render().el);
-      
+
       var minsub = new (MinSub.extend({
         request: function () {
         }
       }))({verbose: false});
       n.setInitialVals = function(){};
-      
+
       var fakeRecaptchaManager = {getHardenedInstance : function(){return this}, activateRecaptcha: function(){}};
-      
+
       minsub.beehive.addObject("RecaptchaManager", fakeRecaptchaManager);
-      
+
       var api = new Api();
       var requestStub = sinon.stub(Api.prototype, "request", function(apiRequest){
         apiRequest.toJSON().options.done();
       });
       minsub.beehive.removeService("Api");
       minsub.beehive.addService("Api", api);
-      
+
       n.activate(minsub.beehive.getHardenedInstance());
 
       // force handlers to be added in case modal doesn't actually fire

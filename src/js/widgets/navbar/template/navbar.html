@@ -26,10 +26,22 @@
 
             <ul class="nav navbar-nav navbar-right">
 
-                <li>
-                    <button type="button" class="btn btn-primary-faded feedback-button" data-toggle="modal" data-target="#feedback-modal">
-                        <i class="fa fa-comment"></i> Feedback
-                    </button>
+                <li class="dropdown">
+                  <button type="button" class="btn btn-primary-faded feedback-button open-feedback-button" data-toggle="dropdown" aria-expanded="false">
+                    Feedback <span class="caret"></span>
+                  </button>
+                  <ul class="dropdown-menu" role="menu">
+                    <li>
+                      <a href="javascript:void(0);" data-target="#feedback-modal" data-toggle="modal" data-feedback-view="list">
+                        <i class="fa fa-pencil"></i> Submit Updates
+                      </a>
+                    </li>
+                    <li>
+                      <a href="javascript:void(0);" data-target="#feedback-modal" data-toggle="modal" data-feedback-view="general">
+                        <i class="fa fa-envelope"></i> General Feedback
+                      </a>
+                    </li>
+                  </ul>
                 </li>
 
                 {{#if orcidLoggedIn}}
@@ -37,7 +49,7 @@
                     {{#if orcidModeOn}}
 
                 <li class="dropdown orcid-dropdown s-orcid-dropdown">
-                    <button class=" btn-link" data-toggle="dropdown" aria-expanded="false">
+                    <button class="btn btn-link" data-toggle="dropdown" aria-expanded="false">
                         <span class="s-orcid-title">
                          <img src="../../styles/img/orcid-active.svg" alt="orcid symbol"/>
                             ORCID
