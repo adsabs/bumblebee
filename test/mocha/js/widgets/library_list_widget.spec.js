@@ -1,14 +1,12 @@
 define([
   "js/widgets/library_list/widget",
   "js/bugutils/minimal_pubsub",
-  "js/widgets/list_of_things/widget",
-  "immutable"
+  "js/widgets/list_of_things/widget"
 
 ], function(
     LibraryWidget,
     MinSub,
-    ListOfThingsWidget,
-    Immutable
+    ListOfThingsWidget
 ) {
 
   describe("Library List Widget (library_list_widget.spec.js)", function () {
@@ -484,16 +482,16 @@ define([
       expect(l.reset.callCount).to.eql(0);
 
       var state = function () {
-        return l.view.sortWidget.store.getState().get('SortApp').toJS();
+        return l.view.sortWidget.store.getState();
       }
       var st = state();
       expect(st.direction).to.eql('desc');
       expect(st.sort.id).to.eql('date');
 
       var updateSort = function (sort, direction) {
-        var values = Immutable.fromJS({ sort: sort, direction: direction });
-        l.view.sortWidget.store.dispatch({ type: 'SET_SORT', value: values.get('sort') });
-        l.view.sortWidget.store.dispatch({ type: 'SET_DIRECTION', value: values.get('direction') });
+        var values = { sort: sort, direction: direction };
+        l.view.sortWidget.store.dispatch({ type: 'SET_SORT', value: values.sort });
+        l.view.sortWidget.store.dispatch({ type: 'SET_DIRECTION', value: values.direction });
         l.view.onSortChange();
       }
 
@@ -503,7 +501,7 @@ define([
       expect(st.direction).to.eql('desc');
       expect(st.sort.id).to.eql('author_count');
       expect(l.reset.callCount).to.eql(1);
-      expect(fakeApi.request.args[2][0].get("query").toJSON().sort[0]).to.eql("author_count desc, bibcode desc");
+      expect(fakeApi.request.args[2][0].query.toJSON().sort[0]).to.eql("author_count desc, bibcode desc");
 
       // change the direction
       updateSort({ id: 'author_count', text: 'Author Count' }, 'asc');
@@ -511,7 +509,7 @@ define([
       expect(st.direction).to.eql('asc');
       expect(st.sort.id).to.eql('author_count');
       expect(l.reset.callCount).to.eql(2);
-      expect(fakeApi.request.args[3][0].get("query").toJSON().sort[0]).to.eql("author_count asc, bibcode asc");
+      expect(fakeApi.request.args[3][0].query.toJSON().sort[0]).to.eql("author_count asc, bibcode asc");
     });
   });
 });

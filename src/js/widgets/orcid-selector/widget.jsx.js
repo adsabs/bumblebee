@@ -5,15 +5,13 @@ define([
   'react',
   'react-redux',
   'react-dom',
-  'redux',
   'es6!./redux/configure-store',
   'es6!./redux/modules/orcid-selector-app',
-  'js/components/api_query',
   'js/widgets/base/base_widget',
   'es6!./containers/orcid-selector-container'
 ], function (
-  _, Backbone, React, ReactRedux, ReactDOM, Redux, configureStore,
-  OrcidSelectorApp, ApiQuery, BaseWidget, OrcidSelectorContainer
+  _, Backbone, React, ReactRedux, ReactDOM, configureStore,
+  OrcidSelectorApp, BaseWidget, OrcidSelectorContainer
 ) {
   /**
    * Main App View

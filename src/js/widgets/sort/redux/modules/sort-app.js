@@ -1,8 +1,7 @@
 
 define([
-  'underscore',
-  'immutable'
-], function (_, Immutable) {
+  'underscore'
+], function (_) {
   // Action Constants
   const SET_DIRECTION = 'SET_DIRECTION';
   const SET_SORT = 'SET_SORT';
@@ -22,10 +21,10 @@ define([
   const setSort = (value, silent) => (dispatch, getState, widget) => {
     // if passed a string, convert it to one of our pre-defined options
     if (_.isString(value)) {
-      const options = getState().get('SortApp').get('options');
+      const { options } = getState();
 
       // attempt to find something, if not just provide the first option
-      value = options.find(i => i.get('id') === value) || options[0];
+      value = options.find(({ id }) => id === value) || options[0];
     }
 
     dispatch({ type: SET_SORT, value });
@@ -45,7 +44,7 @@ define([
   const setDirection = (value, silent) => (dispatch, getState, widget) => {
     // if a direction isn't passed, then just toggle
     if (_.isUndefined(value)) {
-      const direction = getState().get('SortApp').get('direction');
+      const { direction } = getState();
       value = (direction === 'asc') ? 'desc' : 'asc';
     }
     dispatch({ type: SET_DIRECTION, value });
@@ -68,9 +67,9 @@ define([
    */
   const setLocked = value => (dispatch, getState) => {
     // grab the current timer (if exists)
-    const timeout = getState().get('SortApp').get('lockTimer');
-    if (timeout) {
-      clearTimeout(timeout);
+    const { lockTimer } = getState();
+    if (lockTimer) {
+      clearTimeout(lockTimer);
     }
 
     // create a new timer, which resets the locked state after a period of time
@@ -81,7 +80,7 @@ define([
   };
 
   // initial state
-  const initialState = Immutable.fromJS({
+  const initialState = {
     options: [
       { id: 'author_count', text: 'Author Count', desc: 'sort by number of authors' },
       { id: 'bibcode', text: 'Bibcode', desc: 'sort by bibcode' },
@@ -99,22 +98,23 @@ define([
     query: null,
     locked: false,
     lockTimer: null
-  });
+  };
 
   // reducer
   const reducer = (state = initialState, action) => {
     switch (action.type) {
       case SET_SORT:
-        return state.set('sort', action.value);
+          return { ...state, sort: action.value };
       case SET_DIRECTION:
-        return state.set('direction', action.value);
+          return { ...state, direction: action.value };
       case SET_QUERY:
-        return state.set('query', action.value);
+        return { ...state, query: action.value };
       case SET_LOCKED:
-        return state.merge({
+        return {
+          ...state,
           locked: action.value,
           lockTimer: action.timer
-        });
+        };
       default: return initialState;
     }
   };

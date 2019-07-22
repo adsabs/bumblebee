@@ -6,7 +6,6 @@ define([
   'react',
   'react-redux',
   'react-dom',
-  'redux',
   'es6!./redux/configure-store',
   'es6!./redux/modules/sort-app',
   'js/components/api_query',
@@ -14,7 +13,7 @@ define([
   'js/components/api_feedback',
   'es6!./containers/sort-container'
 ], function (
-  _, Backbone, analytics, React, ReactRedux, ReactDOM, Redux, configureStore,
+  _, Backbone, analytics, React, ReactRedux, ReactDOM, configureStore,
   SortApp, ApiQuery, BaseWidget, ApiFeedback, SortContainer
 ) {
   /**
@@ -86,10 +85,10 @@ define([
      */
     onSortChange: function () {
       const pubsub = this.getPubSub();
-      const app = this.store.getState().get('SortApp');
-      const sort = app.get('sort').get('id');
-      const dir = app.get('direction');
-      let query = app.get('query');
+      const app = this.store.getState();
+      const sort = app.sort.id;
+      const dir = app.direction;
+      let query = app.query;
       let newSort = sort + ' ' + dir;
 
       // try local app storage if we don't have one stored

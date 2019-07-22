@@ -197,7 +197,7 @@ require.config({
       '//ajax.aspnetcdn.com/ajax/bootstrap/3.3.5/bootstrap.min',
       'libs/bootstrap/bootstrap'
     ],
-    'bowser': '//cdn.jsdelivr.net/npm/bowser@2.4.0/bundled',  
+    'bowser': '//cdn.jsdelivr.net/npm/bowser@2.4.0/bundled',
     'cache': 'libs/dsjslib/lib/Cache',
     'chai': '../bower_components/chai/chai',
     'classnames': [
@@ -235,7 +235,6 @@ require.config({
       'data:application/javascript,'
     ],
     'hbs': 'libs/require-handlebars-plugin/hbs',
-    'immutable': 'libs/immutable/index',
     'jquery': [
       '//ajax.aspnetcdn.com/ajax/jQuery/jquery-2.0.3.min',
       'libs/jquery/jquery'
@@ -291,7 +290,6 @@ require.config({
       '//cdnjs.cloudflare.com/ajax/libs/redux/3.5.2/redux.min',
       'libs/redux/index'
     ],
-    'redux-immutable': 'libs/redux-immutable/index',
     'redux-thunk': [
       '//cdnjs.cloudflare.com/ajax/libs/redux-thunk/2.1.0/redux-thunk.min',
       'libs/redux-thunk/index'
@@ -381,10 +379,6 @@ require.config({
 
     'persist-js': {
       exports: 'Persist'
-    },
-
-    'redux-immutable': {
-      deps: ['immutable']
     }
   }
 });

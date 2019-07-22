@@ -189,15 +189,6 @@ module.exports = function (grunt) {
           }
         },
         {
-          cwd: 'node_modules/immutable/dist',
-          src: 'immutable.js',
-          dest: 'src/libs/immutable/',
-          expand: true,
-          rename: function (dest, src) {
-            return dest + src.replace('immutable', 'index');
-          }
-        },
-        {
           cwd: 'node_modules/reselect/dist',
           src: 'reselect.js',
           dest: 'src/libs/reselect/',

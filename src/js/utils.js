@@ -1,4 +1,5 @@
 define([
+  'jquery',
   'underscore'
 ], function (_) {
 
@@ -47,16 +48,17 @@ define([
 
   // get the current browser information
   const getBrowserInfo = function () {
-
     // do this inline, so we only request when necessary
-    return new Promise((resolve, reject) => {
-      // reject after 3 seconds
-      const timeoutId = setTimeout(() => { reject(); }, 3000);
-      require(['bowser'], (bowser) => {
-        window.clearTimeout(timeoutId);
-        resolve(bowser.parse(window.navigator.userAgent));
-      }, () => { reject(); });
-    });
+    const $dd = $.Deferred();
+
+    // reject after 3 seconds
+    const timeoutId = setTimeout(() => { $dd.reject(); }, 3000);
+    require(['bowser'], (bowser) => {
+      window.clearTimeout(timeoutId);
+      $dd.resolve(bowser.parse(window.navigator.userAgent));
+    }, () => { $dd.reject(); });
+
+    return $dd.promise();
   };
 
   return {

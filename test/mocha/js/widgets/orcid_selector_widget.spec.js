@@ -10,7 +10,7 @@ define([
       request: _.identity
     }))({ verbose: false });
     this.state = function (w) {
-      return w.store.getState().get('OrcidSelectorApp');
+      return w.store.getState();
     };
   };
 
@@ -29,7 +29,7 @@ define([
       w.activate(this.pubsub.beehive);
 
       // check to make sure mode is off
-      expect(this.state(w).get('mode')).to.equal(false);
+      expect(this.state(w).mode).to.equal(false);
 
       // render and see that it's empty
       expect(w.view.render().$el.children().length).to.equal(0);
@@ -42,7 +42,7 @@ define([
       w.activate(beehive);
 
       // check to make sure mode is on
-      expect(this.state(w).get('mode')).to.equal(true);
+      expect(this.state(w).mode).to.equal(true);
 
       // render and see that it's empty
       expect(w.view.render().$el.children().length).to.be.gt(0);
@@ -52,7 +52,7 @@ define([
       const w = new Widget();
       w.activate(this.pubsub.beehive);
       // should be off initially
-      expect(this.state(w).get('mode')).to.equal(false);
+      expect(this.state(w).mode).to.equal(false);
 
       // trigger a user event
       this.pubsub.publish(this.pubsub.USER_ANNOUNCEMENT, '', {
@@ -60,7 +60,7 @@ define([
       });
 
       // should now be on
-      expect(this.state(w).get('mode')).to.equal(true);
+      expect(this.state(w).mode).to.equal(true);
     });
 
     it('State is update correctly when number of papers is changed', function () {
@@ -71,11 +71,11 @@ define([
       });
       w.activate(beehive);
 
-      expect(this.state(w).get('selected').toJS().length).to.equal(0);
+      expect(this.state(w).selected.length).to.equal(0);
 
       this.pubsub.publish(this.pubsub.STORAGE_PAPER_UPDATE);
 
-      expect(this.state(w).get('selected').length).to.equal(2);
+      expect(this.state(w).selected.length).to.equal(2);
     });
 
     it('Clicking claim button publishes the proper claim event', function () {
@@ -103,7 +103,7 @@ define([
       $('button:contains("Apply")', $el).click();
 
       expect(spy.args[0][0]).is.equal('orcid-bulk-claim');
-      expect(spy.args[0][1]).is.equal(this.state(w).get('selected'));
+      expect(spy.args[0][1]).is.equal(this.state(w).selected);
     });
 
     it('Clicking delete button publishes the proper delete event', function () {
@@ -131,7 +131,7 @@ define([
       $('button:contains("Apply")', $el).click();
 
       expect(spy.args[0][0]).is.equal('orcid-bulk-delete');
-      expect(spy.args[0][1]).is.equal(this.state(w).get('selected'));
+      expect(spy.args[0][1]).is.equal(this.state(w).selected);
     });
   });
 });
