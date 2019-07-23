@@ -38,7 +38,9 @@ define([
     REQUEST_FAILED: 'REQUEST_FAILED',
     REQUEST_CANCELLED: 'REQUEST_CANCELLED',
     SET_ORIGIN: 'SET_ORIGIN',
-    SET_CUSTOM_FORMATS: 'SET_CUSTOM_FORMATS'
+    SET_CUSTOM_FORMATS: 'SET_CUSTOM_FORMATS',
+    SET_BIBTEX_KEY_FORMAT: 'SET_BIBTEX_KEY_FORMAT',
+    SET_BIBTEX_MAX_AUTHORS: 'SET_BIBTEX_MAX_AUTHORS'
   };
 
   actions.setTab = tab => ({ type: actions.SET_TAB, tab });
@@ -66,6 +68,8 @@ define([
   actions.hardReset = () => ({ type: actions.HARD_RESET });
   actions.setOrigin = origin => ({ type: actions.SET_ORIGIN, origin });
   actions.setCustomFormats = customFormats => ({ type: actions.SET_CUSTOM_FORMATS, customFormats });
+  actions.setBibtexMaxAuthors = maxAuthors => ({ type: actions.SET_BIBTEX_MAX_AUTHORS, maxAuthors });
+  actions.setBibtexKeyFormat = keyFormat => ({ type: actions.SET_BIBTEX_KEY_FORMAT, keyFormat });
 
   /**
    * On request failure, we want to display a message to the user here
@@ -179,6 +183,12 @@ define([
       return $.Deferred().resolve().promise().then(function () {
         dispatch(receiveExport(''));
       });
+    } else if (format.value === 'bibtex' || format.value === 'bibtexabs') {
+
+      if (exports.bibtexKeyFormat) {
+        q.set('keyformat', exports.bibtexKeyFormat);
+      }
+      q.set('maxauthors', exports.bibtexMaxAuthors);
     }
 
     const req = composeRequest(q);

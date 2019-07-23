@@ -36,7 +36,9 @@ define([
     SET_SORT,
     RESET,
     HARD_RESET,
-    SET_CUSTOM_FORMATS
+    SET_CUSTOM_FORMATS,
+    SET_BIBTEX_MAX_AUTHORS,
+    SET_BIBTEX_KEY_FORMAT
   } = actions;
 
   // format reducer
@@ -97,7 +99,9 @@ define([
     totalRecs: 0,
     customFormatString: '',
     customFormats: [],
-    snapshot: {}
+    snapshot: {},
+    bibtexKeyFormat: null,
+    bibtexMaxAuthors: 0
   }, action) => {
     switch (action.type) {
       case REQUEST_IDS:
@@ -114,6 +118,10 @@ define([
         return { ...state, customFormatString: action.format };
       case SET_CUSTOM_FORMATS:
         return { ...state, customFormats: action.customFormats };
+      case SET_BIBTEX_MAX_AUTHORS:
+        return { ...state, bibtexMaxAuthors: action.maxAuthors };
+      case SET_BIBTEX_KEY_FORMAT:
+        return { ...state, bibtexKeyFormat: action.keyFormat };
       case RECEIVE_EXPORT:
         return {
           ...state,
