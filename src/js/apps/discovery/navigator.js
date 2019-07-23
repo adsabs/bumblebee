@@ -1223,9 +1223,7 @@ function (
         return defer.promise();
       });
 
-      // proxy to ShowTableofcontents
-      this.set('ShowToc', makeProxyHandler('ShowTableofcontents'));
-      this.set('ShowTableofcontents', function (id, data) {
+      this.set('ShowToc', function (id, data) {
         var defer = $.Deferred()
         showDetail([id].concat(detailsPageAlwaysVisible), id).then((page) => {
           if (!data.bibcode) {

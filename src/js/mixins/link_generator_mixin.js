@@ -382,7 +382,7 @@ define(['underscore', 'js/mixins/openurl_generator'], function (_, OpenURLGenera
           links.list.push({
             letter: 'T',
             name: 'Table of Contents',
-            url: '#abs/' + enc(data.bibcode) + '/tableofcontents'
+            url: '#abs/' + enc(data.bibcode) + '/toc'
           });
         }
       }

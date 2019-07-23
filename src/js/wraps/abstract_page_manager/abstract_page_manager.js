@@ -12,7 +12,7 @@ define([
 ) {
   var PageManager = PageManagerController.extend({
 
-    persistentWidgets: ['SearchWidget', 'ShowAbstract', 'ShowCitations', 'ShowTableofcontents', 'ShowReferences', 'tocWidget'],
+    persistentWidgets: ['SearchWidget', 'ShowAbstract', 'ShowCitations', 'ShowToc', 'ShowReferences', 'tocWidget'],
 
     TOCTemplate: TOCTemplate,
 
@@ -102,9 +102,9 @@ define([
         showCount: false,
         order: 4
       },
-      ShowTableofcontents: {
+      ShowToc: {
         title: 'Volume Content',
-        path: 'tableofcontents',
+        path: 'toc',
         category: 'view',
         showCount: false,
         order: 5

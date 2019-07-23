@@ -203,7 +203,7 @@ define([
       expect($w.find(".s-list-description").text()).to.eql("Papers in the same volume as");
 
       widget.trigger("page-manager-message", "broadcast-payload", {title: "foo"});
-      widget.trigger("page-manager-message", "widget-selected", { idAttribute: "ShowTableofcontents" });
+      widget.trigger("page-manager-message", "widget-selected", { idAttribute: "ShowToc" });
 
       setTimeout(function(){
         expect($w.find(".s-article-title").text()).to.eql("foo");
