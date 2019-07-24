@@ -3,7 +3,7 @@
 <div class="panel-body" id="application-settings-container">
   <div class="row">
     <div class="col-md-12">
-      <form role="form" class="form-horizontal">
+      <form id="app-settings-form" role="form" class="form-horizontal">
 
         <!-- NUM AUTHORS -->
         <div class="form-group">
@@ -163,10 +163,10 @@
                       <input type="text" class="form-control custom-format-edit" placeholder="%l (%Y), %j, %V, %p.\n" id="custom-format-code-{{id}}" value="{{code}}" data-id="{{id}}">
                     </div>
                     <span class="col-xs-2 text-right">
-                      <button id="addCustomFormatConfirmEdit" role="button" data-id="{{id}}" class="btn-link">
+                      <button id="addCustomFormatConfirmEdit" role="button" data-id="{{id}}" class="btn-link" title="confirm edit">
                         <i class="fa fa-check text-success"></i>
                       </button>
-                      <button id="addCustomFormatCancelEdit" role="button" data-id="{{id}}" class="btn-link">
+                      <button id="addCustomFormatCancelEdit" role="button" data-id="{{id}}" class="btn-link" title="cancel edit">
                         <i class="fa fa-times text-danger"></i>
                       </button>
                     </span>
@@ -182,10 +182,10 @@
                       </p>
                     </div>
                     <span class="col-xs-2 text-right">
-                      <button id="addCustomFormatEdit" role="button" data-id="{{id}}" class="btn-link">
+                      <button id="addCustomFormatEdit" role="button" data-id="{{id}}" class="btn-link" title="edit custom format">
                         <i class="fa fa-pencil text-primary"></i>
                       </button>
-                      <button id="addCustomFormatDelete" role="button" data-id="{{id}}" class="btn-link">
+                      <button id="addCustomFormatDelete" role="button" data-id="{{id}}" class="btn-link" title="delete custom format">
                         <i class="fa fa-times text-danger"></i>
                       </button>
                     </span>
@@ -233,6 +233,83 @@
               <option
                 value="{{this}}"
                 {{#compare this ../hideSideBarsSelected}} selected="selected" {{/compare}}
+              >{{this}}</option>
+            {{/each}}
+          </select>
+        </div>
+
+        <!-- Set BibTeX/BibTeX ABS key format  -->
+        <div class="form-group">
+          <label for="bibtexKeyFormat">
+            Default Export Key Format (BibTeX only)
+            <a href="#collapsebibtexKeyFormat" data-toggle="collapse" role="button" aria-expanded="false" aria-controls="collapsebibtexKeyFormat">
+              <i class="fa fa-question-circle"></i>
+            </a>
+          </label>
+          <p>
+            <div class="collapse" id="collapsebibtexKeyFormat">
+              <div class="card card-body text-muted">
+                <p>
+                  Select the default key format when exporting in BibTeX or BibTeX ABS (<a href="http://adsabs.github.io/help/actions/export" rel="noopener" target="_blank">Learn More <i class="fa fa-external-link"></i></a>)
+                  <table class="table">
+                    <thead>
+                      <tr>
+                        <th>Code</th>
+                        <th>Description</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr>
+                        <td><code>%R</code></td>
+                        <td>Bibcode</td>
+                      </tr>
+                      <tr>
+                        <td><code>%nH</code></td>
+                        <td>Author, where <code>n</code> can be any number</td>
+                      </tr>
+                      <tr>
+                        <td><code>%q</code></td>
+                        <td>Publication</td>
+                      </tr>
+                      <tr>
+                        <td><code>%Y</code></td>
+                        <td>Year</td>
+                      </tr>
+                    </tbody>
+                  </table>
+                  <p>* Any other text will be passed as raw strings</p>
+                  (<strong>default: None</strong>)
+                </p>
+              </div>
+            </div>
+          </p>
+          <input type="text" id="bibtexKeyFormat" value="{{bibtexKeyFormatSelected}}" data-no-convert="true" aria-describedby="collapsebibtexKeyFormat" placeholder="%1H:%Y:%q" class="form-control" title="bibtex key format" maxlength="30">
+        </div>
+
+        <!-- Set BibTeX/BibTeX ABS key max authors  -->
+        <div class="form-group">
+          <label for="bibtexMaxAuthors">
+            Default Export Max Authors (BibTeX only)
+            <a href="#collapsebibtexMaxAuthors" data-toggle="collapse" role="button" aria-expanded="false" aria-controls="collapsebibtexMaxAuthors">
+              <i class="fa fa-question-circle"></i>
+            </a>
+          </label>
+          <p>
+            <div class="collapse" id="collapsebibtexMaxAuthors">
+              <div class="card card-body text-muted">
+                <p>
+                  Select the default max number of authors shown when exporting in BibTeX or BibTeX ABS
+                  <br>
+                  (<strong>default: {{bibtexMaxAuthorsDefault}}</strong>)
+                </p>
+              </div>
+            </div>
+          </p>
+          <select class="form-control" id="bibtexMaxAuthors" aria-describedby="collapsebibtexMaxAuthors">
+            {{#each bibtexMaxAuthorsOptions}}
+              <option
+                value="{{this}}"
+                {{#compare this ../bibtexMaxAuthorsSelected}} selected="selected" {{/compare}}
               >{{this}}</option>
             {{/each}}
           </select>

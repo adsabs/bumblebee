@@ -188,7 +188,9 @@ define([
       if (exports.bibtexKeyFormat) {
         q.set('keyformat', exports.bibtexKeyFormat);
       }
-      q.set('maxauthors', exports.bibtexMaxAuthors);
+
+      // set maxauthor, convert it to number first
+      q.set('maxauthor', +exports.bibtexMaxAuthors);
     }
 
     const req = composeRequest(q);

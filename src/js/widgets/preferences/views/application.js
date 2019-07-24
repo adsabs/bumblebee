@@ -29,7 +29,18 @@ define([
       initialValue: 'Show',
       initialOptions: ['Show', 'Hide']
     },
-    addCustomFormatOptions: []
+    addCustomFormatOptions: [],
+    bibtexMaxAuthors: {
+      initialValue: 'all',
+      initialOptions: [
+        ..._.range(1, 10, 1),
+        ..._.range(10, 110, 10, true),
+        'all'
+      ]
+    },
+    bibtexKeyFormat: {
+      initialValue: ''
+    }
   };
 
   const watchedProps = [
@@ -38,7 +49,9 @@ define([
     'databaseSelected',
     'exportFormatSelected',
     'hideSideBarsSelected',
-    'addCustomFormatOptions'
+    'addCustomFormatOptions',
+    'bibtexMaxAuthorsSelected',
+    'bibtexKeyFormatSelected'
   ];
 
   var ApplicationView = Marionette.ItemView.extend({
@@ -58,6 +71,8 @@ define([
         DEFAULTS.hideSidebars.initialValue
       var addCustomFormatOptions = this.model.get('customFormats') ||
         DEFAULTS.addCustomFormatOptions;
+      var bibtexKeyFormat = this.model.get('bibtexKeyFormat') || DEFAULTS.bibtexKeyFormat.initialValue;
+      var bibtexMaxAuthors = this.model.get('bibtexMaxAuthors') || DEFAULTS.bibtexMaxAuthors.initialValue;
 
       // must clone the props that will get mutated
       this.model.set({
@@ -74,7 +89,12 @@ define([
         hideSideBarsDefault: DEFAULTS.hideSidebars.initialValue,
         hideSideBarsOptions: DEFAULTS.hideSidebars.initialOptions,
         hideSideBarsSelected: _.clone(hideSidebars),
-        addCustomFormatOptions: _.clone(addCustomFormatOptions)
+        addCustomFormatOptions: _.clone(addCustomFormatOptions),
+        bibtexKeyFormatDefault: DEFAULTS.bibtexKeyFormat.initialValue,
+        bibtexKeyFormatSelected: _.clone(bibtexKeyFormat),
+        bibtexMaxAuthorsDefault: DEFAULTS.bibtexMaxAuthors.initialValue,
+        bibtexMaxAuthorsOptions: DEFAULTS.bibtexMaxAuthors.initialOptions,
+        bibtexMaxAuthorsSelected: this._convertToNumber(_.clone(bibtexMaxAuthors))
       });
       this.model.trigger('change');
 
@@ -99,6 +119,8 @@ define([
 
       // custom format deleting events
       'click #addCustomFormatDelete': 'onDeleteCustomFormat',
+
+      'change #bibtexKeyFormat': 'onChangeBibtextKeyFormat',
       'change select': 'syncModel'
     },
 
@@ -143,7 +165,11 @@ define([
       $('.form-control', this.el).each(function () {
         var $el = $(this);
         var val = $el.val();
-        update[$el.attr('id') + 'Selected'] = convert(val);
+
+        if (!$el.data('noConvert')) {
+          val = convert(val);
+        }
+        update[$el.attr('id') + 'Selected'] = val;
       });
       this.model.set(update);
     },
@@ -163,7 +189,9 @@ define([
         defaultHideSidebars: this.model.get('hideSideBarsSelected'),
         customFormats: _.map(this.model.get('addCustomFormatOptions'), function (i) {
           return _.pick(i, ['id', 'name', 'code']);
-        })
+        }),
+        bibtexMaxAuthors: this._convertToString(this.model.get('bibtexMaxAuthorsSelected') === 'all' ? 0 : this.model.get('bibtexMaxAuthorsSelected')),
+        bibtexKeyFormat: this.model.get('bibtexKeyFormatSelected')
       });
       return false;
     },
@@ -171,6 +199,10 @@ define([
     onCancel: function (e) {
       this.initialize();
       return false;
+    },
+
+    onChangeBibtextKeyFormat: function () {
+      this.onSubmit();
     },
 
     onResetToDefaults: function () {

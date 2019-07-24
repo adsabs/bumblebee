@@ -131,7 +131,8 @@ define([
       ], (acc, prop) => {
         const value = _.has(userData, prop) ? userData[prop] : this[prop];
         if (prop === 'defaultExportFormat') {
-          acc[prop] = (_.find(config.export.formats, { label: value })).value
+          const v = _.find(config.export.formats, { label: value });
+          acc[prop] = v ? v.value : config.export.formats[0];
         } else {
           acc[prop] = value;
         }
