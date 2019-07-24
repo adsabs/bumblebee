@@ -9,18 +9,16 @@ function (
 ) {
   var Widget = DetailsWidget.extend({
     initialize: function () {
-      this.name = 'ShowTableofcontents';
+      this.name = 'ShowToc';
       return DetailsWidget.prototype.initialize.apply(this, arguments);
     },
     ingestBroadcastedPayload: function (data) {
       var hasTOC = data.property && data.property.indexOf('TOC') > -1;
-      if (hasTOC) {
-        this.trigger('page-manager-event', 'widget-ready', {
-          numFound: 1,
-          isActive: true
-        });
-        DetailsWidget.prototype.ingestBroadcastedPayload.apply(this, arguments);
-      }
+      this.trigger('page-manager-event', 'widget-ready', {
+        numFound: +hasTOC,
+        isActive: hasTOC
+      });
+      DetailsWidget.prototype.ingestBroadcastedPayload.apply(this, arguments);
     },
     customizeQuery: function (apiQuery) {
       var bibcode = this.parseIdentifierFromQuery(apiQuery);

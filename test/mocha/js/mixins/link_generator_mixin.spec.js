@@ -327,7 +327,7 @@ define([
               {
                 letter: 'T',
                 name: 'Table of Contents',
-                url: '#abs/foo/tableofcontents'
+                url: '#abs/foo/toc'
               }
             ],
           }

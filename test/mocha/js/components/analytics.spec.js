@@ -102,7 +102,7 @@ define([
         expect(expected).to.eql(actual);
       });
       analytics('send', 'event', 'interaction', 'toc-link-followed', {
-        target: 'tableofcontents',
+        target: 'toc',
         bibcode: 'foo'
       });
       server.respond();
