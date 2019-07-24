@@ -76,6 +76,9 @@ define([
       this.view = new View({ store: this.store });
 
       this.defaultFormat = 'BibTeX';
+      this.customFormats = [];
+      this.bibtexKeyFormat = null;
+      this.bibtexMaxAuthors = 0;
     },
 
     /**
@@ -93,8 +96,7 @@ define([
       pubsub.subscribe(pubsub.INVITING_REQUEST, query => (
         dispatch(setQuery(query.toJSON()))));
       this.attachGeneralHandler(this.onApiFeedback);
-      pubsub.subscribe(pubsub.USER_ANNOUNCEMENT,
-        _.bind(this.getDefaultFormatFromUserData, this));
+      pubsub.subscribe(pubsub.USER_ANNOUNCEMENT, _.bind(this.getFieldsFromUserData, this));
     },
 
     /**
@@ -119,18 +121,24 @@ define([
       return {};
     },
 
-    getDefaultFormatFromUserData: function () {
+    getFieldsFromUserData: function () {
       const userData = this.getUserData();
-      const format = _.has(userData, 'defaultExportFormat') ?
-        userData.defaultExportFormat : this.defaultFormat;
-      return (_.find(config.export.formats, { label: format })).value;
-    },
-
-    getCustomFormatsFromUserData: function () {
-      const userData = this.getUserData();
-      const formats = _.has(userData, 'customFormats') ?
-        userData.customFormats : this.customFormats;
-      return formats;
+      return _.reduce([
+        'defaultExportFormat',
+        'customFormats',
+        'bibtexKeyFormat',
+        'bibtexMaxAuthors'
+      ], (acc, prop) => {
+        const value = _.has(userData, prop) ? userData[prop] : this[prop];
+        if (prop === 'defaultExportFormat') {
+          const v = _.find(config.export.formats, { label: value });
+          acc[prop] = v ? v.value : config.export.formats[0];
+        } else {
+          acc[prop] = value;
+        }
+        this[prop] = value;
+        return acc;
+      }, {});
     },
 
     /**
@@ -146,17 +154,20 @@ define([
       const { dispatch } = this.store;
       const {
         fetchUsingQuery, fetchUsingIds, findAndSetFormat, hardReset,
-        setCount, setQuery, setTotalRecs, takeSnapshot, setOrigin, setCustomFormats
+        setCount, setQuery, setTotalRecs, takeSnapshot, setOrigin, setCustomFormats,
+        setBibtexKeyFormat, setBibtexMaxAuthors
       } = actions;
 
-      const fmt = format === 'default' || format === 'other' ?
-        this.getDefaultFormatFromUserData() : format;
+      const { customFormats, defaultFormat, bibtexMaxAuthors, bibtexKeyFormat } = this.getFieldsFromUserData();
+
+      const fmt = format === 'default' || format === 'other' ? defaultFormat : format;
 
       // perform a full reset of the store
       dispatch(hardReset());
 
-      const customFormats = this.getCustomFormatsFromUserData();
       dispatch(setCustomFormats(customFormats));
+      dispatch(setBibtexMaxAuthors(bibtexMaxAuthors));
+      dispatch(setBibtexKeyFormat(bibtexKeyFormat));
 
       // set the origin of the request (abstract/results/etc.)
       dispatch(setOrigin(this.componentParams && this.componentParams.origin));
@@ -232,17 +243,20 @@ define([
       const { dispatch } = this.store;
       const {
         receiveIds, findAndSetFormat, fetchUsingIds, hardReset, setSort,
-        setCount, setTotalRecs, takeSnapshot, setOrigin, setCustomFormats
+        setCount, setTotalRecs, takeSnapshot, setOrigin, setCustomFormats,
+        setBibtexKeyFormat, setBibtexMaxAuthors
       } = actions;
 
-      const format = data.format === 'default' || data.format === 'other' ?
-        this.getDefaultFormatFromUserData() : data.format;
+      const { customFormats, defaultFormat, bibtexMaxAuthors, bibtexKeyFormat } = this.getFieldsFromUserData();
+
+      const format = data.format === 'default' || data.format === 'other' ? defaultFormat : data.format;
 
       const sort = data.sort || 'date desc, bibcode desc';
 
       dispatch(hardReset());
-      const customFormats = this.getCustomFormatsFromUserData();
       dispatch(setCustomFormats(customFormats));
+      dispatch(setBibtexMaxAuthors(bibtexMaxAuthors));
+      dispatch(setBibtexKeyFormat(bibtexKeyFormat));
       dispatch(setSort(sort));
       dispatch(setOrigin(this.componentParams && this.componentParams.origin));
       dispatch(receiveIds(recs));
