@@ -247,9 +247,9 @@ define([
         setBibtexKeyFormat, setBibtexMaxAuthors
       } = actions;
 
-      const { customFormats, defaultFormat, bibtexMaxAuthors, bibtexKeyFormat } = this.getFieldsFromUserData();
+      const { customFormats, defaultExportFormat, bibtexMaxAuthors, bibtexKeyFormat } = this.getFieldsFromUserData();
 
-      const format = data.format === 'default' || data.format === 'other' ? defaultFormat : data.format;
+      const format = data.format === 'default' || data.format === 'other' ? defaultExportFormat : data.format;
 
       const sort = data.sort || 'date desc, bibcode desc';
 
