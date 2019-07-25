@@ -105,10 +105,8 @@ define([
     },
 
     onSortChange: function () {
-      var state = this.sortWidget.store.getState().get('SortApp');
-      var sort = state.get('sort').get('id');
-      var dir = state.get('direction');
-      var newSort = sort + ' ' + dir;
+      const { sort, direction: dir } = this.sortWidget.store.getState();
+      var newSort = sort.id + ' ' + dir;
       this.model.set('sort', newSort);
       this.trigger('changeSort');
     },
@@ -307,7 +305,7 @@ define([
       docs = PaginationMixin.addPaginationToDocs(docs, start);
 
       // check for normalized citation count, this will change display of "cited:N"
-      const sortStr = this.view.sortWidget.store.getState().get('SortApp').get('sort').get('id');
+      const sortStr = this.view.sortWidget.store.getState().sort.id;
       const normCiteSort = /citation_count_norm/gi.test(sortStr);
 
       _.each(docs, function (d, i) {
