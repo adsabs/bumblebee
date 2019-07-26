@@ -1,7 +1,7 @@
 define([
   'jquery',
   'underscore'
-], function (_) {
+], function ($, _) {
 
   const qs = function (key, str, separator) {
     const k = key.replace(/[*+?^$.\[\]{}()|\\\/]/g, "\\$&"); // escape RegEx meta chars
