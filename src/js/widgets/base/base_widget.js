@@ -95,9 +95,9 @@ define([
       var pubsub = beehive.getService('PubSub');
 
       // custom dispatchRequest function goes here
-      pubsub.subscribe(pubsub.INVITING_REQUEST, this.dispatchRequest);
+      pubsub.subscribe(pubsub.INVITING_REQUEST, _.bind(this.dispatchRequest, this));
       // custom handleResponse function goes here
-      pubsub.subscribe(pubsub.DELIVERING_RESPONSE, this.processResponse);
+      pubsub.subscribe(pubsub.DELIVERING_RESPONSE, _.bind(this.processResponse, this));
     },
 
     /**
