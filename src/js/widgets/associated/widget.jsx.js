@@ -50,25 +50,23 @@ define([
     defaultQueryArguments: {},
     activate: function (beehive) {
       const { dispatch } = this.store;
-      const self = this;
       this.setBeeHive(beehive);
       this.activateWidget();
       this.attachGeneralHandler(this.onApiFeedback);
 
       const pubsub = this.getPubSub();
-      pubsub.subscribe(pubsub.DISPLAY_DOCUMENTS, function (apiQuery) {
-        const { query: currentQuery } = self.store.getState().api;
-
-        if (apiQuery && _.isFunction(apiQuery.toJSON)) {
-          var query = apiQuery.toJSON();
-
-          // break out early if the currentQuery is different than the incoming one
-          if (_.isEqual(currentQuery, query)) {
+      pubsub.subscribe(pubsub.CUSTOM_EVENT, (event, data) => {
+        if (event === 'latest-abstract-data') {
+          const { bibcode: currentId } = this.store.getState().api;
+          let id = data.bibcode || data.identifier;
+          id = typeof id === 'array' ? id[0] : id;
+          if (currentId === id) {
             return;
           }
-          dispatch(api.displayDocuments(query));
-        } else {
-          dispatch(ui.setError('did not receive query'));
+
+          dispatch(ui.reset());
+          dispatch(api.setBibcode(id));
+          this.processAbstractData(data);
         }
       });
       pubsub.subscribe(pubsub.DELIVERING_RESPONSE, function (apiResponse) {
@@ -79,12 +77,17 @@ define([
         }
       });
     },
-    dispatchRequest: function (options) {
-      const query = new ApiQuery(options);
-      BaseWidget.prototype.dispatchRequest.call(this, query);
-    },
-    composeRequest: function (apiQuery) {
+    processAbstractData: _.debounce(function (data) {
+      const { dispatch } = this.store;
+      if (data && data.property && data.property.includes('ASSOCIATED')) {
+        this.dispatchRequest(new ApiQuery());
+      } else {
+        dispatch(ui.setError('no associated property'));
+      }
+    }, 300),
+    composeRequest: function () {
       const { bibcode } = this.store.getState().api;
+
       return new ApiRequest({
         target: `${ApiTargets.RESOLVER}/${bibcode}/associated`,
         query: new ApiQuery()
