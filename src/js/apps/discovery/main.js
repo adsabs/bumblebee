@@ -142,6 +142,9 @@ define(['discovery.config', 'module'], function (config, module) {
               console.log('Application Started: ' + time + 'ms');
             }
           }
+
+          // clear the app loading timer
+          window.clearTimeout(window.APP_LOADING_TIMER);
         });
       });
     };

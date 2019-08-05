@@ -77,6 +77,13 @@ define([
    */
   var WidgetStateManagerMixin = {
 
+    STATES: {
+      LOADING: 'loading',
+      ERRORED: 'errored',
+      IDLE: 'idle',
+      READY: 'ready'
+    },
+
     /**
      * Creates a new instance of the handlerManager and subscribes to the
      * api feedback calls.  It also sets the first state update.

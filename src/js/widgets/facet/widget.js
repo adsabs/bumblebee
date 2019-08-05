@@ -116,6 +116,7 @@ function (Backbone,
           open: false
         });
       }, 300);
+      this.updateState(this.STATES.ERRORED);
     },
 
     /*
@@ -152,6 +153,7 @@ function (Backbone,
       this.store.dispatch(this.actions.data_requested(id));
       pubsub.subscribeOnce(pubsub.DELIVERING_RESPONSE, function (apiResponse) {
         that.store.dispatch(that.actions.data_received(apiResponse.toJSON(), id));
+        that.updateState(that.STATES.IDLE);
       });
 
       var q = this.customizeQuery(currentQuery);
@@ -166,6 +168,7 @@ function (Backbone,
 
       var req = this.composeRequest(q);
       pubsub.publish(pubsub.DELIVERING_REQUEST, req);
+      this.updateState(this.STATES.LOADING);
     },
 
     submitFilter: function (operator) {

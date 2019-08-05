@@ -111,6 +111,9 @@ define([
           this.model.set(this.pagination);
         }
       }
+      this.getPubSub().subscribe(this.getPubSub().INVITING_REQUEST, () => {
+        this.updateState(this.STATES.LOADING);
+      });
       this.activateWidget();
       this.attachGeneralHandler(this.onApiFeedback);
     },
@@ -118,6 +121,7 @@ define([
     onApiFeedback: function (feedback) {
       if (feedback.error) {
         this.view.model.set('error', feedback.error);
+        this.updateState(this.STATES.ERRORED);
       }
     },
 
@@ -212,6 +216,7 @@ define([
       // finally, loading view (from pagination template) can be removed or added
       if (noItems || allLoaded || (isLastPage && numFound <= start + docs.length)) {
         this.model.set('loading', false);
+        this.updateState(this.STATES.IDLE);
       } else {
         this.model.set('loading', true);
       }
