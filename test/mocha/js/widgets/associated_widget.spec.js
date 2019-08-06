@@ -39,7 +39,7 @@ define([
     $('test-area').empty();
   };
 
-  describe('Associated Widget (associated_widget.spec.js)', function () {
+  describe.only('Associated Widget (associated_widget.spec.js)', function () {
     describe('Widget Essentials', function () {
       beforeEach(init);
       afterEach(teardown);
@@ -53,7 +53,7 @@ define([
         this.sb.stub(w, 'activateWidget');
         this.sb.stub(w, 'attachGeneralHandler');
         const stubs = {
-          DISPLAY_DOCUMENTS: 1,
+          CUSTOM_EVENT: 1,
           DELIVERING_RESPONSE: 2,
           subscribe: this.sb.spy()
         };
@@ -68,48 +68,83 @@ define([
     describe('Communicating with the API', function () {
       beforeEach(init);
       afterEach(teardown);
-      it('fires off request for sources after display docs', function (done) {
+      it('waits for abstract to fire event before attempting to load', function (done) {
         const w = new Widget();
         w.activate(this.pubsub.beehive);
-        const mockQuery = { toJSON: _.constant({ q: ['bibcode:foo'] })};
-        this.pubsub.publish(this.pubsub.DISPLAY_DOCUMENTS, mockQuery);
         const rSpy = this.pubsub.request;
+        this.pubsub.publish(this.pubsub.CUSTOM_EVENT, 'latest-abstract-data', {
+          bibcode: 'foo',
+          property: ['ASSOCIATED']
+        });
         expect(rSpy.calledOnce).to.eql(true);
         expect(rSpy.args[0][0].get('target')).to.eql('resolver/foo/associated');
         expect(rSpy.args[0][0].get('query').get('q')).to.eql(undefined);
         done();
       });
-      it('handles not getting a query', function (done) {
+
+      it('works if bibcode is array', function (done) {
         const w = new Widget();
         w.activate(this.pubsub.beehive);
-        const mockQuery = null;
-        this.pubsub.publish(this.pubsub.DISPLAY_DOCUMENTS, mockQuery);
-        expect(this.state(w).ui.hasError).to.eql('did not receive query');
+        const rSpy = this.pubsub.request;
+        this.pubsub.publish(this.pubsub.CUSTOM_EVENT, 'latest-abstract-data', {
+          bibcode: ['foo'],
+          property: ['ASSOCIATED']
+        });
+        expect(rSpy.calledOnce).to.eql(true);
+        expect(rSpy.args[0][0].get('target')).to.eql('resolver/foo/associated');
+        expect(rSpy.args[0][0].get('query').get('q')).to.eql(undefined);
         done();
       });
-      it('handles not being able to find a bibcode in query', function (done) {
+
+      it('attempts to find identifier if bibcode is missing', function (done) {
         const w = new Widget();
         w.activate(this.pubsub.beehive);
-        const mockQuery = { toJSON: _.constant({ q: [] })};
-        this.pubsub.publish(this.pubsub.DISPLAY_DOCUMENTS, mockQuery);
-        expect(this.state(w).ui.hasError).to.eql('did not receive a bibcode in query');
+        const rSpy = this.pubsub.request;
+        this.pubsub.publish(this.pubsub.CUSTOM_EVENT, 'latest-abstract-data', {
+          identifier: ['foo', 'bar'],
+          property: ['ASSOCIATED']
+        });
+        expect(rSpy.calledOnce).to.eql(true);
+        expect(rSpy.args[0][0].get('target')).to.eql('resolver/foo/associated');
+        expect(rSpy.args[0][0].get('query').get('q')).to.eql(undefined);
         done();
       });
-      it('handles parsing issue with bibcode', function (done) {
+
+      it('does not fire if associated is not present on property', function (done) {
         const w = new Widget();
         w.activate(this.pubsub.beehive);
-        const mockQuery = { toJSON: _.constant({ q: ['bibBAZ:foo'] })};
-        this.pubsub.publish(this.pubsub.DISPLAY_DOCUMENTS, mockQuery);
-        expect(this.state(w).ui.hasError).to.eql('unable to parse bibcode from query');
+        const rSpy = this.pubsub.request;
+        this.pubsub.publish(this.pubsub.CUSTOM_EVENT, 'latest-abstract-data', {
+          identifier: ['foo', 'bar'],
+          property: ['REFEREED']
+        });
+        expect(rSpy.calledOnce).to.eql(false);
         done();
       });
-      it('fully updates state after getting bibcode/query', function (done) {
+
+      it('does not fire if data is not present', function (done) {
         const w = new Widget();
         w.activate(this.pubsub.beehive);
-        const mockQuery = { toJSON: _.constant({ q: ['bibcode:foo'] })};
-        this.pubsub.publish(this.pubsub.DISPLAY_DOCUMENTS, mockQuery);
-        expect(this.state(w).ui.loading).to.eql(true);
-        expect(this.state(w).ui.hasError).to.eql(false);
+        const rSpy = this.pubsub.request;
+        this.pubsub.publish(this.pubsub.CUSTOM_EVENT, 'latest-abstract-data');
+        expect(rSpy.calledOnce).to.eql(false);
+        done();
+      });
+
+      it('does not fire if the current bibcode equals the new one', function (done) {
+        const w = new Widget();
+        w.activate(this.pubsub.beehive);
+        const rSpy = this.pubsub.request;
+        this.pubsub.publish(this.pubsub.CUSTOM_EVENT, 'latest-abstract-data', {
+          bibcode: 'foo',
+          property: ['ASSOCIATED']
+        });
+        expect(rSpy.calledOnce).to.eql(true);
+        this.pubsub.publish(this.pubsub.CUSTOM_EVENT, 'latest-abstract-data', {
+          bibcode: 'foo',
+          property: ['ASSOCIATED']
+        });
+        expect(rSpy.calledTwice).to.eql(false);
         done();
       });
     });
@@ -147,9 +182,8 @@ define([
         const w = new Widget();
         const $el = $(w.view.render().$el).appendTo('#test-area');
         w.activate(this.pubsub.beehive);
-        const mockQuery = { toJSON: _.constant({ q: ['bibcode:foo'] })};
         this.pubsub.request.returns('nothing here'); // the error
-        this.pubsub.publish(this.pubsub.DISPLAY_DOCUMENTS, mockQuery);
+        this.pubsub.publish(this.pubsub.CUSTOM_EVENT, 'latest-abstract-data', { bibcode: 'foo', property: ['ASSOCIATED'] });
         expect($el.find('.fa-spinner').length).to.eql(0);
         expect($el.find('ul').length).to.eql(0);
         expect($el.find('li').length).to.eql(0);
@@ -160,9 +194,8 @@ define([
         const w = new Widget();
         const $el = $(w.view.render().$el).appendTo('#test-area');
         w.activate(this.pubsub.beehive);
-        const mockQuery = { toJSON: _.constant({ q: ['bibcode:foo'] })};
         this.pubsub.request.returns(mockResponse(3)); // 3 docs
-        this.pubsub.publish(this.pubsub.DISPLAY_DOCUMENTS, mockQuery);
+        this.pubsub.publish(this.pubsub.CUSTOM_EVENT, 'latest-abstract-data', { bibcode: 'foo', property: ['ASSOCIATED'] });
         expect($el.find('button').length).to.eql(0);
         done();
       });
@@ -170,9 +203,8 @@ define([
         const w = new Widget();
         const $el = $(w.view.render().$el).appendTo('#test-area');
         w.activate(this.pubsub.beehive);
-        const mockQuery = { toJSON: _.constant({ q: ['bibcode:foo'] })};
         this.pubsub.request.returns(mockResponse(10)); // 10 docs
-        this.pubsub.publish(this.pubsub.DISPLAY_DOCUMENTS, mockQuery);
+        this.pubsub.publish(this.pubsub.CUSTOM_EVENT, 'latest-abstract-data', { bibcode: 'foo', property: ['ASSOCIATED'] });
         expect($el.find('button').length).to.eql(1);
         done();
       });
@@ -180,9 +212,8 @@ define([
         const w = new Widget();
         const $el = $(w.view.render().$el).appendTo('#test-area');
         w.activate(this.pubsub.beehive);
-        const mockQuery = { toJSON: _.constant({ q: ['bibcode:foo'] })};
         this.pubsub.request.returns(mockResponse(10)); // 10 docs
-        this.pubsub.publish(this.pubsub.DISPLAY_DOCUMENTS, mockQuery);
+        this.pubsub.publish(this.pubsub.CUSTOM_EVENT, 'latest-abstract-data', { bibcode: 'foo', property: ['ASSOCIATED'] });
         expect(/\((.*)\)/.exec($el.text())[1]).to.eql('10');
         done();
       });
@@ -190,9 +221,8 @@ define([
         const w = new Widget();
         const $el = $(w.view.render().$el).appendTo('#test-area');
         w.activate(this.pubsub.beehive);
-        const mockQuery = { toJSON: _.constant({ q: ['bibcode:foo'] })};
         this.pubsub.request.returns(mockResponse(10)); // 10 docs
-        this.pubsub.publish(this.pubsub.DISPLAY_DOCUMENTS, mockQuery);
+        this.pubsub.publish(this.pubsub.CUSTOM_EVENT, 'latest-abstract-data', { bibcode: 'foo', property: ['ASSOCIATED'] });
         expect($el.find('ul').length).to.eql(1);
         expect($el.find('li').length).to.eql(4);
         expect($el.find('button').length).to.eql(1);
@@ -202,9 +232,8 @@ define([
         const w = new Widget();
         const $el = $(w.view.render().$el).appendTo('#test-area');
         w.activate(this.pubsub.beehive);
-        const mockQuery = { toJSON: _.constant({ q: ['bibcode:foo'] })};
         this.pubsub.request.returns(mockResponse(10)); // 10 docs
-        this.pubsub.publish(this.pubsub.DISPLAY_DOCUMENTS, mockQuery);
+        this.pubsub.publish(this.pubsub.CUSTOM_EVENT, 'latest-abstract-data', { bibcode: 'foo', property: ['ASSOCIATED'] });
         $('button', $el).click();
         expect($el.find('.fa-spinner').length).to.eql(0);
         expect($el.find('ul').length).to.eql(1);

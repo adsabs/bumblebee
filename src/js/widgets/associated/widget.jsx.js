@@ -46,6 +46,10 @@ define([
 
       // create the view, passing in store
       this.view = new View({ store: this.store });
+
+      if (!window.__BUMBLEBEE_TESTING_MODE__) {
+        this.processAbstractData = _.debounce(_.bind(this.processAbstractData, this), 300);
+      }
     },
     defaultQueryArguments: {},
     activate: function (beehive) {
@@ -59,8 +63,8 @@ define([
         if (event === 'latest-abstract-data') {
           const { bibcode: currentId } = this.store.getState().api;
           let id = data.bibcode || data.identifier;
-          id = typeof id === 'array' ? id[0] : id;
-          if (currentId === id) {
+          id = Array.isArray(id) ? id[0] : id;
+          if (!id || currentId === id) {
             return;
           }
 
@@ -77,14 +81,14 @@ define([
         }
       });
     },
-    processAbstractData: _.debounce(function (data) {
+    processAbstractData: function (data) {
       const { dispatch } = this.store;
       if (data && data.property && data.property.includes('ASSOCIATED')) {
         this.dispatchRequest(new ApiQuery());
       } else {
         dispatch(ui.setError('no associated property'));
       }
-    }, 300),
+    },
     composeRequest: function () {
       const { bibcode } = this.store.getState().api;
 
