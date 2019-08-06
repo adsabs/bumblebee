@@ -3,7 +3,8 @@ define([], function () {
     LINK_CLICKED: '[ui] LINK_CLICKED',
     SET_LOADING: '[ui] SET_LOADING',
     SET_ITEMS: '[ui] SET_ITEMS',
-    SET_HAS_ERROR: '[ui] SET_HAS_ERROR'
+    SET_HAS_ERROR: '[ui] SET_HAS_ERROR',
+    RESET: '[ui] RESET'
   };
 
   const initialState = {
@@ -20,6 +21,8 @@ define([], function () {
         return { ...state, items: action.result };
       case actions.SET_HAS_ERROR:
         return { ...state, hasError: action.result, loading: false };
+      case actions.RESET:
+        return initialState;
       default:
         return state;
     }
@@ -28,12 +31,14 @@ define([], function () {
   // action creators
   const handleLinkClick = result => ({ type: actions.LINK_CLICKED, result });
   const setError = result => ({ type: actions.SET_HAS_ERROR, result });
+  const reset = () => ({ type: actions.RESET });
 
   return {
     reducer,
     initialState,
     actions,
     handleLinkClick,
-    setError
+    setError,
+    reset
   };
 });

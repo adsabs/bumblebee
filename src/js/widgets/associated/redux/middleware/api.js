@@ -4,13 +4,8 @@ define([
   'es6!../modules/ui'
 ], function (_, api, ui) {
   const {
-    QUERY_PROVIDED,
     RECEIVED_RESPONSE,
-    CURRENT_QUERY_UPDATED,
-    FETCH_DATA,
-    FETCHING_DATA,
     SEND_ANALYTICS,
-    SET_BIBCODE,
     FALLBACK_ON_ERROR
   } = api.actions;
 
@@ -19,59 +14,6 @@ define([
     SET_HAS_ERROR,
     SET_ITEMS
   } = ui.actions;
-
-  /**
-   * Fires off request, delegating to the outer context for the actual
-   * fetch
-   */
-  const fetchData = (ctx, { dispatch }) => next => (action) => {
-    next(action);
-    if (action.type === FETCH_DATA) {
-      const query = {
-        q: `identifier:${action.result}`
-      };
-      dispatch({ type: FETCHING_DATA, result: query });
-      dispatch({ type: SET_LOADING, result: true });
-      ctx.dispatchRequest(query);
-    }
-  };
-
-  /**
-   * Extracts the bibcode from the incoming query and makes a new request
-   * for document data.
-   */
-  const displayDocuments = (ctx, { dispatch }) => next => (action) => {
-    next(action);
-    if (action.type === QUERY_PROVIDED) {
-      const query = action.result;
-      dispatch({ type: SET_LOADING, result: true });
-      dispatch({ type: CURRENT_QUERY_UPDATED, result: query });
-
-      // check the query
-      if (_.isPlainObject(query)) {
-        let bibcode = query.q;
-        if (_.isArray(bibcode) && bibcode.length > 0) {
-          if (/^(identifier|bibcode):/.test(bibcode[0])) {
-            bibcode = bibcode[0].split(':')[1];
-
-            // bibcode will be null if initial request in navigator finds nothing
-            if (bibcode === 'null') {
-              return dispatch({ type: SET_HAS_ERROR, result: 'no docs found' });
-            }
-
-            dispatch({ type: SET_BIBCODE, result: bibcode });
-            dispatch({ type: FETCH_DATA, result: bibcode });
-          } else {
-            dispatch({ type: SET_HAS_ERROR, result: 'unable to parse bibcode from query' });
-          }
-        } else {
-          dispatch({ type: SET_HAS_ERROR, result: 'did not receive a bibcode in query' });
-        }
-      } else {
-        dispatch({ type: SET_HAS_ERROR, result: 'query is not a plain object' });
-      }
-    }
-  };
 
   /**
    * Map the array of items to the format we need { url, name, id, etc }
@@ -159,9 +101,7 @@ define([
   const withContext = (...fns) => context => fns.map(fn => _.partial(fn, context));
 
   return withContext(
-    displayDocuments,
     processResponse,
-    fetchData,
     sendAnalytics,
     fallbackOnError
   );
