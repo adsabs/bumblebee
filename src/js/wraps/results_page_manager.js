@@ -2,17 +2,23 @@ define([
   'js/page_managers/controller',
   'js/page_managers/three_column_view',
   'hbs!js/page_managers/templates/results-page-layout',
-  'js/mixins/side_bar_manager'
+  'js/mixins/side_bar_manager',
+  'jquery',
+  'utils'
 ], function (
   PageManagerController,
   PageManagerView,
   PageManagerTemplate,
-  SideBarManagerMixin
+  SideBarManagerMixin,
+  $,
+  utils
 ) {
   var PageManager = PageManagerController.extend({
 
     initialize: function () {
       PageManagerController.prototype.initialize.apply(this, arguments);
+      this.resultsTimer = new utils.TimingEvent('all-results-loaded', 'workflow');
+      this.fullResultsTimer = new utils.TimingEvent('all-results-and-auxillary-loaded', 'workflow');
       this._referrer = null;
     },
 
@@ -27,8 +33,16 @@ define([
     activate: function () {
       PageManagerController.prototype.activate.apply(this, arguments);
 
+      const ps = this.getPubSub();
+      ps.subscribe(ps.START_SEARCH, _.bind(this.onStartSearch, this));
+
       // calls the sideBarManager mixin init handler
       this.init();
+    },
+
+    onStartSearch: function () {
+      this.resultsTimer.start();
+      this.fullResultsTimer.start();
     },
 
     createView: function (options) {
@@ -69,6 +83,32 @@ define([
         }, self);
 
         self.setSidebarState(self._getUpdateFromUserData());
+
+        const defaultWidgets = [
+          'Results', 'AuthorFacet', 'RefereedFacet', 'DatabaseFacet', 'GraphTabs'
+        ];
+
+        try {
+          _.forEach(_.keys(self.widgets), (k) => {
+            const w = self.widgets[k];
+            const handler = () => {
+              if (k === 'Results') {
+                self.resultsTimer.stop();
+              }
+              _.remove(defaultWidgets, t => t === k);
+              if (defaultWidgets.length === 0) {
+                self.fullResultsTimer.stop();
+              }
+            }
+
+            if (w.widgets && w.widgets.length > 0) {
+              _.forEach(w.widgets, (sub) => sub.onIdle = handler);
+            }
+            w.onIdle = handler;
+          });
+        } catch (e) {
+          // do nothing
+        }
       });
     },
 

@@ -304,6 +304,7 @@ function (
       // there was an error
       if (feedback && feedback.error) {
         this.showError();
+        this.updateState(this.STATES.ERRORED);
       }
     },
 
@@ -375,9 +376,17 @@ function (
         ps.publish(ps.CUSTOM_EVENT, 'update-document-title', this._docs[bibcode].title);
         ps.publish(ps.CUSTOM_EVENT, 'latest-abstract-data', this._docs[bibcode]);
       }
+      this.updateState(this.STATES.IDLE);
+    },
+
+    onAbstractPage: function () {
+      // hacky way of confirming the page we're on
+      return /\/abstract$/.test(Backbone.history.getFragment());
     },
 
     onDisplayDocuments: function (apiQuery) {
+      this.updateState(this.STATES.LOADING);
+
       // check to see if a query is already in progress (the way bbb is set up, it will be)
       // if so, auto fill with docs initially requested by results widget
       try {
@@ -398,7 +407,9 @@ function (
       }
 
       if (this._docs[bibcode]) { // we have already loaded it
+        // this.onAbstractPage() && this.updateState(this.STATES.LOADING);
         this.displayBibcode(bibcode);
+        // this.onAbstractPage() && this.updateState(this.STATES.IDLE);
       } else {
         if (apiQuery.has('__show')) return; // cycle protection
         q = apiQuery.clone();

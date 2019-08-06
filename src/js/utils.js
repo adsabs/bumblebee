@@ -1,7 +1,8 @@
 define([
   'jquery',
-  'underscore'
-], function ($, _) {
+  'underscore',
+  'analytics'
+], function ($, _, analytics) {
 
   const qs = function (key, str, separator) {
     const k = key.replace(/[*+?^$.\[\]{}()|\\\/]/g, "\\$&"); // escape RegEx meta chars
@@ -61,10 +62,65 @@ define([
     return $dd.promise();
   };
 
+  class TimingEvent {
+    constructor(timingVar = 'Timers', timingCategory = 'Generic Timer', timingLabel) {
+      this.timingCategory = timingCategory;
+      this.timingVar = timingVar;
+      this.timingLabel = timingLabel;
+      this.time = null;
+    }
+
+    start() {
+      this.time = +new Date();
+      this._emitted = false;
+    }
+
+    stop() {
+
+      // do not emit an event if we haven't started timing or already emitted
+      if (this._emitted) {
+        return;
+      }
+      const time = +new Date() - this.time;
+      analytics('send', {
+        hitType: 'timing',
+        timingCategory: this.timingCategory,
+        timingVar: this.timingVar,
+        timingLabel: this.timingLabel,
+        timingValue: time
+      });
+      this._emitted = true;
+    }
+  };
+
+  const waitForSelector = (...args) => {
+    const $dd = $.Deferred();
+    const timeout = 3100; // 31 seconds
+    let ref = null;
+    (function check (n) {
+      const $el = $(...args);
+      if ($el.length) {
+        return $dd.resolve($el);
+      } else if (n >= timeout) {
+        return $dd.reject('timeout');
+      }
+      ref = setTimeout(() => {
+        window.requestAnimationFrame(() => check(++n));
+      }, 100);
+    })(0);
+    $dd.promise.destroy = () => {
+      window.clearTimeout(ref);
+      $dd.reject();
+    }
+    return $dd.promise();
+  }
+
   return {
     qs: qs,
     updateHash: updateHash,
     difference: difference,
-    getBrowserInfo: getBrowserInfo
+    getBrowserInfo: getBrowserInfo,
+    TimingEvent: TimingEvent,
+    waitForSelector: waitForSelector
   };
 });

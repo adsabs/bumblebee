@@ -47,6 +47,7 @@ function (
         self.isDone = false;
         self.setCurrentQuery.call(self, apiQuery);
         self.dispatchRequest.call(self, apiQuery);
+        self.updateState(self.STATES.LOADING);
       });
       pubsub.subscribe(pubsub.DELIVERING_RESPONSE, this.processResponse);
       this.activateWidget();
@@ -118,8 +119,9 @@ function (
       this.isActive = false;
     },
 
-    onFeedback: function (apiFeedback) {
+    onFeedback: function () {
       this.model.set('error', true);
+      this.updateState(this.STATES.ERRORED);
     }
   });
 

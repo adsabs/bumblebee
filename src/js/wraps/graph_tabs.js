@@ -36,6 +36,7 @@ function (
 
         if (apiResponse.get('response.numFound') < 2) {
           this.model.set({ graphData: [] });
+          this.updateState(this.STATES.IDLE);
           return;
         }
 
@@ -102,9 +103,11 @@ function (
 
         if (finalData.length < 2) {
           this.model.set({ graphData: [] });
+          this.updateState(this.STATES.IDLE);
           return;
         }
         this.model.set({ graphData: finalData });
+        this.updateState(this.STATES.IDLE);
       }
     });
 

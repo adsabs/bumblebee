@@ -64,6 +64,21 @@ function (
       }
     },
 
+    _cleanRoute: function (route) {
+      const r = route.match(/[#\/]?([^\/]*)\//);
+      if (r.length > 1) {
+        return '/' + r[1];
+      }
+      return route;
+    },
+
+    _setPageAndEmitEvent: _.debounce(function (route, pageName) {
+      analytics('set', 'page', this._cleanRoute(route));
+      analytics('send', 'pageview', {
+        'dimension1': pageName
+      });
+    }, 300),
+
     /**
        * Responds to PubSubEvents.NAVIGATE signal
        */
@@ -76,10 +91,6 @@ function (
         return defer.promise();
       }
 
-      analytics('send', 'pageview', {
-        page: ev
-      });
-
       var transition = this.catalog.get(ev);
       if (!transition) {
         this.handleMissingTransition(arguments);
@@ -87,7 +98,9 @@ function (
         return defer.promise();
       }
 
-      if (!transition.execute) { // do nothing
+      if (!transition.execute) {
+
+        // do nothing
         return defer.resolve().promise();
       }
 
@@ -98,6 +111,7 @@ function (
 
         if (transition.route === '' || transition.route) {
           var route = transition.route === '' ? '/' : transition.route;
+          this._setPageAndEmitEvent(route, ev);
           this.router.navigate(route, { trigger: false, replace: replace });
         }
 

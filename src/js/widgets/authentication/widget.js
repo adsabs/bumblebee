@@ -11,6 +11,7 @@ define([
   'hbs!js/widgets/authentication/templates/reset-password-1',
   'hbs!js/widgets/authentication/templates/reset-password-2',
   'js/components/user',
+  'analytics',
   'backbone-validation',
   'backbone.stickit'
 
@@ -25,7 +26,8 @@ define([
   ContainerTemplate,
   ResetPassword1Template,
   ResetPassword2Template,
-  User
+  User,
+  analytics
 ) {
   /*
   *
@@ -488,6 +490,8 @@ define([
       this.stateModel.set('subView', subView);
     },
 
+    fireAnalytics: _.partial(analytics, 'send', 'event', 'user'),
+
     handleUserAnnouncement: function (name, msg) {
       // reset all views and view models
       this.resetAll();
@@ -495,26 +499,43 @@ define([
       switch (name) {
         case User.prototype.USER_SIGNED_IN:
           // will immediately redirect
+          this.fireAnalytics('login', 'status', 1);
           break;
         case 'login_fail':
           // will also see a relevant alert over the widget
           this.view.showLoginForm(msg);
+          this.fireAnalytics('login', 'status', 0, {
+            message: msg
+          });
           break;
         case 'register_success':
           this.view.showRegisterSuccessView();
+          this.fireAnalytics('login', 'status', 0);
           break;
         case 'register_fail':
           // will also see a relevant alert over the widget
           this.view.showRegisterForm(msg);
+          this.fireAnalytics('register', 'status', 0, {
+            message: msg
+          });
           break;
         case 'reset_password_1_success':
           this.view.showResetPasswordSuccessView(msg);
+          this.fireAnalytics('reset-password', 'status', 1, {
+            message: msg
+          });
           break;
         case 'reset_password_1_fail':
           this.view.showResetPasswordForm1(msg);
+          this.fireAnalytics('reset-password', 'status', 0, {
+            message: msg
+          });
           break;
         case 'reset_password_2_fail':
           this.view.showResetPasswordForm2(msg);
+          this.fireAnalytics('reset-password', 'status', 0, {
+            message: msg
+          });
           break;
       }
     },

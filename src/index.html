@@ -148,7 +148,7 @@
               msg += '<button role="button" onclick="location.reload()" class="btn btn-default">Reload</button>';
               window.__setAppLoadingProgress(progressValue, msg);
             } else {
-              setTimeout(check, 10000);
+              window.APP_LOADING_TIMER = setTimeout(check, 10000);
             }
           }, 10000);
         })();

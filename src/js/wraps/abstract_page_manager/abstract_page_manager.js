@@ -3,18 +3,25 @@ define([
   'js/page_managers/three_column_view',
   'hbs!js/wraps/abstract_page_manager/abstract-page-layout',
   'hbs!js/wraps/abstract_page_manager/abstract-nav',
-  'analytics'
+  'utils',
+  'analytics',
 ], function (
   PageManagerController,
   PageManagerView,
   PageManagerTemplate,
-  TOCTemplate
+  TOCTemplate,
+  utils
 ) {
   var PageManager = PageManagerController.extend({
 
     persistentWidgets: ['SearchWidget', 'ShowAbstract', 'ShowCitations', 'ShowToc', 'ShowReferences', 'tocWidget'],
 
     TOCTemplate: TOCTemplate,
+
+    initialize: function () {
+      PageManagerController.prototype.initialize.apply(this, arguments);
+      this.abstractTimer = new utils.TimingEvent('abstract-loaded', 'workflow');
+    },
 
     createView: function (options) {
       options = options || {};
@@ -27,14 +34,37 @@ define([
       this.debug = beehive.getDebug(); // XXX:rca - think of st better
       this.view = this.createView({ debug: this.debug, widgets: this.widgets });
       var pubsub = this.getPubSub();
+      this.onDetailsPage = false;
       pubsub.subscribe(pubsub.DISPLAY_DOCUMENTS, _.bind(this.onDisplayDocuments, this));
+      pubsub.subscribe(pubsub.NAVIGATE, (name, data) => {
+        this.onDetailsPage = data && data.href && data.href.indexOf('abs/') > -1;
+      });
     },
 
     assemble: function (app) {
       var self = this;
+
       return PageManagerController.prototype.assemble.apply(this, arguments).done(function() {
         self.addQuery(self.getCurrentQuery());
-      })
+
+        try {
+          _.forEach(_.keys(self.widgets), (k) => {
+            const w = self.widgets[k];
+            const handler = _.debounce(() => {
+              if (k === 'ShowAbstract' && $(self.widgetDoms[k]).text() !== '') {
+                self.abstractTimer.stop();
+              }
+            }, 300);
+
+            if (w.widgets && w.widgets.length > 0) {
+              _.forEach(w.widgets, (sub) => sub.onIdle = handler);
+            }
+            w.onIdle = handler;
+          });
+        } catch (e) {
+          // do nothing
+        }
+      });
     },
 
     addQuery: function (apiQuery) {
@@ -64,6 +94,11 @@ define([
         return;
       }
       this.widgets.tocWidget.model.set('bibcode', bibcode);
+
+      // do not allow the timer to start again if we haven't left the abstract page
+      if (!this.onDetailsPage) {
+        this.abstractTimer.start();
+      }
     },
 
     navConfig: {

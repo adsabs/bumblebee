@@ -51,8 +51,6 @@ define(['discovery.config', 'module'], function (config, module) {
       updateProgress(50, 'Modules Loaded');
       var timeLoaded = Date.now();
 
-      analytics('send', 'event', 'timer', 'modules-loaded', timeLoaded - timeStart);
-
       // this will activate all loaded modules
       app.activate();
 
@@ -106,8 +104,6 @@ define(['discovery.config', 'module'], function (config, module) {
           pubsub.subscribe(pubsub.getCurrentPubSubKey(), pubsub.NAVIGATE, updateExternalLinkBehavior);
           updateExternalLinkBehavior();
 
-          analytics('send', 'event', 'timer', 'app-booted', Date.now() - timeLoaded);
-
           // some global event handlers, not sure if right place
           $('body').on('click', 'button.toggle-menu', function (e) {
             var $button = $(e.target),
@@ -142,6 +138,9 @@ define(['discovery.config', 'module'], function (config, module) {
               console.log('Application Started: ' + time + 'ms');
             }
           }
+
+          // clear the app loading timer
+          window.clearTimeout(window.APP_LOADING_TIMER);
         });
       });
     };

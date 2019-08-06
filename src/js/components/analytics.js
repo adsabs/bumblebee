@@ -69,11 +69,18 @@ define([
   };
 
   var ga = window[window.GoogleAnalyticsObject];
-  window[window.GoogleAnalyticsObject] = function () {
+  window[window.GoogleAnalyticsObject] = function (...args) {
     try {
+      const $dd = $.Deferred();
       ga.q = ga.q || [];
-      ga.q.push([arguments]);
-      ga.apply(ga, arguments);
+      ga.q.push(args);
+      ga.apply(ga, [...args, {
+        hitCallback: () => {
+          $dd.resolve();
+        }
+      }]);
+      setTimeout(() => $dd.resolve(), 1000);
+      return $dd.promise();
     } catch (e) {
       console.info('google analytics event not tracked');
     }
@@ -81,7 +88,7 @@ define([
 
   var Analytics = function () {
     adsLogger.apply(null, _.rest(arguments, 3));
-    window[window.GoogleAnalyticsObject].apply(this, arguments);
+    return window[window.GoogleAnalyticsObject].apply(this, arguments);
   };
 
   return Analytics;
