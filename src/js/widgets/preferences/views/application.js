@@ -11,7 +11,7 @@ define([
       initialValue: 4
     },
     externalLinks: {
-      initialOptions: [ 'Auto', 'Open new tab', 'Open in current tab' ],
+      initialOptions: ['Auto', 'Open new tab', 'Open in current tab'],
       initialValue: 'Auto'
     },
     exportFormat: {
@@ -19,10 +19,18 @@ define([
       initialValue: 'BibTeX'
     },
     database: {
-      initialValue: [
-        { name: 'Physics', value: false },
-        { name: 'Astronomy', value: false },
-        { name: 'General', value: false }
+      initialValue: [{
+          name: 'Physics',
+          value: false
+        },
+        {
+          name: 'Astronomy',
+          value: false
+        },
+        {
+          name: 'General',
+          value: false
+        }
       ]
     },
     hideSidebars: {
@@ -40,6 +48,17 @@ define([
     },
     bibtexKeyFormat: {
       initialValue: ''
+    },
+    bibtexABSMaxAuthors: {
+      initialValue: 'all',
+      initialOptions: [
+        ..._.range(1, 10, 1),
+        ..._.range(10, 110, 10, true),
+        'all'
+      ]
+    },
+    bibtexABSKeyFormat: {
+      initialValue: ''
     }
   };
 
@@ -51,7 +70,9 @@ define([
     'hideSideBarsSelected',
     'addCustomFormatOptions',
     'bibtexMaxAuthorsSelected',
-    'bibtexKeyFormatSelected'
+    'bibtexKeyFormatSelected',
+    'bibtexABSMaxAuthorsSelected',
+    'bibtexABSKeyFormatSelected'
   ];
 
   var ApplicationView = Marionette.ItemView.extend({
@@ -73,6 +94,8 @@ define([
         DEFAULTS.addCustomFormatOptions;
       var bibtexKeyFormat = this.model.get('bibtexKeyFormat') || DEFAULTS.bibtexKeyFormat.initialValue;
       var bibtexMaxAuthors = this.model.get('bibtexMaxAuthors') || DEFAULTS.bibtexMaxAuthors.initialValue;
+      var bibtexABSKeyFormat = this.model.get('bibtexABSKeyFormat') || DEFAULTS.bibtexABSKeyFormat.initialValue;
+      var bibtexABSMaxAuthors = this.model.get('bibtexABSMaxAuthors') || DEFAULTS.bibtexABSMaxAuthors.initialValue;
 
       // must clone the props that will get mutated
       this.model.set({
@@ -94,7 +117,12 @@ define([
         bibtexKeyFormatSelected: _.clone(bibtexKeyFormat),
         bibtexMaxAuthorsDefault: DEFAULTS.bibtexMaxAuthors.initialValue,
         bibtexMaxAuthorsOptions: DEFAULTS.bibtexMaxAuthors.initialOptions,
-        bibtexMaxAuthorsSelected: this._convertToNumber(_.clone(bibtexMaxAuthors))
+        bibtexMaxAuthorsSelected: this._convertToNumber(_.clone(bibtexMaxAuthors)),
+        bibtexABSKeyFormatDefault: DEFAULTS.bibtexABSKeyFormat.initialValue,
+        bibtexABSKeyFormatSelected: _.clone(bibtexABSKeyFormat),
+        bibtexABSMaxAuthorsDefault: DEFAULTS.bibtexABSMaxAuthors.initialValue,
+        bibtexABSMaxAuthorsOptions: DEFAULTS.bibtexABSMaxAuthors.initialOptions,
+        bibtexABSMaxAuthorsSelected: this._convertToNumber(_.clone(bibtexABSMaxAuthors))
       });
       this.model.trigger('change');
 
@@ -120,7 +148,8 @@ define([
       // custom format deleting events
       'click #addCustomFormatDelete': 'onDeleteCustomFormat',
 
-      'change #bibtexKeyFormat': 'onChangeBibtextKeyFormat',
+      'change #bibtexKeyFormat': 'onChangeBibtexKeyFormat',
+      'change #bibtexABSKeyFormat': 'onChangeBibtexABSKeyFormat',
       'change select': 'syncModel'
     },
 
@@ -135,7 +164,9 @@ define([
       var idx = $('.database-select', this.el).index(e.currentTarget);
 
       // grab the object at [idx] and make our change
-      var newVal = _.assign({}, data[idx], { value: !data[idx].value });
+      var newVal = _.assign({}, data[idx], {
+        value: !data[idx].value
+      });
 
       // place our new value in the array
       var newData = data.slice(0, idx).concat(newVal).concat(data.slice(idx + 1));
@@ -191,7 +222,9 @@ define([
           return _.pick(i, ['id', 'name', 'code']);
         }),
         bibtexMaxAuthors: this._convertToString(this.model.get('bibtexMaxAuthorsSelected') === 'all' ? 0 : this.model.get('bibtexMaxAuthorsSelected')),
-        bibtexKeyFormat: this.model.get('bibtexKeyFormatSelected')
+        bibtexKeyFormat: this.model.get('bibtexKeyFormatSelected'),
+        bibtexABSMaxAuthors: this._convertToString(this.model.get('bibtexABSMaxAuthorsSelected') === 'all' ? 0 : this.model.get('bibtexABSMaxAuthorsSelected')),
+        bibtexABSKeyFormat: this.model.get('bibtexABSKeyFormatSelected')
       });
       return false;
     },
@@ -201,7 +234,11 @@ define([
       return false;
     },
 
-    onChangeBibtextKeyFormat: function () {
+    onChangeBibtexKeyFormat: function () {
+      this.onSubmit();
+    },
+
+    onChangeBibtexABSKeyFormat: function () {
       this.onSubmit();
     },
 
@@ -214,7 +251,9 @@ define([
         defaultDatabase: undefined,
         defaultExportFormat: undefined,
         defaultHideSidebars: undefined
-      }, { unset: true });
+      }, {
+        unset: true
+      });
 
       this.onCancel.apply(this, arguments);
     },
@@ -226,7 +265,9 @@ define([
         loading: false
       });
       setTimeout(() => {
-        model.set('updateFailed', false, { silent: true });
+        model.set('updateFailed', false, {
+          silent: true
+        });
         this.hideMessage();
       }, 5000);
     },
@@ -238,7 +279,9 @@ define([
         loading: false
       });
       setTimeout(() => {
-        model.set('updateSucceeded', false, { silent: true });
+        model.set('updateSucceeded', false, {
+          silent: true
+        });
         this.hideMessage();
       }, 3000);
     },
@@ -276,13 +319,17 @@ define([
     updateCustomFormatEntry: function (_id, data, silent) {
       var items = _.clone(this.model.get('addCustomFormatOptions'));
       var id = _id + '';
-      var idx = _.findIndex(items, { id: id });
+      var idx = _.findIndex(items, {
+        id: id
+      });
       if (_.isPlainObject(data)) {
         items[idx] = _.assign({}, items[idx], data);
       }
       if (!silent) {
         this.model.set('addCustomFormatOptions', items);
-        this.model.trigger('change', { addCustomFormatOptions: items });
+        this.model.trigger('change', {
+          addCustomFormatOptions: items
+        });
       }
       return items;
     },
@@ -352,7 +399,9 @@ define([
       var model = this.model;
       var id = this.$(e.currentTarget).data('id') + '';
       var items = _.clone(model.get('addCustomFormatOptions'));
-      var newList = _.reject(items, { id: id });
+      var newList = _.reject(items, {
+        id: id
+      });
       this.$(e.currentTarget).closest('li').fadeOut(400, function () {
         model.set('addCustomFormatOptions', newList);
       });
@@ -363,7 +412,9 @@ define([
       var items = _.clone(this.model.get('addCustomFormatOptions'));
       var index = this.$('#addCustomFormat .list-group-item').index(ui.item);
       var id = this.$(ui.item).data('id');
-      var fIndex = _.findIndex(items, { id: id });
+      var fIndex = _.findIndex(items, {
+        id: id
+      });
 
       // swap
       if (index !== fIndex) {
@@ -374,7 +425,9 @@ define([
     },
 
     isEditing: function () {
-      return _.any(this.model.get('addCustomFormatOptions'), { editing: true });
+      return _.any(this.model.get('addCustomFormatOptions'), {
+        editing: true
+      });
     },
 
     onRender: function () {

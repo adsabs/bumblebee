@@ -79,6 +79,8 @@ define([
       this.customFormats = [];
       this.bibtexKeyFormat = null;
       this.bibtexMaxAuthors = 0;
+      this.bibtexABSKeyFormat = null;
+      this.bibtexABSMaxAuthors = 0;
     },
 
     /**
@@ -127,7 +129,9 @@ define([
         'defaultExportFormat',
         'customFormats',
         'bibtexKeyFormat',
-        'bibtexMaxAuthors'
+        'bibtexMaxAuthors',
+        'bibtexABSKeyFormat',
+        'bibtexABSMaxAuthors'
       ], (acc, prop) => {
         const value = _.has(userData, prop) ? userData[prop] : this[prop];
         if (prop === 'defaultExportFormat') {
@@ -155,10 +159,13 @@ define([
       const {
         fetchUsingQuery, fetchUsingIds, findAndSetFormat, hardReset,
         setCount, setQuery, setTotalRecs, takeSnapshot, setOrigin, setCustomFormats,
-        setBibtexKeyFormat, setBibtexMaxAuthors
+        setBibtexKeyFormat, setBibtexMaxAuthors, setBibtexABSKeyFormat, setBibtexABSMaxAuthors
       } = actions;
 
-      const { customFormats, defaultFormat, bibtexMaxAuthors, bibtexKeyFormat } = this.getFieldsFromUserData();
+      const {
+        customFormats, defaultFormat, bibtexMaxAuthors, bibtexKeyFormat,
+        bibtexABSMaxAuthors, bibtexABSKeyFormat
+      } = this.getFieldsFromUserData();
 
       const fmt = format === 'default' || format === 'other' ? defaultFormat : format;
 
@@ -167,7 +174,9 @@ define([
 
       dispatch(setCustomFormats(customFormats));
       dispatch(setBibtexMaxAuthors(bibtexMaxAuthors));
+      dispatch(setBibtexABSMaxAuthors(bibtexABSMaxAuthors));
       dispatch(setBibtexKeyFormat(bibtexKeyFormat));
+      dispatch(setBibtexABSKeyFormat(bibtexABSKeyFormat));
 
       // set the origin of the request (abstract/results/etc.)
       dispatch(setOrigin(this.componentParams && this.componentParams.origin));
@@ -244,10 +253,13 @@ define([
       const {
         receiveIds, findAndSetFormat, fetchUsingIds, hardReset, setSort,
         setCount, setTotalRecs, takeSnapshot, setOrigin, setCustomFormats,
-        setBibtexKeyFormat, setBibtexMaxAuthors
+        setBibtexKeyFormat, setBibtexMaxAuthors, setBibtexABSKeyFormat, setBibtexABSMaxAuthors
       } = actions;
 
-      const { customFormats, defaultExportFormat, bibtexMaxAuthors, bibtexKeyFormat } = this.getFieldsFromUserData();
+      const {
+        customFormats, defaultExportFormat, bibtexMaxAuthors, bibtexKeyFormat,
+        bibtexABSMaxAuthors, bibtexABSKeyFormat
+      } = this.getFieldsFromUserData();
 
       const format = data.format === 'default' || data.format === 'other' ? defaultExportFormat : data.format;
 
@@ -256,7 +268,9 @@ define([
       dispatch(hardReset());
       dispatch(setCustomFormats(customFormats));
       dispatch(setBibtexMaxAuthors(bibtexMaxAuthors));
+      dispatch(setBibtexABSMaxAuthors(bibtexABSMaxAuthors));
       dispatch(setBibtexKeyFormat(bibtexKeyFormat));
+      dispatch(setBibtexABSKeyFormat(bibtexABSKeyFormat));
       dispatch(setSort(sort));
       dispatch(setOrigin(this.componentParams && this.componentParams.origin));
       dispatch(receiveIds(recs));
