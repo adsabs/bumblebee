@@ -40,7 +40,9 @@ define([
     SET_ORIGIN: 'SET_ORIGIN',
     SET_CUSTOM_FORMATS: 'SET_CUSTOM_FORMATS',
     SET_BIBTEX_KEY_FORMAT: 'SET_BIBTEX_KEY_FORMAT',
-    SET_BIBTEX_MAX_AUTHORS: 'SET_BIBTEX_MAX_AUTHORS'
+    SET_BIBTEX_MAX_AUTHORS: 'SET_BIBTEX_MAX_AUTHORS',
+    SET_BIBTEX_ABS_KEY_FORMAT: 'SET_BIBTEX_ABS_KEY_FORMAT',
+    SET_BIBTEX_ABS_MAX_AUTHORS: 'SET_BIBTEX_ABS_MAX_AUTHORS'
   };
 
   actions.setTab = tab => ({ type: actions.SET_TAB, tab });
@@ -70,6 +72,8 @@ define([
   actions.setCustomFormats = customFormats => ({ type: actions.SET_CUSTOM_FORMATS, customFormats });
   actions.setBibtexMaxAuthors = maxAuthors => ({ type: actions.SET_BIBTEX_MAX_AUTHORS, maxAuthors });
   actions.setBibtexKeyFormat = keyFormat => ({ type: actions.SET_BIBTEX_KEY_FORMAT, keyFormat });
+  actions.setBibtexABSMaxAuthors = maxAuthors => ({ type: actions.SET_BIBTEX_ABS_MAX_AUTHORS, maxAuthors });
+  actions.setBibtexABSKeyFormat = keyFormat => ({ type: actions.SET_BIBTEX_ABS_KEY_FORMAT, keyFormat });
 
   /**
    * On request failure, we want to display a message to the user here
@@ -183,7 +187,7 @@ define([
       return $.Deferred().resolve().promise().then(function () {
         dispatch(receiveExport(''));
       });
-    } else if (format.value === 'bibtex' || format.value === 'bibtexabs') {
+    } else if (format.value === 'bibtex') {
 
       if (exports.bibtexKeyFormat) {
         q.set('keyformat', exports.bibtexKeyFormat);
@@ -191,6 +195,14 @@ define([
 
       // set maxauthor, convert it to number first
       q.set('maxauthor', +exports.bibtexMaxAuthors);
+
+    } else if (format.value === 'bibtexabs') {
+      if (exports.bibtexABSKeyFormat) {
+        q.set('keyformat', exports.bibtexABSKeyFormat);
+      }
+
+      // set maxauthor, convert it to number first
+      q.set('maxauthor', +exports.bibtexABSMaxAuthors);
     }
 
     const req = composeRequest(q);

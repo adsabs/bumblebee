@@ -41,7 +41,7 @@ define([
             disabled={isFetching || _.isEmpty(output)}
             onClick={onDownloadFile}
           >
-            <i className="fa fa-download fa-fw"/>
+            <i className="fa fa-download fa-fw" aria-hidden="true"/>
             Download to File
           </button>
           <ClipboardBtn
