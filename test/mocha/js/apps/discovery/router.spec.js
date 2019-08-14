@@ -5,19 +5,19 @@ define([
   'js/services/api',
   'js/services/pubsub',
   'js/components/session'
-], function(
-    _,
-    Router,
-    Beehive,
-    Api,
-    PubSub,
-    Session
-  ){
+], function (
+  _,
+  Router,
+  Beehive,
+  Api,
+  PubSub,
+  Session
+) {
 
 
-  describe("Router", function(){
+  describe("Router", function () {
 
-    it("all endpoints", function(){
+    it("all endpoints", function () {
 
       var r = new Router();
 
@@ -59,14 +59,21 @@ define([
       expect(fakePubSub.publish.lastCall.args[2]).to.eql("execute-query");
       expect(fakePubSub.publish.lastCall.args[3]).to.eql('queryid');
 
-      r.view('bibcooode', 'metrics')
+      r.view('bibcooode/metrics')
       expect(fakePubSub.publish.lastCall.args[1]).to.eql(fakePubSub.NAVIGATE);
       expect(fakePubSub.publish.lastCall.args[2]).to.eql("ShowMetrics");
       expect(fakePubSub.publish.lastCall.args[3]).to.eql({
         href: "#abs/bibcooode/metrics",
         bibcode: "bibcooode",
-      })
+      });
 
+      r.view('test/test/test/test/test/metrics')
+      expect(fakePubSub.publish.lastCall.args[1]).to.eql(fakePubSub.NAVIGATE);
+      expect(fakePubSub.publish.lastCall.args[2]).to.eql("ShowMetrics");
+      expect(fakePubSub.publish.lastCall.args[3]).to.eql({
+        href: "#abs/test%2Ftest%2Ftest%2Ftest%2Ftest/metrics",
+        bibcode: "test/test/test/test/test",
+      });
 
       r.routeToVerifyPage('subview', 'token')
       expect(fakePubSub.publish.lastCall.args[1]).to.eql(fakePubSub.NAVIGATE);
