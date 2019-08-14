@@ -1,4 +1,3 @@
-
 define([
   'underscore',
   'jquery',
@@ -9,7 +8,7 @@ define([
 
   const mockResponse = function (n) {
     return {
-      links:{
+      links: {
         records: _.map(_.range(n || 0), function (i) {
           const bib = 'foobar' + i;
           return {
@@ -24,9 +23,11 @@ define([
 
   const init = function () {
     this.sb = sinon.sandbox.create();
-    this.pubsub = new (MinPubSub.extend({
+    this.pubsub = new(MinPubSub.extend({
       request: this.sb.stub()
-    }))({ verbose: false });
+    }))({
+      verbose: false
+    });
     this.state = function (w) {
       return w.store.getState();
     };
@@ -39,7 +40,7 @@ define([
     $('test-area').empty();
   };
 
-  describe.only('Associated Widget (associated_widget.spec.js)', function () {
+  describe('Associated Widget (associated_widget.spec.js)', function () {
     describe('Widget Essentials', function () {
       beforeEach(init);
       afterEach(teardown);
@@ -156,7 +157,11 @@ define([
         const w = new Widget();
         const $el = $(w.view.render().$el).appendTo('#test-area');
         w.activate(this.pubsub.beehive);
-        const mockQuery = { toJSON: _.constant({ q: ['bibcode:foo'] })};
+        const mockQuery = {
+          toJSON: _.constant({
+            q: ['bibcode:foo']
+          })
+        };
         this.pubsub.publish(this.pubsub.DISPLAY_DOCUMENTS, mockQuery);
         expect(this.state(w).ui.loading).to.eql(true);
         expect($el.find('.fa-spinner').length).to.eql(0);
@@ -169,7 +174,11 @@ define([
         const w = new Widget();
         const $el = $(w.view.render().$el).appendTo('#test-area');
         w.activate(this.pubsub.beehive);
-        const mockQuery = { toJSON: _.constant({ q: ['bibcode:foo'] })};
+        const mockQuery = {
+          toJSON: _.constant({
+            q: ['bibcode:foo']
+          })
+        };
         this.pubsub.request.returns(mockResponse(0)); // no docs
         this.pubsub.publish(this.pubsub.DISPLAY_DOCUMENTS, mockQuery);
         expect($el.find('.fa-spinner').length).to.eql(0);
@@ -183,7 +192,10 @@ define([
         const $el = $(w.view.render().$el).appendTo('#test-area');
         w.activate(this.pubsub.beehive);
         this.pubsub.request.returns('nothing here'); // the error
-        this.pubsub.publish(this.pubsub.CUSTOM_EVENT, 'latest-abstract-data', { bibcode: 'foo', property: ['ASSOCIATED'] });
+        this.pubsub.publish(this.pubsub.CUSTOM_EVENT, 'latest-abstract-data', {
+          bibcode: 'foo',
+          property: ['ASSOCIATED']
+        });
         expect($el.find('.fa-spinner').length).to.eql(0);
         expect($el.find('ul').length).to.eql(0);
         expect($el.find('li').length).to.eql(0);
@@ -195,7 +207,10 @@ define([
         const $el = $(w.view.render().$el).appendTo('#test-area');
         w.activate(this.pubsub.beehive);
         this.pubsub.request.returns(mockResponse(3)); // 3 docs
-        this.pubsub.publish(this.pubsub.CUSTOM_EVENT, 'latest-abstract-data', { bibcode: 'foo', property: ['ASSOCIATED'] });
+        this.pubsub.publish(this.pubsub.CUSTOM_EVENT, 'latest-abstract-data', {
+          bibcode: 'foo',
+          property: ['ASSOCIATED']
+        });
         expect($el.find('button').length).to.eql(0);
         done();
       });
@@ -204,7 +219,10 @@ define([
         const $el = $(w.view.render().$el).appendTo('#test-area');
         w.activate(this.pubsub.beehive);
         this.pubsub.request.returns(mockResponse(10)); // 10 docs
-        this.pubsub.publish(this.pubsub.CUSTOM_EVENT, 'latest-abstract-data', { bibcode: 'foo', property: ['ASSOCIATED'] });
+        this.pubsub.publish(this.pubsub.CUSTOM_EVENT, 'latest-abstract-data', {
+          bibcode: 'foo',
+          property: ['ASSOCIATED']
+        });
         expect($el.find('button').length).to.eql(1);
         done();
       });
@@ -213,7 +231,10 @@ define([
         const $el = $(w.view.render().$el).appendTo('#test-area');
         w.activate(this.pubsub.beehive);
         this.pubsub.request.returns(mockResponse(10)); // 10 docs
-        this.pubsub.publish(this.pubsub.CUSTOM_EVENT, 'latest-abstract-data', { bibcode: 'foo', property: ['ASSOCIATED'] });
+        this.pubsub.publish(this.pubsub.CUSTOM_EVENT, 'latest-abstract-data', {
+          bibcode: 'foo',
+          property: ['ASSOCIATED']
+        });
         expect(/\((.*)\)/.exec($el.text())[1]).to.eql('10');
         done();
       });
@@ -222,7 +243,10 @@ define([
         const $el = $(w.view.render().$el).appendTo('#test-area');
         w.activate(this.pubsub.beehive);
         this.pubsub.request.returns(mockResponse(10)); // 10 docs
-        this.pubsub.publish(this.pubsub.CUSTOM_EVENT, 'latest-abstract-data', { bibcode: 'foo', property: ['ASSOCIATED'] });
+        this.pubsub.publish(this.pubsub.CUSTOM_EVENT, 'latest-abstract-data', {
+          bibcode: 'foo',
+          property: ['ASSOCIATED']
+        });
         expect($el.find('ul').length).to.eql(1);
         expect($el.find('li').length).to.eql(4);
         expect($el.find('button').length).to.eql(1);
@@ -233,7 +257,10 @@ define([
         const $el = $(w.view.render().$el).appendTo('#test-area');
         w.activate(this.pubsub.beehive);
         this.pubsub.request.returns(mockResponse(10)); // 10 docs
-        this.pubsub.publish(this.pubsub.CUSTOM_EVENT, 'latest-abstract-data', { bibcode: 'foo', property: ['ASSOCIATED'] });
+        this.pubsub.publish(this.pubsub.CUSTOM_EVENT, 'latest-abstract-data', {
+          bibcode: 'foo',
+          property: ['ASSOCIATED']
+        });
         $('button', $el).click();
         expect($el.find('.fa-spinner').length).to.eql(0);
         expect($el.find('ul').length).to.eql(1);
