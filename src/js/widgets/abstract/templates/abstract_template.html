@@ -145,18 +145,7 @@
     <div id="pubnote">
         <dt>E-Print Comments:</dt>
         <dd>
-            <ul class="list-unstyled">
-                {{#each pubnoteList}}
-                    <li>{{{this}}}</li>
-                {{/each}}
-                {{#if hasExtraPubnotes}}
-                    {{#if showAllPubnotes}}
-                    <li><a href="javascript:void(0)" id="show-less-pubnotes">show less</a></li>
-                    {{else}}
-                    <li><a href="javascript:void(0)" id="show-all-pubnotes">show all</a></li>
-                    {{/if}}
-                {{/if}}
-            </ul>
+            {{ pubnote }}
         </dd>
     </div>
     {{/if}}
