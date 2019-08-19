@@ -134,6 +134,19 @@ define([
       });
     });
 
+    it('if passed "library" field, make a docs(library/ID) request', function () {
+      const pubSpy = sinon.spy();
+      this.minsub.pubsub.publish = pubSpy;
+      const ti = this.createTestItem();
+      ti.transform('library', { libraryId: 'foo' });
+      const args = pubSpy.lastCall.args;
+      expect(args[2]).to.eql('search-page');
+      expect(args[3].q.toJSON()).to.eql({
+        q: ['docs(library/foo)'],
+        sort: ['date desc']
+      });
+    });
+
     it('throws if field is invalid', function () {
       const ti = this.createTestItem();
       _.forEach(['foo', 'bar', 'test', '1', '2', '3', undefined, 1, 2], (field) => {
@@ -146,7 +159,7 @@ define([
       const ti = this.createTestItem();
       const promise = $.Deferred().resolve(undefined).promise();
       ti.getBigQueryResponse = sinon.stub().returns(promise);
-      expect(ti.transform.bind(ti, 'useful', { onlySelected: true })).to.throw('no qid from vault');
+      expect(ti.transform.bind(ti, 'useful', { onlySelected: true })).to.throw('no id');
     });
 
     it('throws error if an error occurred during request to vault', function () {
