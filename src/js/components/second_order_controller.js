@@ -60,6 +60,7 @@ function (
       if (storage && storage.getSelectedPapers) {
         return storage.getSelectedPapers() || [];
       }
+      return [];
     },
 
     /**
@@ -67,7 +68,7 @@ function (
      */
     getCurrentQuery: function () {
       const storage = this.getBeeHive().getObject('AppStorage');
-      if (storage && storage.getCurrentQuery) {
+      if (storage && storage.getCurrentQuery && storage.getCurrentQuery() instanceof ApiQuery) {
         return storage.getCurrentQuery();
       }
     },
@@ -149,15 +150,23 @@ function (
       }
 
       const options = _.defaults({}, opts, {
-        onlySelected: false
+        onlySelected: false,
+        libraryId: null
       });
 
       // get the selected records from appStorage
       const selectedIds = this.getSelectedIds();
 
       // if field is 'limit' it should generate qid from selection
-      if (selectedIds.length === 0 || !options.onlySelected && field !== 'limit') {
+      if ((selectedIds.length === 0 || !options.onlySelected)
+        && field !== SecondOrderController.FIELDS.LIMIT
+        && field !== SecondOrderController.FIELDS.LIBRARY
+        ) {
         this.transformCurrentQuery(field);
+      } else if (field === SecondOrderController.FIELDS.LIBRARY) {
+
+        // if field is library, no need to make the request to vault, just start search
+        this.startSearch(field, options.libraryId);
       } else {
         this.getQidAndStartSearch(field, selectedIds);
       }
@@ -182,7 +191,11 @@ function (
      */
     transformCurrentQuery: function (field) {
       const ps = this.getPubSub();
-      const query = this.getCurrentQuery().clone();
+      const currentQuery = this.getCurrentQuery();
+      if (!currentQuery) {
+        return;
+      }
+      const query = currentQuery.clone();
       let q = [];
 
       q.push(`(${ query.get('q') })`);
@@ -206,35 +219,47 @@ function (
      * This will navigate to the search page when done
      */
     getQidAndStartSearch: function (field, ids) {
-      const ps = this.getPubSub();
 
       // get the big query response from vault
       this.getBigQueryResponse(ids).then((qid) => {
-        if (!qid) {
-          throw 'no qid from vault';
-        }
-
-        let newQuery;
-        if (field === 'limit') {
-
-          // if field is limit, only do docs and retain the current sort
-          newQuery = new ApiQuery({
-            q: `docs(${ qid })`,
-            sort: this.getCurrentQuery().get('sort') || 'score desc'
-          });
-        } else {
-
-          // replace the current query with our operator
-          newQuery = new ApiQuery({
-            q: `${ field }(docs(${ qid }))`,
-            sort: 'score desc'
-          });
-        }
-
-        ps.publish(ps.NAVIGATE, 'search-page', { q: newQuery });
-
-        this.submitAnalyticsEvent(field);
+        this.startSearch(field, qid);
       }).fail(this.handleError);
+    },
+
+    startSearch: function (field, id) {
+      if (!id) {
+        throw 'no id';
+      }
+
+      let newQuery;
+      if (field === SecondOrderController.FIELDS.LIMIT) {
+        const currentQuery = this.getCurrentQuery() || new ApiQuery();
+
+        // if field is limit, only do docs and retain the current sort
+        newQuery = new ApiQuery({
+          q: `docs(${ id })`,
+          sort: currentQuery.get('sort') || 'score desc'
+        });
+      } else if (field === SecondOrderController.FIELDS.LIBRARY) {
+
+        // if library id, use the library/ prefix with the passed in ID
+        newQuery = new ApiQuery({
+          q: `docs(library/${ id })`,
+          sort: 'date desc'
+        });
+      } else {
+
+        // replace the current query with our operator
+        newQuery = new ApiQuery({
+          q: `${ field }(docs(${ id }))`,
+          sort: 'score desc'
+        });
+      }
+
+      const ps = this.getPubSub();
+      ps.publish(ps.NAVIGATE, 'search-page', { q: newQuery });
+
+      this.submitAnalyticsEvent(field);
     }
   });
 
@@ -243,7 +268,8 @@ function (
     SIMILAR: 'similar',
     TRENDING: 'trending',
     REVIEWS: 'reviews',
-    LIMIT: 'limit'
+    LIMIT: 'limit',
+    LIBRARY: 'library'
   };
 
   _.extend(SecondOrderController.prototype, Dependon.BeeHive);

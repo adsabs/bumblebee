@@ -10,11 +10,15 @@
           <input type="checkbox" id="select-all-docs" name="select-all-docs" title="select all docs" {{#if allSelected}} checked {{/if}}>
         {{/unless}}
         </div>
-        <div class="col-sm-3">
-          <button
-            class="btn btn-danger btn-sm hidden" id="bulk-delete">Delete Selected</button>
+        <div class="col-sm-6">
+          <div class="button-toolbar">
+            <button class="btn btn-danger btn-sm hidden" id="bulk-delete">Delete Selected</button>
+            <button class="btn btn-default btn-sm hidden" id="bulk-limit">
+              <i class="fa fa-archive" aria-hidden="true"></i> Show Selection in Results Page
+            </button>
+          </div>
         </div>
-        <div class="col-sm-3 col-sm-offset-5">
+        <div class="col-sm-3 col-sm-offset-2">
           <div id="sort-container"></div>
         </div>
       </div>

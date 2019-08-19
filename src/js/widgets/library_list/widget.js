@@ -97,6 +97,7 @@ define([
       'keyup input.page-control': 'tabOrEnterChangePageWithInput',
       'change #per-page-select': 'changePerPage',
       'click #bulk-delete': 'bulkDelete',
+      'click #bulk-limit': 'bulkLimit',
       'click #select-all-docs': 'toggleAll'
     },
 
@@ -140,6 +141,11 @@ define([
       });
     },
 
+    bulkLimit: function () {
+      this.$('#bulk-limit').toggleClass('disabled').html('<i class="fa fa-spinner fa-pulse"></i>');
+      this.trigger('bulkLimit');
+    },
+
     toggleAll: function (e) {
       var flag = e.target.checked ? 'add' : 'remove';
       this.model.set('allSelected', !this.model.get('allSelected'));
@@ -162,6 +168,9 @@ define([
       $bulkDeleteBtn
         .toggleClass('hidden', !(numSelected > 0))
         .html('Delete ' + numSelected + ' Record' + (numSelected > 1 ? 's' : ''));
+
+      var $bulkLimitBtn = this.$('#bulk-limit');
+      $bulkLimitBtn.toggleClass('hidden', !(numSelected > 0));
       return this;
     }
 
@@ -416,6 +425,10 @@ define([
               });
           }
           break;
+        case 'bulkLimit':
+          const ps = this.getPubSub();
+          ps.publish(ps.CUSTOM_EVENT, 'second-order-search/limit');
+        break;
         case 'removeRecord':
           // from library list view
           var data = { bibcode: [arg1], action: 'remove' },
