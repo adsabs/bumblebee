@@ -733,7 +733,7 @@ function (
             break;
 
           default:
-            analytics('send', 'event', 'introspection', 'not-retrying', status);
+            analytics('send', 'event', 'introspection', 'not-retrying', status, JSON.stringify(qm.mostRecentQuery.toJSON()));
         }
       }
     },
