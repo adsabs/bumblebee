@@ -29,7 +29,6 @@ function (
   MathJax,
   Bootstrap
 ) {
-  var MAX_COMMENTS = 3;
 
   var AbstractModel = Backbone.Model.extend({
     defaults: function () {
@@ -114,20 +113,11 @@ function (
       }
 
       if (doc.comment) {
-        if (!_.isArray(doc.comment)) {
-          doc.comment = [doc.comment];
-        }
+        doc.comment = _.unescape(doc.comment);
+      }
 
-        var tmp = doc.comment;
-        // attempt to parse it out
-        try {
-          doc.comment = doc.comment[0].split(';');
-        } catch (e) {
-          // do nothing
-          doc.comment = tmp;
-        }
-        doc.hasExtraComments = doc.comment.length > MAX_COMMENTS;
-        doc.commentList = _.first(doc.comment, MAX_COMMENTS);
+      if (doc.pubnote) {
+        doc.pubnote = _.unescape(doc.pubnote);
       }
 
       if (doc.identifier) {
@@ -159,31 +149,11 @@ function (
     template: abstractTemplate,
 
     events: {
-      'click #show-all-comments': 'showAllComments',
-      'click #show-less-comments': 'showLessComments',
       'click #toggle-aff': 'toggleAffiliation',
       'click #toggle-more-authors': 'toggleMoreAuthors',
       'click a[data-target="more-authors"]': 'toggleMoreAuthors',
       'click a[target="prev"]': 'onClick',
       'click a[target="next"]': 'onClick'
-    },
-
-    showAllComments: function (e) {
-      var m = this.model;
-      m.set({
-        commentList: m.get('comment'),
-        showAllComments: true
-      });
-      return false;
-    },
-
-    showLessComments: function (e) {
-      var m = this.model;
-      m.set({
-        commentList: _.first(m.get('comment'), MAX_COMMENTS),
-        showAllComments: false
-      });
-      return false;
     },
 
     toggleMoreAuthors: function () {

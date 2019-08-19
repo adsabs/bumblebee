@@ -125,18 +125,7 @@
     <div id="comment">
         <dt>Comments:</dt>
         <dd>
-            <ul class="list-unstyled">
-                {{#each commentList}}
-                    <li>{{{this}}}</li>
-                {{/each}}
-                {{#if hasExtraComments}}
-                    {{#if showAllComments}}
-                    <li><a href="javascript:void(0)" id="show-less-comments">show less</a></li>
-                    {{else}}
-                    <li><a href="javascript:void(0)" id="show-all-comments">show all</a></li>
-                    {{/if}}
-                {{/if}}
-            </ul>
+            {{ comment }}
         </dd>
     </div>
     {{/if}}
