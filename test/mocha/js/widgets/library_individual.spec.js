@@ -785,33 +785,15 @@ define([
 
       var publishStub = sinon.stub(w.getPubSub(), "publish");
 
-      expect(fakeLibraryController.getLibraryBibcodes.callCount).to.eql(0);
-
       $("#test").find(".bigquery-export").click();
 
-
-      expect(fakeLibraryController.getLibraryBibcodes.callCount).to.eql(1);
-
-      setTimeout(function(){
-
-        expect(publishStub.args[0][0]).to.eql("[Router]-Navigate-With-Trigger");
-
-        expect(publishStub.args[0][2].q.toJSON()).to.eql({
-            "__bigquery": [
-              "1",
-              "2",
-              "3"
-            ],
-            "__bigquerySource": [
-              "Library: Aliens Among Us"
-            ],
-            "sort": [
-              "date desc"
-            ]
-          });
-
+      setTimeout(function() {
+        expect(publishStub.args[0]).to.eql([
+          "[PubSub]-Custom-Event",
+          "second-order-search/library",
+          { "libraryId": "1" }
+        ]);
         done();
-
       }, 10);
 
     });

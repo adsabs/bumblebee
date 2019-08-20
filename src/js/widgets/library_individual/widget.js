@@ -224,15 +224,9 @@ function (
           break;
 
         case 'start-search':
-          libController.getLibraryBibcodes(this.model.get('id')).done(function (bibcodes) {
-            var query = new ApiQuery({
-              __bigquery: bibcodes,
-              __bigquerySource: 'Library: ' + that.headerModel.get('name'),
-              sort: 'date desc'
-            });
-            pubsub.publish(pubsub.NAVIGATE, 'search-page', { q: query });
-            that.headerView.triggerMethod('search:started');
-          });
+          this.headerView.triggerMethod('search:started');
+          pubsub.publish(pubsub.CUSTOM_EVENT, 'second-order-search/library', { libraryId: this.model.get('id') });
+          break;
       }
     }
   });
