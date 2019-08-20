@@ -125,18 +125,7 @@
     <div id="comment">
         <dt>Comments:</dt>
         <dd>
-            <ul class="list-unstyled">
-                {{#each commentList}}
-                    <li>{{{this}}}</li>
-                {{/each}}
-                {{#if hasExtraComments}}
-                    {{#if showAllComments}}
-                    <li><a href="javascript:void(0)" id="show-less-comments">show less</a></li>
-                    {{else}}
-                    <li><a href="javascript:void(0)" id="show-all-comments">show all</a></li>
-                    {{/if}}
-                {{/if}}
-            </ul>
+            {{ comment }}
         </dd>
     </div>
     {{/if}}
@@ -145,18 +134,7 @@
     <div id="pubnote">
         <dt>E-Print Comments:</dt>
         <dd>
-            <ul class="list-unstyled">
-                {{#each pubnoteList}}
-                    <li>{{{this}}}</li>
-                {{/each}}
-                {{#if hasExtraPubnotes}}
-                    {{#if showAllPubnotes}}
-                    <li><a href="javascript:void(0)" id="show-less-pubnotes">show less</a></li>
-                    {{else}}
-                    <li><a href="javascript:void(0)" id="show-all-pubnotes">show all</a></li>
-                    {{/if}}
-                {{/if}}
-            </ul>
+            {{ pubnote }}
         </dd>
     </div>
     {{/if}}
