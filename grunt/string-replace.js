@@ -47,8 +47,8 @@ module.exports = {
     },
     options: {
       replacements: [{
-        pattern: /window.APP_VERSION\s+=\s+['"]+.*['"];/ig,
-        replacement: `window.APP_VERSION="<%= appVersion %>";`
+        pattern: /APP_VERSION\s+=\s+['"]+.*['"];/ig,
+        replacement: `APP_VERSION="<%= appVersion %>";`
       }]
     }
   }
