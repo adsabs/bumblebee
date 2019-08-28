@@ -43,12 +43,12 @@ module.exports = {
   },
   latest_version: {
     files: {
-      'dist/index.html': 'dist/index.html'
+      'dist/shim.js': 'dist/shim.js'
     },
     options: {
       replacements: [{
-        pattern: /APP_VERSION\s+=\s+['"]+.*['"];/ig,
-        replacement: `APP_VERSION="<%= appVersion %>";`
+        pattern: /window.APP_VERSION\s+=\s+['"]+.*['"];/ig,
+        replacement: `window.APP_VERSION="<%= appVersion %>";`
       }]
     }
   }

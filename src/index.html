@@ -94,12 +94,6 @@
     </script>
     <!-- {{/each}} -->
     <script>
-        var APP_VERSION = "";
-        var LOCALDOMAINS = ['localhost', '127.0.0.1'];
-        var urlArgs;
-        if (LOCALDOMAINS.indexOf(window.location.hostname) === -1) {
-          urlArgs = 'v=' + (APP_VERSION.length > 0 ? APP_VERSION : (new Date()).getTime());
-        }
 
         // define waitSeconds above require script tag
         // to override the default, until main.js loads
@@ -156,7 +150,6 @@
 
     <!-- start the discovery application -->
     <script src="./libs/requirejs/require.js"></script>
-    <script>APP_VERSION='';</script>
     <script src="./shim.js"></script>
   </body>
 </html>

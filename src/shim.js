@@ -1,6 +1,10 @@
 'use strict';
 (function () {
 
+  // ############ DON'T EDIT THIS LINE
+  window.APP_VERSION='';
+  // #################################
+
   /*
     Dynamically pick which configuration to use based on the url.
     Then attempt to load the resource, using require, upon failure we
