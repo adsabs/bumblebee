@@ -126,8 +126,8 @@ define(['discovery.config', 'module'], function (config, module) {
 
           // app is loaded, send timing event
 
-          if (__PAGE_LOAD_TIMESTAMP) {
-            var time = new Date() - __PAGE_LOAD_TIMESTAMP;
+          if (window.__PAGE_LOAD_TIMESTAMP) {
+            var time = new Date() - window.__PAGE_LOAD_TIMESTAMP;
             analytics('send', {
               hitType: 'timing',
               timingCategory: 'Application',

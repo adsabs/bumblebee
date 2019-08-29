@@ -628,9 +628,6 @@ function (
       });
 
       this.listenTo(this.view, 'render', function () {
-        if (this.model.get('loading')) {
-          return;
-        }
         var newQueryString = '';
         var query = this.getCurrentQuery();
         var oldQueryString = query.get('q');

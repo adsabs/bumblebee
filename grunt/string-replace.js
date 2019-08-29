@@ -43,7 +43,7 @@ module.exports = {
   },
   latest_version: {
     files: {
-      'dist/index.html': 'dist/index.html'
+      'dist/shim.js': 'dist/shim.js'
     },
     options: {
       replacements: [{
