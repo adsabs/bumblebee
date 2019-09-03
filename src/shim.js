@@ -2,7 +2,7 @@
 (function () {
 
   // ############ DON'T EDIT THIS LINE
-  var APP_VERSION='1.2.30';
+  var APP_VERSION='';
   // #################################
 
   /*
