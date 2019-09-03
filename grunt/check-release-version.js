@@ -9,7 +9,6 @@ module.exports = function (grunt) {
     const done = this.async();
     const axios = require('axios');
     const fs = require('fs');
-    const gitVersionFileName = '.git-current-version';
     const githubReleasesPath = 'https://api.github.com/repos/adsabs/bumblebee/releases/latest';
     const releaseFilePath = '/release';
 
@@ -32,7 +31,7 @@ module.exports = function (grunt) {
 
       if (version) {
         console.log('version found: ', version);
-        grunt.file.write(gitVersionFileName, version);
+        grunt.config('appVersion', version);
       }
     } catch (e) {
       console.error(e);

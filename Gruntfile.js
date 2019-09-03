@@ -28,10 +28,4 @@ module.exports = function(grunt) {
     console.log("blanket:fileDone ", filepath);
     return;
   });
-
-  grunt.registerTask('readLatestTag', function () {	
-    const version = (grunt.file.read('.git-current-version')).trim();	
-    grunt.config('appVersion', version);	
-    grunt.log.writeln('current version: ', version);	
-  });
 };
