@@ -47,7 +47,8 @@
         "select2": "empty:",
         "sinon": "empty:",
         "sprintf": "empty:",
-        "underscore": "empty:"
+        "underscore": "empty:",
+        "discovery.vars": "empty:"
       },
       "stubModules": [
         "es6",
@@ -65,7 +66,6 @@
         "create-react-class",
         "d3-cloud",
         "d3",
-        "discovery.vars",
         "es5-shim",
         "google-analytics",
         "hbs",
@@ -224,7 +224,8 @@
         "select2": "empty:",
         "sinon": "empty:",
         "sprintf": "empty:",
-        "underscore": "empty:"
+        "underscore": "empty:",
+        "discovery.vars": "empty:"
       },
       "stubModules": [
         "es6",
@@ -236,7 +237,6 @@
         "common.config",
         "analytics",
         "cache",
-        "discovery.vars",
         "hbs",
         "hbs/handlebars",
         "hbs/json2",
@@ -414,7 +414,8 @@
         "select2": "empty:",
         "sinon": "empty:",
         "sprintf": "empty:",
-        "underscore": "empty:"
+        "underscore": "empty:",
+        "discovery.vars": "empty:"
       },
       "stubModules": [
         "es6",
@@ -426,7 +427,6 @@
         "common.config",
         "analytics",
         "cache",
-        "discovery.vars",
         "hbs",
         "hbs/handlebars",
         "hbs/json2",
