@@ -36,7 +36,8 @@ module.exports = function (grunt) {
     'select2': 'empty:',
     'sinon': 'empty:',
     'sprintf': 'empty:',
-    'underscore': 'empty:'
+    'underscore': 'empty:',
+    'discovery.vars': 'empty:'
   };
 
   var baseConfig = {
@@ -110,7 +111,6 @@ module.exports = function (grunt) {
           "create-react-class",
           "d3-cloud",
           "d3",
-          "discovery.vars",
           "es5-shim",
           "google-analytics",
           "hbs",
@@ -228,7 +228,6 @@ module.exports = function (grunt) {
           "common.config",
           "analytics",
           "cache",
-          "discovery.vars",
           "hbs",
           "hbs/handlebars",
           "hbs/json2",
@@ -365,7 +364,6 @@ module.exports = function (grunt) {
           "common.config",
           "analytics",
           "cache",
-          "discovery.vars",
           "hbs",
           "hbs/handlebars",
           "hbs/json2",
