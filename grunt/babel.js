@@ -11,6 +11,12 @@ module.exports = {
       cwd: 'dist/js',
       src: '**/*.js',
       dest: 'dist/js'
+    },
+    {
+      expand: true,
+      cwd: 'dist/config',
+      src: '**/*.js',
+      dest: 'dist/config'
     }]
   },
   temp: {
