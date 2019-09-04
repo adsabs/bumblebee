@@ -37,21 +37,23 @@ function (
     activate: function (beehive) {
       var self = this;
       this.setBeeHive(beehive);
-      _.bindAll(this, 'dispatchRequest', 'processResponse');
+      _.bindAll(this, 'dispatchRequest', 'processResponse', 'onInvitingRequest');
       // custom dispatchRequest function goes here
       var pubsub = this.getPubSub();
-      pubsub.subscribe(pubsub.INVITING_REQUEST, function (apiQuery) {
-        if (self._sortChanged.call(self, apiQuery)) {
-          return;
-        }
-        self.isDone = false;
-        self.setCurrentQuery.call(self, apiQuery);
-        self.dispatchRequest.call(self, apiQuery);
-        self.updateState(self.STATES.LOADING);
-      });
+      pubsub.subscribe(pubsub.INVITING_REQUEST, this.onInvitingRequest);
       pubsub.subscribe(pubsub.DELIVERING_RESPONSE, this.processResponse);
       this.activateWidget();
       this.attachGeneralHandler(this.onFeedback);
+    },
+
+    onInvitingRequest: function (apiQuery) {
+      if (this._sortChanged.call(this, apiQuery)) {
+        return;
+      }
+      this.isDone = false;
+      this.setCurrentQuery(apiQuery);
+      this.dispatchRequest(apiQuery);
+      this.updateState(this.STATES.LOADING);
     },
 
     _sortChanged: function (apiQuery) {
