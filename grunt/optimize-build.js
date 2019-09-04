@@ -45,7 +45,7 @@ module.exports = function (grunt) {
     logLevel: 1,
     baseUrl: 'dist',
     optimize: 'none',
-    mainConfigFile: 'dist/discovery.config.js',
+    mainConfigFile: 'dist/config/discovery.config.js',
     deps: [],
     findNestedDependencies: false,
     create: true,
@@ -96,13 +96,13 @@ module.exports = function (grunt) {
         config[name] = {};
         config[name].options = _.extend({}, baseConfig, {
           name: `${name}.bundle`,
-          out: `dist/${name}.bundle.js`
+          out: `dist/config/${name}.bundle.js`
         }, cfg);
       }
 
       addConfig('landing-page', {
         include: [
-          "common.config",
+          "config/common.config",
           "analytics",
           "backbone-validation",
           "backbone",
@@ -225,7 +225,7 @@ module.exports = function (grunt) {
 
       addConfig('search-page', {
         include: [
-          "common.config",
+          "config/common.config",
           "analytics",
           "cache",
           "hbs",
@@ -361,7 +361,7 @@ module.exports = function (grunt) {
 
       addConfig('abstract-page', {
         include: [
-          "common.config",
+          "config/common.config",
           "analytics",
           "cache",
           "hbs",
@@ -481,7 +481,7 @@ module.exports = function (grunt) {
     });
 
     var getDiscoveryConfig = function () {
-      var content = grunt.file.read('dist/discovery.config.js');
+      var content = grunt.file.read('dist/config/discovery.config.js');
       var cfg = {};
       (function () {
         var require = requirejs = {
@@ -510,7 +510,7 @@ requirejs.config(${ JSON.stringify(cnts, null, 2) });
         var _cfg = _.extend({}, cfg, {
 
           // set the main dependency to the bundle name
-          deps: [bundle.options.name],
+          deps: [`config/${ bundle.options.name }`],
 
           // update the paths config with new revved names
           paths: _.extend({},
@@ -518,19 +518,19 @@ requirejs.config(${ JSON.stringify(cnts, null, 2) });
 
             // add all additional revved filenames to the paths
             _.reduce(bundle.options.include, function (acc, p) {
-              acc[p] = bundle.options.name;
+              acc[p] = `config/${ bundle.options.name }`;
               return acc;
             }, {}),
 
             // some explicit path changes
             {
-              'discovery.config': bundle.options.name
+              'discovery.config': `config/${ bundle.options.name }`
             }
           )
         });
 
         var out = generateConfigFileString(`dist/${name}.config.js`, _cfg);
-        grunt.file.write(`dist/${name}.config.js`, out);
+        grunt.file.write(`dist/config/${name}.config.js`, out);
         grunt.log.writeln(`${name}.config.js has been created`);
       });
     });

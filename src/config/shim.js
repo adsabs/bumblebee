@@ -27,15 +27,15 @@
     path = path.length && path[0];
     load = function () {
       // attempt to get bundle config
-      require([paths[path] + '.config.js'], function () {}, function () {
+      require(['config/' + paths[path] + '.config.js'], function () {}, function () {
         // on failure to load specific bundle; load generic one
-        require(['discovery.config.js']);
+        require(['config/discovery.config.js']);
       });
     };
   } catch (e) {
     load = function () {
       // on errors, just fallback to normal config
-      require(['discovery.config.js']);
+      require(['config/discovery.config.js']);
     };
   }
 

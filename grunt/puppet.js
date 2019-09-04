@@ -69,10 +69,8 @@ module.exports = function (grunt) {
     // get the dependencies for testing, and setup globals
     await page.evaluate(() => {
       return new Promise(resolve => {
-        require([
-          'mocha', 'chai', 'sinon',
-          '../../node_modules/es5-shim/es5-shim.min'
-        ], (mocha, chai) => {
+
+        require(['mocha', 'chai', 'sinon', 'es5shim'], (mocha, chai) => {
           // expose chai globals
           window.expect = chai.expect;
           window.assert = chai.assert;
@@ -100,7 +98,7 @@ module.exports = function (grunt) {
     });
 
     let config = {
-      baseUrl: '/',
+      baseUrl: '../../',
       paths: mappings
     };
     if (options.env === 'production') {

@@ -11,7 +11,7 @@ var stringify = function (arr) {
 };
 
 module.exports = function (grunt) {
-  var indexConfig = grunt.file.readJSON('./src/index.config.json');
+  var indexConfig = grunt.file.readJSON('./src/config/index.config.json');
   indexConfig = stringify(indexConfig);
 
   return {

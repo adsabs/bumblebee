@@ -13,7 +13,7 @@
  *
  */
 
-define(['discovery.config', 'module'], function (config, module) {
+define(['config/discovery.config', 'module'], function (config, module) {
   require([
     'router',
     'js/components/application',
