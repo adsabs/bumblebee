@@ -3,7 +3,6 @@ define([
   'js/components/api_query',
   'js/components/api_query_updater',
   'hbs!js/widgets/classic_form/form',
-  'jquery-ui',
   'js/widgets/paper_search_form/topterms',
   'analytics'
 ], function (
@@ -11,7 +10,6 @@ define([
   ApiQuery,
   ApiQueryUpdater,
   FormTemplate,
-  JQueryUI,
   AutocompleteData,
   analytics) {
 
@@ -20,19 +18,11 @@ define([
     return val.split(/,\s*/);
   }
 
-  function extractLast(term) {
-    return split(term).pop();
-  }
-
   var BOOLEAN = {
     'AND': ' ',
     'OR': ' OR ',
     'BOOLEAN': ' '
   };
-
-  var MONTHS = ['01', '02', '03', '04', '05', '06', '07', '08', '09', '10', '11', '12'];
-  var _year = (new Date()).getFullYear();
-  var YEARS = _.map(_.range(_year - 100, _year + 1).reverse(), function (y) { return '' + y; });
 
   var FormModel = Backbone.Model.extend({
     initialize: function () {
@@ -221,6 +211,19 @@ define([
       'input input[name^="month"],input[name^="year"]': 'dateUpdate'
     },
 
+    /**
+     * update the view with the new collections data
+     * @param {{ astronomy: boolean, physics: boolean }} data
+     */
+    onChangeToCollections: function (data) {
+      Object.keys(data).forEach((key) => {
+        const $el = $(`div[data-field="database"] input[name=${ key }]`, this.$el);
+        if ($el.length > 0) {
+          $el.prop('checked', data[key]);
+        }
+      });
+    },
+
     updateLogic: function (e) {
       var $el = this.$(e.currentTarget);
       this.model.set($el.attr('name'), $el.val().trim());
@@ -280,10 +283,6 @@ define([
 
     onRender: function () {
       var self = this;
-
-      var showOnFocus = function () {
-        $(this).autocomplete('search', '');
-      };
 
       var getLastTerm = function (term) {
         var t = _.last(term.split(/(,\s|;\s|[,;])/));
@@ -353,7 +352,6 @@ define([
   });
 
   var FormWidget = BaseWidget.extend({
-
     initialize: function (options) {
       options = options || {};
       this.model = new FormModel();
@@ -370,6 +368,15 @@ define([
           self.onNewSearch();
         }
       });
+      ps.subscribe(ps.USER_ANNOUNCEMENT, (ev, data) => {
+        if (ev === 'user_info_change' && data.defaultDatabase) {
+          const dbs = this.getDbSelectionFromUserData();
+          if (dbs) {
+            this.model.set('collections', dbs);
+            this.view.triggerMethod('changeToCollections', dbs);
+          }
+        }
+      });
     },
 
     onNewSearch: function () {
@@ -380,8 +387,6 @@ define([
       this.model.set(this.model.defaults);
       const v = this.view;
       v.$('input,textarea').val('');
-      v.$('input[type="checkbox"]').prop('checked', false);
-      v.$('input[name="astronomy"]').prop('checked', true);
     },
 
     /**
@@ -405,6 +410,29 @@ define([
       });
       // set focus to author field
       this.setFocus('#classic-author');
+
+      const dbs = this.getDbSelectionFromUserData();
+      if (dbs) {
+        this.model.set('collections', dbs);
+        this.view.triggerMethod('changeToCollections', dbs);
+      }
+    },
+
+    getDbSelectionFromUserData: function () {
+      try {
+        const userData = this.getBeeHive().getObject('User').getUserData();
+        return userData.defaultDatabase.reduce((acc, db) => {
+
+          // skip general
+          if (db.name === 'General') {
+            return acc;
+          }
+          acc[db.name.toLowerCase()] = db.value;
+          return acc;
+        }, {});
+      } catch (e) {
+        return null;
+      }
     },
 
     submitForm: function (queryDict) {
