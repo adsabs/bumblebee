@@ -18,6 +18,10 @@ define([
       initialOptions: _.map(config.export.formats, 'label'),
       initialValue: 'BibTeX'
     },
+    homePage: {
+      initialOptions: ['Modern Form', 'Classic Form', 'Paper Form'],
+      initialValue: 'Modern Form'
+    },
     database: {
       initialValue: [{
           name: 'Physics',
@@ -67,6 +71,7 @@ define([
     'externalLinksSelected',
     'databaseSelected',
     'exportFormatSelected',
+    'homePageSelected',
     'hideSideBarsSelected',
     'addCustomFormatOptions',
     'bibtexMaxAuthorsSelected',
@@ -84,6 +89,8 @@ define([
         DEFAULTS.numAuthors.initialValue;
       var externalLinks = this.model.get('externalLinkAction') ||
         DEFAULTS.externalLinks.initialValue;
+      var homePage = this.model.get('homePage') ||
+        DEFAULTS.homePage.initialValue;
       var database = this.model.get('defaultDatabase') ||
         DEFAULTS.database.initialValue;
       var exportFormat = this.model.get('defaultExportFormat') ||
@@ -109,6 +116,9 @@ define([
         exportFormatOptions: DEFAULTS.exportFormat.initialOptions,
         exportFormatDefault: DEFAULTS.exportFormat.initialValue,
         exportFormatSelected: _.clone(exportFormat),
+        homePageOptions: DEFAULTS.homePage.initialOptions,
+        homePageDefault: DEFAULTS.homePage.initialValue,
+        homePageSelected: _.clone(homePage),
         hideSideBarsDefault: DEFAULTS.hideSidebars.initialValue,
         hideSideBarsOptions: DEFAULTS.hideSidebars.initialOptions,
         hideSideBarsSelected: _.clone(hideSidebars),
@@ -224,7 +234,8 @@ define([
         bibtexMaxAuthors: this._convertToString(this.model.get('bibtexMaxAuthorsSelected') === 'all' ? 0 : this.model.get('bibtexMaxAuthorsSelected')),
         bibtexKeyFormat: this.model.get('bibtexKeyFormatSelected'),
         bibtexABSMaxAuthors: this._convertToString(this.model.get('bibtexABSMaxAuthorsSelected') === 'all' ? 0 : this.model.get('bibtexABSMaxAuthorsSelected')),
-        bibtexABSKeyFormat: this.model.get('bibtexABSKeyFormatSelected')
+        bibtexABSKeyFormat: this.model.get('bibtexABSKeyFormatSelected'),
+        homePage: this.model.get('homePageSelected')
       });
       return false;
     },

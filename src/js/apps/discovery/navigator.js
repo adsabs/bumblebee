@@ -95,13 +95,22 @@ function (
         }
       };
 
-      this.set('index-page', function () {
+      this.set('index-page', function (data) {
         var that = this;
         var defer = $.Deferred();
         app.getObject('MasterPageManager').show('LandingPage', ['SearchWidget']).then(
           function() {
             return app.getWidget('LandingPage').then(function (widget) {
-              widget.setActive('SearchWidget');
+              if (data && data.origin === 'SearchWidget') {
+
+                // we know it came from the searchWidget handler, so call it without extra params
+                widget.setActive('SearchWidget');
+              } else {
+
+                // only set the origin flag if we know it wasn't a redirect from the other handler (SearchWidget)
+                widget.setActive('SearchWidget', null, { origin: 'index-page' });
+              }
+
               that.route = '';
               that.title = '';
               defer.resolve();
@@ -116,7 +125,7 @@ function (
         // another function that sets a route
         var that = this;
         var defer = $.Deferred();
-        var exec = _.bind(self.get('index-page').execute, this);
+        var exec = _.bind(self.get('index-page').execute, this, { origin: 'SearchWidget'});
         exec().then(function() {
           that.route = '';
           that.title = '';
