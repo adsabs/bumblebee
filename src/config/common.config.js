@@ -1,5 +1,11 @@
 define([], function () {
 
+  if (window.skipMain) {
+    requirejs.config({
+      baseUrl: '../../'
+    });
+  }
+
   requirejs.config({
     shim: {
       mathjax: {

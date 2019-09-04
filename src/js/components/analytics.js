@@ -88,7 +88,8 @@ define([
 
   var Analytics = function () {
     adsLogger.apply(null, _.rest(arguments, 3));
-    return window[window.GoogleAnalyticsObject].apply(this, arguments);
+    return window[window.GoogleAnalyticsObject]
+      && window[window.GoogleAnalyticsObject].apply(this, arguments);
   };
 
   return Analytics;

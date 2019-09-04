@@ -1,10 +1,11 @@
 // Main config file for the Discovery application
 require.config({
+
   // Initialize the application with the main application file or if we run
   // as a test, then load the test unittests
   deps: (function() {
     if (typeof window !== "undefined" && window.skipMain) {
-      return ['config/common.config'];
+      return ['common.config'];
     } else {
       return ['config/common.config', 'js/apps/discovery/main'];
     }
@@ -199,7 +200,6 @@ require.config({
     ],
     'bowser': '//cdn.jsdelivr.net/npm/bowser@2.4.0/bundled',
     'cache': 'libs/dsjslib/lib/Cache',
-    'chai': '../bower_components/chai/chai',
     'classnames': [
       '//cdnjs.cloudflare.com/ajax/libs/classnames/2.2.5/index.min',
       '../bower_components/classnames/index'
@@ -256,7 +256,6 @@ require.config({
       '//cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS_HTML&amp;delayStartupUntil=configured',
       'libs/mathjax/index'
     ],
-    'mocha': 'libs/mocha/mocha',
     'moment': [
       '//cdnjs.cloudflare.com/ajax/libs/moment.js/2.22.2/moment.min',
       'libs/momentjs/moment'
@@ -298,10 +297,6 @@ require.config({
       '//cdnjs.cloudflare.com/ajax/libs/select2/4.0.3/js/select2.min',
       'libs/select2/select2'
     ],
-    'sinon': [
-      '//cdnjs.cloudflare.com/ajax/libs/sinon.js/1.9.0/sinon.min',
-      '../bower_components/sinon/index'
-    ],
     'sprintf': [
       '//cdnjs.cloudflare.com/ajax/libs/sprintf/1.0.2/sprintf.min',
       'libs/sprintf/sprintf'
@@ -310,7 +305,11 @@ require.config({
     'reselect': [
       '//cdnjs.cloudflare.com/ajax/libs/reselect/3.0.1/reselect.min',
       'libs/reselect'
-    ]
+    ],
+    'mocha': 'libs/mocha/mocha',
+    'chai': 'bower_components/chai/chai',
+    'sinon': 'https://cdnjs.cloudflare.com/ajax/libs/sinon.js/1.9.0/sinon.min',
+    'es5shim': 'node_modules/es5-shim/es5-shim.min'
   },
 
   hbs: {
@@ -323,9 +322,6 @@ require.config({
     "Backbone": {
       deps: ["backbone"],
       exports: "Backbone"
-    },
-    'mocha': {
-      exports: 'mocha'
     },
     'backbone.stickit': {
       deps: ['backbone']
@@ -347,6 +343,10 @@ require.config({
 
     cache: {
       exports: 'Cache'
+    },
+
+    'mocha': {
+      exports: 'mocha'
     },
 
     'filesaver': {
