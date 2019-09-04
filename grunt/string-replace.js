@@ -14,7 +14,7 @@ module.exports = {
     }],
     options: {
       replacements: [{
-        pattern: 'data-main="./discovery.config"',
+        pattern: 'data-main="./config/discovery.config"',
         replacement: 'data-main="./bumblebee_app.js"'
       }]
     }
@@ -43,7 +43,7 @@ module.exports = {
   },
   latest_version: {
     files: {
-      'dist/shim.js': 'dist/shim.js'
+      'dist/config/shim.js': 'dist/config/shim.js'
     },
     options: {
       replacements: [{

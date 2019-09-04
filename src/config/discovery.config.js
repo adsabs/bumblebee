@@ -4,9 +4,9 @@ require.config({
   // as a test, then load the test unittests
   deps: (function() {
     if (typeof window !== "undefined" && window.skipMain) {
-      return ['common.config'];
+      return ['config/common.config'];
     } else {
-      return ['common.config', 'js/apps/discovery/main'];
+      return ['config/common.config', 'js/apps/discovery/main'];
     }
   }()),
 
@@ -50,7 +50,7 @@ require.config({
         objects: {
           User: 'js/components/user',
           Session: 'js/components/session',
-          DynamicConfig: 'discovery.vars',
+          DynamicConfig: 'config/discovery.vars',
           MasterPageManager: 'js/page_managers/master',
           AppStorage: 'js/components/app_storage',
           RecaptchaManager: 'recaptcha!js/components/recaptcha_manager',

@@ -39,7 +39,7 @@ define([], function () {
 
   window.GoogleAnalyticsObject = '__ga__';
 
-  require(['discovery.vars'], function(config) {
+  require(['config/discovery.vars'], function(config) {
 
     // make sure that google analytics never blocks app load
     setTimeout(function () {

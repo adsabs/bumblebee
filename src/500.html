@@ -27,7 +27,7 @@
       },
       callback: function () {
         window.GoogleAnalyticsObject = '__ga__';
-        require(['discovery.vars'], function(config) {
+        require(['config/discovery.vars'], function(config) {
           setTimeout(function () {
             require(['google-analytics', 'analytics'], function () {
               var qa = window[window.GoogleAnalyticsObject];

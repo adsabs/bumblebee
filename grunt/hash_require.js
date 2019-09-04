@@ -19,7 +19,7 @@ module.exports = {
     src: [
       'dist/*.js',
       'dist/js/**/*.{js,html}',
-      '!dist/discovery.config.js'
+      '!dist/config/discovery.config.js'
     ]
   },
   css: {

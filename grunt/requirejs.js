@@ -7,7 +7,7 @@
       "logLevel": 1,
       "baseUrl": "dist",
       "optimize": "none",
-      "mainConfigFile": "dist/discovery.config.js",
+      "mainConfigFile": "dist/config/discovery.config.js",
       "deps": [],
       "findNestedDependencies": false,
       "create": true,
@@ -55,9 +55,9 @@
         "babel"
       ],
       "name": "landing-page.bundle",
-      "out": "dist/landing-page.bundle.js",
+      "out": "dist/config/landing-page.bundle.js",
       "include": [
-        "common.config",
+        "config/common.config",
         "analytics",
         "backbone-validation",
         "backbone",
@@ -184,7 +184,7 @@
       "logLevel": 1,
       "baseUrl": "dist",
       "optimize": "none",
-      "mainConfigFile": "dist/discovery.config.js",
+      "mainConfigFile": "dist/config/discovery.config.js",
       "deps": [],
       "findNestedDependencies": false,
       "create": true,
@@ -232,9 +232,9 @@
         "babel"
       ],
       "name": "search-page.bundle",
-      "out": "dist/search-page.bundle.js",
+      "out": "dist/config/search-page.bundle.js",
       "include": [
-        "common.config",
+        "config/common.config",
         "analytics",
         "cache",
         "hbs",
@@ -374,7 +374,7 @@
       "logLevel": 1,
       "baseUrl": "dist",
       "optimize": "none",
-      "mainConfigFile": "dist/discovery.config.js",
+      "mainConfigFile": "dist/config/discovery.config.js",
       "deps": [],
       "findNestedDependencies": false,
       "create": true,
@@ -422,9 +422,9 @@
         "babel"
       ],
       "name": "abstract-page.bundle",
-      "out": "dist/abstract-page.bundle.js",
+      "out": "dist/config/abstract-page.bundle.js",
       "include": [
-        "common.config",
+        "config/common.config",
         "analytics",
         "cache",
         "hbs",

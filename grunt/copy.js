@@ -246,7 +246,7 @@ module.exports = function (grunt) {
         expand: true,
         src: [
           './dist/index.html',
-          'dist/discovery.config.js'
+          'dist/config/discovery.config.js'
         ],
         dest: 'dist/',
         rename: function(dest, src) {
