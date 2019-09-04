@@ -54,8 +54,6 @@ define([
    *  defaultQueryArguments: this is a list of parameters added to each query
    *
    */
-
-
   var BaseWidget = Marionette.Controller.extend({
 
     initialize: function (options) {
