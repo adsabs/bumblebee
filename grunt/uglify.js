@@ -25,7 +25,7 @@ module.exports = {
       expand: true,
       cwd: 'dist',
       src: [
-        '*.js',
+        'config/*.js',
         'js/**/*.js'
       ],
       dest: 'dist'
