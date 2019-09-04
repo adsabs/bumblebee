@@ -11,6 +11,72 @@ define([
 ) {
   var PageManager = PageManagerController.extend({
 
+    /**
+     * Attempt to get the current default home page from user data
+     */
+    getHomePageFromUserData: function () {
+      try {
+        const userData = this.getBeeHive().getObject('User').getUserData();
+        return userData.homePage;
+      } catch (e) {
+        return null;
+      }
+    },
+
+    /**
+     * Overrides activate to add subscription to user announcements about changes
+     * to the default home page.
+     */
+    activate: function () {
+      PageManagerController.prototype.activate.apply(this, arguments);
+
+      const ps = this.getPubSub();
+      ps.subscribe(ps.USER_ANNOUNCEMENT, (ev, data) => {
+        if (ev === 'user_info_change' && data && data.homePage) {
+          this.setHomePage(data.homePage);
+        }
+      });
+
+      const defaultHomePage = this.getHomePageFromUserData();
+      if (defaultHomePage) {
+        this.setHomePage(defaultHomePage);
+      }
+    },
+
+    /**
+     * Parse and find the navigation item from the navConfig object
+     * and set the property
+     * @param {string} page the name of the page
+     */
+    setHomePage: function (page) {
+      if (page) {
+        const name = page.split(' ')[0];
+
+        // find the page in the navConfig
+        const navItem = Object.keys(this.navConfig).filter(key => this.navConfig[key].title === name);
+        if (navItem.length > 0) {
+          this.__defaultNavItem = navItem[0];
+        }
+      }
+    },
+
+    /**
+     * Override the setActive method to inject the default navItem, if we have one
+     * @param {string} navItem the navitem name
+     * @param {string} subView the subview item
+     * @param {object} extra additional flags/options
+     */
+    setActive: function (navItem, subView, extra) {
+      if (extra && extra.origin === 'index-page' && this.__defaultNavItem) {
+        if (this.widgets.tocWidget.model.get('idAttribute') === this.__defaultNavItem) {
+          PageManagerController.prototype.setActive.call(this, 'SearchWidget', subView);
+        }
+        PageManagerController.prototype.setActive.call(this, this.__defaultNavItem, subView);
+      } else {
+        PageManagerController.prototype.setActive.apply(this, arguments);
+      }
+    },
+
     TOCTemplate: TOCTemplate,
 
     className: 's-landing-page-layout',
