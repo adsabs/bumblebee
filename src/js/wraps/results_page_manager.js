@@ -75,9 +75,53 @@ define([
       }
     },
 
+    setUpIntercepts: function () {
+      const widgets = ['AuthorFacet', 'RefereedFacet', 'DatabaseFacet', 'GraphTabs'];
+      const interceptRequests = (widget) => {
+        let wid = widget;
+
+        // check if the widget contains other widgets (like graphTabs)
+        if (widget.widgets && widget.widgets.length > 0) {
+          wid = widget.widgets[0];
+        }
+
+        const wps = wid.getPubSub();
+        const oldPublish = wps.publish;
+
+        // override the publish method
+        // intercept any requests and cache it
+        wps.publish = (ev, ...args) => {
+          if (ev === wps.DELIVERING_REQUEST && !this.getSidebarState()) {
+            let to;
+
+            // if there is a new search cycle, then stop watching for changes
+            wps.subscribeOnce(wps.INVITING_REQUEST, () => window.clearTimeout(to));
+
+            // check for changes to sidebar state
+            const check = () => {
+              if (this.getSidebarState()) {
+
+                // if the sidebars are shown, then go forward with the request
+                return oldPublish.call(wid, ev, ...args);
+              }
+              to = setTimeout(() => requestAnimationFrame(check), 1000);
+            }
+            check();
+
+            // break out here so the request is caught
+            return;
+          }
+          oldPublish.call(wid, ev, ...args);
+        }
+      }
+
+      widgets.map((k) => interceptRequests(this.widgets[k]));
+    },
+
     assemble: function () {
       var self = this;
       return PageManagerController.prototype.assemble.apply(this, arguments).done(function () {
+        self.setUpIntercepts();
         _.each(_.keys(self.widgets), function (w) {
           self.listenTo(self.widgets[w], 'page-manager-event', _.bind(self.onPageManagerEvent, self, self.widgets[w]));
         }, self);
@@ -91,6 +135,7 @@ define([
         try {
           _.forEach(_.keys(self.widgets), (k) => {
             const w = self.widgets[k];
+
             const handler = () => {
               if (k === 'Results') {
                 self.resultsTimer.stop();
