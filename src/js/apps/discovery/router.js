@@ -72,6 +72,7 @@ define([
         'paper-form(/)': 'paperForm',
         'index/(:query)': 'index',
         'search/(:query)(/)(:widgetName)': 'search',
+        'search(?:query)': 'search',
         'execute-query/(:query)': 'executeQuery',
         'abs/*path': 'view',
         /*
