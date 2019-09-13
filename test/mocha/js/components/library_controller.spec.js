@@ -46,6 +46,7 @@ define([
         "updateLibraryContents",
         "updateLibraryMetadata",
         "importLibraries",
+        "transferOwnership",
         "getLibraryBibcodes",
         "performLibraryOperation",
         "__facade__",

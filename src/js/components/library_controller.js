@@ -445,6 +445,18 @@ function (
       return this.composeRequest(endpoint, 'POST', { data: data });
     },
 
+    transferOwnership: function (libId, newOwnerEmail) {
+      if (!newOwnerEmail || !_.isString(newOwnerEmail)) {
+        throw 'new owner email address must be a string';
+      }
+      if (!libId || !_.isString(libId)) {
+        throw 'library Id must be a string';
+      }
+      const endpoint = ApiTargets.LIBRARY_TRANSFER + '/' + libId;
+      const data = { email: newOwnerEmail };
+      return this.composeRequest(endpoint, 'POST', { data });
+    },
+
 
     //      /*
     //      * email, permission, value
@@ -571,6 +583,7 @@ function (
       updateLibraryMetadata: 'updateLibraryMetadata',
 
       importLibraries: 'importLibraries',
+      transferOwnership: 'transferOwnership',
 
       // currently called by library individual widget to get
       // lists of bibs to pass to export, metrics, vis widgets etc

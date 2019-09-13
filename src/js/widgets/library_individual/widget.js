@@ -141,11 +141,13 @@ function (
     handleAdminEvents: function (event, arg1, arg2) {
       var that = this;
 
+      const libController = this.getBeeHive().getObject('LibraryController');
+
       switch (event) {
         case 'update-public-status':
           var data = { 'public': arg1 },
             id = this.model.get('id');
-          this.getBeeHive().getObject('LibraryController')
+            libController
             .updateLibraryMetadata(id, data)
             .done(function (response, status) {
               // re-render the admin view
@@ -154,6 +156,19 @@ function (
             .fail(function () {
             });
           break;
+        case 'confirm-transfer-ownership':
+          libController
+            .transferOwnership(this.model.get('id'), arg1)
+            .done(arg2.done)
+            .fail(arg2.fail);
+        break;
+        case 'reset-and-navigate':
+          const ps = this.getPubSub();
+
+          // invalidates the cache of entries so the list gets refreshed
+          ps.publish(ps.CUSTOM_EVENT, 'invalidate-library-metadata');
+          ps.publish(ps.NAVIGATE, 'AllLibrariesWidget');
+        break;
       }
     },
 
@@ -162,6 +177,8 @@ function (
         id = this.model.get('id'),
         pubsub = this.getBeeHive().getService('PubSub'),
         libController = this.getBeeHive().getObject('LibraryController');
+
+      console.log('headerEvent', event);
 
       switch (event) {
         case 'updateVal':
