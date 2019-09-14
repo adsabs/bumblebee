@@ -7,8 +7,6 @@ define([
   'hbs!js/widgets/graphics/templates/grid',
   'hbs!js/widgets/graphics/templates/sidebar',
   'js/components/api_targets'
-
-
 ], function (
   Marionette,
   BaseWidget,
@@ -41,7 +39,6 @@ define([
     modelEvents: {
       change: 'render'
     }
-
   });
 
   var SidebarView = Marionette.ItemView.extend({
@@ -74,7 +71,8 @@ define([
     initialize: function (options) {
       options = options || {};
       this.model = new GraphicsModel();
-      this.view = (options.sidebar === true) ? new SidebarView({ model: this.model }) : new GridView({ model: this.model });
+      this.view = (options.sidebar === true) ?
+        new SidebarView({ model: this.model }) : new GridView({ model: this.model });
       BaseWidget.prototype.initialize.apply(this, arguments);
     },
 
