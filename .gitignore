@@ -32,7 +32,7 @@ src/styles/css
 
 .vagrant
 
-src/discovery.vars.js
+src/config/discovery.vars.js
 grunt/requirejs.js
 .*
 !.babelrc

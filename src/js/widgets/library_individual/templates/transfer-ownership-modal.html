@@ -1,0 +1,47 @@
+<div class="modal fade" id="transferOwnershipModal" tabindex="-1" role="dialog"
+  aria-labelledby="transforOwnershipModal">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+            aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title" id="transforOwnershipModal">Transfer Ownership</h4>
+      </div>
+      <div class="modal-body">
+        <form class="form-horizontal">
+          <fieldset>
+            <!-- Text input-->
+            <div class="form-group">
+              <label class="col-md-4 control-label" for="textinput">New Owner</label>
+              <div class="col-md-7">
+                <input id="textinput" name="textinput" type="email" placeholder="new-owner@test.com"
+                  class="form-control input-md" required="" value="" autofocus aria-describedby="helpBlock">
+                <span class="help-block" id="helpBlock">Enter the email address of the new user</span>
+              </div>
+            </div>
+
+            <div class="alert alert-danger" id="error-message" style="display: none;">
+              <i class="fa fa-exclamation-triangle" aria-hidden="true"></i>
+              <span></span>
+            </div>
+
+            <div class="text-center" id="loader" style="display: none;">
+              <i class="fa fa-spinner fa-spin" aria-hidden="true"></i>
+            </div>
+
+            <div class="alert alert-success" id="success-message" style="display: none;">
+              <i class="fa fa-checkmark" aria-hidden="true"></i>
+              <span></span>
+            </div>
+
+          </fieldset>
+        </form>
+
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default close-button" data-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-primary confirm-button">Confirm</button>
+      </div>
+    </div>
+  </div>
+</div>

@@ -72,6 +72,7 @@ function (
     // can get info about all libraries, or list of bibcodes associated w/specific lib (libraries/id)
     // post to /libraries/ to create a library
     LIBRARIES: 'biblib/libraries',
+    LIBRARY_TRANSFER: 'biblib/transfer',
     // can post, put, and delete changes to individual libs using this endpoint
     DOCUMENTS: 'biblib/documents',
     PERMISSIONS: 'biblib/permissions',
