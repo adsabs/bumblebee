@@ -429,7 +429,7 @@ define([
           q.unset('hl.fl');
           q.unset('hl.maxAnalyzedChars');
           q.unset('hl.requireFieldMatch');
-          q.unset('hl.userPhraseHighlighter');
+          q.unset('hl.usePhraseHighlighter');
           q.set('__fetch_missing', 'true');
           q.set('start', start);
           q.set('rows', perPage - start <= 0 ? perPage : perPage - start);
@@ -453,7 +453,7 @@ define([
             'hl.fl': 'title,abstract,body,ack',
             'hl.maxAnalyzedChars': '150000',
             'hl.requireFieldMatch': 'true',
-            'hl.userPhraseHighlighter': 'true',
+            'hl.usePhraseHighlighter': 'true',
             start: pageStart + start,
             rows: rows
           });
