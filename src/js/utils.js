@@ -115,12 +115,30 @@ define([
     return $dd.promise();
   }
 
+  const withPrerenderedContent = (view) => {
+    view.handlePrerenderedContent = (content, $el) => {
+
+      // setup the elements so events are properly delegated
+      view.$el = $(view.tagName + '.' + view.className, $el);
+      view.el = view.$el.get(0);
+      view.delegateEvents();
+
+      // reset on first model change
+      view.model.once('change', () => view.getTemplate = () => view.getOption('template'))
+
+      // override the template to provide our pre-rendered content
+      view.getTemplate = () => content;
+    };
+    return view;
+  };
+
   return {
     qs: qs,
     updateHash: updateHash,
     difference: difference,
     getBrowserInfo: getBrowserInfo,
     TimingEvent: TimingEvent,
-    waitForSelector: waitForSelector
+    waitForSelector: waitForSelector,
+    withPrerenderedContent: withPrerenderedContent
   };
 });

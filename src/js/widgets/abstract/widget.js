@@ -13,7 +13,8 @@ define([
   'js/mixins/link_generator_mixin',
   'js/mixins/papers_utils',
   'mathjax',
-  'bootstrap'
+  'bootstrap',
+  'utils'
 ],
 function (
   Marionette,
@@ -27,7 +28,8 @@ function (
   LinkGeneratorMixin,
   PapersUtils,
   MathJax,
-  Bootstrap
+  Bootstrap,
+  utils
 ) {
 
   var AbstractModel = Backbone.Model.extend({
@@ -182,23 +184,6 @@ function (
       return false;
     },
 
-    handlePrerenderedContent: function ($el) {
-      this.$el = $(this.tagName + '.' + this.className, $el);
-      this.el = this.$el.get(0);
-      this.delegateEvents();
-
-      var _getTemplate = _.bind(this.getTemplate, this);
-      // replace the template function to manually set the content
-      this.getTemplate = _.bind(function () {
-        if (this.model.has('bibcode')) {
-          this.getTemplate = _getTemplate;
-          return this.template;
-        } else {
-          return $el.html();
-        }
-      }, this);
-    },
-
     onRender: function () {
       this.$('.icon-help').popover({ trigger: 'hover', placement: 'right', html: true });
 
@@ -210,7 +195,7 @@ function (
     initialize: function (options) {
       options = options || {};
       this.model = options.data ? new AbstractModel(options.data, { parse: true }) : new AbstractModel();
-      this.view = new AbstractView({ model: this.model });
+      this.view = utils.withPrerenderedContent(new AbstractView({ model: this.model }));
 
       this.listenTo(this.view, 'all', this.onAllInternalEvents);
 

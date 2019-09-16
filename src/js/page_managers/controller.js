@@ -104,9 +104,12 @@ function ($, _,
               // create props on the widget
               _.assign(widget, { componentParams: $(widgetDom).data() });
 
-              if (window.__PRERENDERED && widget.view && PRIORITY_WIDGETS.indexOf(widgetName) > -1) {
-                var $el = $('*[data-widget="' + widgetName + '"]');
-                widget.view.handlePrerenderedContent($el);
+              var $el = $('*[data-widget="' + widgetName + '"]');
+              const content = $el.length > 0 ? $el.html().trim() : '';
+              if (window.__PRERENDERED && widget.view && PRIORITY_WIDGETS.indexOf(widgetName) > -1 && $el.length > 0 && content.length > 0) {
+                if (typeof widget.view.handlePrerenderedContent === 'function') {
+                  widget.view.handlePrerenderedContent(content, $el);
+                }
                 window.__PRERENDERED = false;
               } else {
                 el = widget.getEl ? widget.getEl() : widget.render().el;
