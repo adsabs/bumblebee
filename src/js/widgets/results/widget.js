@@ -80,7 +80,7 @@ function (
     },
 
     defaultQueryArguments: {
-      'fl': 'title,abstract,bibcode,author,keyword,id,links_data,property,esources,data,citation_count,[citations],pub,aff,email,volume,pubdate,doi,doctype,identifier',
+      'fl': 'title,abstract,bibcode,author,keyword,id,links_data,property,esources,data,citation_count,citation_count_norm,[citations],pub,aff,email,volume,pubdate,doi,doctype,identifier',
       'rows': 25,
       'start': 0
     },
@@ -263,6 +263,9 @@ function (
 
         d.normCiteSort = normCiteSort;
 
+        if (normCiteSort) {
+          d.citationCountNorm = d.citation_count_norm.toFixed(2);
+        }
         // used by link generator mixin
         d.link_server = link_server;
         d.identifier = d.bibcode ? d.bibcode : d.identifier;
