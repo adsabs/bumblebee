@@ -136,6 +136,10 @@ define(['underscore', 'js/mixins/openurl_generator'], function (_, OpenURLGenera
       shortName: 'ISO',
       description: 'Infrared Space Observatory'
     },
+    JOSS: {
+      shortName: 'JOSS',
+      description: 'Journal of Open Source Software'
+    },
     KOA: {
       shortName: 'KOA',
       description: 'Keck Observatory Archive'
