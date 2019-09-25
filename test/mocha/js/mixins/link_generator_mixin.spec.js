@@ -190,11 +190,11 @@ define([
         done();
       });
       it('esources properly creates openUrl fullText open access source', function (done) {
-        const data = { property: ['ESOURCE'], bibcode: 'foo', doi: 'baz', esources: ['PUB_PDF'], link_server: 'bar' };
+        const data = { property: ['ESOURCE'], bibcode: 'foo', doi: ['baz'], esources: ['PUB_PDF'], link_server: 'bar' };
         const expected = {
           "fullTextSources": [
             {
-              "url": "bar?&url_ver=Z39.88-2004&rfr_id=info:sid/ADS&rft_val_fmt=info:ofi/fmt:kev:mtx:article&rft_id=info:doi/b&rft_id=info:bibcode/foo&id=doi:b&rft.genre=article&sid=ADS&genre=article",
+              "url": "bar?url_ver=Z39.88-2004&rft_val_fmt=info:ofi/fmt:kev:mtx:article&rfr_id=info:sid/ADS&sid=ADS&id=doi:baz&genre=article&rft_id=info:doi/baz&rft_id=info:bibcode/foo&rft.genre=article",
               "openUrl": true,
               "type": "INSTITUTION",
               "shortName": "My Institution",
