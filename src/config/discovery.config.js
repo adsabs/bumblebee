@@ -5,11 +5,12 @@ require.config({
   deps: (function() {
     if (typeof window !== 'undefined' && window.skipMain) {
       return ['common.config'];
+    } else {
+      return ['config/common.config', 'js/apps/discovery/main'];
     }
-    return ['config/common.config', 'js/apps/discovery/main'];
   })(),
 
-  // this will be overridden in the compiled file
+  //this will be overridden in the compiled file
   waitSeconds: 30,
 
   // Configuration we want to make available to modules of ths application
@@ -87,6 +88,7 @@ require.config({
         SearchWidget: 'js/widgets/search_bar/search_bar_widget',
         PaperSearchForm: 'js/widgets/paper_search_form/widget',
         Results: 'js/widgets/results/widget',
+        MyAdsFreeform: 'reactify!js/react/BumblebeeWidget?MyAdsFreeform',
         QueryInfo: 'js/widgets/query_info/query_info_widget',
         QueryDebugInfo: 'js/widgets/api_query/widget',
         ExportWidget: 'es6!js/widgets/export/widget.jsx',
@@ -97,6 +99,7 @@ require.config({
         PaperNetwork: 'js/wraps/paper_network',
         ConceptCloud: 'js/widgets/wordcloud/widget',
         BubbleChart: 'js/widgets/bubble_chart/widget',
+        MyAdsDashboard: 'reactify!js/react/BumblebeeWidget?MyAdsDashboard',
         AuthorAffiliationTool:
           'es6!js/widgets/author_affiliation_tool/widget.jsx',
 
@@ -129,7 +132,7 @@ require.config({
         ShowCoreads: 'js/wraps/coreads',
         ShowSimilar: 'js/wraps/similar',
         MetaTagsWidget: 'js/widgets/meta_tags/widget',
-        // can't camel case because router only capitalizes first letter
+        //can't camel case because router only capitalizes first letter
         ShowToc: 'js/wraps/table_of_contents',
         ShowResources: 'es6!js/widgets/resources/widget.jsx',
         ShowAssociated: 'es6!js/widgets/associated/widget.jsx',
@@ -174,7 +177,7 @@ require.config({
     async: 'libs/requirejs-plugins/async',
     babel: 'libs/requirejs-babel-plugin/babel-5.8.34.min',
     backbone: [
-      // '//cdnjs.cloudflare.com/ajax/libs/backbone.js/1.1.2/backbone-min',
+      //'//cdnjs.cloudflare.com/ajax/libs/backbone.js/1.1.2/backbone-min',
       'libs/backbone/backbone',
     ],
     'backbone-validation': [

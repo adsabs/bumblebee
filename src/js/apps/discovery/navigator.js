@@ -60,6 +60,7 @@ define([
 
       var searchPageAlwaysVisible = [
         'Results',
+        'MyAdsFreeform',
         'QueryInfo',
         'AffiliationFacet',
         'AuthorFacet',
@@ -209,7 +210,6 @@ define([
       });
 
       this.set('LibraryImport', function(page, data) {
-        var that = this;
         var defer = $.Deferred();
         var that = this;
         if (redirectIfNotSignedIn(that.endpoint)) {
@@ -283,6 +283,30 @@ define([
           'Application Settings'
         )
       );
+
+      this.set('MyAdsDashboard', function() {
+        var defer = $.Deferred();
+        var that = this;
+        if (redirectIfNotSignedIn(that.endpoint)) {
+          defer.resolve();
+          return defer.promise();
+        }
+
+        app
+          .getObject('MasterPageManager')
+          .show('SettingsPage', ['MyAdsDashboard', 'UserNavbarWidget'])
+          .then(function() {
+            app.getWidget('SettingsPage').done(function(widget) {
+              widget.setActive('MyAdsDashboard');
+              that.route = '#user/settings/myads';
+              that.title = 'myADS Notifications';
+              publishPageChange('settings-page');
+              defer.resolve();
+            });
+          });
+
+        return defer.promise();
+      });
 
       this.set('LibraryActionsWidget', function() {
         var $dd = $.Deferred();
@@ -399,8 +423,8 @@ define([
                 app
                   .getWidget('LibraryListWidget', 'IndividualLibraryWidget')
                   .then(function(w) {
-                    w.LibraryListWidget.setData(data);
-                    w.IndividualLibraryWidget.setSubView(data);
+                    w['LibraryListWidget'].setData(data);
+                    w['IndividualLibraryWidget'].setSubView(data);
                     if (pub) publishPageChange('libraries-page');
 
                     defer.resolve();
@@ -533,13 +557,13 @@ define([
 
       this.set('authentication-page', function(page, data) {
         var defer = $.Deferred();
-        var data = data || {};
-        var subView = data.subView || 'login';
-        var loggedIn = app
-          .getBeeHive()
-          .getObject('User')
-          .isLoggedIn();
-        var that = this;
+        var data = data || {},
+          subView = data.subView || 'login',
+          loggedIn = app
+            .getBeeHive()
+            .getObject('User')
+            .isLoggedIn(),
+          that = this;
 
         if (loggedIn) {
           // redirect to index
@@ -794,8 +818,7 @@ define([
           'BubbleChart',
         ];
 
-        var widgetName;
-        var pages;
+        var widgetName, pages;
 
         // convention is that a navigate command for search page widget starts with "show-"
         // waits for the navigate to results page emitted by the discovery_mediator
@@ -843,7 +866,7 @@ define([
               that.route += '&__tb=1';
             }
 
-            const q = query;
+            let q = query;
             if (q instanceof ApiQuery) {
               var update = {};
               var par = function(str) {
@@ -945,14 +968,14 @@ define([
       });
 
       this.set('user-action', function(endPoint, data) {
-        var failMessage = '';
-        var failTitle = '';
-        var route;
-        var done;
-        var defer = $.Deferred();
+        var failMessage = '',
+          failTitle = '',
+          route,
+          done,
+          defer = $.Deferred();
 
-        var token = data.token;
-        var subView = data.subView;
+        var token = data.token,
+          subView = data.subView;
 
         function fail(jqXHR, status, errorThrown) {
           self
@@ -1153,8 +1176,7 @@ define([
                 });
             });
           return;
-        }
-        if (orcidApi.hasAccess()) {
+        } else if (orcidApi.hasAccess()) {
           // XXX:rca = this block is async; showing modals even if the page under may be
           // changing; likely not intended to be doing that but not sure...
 
@@ -1219,8 +1241,8 @@ define([
        * */
 
       function showResultsPageWidgetWithUniqueUrl(command, options) {
-        var defer = $.Deferred();
-        var that = this;
+        var defer = $.Deferred(),
+          that = this;
         options = options || {};
         var q = app.getObject('AppStorage').getCurrentQuery();
         if (!q && options.q) {
@@ -1316,10 +1338,10 @@ define([
       this.set('verify-abstract', function() {
         // XXX:rca - moved from router; not in a working state
         // check we are using the canonical bibcode and redirect to it if necessary
-        var q;
-        var req;
-        var defer = $.Deferred;
-        var that = this;
+        var q,
+          req,
+          defer = $.Deferred,
+          that = this;
 
         q = new ApiQuery({
           q: 'identifier:' + this.queryUpdater.quoteIfNecessary(bibcode),
@@ -1330,8 +1352,7 @@ define([
           target: ApiTargets.SEARCH,
           options: {
             done: function(resp) {
-              var navigateString;
-              var href;
+              var navigateString, href;
 
               if (!subPage) {
                 navigateString = 'ShowAbstract';
@@ -1340,7 +1361,7 @@ define([
                   'Show' + subPage[0].toUpperCase() + subPage.slice(1);
                 href = '#abs/' + bibcode + '/' + subPage;
               }
-              // self.routerNavigate(navigateString, { href: href });
+              //self.routerNavigate(navigateString, { href: href });
 
               if (
                 resp.response &&
@@ -1648,8 +1669,8 @@ define([
       });
 
       this.set('show-author-affiliation-tool', function(id, options) {
-        var defer = $.Deferred();
-        var that = this;
+        var defer = $.Deferred(),
+          that = this;
         var q = app.getObject('AppStorage').getCurrentQuery();
         app
           .getObject('MasterPageManager')

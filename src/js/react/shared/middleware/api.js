@@ -16,9 +16,13 @@ define([], function() {
       };
 
       const fail = (error = defaultFail) => {
-        let response = error.responseJSON;
-        if (!response) {
-          response = defaultFail.responseJSON;
+        const { responseJSON, statusText, status } = error;
+        let errorMsg = defaultFail.responseJSON.error;
+        if (responseJSON) {
+          errorMsg =
+            responseJSON.error || responseJSON.message || responseJSON.msg;
+        } else if (statusText) {
+          errorMsg = statusText;
         }
         const { error: err, ...result } = response;
         dispatch({
@@ -28,7 +32,13 @@ define([], function() {
         });
       };
 
-      const { target, query = {}, type = 'GET', data } = action.options;
+      const {
+        target,
+        query = {},
+        type = 'GET',
+        data,
+        headers,
+      } = action.options;
 
       if (!target) {
         return;
@@ -42,7 +52,11 @@ define([], function() {
           done,
           fail,
           data: JSON.stringify(data),
-          contentType: 'application/json',
+          headers: {
+            Accept: 'application/json; charset=utf-8',
+            'Content-Type': 'application/json; charset=utf-8',
+            ...headers,
+          },
         },
       });
     }

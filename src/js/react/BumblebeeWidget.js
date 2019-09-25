@@ -6,28 +6,7 @@ define([
   'js/widgets/base/base_widget',
   'js/components/api_request',
   'js/components/api_query',
-  'analytics',
-], function(_, BaseWidget, ApiRequest, ApiQuery, analytics) {
-  const getBeeHive = () => {
-    return window.bbb.getBeeHive();
-  };
-
-  const getPubSub = () => {
-    const beehive = getBeeHive();
-    const ps = beehive.getService('PubSub');
-    return ps;
-  };
-
-  const subscribe = (...args) => {
-    const ps = getPubSub();
-    ps.subscribe(ps.pubSubKey, ...args);
-  };
-
-  const publish = (...args) => {
-    const ps = getPubSub();
-    ps.publish(ps.pubSubKey, ...args);
-  };
-
+], function(_, BaseWidget, ApiRequest, ApiQuery) {
   const BumblebeeWidget = BaseWidget.extend({
     /**
      * @override
@@ -52,7 +31,6 @@ define([
         getCurrentQuery: _.bind(this.onGetCurrentQuery, this),
         isLoggedIn: _.bind(this.isLoggedIn, this),
         getInitialData: _.bind(this.getInitialData, this),
-        analyticsEvent: _.bind(this.analyticsEvent, this),
       });
 
       this.listenTo(this, 'page-manager-message', (ev, data) => {
@@ -83,31 +61,33 @@ define([
         cb(this.initialData);
       }
     },
-    activate() {
-      const ps = getPubSub();
-      subscribe(ps.USER_ANNOUNCEMENT, this.handleUserAnnouncement.bind(this));
+    activate(beehive) {
+      this.setBeeHive(beehive);
+      const ps = this.getPubSub();
+      ps.subscribe(
+        ps.USER_ANNOUNCEMENT,
+        this.handleUserAnnouncement.bind(this)
+      );
     },
     handleUserAnnouncement() {},
     isLoggedIn(cb) {
       const user = this.getBeeHive().getObject('User');
-      if (typeof cb === 'function') {
-        cb(user.isLoggedIn());
-      }
+      cb(user.isLoggedIn());
     },
     onGetCurrentQuery(callback) {
       callback(this.getCurrentQuery());
     },
     subscribeToPubSub(event, callback) {
-      const ps = getPubSub();
-      subscribe(ps[event], callback);
+      const ps = this.getPubSub();
+      ps.subscribe(ps[event], callback);
     },
     publishToPubSub(event, ...args) {
-      const ps = getPubSub();
-      publish(ps[event], ...args);
+      const ps = this.getPubSub();
+      ps.publish(ps[event], ...args);
     },
     doSearch(queryParams) {
       const query = new ApiQuery();
-      if (_.isString(queryParams)) {
+      if (typeof queryParams === 'string') {
         query.load(queryParams);
       } else {
         query.set({ ...queryParams });
@@ -117,7 +97,7 @@ define([
       });
     },
     onSendRequest({ options, target, query }) {
-      const ps = getPubSub();
+      const ps = this.getPubSub();
       const request = new ApiRequest({
         target,
         query: new ApiQuery(query),

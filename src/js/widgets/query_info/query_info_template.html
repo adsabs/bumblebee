@@ -11,10 +11,26 @@
 
 {{#if loggedIn}}
 <div class="s-library-area">
-    <div class="s-library-add-title library-add-title"  role="button" data-toggle="collapse" data-target="#library-console" aria-expanded="false">
-        <i class="fa fa-book fa-lg" aria-hidden="true"></i> Add papers to library &nbsp; <i class="fa fa-lg fa-caret-down" aria-hidden="true"></i>
+  <div class="panel panel-default">
+    <div class="panel-heading" style="padding:0px;">
+      <div class="panel-title">
+        <button class="library-add-title btn btn-link btn-block" data-toggle="collapse" data-target="#library-console" aria-expanded="false}">
+          <div class="s-library-add-title__title">
+            <span><i class="fa fa-book" aria-hidden="true"></i> Add papers to library</span>
+            <span>
+              {{#if libraryDrawerOpen}}
+                <i class="fa fa-caret-down" aria-hidden="true"></i>
+              {{else}}
+                <i class="fa fa-caret-right" aria-hidden="true"></i>
+              {{/if}}
+            </span>
+          </div>
+        </button>
+      </div>
     </div>
-    <div class="collapse {{#if libraryDrawerOpen }} in {{/if}}" id="library-console" role="button">
+
+    <div class="panel-collapse collapse {{#if libraryDrawerOpen }} in {{/if}}" id="library-console">
+      <div class="panel-body">
 
         {{#compare selected 0 operator=">"}}
         add
@@ -38,7 +54,7 @@
                     <option value="{{this.id}}" {{#compare id ../selectedLibrary}} selected="true" {{/compare}}>{{this.name}}</option>
                     {{/each}}
                 </select>
-                <button class="btn btn-sm btn-success submit-add-to-library">submit</button>
+                <button class="btn btn-sm btn-primary-faded submit-add-to-library">submit</button>
             </div>
             <div style="margin:10px 0 4px 0">
                 OR
@@ -54,7 +70,7 @@
               value="{{newLibraryName}}"
               style="max-width:166px;margin-bottom:10px;"
               aria-label="enter new library name"/>
-            <button class="btn btn-sm btn-success submit-create-library"></i>submit</button>
+            <button class="btn btn-sm btn-primary-faded submit-create-library"></i>submit</button>
 
         </div>
 
@@ -99,13 +115,10 @@
               {{/if}}
 
           {{/if}}
-
-
         </div>
-
+      </div>
     </div>
-
-
+  </div>
     <!--end 'library area' if user is signed in-->
 </div>
 {{/if}}
