@@ -1,4 +1,4 @@
-define(['underscore', 'js/mixins/openurl_generator'], function (_, OpenURLGenerator) {
+define(['underscore', 'js/mixins/openurl_generator'], function (_, { getOpenUrl }) {
   const GATEWAY_BASE_URL = '/link_gateway/';
 
   const DEFAULT_ORDERING = [
@@ -245,10 +245,8 @@ define(['underscore', 'js/mixins/openurl_generator'], function (_, OpenURLGenera
       //   - The user is authenticated
       //   - the user HAS a library link server
       if (identifier && linkServer && countOpenUrls < 1) {
-        const openUrl = new OpenURLGenerator(data, linkServer);
-        openUrl.createOpenURL();
         fullTextSources.push({
-          url: openUrl.openURL,
+          url: getOpenUrl({ metadata: data, linkServer }),
           openUrl: true,
           type: 'INSTITUTION',
           shortName: 'My Institution',

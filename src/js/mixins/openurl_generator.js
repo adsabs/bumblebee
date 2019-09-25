@@ -1,215 +1,142 @@
-define([], function () {
-  var OpenURLGenerator = function (metadata, link_server) {
-    /**
-         * Generates a class that can be used to create an OpenURL and a ContextObject for OpenURLs
-         * OpenURL semantics have been followed using the standard Z39.88-2004, v0.1 and v1.0 should
-         * both be supported, in principle.
-         *
-         * @param {object} metadata - should contain the docs from a Solr response
-         * @param {string} link_server - library link server to be used as the base of the OpenURL
-         */
+define([
+  'underscore'
+], function (_) {
 
-    // Fixed values
-    this.baseURL = link_server;
-    this.metadata = (metadata !== undefined) ? this.metadata = metadata : {};
+  /**
+   * @typedef Metadata
+   * @property {string[]} page
+   * @property {string[]} doi
+   * @property {string} doctype
+   * @property {string} bibcode
+   * @property {string} author
+   * @property {string} issue
+   * @property {string} volume
+   * @property {string} pub
+   * @property {string} year
+   * @property {string[]} title
+   * @property {string[]} issn
+   * @property {string[]} isbn
+   */
 
-    this.url_ver = 'Z39.88-2004';
-    this.rft_val_fmt = 'info:ofi/fmt:kev:mtx:';
-    this.rfr_id = 'info:sid/ADS';
-    this.sid = 'ADS';
+  /**
+   * check if value is string
+   * @param {any} val value to test
+   * @returns {boolean}
+   */
+  const isString = (val) => _.isString(val);
 
-    this.parseAuthor = function (author) {
-      /** Parses the author returned from Solr docs that is the full author name, not their second name.
-             * The first and last names are comma separated.
-             *
-             * @param {string} author - author string
-             */
+  /**
+   * Check if value is an array
+   * @param {any} val value to test
+   * @returns {boolean}
+   */
+  const isArray = (val) => _.isArray(val);
 
-      if (author === undefined) {
-        return {
-          firstnames: false,
-          lastname: false
-        };
-      }
-      return {
-        firstnames: author.split(', ')[1],
-        lastname: author.split(', ')[0]
-      };
-    };
-
-    this.parseFirstPage = function (page) {
-      /** Parses the pages such that it returns the first page. There are two scenarios, one where there
-             * is a page range, and one where there is only a single page.
-             *
-             * @param {array} page - array containing a page or page range
-             */
-      return (page !== undefined) ? page[0].split('-')[0] : false;
-    };
-
-    this.parseRFTInfo = function (metadata) {
-      /**
-             * Extracts the possible types of IDs from the meta data. Currently there are two types of IDs. One
-             * is the DOI, and the second is a bibcode.
-             *
-             * @param {dictionary} metadata - should contain 'doi' and 'bibcode' keys
-             */
-
-      var doi = (metadata.doi !== undefined) ? 'info:doi/' + metadata.doi[0] : false;
-      var bibcode = (metadata.bibcode !== undefined) ? 'info:bibcode/' + metadata.bibcode : false;
-
-      return [doi, bibcode];
-    };
-
-    this.parseID = function (doi) {
-      /**
-             * Parses the incoming DOI array and returns the ContextObject specific format
-             *
-             * @param {array} doi - doi of the article in an array
-             */
-      return (doi !== undefined) ? 'doi:' + doi[0] : false;
-    };
-
-    this.parseGenre = function (doctype) {
-      /**
-             * Parses the incoming doctype to define the type of genre this should fit in.
-             * Currently, this is not implemented within the search engine, such that the doctype is
-             * not indexed. This will be updated in the future, for now we default to genre:article
-             *
-             * @param {string} doctype - doctype
-             */
-
-      return (doctype !== undefined) ? doctype : 'article';
-    };
-
-    this.parseDegree = function (bibcode) {
-      /**
-             * Parses the degree type from the bibcode given. Currently, we have the following two types
-             * of degrees:
-             *   1. PhD
-             *   2. Masters
-             *
-             * If neither of these degrees are found in the bibcode, it defaults to a false value
-             */
-      var degree;
-      bibcode = (bibcode !== undefined) ? bibcode : '';
-
-      if (bibcode.indexOf('PhDT') != -1) {
-        degree = 'PhD';
-      } else if (bibcode.indexOf('MsT') != -1) {
-        degree = 'Masters';
-      } else {
-        degree = false;
-      }
-
-      return degree;
-    };
-
-    this.parseContent = function () {
-      /**
-             * Parses the metadata of the object and fills all the correct attributes required for making a
-             * ContextObject
-             */
-      this.rft_spage = this.parseFirstPage(this.metadata.page);
-      this.id = this.parseID(this.metadata.doi);
-      this.genre = this.parseGenre(this.metadata.doctype);
-      this.rft_degree = this.parseDegree(this.metadata.bibcode);
-      this.rft_id = this.parseRFTInfo(this.metadata);
-      var author_name = this.parseAuthor(this.metadata.first_author);
-      this.rft_aulast = author_name.lastname;
-      this.rft_aufirst = author_name.firstnames;
-
-      this.rft_issue = (this.metadata.issue !== undefined) ? this.metadata.issue : false;
-      this.rft_vol = (this.metadata.volume !== undefined) ? this.metadata.volume : false;
-      this.rft_jtitle = (this.metadata.pub !== undefined) ? this.metadata.pub : false;
-      this.rft_date = (this.metadata.year !== undefined) ? this.metadata.year : false;
-      this.rft_atitle = (this.metadata.title !== undefined) ? this.metadata.title[0] : false;
-      this.rft_issn = (this.metadata.issn !== undefined) ? this.metadata.issn[0] : false;
-      this.rft_isbn = (this.metadata.isbn !== undefined) ? this.metadata.isbn[0] : false;
-
-      this.rft_val_fmt += this.genre;
-    };
-
-    this.createContextObject = function () {
-      /**
-             * Creates a ContextObject that is used for the generation of OpenURLs either by the service or
-             * by third-party plugins
-             *
-             */
-
-      // Parse the objects content first
-      this.parseContent();
-
-      // Generate the ContextObject, which for now will look like a dictionary
-      this.contextObject = {
-        'url_ver': this.url_ver,
-        'rfr_id': this.rfr_id,
-        'rft_val_fmt': this.rft_val_fmt,
-        'rft_id': this.rft_id,
-        'issn': this.rft_issn,
-        'id': this.id,
-        'isbn': this.rft_isbn,
-        'rft.spage': this.rft_spage,
-        'rft.issue': this.rft_issue,
-        'rft.volume': this.rft_vol,
-        'rft.jtitle': this.rft_jtitle,
-        'rft.atitle': this.rft_atitle,
-        'rft.aulast': this.rft_aulast,
-        'rft.aufirst': this.rft_aufirst,
-        'rft.date': this.rft_date,
-        'rft.issn': this.rft_issn,
-        'rft.isbn': this.rft_isbn,
-        'rft.genre': this.genre,
-        'rft.degree': this.rft_degree,
-        'sid': this.sid,
-        'spage': this.rft_spage,
-        'volume': this.rft_vol,
-        'title': this.rft_jtitle,
-        'atitle': this.rft_atitle,
-        'aulast': this.rft_aulast,
-        'aufirst': this.rft_aufirst,
-        'date': this.rft_date,
-        'genre': this.genre
-      };
-    };
-
-    this.createOpenURL = function () {
-      /**
-             * Generates the openURL using the context object
-             */
-
-      // Create the context object
-      this.createContextObject();
-
-      // Modify the base to allow the key values to be appended
-      this.openURL = this.baseURL + '?';
-
-      // Append all the keys
-      for (var key in this.contextObject) {
-        if (this.contextObject.hasOwnProperty(key)) {
-          // Escape if the object is set to false
-          if (this.contextObject[key] === false) {
-            continue;
-          }
-
-          if (this.contextObject[key] instanceof Array) {
-            for (var i = 0; i < this.contextObject[key].length; i++) {
-              // Escape if this element is set to false
-              if (this.contextObject[key][i] === false) {
-                continue;
-              }
-
-              this.openURL += '&' + key + '=' + this.contextObject[key][i];
-            }
-          } else {
-            this.openURL += '&' + key + '=' + this.contextObject[key];
-          }
-        }
-      }
-
-      // Encode the URL
-      this.openURL = encodeURI(this.openURL);
-    };
+  /**
+   * ADS specific fields
+   */
+  const STATIC_FIELDS = {
+    url_ver: 'Z39.88-2004',
+    rft_val_fmt: 'info:ofi/fmt:kev:mtx:',
+    rfr_id: 'info:sid/ADS',
+    sid: 'ADS'
   };
 
-  return OpenURLGenerator;
+  /**
+   * Generates an OpenUrl using metadata and a linkServer
+   * @param {object} options
+   * @param {Metadata} options.metadata field data from database
+   * @param {string} options.linkServer base url to use for generating link
+   * @returns {string} the openUrl url
+   */
+  const getOpenUrl = (options) => {
+
+    const {
+      metadata,
+      linkServer = ''
+    } = options || {};
+
+    const {
+      page,
+      doi,
+      doctype,
+      bibcode,
+      author,
+      issue,
+      volume,
+      pub,
+      year,
+      title,
+      issn,
+      isbn
+    } = metadata || {};
+
+    // parse out degree based on bibcode
+    const degree = isString(bibcode) && (
+      bibcode.includes('PhDT') ? 'PhD' :
+      bibcode.includes('MsT') ? 'Masters' : false
+    );
+
+    // parse various fields to create a context object
+    const parsed = {
+      ...STATIC_FIELDS,
+      'rft.spage': isArray(page) ? page[0].split('-')[0] : false,
+      'id': isArray(doi) ? 'doi:' + doi[0] : false,
+      'genre': isString(doctype) ? doctype : 'article',
+      'rft_id': [
+        isArray(doi) ? 'info:doi/' + doi[0] : false,
+        isString(bibcode) ? 'info:bibcode/' + bibcode : false
+      ],
+      'rft.degree': degree,
+      'rft.aulast': isString(author) ? author.split(', ')[0] : false,
+      'rft.aufirst': isString(author) ? author.split(', ')[1] : false,
+      'rft.issue': isString(issue) ? issue : false,
+      'rft.volume': isString(volume) ? volume : false,
+      'rft.jtitle': isString(pub) ? pub : false,
+      'rft.date': isString(year) ? year : false,
+      'rft.atitle': isArray(title) ? title[0] : false,
+      'rft.issn': isArray(issn) ? issn[0] : false,
+      'rft.isbn': isArray(isbn) ? isbn[0] : false,
+      'rft.genre': isString(doctype) ? doctype : 'article',
+      'rft_val_fmt': STATIC_FIELDS.rft_val_fmt + (isString(doctype) ? doctype : 'article'),
+    };
+
+    // add extra fields to context object
+    const context = {
+      ...parsed,
+      spage: parsed['rft.spage'],
+      volume: parsed['rft.volume'],
+      title: parsed['rft.jtitle'],
+      atitle: parsed['rft.atitle'],
+      aulast: parsed['rft.aulast'],
+      aufirst: parsed['rft.aufirst'],
+      date: parsed['rft.date'],
+      isbn: parsed['rft.isbn'],
+      issn: parsed['rft.issn']
+    }
+
+    // if the linkServer has query string, just append to the end
+    const openUrl = linkServer.includes('?') ? linkServer + '&' : linkServer + '?';
+
+    // generate array of query params from the context object
+    const fields = Object.keys(context)
+      .filter((k) => context[k])
+      .map((key) => {
+        if (context[key]) {
+          if (isArray(context[key])) {
+            return context[key]
+              .filter(v => v)
+              .map((val) => `${ key }=${ val }`)
+              .join('&');
+          }
+          return `${ key }=${ context[key] }`;
+        }
+      });
+
+    return encodeURI(openUrl + fields.join('&'));
+  }
+
+  return {
+    getOpenUrl
+  };
 });
