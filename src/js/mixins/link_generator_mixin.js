@@ -311,20 +311,20 @@ define(['underscore', 'js/mixins/openurl_generator'], function (_, OpenURLGenera
       const parts = product.split(':');
       const linkInfo = LINK_TYPES[parts[0]];
 
-      // are there any without a count? just make them 0
+      // are there any without a count? just make them 1
       if (parts.length > 1) {
         dataProducts.push({
           url: createGatewayUrl(data.bibcode, parts[0]),
           count: parts[1],
-          name: linkInfo && linkInfo.shortName,
-          description: linkInfo && linkInfo.description
+	  name: linkInfo ? linkInfo.shortName : parts[0],
+	  description: linkInfo ? linkInfo.description : parts[0]
         });
       } else {
         dataProducts.push({
           url: createGatewayUrl(data.bibcode, product),
-          count: '0',
-          name: product,
-          description: linkInfo && linkInfo.description
+          count: '1',
+	  name: linkInfo ? linkInfo.shortName : product,
+	  description: linkInfo ? linkInfo.description : product
         });
       }
     });
