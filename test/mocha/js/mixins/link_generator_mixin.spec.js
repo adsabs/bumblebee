@@ -257,7 +257,7 @@ define([
           "dataProducts": [
             {
               "url": "/link_gateway/foo/NED",
-              "count": "0",
+              "count": "1",
               "name": "NED",
               "description": "NASA/IPAC Extragalactic Database"
             }
