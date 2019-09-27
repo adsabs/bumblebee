@@ -1,9 +1,16 @@
-define(['underscore', 'js/mixins/openurl_generator'], function (_, { getOpenUrl }) {
+define(['underscore', 'js/mixins/openurl_generator'], function(
+  _,
+  { getOpenUrl },
+) {
   const GATEWAY_BASE_URL = '/link_gateway/';
 
   const DEFAULT_ORDERING = [
-    'ADS PDF', 'ADS Scanned Article', 'My Institution',
-    'Publisher Article', 'Publisher PDF', 'arXiv PDF'
+    'ADS PDF',
+    'ADS Scanned Article',
+    'My Institution',
+    'Publisher Article',
+    'Publisher PDF',
+    'arXiv PDF',
   ];
 
   // set of link types and descriptions
@@ -12,190 +19,192 @@ define(['underscore', 'js/mixins/openurl_generator'], function (_, { getOpenUrl 
       name: 'Publisher PDF',
       shortName: 'Publisher',
       description: 'Publisher PDF',
-      type: 'PDF'
+      type: 'PDF',
     },
     EPRINT_PDF: {
       name: 'arXiv PDF',
       shortName: 'arXiv',
       description: 'ArXiv eprint',
-      type: 'PDF'
+      type: 'PDF',
     },
     AUTHOR_PDF: {
       name: 'Author PDF',
       shortName: 'Author',
       description: 'Link to PDF page provided by author',
-      type: 'PDF'
+      type: 'PDF',
     },
     ADS_PDF: {
       name: 'ADS PDF',
       shortName: 'ADS',
       description: 'ADS PDF',
-      type: 'PDF'
+      type: 'PDF',
     },
     PUB_HTML: {
       name: 'Publisher Article',
       shortName: 'Publisher',
       description: 'Electronic on-line publisher article (HTML)',
-      type: 'HTML'
+      type: 'HTML',
     },
     EPRINT_HTML: {
       name: 'arXiv Article',
       shortName: 'arXiv',
       description: 'Arxiv article',
-      type: 'HTML'
+      type: 'HTML',
     },
     AUTHOR_HTML: {
       name: 'Author Article',
       shortName: 'Author',
       description: 'Link to HTML page provided by author',
-      type: 'HTML'
+      type: 'HTML',
     },
     ADS_SCAN: {
       name: 'ADS Scanned Article',
       description: 'ADS scanned article',
       shortName: 'ADS',
-      type: 'SCAN'
+      type: 'SCAN',
     },
     AcA: {
       shortName: 'AcA',
-      description: 'Acta Astronomica Data Files'
+      description: 'Acta Astronomica Data Files',
     },
     ALMA: {
       shortName: 'ALMA',
-      description: 'Atacama Large Millimeter/submillimeter Array'
+      description: 'Atacama Large Millimeter/submillimeter Array',
     },
     ARI: {
       shortName: 'ARI',
-      description: 'Astronomisches Rechen-Institut'
+      description: 'Astronomisches Rechen-Institut',
     },
     Astroverse: {
       shortName: 'Astroverse',
-      description: 'CfA Dataverse'
+      description: 'CfA Dataverse',
     },
     ATNF: {
       shortName: 'ATNF',
-      description: 'Australia Telescope Online Archive'
+      description: 'Australia Telescope Online Archive',
     },
     Author: {
       shortName: 'Author',
-      description: 'Author Hosted Dataset'
+      description: 'Author Hosted Dataset',
     },
     BICEP2: {
       shortName: 'BICEP2',
-      description: 'BICEP/Keck Data'
+      description: 'BICEP/Keck Data',
     },
     CADC: {
       shortName: 'CADC',
-      description: 'Canadian Astronomy Data Center'
+      description: 'Canadian Astronomy Data Center',
     },
     CDS: {
       shortName: 'CDS',
-      description: 'Strasbourg Astronomical Data Center'
+      description: 'Strasbourg Astronomical Data Center',
     },
     Chandra: {
       shortName: 'Chandra',
-      description: 'Chandra X-Ray Observatory'
+      description: 'Chandra X-Ray Observatory',
     },
     ESA: {
       shortName: 'ESA',
-      description: 'ESAC Science Data Center'
+      description: 'ESAC Science Data Center',
     },
     ESO: {
       shortName: 'ESO',
-      description: 'European Southern Observatory'
+      description: 'European Southern Observatory',
     },
     GCPD: {
       shortName: 'GCPD',
-      description: 'The General Catalogue of Photometric Data'
+      description: 'The General Catalogue of Photometric Data',
     },
     GTC: {
       shortName: 'GTC',
-      description: 'Gran Telescopio CANARIAS Public Archive'
+      description: 'Gran Telescopio CANARIAS Public Archive',
     },
     HEASARC: {
       shortName: 'HEASARC',
-      description: 'NASA\'s High Energy Astrophysics Science Archive Research Center'
+      description:
+        "NASA's High Energy Astrophysics Science Archive Research Center",
     },
     Herschel: {
       shortName: 'Herschel',
-      description: 'Herschel Science Center'
+      description: 'Herschel Science Center',
     },
     IBVS: {
       shortName: 'IBVS',
-      description: 'Information Bulletin on Variable Stars'
+      description: 'Information Bulletin on Variable Stars',
     },
     INES: {
       shortName: 'INES',
-      description: 'IUE Newly Extracted Spectra'
+      description: 'IUE Newly Extracted Spectra',
     },
     IRSA: {
       shortName: 'IRSA',
-      description: 'NASA/IPAC Infrared Science Archive'
+      description: 'NASA/IPAC Infrared Science Archive',
     },
     ISO: {
       shortName: 'ISO',
-      description: 'Infrared Space Observatory'
+      description: 'Infrared Space Observatory',
     },
     JOSS: {
       shortName: 'JOSS',
-      description: 'Journal of Open Source Software'
+      description: 'Journal of Open Source Software',
     },
     KOA: {
       shortName: 'KOA',
-      description: 'Keck Observatory Archive'
+      description: 'Keck Observatory Archive',
     },
     MAST: {
       shortName: 'MAST',
-      description: 'Mikulski Archive for Space Telescopes'
+      description: 'Mikulski Archive for Space Telescopes',
     },
     NED: {
       shortName: 'NED',
-      description: 'NASA/IPAC Extragalactic Database'
+      description: 'NASA/IPAC Extragalactic Database',
     },
     NExScI: {
       shortName: 'NExScI',
-      description: 'NASA Exoplanet Archive'
+      description: 'NASA Exoplanet Archive',
     },
     NOAO: {
       shortName: 'NOAO',
-      description: 'National Optical Astronomy Observatory'
+      description: 'National Optical Astronomy Observatory',
     },
     PASA: {
       shortName: 'PASA',
-      description: 'Publication of the Astronomical Society of Australia Datasets'
+      description:
+        'Publication of the Astronomical Society of Australia Datasets',
     },
     PDG: {
       shortName: 'PDG',
-      description: 'Particle Data Group'
+      description: 'Particle Data Group',
     },
     PDS: {
       shortName: 'PDS',
-      description: 'The NASA Planetary Data System'
+      description: 'The NASA Planetary Data System',
     },
     SIMBAD: {
       shortName: 'SIMBAD',
-      description: 'SIMBAD Database at the CDS'
+      description: 'SIMBAD Database at the CDS',
     },
     Spitzer: {
       shortName: 'Spitzer',
-      description: 'Spitzer Space Telescope'
+      description: 'Spitzer Space Telescope',
     },
     TNS: {
       shortName: 'TNS',
-      description: 'Transient Name Server'
+      description: 'Transient Name Server',
     },
     Vizier: {
       shortName: 'VizieR',
-      description: 'VizieR Catalog Service'
+      description: 'VizieR Catalog Service',
     },
     XMM: {
       shortName: 'XMM',
-      description: 'XMM Newton Science Archive'
+      description: 'XMM Newton Science Archive',
     },
     Zenodo: {
       shortName: 'Zenodo',
-      description: 'Zenodo Archive'
-    }
+      description: 'Zenodo Archive',
+    },
   };
 
   /**
@@ -204,7 +213,7 @@ define(['underscore', 'js/mixins/openurl_generator'], function (_, { getOpenUrl 
    * @param {string} target - the source target (i.e. PUB_HTML)
    * @returns {string} - the new url
    */
-  const _createGatewayUrl = function (bibcode, target) {
+  const _createGatewayUrl = function(bibcode, target) {
     if (_.isString(bibcode) && _.isString(target)) {
       return GATEWAY_BASE_URL + enc(bibcode) + '/' + target;
     }
@@ -225,7 +234,7 @@ define(['underscore', 'js/mixins/openurl_generator'], function (_, { getOpenUrl 
    * @param {object} data - the data object to process
    * @returns {object} - the fulltext and data sources
    */
-  const _processLinkData = function (data) {
+  const _processLinkData = function(data) {
     const createGatewayUrl = this._createGatewayUrl;
     let fullTextSources = [];
     let dataProducts = [];
@@ -233,7 +242,7 @@ define(['underscore', 'js/mixins/openurl_generator'], function (_, { getOpenUrl 
     const property = data.property;
 
     // check the esources property
-    _.forEach(data.esources, function (el, ids, sources) {
+    _.forEach(data.esources, function(el, ids, sources) {
       const parts = el.split('_');
       const linkInfo = LINK_TYPES[el];
       const linkServer = data.link_server;
@@ -251,7 +260,7 @@ define(['underscore', 'js/mixins/openurl_generator'], function (_, { getOpenUrl 
           type: 'INSTITUTION',
           shortName: 'My Institution',
           name: 'My Institution',
-          description: 'Find Article At My Institution'
+          description: 'Find Article At My Institution',
         });
         countOpenUrls += 1;
       }
@@ -263,10 +272,10 @@ define(['underscore', 'js/mixins/openurl_generator'], function (_, { getOpenUrl 
           shortName: (linkInfo && linkInfo.shortName) || el,
           name: (linkInfo && linkInfo.name) || el,
           type: (linkInfo && linkInfo.type) || 'HTML',
-          description: linkInfo && linkInfo.description
+          description: linkInfo && linkInfo.description,
         });
 
-      // if entry cannot be split, then it will not be open access
+        // if entry cannot be split, then it will not be open access
       } else {
         fullTextSources.push({
           url: createGatewayUrl(data.bibcode, el),
@@ -274,15 +283,17 @@ define(['underscore', 'js/mixins/openurl_generator'], function (_, { getOpenUrl 
           shortName: (linkInfo && linkInfo.shortName) || el,
           name: (linkInfo && linkInfo.name) || el,
           type: (linkInfo && linkInfo.type) || 'HTML',
-          description: linkInfo && linkInfo.description
+          description: linkInfo && linkInfo.description,
         });
       }
     });
 
     // if no arxiv link is present, check links_data as well to make sure
-    const hasEprint = _.find(fullTextSources, { name: LINK_TYPES.EPRINT_PDF.name });
+    const hasEprint = _.find(fullTextSources, {
+      name: LINK_TYPES.EPRINT_PDF.name,
+    });
     if (!hasEprint && _.isArray(data.links_data)) {
-      _.forEach(data.links_data, function (linkData) {
+      _.forEach(data.links_data, function(linkData) {
         const link = JSON.parse(linkData);
         if (/preprint/i.test(link.type)) {
           const info = LINK_TYPES.EPRINT_PDF;
@@ -292,37 +303,37 @@ define(['underscore', 'js/mixins/openurl_generator'], function (_, { getOpenUrl 
             shortName: (info && info.shortName) || link.type,
             name: (info && info.name) || link.type,
             type: (info && info.type) || 'HTML',
-            description: info && info.description
+            description: info && info.description,
           });
         }
       });
     }
 
     // reorder the full text sources based on our default ordering
-    fullTextSources = _.sortBy(fullTextSources, function (source) {
+    fullTextSources = _.sortBy(fullTextSources, function(source) {
       const rank = DEFAULT_ORDERING.indexOf(source.name);
       return rank > -1 ? rank : 9999;
     });
 
     // check the data property
-    _.forEach(data.data, function (product) {
+    _.forEach(data.data, function(product) {
       const parts = product.split(':');
       const linkInfo = LINK_TYPES[parts[0]];
 
-      // are there any without a count? just make them 0
+      // are there any without a count? just make them 1
       if (parts.length > 1) {
         dataProducts.push({
           url: createGatewayUrl(data.bibcode, parts[0]),
           count: parts[1],
-          name: linkInfo && linkInfo.shortName,
-          description: linkInfo && linkInfo.description
+          name: linkInfo ? linkInfo.shortName : parts[0],
+          description: linkInfo ? linkInfo.description : parts[0],
         });
       } else {
         dataProducts.push({
           url: createGatewayUrl(data.bibcode, product),
-          count: '0',
-          name: product,
-          description: linkInfo && linkInfo.description
+          count: '1',
+          name: linkInfo ? linkInfo.shortName : product,
+          description: linkInfo ? linkInfo.description : product,
         });
       }
     });
@@ -332,7 +343,7 @@ define(['underscore', 'js/mixins/openurl_generator'], function (_, { getOpenUrl 
 
     return {
       fullTextSources: fullTextSources,
-      dataProducts: dataProducts
+      dataProducts: dataProducts,
     };
   };
 
@@ -342,15 +353,15 @@ define(['underscore', 'js/mixins/openurl_generator'], function (_, { getOpenUrl 
    * @param {object} _data - the data object to parse
    * @returns {object} - copy of the data object with links prop added
    */
-  const _parseLinksDataForModel = function (_data, linksData) {
-    let links = { list: [], data: [], text: [] };
-    const data = _.extend({}, _data, { links: links });
+  const _parseLinksDataForModel = function(_data, linksData) {
+    let links = {list: [], data: [], text: []};
+    const data = _.extend({}, _data, {links: links});
 
     // map linksData to links object
     if (_.isPlainObject(linksData)) {
       links = _.assign(links, {
         data: links.data.concat(linksData.dataProducts || []),
-        text: links.text.concat(linksData.fullTextSources || [])
+        text: links.text.concat(linksData.fullTextSources || []),
       });
     }
 
@@ -360,20 +371,26 @@ define(['underscore', 'js/mixins/openurl_generator'], function (_, { getOpenUrl 
         const citations = data['[citations]'];
 
         // push it onto the links if the citation count is higher than 0
-        if (_.isNumber(citations.num_citations) && citations.num_citations > 0) {
+        if (
+          _.isNumber(citations.num_citations) &&
+          citations.num_citations > 0
+        ) {
           links.list.push({
             letter: 'C',
             name: 'Citations (' + citations.num_citations + ')',
-            url: '#abs/' + enc(data.bibcode) + '/citations'
+            url: '#abs/' + enc(data.bibcode) + '/citations',
           });
         }
 
         // push onto the links if the reference count is higher than 0
-        if (_.isNumber(citations.num_references) && citations.num_references > 0) {
+        if (
+          _.isNumber(citations.num_references) &&
+          citations.num_references > 0
+        ) {
           links.list.push({
             letter: 'R',
             name: 'References (' + citations.num_references + ')',
-            url: '#abs/' + enc(data.bibcode) + '/references'
+            url: '#abs/' + enc(data.bibcode) + '/references',
           });
         }
       }
@@ -384,7 +401,7 @@ define(['underscore', 'js/mixins/openurl_generator'], function (_, { getOpenUrl 
           links.list.push({
             letter: 'T',
             name: 'Table of Contents',
-            url: '#abs/' + enc(data.bibcode) + '/toc'
+            url: '#abs/' + enc(data.bibcode) + '/toc',
           });
         }
       }
@@ -401,11 +418,11 @@ define(['underscore', 'js/mixins/openurl_generator'], function (_, { getOpenUrl 
    * by the processData method of a widget.
    *
    */
-  const parseLinksData = function (data) {
+  const parseLinksData = function(data) {
     const parseLinksDataForModel = _.bind(this._parseLinksDataForModel, this);
     const parseResourcesData = _.bind(this.parseResourcesData, this);
     if (_.isArray(data)) {
-      return _.map(data, function (d) {
+      return _.map(data, function(d) {
         try {
           const linkData = parseResourcesData(d);
           return parseLinksDataForModel(d, linkData);
@@ -422,7 +439,7 @@ define(['underscore', 'js/mixins/openurl_generator'], function (_, { getOpenUrl 
    *
    * @param {object} data - the data to parse
    */
-  const parseResourcesData = function (data) {
+  const parseResourcesData = function(data) {
     const processLinkData = _.bind(this._processLinkData, this);
 
     // data must have 'property' and sub-props
@@ -430,10 +447,14 @@ define(['underscore', 'js/mixins/openurl_generator'], function (_, { getOpenUrl 
       if (_.isArray(data.property) && _.isString(data.bibcode)) {
         // make sure if property has a esource or data, we find it on data as well
         if (_.contains(data.property, 'ESOURCE') && !_.has(data, 'esources')) {
-          throw new Error('if `property` property contains `ESOURCE`, then data must have `esources` field');
+          throw new Error(
+            'if `property` property contains `ESOURCE`, then data must have `esources` field',
+          );
         }
         if (_.contains(data.property, 'DATA') && !_.has(data, 'data')) {
-          throw new Error('if `property` property contains `DATA`, then data must have `data` field');
+          throw new Error(
+            'if `property` property contains `DATA`, then data must have `data` field',
+          );
         }
         return processLinkData(_.extend({}, data));
       }
@@ -450,7 +471,7 @@ define(['underscore', 'js/mixins/openurl_generator'], function (_, { getOpenUrl 
    * @param {string|array} identifier - the identifier to use to build the url
    * @returns {string}
    */
-  const createUrlByType = function (bibcode, type, identifier) {
+  const createUrlByType = function(bibcode, type, identifier) {
     let id = identifier;
     if (_.isArray(id)) {
       id = id[0];
@@ -462,7 +483,7 @@ define(['underscore', 'js/mixins/openurl_generator'], function (_, { getOpenUrl 
     return '';
   };
 
-  const enc = function (str) {
+  const enc = function(str) {
     return encodeURIComponent(str);
   };
 
@@ -473,6 +494,6 @@ define(['underscore', 'js/mixins/openurl_generator'], function (_, { getOpenUrl 
     createUrlByType: createUrlByType,
     _createGatewayUrl: _createGatewayUrl,
     _processLinkData: _processLinkData,
-    _parseLinksDataForModel: _parseLinksDataForModel
+    _parseLinksDataForModel: _parseLinksDataForModel,
   };
 });
