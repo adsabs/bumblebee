@@ -5,29 +5,53 @@ s-search-bar-motion is applied */
   @extend .border-default-light;
 }
 
+@mixin container-fixed($gutter: $grid-gutter-width) {
+  margin-right: auto;
+  margin-left: auto;
+  padding-left:  floor(($gutter / 2));
+  padding-right: ceil(($gutter / 2));
+  @include clearfix;
+}
 
 .loading-screen {
+  @include container-fixed(30px);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  min-height: 100vh;
   color: $gray-light;
-  height: 100vh;
-  padding-top: 30vh;
-  text-align:center;
-  font-size: 3.2em;
   font-weight: 300;
-}
+  width: 100%;
+  @media only screen and (min-width : 768px) {
+    font-size: 2rem;
+    min-height: 50vh;
+    width: auto;
+  }
 
-.logo__astrophysics {
-  font-weight: 500;
-  letter-spacing: .03em;
-  color: $gray-light;
+  #loading-screen-title {
+    font-size: 2.5rem;
+    letter-spacing: 0.03em;
+    text-align: center;
+    .logo__astrophysics {
+      font-weight: 300;
+      color: $gray-light;
+    }
+    .logo__data-system {
+      color: lighten($gray-light, 12%);
+    }
+    @media only screen and (min-width : 768px) {
+      font-size: 5rem;
+    }
+  }
 
-}
-
-.logo__data-system {
-  letter-spacing: 0.09em;
-  position: relative;
-  top: -20px;
-  color: lighten($gray-light, 12%);
-
+  #loading-screen-message {
+    font-size: 2.5rem;
+    text-align: center;
+    margin-top: 0.5rem;
+    div {
+      padding-bottom: 1rem;
+    }
+  }
 }
 
 .loading-screen__loading {
