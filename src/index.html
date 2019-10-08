@@ -44,14 +44,7 @@
 
     <noscript>
       <div id="noscriptmsg">
-        <div class="h3">JavaScript Required</div>
-        <hr class="hr">
-        <p>
-          Sorry, but ADS requires JavaScript to be enabled.
-        </p>
-        <p class="pull-right">
-          <a href="/core/always" class="btn btn-info">Try ADS Core</a>
-        </p>
+        Sorry, but the fully featured ADS requires JavaScript to be enabled. Alternatively, <a href="https://ui.adsabs.harvard.edu/core">load basic HTML</a> (for slow connections/low resources).
       </div>
     </noscript>
 
@@ -70,10 +63,13 @@
             <div class="progress">
               <div class="progress-bar progress-bar-striped active" role="progressbar" id="loading-screen-progress" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="width: 0%">
                 <span class="sr-only">0% Complete</span>
+                <span id="loading-screen-message">lsdkfj</span>
               </div>
             </div>
           </section>
-          <h2 id="loading-screen-message"></h2>
+          <h3 id="basic-html-message">
+            Loading ADS | <a href="https://ui.adsabs.harvard.edu/core">Load basic HTML</a> (for slow connections/low resources)
+          </h3>
         </article>
       </div>
     </div>
@@ -109,21 +105,10 @@
               // do nothing
             }
           };
-          setTimeout(__setAppLoadingProgress, 200, 10);
-          setTimeout(__setAppLoadingProgress, 500, 15);
-          window.__setAppLoadingProgress(5, 'Downloading Assets');
+          setTimeout(__setAppLoadingProgress, 200, 20);
+          setTimeout(__setAppLoadingProgress, 500, 25);
+          window.__setAppLoadingProgress(15, 'Downloading Assets');
           window.__PAGE_LOAD_TIMESTAMP = new Date();
-
-          // Show a reload button if the page is taking too long
-          setTimeout(function check () {
-            if (progressValue !== 100) {
-              var msg = '<div>Loading is taking a while...</div>';
-              msg += '<div><a href="/core/always" class="btn btn-default btn-lg" title="try ads core for slow connections">Try ADS Core (for slow connections)</a></div>';
-              window.__setAppLoadingProgress(progressValue, msg);
-            } else {
-              window.APP_LOADING_TIMER = setTimeout(check, 10000);
-            }
-          }, 10000);
         })();
     </script>
 
