@@ -109,7 +109,6 @@ function (
         numFound: undefined,
         bigquery: false,
         bigquerySource: undefined
-
       };
     }
   });
@@ -345,7 +344,8 @@ function (
       'keyup .q': 'storeCursorInfo',
       'select .q': 'storeCursorInfo',
       'click .q': 'storeCursorInfo',
-      'click .bigquery-close': 'clearBigquery'
+      'click .bigquery-close': 'clearBigquery',
+      'click .bigquery-tag': 'showBigquery'
     },
 
     toggleClear: function () {
@@ -362,14 +362,7 @@ function (
     },
 
     setFormVal: function (v) {
-      /*
-            bigquery special case: don't show the confusing *:*, just empty bar
-           */
-      if (this.model.get('bigquery') && v === '*:*') {
-        this.$('.q').val('');
-      } else {
-        this.$('.q').val(v);
-      }
+      this.$('.q').val(this.model.get('bigquery') ? '' : v);
       this.toggleClear();
     },
 
@@ -378,7 +371,7 @@ function (
       j.numFound = j.numFound ? this.formatNum(j.numFound) : 0;
       j.citationCount = j.citationCount ? this.formatNum(j.citationCount) : false;
       if (this.model.get('bigquerySource')) {
-        if (this.model.get('bigquerySource').match(/library/i)) {
+        if (this.model.get('bigquerySource').match(/library:/i)) {
           this.model.set({ libraryName: this.model.get('bigquerySource').match(/library:(.*)/i)[1] });
         }
       }
@@ -595,6 +588,10 @@ function (
 
     clearBigquery: function () {
       this.trigger('clear_big_query');
+    },
+
+    showBigquery: function () {
+      this.trigger('show_big_query');
     }
   });
 
@@ -622,9 +619,18 @@ function (
         query.unset('__bigquerySource');
         query.set('__clearBigQuery', 'true');
 
+        const bigQuery = this.model.get('bigquery');
+
         // unload the bigquery from the model
         this.clearBigQueryPill();
-        this.navigate(query);
+
+        if (bigQuery && !bigQuery.isDocsQuery) {
+          this.navigate(query);
+        }
+      });
+
+      this.listenTo(this.view, 'show_big_query', function (query) {
+        this.clearBigQueryPill();
       });
 
       this.listenTo(this.view, 'render', function () {
@@ -803,6 +809,16 @@ function (
       this.focusInput(page);
     },
 
+    _isDocsQuery: function (apiQuery) {
+      if (typeof apiQuery.get === 'function') {
+        const q = apiQuery.get('q');
+        const match = /^docs\((library\/)?/.exec(q);
+        if (match) {
+          return { isDocsQuery: true, isLibrary: match.length > 1 };
+        }
+      }
+    },
+
     handleFeedback: function (feedback) {
       if (feedback.code === ApiFeedback.CODES.SEARCH_CYCLE_STARTED
             || feedback.code === ApiFeedback.CODES.SEARCH_CYCLE_FAILED_TO_START) {
@@ -813,10 +829,12 @@ function (
           ? query.get('__original_query')[0] : query.get('q').join(' ');
 
         this.setCurrentQuery(query);
+        const docsQuery = this._isDocsQuery(query);
 
         this.model.set({
-          bigquerySource: query.get('__bigquerySource') ? query.get('__bigquerySource')[0] : 'Bulk query',
-          bigquery: !!query.get('__qid'),
+          bigquerySource: query.get('__bigquerySource')
+              ? query.get('__bigquerySource')[0] : (docsQuery && docsQuery.isLibrary) ? 'Library' : 'Bulk query',
+          bigquery: !!query.get('__qid') || (docsQuery && docsQuery.isDocsQuery),
           numFound: feedback.numFound
         });
 
