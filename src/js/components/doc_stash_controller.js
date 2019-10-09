@@ -38,7 +38,7 @@ function (
     },
 
     emptyStash: function () {
-      this.docs = [];
+      this._docs = [];
     },
 
     hardenedInterface: {
