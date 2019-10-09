@@ -707,7 +707,9 @@ function (
 
     this.resetWidget();
     var ps = this.getPubSub();
-    ps.publish(ps.NAVIGATE, 'search-page', { q: newQuery });
+    ps.publish(ps.CUSTOM_EVENT, 'second-order-search/limit', {
+      ids: filterBibcodes
+    });
   };
 
   options.widgetName = 'PaperNetwork';
