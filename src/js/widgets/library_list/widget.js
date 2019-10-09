@@ -262,10 +262,27 @@ define([
       console.error('data for library list view not received', err);
     },
 
-    createApiResponse: function (apiQuery, resp) {
-      // hide possible record deleted success method
-      this.model.set('itemDeleted', false);
+    updatePaginationOnDelete: function () {
+      const deleted = this.model.get('itemDeleted');
+      if (deleted && _.isNumber(deleted.id)) {
+        const { perPage = 25 } = this.model.get('pageData');
+        const newPage = Math.floor(deleted.id / perPage);
 
+        if (deleted.id !== 0 && deleted.id % perPage === 0) {
+
+          // go back 1 page
+          this.updatePagination({ page: newPage - 1 });
+        } else if (deleted.id % perPage !== 0) {
+
+          // stay on the current page
+          this.updatePagination({ page: newPage });
+        }
+      }
+
+      this.model.set('itemDeleted', false);
+    },
+
+    createApiResponse: function (apiQuery, resp) {
       // might have been an error
       if (_.isString(resp.solr)) {
         throw new Error(resp.solr + ': list of things widget can\'t render');
@@ -282,6 +299,7 @@ define([
       resp.setApiQuery(apiQuery);
       this.processResponse(resp);
       this.updateSortWidget(apiQuery);
+      this.updatePaginationOnDelete();
     },
 
     // this is called by list_of_things show:missing handler
@@ -417,9 +435,10 @@ define([
             id = this.model.get('libraryID');
             this.getBeeHive().getObject('LibraryController').updateLibraryContents(id, data)
               .done(function () {
+                const deleted = that.collection.find(m => m.get('bibcode') === chosen[0]);
                 that.reset();
                 // flash a success message
-                that.model.set('itemDeleted', true);
+                that.model.set('itemDeleted', { id: deleted.id });
                 var data = that.model.get('sort') ? { sort: that.model.get('sort') } : {};
                 that.dispatchRequest(data);
               });
@@ -435,9 +454,10 @@ define([
             id = this.model.get('libraryID');
           this.getBeeHive().getObject('LibraryController').updateLibraryContents(id, data)
             .done(function () {
+              const deleted = that.collection.find(m => m.get('bibcode') === arg1);
               that.reset();
               // flash a success message
-              that.model.set('itemDeleted', true);
+              that.model.set('itemDeleted', { id: deleted.id });
               var data = that.model.get('sort') ? { sort: that.model.get('sort') } : {};
               that.dispatchRequest(data);
             });
