@@ -44,12 +44,16 @@ s-search-bar-motion is applied */
     }
   }
 
-  #loading-screen-message {
-    font-size: 2.5rem;
+  .progress {
+    margin-bottom: 0;
+  }
+
+  #basic-html-message {
+    font-size: 1rem;
+    margin-top: 20px;
     text-align: center;
-    margin-top: 0.5rem;
-    div {
-      padding-bottom: 1rem;
+    @media only screen and (min-width : 768px) {
+      font-size: 1.5rem;
     }
   }
 }
