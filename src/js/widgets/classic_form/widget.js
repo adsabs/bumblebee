@@ -4,14 +4,18 @@ define([
   'js/components/api_query_updater',
   'hbs!js/widgets/classic_form/form',
   'js/widgets/paper_search_form/topterms',
-  'analytics'
+  'analytics',
+  'es6!js/widgets/sort/widget.jsx',
+  'es6!js/widgets/sort/redux/modules/sort-app'
 ], function (
   BaseWidget,
   ApiQuery,
   ApiQueryUpdater,
   FormTemplate,
   AutocompleteData,
-  analytics) {
+  analytics,
+  SortWidget,
+  SortActions) {
 
   // for autocomplete
   function split(val) {
@@ -39,7 +43,8 @@ define([
       'object-names': [],
       'collections': {
         'astronomy': true,
-        'physics': false
+        'physics': false,
+        'general': false
       },
       'property': {
         'refereed': false,
@@ -54,7 +59,8 @@ define([
       title: '',
       abs: '',
       bibstem: '',
-      query: null
+      query: null,
+      sort: 'date desc'
     },
     _makeFqStr: function (data, fullSet) {
       var keys = _.keys(data);
@@ -91,7 +97,8 @@ define([
       var data = this.toJSON();
       var query = {
         q: [],
-        fq: []
+        fq: [],
+        sort: data.sort
       };
 
       // collections
@@ -196,6 +203,19 @@ define([
   });
 
   var FormView = Marionette.ItemView.extend({
+    initialize: function () {
+      this.sortWidget = new SortWidget();
+      this.sortWidget.onSortChange = _.bind(this.onSortChange, this);
+      this.model.on('change:sort', () => {
+        const [ sortStr, dir ] = this.model.get('sort').split(' ');
+        const { sort, direction } = this.sortWidget.store.getState();
+        if (sortStr !== sort.id && dir !== direction) {
+          this.sortWidget.store.dispatch(SortActions.setQuery(null));
+          this.sortWidget.store.dispatch(SortActions.setSort(sortStr, true));
+          this.sortWidget.store.dispatch(SortActions.setDirection(dir, true));
+        }
+      })
+    },
 
     template: FormTemplate,
 
@@ -213,7 +233,7 @@ define([
 
     /**
      * update the view with the new collections data
-     * @param {{ astronomy: boolean, physics: boolean }} data
+     * @param {{ astronomy: boolean, physics: boolean, general: boolean }} data
      */
     onChangeToCollections: function (data) {
       Object.keys(data).forEach((key) => {
@@ -227,6 +247,12 @@ define([
     updateLogic: function (e) {
       var $el = this.$(e.currentTarget);
       this.model.set($el.attr('name'), $el.val().trim());
+    },
+
+    onSortChange: function () {
+      const { sort, direction: dir } = this.sortWidget.store.getState();
+      var newSort = sort.id + ' ' + dir;
+      this.model.set('sort', newSort);
     },
 
     textareaUpdate: function (e) {
@@ -283,6 +309,7 @@ define([
 
     onRender: function () {
       var self = this;
+      this.$('#sort-container').html(this.sortWidget.render().el);
 
       var getLastTerm = function (term) {
         var t = _.last(term.split(/(,\s|;\s|[,;])/));
@@ -361,6 +388,7 @@ define([
 
     activate: function (beehive) {
       this.setBeeHive(beehive);
+      this.view.sortWidget.activate(beehive);
       var ps = this.getPubSub();
       var self = this;
       ps.subscribe(ps.CUSTOM_EVENT, function (ev) {
@@ -437,9 +465,9 @@ define([
 
     submitForm: function (queryDict) {
       var newQuery = _.assign({}, queryDict, {
-        q: queryDict.q.join(' '),
-        sort: 'date desc'
+        q: queryDict.q.join(' ')
       });
+
       newQuery = new ApiQuery(newQuery);
       var ps = this.getPubSub();
       var options = {
