@@ -43,7 +43,7 @@ define([
     },
     addCustomFormatOptions: [],
     bibtexMaxAuthors: {
-      initialValue: 'all',
+      initialValue: 10,
       initialOptions: [
         ..._.range(1, 10, 1),
         ..._.range(10, 110, 10, true),
@@ -54,7 +54,7 @@ define([
       initialValue: '',
     },
     bibtexABSMaxAuthors: {
-      initialValue: 'all',
+      initialValue: 10,
       initialOptions: [
         ..._.range(1, 10, 1),
         ..._.range(10, 110, 10, true),
@@ -63,6 +63,14 @@ define([
     },
     bibtexABSKeyFormat: {
       initialValue: '',
+    },
+    bibtexAuthorCutoff: {
+      initialValue: 200,
+      initialOptions: [..._.range(1, 11, 1), ..._.range(100, 600, 100)],
+    },
+    bibtexABSAuthorCutoff: {
+      initialValue: 200,
+      initialOptions: [..._.range(1, 11, 1), ..._.range(100, 600, 100)],
     },
   };
 
@@ -78,6 +86,8 @@ define([
     'bibtexKeyFormatSelected',
     'bibtexABSMaxAuthorsSelected',
     'bibtexABSKeyFormatSelected',
+    'bibtexAuthorCutoffSelected',
+    'bibtexABSAuthorCutoffSelected',
   ];
 
   var ApplicationView = Marionette.ItemView.extend({
@@ -113,6 +123,12 @@ define([
       var bibtexABSMaxAuthors =
         this.model.get('bibtexABSMaxAuthors') ||
         DEFAULTS.bibtexABSMaxAuthors.initialValue;
+      var bibtexAuthorCutoff =
+        this.model.get('bibtexAuthorCutoff') ||
+        DEFAULTS.bibtexAuthorCutoff.initialValue;
+      var bibtexABSAuthorCutoff =
+        this.model.get('bibtexABSAuthorCutoff') ||
+        DEFAULTS.bibtexABSAuthorCutoff.initialValue;
 
       // must clone the props that will get mutated
       this.model.set({
@@ -146,6 +162,18 @@ define([
         bibtexABSMaxAuthorsOptions: DEFAULTS.bibtexABSMaxAuthors.initialOptions,
         bibtexABSMaxAuthorsSelected: this._convertToNumber(
           _.clone(bibtexABSMaxAuthors)
+        ),
+        bibtexAuthorCutoffDefault: DEFAULTS.bibtexAuthorCutoff.initialValue,
+        bibtexAuthorCutoffOptions: DEFAULTS.bibtexAuthorCutoff.initialOptions,
+        bibtexAuthorCutoffSelected: this._convertToNumber(
+          _.clone(bibtexAuthorCutoff)
+        ),
+        bibtexABSAuthorCutoffDefault:
+          DEFAULTS.bibtexABSAuthorCutoff.initialValue,
+        bibtexABSAuthorCutoffOptions:
+          DEFAULTS.bibtexABSAuthorCutoff.initialOptions,
+        bibtexABSAuthorCutoffSelected: this._convertToNumber(
+          _.clone(bibtexABSAuthorCutoff)
         ),
       });
       this.model.trigger('change');
@@ -265,6 +293,12 @@ define([
         ),
         bibtexABSKeyFormat: this.model.get('bibtexABSKeyFormatSelected'),
         homePage: this.model.get('homePageSelected'),
+        bibtexAuthorCutoff: this._convertToString(
+          this.model.get('bibtexAuthorCutoffSelected')
+        ),
+        bibtexABSAuthorCutoff: this._convertToString(
+          this.model.get('bibtexABSAuthorCutoffSelected')
+        ),
       });
       return false;
     },
