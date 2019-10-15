@@ -40,7 +40,9 @@ define([
     SET_BIBTEX_MAX_AUTHORS,
     SET_BIBTEX_KEY_FORMAT,
     SET_BIBTEX_ABS_MAX_AUTHORS,
-    SET_BIBTEX_ABS_KEY_FORMAT
+    SET_BIBTEX_ABS_KEY_FORMAT,
+    SET_BIBTEX_AUTHOR_CUTOFF,
+    SET_BIBTEX_ABS_AUTHOR_CUTOFF
   } = actions;
 
   // format reducer
@@ -104,8 +106,10 @@ define([
     snapshot: {},
     bibtexKeyFormat: null,
     bibtexMaxAuthors: 0,
+    bibtexAuthorCutoff: 200,
     bibtexABSKeyFormat: null,
-    bibtexABSMaxAuthors: 0
+    bibtexABSMaxAuthors: 0,
+    bibtexABSAuthorCutoff: 200
   }, action) => {
     switch (action.type) {
       case REQUEST_IDS:
@@ -126,10 +130,14 @@ define([
         return { ...state, bibtexMaxAuthors: action.maxAuthors };
       case SET_BIBTEX_KEY_FORMAT:
         return { ...state, bibtexKeyFormat: action.keyFormat };
+      case SET_BIBTEX_AUTHOR_CUTOFF:
+        return { ...state, bibtexAuthorCutoff: action.payload };
       case SET_BIBTEX_ABS_MAX_AUTHORS:
         return { ...state, bibtexABSMaxAuthors: action.maxAuthors };
       case SET_BIBTEX_ABS_KEY_FORMAT:
         return { ...state, bibtexABSKeyFormat: action.keyFormat };
+      case SET_BIBTEX_ABS_AUTHOR_CUTOFF:
+        return { ...state, bibtexABSAuthorCutoff: action.payload };
       case RECEIVE_EXPORT:
         return {
           ...state,
