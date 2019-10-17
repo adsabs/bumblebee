@@ -42,7 +42,9 @@ define([
     SET_BIBTEX_KEY_FORMAT: 'SET_BIBTEX_KEY_FORMAT',
     SET_BIBTEX_MAX_AUTHORS: 'SET_BIBTEX_MAX_AUTHORS',
     SET_BIBTEX_ABS_KEY_FORMAT: 'SET_BIBTEX_ABS_KEY_FORMAT',
-    SET_BIBTEX_ABS_MAX_AUTHORS: 'SET_BIBTEX_ABS_MAX_AUTHORS'
+    SET_BIBTEX_ABS_MAX_AUTHORS: 'SET_BIBTEX_ABS_MAX_AUTHORS',
+    SET_BIBTEX_AUTHOR_CUTOFF: 'SET_BIBTEX_AUTHOR_CUTOFF',
+    SET_BIBTEX_ABS_AUTHOR_CUTOFF: 'SET_BIBTEX_ABS_AUTHOR_CUTOFF'
   };
 
   actions.setTab = tab => ({ type: actions.SET_TAB, tab });
@@ -74,6 +76,8 @@ define([
   actions.setBibtexKeyFormat = keyFormat => ({ type: actions.SET_BIBTEX_KEY_FORMAT, keyFormat });
   actions.setBibtexABSMaxAuthors = maxAuthors => ({ type: actions.SET_BIBTEX_ABS_MAX_AUTHORS, maxAuthors });
   actions.setBibtexABSKeyFormat = keyFormat => ({ type: actions.SET_BIBTEX_ABS_KEY_FORMAT, keyFormat });
+  actions.setBibtexAuthorCutoff = payload => ({ type: actions.SET_BIBTEX_AUTHOR_CUTOFF, payload });
+  actions.setBibtexABSAuthorCutoff = payload => ({ type: actions.SET_BIBTEX_ABS_AUTHOR_CUTOFF, payload });
 
   /**
    * On request failure, we want to display a message to the user here
@@ -195,6 +199,7 @@ define([
 
       // set maxauthor, convert it to number first
       q.set('maxauthor', +exports.bibtexMaxAuthors);
+      q.set('authorcutoff', +exports.bibtexAuthorCutoff);
 
     } else if (format.value === 'bibtexabs') {
       if (exports.bibtexABSKeyFormat) {
@@ -203,6 +208,7 @@ define([
 
       // set maxauthor, convert it to number first
       q.set('maxauthor', +exports.bibtexABSMaxAuthors);
+      q.set('authorcutoff', +exports.bibtexABSAuthorCutoff);
     }
 
     const req = composeRequest(q);
