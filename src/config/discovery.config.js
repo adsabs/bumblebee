@@ -285,6 +285,7 @@ require.config({
       'libs/react-redux/index'
     ],
     'recaptcha': 'js/plugins/recaptcha',
+    'reactify': 'js/plugins/reactify',
     'redux': [
       '//cdnjs.cloudflare.com/ajax/libs/redux/3.5.2/redux.min',
       'libs/redux/index'
