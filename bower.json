@@ -17,7 +17,7 @@
     "fontawesome": "~4.6.0",
     "html5-boilerplate": "~4.3.0",
     "jQuery-QueryBuilder": "https://github.com/romanchyla/jQuery-QueryBuilder.git#master",
-    "jquery": "~2.0.3",
+    "jquery": "~2.2.4",
     "jqueryui": "~1.10.4",
     "lodash": "~2.4.1",
     "marionette": "2.4.5",
