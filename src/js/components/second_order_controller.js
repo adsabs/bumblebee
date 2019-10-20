@@ -192,12 +192,14 @@ define([
     /**
      * General error handler
      */
-    handleError: function(ev) {
+    handleError: function (ev) {
+      let msg = 'Error occurred';
       if (ev.responseJSON && ev.responseJSON.error) {
-        throw ev.responseJSON.error;
-      } else {
-        throw 'error occurred';
+        msg = ev.responseJSON.error;
       }
+      const ps = this.getPubSub();
+      ps.publish(ps.CUSTOM_EVENT, 'second-order-search/error', { message: msg });
+      throw msg;
     },
 
     /**
@@ -239,11 +241,9 @@ define([
      */
     getQidAndStartSearch: function(field, ids) {
       // get the big query response from vault
-      this.getBigQueryResponse(ids)
-        .then(qid => {
-          this.startSearch(field, qid);
-        })
-        .fail(this.handleError);
+      this.getBigQueryResponse(ids).then((qid) => {
+        this.startSearch(field, qid);
+      }).fail((...args) => this.handleError(...args));
     },
 
     startSearch: function(field, id) {
