@@ -283,10 +283,10 @@ define([
       expect($("form.feedback-form").length).to.eql(1);
 
       // there are two buttons
-      expect($("#test a[data-target=#feedback-modal]").length).to.eql(2);
+      expect($('#test a[data-target="#feedback-modal"]').length).to.eql(2);
 
-      expect($("#test a[data-target=#feedback-modal]:first").data('feedbackView')).to.eql('list');
-      expect($("#test a[data-target=#feedback-modal]:last").data('feedbackView')).to.eql('general');
+      expect($('#test a[data-target="#feedback-modal"]:first').data('feedbackView')).to.eql('list');
+      expect($('#test a[data-target="#feedback-modal"]:last').data('feedbackView')).to.eql('general');
     });
 
     it("feedback form should make an ajax request upon submit, display status, and clear itself on close", function(){

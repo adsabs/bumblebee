@@ -235,15 +235,9 @@ require.config({
       'data:application/javascript,'
     ],
     'hbs': 'libs/require-handlebars-plugin/hbs',
-    'jquery': [
-      '//ajax.aspnetcdn.com/ajax/jQuery/jquery-2.0.3.min',
-      'libs/jquery/jquery'
-    ],
+    'jquery': 'libs/jquery/jquery',
     'jquery-querybuilder': 'libs/jQuery-QueryBuilder/query-builder',
-    'jquery-ui': [
-      '//ajax.aspnetcdn.com/ajax/jquery.ui/1.10.4/jquery-ui.min',
-      'libs/jqueryui/jquery-ui'
-    ],
+    'jquery-ui': 'libs/jqueryui/jquery-ui',
     'jsonpath': [
       '//cdn.jsdelivr.net/npm/jsonpath@0.2.12/jsonpath.min',
       'libs/jsonpath/jsonpath'
