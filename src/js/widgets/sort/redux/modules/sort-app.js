@@ -94,7 +94,7 @@ define([
       { id: 'score', text: 'Score', desc: 'sort by the relative score' }
     ],
     sort: { id: 'date', text: 'Date' },
-    direction: 'asc',
+    direction: 'desc',
     query: null,
     locked: false,
     lockTimer: null
