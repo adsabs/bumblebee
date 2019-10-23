@@ -1,6 +1,6 @@
 define(['underscore', 'js/mixins/openurl_generator'], function(
   _,
-  { getOpenUrl },
+  { getOpenUrl }
 ) {
   const GATEWAY_BASE_URL = '/link_gateway/';
 
@@ -115,6 +115,11 @@ define(['underscore', 'js/mixins/openurl_generator'], function(
       shortName: 'GCPD',
       description: 'The General Catalogue of Photometric Data',
     },
+    Github: {
+      shortName: 'Github',
+      description:
+        'Web-based version-control and collaboration platform for software developers.',
+    },
     GTC: {
       shortName: 'GTC',
       description: 'Gran Telescopio CANARIAS Public Archive',
@@ -143,10 +148,6 @@ define(['underscore', 'js/mixins/openurl_generator'], function(
     ISO: {
       shortName: 'ISO',
       description: 'Infrared Space Observatory',
-    },
-    JOSS: {
-      shortName: 'JOSS',
-      description: 'Journal of Open Source Software',
     },
     KOA: {
       shortName: 'KOA',
@@ -354,8 +355,8 @@ define(['underscore', 'js/mixins/openurl_generator'], function(
    * @returns {object} - copy of the data object with links prop added
    */
   const _parseLinksDataForModel = function(_data, linksData) {
-    let links = {list: [], data: [], text: []};
-    const data = _.extend({}, _data, {links: links});
+    let links = { list: [], data: [], text: [] };
+    const data = _.extend({}, _data, { links: links });
 
     // map linksData to links object
     if (_.isPlainObject(linksData)) {
@@ -448,12 +449,12 @@ define(['underscore', 'js/mixins/openurl_generator'], function(
         // make sure if property has a esource or data, we find it on data as well
         if (_.contains(data.property, 'ESOURCE') && !_.has(data, 'esources')) {
           throw new Error(
-            'if `property` property contains `ESOURCE`, then data must have `esources` field',
+            'if `property` property contains `ESOURCE`, then data must have `esources` field'
           );
         }
         if (_.contains(data.property, 'DATA') && !_.has(data, 'data')) {
           throw new Error(
-            'if `property` property contains `DATA`, then data must have `data` field',
+            'if `property` property contains `DATA`, then data must have `data` field'
           );
         }
         return processLinkData(_.extend({}, data));
