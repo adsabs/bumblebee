@@ -76,6 +76,7 @@ function (
     // can post, put, and delete changes to individual libs using this endpoint
     DOCUMENTS: 'biblib/documents',
     PERMISSIONS: 'biblib/permissions',
+    REFERENCE: 'reference/text',
 
 
     /*
