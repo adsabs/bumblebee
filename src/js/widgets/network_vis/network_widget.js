@@ -1381,15 +1381,11 @@ function (Marionette,
     // filter the original query
     broadcastFilteredQuery: function () {
       var allBibs = _.flatten(this.filterCollection.pluck('papers'));
-
-      var newQuery = this.getOriginalQuery().clone();
-      newQuery.unlock();
-
-      newQuery.set('__bigquery', allBibs);
-
       this.resetWidget();
       var ps = this.getPubSub();
-      ps.publish(ps.NAVIGATE, 'search-page', { q: newQuery });
+      ps.publish(ps.CUSTOM_EVENT, 'second-order-search/limit', {
+        ids: allBibs
+      });
     },
 
     broadcastClose: function () {
