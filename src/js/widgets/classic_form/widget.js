@@ -76,7 +76,7 @@ define([
     _movePrefix: function (lines) {
       var updater = this.updater;
       return _.map(lines, function (l) {
-        var prefix = '';
+        let prefix = '';
         if (/^[=\-+]/.test(l)) {
           prefix = l.substr(0, 1);
           l = l.substr(1);
@@ -86,13 +86,6 @@ define([
     },
     serialize: _.debounce(function () {
 
-      /*
-       * Matches on:
-       * `gamma-ray burst` -> hyphenated and non-hyphenated tokens
-       * `-test +test =test` -> operator-prefixed without quotes
-       * `-"test" +"test" ="test" -> operator-prefixed with quotes
-       */
-      var genericMatcher = /[=+-]?(\w+-\w+|"[^"]+"|\w+)/g;
       var updater = this.updater;
       var data = this.toJSON();
       var query = {
@@ -159,16 +152,16 @@ define([
 
       // title
       var titleLogic = BOOLEAN[data['title-logic']];
-      var titles = this._movePrefix(data.title.match(genericMatcher));
-      if (titles.length) {
+      var titles = data.title.split(/\s+/);
+      if (titles.length > 0 && titles[0] !== '') {
         query.q.push('title:(' + titles.join(titleLogic) + ')');
       }
 
       // abs
       var absLogic = BOOLEAN[data['abstract-logic']];
-      var abs = this._movePrefix(data.abs.match(genericMatcher));
+      var abs = data.abs.split(/\s+/);
       var result = 'abs:(' + abs.join(absLogic) + ')';
-      if (abs.length) {
+      if (abs.length && abs[0] !== '') {
         query.q.push(result);
       }
 
@@ -222,7 +215,8 @@ define([
     className: 'classic-form',
 
     events: {
-      'click button[type=submit]': 'submitForm',
+      'submit form': 'submitForm',
+      'reset form': 'onReset',
       'change input[name$="-logic"]': 'updateLogic',
       'input textarea': 'textareaUpdate',
       'change div[data-field="database"] input': 'updateCollection',
@@ -307,6 +301,11 @@ define([
       return false;
     },
 
+    onReset: function () {
+      this.model.set(this.model.defaults);
+      this.render();
+    },
+
     onRender: function () {
       var self = this;
       this.$('#sort-container').html(this.sortWidget.render().el);
@@ -317,7 +316,12 @@ define([
         // ignore any leading `-`
         return t.replace(/^\-/, '');
       };
-      this.$('input[name=bibstem]').autocomplete({
+
+      const $bibInput = this.$('input[name=bibstem]');
+      if ($bibInput.data('ui-autocomplete')) {
+        return;
+      }
+      $bibInput.autocomplete({
         minLength: 1,
         autoFocus: true,
         source: function (request, response) {
@@ -408,13 +412,8 @@ define([
     },
 
     onNewSearch: function () {
-      this.resetForm();
-    },
-
-    resetForm: function () {
       this.model.set(this.model.defaults);
-      const v = this.view;
-      v.$('input,textarea').val('');
+      this.view.triggerMethod('reset');
     },
 
     /**
