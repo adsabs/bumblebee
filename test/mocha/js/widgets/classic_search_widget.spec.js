@@ -103,26 +103,35 @@ define([
       $Q.object().val('a, a\nb, m\n-j, a\n+b, b\n=w,w\n\n\nl,l');
       $($Q.date()[0]).val(10);
       $($Q.date()[1]).val(2010);
-      $Q.title().val('a, b, c, d, +e, -f, =g, +"h", -"i", i-i, +i-i, -"i-i"');
-      $Q.abs().val('a, b, c, d, +e, -f, =g, +"h", -"i"');
-      $Q.bibstem().val('a, b, c, d, +e, -f, =g, +"h", -"i"');
+      $Q.title().val('a b c d +e -f =g +"h" -"i" i-i +i-i -"i-i"');
+      $Q.abs().val('a b c d +e -f =g +"h" -"i"');
+      $Q.bibstem().val('a b c d +e -f =g +"h" -"i"');
       triggerChanges();
 
       setTimeout(function() {
         expect(w.model.get('query')).to.eql({
-          q: [
-            'pubdate:[2010-10 TO 9999-12]',
-            'author:("a, a" "b, m" -"j, a" +"b, b" ="w,w" "l,l")',
-            'object:("a, a" "b, m" -"j, a" +"b, b" =w,w l,l)',
-            'title:(a b c d +e -f =g +"h" -"i" "i-i" +"i-i" -"i-i")',
-            'abs:(a b c d +e -f =g +"h" -"i")',
-            '-bibstem:(f OR "i")',
-            'bibstem:(a OR b OR c OR d OR "+e" OR =g OR "+\\"h\\"")',
+          "q": [
+            "pubdate:[2010-10 TO 9999-12]",
+            "author:(\"a, a\" \"b, m\" -\"j, a\" +\"b, b\" =\"w,w\" \"l,l\")",
+            "object:(\"a, a\" \"b, m\" -\"j, a\" +\"b, b\" =w,w l,l)",
+            "title:(a b c d +e -f =g +\"h\" -\"i\" i-i +i-i -\"i-i\")",
+            "abs:(a b c d +e -f =g +\"h\" -\"i\")",
+            "-bibstem:(f OR \"i\")",
+            "bibstem:(a OR b OR c OR d OR \"+e\" OR =g OR \"+\\\"h\\\"\")"
           ],
-          fq: ['{!type=aqp v=$fq_database}'],
-          sort: ['date desc'],
-          __fq_database: ['AND', '(astronomy OR physics OR general)'],
-          fq_database: ['database: (astronomy OR physics OR general)'],
+          "fq": [
+            "{!type=aqp v=$fq_database}"
+          ],
+          "sort": [
+            "date desc"
+          ],
+          "__fq_database": [
+            "AND",
+            "(astronomy OR physics OR general)"
+          ],
+          "fq_database": [
+            "database: (astronomy OR physics OR general)"
+          ]
         });
         $Q.dbPhysics().prop('checked', true);
         $($Q.authorLogic()[1]).prop('checked', true);
@@ -133,30 +142,45 @@ define([
         $Q.object().val('a, a\nb, m\n-j, a\n+b, b\n=w,w\n\n\nl,l');
         $($Q.date()[0]).val(10);
         $($Q.date()[1]).val(2010);
-        $Q.title().val('a, b, c, d, +e, -f, =g, +"h", -"i", i-i, +i-i, -"i-i"');
-        $Q.abs().val('a, b, c, d, +e, -f, =g, +"h", -"i"');
-        $Q.bibstem().val('a, b, c, d, +e, -f, =g, +"h", -"i"');
+        $Q.title().val('a b c (d +e -f (=g +"h") -"i" i-i) +i-i -"i-i"');
+        $Q.abs().val('a b c d +e -f (=g +"h" -"i")');
+        $Q.bibstem().val('a b c d +e -f =g +"h" -"i"');
         $Q.propertyRefereed().prop('checked', true);
         $Q.propertyArticle().prop('checked', true);
         triggerChanges();
 
         setTimeout(function() {
           expect(w.model.get('query')).to.eql({
-            q: [
-              'pubdate:[2010-10 TO 9999-12]',
-              'author:("a, a" OR "b, m" OR -"j, a" OR +"b, b" OR ="w,w" OR "l,l")',
-              'object:("a, a" OR "b, m" OR -"j, a" OR +"b, b" OR =w,w OR l,l)',
-              'title:(a OR b OR c OR d OR +e OR -f OR =g OR +"h" OR -"i" OR "i-i" OR +"i-i" OR -"i-i")',
-              'abs:(a OR b OR c OR d OR +e OR -f OR =g OR +"h" OR -"i")',
-              '-bibstem:(f OR "i")',
-              'bibstem:(a OR b OR c OR d OR "+e" OR =g OR "+\\"h\\"")',
+            "q": [
+              "pubdate:[2010-10 TO 9999-12]",
+              "author:(\"a, a\" OR \"b, m\" OR -\"j, a\" OR +\"b, b\" OR =\"w,w\" OR \"l,l\")",
+              "object:(\"a, a\" OR \"b, m\" OR -\"j, a\" OR +\"b, b\" OR =w,w OR l,l)",
+              "title:(a OR b OR c OR (d OR +e OR -f OR (=g OR +\"h\") OR -\"i\" OR i-i) OR +i-i OR -\"i-i\")",
+              "abs:(a OR b OR c OR d OR +e OR -f OR (=g OR +\"h\" OR -\"i\"))",
+              "-bibstem:(f OR \"i\")",
+              "bibstem:(a OR b OR c OR d OR \"+e\" OR =g OR \"+\\\"h\\\"\")"
             ],
-            fq: ['{!type=aqp v=$fq_database}', '{!type=aqp v=$fq_property}'],
-            sort: ['date desc'],
-            __fq_database: ['AND', '(astronomy OR physics OR general)'],
-            fq_database: ['database: (astronomy OR physics OR general)'],
-            __fq_property: ['AND', '(refereed AND article)'],
-            fq_property: ['property: (refereed AND article)'],
+            "fq": [
+              "{!type=aqp v=$fq_database}",
+              "{!type=aqp v=$fq_property}"
+            ],
+            "sort": [
+              "date desc"
+            ],
+            "__fq_database": [
+              "AND",
+              "(astronomy OR physics OR general)"
+            ],
+            "fq_database": [
+              "database: (astronomy OR physics OR general)"
+            ],
+            "__fq_property": [
+              "AND",
+              "(refereed AND article)"
+            ],
+            "fq_property": [
+              "property: (refereed AND article)"
+            ]
           });
           done();
         }, 100);
@@ -231,7 +255,7 @@ define([
           ' - test ',
           'test',
           '+testing',
-          '-testing',
+          '-testing'
         ]);
         setLogic('author', 'BOOLEAN');
         setTimeout(function() {
@@ -245,7 +269,22 @@ define([
             fq_database: ['database: astronomy'],
             sort: ['date desc'],
           });
-          done();
+
+          authorInput(['testing, t$']);
+          setLogic('author', 'BOOLEAN');
+          setTimeout(function () {
+            submitForm();
+            expect(publishSpy.args[2][3]['q'].toJSON()).to.eql({
+              q: [
+                'author:("testing, t") author_count:1',
+              ],
+              fq: ['{!type=aqp v=$fq_database}'],
+              __fq_database: ['AND', 'astronomy'],
+              fq_database: ['database: astronomy'],
+              sort: ['date desc'],
+            });
+            done();
+          }, 100);
         }, 100);
       }, 100);
     });
