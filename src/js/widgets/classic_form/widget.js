@@ -202,7 +202,7 @@ define([
       this.model.on('change:sort', () => {
         const [ sortStr, dir ] = this.model.get('sort').split(' ');
         const { sort, direction } = this.sortWidget.store.getState();
-        if (sortStr !== sort.id && dir !== direction) {
+        if (sortStr !== sort.id || dir !== direction) {
           this.sortWidget.store.dispatch(SortActions.setQuery(null));
           this.sortWidget.store.dispatch(SortActions.setSort(sortStr, true));
           this.sortWidget.store.dispatch(SortActions.setDirection(dir, true));
