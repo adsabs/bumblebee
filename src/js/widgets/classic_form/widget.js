@@ -251,8 +251,8 @@ define([
 
     textareaUpdate: function (e) {
       var $el = this.$(e.currentTarget);
-      var vals = _.filter($el.val().split(/\n/), function (v) {
-         return !_.isEmpty(v);
+      var vals = _.filter($el.val().split(/[\n;]\s*/), function (v) {
+        return !_.isEmpty(v);
       });
       vals = vals.map(Function.prototype.call, String.prototype.trim);
       this.model.set($el.attr('name'), vals);
