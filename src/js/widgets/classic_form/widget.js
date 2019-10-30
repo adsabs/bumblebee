@@ -403,10 +403,8 @@ define([
       ps.subscribe(ps.USER_ANNOUNCEMENT, (ev, data) => {
         if (ev === 'user_info_change' && data.defaultDatabase) {
           const dbs = this.getDbSelectionFromUserData();
-          if (dbs) {
-            this.model.set('collections', dbs);
-            this.view.triggerMethod('changeToCollections', dbs);
-          }
+          this.model.set('collections', dbs ? dbs : this.model.defaults.collections);
+          this.view.triggerMethod('changeToCollections', dbs ? dbs : this.model.defaults.collections);
         }
       });
     },
@@ -439,24 +437,24 @@ define([
       this.setFocus('#classic-author');
 
       const dbs = this.getDbSelectionFromUserData();
-      if (dbs) {
-        this.model.set('collections', dbs);
-        this.view.triggerMethod('changeToCollections', dbs);
-      }
+      this.model.set('collections', dbs ? dbs : this.model.defaults.collections);
+      this.view.triggerMethod('changeToCollections', dbs ? dbs : this.model.defaults.collections);
     },
 
     getDbSelectionFromUserData: function () {
       try {
         const userData = this.getBeeHive().getObject('User').getUserData();
-        return userData.defaultDatabase.reduce((acc, db) => {
-
-          // skip general
-          if (db.name === 'General') {
-            return acc;
+        let hasTrueVal = false;
+        const dbs = userData.defaultDatabase.reduce((acc, db) => {
+          if (db.value) {
+            hasTrueVal = true;
           }
           acc[db.name.toLowerCase()] = db.value;
           return acc;
         }, {});
+
+        // only return something if at least one is true
+        return hasTrueVal ? dbs : null;
       } catch (e) {
         return null;
       }

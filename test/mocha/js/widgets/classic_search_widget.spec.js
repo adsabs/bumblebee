@@ -127,12 +127,12 @@ define([
           ],
           "__fq_database": [
             "AND",
-            "(astronomy OR physics OR general)"
+            "astronomy"
           ],
           "fq_database": [
-            "database: (astronomy OR physics OR general)"
+            "database: astronomy"
           ]
-        });
+        }, 'test A');
         $Q.dbPhysics().prop('checked', true);
         $($Q.authorLogic()[1]).prop('checked', true);
         $($Q.objectLogic()[1]).prop('checked', true);
@@ -181,7 +181,7 @@ define([
             "fq_property": [
               "property: (refereed AND article)"
             ]
-          });
+          }, 'test B');
           done();
         }, 100);
       }, 100);
