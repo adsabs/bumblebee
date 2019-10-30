@@ -86,7 +86,7 @@ define([
     },
     _submit: _.debounce(
       function(e) {
-        const type = $(e.target).data('formType');
+        const type = $(e.target).addClass('submitted').data('formType');
         const $inputs = $('input, textarea', e.target);
 
         // parse the inputs' values into an object
@@ -123,16 +123,16 @@ define([
     onFail(msg = 'Error') {
       // show an error message, and then remove it next time the user focuses on an input
       const $el = $(this.el);
-      $el.append(
-        () => `
+      const $submittedContainer = $('form.submitted', $el).closest('.row');
+      $(`
         <div class="alert alert-danger" id="error-message">
           <i class="fa fa-exclamation-triangle" aria-hidden="true"></i>  <strong>${msg}</strong>
         </div>
-      `
-      );
+      `).insertAfter($submittedContainer);
       this.setFormDisabled(false);
       $('input, textarea, button', $el).one('focus', () => {
         $('#error-message', $el).remove();
+        $('form.submitted', $el).removeClass('submitted');
       });
     },
     onReset() {
