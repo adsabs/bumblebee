@@ -15,23 +15,9 @@ define(['underscore', 'js/mixins/openurl_generator'], function(
 
   // set of link types and descriptions
   const LINK_TYPES = {
-    PUB_PDF: {
-      name: 'Publisher PDF',
-      shortName: 'Publisher',
-      description: 'Publisher PDF',
-      type: 'PDF',
-    },
-    EPRINT_PDF: {
-      name: 'arXiv PDF',
-      shortName: 'arXiv',
-      description: 'ArXiv eprint',
-      type: 'PDF',
-    },
-    AUTHOR_PDF: {
-      name: 'Author PDF',
-      shortName: 'Author',
-      description: 'Link to PDF page provided by author',
-      type: 'PDF',
+    AcA: {
+      shortName: 'AcA',
+      description: 'Acta Astronomica Data Files',
     },
     ADS_PDF: {
       name: 'ADS PDF',
@@ -39,33 +25,11 @@ define(['underscore', 'js/mixins/openurl_generator'], function(
       description: 'ADS PDF',
       type: 'PDF',
     },
-    PUB_HTML: {
-      name: 'Publisher Article',
-      shortName: 'Publisher',
-      description: 'Electronic on-line publisher article (HTML)',
-      type: 'HTML',
-    },
-    EPRINT_HTML: {
-      name: 'arXiv Article',
-      shortName: 'arXiv',
-      description: 'Arxiv article',
-      type: 'HTML',
-    },
-    AUTHOR_HTML: {
-      name: 'Author Article',
-      shortName: 'Author',
-      description: 'Link to HTML page provided by author',
-      type: 'HTML',
-    },
     ADS_SCAN: {
       name: 'ADS Scanned Article',
       description: 'ADS scanned article',
       shortName: 'ADS',
       type: 'SCAN',
-    },
-    AcA: {
-      shortName: 'AcA',
-      description: 'Acta Astronomica Data Files',
     },
     ALMA: {
       shortName: 'ALMA',
@@ -87,6 +51,22 @@ define(['underscore', 'js/mixins/openurl_generator'], function(
       shortName: 'Author',
       description: 'Author Hosted Dataset',
     },
+    AUTHOR_HTML: {
+      name: 'Author Article',
+      shortName: 'Author',
+      description: 'Link to HTML page provided by author',
+      type: 'HTML',
+    },
+    AUTHOR_PDF: {
+      name: 'Author PDF',
+      shortName: 'Author',
+      description: 'Link to PDF page provided by author',
+      type: 'PDF',
+    },
+    BAVJ: {
+      shortName: 'BAVJ',
+      description: 'Data of the German Association for Variable Stars',
+    },
     BICEP2: {
       shortName: 'BICEP2',
       description: 'BICEP/Keck Data',
@@ -103,6 +83,22 @@ define(['underscore', 'js/mixins/openurl_generator'], function(
       shortName: 'Chandra',
       description: 'Chandra X-Ray Observatory',
     },
+    Dryad: {
+      shortName: 'Dryad',
+      description: 'International Repository of Research Data',
+    },
+    EPRINT_HTML: {
+      name: 'arXiv Article',
+      shortName: 'arXiv',
+      description: 'Arxiv article',
+      type: 'HTML',
+    },
+    EPRINT_PDF: {
+      name: 'arXiv PDF',
+      shortName: 'arXiv',
+      description: 'ArXiv eprint',
+      type: 'PDF',
+    },
     ESA: {
       shortName: 'ESA',
       description: 'ESAC Science Data Center',
@@ -110,6 +106,10 @@ define(['underscore', 'js/mixins/openurl_generator'], function(
     ESO: {
       shortName: 'ESO',
       description: 'European Southern Observatory',
+    },
+    Figshare: {
+      shortName: 'Figshare',
+      description: 'Online Open Access Repository',
     },
     GCPD: {
       shortName: 'GCPD',
@@ -149,6 +149,10 @@ define(['underscore', 'js/mixins/openurl_generator'], function(
       shortName: 'ISO',
       description: 'Infrared Space Observatory',
     },
+    JWST: {
+      shortName: 'JWST',
+      description: 'JWST Proposal Info',
+    },
     KOA: {
       shortName: 'KOA',
       description: 'Keck Observatory Archive',
@@ -169,6 +173,11 @@ define(['underscore', 'js/mixins/openurl_generator'], function(
       shortName: 'NOAO',
       description: 'National Optical Astronomy Observatory',
     },
+    PANGAEA: {
+      shortName: 'PANGAEA',
+      description:
+        'Digital Data Library and a Data Publisher for Earth System Science',
+    },
     PASA: {
       shortName: 'PASA',
       description:
@@ -181,6 +190,23 @@ define(['underscore', 'js/mixins/openurl_generator'], function(
     PDS: {
       shortName: 'PDS',
       description: 'The NASA Planetary Data System',
+    },
+    protocols: {
+      shortName: 'protocols',
+      description:
+        'Collaborative Platform and Preprint Server for Science Methods and Protocols',
+    },
+    PUB_HTML: {
+      name: 'Publisher Article',
+      shortName: 'Publisher',
+      description: 'Electronic on-line publisher article (HTML)',
+      type: 'HTML',
+    },
+    PUB_PDF: {
+      name: 'Publisher PDF',
+      shortName: 'Publisher',
+      description: 'Publisher PDF',
+      type: 'PDF',
     },
     SIMBAD: {
       shortName: 'SIMBAD',
