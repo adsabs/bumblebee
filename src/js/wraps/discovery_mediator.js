@@ -459,7 +459,7 @@ function (
           if (data.type == 'orcid') {
             alerts.alert(new ApiFeedback({
               code: ApiFeedback.CODES.WARNING,
-              msg: '<p>You will be redirected to ORCID.</p> <p>Please sign in with your ORCID credentials and click on the "authorize" button.</p><p><b>This service is experimental. Should you have any suggestions, please let us know at <a href="mailto:adshelp@cfa.harvard.edu">adshelp@cfa.harvard.edu</a></b></p><button class="btn btn-success" id="okOrcid">Take me to ORCID</button>',
+              msg: '<p>You will be redirected to ORCID.</p> <p>Please sign in with your ORCID credentials and click on the "authorize" button.</p><button class="btn btn-success" id="okOrcid">Take me to ORCID</button>',
               modal: true,
               events: {
                 'click button#okOrcid': 'OK'
