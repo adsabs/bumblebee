@@ -354,26 +354,19 @@ function (
           app.getObject('LibraryController')
             .getLibraryBibcodes(id)
             .done(function (bibcodes) {
-              if (widgetName === 'ExportWidget' && format === 'classic') {
-                app.getWidget(widgetName).done(function (widget) {
-                  widget.openClassicExports({ bibcodes: bibcodes, libid: data.id });
-                  defer.resolve();
-                });
-              } else {
-                // XXX - this was async in the original version; likely wrong
-                // one block should be main...
-                app.getWidget('LibraryListWidget').then(function (listWidget) {
-                  var sort = listWidget.model.get('sort');
-                  app.getWidget(widgetName).then(function (subWidget) {
-                    additional = _.extend({}, additional, { sort: sort });
-                    subWidget.renderWidgetForListOfBibcodes(bibcodes, additional);
-                    app.getWidget('IndividualLibraryWidget').then(function (indWidget) {
-                      indWidget.setSubView({ subView: subView, publicView: publicView, id: id });
-                      defer.resolve();
-                    });
+              // XXX - this was async in the original version; likely wrong
+              // one block should be main...
+              app.getWidget('LibraryListWidget').then(function (listWidget) {
+                var sort = listWidget.model.get('sort');
+                app.getWidget(widgetName).then(function (subWidget) {
+                  additional = _.extend({}, additional, { sort: sort });
+                  subWidget.renderWidgetForListOfBibcodes(bibcodes, additional);
+                  app.getWidget('IndividualLibraryWidget').then(function (indWidget) {
+                    indWidget.setSubView({ subView: subView, publicView: publicView, id: id });
+                    defer.resolve();
                   });
                 });
-              }
+              });
             });
           return defer.promise();
         }
@@ -539,15 +532,7 @@ function (
           ['ExportWidget'].concat(searchPageAlwaysVisible.slice(1))).then(function() {
 
             app.getWidget('ExportWidget').done(function (widget) {
-              // classic is a special case, it opens in a new tab
-              if (format === 'classic') {
-                if (options.onlySelected && storage.hasSelectedPapers()) {
-                  widget.openClassicExports({ bibcodes: storage.getSelectedPapers() });
-                } else {
-                  widget.openClassicExports({ currentQuery: storage.getCurrentQuery() });
-                }
-                return;
-              } if (format === 'authoraff') {
+              if (format === 'authoraff') {
                 if (options.onlySelected && storage.hasSelectedPapers()) {
                   widget.getAuthorAffForm({ bibcodes: storage.getSelectedPapers() });
                 } else {

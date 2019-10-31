@@ -15,11 +15,10 @@ define([
   'js/components/api_query',
   'js/components/api_targets',
   'js/components/api_feedback',
-  'hbs!js/widgets/export/templates/classic_submit_form',
   'js/widgets/config'
 ], function ($, _, Backbone, React, ReactDOM, Redux, ReactRedux,
   ReduxThunk, BaseWidget, reducers, actions, App, ApiQuery, ApiTargets,
-  ApiFeedback, ClassicFormTemplate, config) {
+  ApiFeedback, config) {
 
   var View = Backbone.View.extend({
 
@@ -299,63 +298,6 @@ define([
     },
 
     processResponse: _.noop,
-
-    /**
-     * Export the list of identifiers as an ADS Classic result
-     *
-     * it will determine what to do based on the options object passed in,
-     * if only passed ids, it can fill out and execute the form, otherwise a
-     * pre-request is necessary.
-     *
-     * @param {{bibcodes: Array, currentQuery: ApiQuery}} options
-     */
-    openClassicExports: function (options) {
-      // if bibcodes is present, then fill out and submit the form
-      if (options.bibcodes) {
-        var $form = $(ClassicFormTemplate({
-          bibcode: options.bibcodes,
-          exportLimit: ApiTargets._limits.ExportWidget.limit
-        }));
-        $('body').append($form);
-        $form.submit();
-        $form.remove();
-      }
-
-      // otherwise, get the ids first from the passed in query
-      else if (options.currentQuery) {
-        var q = options.currentQuery.clone();
-        q.set('rows', ApiTargets._limits.ExportWidget.limit);
-        q.set('fl', 'bibcode');
-        var req = this.composeRequest(q);
-
-        this._executeApiRequest(req)
-          .done(function (apiResponse) {
-            // export documents by their ids
-            var ids = _.map(apiResponse.get('response.docs'), function (d) {
-              return d.bibcode;
-            });
-            var $form = $(ClassicFormTemplate({
-              bibcode: ids,
-              exportLimit: ids.length
-            }));
-            // firefox requires form to actually be in the dom when it is submitted
-            $('body').append($form);
-            $form.submit();
-            $form.remove();
-          });
-      } else {
-        throw new Error('can\'t export with no bibcodes or query');
-      }
-
-      // finally, close export widget and return to results page
-      if (options.libid) {
-        // We are in an ADS library: the contents of the library need to stay visible and the highlight
-        // has to go back to the "View Library" menu item
-        this.getPubSub().publish(this.getPubSub().NAVIGATE, 'IndividualLibraryWidget', { subView: 'library', id: options.libid });
-      } else {
-        this.getPubSub().publish(this.getPubSub().NAVIGATE, 'results-page');
-      }
-    }
   });
 
   return Widget;
