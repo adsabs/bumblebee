@@ -4,6 +4,7 @@ define([], function () {
   return  [
     { value: "PhRvL", label: "Physical Review Letters (PhRvL)" },
     { value: "ApJ", label: "The Astrophysical Journal (ApJ)" },
+    { value: "ApJL", label: "The Astrophysical Journal Letters (ApJL)" },
     { value: "PhRvB", label: "Physical Review B (PhRvB)" },
     { value: "JChPh", label: "Journal of Chemical Physics (JChPh)" },
     { value: "Natur", label: "Nature (Natur)" },
