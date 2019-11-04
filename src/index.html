@@ -73,11 +73,20 @@
         </article>
       </div>
     </div>
-    <!-- {{#each data}} -->
     <script type="application/ld+json">
-      {{{this}}}
+      {
+        "@context": "http://schema.org",
+        "@type": "WebSite",
+         "name": "ADS",
+        "url": "https://ui.absads.harvard.edu/",
+        "alternateName": "Astrophysics Data System",
+        "potentialAction": {
+          "@type": "SearchAction",
+          "target": "https://ui.adsabs.harvard.edu/search/q={search_term_string}",
+          "query-input": "required name=search_term_string"
+        }
+      }
     </script>
-    <!-- {{/each}} -->
     <script>
 
         // Progress Bar
