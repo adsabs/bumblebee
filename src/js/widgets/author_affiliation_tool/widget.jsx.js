@@ -161,8 +161,7 @@ define([
       // when done set the data into the store
       $dd.done((data) => {
         try {
-          data = JSON.parse(data).data;
-          this.store.dispatch(actions.setAffiliationData(data));
+          this.store.dispatch(actions.setAffiliationData(data.data));
         } catch (e) {
           console.error(e);
         }
