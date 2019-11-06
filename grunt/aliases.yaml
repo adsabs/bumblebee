@@ -78,7 +78,6 @@ test:prod:
   - 'clean:coverage'
   - 'clean:release'
   - 'copy:release'
-  - 'compile-handlebars:index'
   - 'babel'
   - 'string-replace:final'
   - 'exec:nyc-instrument'
@@ -107,7 +106,6 @@ release:
   tasks:
     - 'env:prod'
     - 'assets'
-    - 'compile-handlebars:index'
     - 'clean:release'
     - 'copy:release'
     - 'check-release-version'
