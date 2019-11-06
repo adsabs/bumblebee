@@ -12,6 +12,7 @@ define([
   'js/mixins/formatter',
   'hbs!js/widgets/results/templates/container-template',
   'js/mixins/papers_utils',
+  'js/mixins/expose_metadata',
   'js/modules/orcid/extension',
   'js/mixins/dependon',
   'js/components/api_feedback'
@@ -25,6 +26,7 @@ function (
   Formatter,
   ContainerTemplate,
   PapersUtilsMixin,
+  MetadataMixin,
   OrcidExtension,
   Dependon,
   ApiFeedback
@@ -245,6 +247,7 @@ function (
       var self = this;
       var userData = this.getBeeHive().getObject('User').getUserData('USER_DATA');
       var link_server = userData.link_server;
+      this.__exposeMetadata(docs);
       this.updateMinAuthorsFromUserData();
 
       var appStorage = null;
@@ -395,6 +398,6 @@ function (
 
   _.extend(ResultsWidget.prototype, LinkGenerator);
   _.extend(ResultsWidget.prototype, Formatter);
-  _.extend(ResultsWidget.prototype, PapersUtilsMixin, Dependon.BeeHive);
+  _.extend(ResultsWidget.prototype, PapersUtilsMixin, MetadataMixin, Dependon.BeeHive);
   return OrcidExtension(ResultsWidget);
 });
