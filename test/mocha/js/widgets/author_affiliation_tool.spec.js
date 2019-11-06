@@ -64,7 +64,7 @@ define([
             case 'author-affiliation/search':
               self.testSpies.authorAffSearch();
               _.delay(function () {
-                apiRequest.get('options').done(JSON.stringify(mockResponse));
+                apiRequest.get('options').done(mockResponse);
               }, 10); break;
             case 'search/query':
               self.testSpies.authorAffSearch();
