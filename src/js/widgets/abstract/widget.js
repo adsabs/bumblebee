@@ -185,7 +185,7 @@ function (
     },
 
     onRender: function () {
-      this.$('.icon-help').popover({ trigger: 'hover', placement: 'right', html: true });
+      this.$('.icon-help').popover({ trigger: 'hover', placement: 'right', html: true, container: 'body' });
 
       if (MathJax) MathJax.Hub.Queue(['Typeset', MathJax.Hub, this.el]);
     }
