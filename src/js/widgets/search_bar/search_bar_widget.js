@@ -830,31 +830,58 @@ function (
 
       // make sure not to override an explicit sort if there is one
       if (!query.has('sort')) {
-        var queryVal = query.get('q')[0];
+        var queryVal = query.get('q')[0].trim();
 
-        // citations operator should be sorted by pubdate, so it isn't added here
+        if (queryVal === "*:*" || queryVal === "*") {
+          query.set('sort', 'date desc');
+          return;
+        }
+
+        // citations operator should be sorted by pubdate
         var toMatch = [
           'trending(',
           'instructive(',
           'useful(',
           'references(',
           'reviews(',
-          'similar('
+          'similar(',
+          'citations('
         ];
 
         // if there are multiple, this will just match the first operator
-        var operator = _.find(toMatch, function (e) {
-          if (queryVal.indexOf(e) !== -1) {
-            return e;
-          }
+        var operators = _.filter(toMatch, function (e) {
+          return queryVal.indexOf(e) > -1;
         });
 
-        if (operator == 'references(') {
-          query.set('sort', 'first_author asc');
-        } else if (operator) {
-          query.set('sort', 'score desc');
-        } else if (!operator) {
-          query.set('sort', 'date desc');
+        if (operators.length > 1) { // complex case, combined 2nd order
+          query.set('sort', 'score asc');
+        } else if (operators.length == 1) {
+          if (operators.indexOf('citations(') > -1) { // todo: should only be done if citations() is outer
+            query.set('sort', 'date desc');
+          }
+          else if (operators.indexOf('references(') > -1) {
+            query.set('sort', 'first_author asc');
+          }
+          else {
+            query.set('sort', 'score desc');
+          }
+        } else if (operators.length === 0) {
+          var fields = queryVal.match(/[a-z]+\:/g);
+          if (fields === null) {
+            query.set('sort', 'score desc'); // unfielded search
+          }
+          else {
+            const scoreFields = ["body:", "aff:"];
+            var scoreable = _.filter(fields, function(a) {return scoreFields.indexOf(a) > -1})
+
+            if (scoreable.length === fields.length) {
+              query.set('sort', 'score desc'); // all fields were scoreable
+            }
+            else {
+              query.set('sort', 'date desc');
+            }
+
+          }
         }
       } else if (currentQuery && currentQuery.has('sort')) {
         query.set('sort', currentQuery.get('sort'));

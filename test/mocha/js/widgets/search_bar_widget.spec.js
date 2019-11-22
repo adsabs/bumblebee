@@ -179,7 +179,7 @@ define([
       //should add pubdate sort if there is no sort
       var q1 = new ApiQuery({q : "star"});
       widget.changeDefaultSort(q1);
-      expect(q1.get("sort")[0]).to.eql("date desc");
+      expect(q1.get("sort")[0]).to.eql("score desc");
 
 
       //shouldn't change the sort if a sort already exists
@@ -214,6 +214,25 @@ define([
       var q8 = new ApiQuery({q : "reviews(star)"});
       widget.changeDefaultSort(q8);
       expect(q8.get("sort")[0]).to.eql("score desc");
+
+      // should default to score
+      var s;
+      s = new ApiQuery({q : "foo body:bar"});
+      widget.changeDefaultSort(s);
+      expect(s.get("sort")[0]).to.eql("score desc");
+
+      s = new ApiQuery({q : "foo body:bar aff:baz"});
+      widget.changeDefaultSort(s);
+      expect(s.get("sort")[0]).to.eql("score desc");
+
+      // but presence of other field(s) changes it
+      s = new ApiQuery({q : "foo body:bar year:2000"});
+      widget.changeDefaultSort(s);
+      expect(s.get("sort")[0]).to.eql("date desc");
+
+      s = new ApiQuery({q : "title:bar"});
+      widget.changeDefaultSort(s);
+      expect(s.get("sort")[0]).to.eql("date desc");
 
       done();
     });
