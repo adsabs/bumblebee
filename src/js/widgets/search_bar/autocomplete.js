@@ -105,10 +105,10 @@ define([
     },
 
     {
-      value: 'property:software', label: 'Limit to software', desc: '(property:software)', match: 'software'
+      value: 'doctype:software', label: 'Limit to software', desc: '(doctype:software)', match: 'software'
     },
     {
-      value: 'property:software', label: 'Limit to software', desc: '(property:software)', match: 'property:software'
+      value: 'doctype:software', label: 'Limit to software', desc: '(doctype:software)', match: 'doctype:software'
     },
 
     {
