@@ -442,7 +442,13 @@ define([
         pubsub.publish(pubsub.PAPER_SELECTION, arg2.data.identifier);
       } else if (ev === 'toggle-highlights') {
         var perPage = this.model.get('perPage');
+        if (this.hiddenCollection.length < perPage) {
+          perPage = this.hiddenCollection.length;
+        }
         var pageStart = this.model.get('start');
+
+        // how many requests to make, based on size of set
+        var divisor = perPage > 300 ? 5 : perPage <= 50 ? 1 : 2;
 
         // request runner
         var runRequest = _.bind(function (start, rows) {
@@ -470,7 +476,7 @@ define([
           });
 
           var start = withHighlights.length;
-          var batchSize = Math.ceil((perPage - start) / 5);
+          var batchSize = Math.ceil((perPage - start) / divisor);
           for (var i = start, j = 1; i < perPage; i = i + batchSize, j++) {
             if (i === start) {
               runRequest(i, batchSize);
