@@ -92,7 +92,7 @@ function (
       },
 
       Metrics: {
-        'default': 6000, 'limit': 6000
+        'default': 7000, 'limit': 7000
       },
 
       AuthorNetwork: {
