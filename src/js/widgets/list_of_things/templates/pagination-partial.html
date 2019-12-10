@@ -27,10 +27,10 @@
             {{/if}}
         </div>
         <div class="col-xs-6">
-            <nav>
+            <nav aria-label="pagination controls">
                 <ul class="pager">
                     <li class="{{#unless pageData.previousPossible}} disabled {{/unless}}"><a href="javascript:void(0)" class="page-control previous-page"><i class="fa fa-chevron-circle-left"></i> prev</a></li>
-                    <input type="text" value="{{pageData.currentPage}}" class="form-control page-control" style="display:inline-block;width:60px"> of {{pageData.totalPages}}
+                    <li><input type="text" value="{{pageData.currentPage}}" class="form-control page-control" style="display:inline-block;width:60px" aria-label="set the current page"> of {{pageData.totalPages}}</li>
                     <li class="{{#unless pageData.nextPossible}} disabled {{/unless}}"><a href="javascript:void(0)" class="page-control next-page">next <i class="fa fa-chevron-circle-right"></i></a></li>
                 </ul>
             </nav>

@@ -1,8 +1,4 @@
-
-
-define([
-  'react', 'react-prop-types'
-], function (React, ReactPropTypes) {
+define(['react', 'react-prop-types'], function(React, ReactPropTypes) {
   const Closer = ({ onClick }) => {
     const handleClick = (e) => {
       e.preventDefault();
@@ -11,14 +7,20 @@ define([
     };
 
     return (
-      <a href="javascript:void(0)" className="pull-right" onClick={e => handleClick(e)}>
-        <i className="fa fa-times fa-2x"/>
+      <a
+        href="javascript:void(0)"
+        className="pull-right"
+        onClick={(e) => handleClick(e)}
+        aria-label="close"
+      >
+        <i className="fa fa-times fa-2x" aria-hidden="true" />
+        <span className="sr-only">close</span>
       </a>
     );
   };
 
   Closer.propTypes = {
-    onClick: ReactPropTypes.func.isRequired
+    onClick: ReactPropTypes.func.isRequired,
   };
 
   return Closer;

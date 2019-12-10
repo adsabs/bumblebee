@@ -1,36 +1,74 @@
 <form action="#classic-form">
   <div class="pull-right">
-    <button style="position: relative;top: -13px;" class="btn btn-primary" type="submit"><i class="fa fa-search"></i>
-      Search</button>
+    <button
+      style="position: relative;top: -13px;"
+      class="btn btn-primary"
+      type="submit"
+    >
+      <i class="fa fa-search"></i> Search
+    </button>
   </div>
 
   <div data-field="database">
-    <b>Limit query to: </b>&nbsp;<label> <input type="checkbox" checked="true" name="astronomy" /> Astronomy
-    </label>&nbsp;&nbsp; <label> <input type="checkbox" name="physics" /> Physics </label>&nbsp;&nbsp; <label> <input
-        type="checkbox" name="general" /> General </label>
+    <b>Limit query to: </b>&nbsp;<label>
+      <input type="checkbox" checked="true" name="astronomy" />
+      Astronomy </label
+    >&nbsp;&nbsp;
+    <label> <input type="checkbox" name="physics" /> Physics </label
+    >&nbsp;&nbsp;
+    <label> <input type="checkbox" name="general" /> General </label>
   </div>
   <div class="clearfix">
     <div class="col-sm-6" data-field="author" data-textInput="true">
       <div class="classic-form__logic-group logic-group">
-        <label> <input type="radio" name="author-logic" value="AND" checked="true" /> and </label>
-        <label> <input type="radio" name="author-logic" value="OR" /> or </label>
+        <label>
+          <input type="radio" name="author-logic" value="AND" checked="true" />
+          and
+        </label>
+        <label>
+          <input type="radio" name="author-logic" value="OR" /> or
+        </label>
       </div>
       <div>
         <label class="classic-author-label" for="#classic-author">Author</label>
-        <textarea id="classic-author" name="author-names" cols="30" rows="2"
-          placeholder="(Last, First M) one per line"></textarea>
+        <textarea
+          id="classic-author"
+          name="author-names"
+          cols="30"
+          rows="2"
+          placeholder="(Last, First M) one per line"
+          aria-label="author names"
+        ></textarea>
       </div>
     </div>
     <div class="col-sm-6" data-field="object" data-textInput="true">
       <div class="pull-right-sm">
         <div class="classic-form__logic-group logic-group">
-          <label> <input type="radio" name="object-logic" value="AND" checked="true" /> and </label>
-          <label> <input type="radio" name="object-logic" value="OR" /> or </label>
+          <label>
+            <input
+              type="radio"
+              name="object-logic"
+              value="AND"
+              checked="true"
+            />
+            and
+          </label>
+          <label>
+            <input type="radio" name="object-logic" value="OR" /> or
+          </label>
         </div>
         <div>
-          <label class="classic-object-label" for="#classic-object">Object</label>
-          <textarea id="classic-object" name="object-names" cols="30" rows="2"
-            placeholder="SIMBAD object search (one per line)"></textarea>
+          <label class="classic-object-label" for="#classic-object"
+            >Object</label
+          >
+          <textarea
+            id="classic-object"
+            name="object-names"
+            cols="30"
+            rows="2"
+            placeholder="SIMBAD object search (one per line)"
+            aria-label="SIMBAD object search"
+          ></textarea>
         </div>
       </div>
     </div>
@@ -38,43 +76,97 @@
   <div data-field="date">
     <div>
       <b>Publication date</b> between <br />
-      <input class="form-control  date-control" maxlength="2" placeholder="MM" type="text" value="" name="month_from"
-        style="margin-top:6px">/
-      <input class="form-control  date-control" maxlength="4" placeholder="YYYY" type="text" value=""
-        name="year_from">and
-      <input class="form-control  date-control" maxlength="2" placeholder="MM" type="text" value="" name="month_to">/
-      <input class="form-control  date-control" maxlength="4" placeholder="YYYY" type="text" value="" name="year_to">
+      <input
+        class="form-control  date-control"
+        maxlength="2"
+        placeholder="MM"
+        type="text"
+        value=""
+        name="month_from"
+        style="margin-top:6px"
+        aria-label="start publication month"
+      />/
+      <input
+        class="form-control  date-control"
+        maxlength="4"
+        placeholder="YYYY"
+        type="text"
+        value=""
+        name="year_from"
+        aria-label="start publication year"
+      />and
+      <input
+        class="form-control  date-control"
+        maxlength="2"
+        placeholder="MM"
+        type="text"
+        value=""
+        name="month_to"
+        aria-label="end publication month"
+      />/
+      <input
+        class="form-control  date-control"
+        maxlength="4"
+        placeholder="YYYY"
+        type="text"
+        value=""
+        name="year_to"
+        aria-label="end publication year"
+      />
     </div>
   </div>
   <div data-field="title" data-textInput="true">
     <div class="classic-form__logic-group logic-group pull-right">
-      <label> <input type="radio" name="title-logic" value="AND" checked="true" /> and </label>
+      <label>
+        <input type="radio" name="title-logic" value="AND" checked="true" /> and
+      </label>
       <label> <input type="radio" name="title-logic" value="OR" /> or </label>
-      <label> <input type="radio" name="title-logic" value="BOOLEAN" /> boolean </label>
+      <label>
+        <input type="radio" name="title-logic" value="BOOLEAN" /> boolean
+      </label>
     </div>
     <div>
       <label for="#classic_title_input"> Title</label>
-      <input id="classic_title_input" class="form-control" name="title" type="text" />
+      <input
+        id="classic_title_input"
+        class="form-control"
+        name="title"
+        type="text"
+        aria-label="title"
+      />
     </div>
   </div>
   <div data-field="abs" data-textInput="true">
     <div class="classic-form__logic-group logic-group pull-right">
-      <label> <input type="radio" name="abstract-logic" value="AND" checked="true" /> and </label>
-      <label> <input type="radio" name="abstract-logic" value="OR" /> or </label>
-      <label> <input type="radio" name="abstract-logic" value="BOOLEAN" /> boolean </label>
+      <label>
+        <input type="radio" name="abstract-logic" value="AND" checked="true" />
+        and
+      </label>
+      <label>
+        <input type="radio" name="abstract-logic" value="OR" /> or
+      </label>
+      <label>
+        <input type="radio" name="abstract-logic" value="BOOLEAN" /> boolean
+      </label>
     </div>
     <div>
       <label for="#classic_abstract_input"> Abstract/Keywords</label>
-      <input id="clasic_abstract_input" class="form-control" name="abs" type="text" />
+      <input
+        id="clasic_abstract_input"
+        class="form-control"
+        name="abs"
+        type="text"
+        aria-label="abstract and keywords"
+      />
     </div>
   </div>
   <div data-field="property">
     <label>
-      <input type="checkbox" name="refereed">&nbsp;Refereed only&nbsp;
+      <input type="checkbox" name="refereed" />&nbsp;Refereed only&nbsp;
     </label>
     &nbsp;&nbsp;&nbsp;
     <label>
-      <input type="checkbox" name="article">&nbsp;Articles only&nbsp;
+      <input type="checkbox" name="article" />&nbsp;Articles only&nbsp;
     </label>
   </div>
   <div data-field="bibstem" data-textInput="true">
@@ -83,8 +175,15 @@
     </div>
     <label for="#classic-bibstem">Publication(s)</label>
     <p class="help-block small">Press Return Key To Add Publication</p>
-    <input id="classic-bibstem" type="text" class="form-control" name="bibstem"
-      placeholder="Comma-separated bibstems of journal titles" autocomplete="off" />
+    <input
+      id="classic-bibstem"
+      type="text"
+      class="form-control"
+      name="bibstem"
+      placeholder="Comma-separated bibstems of journal titles"
+      autocomplete="off"
+      aria-label="bibstems"
+    />
   </div>
 
   <div data-field="sort" class="clearfix">
@@ -95,6 +194,8 @@
   </div>
   <div class="pull-right">
     <button class="btn" type="reset"><i class="fa fa-times"></i> Clear</button>
-    <button class="btn btn-primary" type="submit"><i class="fa fa-search"></i> Search</button>
+    <button class="btn btn-primary" type="submit">
+      <i class="fa fa-search"></i> Search
+    </button>
   </div>
 </form>

@@ -3,25 +3,17 @@ define([
   'js/widgets/facet/factory',
   'js/widgets/facet/graph-facet/year_graph',
   'js/widgets/facet/graph-facet/h_index_graph',
-  'js/mixins/formatter'
-],
-function (
-  TabsWidget,
-  FacetFactory,
-  YearGraphView,
-  HIndexGraph,
-  FormatMixin
-) {
-  return function () {
+  'js/mixins/formatter',
+], function(TabsWidget, FacetFactory, YearGraphView, HIndexGraph, FormatMixin) {
+  return function() {
     var yearGraphWidget = FacetFactory.makeGraphFacet({
       graphView: YearGraphView,
       facetField: 'year',
       defaultQueryArguments: {
         'facet.pivot': 'property,year',
-        'facet': 'true',
+        facet: 'true',
         'facet.minCount': '1',
-		  'facet.limit': '-1'
-
+        'facet.limit': '-1',
       },
 
       graphViewOptions: {
@@ -29,7 +21,7 @@ function (
         xAxisTitle: 'years',
       },
 
-      processResponse: function (apiResponse) {
+      processResponse: function(apiResponse) {
         this.setCurrentQuery(apiResponse.getApiQuery());
 
         var data = apiResponse.get('facet_counts.facet_pivot.property,year');
@@ -52,10 +44,9 @@ function (
           nonRefData = nonRefData.pivot;
         }
 
-        var maxVal,
-          minVal;
+        var maxVal, minVal;
 
-        _.each(refData, function (d) {
+        _.each(refData, function(d) {
           var val = parseInt(d.value);
           if (maxVal === undefined) {
             maxVal = val;
@@ -69,7 +60,7 @@ function (
           }
         });
 
-        _.each(nonRefData, function (d) {
+        _.each(nonRefData, function(d) {
           var val = parseInt(d.value);
           if (maxVal === undefined) {
             maxVal = val;
@@ -87,18 +78,22 @@ function (
 
         var finalData = [];
 
-        _.each(yearRange, function (year) {
+        _.each(yearRange, function(year) {
           var stringYear = year + '';
-          var refCount = _.filter(refData, function (d) {
+          var refCount = _.filter(refData, function(d) {
             return d.value === stringYear;
           })[0];
           refCount = refCount ? refCount.count : 0;
-          var nonRefCount = _.filter(nonRefData, function (d) {
+          var nonRefCount = _.filter(nonRefData, function(d) {
             return d.value === stringYear;
           })[0];
           nonRefCount = nonRefCount ? nonRefCount.count : 0;
 
-          finalData.push({ x: year, y: refCount + nonRefCount, refCount: refCount });
+          finalData.push({
+            x: year,
+            y: refCount + nonRefCount,
+            refCount: refCount,
+          });
         });
 
         if (finalData.length < 2) {
@@ -108,7 +103,7 @@ function (
         }
         this.model.set({ graphData: finalData });
         this.updateState(this.STATES.IDLE);
-      }
+      },
     });
 
     var citationGraphWidget = FacetFactory.makeGraphFacet({
@@ -116,21 +111,22 @@ function (
       facetField: 'citation_count',
       defaultQueryArguments: {
         'facet.pivot': 'property,citation_count',
-        'facet': 'true',
+        facet: 'true',
         'facet.limit': '-1',
-        'stats': 'true',
-        'stats.field': 'citation_count'
-
+        stats: 'true',
+        'stats.field': 'citation_count',
       },
       graphViewOptions: {
         yAxisTitle: 'citations',
         xAxisTitle: 'number of records',
-        pastTenseTitle: 'cited'
+        pastTenseTitle: 'cited',
       },
-      processResponse: function (apiResponse) {
+      processResponse: function(apiResponse) {
         this.setCurrentQuery(apiResponse.getApiQuery());
 
-        var data = apiResponse.get('facet_counts.facet_pivot.property,citation_count');
+        var data = apiResponse.get(
+          'facet_counts.facet_pivot.property,citation_count'
+        );
 
         if (apiResponse.get('response.numFound') < 2) {
           this.model.set({ graphData: [] });
@@ -150,18 +146,18 @@ function (
 
         var finalData = [];
 
-        _.each(refData, function (d) {
+        _.each(refData, function(d) {
           var val = d.value,
             count = d.count;
-          _.each(_.range(count), function () {
+          _.each(_.range(count), function() {
             finalData.push({ refereed: true, x: undefined, y: val });
           });
         });
 
-        _.each(nonRefData, function (d) {
+        _.each(nonRefData, function(d) {
           var val = d.value,
             count = d.count;
-          _.each(_.range(count), function () {
+          _.each(_.range(count), function() {
             finalData.push({ refereed: false, x: undefined, y: val });
           });
         });
@@ -171,30 +167,30 @@ function (
           return;
         }
 
-        finalData = finalData.sort(function (a, b) {
+        finalData = finalData.sort(function(a, b) {
           return b.y - a.y;
         });
 
         // a cut off of 2000
         finalData = _.first(finalData, 2000);
-        finalData = _.map(finalData, function (d, i) {
+        finalData = _.map(finalData, function(d, i) {
           d.x = i + 1;
           return d;
         });
 
         var statsCount;
         if (apiResponse.toJSON().stats) {
-          statsCount = FormatMixin.formatNum(apiResponse.get('stats.stats_fields.citation_count.sum'));
+          statsCount = FormatMixin.formatNum(
+            apiResponse.get('stats.stats_fields.citation_count.sum')
+          );
         }
 
-        this.model.set(
-          {
-            graphData: finalData,
-            statsCount: statsCount,
-            statsDescription: 'total number of citations'
-          }
-        );
-      }
+        this.model.set({
+          graphData: finalData,
+          statsCount: statsCount,
+          statsDescription: 'total number of citations',
+        });
+      },
     });
 
     var readsGraphWidget = FacetFactory.makeGraphFacet({
@@ -202,20 +198,22 @@ function (
       facetField: 'read_count',
       defaultQueryArguments: {
         'facet.pivot': 'property,read_count',
-        'facet': 'true',
+        facet: 'true',
         'facet.limit': '-1',
-        'stats': 'true',
-        'stats.field': 'read_count'
+        stats: 'true',
+        'stats.field': 'read_count',
       },
       graphViewOptions: {
         yAxisTitle: 'recent reads',
         xAxisTitle: 'number of records',
-        pastTenseTitle: 'read'
+        pastTenseTitle: 'read',
       },
-      processResponse: function (apiResponse) {
+      processResponse: function(apiResponse) {
         this.setCurrentQuery(apiResponse.getApiQuery());
 
-        var data = apiResponse.get('facet_counts.facet_pivot.property,read_count');
+        var data = apiResponse.get(
+          'facet_counts.facet_pivot.property,read_count'
+        );
 
         if (apiResponse.get('response.numFound') < 2) {
           this.model.set({ graphData: [] });
@@ -236,18 +234,18 @@ function (
 
         var finalData = [];
 
-        _.each(refData, function (d) {
+        _.each(refData, function(d) {
           var val = d.value,
             count = d.count;
-          _.each(_.range(count), function () {
+          _.each(_.range(count), function() {
             finalData.push({ refereed: true, x: undefined, y: val });
           });
         });
 
-        _.each(nonRefData, function (d) {
+        _.each(nonRefData, function(d) {
           var val = d.value,
             count = d.count;
-          _.each(_.range(count), function () {
+          _.each(_.range(count), function() {
             finalData.push({ refereed: false, x: undefined, y: val });
           });
         });
@@ -257,42 +255,50 @@ function (
           return;
         }
 
-        finalData = finalData.sort(function (a, b) {
+        finalData = finalData.sort(function(a, b) {
           return b.y - a.y;
         });
 
         // a cut off of 2000
         finalData = _.first(finalData, 2000);
 
-        finalData = _.map(finalData, function (d, i) {
+        finalData = _.map(finalData, function(d, i) {
           d.x = i + 1;
           return d;
         });
 
         var statsCount;
         if (apiResponse.toJSON().stats) {
-          var statsCount = FormatMixin.formatNum(apiResponse.get('stats.stats_fields.read_count.sum'));
+          var statsCount = FormatMixin.formatNum(
+            apiResponse.get('stats.stats_fields.read_count.sum')
+          );
         }
 
         this.model.set({
           graphData: finalData,
           statsCount: statsCount,
-          statsDescription: 'total recent (90 day) reads'
+          statsDescription: 'total recent (90 day) reads',
         });
-      }
-
+      },
     });
 
     var tab = new TabsWidget({
       tabs: [
         {
-          'title': 'Years', 'widget': yearGraphWidget, 'id': 'year-facet', 'default': true
+          title: 'Years',
+          widget: yearGraphWidget,
+          id: 'year-facet',
+          default: true,
         },
-        { title: 'Citations', widget: citationGraphWidget, id: 'citations-facet' },
-        { title: 'Reads', widget: readsGraphWidget, id: 'reads-facet' }
-      ]
+        {
+          title: 'Citations',
+          widget: citationGraphWidget,
+          id: 'citations-facet',
+        },
+        { title: 'Reads', widget: readsGraphWidget, id: 'reads-facet' },
+      ],
     });
-      // for tests
+    // for tests
     tab.yearGraphWidget = yearGraphWidget;
     tab.citationGraphWidget = citationGraphWidget;
     tab.readsGraphWidget = readsGraphWidget;

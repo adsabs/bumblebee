@@ -1,133 +1,166 @@
-
-
 <thead>
-<tr>
+  <tr>
     <th>
-
+      <span class="sr-only">no value</span>
     </th>
     <th>
-
+      <span class="sr-only">no value</span>
     </th>
     <th>
-        Totals
-
+      Totals
     </th>
     <th>
-        Refereed
-
+      Refereed
     </th>
-
-</tr>
+  </tr>
 </thead>
 
 <tr>
-
-    <td>
-        h-index
-    </td>
-    <td>
-        <i class="icon-help" data-toggle="popover" data-container="body" title="<b>h-index</b>" data-content="The H-index is the largest number H such that H publications have at least H citations."></i>
-
-    </td>
-    <td>
-        {{ hIndex.[0] }}
-    </td>
-    <td>
-        {{ hIndex.[1] }}
-    </td>
-
+  <td>
+    h-index
+  </td>
+  <td>
+    <i
+      class="icon-help"
+      data-toggle="popover"
+      data-container="body"
+      title="<b>h-index</b>"
+      data-content="The H-index is the largest number H such that H publications have at least H citations."
+    ></i>
+  </td>
+  <td>
+    {{ hIndex.[0] }}
+  </td>
+  <td>
+    {{ hIndex.[1] }}
+  </td>
 </tr>
 <tr>
-    <td> m-index </td>
-    <td>
-        <i class="icon-help" data-toggle="popover" data-container="body" title="<b>m-index</b>" data-content="The m-index is defined as the h-index divided by number of years since the first published paper of the scientist (also called m-quotient)."></i>
-    </td>
-    <td>
-        {{ mIndex.[0]}}
-    </td>
-    <td>
-        {{ mIndex.[1] }}
-    </td>
-
+  <td>m-index</td>
+  <td>
+    <i
+      class="icon-help"
+      data-toggle="popover"
+      data-container="body"
+      title="<b>m-index</b>"
+      data-content="The m-index is defined as the h-index divided by number of years since the first published paper of the scientist (also called m-quotient)."
+    ></i>
+  </td>
+  <td>
+    {{ mIndex.[0]}}
+  </td>
+  <td>
+    {{ mIndex.[1] }}
+  </td>
 </tr>
 <tr>
-    <td> g-index </td>
-    <td>
-        <i class="icon-help" data-toggle="popover" data-container="body" title="<b>g-index</b>" data-content="Given a set of articles ranked in decreasing order of the number of citations that they received, the g-index is the (unique) largest number such that the top g articles received (together) at least g<sup>2</sup> citations."></i>
-    </td>
-    <td>
-        {{ gIndex.[0] }}
-    </td>
-    <td>
-        {{  gIndex.[1] }}
-    </td>
-
-</tr>
-
-<tr>
-    <td> i10-index </td>
-    <td>
-        <i class="icon-help" data-toggle="popover" data-container="body" title="<b>i10-index</b>" data-content="The i10-index is the number of publications with at least 10 citations."></i>
-    </td>
-    <td>
-        {{ i10Index.[0] }}
-    </td>
-    <td>
-        {{ i10Index.[1] }}
-    </td>
-
-</tr>
-<tr>
-    <td> i100-index </td>
-    <td>
-        <i class="icon-help" data-toggle="popover" data-container="body" title="<b>i100-index</b>" data-content="The i100-index is the number of publications with at least 100 citations."></i>
-    </td>
-    <td>
-        {{ i100Index.[0] }}
-    </td>
-    <td>
-        {{ i100Index.[1] }}
-    </td>
-
+  <td>g-index</td>
+  <td>
+    <i
+      class="icon-help"
+      data-toggle="popover"
+      data-container="body"
+      title="<b>g-index</b>"
+      data-content="Given a set of articles ranked in decreasing order of the number of citations that they received, the g-index is the (unique) largest number such that the top g articles received (together) at least g<sup>2</sup> citations."
+    ></i>
+  </td>
+  <td>
+    {{ gIndex.[0] }}
+  </td>
+  <td>
+    {{ gIndex.[1] }}
+  </td>
 </tr>
 
 <tr>
-    <td> tori index  </td>
-    <td>
-        <i class="icon-help" data-toggle="popover" data-container="body" title="<b>tori index</b>" data-content="The tori-index is calculated using the reference lists of the citing papers, where self-citations are removed. The contribution of each citing paper is then normalized by the number of remaining references in the citing papers and the number of authors in the cited paper."></i>
-    </td>
-    <td>
-        {{ toriIndex.[0] }}
-    </td>
-    <td>
-        {{ toriIndex.[1] }}
-    </td>
-
+  <td>i10-index</td>
+  <td>
+    <i
+      class="icon-help"
+      data-toggle="popover"
+      data-container="body"
+      title="<b>i10-index</b>"
+      data-content="The i10-index is the number of publications with at least 10 citations."
+    ></i>
+  </td>
+  <td>
+    {{ i10Index.[0] }}
+  </td>
+  <td>
+    {{ i10Index.[1] }}
+  </td>
+</tr>
+<tr>
+  <td>i100-index</td>
+  <td>
+    <i
+      class="icon-help"
+      data-toggle="popover"
+      data-container="body"
+      title="<b>i100-index</b>"
+      data-content="The i100-index is the number of publications with at least 100 citations."
+    ></i>
+  </td>
+  <td>
+    {{ i100Index.[0] }}
+  </td>
+  <td>
+    {{ i100Index.[1] }}
+  </td>
 </tr>
 
 <tr>
-    <td> riq index </td>
-    <td>
-        <i class="icon-help" data-toggle="popover" data-container="body" title="<b>riq index</b>" data-content="The riq-index equals the square root of the tori-index, divided by the time between the first and last publication. A multiplication with 1000 has been applied."></i>
-    </td>
-    <td>
-        {{ riqIndex.[0] }}
-    </td>
-    <td>
-        {{  riqIndex.[1] }}
-    </td>
+  <td>tori index</td>
+  <td>
+    <i
+      class="icon-help"
+      data-toggle="popover"
+      data-container="body"
+      title="<b>tori index</b>"
+      data-content="The tori-index is calculated using the reference lists of the citing papers, where self-citations are removed. The contribution of each citing paper is then normalized by the number of remaining references in the citing papers and the number of authors in the cited paper."
+    ></i>
+  </td>
+  <td>
+    {{ toriIndex.[0] }}
+  </td>
+  <td>
+    {{ toriIndex.[1] }}
+  </td>
+</tr>
 
+<tr>
+  <td>riq index</td>
+  <td>
+    <i
+      class="icon-help"
+      data-toggle="popover"
+      data-container="body"
+      title="<b>riq index</b>"
+      data-content="The riq-index equals the square root of the tori-index, divided by the time between the first and last publication. A multiplication with 1000 has been applied."
+    ></i>
+  </td>
+  <td>
+    {{ riqIndex.[0] }}
+  </td>
+  <td>
+    {{ riqIndex.[1] }}
+  </td>
 </tr>
 <tr>
-    <td> read10-index  </td>
-    <td>
-        <i class="icon-help" data-toggle="popover" data-container="body" title="<b>Read10-index</b>" data-content="Read10 is the current readership rate for all an individual's papers published in the most recent ten years, normalized for number of authors."></i>
-    </td>
-    <td>
-        {{ read10Index.[0] }}
-    </td>
-    <td>
-        {{  read10Index.[1] }}
-    </td>
-
+  <td>read10-index</td>
+  <td>
+    <i
+      class="icon-help"
+      data-toggle="popover"
+      data-container="body"
+      title="<b>Read10-index</b>"
+      data-content="Read10 is the current readership rate for all an individual's papers published in the most recent ten years, normalized for number of authors."
+    ></i>
+  </td>
+  <td>
+    {{ read10Index.[0] }}
+  </td>
+  <td>
+    {{ read10Index.[1] }}
+  </td>
 </tr>
