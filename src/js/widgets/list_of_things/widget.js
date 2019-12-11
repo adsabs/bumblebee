@@ -202,8 +202,11 @@ define([
         this.view.model.set('query', false);
       } else {
         var params = apiResponse.get('responseHeader.params');
-        this.view.model.set('isTugboat', !!params['__tb']);
-        this.view.model.set('query', this._getCurrentQueryString(apiResponse));
+        this.view.model.set({
+          isTugboat: !!params['__tb'],
+          query: this._getCurrentQueryString(apiResponse),
+          currentQuery: apiResponse.getApiQuery()
+        });
       }
 
       // XXX:rca - hack, to be solved later
