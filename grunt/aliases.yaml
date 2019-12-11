@@ -58,9 +58,8 @@ server: 'server:dev'
 # 3rd Party Assets
 assets:
   - 'clean:libs'
-  - 'concurrent:install'
   - 'copy:libs'
-  - 'concurrent:convert'
+  - 'concurrent:install'
 
 # CSS Processing
 css:

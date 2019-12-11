@@ -5,11 +5,11 @@
  * @module grunt/concurrent
  */
 module.exports = {
-  install: ['bower:install', 'exec:npm_install', 'curl:google-analytics'],
-  convert: [
+  install: [
+    'bower:install',
+    'curl:google-analytics',
     'exec:install_enzyme',
-    'exec:convert_dsjslib',
-    'exec:convert_requirejs',
+    'exec:install_dsjslib_cache',
   ],
   hash_require: ['hash_require:js', 'hash_require:css'],
 };

@@ -76,7 +76,6 @@
     "nyc": "^11.2.1",
     "phantomjs": "^2.1.7",
     "puppeteer": "^1.14.0",
-    "react-addons-test-utils": "^15.6.1",
     "react-bootstrap": "^0.32.1",
     "react-dom": "^15.6.1",
     "react-redux": "^4.4.9",
