@@ -39,5 +39,6 @@ grunt/requirejs.js
 !.travis.yml
 !.eslintrc.json
 !.editorconfig
+!src/styles/vendor/**/*
 
 package-lock.json
