@@ -193,12 +193,12 @@ define([
       'click #addCustomFormatAdd': 'onAddCustomFormat',
 
       // Custom format editor events
-      'click #addCustomFormatEdit': 'onEditCustomFormat',
-      'click #addCustomFormatConfirmEdit': 'onConfirmEditCustomFormat',
-      'click #addCustomFormatCancelEdit': 'onCancelEditCustomFormat',
+      'click .addCustomFormatEdit': 'onEditCustomFormat',
+      'click .addCustomFormatConfirmEdit': 'onConfirmEditCustomFormat',
+      'click .addCustomFormatCancelEdit': 'onCancelEditCustomFormat',
 
       // custom format deleting events
-      'click #addCustomFormatDelete': 'onDeleteCustomFormat',
+      'click .addCustomFormatDelete': 'onDeleteCustomFormat',
 
       'change #bibtexKeyFormat': 'onChangeBibtexKeyFormat',
       'change #bibtexABSKeyFormat': 'onChangeBibtexABSKeyFormat',

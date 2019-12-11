@@ -3,38 +3,78 @@
     <span class="h2">My Libraries</span>
   </div>
   <div class="col-sm-4 col-sm-offset-4">
-    <a href="#user/libraries/actions" class="btn btn-primary pull-right" id="library-actions" role="button">
+    <a
+      href="#user/libraries/actions"
+      class="btn btn-primary pull-right"
+      id="library-actions"
+      role="button"
+    >
       <i class="fa fa-wrench"></i>
       Actions
     </a>
   </div>
 </div>
-<hr class="hr">
+<hr class="hr" />
 <div class="row">
   <table class="libraries-list-container table table-hover table-responsive">
-      <thead>
+    <thead>
       <tr>
-          <th>
-              <!--page num -->
-          </th>
-          <th>
-             <!--public/private status-->
-          </th>
-          <th> Library
-              <button title="sort by library name" class="btn btn-xs {{#compare sort 'name'}} s-sort-active {{/compare}} btn-default" data-sort='{"sort":"name","type":"string"}'><i class="fa fa-lg fa-sort"></i>{{#compare sort 'name'}}  {{#compare order "asc"}} asc {{else}} desc {{/compare}}{{/compare}}</button>
-          </th>
-          <th> Papers
-              <button title="sort by number of papers"  class="btn btn-xs {{#compare sort 'num_documents'}} s-sort-active {{/compare}} btn-default" data-sort='{"sort":"num_documents","type":"int"}' ><i class="fa fa-lg fa-sort"></i> {{#compare sort 'num_documents'}}  {{#compare order "asc"}} asc {{else}} desc {{/compare}}{{/compare}}</button>
-          </th>
-          <th> Permission
-              <button title="sort by permission status (admin --> read only)" class="btn btn-xs {{#compare sort 'permission'}} s-sort-active {{/compare}} btn-default" data-sort='{"sort":"permission","type":"permission"}'><i class="fa fa-lg fa-sort"></i> {{#compare sort 'permission'}}  {{#compare order "asc"}} asc {{else}} desc {{/compare}}{{/compare}}</button>
-          </th>
-          <th> Last Modified
-              <button title="sort by last modified" class="btn btn-xs {{#compare sort 'date_last_modified'}} s-sort-active {{/compare}} btn-default" data-sort='{"sort":"date_last_modified","type":"date"}'><i class="fa fa-lg fa-sort"></i> {{#compare sort 'date_last_modified'}}  {{#compare order "asc"}} asc {{else}} desc {{/compare}}{{/compare}}</button>
-          </th>
+        <th>
+          <!--page num -->
+          <span class="sr-only">no data</span>
+        </th>
+        <th>
+          <!--public/private status-->
+          <span class="sr-only">no data</span>
+        </th>
+        <th>
+          Library
+          <button
+            title="sort by library name"
+            class="btn btn-xs {{#compare sort 'name'}} s-sort-active {{/compare}} btn-default"
+            data-sort='{"sort":"name","type":"string"}'
+          >
+            <i class="fa fa-lg fa-sort"></i>{{#compare sort 'name'}} {{#compare
+            order "asc"}} asc {{else}} desc {{/compare}}{{/compare}}
+          </button>
+        </th>
+        <th>
+          Papers
+          <button
+            title="sort by number of papers"
+            class="btn btn-xs {{#compare sort 'num_documents'}} s-sort-active {{/compare}} btn-default"
+            data-sort='{"sort":"num_documents","type":"int"}'
+          >
+            <i class="fa fa-lg fa-sort"></i> {{#compare sort 'num_documents'}}
+            {{#compare order "asc"}} asc {{else}} desc {{/compare}}{{/compare}}
+          </button>
+        </th>
+        <th>
+          Permission
+          <button
+            title="sort by permission status (admin --> read only)"
+            class="btn btn-xs {{#compare sort 'permission'}} s-sort-active {{/compare}} btn-default"
+            data-sort='{"sort":"permission","type":"permission"}'
+          >
+            <i class="fa fa-lg fa-sort"></i> {{#compare sort 'permission'}}
+            {{#compare order "asc"}} asc {{else}} desc {{/compare}}{{/compare}}
+          </button>
+        </th>
+        <th>
+          Last Modified
+          <button
+            title="sort by last modified"
+            class="btn btn-xs {{#compare sort 'date_last_modified'}} s-sort-active {{/compare}} btn-default"
+            data-sort='{"sort":"date_last_modified","type":"date"}'
+          >
+            <i class="fa fa-lg fa-sort"></i> {{#compare sort
+            'date_last_modified'}} {{#compare order "asc"}} asc {{else}} desc
+            {{/compare}}{{/compare}}
+          </button>
+        </th>
       </tr>
-      </thead>
+    </thead>
 
-      <tbody></tbody>
+    <tbody></tbody>
   </table>
 </div>

@@ -10,7 +10,7 @@
           <label for="numAuthors">
             Authors Visible Per Result
             <a href="#collapseNumAuthorsDesc" data-toggle="collapse" role="button" aria-expanded="false"
-              aria-controls="collapseNumAuthorsDesc">
+              aria-controls="collapseNumAuthorsDesc" aria-label="number of authors per result">
               <i class="fa fa-question-circle" aria-hidden="true"></i>
             </a>
           </label>
@@ -38,7 +38,7 @@
           <label for="externalLinks">
             Default Action For External Links
             <a href="#collapseExternalLinks" data-toggle="collapse" role="button" aria-expanded="false"
-              aria-controls="collapseExternalLinks">
+              aria-controls="collapseExternalLinks" aria-label="default action for external links">
               <i class="fa fa-question-circle" aria-hidden="true"></i>
             </a>
           </label>
@@ -66,7 +66,7 @@
           <label for="homePage">
             Default Home Page
             <a href="#collapseHomePage" data-toggle="collapse" role="button" aria-expanded="false"
-              aria-controls="collapseHomePage">
+              aria-controls="collapseHomePage" aria-label="default home page">
               <i class="fa fa-question-circle" aria-hidden="true"></i>
             </a>
           </label>
@@ -94,7 +94,7 @@
           <label for="database">
             Default Collection(s)
             <a href="#collapseDatabase" data-toggle="collapse" role="button" aria-expanded="false"
-              aria-controls="collapseDatabase">
+              aria-controls="collapseDatabase" aria-label="default collection">
               <i class="fa fa-question-circle" aria-hidden="true"></i>
             </a>
           </label>
@@ -122,7 +122,7 @@
           <label for="exportFormat">
             Default Export Format
             <a href="#collapseExportFormat" data-toggle="collapse" role="button" aria-expanded="false"
-              aria-controls="collapseExportFormat">
+              aria-controls="collapseExportFormat" aria-label="default export format">
               <i class="fa fa-question-circle" aria-hidden="true"></i>
             </a>
           </label>
@@ -150,7 +150,7 @@
           <label for="addCustomFormat">
             Custom Formats
             <a href="#collapseAddCustomFormat" data-toggle="collapse" role="button" aria-expanded="false"
-              aria-controls="collapseAddCustomFormat">
+              aria-controls="collapseAddCustomFormat" aria-label="custom formats">
               <i class="fa fa-question-circle" aria-hidden="true"></i>
             </a>
           </label>
@@ -185,11 +185,11 @@
                   <input type="text" class="form-control custom-format-edit" placeholder="%l (%Y), %j, %V, %p.\n" id="custom-format-code-{{id}}" value="{{code}}" data-id="{{id}}">
                 </div>
                 <span class="col-xs-2 text-right">
-                  <button id="addCustomFormatConfirmEdit" role="button" data-id="{{id}}" class="btn-link"
+                  <button role="button" data-id="{{id}}" class="btn-link addCustomFormatConfirmEdit"
                     title="confirm edit">
                     <i class="fa fa-check text-success" aria-hidden="true"></i>
                   </button>
-                  <button id="addCustomFormatCancelEdit" role="button" data-id="{{id}}" class="btn-link"
+                  <button role="button" data-id="{{id}}" class="btn-link addCustomFormatCancelEdit"
                     title="cancel edit">
                     <i class="fa fa-times text-danger" aria-hidden="true"></i>
                   </button>
@@ -205,11 +205,11 @@
                   </p>
                 </div>
                 <span class="col-xs-2 text-right">
-                  <button id="addCustomFormatEdit" role="button" data-id="{{id}}" class="btn-link"
+                  <button role="button" data-id="{{id}}" class="btn-link addCustomFormatEdit"
                     title="edit custom format">
                     <i class="fa fa-pencil text-primary" aria-hidden="true"></i>
                   </button>
-                  <button id="addCustomFormatDelete" role="button" data-id="{{id}}" class="btn-link"
+                  <button role="button" data-id="{{id}}" class="btn-link addCustomFormatEdit"
                     title="delete custom format">
                     <i class="fa fa-times text-danger" aria-hidden="true"></i>
                   </button>
@@ -236,7 +236,7 @@
           <label for="hideSideBars">
             Results List Side Bars
             <a href="#collapseHideSideBars" data-toggle="collapse" role="button" aria-expanded="false"
-              aria-controls="collapseHideSideBars">
+              aria-controls="collapseHideSideBars" aria-label="results list side bars">
               <i class="fa fa-question-circle" aria-hidden="true"></i>
             </a>
           </label>
@@ -264,7 +264,7 @@
           <label for="bibtexKeyFormat">
             BibTeX Default Export Key Format
             <a href="#collapsebibtexKeyFormat" data-toggle="collapse" role="button" aria-expanded="false"
-              aria-controls="collapsebibtexKeyFormat">
+              aria-controls="collapsebibtexKeyFormat" aria-label="bibtex default export key format">
               <i class="fa fa-question-circle" aria-hidden="true"></i>
             </a>
           </label>
@@ -316,7 +316,7 @@
               <label for="bibtexMaxAuthors">
                 BibTeX Default Export Max Authors
                 <a href="#collapsebibtexMaxAuthors" data-toggle="collapse" role="button" aria-expanded="false"
-                  aria-controls="collapsebibtexMaxAuthors">
+                  aria-controls="collapsebibtexMaxAuthors" aria-label="bibtex default export max authors">
                   <i class="fa fa-question-circle" aria-hidden="true"></i>
                 </a>
               </label>
@@ -345,7 +345,7 @@
               <label for="bibtexAuthorCutoff">
                 BibTeX Default Author Cutoff
                 <a href="#collapsebibtexAuthorCutoff" data-toggle="collapse" role="button" aria-expanded="false"
-                  aria-controls="collapsebibtexAuthorCutoff">
+                  aria-controls="collapsebibtexAuthorCutoff" aria-label="bibtex default author cutoff">
                   <i class="fa fa-question-circle" aria-hidden="true"></i>
                 </a>
               </label>
@@ -378,7 +378,7 @@
           <label for="bibtexABSKeyFormat">
             BibTeX ABS Default Export Key Format
             <a href="#collapsebibtexABSKeyFormat" data-toggle="collapse" role="button" aria-expanded="false"
-              aria-controls="collapsebibtexABSKeyFormat">
+              aria-controls="collapsebibtexABSKeyFormat" aria-label="bibtex abs default export key format">
               <i class="fa fa-question-circle" aria-hidden="true"></i>
             </a>
           </label>
@@ -430,7 +430,7 @@
               <label for="bibtexABSMaxAuthors">
                 BibTeX ABS Default Export Max Authors
                 <a href="#collapsebibtexABSMaxAuthors" data-toggle="collapse" role="button" aria-expanded="false"
-                  aria-controls="collapsebibtexABSMaxAuthors">
+                  aria-controls="collapsebibtexABSMaxAuthors" aria-label="bibtex abs default export max authors">
                   <i class="fa fa-question-circle" aria-hidden="true"></i>
                 </a>
               </label>
@@ -459,7 +459,7 @@
               <label for="bibtexABSAuthorCutoff">
                 BibTeX ABS Default Author Cutoff
                 <a href="#collapsebibtexABSAuthorCutoff" data-toggle="collapse" role="button" aria-expanded="false"
-                  aria-controls="collapsebibtexABSAuthorCutoff">
+                  aria-controls="collapsebibtexABSAuthorCutoff" aria-label="bibtex abs default author cutoff">
                   <i class="fa fa-question-circle" aria-hidden="true"></i>
                 </a>
               </label>

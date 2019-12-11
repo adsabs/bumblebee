@@ -1,152 +1,155 @@
 <!--<div id="article-navigation">{{#if hasPrev}}<a target="prev">prev</a>{{/if}}|{{#if hasNext}} <a target="next">next</a>{{/if}}</div>-->
 
-{{#unless bibcode}}
-  {{#if loading}}
-    {{> js/wraps/widget/loading/template hideCloseButton=true widgetLoadingSize="big"}}
-  {{else if error}}
-    <h2>Error loading abstract</h2>
-  {{else}}
-    <h2 class="s-abstract-title">Abstract Not Found</h2>
-    <div class="s-abstract-text">
-        No valid abstract selected for retrieval or abstract not yet indexed in ADS.
-    </div>
-  {{/if}}
+{{#unless bibcode}} {{#if loading}} {{> js/wraps/widget/loading/template
+hideCloseButton=true widgetLoadingSize="big"}} {{else if error}}
+<h2>Error loading abstract</h2>
 {{else}}
+<h2 class="s-abstract-title">Abstract Not Found</h2>
+<div class="s-abstract-text">
+  No valid abstract selected for retrieval or abstract not yet indexed in ADS.
+</div>
+{{/if}} {{else}}
 
 <h2 class="s-abstract-title">
-    {{{title}}}
-    <a href="{{titleLink.href}}">{{titleLink.text}}</a>
+  {{{title}}} {{#if titleLink.href}}
+  <a href="{{titleLink.href}}">{{titleLink.text}}</a>
+  {{/if}}
 </h2>
 
-
-{{#if authorAff.length}}
-{{#if hasAffiliation}}
-<button class="btn btn-xs btn-default-flat s-toggle-aff" id="toggle-aff">Show affiliations</button>
-{{/if}}
-{{#if hasMoreAuthors}}
-<button class="btn btn-xs btn-default-flat s-toggle-authors" id="toggle-more-authors">Show all authors</button>
+{{#if authorAff.length}} {{#if hasAffiliation}}
+<button class="btn btn-xs btn-default-flat s-toggle-aff" id="toggle-aff">
+  Show affiliations
+</button>
+{{/if}} {{#if hasMoreAuthors}}
+<button
+  class="btn btn-xs btn-default-flat s-toggle-authors"
+  id="toggle-more-authors"
+>
+  Show all authors
+</button>
 {{/if}}
 
 <div id="authors-and-aff" class="s-authors-and-aff">
-    <ul class="list-inline">
-        {{#each authorAff}}
-        {{#if @last}}
-        <li class="author"><a href="#search/q=author:{{this.[2]}}&sort=date%20desc,%20bibcode%20desc">{{this.[0]}}</a><span class="affiliation hide"> (<i>{{this.[1]}}</i>)</span></li>
-        {{else}}
-        <li class="author"><a href="#search/q=author:{{this.[2]}}&sort=date%20desc,%20bibcode%20desc">{{this.[0]}}</a><span class="affiliation hide"> (<i>{{this.[1]}}</i>)</span>;</li>
-        {{/if}}
-        {{/each}}
-        {{#if hasMoreAuthors}}
-        <li class="author extra-dots">; <a data-target="more-authors" title="Show all authors">...</a></li>
-        {{/if}}
-        {{#each authorAffExtra}}
-        {{#if @last}}
-        <li class="author extra hide"><a href="#search/q=author:{{this.[2]}}&sort=date%20desc,%20bibcode%20desc">{{this.[0]}}</a><span class="affiliation hide"> (<i>{{this.[1]}}</i>)</span></li>
-        {{else}}
-        <li class="author extra hide"><a href="#search/q=author:{{this.[2]}}&sort=date%20desc,%20bibcode%20desc">{{this.[0]}}</a><span class="affiliation hide"> (<i>{{this.[1]}}</i>)</span>;</li>
-        {{/if}}
-        {{/each}}
-    </ul>
+  <ul class="list-inline">
+    {{#each authorAff}} {{#if @last}}
+    <li class="author">
+      <a href="#search/q=author:{{this.[2]}}&sort=date%20desc,%20bibcode%20desc"
+        >{{this.[0]}}</a
+      ><span class="affiliation hide"> (<i>{{this.[1]}}</i>)</span>
+    </li>
+    {{else}}
+    <li class="author">
+      <a href="#search/q=author:{{this.[2]}}&sort=date%20desc,%20bibcode%20desc"
+        >{{this.[0]}}</a
+      ><span class="affiliation hide"> (<i>{{this.[1]}}</i>)</span>;
+    </li>
+    {{/if}} {{/each}} {{#if hasMoreAuthors}}
+    <li class="author extra-dots">
+      ; <a data-target="more-authors" title="Show all authors">...</a>
+    </li>
+    {{/if}} {{#each authorAffExtra}} {{#if @last}}
+    <li class="author extra hide">
+      <a href="#search/q=author:{{this.[2]}}&sort=date%20desc,%20bibcode%20desc"
+        >{{this.[0]}}</a
+      ><span class="affiliation hide"> (<i>{{this.[1]}}</i>)</span>
+    </li>
+    {{else}}
+    <li class="author extra hide">
+      <a href="#search/q=author:{{this.[2]}}&sort=date%20desc,%20bibcode%20desc"
+        >{{this.[0]}}</a
+      ><span class="affiliation hide"> (<i>{{this.[1]}}</i>)</span>;
+    </li>
+    {{/if}} {{/each}}
+  </ul>
 </div>
 {{/if}}
 
 <div class="s-abstract-text">
-    <h4 class="sr-only">Abstract</h4>
-    <p>
-        {{#if abstract}}
-        {{{abstract}}}
-        {{else}}
-        <i>No abstract</i>
-        {{/if}}
-    </p>
+  <h4 class="sr-only">Abstract</h4>
+  <p>
+    {{#if abstract}} {{{abstract}}} {{else}}
+    <i>No abstract</i>
+    {{/if}}
+  </p>
 </div>
 
-<br>
+<br />
 <dl class="s-abstract-dl-horizontal">
-
-    {{#if pub_raw}}
-    <dt>Publication:</dt>
-    <dd>
-        <div id="article-publication">{{{pub_raw}}}</div>
-    </dd>
-    {{/if}}
-
-    {{#if formattedDate}}
-    <dt>Pub Date:</dt>
-    <dd>{{formattedDate}}</dd>
-    {{/if}}
-
-    {{#if doi}}
-    <dt>DOI:</dt>
-    <dd>
-        <span>
-            <a href="{{doi.href}}" target="_blank" rel="noopener">{{doi.doi}}</a>
-            <i class="fa fa-external-link"></i>
-        </span>
-    </dd>
-    {{/if}}
-
-    {{#if arxiv}}
-    <dt>arXiv:</dt>
-    <dd>
-        <span>
-            <a href="{{arxiv.href}}" target="_blank" rel="noopener">{{arxiv.id}}</a>
-            <i class="fa fa-external-link"></i>
-        </span>
-    </dd>
-    {{/if}}
-
-    <dt>Bibcode:</dt>
-    <dd>
-      <a href="#abs/{{bibcode}}/abstract">
-        {{ bibcode }}
-      </a>
-      <i class="icon-help" data-toggle="popover" data-container="body" data-content="The bibcode is assigned by the ADS as a unique identifier for the paper."></i>
-    </dd>
-
-    {{#if keyword}}
-    <div id="keywords">
-        <dt>Keywords:</dt>
-        <dd>
-            <ul class="list-inline">
-                {{#each keyword}}
-                {{#if @last}}
-                <li>{{{this}}}</li>
-                {{else}}
-                <li>{{{this}}};</li>
-                {{/if}}
-                {{/each}}
-            </ul>
-        </dd>
-    </div>
-    {{/if}}
-
-    {{#if comment}}
-    <div id="comment">
-        <dt>Comments:</dt>
-        <dd>
-            {{ comment }}
-        </dd>
-    </div>
-    {{/if}}
-
-    {{#if pubnote}}
-    <div id="pubnote">
-        <dt>E-Print Comments:</dt>
-        <dd>
-            {{ pubnote }}
-        </dd>
-    </div>
-    {{/if}}
-
-</dl>
-<br/>
-<a class="small pull-right text-faded" target="_blank" rel="noopener" href="http://adsabs.harvard.edu/adsfeedback/submit_abstract.php?bibcode={{bibcode}}" title="Provide feedback or suggest corrections">
-    <span class="fa-stack">
-        <i class="fa fa-comment-o fa-stack-2x"></i>
-        <i class="fa fa-exclamation fa-stack-1x"></i>
+  {{#if pub_raw}}
+  <dt>Publication:</dt>
+  <dd>
+    <div id="article-publication">{{{pub_raw}}}</div>
+  </dd>
+  {{/if}} {{#if formattedDate}}
+  <dt>Pub Date:</dt>
+  <dd>{{formattedDate}}</dd>
+  {{/if}} {{#if doi}}
+  <dt>DOI:</dt>
+  <dd>
+    <span>
+      <a href="{{doi.href}}" target="_blank" rel="noopener">{{doi.doi}}</a>
+      <i class="fa fa-external-link"></i>
     </span>
-    Feedback/Corrections?
+  </dd>
+  {{/if}} {{#if arxiv}}
+  <dt>arXiv:</dt>
+  <dd>
+    <span>
+      <a href="{{arxiv.href}}" target="_blank" rel="noopener">{{arxiv.id}}</a>
+      <i class="fa fa-external-link"></i>
+    </span>
+  </dd>
+  {{/if}}
+
+  <dt>Bibcode:</dt>
+  <dd>
+    <a href="#abs/{{bibcode}}/abstract">
+      {{ bibcode }}
+    </a>
+    <i
+      class="icon-help"
+      data-toggle="popover"
+      data-container="body"
+      data-content="The bibcode is assigned by the ADS as a unique identifier for the paper."
+    ></i>
+  </dd>
+
+  {{#if keyword}}
+  <dt>Keywords:</dt>
+  <dd>
+    <ul class="list-inline">
+      {{#each keyword}} {{#if @last}}
+      <li>{{{this}}}</li>
+      {{else}}
+      <li>{{{this}}};</li>
+      {{/if}} {{/each}}
+    </ul>
+  </dd>
+  {{/if}} {{#if comment}}
+  <dt>Comments:</dt>
+  <dd>
+    {{ comment }}
+  </dd>
+  {{/if}} {{#if pubnote}}
+  <dt>E-Print Comments:</dt>
+  <dd>
+    {{ pubnote }}
+  </dd>
+  {{/if}}
+</dl>
+<br />
+<a
+  class="small pull-right text-faded"
+  target="_blank"
+  rel="noopener"
+  href="http://adsabs.harvard.edu/adsfeedback/submit_abstract.php?bibcode={{bibcode}}"
+  title="Provide feedback or suggest corrections"
+>
+  <span class="fa-stack">
+    <i class="fa fa-comment-o fa-stack-2x"></i>
+    <i class="fa fa-exclamation fa-stack-1x"></i>
+  </span>
+  Feedback/Corrections?
 </a>
 
 {{/unless}}

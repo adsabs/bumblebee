@@ -1,11 +1,9 @@
-
-
-define([
-  'react', 'react-prop-types', 'es6!./ClipboardBtn.jsx'
-], function (React, ReactPropTypes, ClipboardBtn) {
-  const Export = ({
-    output, isFetching, progress, onDownloadFile, onCopy
-  }) => (
+define(['react', 'react-prop-types', 'es6!./ClipboardBtn.jsx'], function(
+  React,
+  ReactPropTypes,
+  ClipboardBtn
+) {
+  const Export = ({ output, isFetching, progress, onDownloadFile, onCopy }) => (
     <div>
       <div className="row">
         <div className="form-group">
@@ -14,12 +12,13 @@ define([
             readOnly="true"
             value={output}
             disabled={isFetching}
+            aria-label="export content"
           />
         </div>
       </div>
 
-      { isFetching
-        && <div className="progress export-progress">
+      {isFetching && (
+        <div className="progress export-progress">
           <div
             className="progress-bar"
             role="progressbar"
@@ -32,7 +31,7 @@ define([
           </div>
           <div className="text-center">Loading...</div>
         </div>
-      }
+      )}
 
       <div className="row">
         <div className="col-sm-12 btn-group">
@@ -41,7 +40,7 @@ define([
             disabled={isFetching || _.isEmpty(output)}
             onClick={onDownloadFile}
           >
-            <i className="fa fa-download fa-fw" aria-hidden="true"/>
+            <i className="fa fa-download fa-fw" aria-hidden="true" />
             Download to File
           </button>
           <ClipboardBtn
@@ -59,7 +58,7 @@ define([
     isFetching: ReactPropTypes.bool.isRequired,
     progress: ReactPropTypes.number,
     onDownloadFile: ReactPropTypes.func.isRequired,
-    onCopy: ReactPropTypes.func.isRequired
+    onCopy: ReactPropTypes.func.isRequired,
   };
 
   return Export;

@@ -1,14 +1,17 @@
-
-<nav class="s-landing-tabs">
+<nav class="s-landing-tabs" role="navigation">
+  <ul>
     {{#each tabs}}
-            <li class="landing-tab {{#if this.isSelected}} active {{/if}}">
-                <a href="{{this.path}}" data-widget-id="{{this.id}}">
-                    {{this.title}}
-                    <span class="hidden-xs">
-                        Form
-                    </span>
-                </a>
-            </li>
+    <li
+      class="landing-tab {{#if this.isSelected}} active {{/if}}"
+      aria-labelledby="{{this.id}}"
+    >
+      <a href="{{this.path}}" data-widget-id="{{this.id}}" id="{{this.id}}">
+        {{this.title}}
+        <span class="hidden-xs">
+          Form
+        </span>
+      </a>
+    </li>
     {{/each}}
-
+  </ul>
 </nav>

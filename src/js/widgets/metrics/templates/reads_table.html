@@ -1,104 +1,129 @@
 <thead>
-    <tr>
-        <th>
+  <tr>
+    <th>
+      <span class="sr-only">no value</span>
+    </th>
+    <th>
+      <span class="sr-only">no value</span>
+    </th>
+    <th class="hidden-abstract-page">
+      Totals
+    </th>
+    <th class="hidden-abstract-page">
+      Refereed
+    </th>
+  </tr>
+</thead>
 
-        </th>
-        <th>
-
-        </th>
-        <th class="hidden-abstract-page">
-            Totals
-
-        </th>
-        <th class="hidden-abstract-page">
-            Refereed
-
-        </th>
-
-    </tr>
-    </thead>
-
-    <tr>
-
-        <td>
-            Total number of reads
-        </td>
-        <td>
-            <i class="icon-help" data-toggle="popover" data-container="body" title="<b>Total Number of Reads</b>" data-content="The total number of times all papers were read. For each paper, a read is counted if an ADS user runs a search in our system and then requests to either view the paper\'s full bibliographic record or download the fulltext."></i>
-
-        </td>
-        <td>
-            {{ totalNumberOfReads.[0] }}
-        </td>
-        <td class="hidden-abstract-page">
-            {{ totalNumberOfReads.[1]  }}
-        </td>
-
-    </tr>
-    <tr class="hidden-abstract-page">
-        <td> Average number of reads </td>
-        <td>
-            <i class="icon-help" data-toggle="popover" data-container="body" title="<b>Average Number of Reads</b>" data-content="The total number of reads divided by the number of papers."></i>
-        </td>
-        <td>
-            {{ averageNumberOfReads.[0] }}
-        </td>
-        <td class="hidden-abstract-page">
-            {{ averageNumberOfReads.[1] }}
-        </td>
-
-    </tr>
- <tr class="hidden-abstract-page">
-    <td> Median number of reads </td>
-    <td>
-        <i class="icon-help" data-toggle="popover" data-container="body" title="<b>Median Number of Reads</b>" data-content="The median of the reads distribution."></i>
-    </td>
-    <td>
-        {{ medianNumberOfReads.[0] }}
-    </td>
-    <td class="hidden-abstract-page">
-        {{ medianNumberOfReads.[1] }}
-    </td>
-
+<tr>
+  <td>
+    Total number of reads
+  </td>
+  <td>
+    <i
+      class="icon-help"
+      data-toggle="popover"
+      data-container="body"
+      title="<b>Total Number of Reads</b>"
+      data-content="The total number of times all papers were read. For each paper, a read is counted if an ADS user runs a search in our system and then requests to either view the paper\'s full bibliographic record or download the fulltext."
+    ></i>
+  </td>
+  <td>
+    {{ totalNumberOfReads.[0] }}
+  </td>
+  <td class="hidden-abstract-page">
+    {{ totalNumberOfReads.[1] }}
+  </td>
+</tr>
+<tr class="hidden-abstract-page">
+  <td>Average number of reads</td>
+  <td>
+    <i
+      class="icon-help"
+      data-toggle="popover"
+      data-container="body"
+      title="<b>Average Number of Reads</b>"
+      data-content="The total number of reads divided by the number of papers."
+    ></i>
+  </td>
+  <td>
+    {{ averageNumberOfReads.[0] }}
+  </td>
+  <td class="hidden-abstract-page">
+    {{ averageNumberOfReads.[1] }}
+  </td>
+</tr>
+<tr class="hidden-abstract-page">
+  <td>Median number of reads</td>
+  <td>
+    <i
+      class="icon-help"
+      data-toggle="popover"
+      data-container="body"
+      title="<b>Median Number of Reads</b>"
+      data-content="The median of the reads distribution."
+    ></i>
+  </td>
+  <td>
+    {{ medianNumberOfReads.[0] }}
+  </td>
+  <td class="hidden-abstract-page">
+    {{ medianNumberOfReads.[1] }}
+  </td>
 </tr>
 
 <tr>
-    <td> Total number of downloads </td>
-    <td>
-        <i class="icon-help" data-toggle="popover" data-container="body" title="<b>Total Number of Downloads</b>" data-content="The total number of times full text (article or e-print) was accessed."></i>
-    </td>
-    <td>
-        {{ totalNumberOfDownloads.[0] }}
-    </td>
-    <td class="hidden-abstract-page">
-        {{ totalNumberOfDownloads.[1] }}
-    </td>
-
+  <td>Total number of downloads</td>
+  <td>
+    <i
+      class="icon-help"
+      data-toggle="popover"
+      data-container="body"
+      title="<b>Total Number of Downloads</b>"
+      data-content="The total number of times full text (article or e-print) was accessed."
+    ></i>
+  </td>
+  <td>
+    {{ totalNumberOfDownloads.[0] }}
+  </td>
+  <td class="hidden-abstract-page">
+    {{ totalNumberOfDownloads.[1] }}
+  </td>
 </tr>
 <tr class="hidden-abstract-page">
-    <td> Average number of downloads </td>
-    <td>
-        <i class="icon-help" data-toggle="popover" data-container="body" title="<b>Average Number of Downloads</b>" data-content="The total number of downloads divided by the number of papers."></i>
-    </td>
-    <td>
-        {{ averageNumberOfDownloads.[0] }}
-    </td>
-    <td class="hidden-abstract-page">
-        {{ averageNumberOfDownloads.[1]  }}
-    </td>
-
+  <td>Average number of downloads</td>
+  <td>
+    <i
+      class="icon-help"
+      data-toggle="popover"
+      data-container="body"
+      title="<b>Average Number of Downloads</b>"
+      data-content="The total number of downloads divided by the number of papers."
+    ></i>
+  </td>
+  <td>
+    {{ averageNumberOfDownloads.[0] }}
+  </td>
+  <td class="hidden-abstract-page">
+    {{ averageNumberOfDownloads.[1] }}
+  </td>
 </tr>
 
 <tr class="hidden-abstract-page">
-    <td> Median number of downloads </td>
-    <td>
-        <i class="icon-help" data-toggle="popover" data-container="body" title="<b>Median Number of Downloads</b>" data-content="The median of the downloads distribution."></i>
-    </td>
-    <td>
-        {{ medianNumberOfDownloads.[0] }}
-    </td>
-    <td class="hidden-abstract-page">
-        {{ medianNumberOfDownloads.[1] }}
-    </td>
-
+  <td>Median number of downloads</td>
+  <td>
+    <i
+      class="icon-help"
+      data-toggle="popover"
+      data-container="body"
+      title="<b>Median Number of Downloads</b>"
+      data-content="The median of the downloads distribution."
+    ></i>
+  </td>
+  <td>
+    {{ medianNumberOfDownloads.[0] }}
+  </td>
+  <td class="hidden-abstract-page">
+    {{ medianNumberOfDownloads.[1] }}
+  </td>
 </tr>

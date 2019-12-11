@@ -4,7 +4,7 @@
         <label>
             {{indexToShow}}
             {{#if showCheckbox}}
-            <input type="checkbox" value={{identifier}} name="identifier" {{#if chosen}} checked {{/if}}>
+            <input type="checkbox" value={{identifier}} name="identifier" {{#if chosen}} checked {{/if}} aria-label="select item {{indexToShow}}">
             {{/if}}
         </label>
     </div>
@@ -146,7 +146,7 @@
 
                 {{#if extraAuthors}}
                 <li>
-                    <a href="javascript:void(0)" id="show-all-authors">
+                    <a href="javascript:void(0)" class="show-all-authors">
                         <em>and {{extraAuthors}} more</em>
                     </a>
                 </li>
@@ -158,7 +158,7 @@
                     <li class="article-author">{{this}}</li>
                 {{/each}}
                 <li>
-                    <a href="javascript:void(0)" id="show-less-authors">
+                    <a href="javascript:void(0)" class="show-less-authors">
                         <em>show less</em>
                     </a>
                 </li>
