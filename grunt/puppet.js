@@ -84,11 +84,25 @@ module.exports = function(grunt) {
 
       await page.on('pageerror', async (error) => {
         if (error.message.indexOf('require is not defined') > -1) {
-          console.log(
+          console.warn(
             '\n\n',
             'Restart the dev server using `grunt server` instead of `./server`'
           );
+        } else {
+          console.error(error.message);
         }
+      });
+
+      await page.on('error', async (error) => {
+        console.error(error);
+      });
+
+      await page.on('requestfailed', async (req) => {
+        console.warn(
+          `${req.method()} request for ${req.url()} failed.  Status: ${req
+            .response()
+            .status()}`
+        );
       });
 
       // get the dependencies for testing, and setup globals
@@ -185,6 +199,12 @@ module.exports = function(grunt) {
     prod: {
       options: {
         env: 'production',
+      },
+    },
+    'prod-debug': {
+      options: {
+        env: 'production',
+        launchOptions: { headless: false, devtools: true },
       },
     },
     dev: {

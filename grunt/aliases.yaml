@@ -85,6 +85,18 @@ test:prod:
   - 'coverage-report:coveralls'
   - 'exec:coveralls-report'
 
+test:prod:debug:
+  - 'clean:coverage'
+  - 'clean:release'
+  - 'copy:release'
+  - 'babel'
+  - 'string-replace:final'
+  - 'exec:nyc-instrument'
+  - 'server:once'
+  - 'puppet:prod-debug'
+  - 'coverage-report:coveralls'
+  - 'exec:coveralls-report'
+
 test:
   - babel:temp
   - string-replace:temp
