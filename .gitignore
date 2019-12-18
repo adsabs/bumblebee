@@ -41,3 +41,4 @@ grunt/requirejs.js
 !.editorconfig
 
 package-lock.json
+!.nvmrc
