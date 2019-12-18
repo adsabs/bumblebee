@@ -60,7 +60,6 @@ assets:
   - 'clean:libs'
   - 'concurrent:install'
   - 'copy:libs'
-  - 'concurrent:convert'
 
 # CSS Processing
 css:

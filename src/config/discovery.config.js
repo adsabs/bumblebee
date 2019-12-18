@@ -197,7 +197,7 @@ require.config({
       'libs/bootstrap/bootstrap',
     ],
     bowser: '//cdn.jsdelivr.net/npm/bowser@2.4.0/bundled',
-    cache: 'libs/dsjslib/lib/Cache',
+    cache: 'libs/cache/index',
     classnames: [
       '//cdnjs.cloudflare.com/ajax/libs/classnames/2.2.5/index.min',
       '../bower_components/classnames/index',

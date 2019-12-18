@@ -6,9 +6,9 @@
  */
 module.exports = {
   // this is necessary to make the library AMD compatible
-  convert_dsjslib: {
+  install_dsjslib_cache: {
     cmd:
-      'node node_modules/requirejs/bin/r.js -convert src/libs/dsjslib src/libs/dsjslib',
+      'mkdir -p src/libs/cache && wget -q -O src/libs/cache/index.js https://gitcdn.xyz/repo/thostetler/dsjslib/master/cache.js',
   },
   convert_requirejs: {
     cmd:
@@ -23,12 +23,9 @@ module.exports = {
   git_current_tag: {
     cmd: 'git describe --tags --abbrev=0 > .tag',
   },
-  npm_install: {
-    cmd: 'npm install --no-package-lock --no-shrinkwrap',
-  },
   install_enzyme: {
     cmd:
-      'mkdir src/libs/enzyme && wget -q -O src/libs/enzyme/index.js https://gitcdn.link/repo/thostetler/enzyme/7c39296c83ed3a8fc09907c9d013aee8d91bde5e/enzyme.2.7.1.js',
+      'mkdir -p src/libs/enzyme && wget -q -O src/libs/enzyme/index.js https://gitcdn.link/repo/thostetler/enzyme/7c39296c83ed3a8fc09907c9d013aee8d91bde5e/enzyme.2.7.1.js',
   },
   'nyc-instrument': {
     cmd: 'node_modules/.bin/nyc instrument dist/js/ test/coverage/instrument',
