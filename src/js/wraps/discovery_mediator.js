@@ -175,7 +175,7 @@ function (
 
           var msg = '';
           if (xhr.responseJSON && xhr.responseJSON.error && xhr.responseJSON.error.msg) {
-            msg = xhr.responseJSON.error.msg;
+            msg = _.escape(xhr.responseJSON.error.msg);
             if (msg.indexOf('SyntaxError') > -1) {
               // what will remain: Syntax Error, cannot parse doi:a* keyword_schema:arXiv:
               msg = msg.replace('org.apache.solr.search.SyntaxError:', '');
