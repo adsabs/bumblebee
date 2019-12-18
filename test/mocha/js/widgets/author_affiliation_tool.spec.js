@@ -101,7 +101,7 @@ define([
       this.component = null;
     };
 
-    describe.only('Author Affiliation Tool (author_affiliation_tool.spec.js)', function () {
+    describe('Author Affiliation Tool (author_affiliation_tool.spec.js)', function () {
 
       describe('initial state', function () {
         beforeEach(init);
