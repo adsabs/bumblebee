@@ -165,7 +165,7 @@ define([
     getListOfFields: function (url) {
       var defer = $.Deferred();
       this.jsonp({
-        url: url + '/solr/collection1/admin/luke?numTerms=0&wt=json&indent=true',
+        url: url + '/admin/luke?numTerms=0&wt=json&indent=true',
         timeout: 60000
       })
         .done(function (data) {
@@ -210,7 +210,7 @@ define([
         console.log('Getting num docs for: ' + q);
 
         var c = self.jsonp({
-          url: url + '/solr/collection1/select?q=' + q + '&fl=id&wt=json&indent=true',
+          url: url + '/query?q=' + q + '&fl=id&wt=json&indent=true',
           context: { field: fname, finalResult: finalResult, cycleR: cycleR },
           timeout: 300000 // 5mins
         })
