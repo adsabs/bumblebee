@@ -86,7 +86,9 @@ define([
     },
     _submit: _.debounce(
       function(e) {
-        const type = $(e.target).addClass('submitted').data('formType');
+        const type = $(e.target)
+          .addClass('submitted')
+          .data('formType');
         const $inputs = $('input, textarea', e.target);
 
         // parse the inputs' values into an object
@@ -97,7 +99,7 @@ define([
 
         // disable to form, change the button to loading, and trigger submit
         this.setFormDisabled(true);
-        $('button', e.target).html(
+        $('button[type="submit"]', e.target).html(
           '<i class="fa fa-spinner fa-spin" aria-hidden="true"></i> Submitting...'
         );
         this.trigger('submit', type, data);
@@ -113,7 +115,7 @@ define([
       $('input, textarea, button', this.el)
         .prop('disabled', disable)
         .toggleClass('disabled', disable);
-      $('button', this.el).html(`
+      $('button[type="submit"]', this.el).html(`
         <i class="fa fa-search" aria-hidden="true"></i> Search
       `);
     },
@@ -147,12 +149,12 @@ define([
   });
 
   const extractBibcodeFromReference = (data) => {
-    const {score, bibcode} = data;
+    const { score, bibcode } = data;
     if (score !== '0.0' && bibcode) {
       return bibcode;
     }
     return null;
-  }
+  };
 
   const PaperForm = BaseWidget.extend({
     initialize() {
