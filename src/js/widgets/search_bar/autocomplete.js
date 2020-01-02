@@ -39,8 +39,10 @@ define([
 
     { value: 'abs:""', label: 'Search abstract + title + keywords', match: 'abs:' },
 
-    { value: 'database:astronomy', label: 'Limit to papers in the astronomy database', match: 'database:astronomy' },
-    { value: 'database:physics', label: 'Limit to papers in the physics database', match: 'database:physics' },
+    { value: 'collection:astronomy', label: 'Limit to papers in the astronomy database', match: 'database:astronomy' },
+    { value: 'collection:physics', label: 'Limit to papers in the physics database', match: 'database:physics' },
+    { value: 'collection:astronomy', label: 'Limit to papers in the astronomy database', match: 'collection:astronomy' },
+    { value: 'collection:physics', label: 'Limit to papers in the physics database', match: 'collection:physics' },
 
     // hide this one
     //    {value: "abstract:\"\"" , label : "Abstract", match: "abstract:("},
