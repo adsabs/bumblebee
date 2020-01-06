@@ -90,12 +90,14 @@ define([
     },
 
     {
-      value: 'property:eprint', label: 'Limit to eprints', desc: '(property:eprint)', match: 'eprint'
+      value: 'doctype:eprint', label: 'Limit to eprints', desc: '(doctype:eprint)', match: 'eprint'
     },
     {
-      value: 'property:eprint', label: 'Limit to eprints', desc: '(property:eprint)', match: 'property:eprint'
+      value: 'doctype:eprint', label: 'Limit to eprints', desc: '(doctype:eprint)', match: 'doctype:eprint'
     },
-
+    {
+      value: 'doctype:eprint', label: 'Limit to eprints', desc: '(doctype:eprint)', match: 'property:eprint'
+    },
     {
       value: 'property:openaccess', label: 'Limit to open access', desc: '(property:openaccess)', match: 'open access'
     },
@@ -114,13 +116,14 @@ define([
     },
 
     {
-      value: 'property:inproceedings', label: 'Limit to papers in conference proceedings', desc: '(property:inproceedings)', match: 'conference proceedings'
+      value: 'doctype:inproceedings', label: 'Limit to papers in conference proceedings', desc: '(doctype:inproceedings)', match: 'conference proceedings'
     },
     {
-      value: 'property:inproceedings', label: 'Limit to papers in conference proceedings', desc: '(property:inproceedings)', match: 'property:inproceedings'
+      value: 'doctype:inproceedings', label: 'Limit to papers in conference proceedings', desc: '(doctype:inproceedings)', match: 'doctype:inproceedings'
+    },
+    {
+      value: 'doctype:inproceedings', label: 'Limit to papers in conference proceedings', desc: '(doctype:inproceedings)', match: 'property:inproceedings'
     }
-
-
   ];
 
   return autoList;

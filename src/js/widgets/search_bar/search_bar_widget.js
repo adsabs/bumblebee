@@ -440,7 +440,7 @@ function (
         }
           break;
         case 'operators':
-          newVal = val + '(' + selected + ')';
+          newVal = val + '(' + (selected === '\"\"' ? '' : selected) + ')';
           break;
         case 'special characters':
           if (val === '=') {
