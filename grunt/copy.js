@@ -8,7 +8,15 @@ module.exports = function (grunt) {
 
   return {
     libs: {
-      files: [
+      files: [{
+          cwd: 'node_modules/hotkeys-js/dist',
+          src: 'hotkeys.min.js',
+          dest: 'src/libs/hotkeys/',
+          expand: true,
+          rename: function (dest, src) {
+            return dest + src.replace('hotkeys.min', 'index');
+          }
+        },
         {
           cwd: 'node_modules/react-bootstrap/dist',
           src: 'react-bootstrap.min.js',
@@ -171,7 +179,7 @@ module.exports = function (grunt) {
           src: ['bower_components/select2/**/*.js', 'bower_components/select2/**/*.css'],
           dest: 'src/libs/select2/',
           expand: true,
-          flatten : true
+          flatten: true
         },
         {
           cwd: 'node_modules/jsonpath',
@@ -225,7 +233,7 @@ module.exports = function (grunt) {
           './src/**'
         ],
         dest: 'dist/',
-        rename: function(dest, src) {
+        rename: function (dest, src) {
           return dest + src.replace('/src/', '/');
         }
       }]
@@ -249,9 +257,9 @@ module.exports = function (grunt) {
           'dist/config/discovery.config.js'
         ],
         dest: 'dist/',
-        rename: function(dest, src) {
+        rename: function (dest, src) {
           var x = src.split('.');
-          return x.slice(0, x.length-1).join('.') + '.original.' + x[x.length-1];
+          return x.slice(0, x.length - 1).join('.') + '.original.' + x[x.length - 1];
         }
       }]
     },
@@ -261,27 +269,26 @@ module.exports = function (grunt) {
         src: ['./src/js/components/**/*.js'],
         dest: 'dist/',
         expand: true,
-        rename: function(dest, src) {
+        rename: function (dest, src) {
           return dest + src.replace('/src/', '/');
         }
       }]
     },
 
     //give the concatenated file a cache busting hash
-    bumblebee_app : {
-      files : [{
+    bumblebee_app: {
+      files: [{
         src: ['dist/bumblebee_app.js'],
         dest: 'dist/',
         expand: true,
-        rename : function(dest, src){
+        rename: function (dest, src) {
           var gitDescribe = grunt.file.read('git-describe').trim();
           // find out what version of bbb we are going to assemble
           var tagInfo = gitDescribe.split('-');
           var version;
           if (tagInfo.length == 1) {
             version = tagInfo[0]; // the latest tag is also the latest commit (we'll use tagname v1.x.x)
-          }
-          else {
+          } else {
             version = tagInfo[2]; // use commit number instead of a tag
           }
           return 'dist/bumblebee_app.' + version + '.js';

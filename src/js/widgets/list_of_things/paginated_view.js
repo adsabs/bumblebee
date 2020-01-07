@@ -57,7 +57,7 @@ define([
         showSidebars: true,
         pagination: true,
         start: 0,
-        highlightsLoaded: false,
+        highlightsLoaded: false
       };
     },
   });
