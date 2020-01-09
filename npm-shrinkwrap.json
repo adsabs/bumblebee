@@ -7839,6 +7839,11 @@
       "resolved": "https://registry.npmjs.org/hosted-git-info/-/hosted-git-info-2.7.1.tgz",
       "integrity": "sha512-7T/BxH19zbcCTa8XkMlbK5lTo1WtgkFi3GvdWEyNuc4Vex7/9Dqbnpsf4JMydcfj9HCg4zUWFTL3Za6lapg5/w=="
     },
+    "hotkeys-js": {
+      "version": "3.7.3",
+      "resolved": "https://registry.npmjs.org/hotkeys-js/-/hotkeys-js-3.7.3.tgz",
+      "integrity": "sha512-CSaeVPAKEEYNexYR35znMJnCqoofk7oqG/AOOqWow1qDT0Yxy+g+Y8Hs/LhGlsZaSJ7973YN6/N41LAr3t30QQ=="
+    },
     "html-comment-regex": {
       "version": "1.1.2",
       "resolved": "https://registry.npmjs.org/html-comment-regex/-/html-comment-regex-1.1.2.tgz",

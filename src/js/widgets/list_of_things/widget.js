@@ -59,7 +59,8 @@ define([
         numFound: undefined,
         currentQuery: undefined,
         start: 0,
-        pageData: undefined
+        pageData: undefined,
+        focusedIndex: -1
       };
 
       options.collection = options.collection || new PaginatedCollection();
@@ -73,16 +74,23 @@ define([
         });
       }
 
-      options.view.model.set(this.pagination, { silent: true });
+      options.view.model.set(this.pagination, {
+        silent: true
+      });
       options.view.model.set({
         // for the template button that opens search in search results page
         sortOrder: options.sortOrder,
         removeSelf: options.removeSelf,
         queryOperator: options.queryOperator,
         description: options.description
-      }, { silent: true });
+      }, {
+        silent: true
+      });
 
-      _.extend(this, { model: options.view.model, view: options.view });
+      _.extend(this, {
+        model: options.view.model,
+        view: options.view
+      });
 
       // this is the hidden collection (just to hold data)
       this.hiddenCollection = new PaginatedCollection();
@@ -91,7 +99,13 @@ define([
       this.listenTo(this.hiddenCollection, 'all', this.onAllInternalEvents);
       this.listenTo(this.view, 'all', this.onAllInternalEvents);
       this.on('all', this.onAllInternalEvents);
+      this.model.on('change:page', () => {
+        this.model.set('focusedIndex', -1, {
+          silent: true
+        });
+      })
 
+      this.changePage = _.debounce(this.changePage.bind(this), 500);
       BaseWidget.prototype.initialize.call(this, options);
     },
 
@@ -99,8 +113,8 @@ define([
     activate: function (beehive) {
       this.setBeeHive(beehive);
       _.bindAll(this, ['updatePaginationPreferences']);
+      const ps = this.getPubSub();
 
-      this.getPubSub().subscribe(this.getPubSub().USER_ANNOUNCEMENT, this.updatePaginationPreferences);
 
       if (this.getBeeHive().getObject('User') && this.getBeeHive().getObject('User').getLocalStorage) {
         var perPage = this.getBeeHive().getObject('User').getLocalStorage().perPage;
@@ -111,11 +125,60 @@ define([
           this.model.set(this.pagination);
         }
       }
-      this.getPubSub().subscribe(this.getPubSub().INVITING_REQUEST, () => {
+      ps.subscribe(ps.INVITING_REQUEST, () => {
         this.updateState(this.STATES.LOADING);
       });
       this.activateWidget();
       this.attachGeneralHandler(this.onApiFeedback);
+      ps.subscribe(ps.USER_ANNOUNCEMENT, this.updatePaginationPreferences);
+      ps.subscribe(ps.CUSTOM_EVENT, (event) => {
+        if (event === 'hotkey/next') {
+          this.changePage(1);
+        } else if (event === 'hotkey/prev') {
+          this.changePage(-1);
+        } else if (event === 'hotkey/item-next') {
+          this.changeItemFocus(1);
+        } else if (event === 'hotkey/item-prev') {
+          this.changeItemFocus(-1);
+        } else if (event === 'hotkey/item-select') {
+          this.selectItem();
+        }
+      });
+    },
+
+    selectItem() {
+      const idx = this.model.get('focusedIndex');
+      if (idx >= 0) {
+        const view = this.view.children.findByIndex(idx);
+        if (view && view.toggleSelect) {
+          view.toggleSelect();
+        }
+      }
+    },
+
+    changeItemFocus(change) {
+      const len = this.view.children.length;
+      let focusedIndex = this.model.get('focusedIndex');
+      if (focusedIndex <= 0 && change === -1) {
+        focusedIndex = len - 1;
+      } else if (focusedIndex === len - 1 && change === 1) {
+        focusedIndex = 0;
+      } else {
+        focusedIndex += change;
+      }
+      this.model.set('focusedIndex', focusedIndex, {
+        silent: true
+      });
+      const view = this.view.children.findByIndex(focusedIndex);
+      if (view && view.el) {
+        $('>', view.el).focus();
+      }
+    },
+
+    changePage(change) {
+      this.updatePagination({
+        page: (this.model.get('page') || 0) + change
+      });
     },
 
     onApiFeedback: function (feedback) {
@@ -128,7 +191,9 @@ define([
     updatePaginationPreferences: function (event, data) {
       if (event == 'user_info_change' && data.perPage && data.perPage !== this.pagination.perPage) {
         // update per-page value
-        this.updatePagination({ perPage: data.perPage });
+        this.updatePagination({
+          perPage: data.perPage
+        });
       }
     },
 
@@ -164,10 +229,10 @@ define([
 
     processResponse: function (apiResponse) {
       var docs = this.extractDocs(apiResponse);
-      var numFound = apiResponse.has('response.numFound')
-        ? apiResponse.get('response.numFound') : this.hiddenCollection.length;
-      var start = apiResponse.has('response.start')
-        ? apiResponse.get('response.start') : this.model.get('start');
+      var numFound = apiResponse.has('response.numFound') ?
+        apiResponse.get('response.numFound') : this.hiddenCollection.length;
+      var start = apiResponse.has('response.start') ?
+        apiResponse.get('response.start') : this.model.get('start');
       var pagination = this.getPaginationInfo(apiResponse, docs);
       docs = this.processDocs(apiResponse, docs, pagination);
       var self = this;
@@ -182,7 +247,9 @@ define([
           });
         });
 
-        this.hiddenCollection.add(newDocs, { merge: true });
+        this.hiddenCollection.add(newDocs, {
+          merge: true
+        });
 
         // finally, if there aren't any highlights, close the button
         var hasHighlights = this.hiddenCollection.filter(function (m) {
@@ -210,7 +277,9 @@ define([
       }
 
       // XXX:rca - hack, to be solved later
-      this.trigger('page-manager-event', 'widget-ready', { numFound: numFound });
+      this.trigger('page-manager-event', 'widget-ready', {
+        numFound: numFound
+      });
 
       var allLoaded = this.model.has('perPage') && this.model.get('perPage') === this.collection.length;
       var isLastPage = this.model.has('pageData') && this.model.get('pageData').nextPossible === false;
@@ -274,8 +343,8 @@ define([
     },
 
     /*
-  * data for the page numbers template at the bottom
-  * */
+     * data for the page numbers template at the bottom
+     * */
     _getPaginationData: function (page, perPage, numFound) {
       // page is zero indexed
       return {
@@ -302,13 +371,15 @@ define([
     },
 
     /*
-    * right now only perPage value can be updated by list of things
-    * */
+     * right now only perPage value can be updated by list of things
+     * */
 
     updateLocalStorage: function (options) {
       // if someone has selected perPage, save it in to localStorage
       if (options.hasOwnProperty('perPage') && _.contains([25, 50, 100, 200, 500], options.perPage)) {
-        this.getBeeHive().getObject('User').setLocalStorage({ perPage: options.perPage });
+        this.getBeeHive().getObject('User').setLocalStorage({
+          perPage: options.perPage
+        });
         console.log('set user\'s page preferences in localStorage: ' + options.perPage);
       }
       // updatePagination will be called after localStorage triggers an event
@@ -408,16 +479,22 @@ define([
       // for testing, allow widget to not have been activated
       try {
         var pubsub = this.getPubSub();
-      } catch (e) {
-      }
+      } catch (e) {}
 
       if (ev === 'pagination:changePerPage') {
-        this.updateLocalStorage({ perPage: arg1 });
-        this.updatePagination({ page: 0, perPage: arg1 });
+        this.updateLocalStorage({
+          perPage: arg1
+        });
+        this.updatePagination({
+          page: 0,
+          perPage: arg1
+        });
         this.view.model.set('showHighlights', 'closed');
       } else if (ev === 'pagination:select') {
         this.view.model.set('showHighlights', 'closed');
-        return this.updatePagination({ page: arg1 });
+        return this.updatePagination({
+          page: arg1
+        });
       } else if (ev === 'show:missing') {
         _.each(arg1, function (gap) {
           var numFound = this.model.get('numFound');

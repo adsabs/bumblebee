@@ -2,7 +2,7 @@
 require.config({
   // Initialize the application with the main application file or if we run
   // as a test, then load the test unittests
-  deps: (function() {
+  deps: (function () {
     if (typeof window !== 'undefined' && window.skipMain) {
       return ['common.config'];
     } else {
@@ -36,6 +36,7 @@ require.config({
           AlertsController: 'js/wraps/alerts_mediator',
           Orcid: 'js/modules/orcid/module',
           SecondOrderController: 'js/components/second_order_controller',
+          HotkeysController: 'js/components/hotkeys_controller'
         },
         services: {
           Api: 'js/services/api',
@@ -66,13 +67,11 @@ require.config({
         AuthenticationPage: 'js/wraps/authentication_page_manager',
         SettingsPage: 'js/wraps/user_settings_page_manager/user_page_manager',
         OrcidPage: 'js/wraps/orcid_page_manager/orcid_page_manager',
-        OrcidInstructionsPage:
-          'js/wraps/orcid-instructions-page-manager/manager',
+        OrcidInstructionsPage: 'js/wraps/orcid-instructions-page-manager/manager',
 
         LibrariesPage: 'js/wraps/libraries_page_manager/libraries_page_manager',
         HomePage: 'js/wraps/home_page_manager/home_page_manager',
-        PublicLibrariesPage:
-          'js/wraps/public_libraries_page_manager/public_libraries_manager',
+        PublicLibrariesPage: 'js/wraps/public_libraries_page_manager/public_libraries_manager',
         ErrorPage: 'js/wraps/error_page_manager/error_page_manager',
 
         Authentication: 'js/widgets/authentication/widget',
@@ -97,8 +96,7 @@ require.config({
         PaperNetwork: 'js/wraps/paper_network',
         ConceptCloud: 'js/widgets/wordcloud/widget',
         BubbleChart: 'js/widgets/bubble_chart/widget',
-        AuthorAffiliationTool:
-          'es6!js/widgets/author_affiliation_tool/widget.jsx',
+        AuthorAffiliationTool: 'es6!js/widgets/author_affiliation_tool/widget.jsx',
 
         Metrics: 'js/widgets/metrics/widget',
         CitationHelper: 'js/widgets/citation_helper/widget',
@@ -227,6 +225,7 @@ require.config({
     ],
     'google-analytics': ['libs/g', 'data:application/javascript,'],
     hbs: 'libs/require-handlebars-plugin/hbs',
+    hotkeys: 'libs/hotkeys/index',
     jquery: 'libs/jquery/jquery',
     'jquery-querybuilder': 'libs/jQuery-QueryBuilder/query-builder',
     'jquery-ui': 'libs/jqueryui/jquery-ui',

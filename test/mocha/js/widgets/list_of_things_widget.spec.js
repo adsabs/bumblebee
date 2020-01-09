@@ -14,20 +14,20 @@ define(['marionette',
     'js/widgets/list_of_things/details_widget'
   ],
   function (Marionette,
-            Backbone,
-            _,
-            ApiQuery,
-            ApiResponse,
-            test1,
-            test2,
-            PaginatedView,
-            PaginatedCollection,
-            ListOfThings,
-            BaseWidget,
-            MinPubSub,
-            ItemView,
-            DetailsWidget
-    ) {
+    Backbone,
+    _,
+    ApiQuery,
+    ApiResponse,
+    test1,
+    test2,
+    PaginatedView,
+    PaginatedCollection,
+    ListOfThings,
+    BaseWidget,
+    MinPubSub,
+    ItemView,
+    DetailsWidget
+  ) {
 
     describe("ListOfThings (list_of_things_widget.spec.js)", function () {
 
@@ -51,7 +51,7 @@ define(['marionette',
         done();
       });
 
-      it("returns PaginatedView object", function(done) {
+      it("returns PaginatedView object", function (done) {
         expect(new PaginatedView()).to.be.instanceof(Marionette.CompositeView);
         var m = new PaginatedCollection();
         expect(m).to.be.instanceof(Backbone.Collection);
@@ -64,7 +64,9 @@ define(['marionette',
         var opts = function (o, e) {
           return {
             getApiQuery: function () {
-              return { get: _.constant([o]) }
+              return {
+                get: _.constant([o])
+              }
             },
             get: _.constant(e)
           }
@@ -81,12 +83,14 @@ define(['marionette',
         var spy = sinon.spy();
         coll.on('show:missing', spy);
 
-        _.each(docs, function(d) {
+        _.each(docs, function (d) {
           coll.add(_.clone(d));
         });
 
-        var ix = _.map(coll.models, function(m) {return m.attributes.resultsIndex});
-        expect(ix).to.be.eql(_.range(0,10));
+        var ix = _.map(coll.models, function (m) {
+          return m.attributes.resultsIndex
+        });
+        expect(ix).to.be.eql(_.range(0, 10));
 
         expect(coll.getNumVisible()).to.be.equal(0);
         expect(coll.showMore(5)).to.be.equal(5);
@@ -95,38 +99,65 @@ define(['marionette',
         expect(coll.showMore(10)).to.be.equal(5);
         expect(coll.getNumVisible()).to.be.equal(10);
         expect(coll.models.length).to.be.eql(10);
-        expect(spy.lastCall.args[0]).to.be.eql([{start: 10, end: 14}]);
+        expect(spy.lastCall.args[0]).to.be.eql([{
+          start: 10,
+          end: 14
+        }]);
 
         spy.reset();
-        expect(coll.showRange(3,6)).to.be.equal(4);
+        expect(coll.showRange(3, 6)).to.be.equal(4);
         expect(coll.getNumVisible()).to.be.equal(4);
         expect(coll.models.length).to.be.eql(10); // no change there
         expect(spy.called).to.eql(false);
 
-        expect(coll.showRange(30,39)).to.be.equal(0);
+        expect(coll.showRange(30, 39)).to.be.equal(0);
         expect(coll.getNumVisible()).to.be.equal(0);
         expect(coll.models.length).to.be.eql(10); // the gap 30-39 was not auto-filled
-        expect(spy.lastCall.args[0]).to.be.eql([{start: 30, end: 39}]);
+        expect(spy.lastCall.args[0]).to.be.eql([{
+          start: 30,
+          end: 39
+        }]);
 
-        coll.add({resultsIndex: 20, title: 'foo'});
-        coll.add({resultsIndex: 50, title: 'foo'});
+        coll.add({
+          resultsIndex: 20,
+          title: 'foo'
+        });
+        coll.add({
+          resultsIndex: 50,
+          title: 'foo'
+        });
 
         // however when we ask to display more, the system reports more gaps
         coll.showRange(0, 99);
-        expect(spy.lastCall.args[0]).to.be.eql([
-          {"start":10,"end":19},
-          {"start":21,"end":49},
-          {"start":51,"end":99}]);
+        expect(spy.lastCall.args[0]).to.be.eql([{
+            "start": 10,
+            "end": 19
+          },
+          {
+            "start": 21,
+            "end": 49
+          },
+          {
+            "start": 51,
+            "end": 99
+          }
+        ]);
 
         // has a mechanism to prevent recursive requests
         spy.reset();
         coll.showRange(90, 99);
-        expect(spy.lastCall.args[0]).to.be.eql([{start: 90, end: 99}]);
+        expect(spy.lastCall.args[0]).to.be.eql([{
+          start: 90,
+          end: 99
+        }]);
         spy.reset();
         coll.showRange(90, 99);
         expect(spy.called).to.eql(false);
         coll.showRange(91, 99);
-        expect(spy.lastCall.args[0]).to.be.eql([{start: 91, end: 99}]);
+        expect(spy.lastCall.args[0]).to.be.eql([{
+          start: 91,
+          end: 99
+        }]);
 
         done();
       });
@@ -134,10 +165,12 @@ define(['marionette',
       it("the item view reacts to actions inside the model", function (done) {
 
         var coll = new PaginatedCollection();
-        var view = new PaginatedView({collection: coll});
+        var view = new PaginatedView({
+          collection: coll
+        });
         var docs = test1().response.docs;
 
-        _.each(docs, function(d) {
+        _.each(docs, function (d) {
           view.collection.add(_.clone(d));
         });
 
@@ -150,10 +183,10 @@ define(['marionette',
         view.collection.showMore(5);
         expect($w.find("label").length).to.equal(5);
 
-        view.collection.showRange(3,5);
+        view.collection.showRange(3, 5);
         expect($w.find("label").length).to.equal(3);
 
-        view.collection.showRange(0,20);
+        view.collection.showRange(0, 20);
 
         // the signals should still work (even if elements were removed)
         $($w.find('label input')[0]).click();
@@ -165,7 +198,10 @@ define(['marionette',
         // the whole widget
 
         view.destroy();
-        view = new PaginatedView({collection: coll, model: view.model});
+        view = new PaginatedView({
+          collection: coll,
+          model: view.model
+        });
 
         $w = $(view.render().el);
         $('#test').append($w);
@@ -202,27 +238,42 @@ define(['marionette',
       });
 
 
-      it("the controller reacts to user actions", function(done) {
+      it("the controller reacts to user actions", function (done) {
 
         var counter = 0;
-        var minsub = new (MinPubSub.extend({
-          request: function(apiRequest) {
+        var minsub = new(MinPubSub.extend({
+          request: function (apiRequest) {
             counter++;
             var q = apiRequest.get('query');
             var ret = test1();
-            _.each(q.keys(), function(k) {
+            _.each(q.keys(), function (k) {
               ret.responseHeader.params[k] = q.get(k)[0];
             });
             //but widget is currently checking in the response.start not the responseheader
             ret.response.start = q.get("start")[0];
             return ret;
           }
-        }))({verbose: false});
+        }))({
+          verbose: false
+        });
 
-        var fakeUserObject = {getHardenedInstance : function(){return this},
-          isOrcidModeOn : function(){return false},
-          getUserData : function(){ return {link_server :  "foo"}},
-          getLocalStorage : function(){return { perPage : 50 }}
+        var fakeUserObject = {
+          getHardenedInstance: function () {
+            return this
+          },
+          isOrcidModeOn: function () {
+            return false
+          },
+          getUserData: function () {
+            return {
+              link_server: "foo"
+            }
+          },
+          getLocalStorage: function () {
+            return {
+              perPage: 50
+            }
+          }
 
         };
         minsub.beehive.addObject("User", fakeUserObject);
@@ -234,7 +285,9 @@ define(['marionette',
         widget.activate(minsub.beehive.getHardenedInstance());
         var updatePagination = widget.updatePagination;
         widget.updatePagination = function (opts) {
-          return updatePagination.call(widget, _.assign(opts, { updateHash: false }));
+          return updatePagination.call(widget, _.assign(opts, {
+            updateHash: false
+          }));
         }
 
         var $w = widget.render().$el;
@@ -242,7 +295,9 @@ define(['marionette',
 
         // give command to display first 20 docs; since responses are coming in
         // batches of 10; the collection will automatically ask twice
-        minsub.publish(minsub.DISPLAY_DOCUMENTS, new ApiQuery({'q': 'bibcode:bar'}));
+        minsub.publish(minsub.DISPLAY_DOCUMENTS, new ApiQuery({
+          'q': 'bibcode:bar'
+        }));
         expect($w.find("label").length).to.equal(51);
         expect($(".s-checkbox-col").text().replace(/\s+/g, " ").trim()).to.eql(_.range(1, 51).join(' '));
 
@@ -257,28 +312,43 @@ define(['marionette',
         done();
       });
 
-      it("has a pagination view and model that handle displaying and transmitting pagination state and changes to localStorage", function(done){
+      it("has a pagination view and model that handle displaying and transmitting pagination state and changes to localStorage", function (done) {
 
-        var minsub = new (MinPubSub.extend({
-          request: function(apiRequest) {
+        var minsub = new(MinPubSub.extend({
+          request: function (apiRequest) {
             var q = apiRequest.get('query');
             var ret = test1();
-            _.each(q.keys(), function(k) {
+            _.each(q.keys(), function (k) {
               ret.responseHeader.params[k] = q.get(k)[0];
             });
             //but widget is currently checking in the response.start not the responseheader
             ret.response.start = q.get("start")[0];
             return ret;
           }
-        }))({verbose: false});
+        }))({
+          verbose: false
+        });
 
         var setStorageSpy = sinon.spy();
 
-        var fakeUserObject = {getHardenedInstance : function(){return this},
-          isOrcidModeOn : function(){return false},
-          getUserData : function(){ return {link_server :  "foo"}},
-          getLocalStorage : function(){return { perPage : 25}},
-          setLocalStorage : setStorageSpy
+        var fakeUserObject = {
+          getHardenedInstance: function () {
+            return this
+          },
+          isOrcidModeOn: function () {
+            return false
+          },
+          getUserData: function () {
+            return {
+              link_server: "foo"
+            }
+          },
+          getLocalStorage: function () {
+            return {
+              perPage: 25
+            }
+          },
+          setLocalStorage: setStorageSpy
         };
         minsub.beehive.addObject("User", fakeUserObject);
 
@@ -292,16 +362,20 @@ define(['marionette',
 
         var updatePagination = widget.updatePagination;
         widget.updatePagination = function (opts) {
-          return updatePagination.call(widget, _.assign(opts, { updateHash: false }));
+          return updatePagination.call(widget, _.assign(opts, {
+            updateHash: false
+          }));
         }
 
         var data = test1();
         data.response.numFound = 100;
 
-        _.each(_.range(5), function(n) {
-          data.response.start = n*10;
+        _.each(_.range(5), function (n) {
+          data.response.start = n * 10;
           var res = new ApiResponse(data);
-          res.setApiQuery(new ApiQuery({q: 'foo:bar'}));
+          res.setApiQuery(new ApiQuery({
+            q: 'foo:bar'
+          }));
           widget.processResponse(res);
         });
 
@@ -314,7 +388,9 @@ define(['marionette',
         //first, set the page but don't have local storage send an event --> page won't change
         widget.trigger("pagination:changePerPage", 50);
         //an update in perPage should trigger a call to localstorage
-        expect(setStorageSpy.args[0][0]).to.eql({perPage: 50});
+        expect(setStorageSpy.args[0][0]).to.eql({
+          perPage: 50
+        });
 
         // model should update, and reset page back to 0
         expect(widget.model.get("perPage")).to.eql(50);
@@ -323,14 +399,14 @@ define(['marionette',
 
 
         //now, user object will publish the change
-        fakeUserObject.setLocalStorage = function(arg) {
+        fakeUserObject.setLocalStorage = function (arg) {
           minsub.publish(minsub.USER_ANNOUNCEMENT, "user_info_change", arg)
         }
 
         widget.trigger("pagination:changePerPage", 50);
         expect(widget.model.get("perPage")).to.eql(50);
 
-        expect(JSON.stringify(widget.model.toJSON())).to.eql('{"mainResults":false,"showAbstract":"closed","showHighlights":"closed","showSidebars":true,"pagination":true,"start":0,"highlightsLoaded":false,"perPage":50,"numFound":100,"currentQuery":{"q":["foo:bar"]},"pageData":{"perPage":50,"totalPages":2,"currentPage":1,"previousPossible":false,"nextPossible":true},"page":0,"showRange":[0,49],"query":false,"loading":false}');
+        expect(JSON.stringify(widget.model.toJSON())).to.eql('{"mainResults":false,"showAbstract":"closed","showHighlights":"closed","showSidebars":true,"pagination":true,"start":0,"highlightsLoaded":false,"perPage":50,"numFound":100,"currentQuery":{"q":["foo:bar"]},"pageData":{"perPage":50,"totalPages":2,"currentPage":1,"previousPossible":false,"nextPossible":true},"focusedIndex":-1,"page":0,"showRange":[0,49],"query":false,"loading":false}');
 
         expect($("#per-page-select>option:selected").text().trim()).to.eql("50");
         expect($("input.page-control").val()).to.eql("1");
@@ -346,26 +422,36 @@ define(['marionette',
       });
 
 
-      it("correctly displays pagination options depending on the model's settings", function(done){
+      it("correctly displays pagination options depending on the model's settings", function (done) {
 
-        var minsub = new (MinPubSub.extend({
-          request: function(apiRequest) {
+        var minsub = new(MinPubSub.extend({
+          request: function (apiRequest) {
             var q = apiRequest.get('query');
             var ret = test1();
-            _.each(q.keys(), function(k) {
+            _.each(q.keys(), function (k) {
               ret.responseHeader.params[k] = q.get(k)[0];
             });
             //but widget is currently checking in the response.start not the responseheader
             ret.response.start = q.get("start")[0];
             return ret;
           }
-        }))({verbose: false});
+        }))({
+          verbose: false
+        });
 
 
         var fakeUserObject = {
-          getHardenedInstance : function(){return this},
-          isOrcidModeOn : function(){return false},
-          getLocalStorage : function(){return { perPage : 25 }},
+          getHardenedInstance: function () {
+            return this
+          },
+          isOrcidModeOn: function () {
+            return false
+          },
+          getLocalStorage: function () {
+            return {
+              perPage: 25
+            }
+          },
         };
         minsub.beehive.addObject("User", fakeUserObject);
 
@@ -377,16 +463,20 @@ define(['marionette',
 
         var updatePagination = widget.updatePagination;
         widget.updatePagination = function (opts) {
-          return updatePagination.call(widget, _.assign(opts, { updateHash: false }));
+          return updatePagination.call(widget, _.assign(opts, {
+            updateHash: false
+          }));
         }
 
         var data = test1();
         data.response.numFound = 100;
 
-        _.each(_.range(5), function(n) {
-          data.response.start = n*10;
+        _.each(_.range(5), function (n) {
+          data.response.start = n * 10;
           var res = new ApiResponse(data);
-          res.setApiQuery(new ApiQuery({q: 'foo:bar'}));
+          res.setApiQuery(new ApiQuery({
+            q: 'foo:bar'
+          }));
           widget.processResponse(res);
         });
 
@@ -396,7 +486,10 @@ define(['marionette',
 
         //just calling the update function directly
 
-        widget.updatePagination({ page : 2 , perPage : 25});
+        widget.updatePagination({
+          page: 2,
+          perPage: 25
+        });
 
         expect($("#per-page-select>option:selected").text().trim()).to.eql("25");
         expect($("input.page-control").val()).to.eql("3");
@@ -411,7 +504,10 @@ define(['marionette',
          * last page
          * */
 
-        widget.updatePagination(({ page : 3, perPage : 25}));
+        widget.updatePagination(({
+          page: 3,
+          perPage: 25
+        }));
 
         expect($(".page-control.previous-page").parent().hasClass("disabled")).to.be.false;
         expect($(".page-control.next-page").parent().hasClass("disabled")).to.be.true;
@@ -427,30 +523,40 @@ define(['marionette',
 
       });
 
-      it("displays a loading view on pages that have not finished loading all the papers", function(){
+      it("displays a loading view on pages that have not finished loading all the papers", function () {
 
         var requests;
 
-        var minsub = new (MinPubSub.extend({
-          request: function(apiRequest) {
+        var minsub = new(MinPubSub.extend({
+          request: function (apiRequest) {
             if (requests === 0) return;
             requests--;
             var ret = test1();
             var q = apiRequest.get('query');
-            _.each(q.keys(), function(k) {
+            _.each(q.keys(), function (k) {
               ret.responseHeader.params[k] = q.get(k)[0];
             });
             //but widget is currently checking in the response.start not the responseheader
             ret.response.start = q.get("start")[0];
             return ret;
           }
-        }))({verbose: false});
+        }))({
+          verbose: false
+        });
 
 
         var fakeUserObject = {
-          getHardenedInstance : function(){return this},
-          isOrcidModeOn : function(){return false},
-          getLocalStorage : function(){return { perPage : 25 }},
+          getHardenedInstance: function () {
+            return this
+          },
+          isOrcidModeOn: function () {
+            return false
+          },
+          getLocalStorage: function () {
+            return {
+              perPage: 25
+            }
+          },
         };
         minsub.beehive.addObject("User", fakeUserObject);
 
@@ -462,7 +568,9 @@ define(['marionette',
 
         var updatePagination = widget.updatePagination;
         widget.updatePagination = function (opts) {
-          return updatePagination.call(widget, _.assign(opts, { updateHash: false }));
+          return updatePagination.call(widget, _.assign(opts, {
+            updateHash: false
+          }));
         }
 
         var data = test1();
@@ -473,7 +581,9 @@ define(['marionette',
 
         data.response.start = 0;
         var res = new ApiResponse(data);
-        res.setApiQuery(new ApiQuery({q: 'foo:bar'}));
+        res.setApiQuery(new ApiQuery({
+          q: 'foo:bar'
+        }));
 
         requests = 1;
 
@@ -485,24 +595,31 @@ define(['marionette',
 
         requests = 3;
 
-        _.each(_.range(3), function(n) {
-          data.response.start = n*10;
+        _.each(_.range(3), function (n) {
+          data.response.start = n * 10;
           var res = new ApiResponse(data);
-          res.setApiQuery(new ApiQuery({q: 'foo:bar'}));
+          res.setApiQuery(new ApiQuery({
+            q: 'foo:bar'
+          }));
           widget.processResponse(res);
         });
 
         expect($(".page-loading").text().trim()).to.eql("");
 
         requests = 0;
-        widget.updatePagination({ page : 2 , perPage : 25});
+        widget.updatePagination({
+          page: 2,
+          perPage: 25
+        });
 
         //add penultimate record
 
         data.response.start = 30;
-        data.response.docs = test1().response.docs.slice(0,1);
+        data.response.docs = test1().response.docs.slice(0, 1);
         var res = new ApiResponse(data);
-        res.setApiQuery(new ApiQuery({q: 'foo:bar'}));
+        res.setApiQuery(new ApiQuery({
+          q: 'foo:bar'
+        }));
 
         widget.processResponse(res);
 
@@ -511,9 +628,11 @@ define(['marionette',
         //add final record, remove loading view
 
         data.response.start = 31;
-        data.response.docs = test1().response.docs.slice(1,2);
+        data.response.docs = test1().response.docs.slice(1, 2);
         var res = new ApiResponse(data);
-        res.setApiQuery(new ApiQuery({q: 'foo:bar'}));
+        res.setApiQuery(new ApiQuery({
+          q: 'foo:bar'
+        }));
 
         widget.processResponse(res);
 
@@ -522,17 +641,22 @@ define(['marionette',
       });
 
 
-      it("the item view allows the user to view the lsit in a search results page if 'operator' option is true and 'queryOperator' option is set", function() {
+      it("the item view allows the user to view the lsit in a search results page if 'operator' option is true and 'queryOperator' option is set", function () {
 
         var coll = new PaginatedCollection();
-        var view = new PaginatedView({collection: coll});
+        var view = new PaginatedView({
+          collection: coll
+        });
         var docs = test1().response.docs;
 
         _.each(docs, function (d) {
           view.collection.add(_.clone(d));
         });
 
-        view.model.set({"bibcode" :  "foo", queryOperator: "citations"})
+        view.model.set({
+          "bibcode": "foo",
+          queryOperator: "citations"
+        })
 
         var $w = $(view.render().el);
         $('#test').append($w);
@@ -543,24 +667,40 @@ define(['marionette',
 
 
 
-      it("the ItemView has user interacting parts", function() {
-        var model = new Backbone.Model({visible: true, identifier: 'foo',
-          orderNum: 1, title: 'test',
+      it("the ItemView has user interacting parts", function () {
+        var model = new Backbone.Model({
+          visible: true,
+          identifier: 'foo',
+          orderNum: 1,
+          title: 'test',
           details: {
             highlights: ['one high', 'two high'],
             shortAbstract: 'silly short'
           },
           links: {
-            text: {title: 'foo', link: 'link'},
-            list: [
-              {link: 'link1', title: 'title1'},
-              {link: 'link2', title: 'title2'}
+            text: {
+              title: 'foo',
+              link: 'link'
+            },
+            list: [{
+                link: 'link1',
+                title: 'title1'
+              },
+              {
+                link: 'link2',
+                title: 'title2'
+              }
             ]
           },
           orcid: {
-            actions: [
-              {action: 'orcid-update', title: 'update'},
-              {action: 'orcid-delete', title: 'delete'}
+            actions: [{
+                action: 'orcid-update',
+                title: 'update'
+              },
+              {
+                action: 'orcid-delete',
+                title: 'delete'
+              }
             ]
           }
         });
@@ -571,7 +711,9 @@ define(['marionette',
         var triggerSpy = sinon.spy();
 
 
-        var view = new M({model: model});
+        var view = new M({
+          model: model
+        });
         view.on('all', triggerSpy);
 
         var $w = view.render().$el;
