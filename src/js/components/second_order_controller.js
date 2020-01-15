@@ -11,7 +11,7 @@ define([
   ApiQuery,
   ApiRequest,
   ApiTargets,
-  analytics,
+  analytics
 ) {
   /**
    * Triggered via pubsub event, this will take a set of identifiers
@@ -31,7 +31,7 @@ define([
       if (this.options.transformDebounce) {
         this.transform = _.debounce(
           this.transform,
-          this.options.transformDebounce,
+          this.options.transformDebounce
         );
       }
     },
@@ -51,7 +51,7 @@ define([
       if (event.startsWith('second-order-search/')) {
         this.transform.apply(
           this,
-          [event.split('/')[1]].concat(_.rest(arguments)),
+          [event.split('/')[1]].concat(_.rest(arguments))
         );
       }
     },
@@ -103,8 +103,8 @@ define([
         query: bigQuery,
         options: {
           type: 'POST',
-          done: ({qid}) => $dd.resolve(qid),
-          fail: ev => $dd.reject(ev),
+          done: ({ qid }) => $dd.resolve(qid),
+          fail: (ev) => $dd.reject(ev),
         },
       });
       ps.publish(ps.EXECUTE_REQUEST, request);
@@ -125,8 +125,8 @@ define([
         query: query,
         options: {
           type: 'GET',
-          done: res => $dd.resolve(res),
-          fail: ev => $dd.reject(ev),
+          done: (res) => $dd.resolve(res),
+          fail: (ev) => $dd.reject(ev),
         },
       });
       ps.publish(ps.EXECUTE_REQUEST, request);
@@ -150,7 +150,7 @@ define([
         'event',
         'interaction',
         'second-order-operation',
-        field,
+        field
       );
     },
 
@@ -192,13 +192,15 @@ define([
     /**
      * General error handler
      */
-    handleError: function (ev) {
+    handleError: function(ev) {
       let msg = 'Error occurred';
       if (ev.responseJSON && ev.responseJSON.error) {
         msg = ev.responseJSON.error;
       }
       const ps = this.getPubSub();
-      ps.publish(ps.CUSTOM_EVENT, 'second-order-search/error', { message: msg });
+      ps.publish(ps.CUSTOM_EVENT, 'second-order-search/error', {
+        message: msg,
+      });
       throw msg;
     },
 
@@ -219,8 +221,8 @@ define([
       const query = currentQuery.clone();
       let q = [];
 
-      q.push(`(${query.get('q')})`);
-      _.forEach(Object.keys(query.toJSON()), key => {
+      q.push(query.get('q'));
+      _.forEach(Object.keys(query.toJSON()), (key) => {
         if (key.startsWith('fq_')) {
           q.push(query.get(key));
         }
@@ -230,7 +232,7 @@ define([
         q: `${field}(${q.join(' AND ')})`,
         sort: 'score desc',
       });
-      ps.publish(ps.NAVIGATE, 'search-page', {q: newQuery});
+      ps.publish(ps.NAVIGATE, 'search-page', { q: newQuery });
     },
 
     /**
@@ -241,9 +243,11 @@ define([
      */
     getQidAndStartSearch: function(field, ids) {
       // get the big query response from vault
-      this.getBigQueryResponse(ids).then((qid) => {
-        this.startSearch(field, qid);
-      }).fail((...args) => this.handleError(...args));
+      this.getBigQueryResponse(ids)
+        .then((qid) => {
+          this.startSearch(field, qid);
+        })
+        .fail((...args) => this.handleError(...args));
     },
 
     startSearch: function(field, id) {
@@ -275,7 +279,7 @@ define([
       }
 
       const ps = this.getPubSub();
-      ps.publish(ps.NAVIGATE, 'search-page', {q: newQuery});
+      ps.publish(ps.NAVIGATE, 'search-page', { q: newQuery });
 
       this.submitAnalyticsEvent(field);
     },
