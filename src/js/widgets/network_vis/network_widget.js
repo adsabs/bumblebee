@@ -465,6 +465,8 @@ define([
     },
 
     triggerClose: function() {
+      this.$('.network-filter-container').empty();
+      this.$('.network-container').html(loadingTemplate);
       this.trigger('close');
     },
 
@@ -478,9 +480,13 @@ define([
 
     changeRows: function(e) {
       var num = parseInt(this.$('.network-rows').val());
-      this.$('.network-metadata').html(loadingTemplate);
-      if (num) {
-        this.model.set('userVal', _.min([this.model.get('max'), num]));
+      if (_.isNumber(num)) {
+        const newVal = _.min([this.model.get('max'), num]);
+        if (this.model.get('userVal') === newVal) {
+          return false;
+        }
+        this.$('.network-container').html(loadingTemplate);
+        this.model.set('userVal', newVal);
       }
       return false;
     },
