@@ -143,7 +143,12 @@ define([
     template: WordCloudTemplate,
 
     render: function() {
-      this.$el.html(WordCloudTemplate({ helpText: helpText }));
+      this.$el.html(
+        WordCloudTemplate({
+          helpText: helpText,
+          loading: this.model.get('processedWordList').length <= 0,
+        })
+      );
       this.listView.setElement(this.$('.selected-word-list')).render();
       // add popover listener
       this.$('.icon-help').popover({
@@ -155,13 +160,9 @@ define([
     },
 
     onProcessedWordChange: function() {
+      this.render();
       // prevents word cloud from drawing if no information
       if (this.model.get('processedWordList').length > 0) {
-        // remove loading view if it's there
-        if (this.$('.s-loading').length) {
-          this.render();
-        }
-
         this.buildSlider();
         this.buildCloudLayout();
       }
@@ -312,7 +313,10 @@ define([
 
   var WordCloudModel = Backbone.Model.extend({
     initialize: function() {
-      this.on('change:tfidfData', this.buildWCDict);
+      // if we have data, move along to build word model, otherwise reset
+      this.on('change:tfidfData', (model) =>
+        model.has('tfidfData') ? this.buildWCDict() : this.reset(false)
+      );
       this.on('change:currentSliderVal', this.buildWCDict);
     },
 
@@ -339,8 +343,8 @@ define([
       },
     },
 
-    reset: function() {
-      this.set(this.defaults, { silent: true });
+    reset: function(silent = true) {
+      this.set(this.defaults, { silent });
     },
 
     buildWCDict: function() {
@@ -470,6 +474,7 @@ define([
 
     // fetch data
     renderWidgetForCurrentQuery: function() {
+      this.model.unset('tfidfData');
       var query = this.getCurrentQuery();
       var that = this;
 
@@ -513,6 +518,7 @@ define([
 
     // for now, called to show vis for library
     renderWidgetForListOfBibcodes: function(bibcodes) {
+      this.model.unset('tfidfData');
       // for the moment, /tvrh endpoint can't handle more than 100 bibs
       bibcodes = bibcodes.slice(0, 100);
 
