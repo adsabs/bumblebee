@@ -21,7 +21,15 @@ define([
 ) {
   var BubbleModel = Backbone.Model.extend({
     initialize: function(options) {
-      this.on('change:solrData', this.modifyData);
+      this.on('change:solrData', () => {
+        if (_.isEmpty(this.get('solrData'))) {
+          this.reset(false);
+          return;
+        } else {
+          this.set('loading', false);
+          this.modifyData();
+        }
+      });
     },
 
     modifyData: function() {
@@ -84,8 +92,8 @@ define([
       this.set('modifiedSolrData', data);
     },
 
-    reset: function() {
-      this.set(this.defaults(), { silent: true });
+    reset: function(silent = true) {
+      this.set(this.defaults(), { silent });
     },
 
     toggleTracked: function(bibcode) {
@@ -126,6 +134,7 @@ define([
         selectedBibs: [],
         timeRange: 'year',
         currentPub: undefined,
+        loading: true,
       };
     },
   });
@@ -544,7 +553,7 @@ define([
       if (!_.isEmpty(this.model.get('modifiedSolrData'))) {
         this.renderGraph();
       } else {
-        this.$el.html('Not enough data to form the citations/reads graphs');
+        this.model.set('loading', true);
       }
     },
 
@@ -1054,7 +1063,10 @@ define([
         testing: options.testing,
       });
       this.listenTo(this.view, 'filterBibs', this.onFilterBibs);
-      this.listenTo(this.view, 'close-widget', this.broadcastClose);
+      this.listenTo(this.view, 'close-widget', () => {
+        this.resetModel();
+        this.broadcastClose();
+      });
       this.widgetName = 'bubble_chart';
       this.queryUpdater = new ApiQueryUpdater(this.widgetName);
     },
@@ -1076,8 +1088,13 @@ define([
       }
     },
 
+    resetModel() {
+      this.model.reset(false);
+    },
+
     // for now, called to show vis for library
     renderWidgetForListOfBibcodes: function(bibcodes) {
+      this.resetModel();
       var query = new ApiQuery();
       query.unlock();
       query.set('q', 'bibcode:(' + bibcodes.join(' OR ') + ')');
@@ -1094,6 +1111,7 @@ define([
 
     // fetch data
     renderWidgetForCurrentQuery: function() {
+      this.resetModel();
       var query = this.getCurrentQuery().clone();
       query.unlock();
       query.set('rows', ApiTargets._limits.BubbleChart.default);

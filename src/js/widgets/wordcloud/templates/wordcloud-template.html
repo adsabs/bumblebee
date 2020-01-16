@@ -38,9 +38,11 @@
 
 
 <div class="s-wordcloud-container col-sm-10" id="wordcloud-container">
-
+    {{#if loading}}
+      {{> js/wraps/widget/loading/template widgetLoadingSize="medium" hideCloseButton=true}}
+    {{else}}
     <svg id="wordcloud-svg" viewBox="0 0 1000 600" class="s-wordcloud-svg">
     </svg>
-
+    {{/if}}
 </div>
 </div>
