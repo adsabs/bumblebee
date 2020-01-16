@@ -3,7 +3,9 @@ define([
   'js/mixins/openurl_generator'
 ], function ($, OpenURLGenerator) {
 
-  const { getOpenUrl } = OpenURLGenerator;
+  const {
+    getOpenUrl
+  } = OpenURLGenerator;
 
   describe('OpenURL generator function (openurl_generator.spec.js',
     function () {
@@ -116,7 +118,7 @@ define([
           },
           linkServer
         });
-        const expected = 'https://hollis.harvard.edu/openurl/01HVD/HVD_URL?url_ver=Z39.88-2004&rft_val_fmt=info:ofi/fmt:kev:mtx:baz&rfr_id=info:sid/ADS&sid=ADS&rft.spage=foo&id=doi:bar&genre=baz&rft_id=info:doi/bar&rft_id=info:bibcode/fooPhDTbar&rft.degree=PhD&rft.aulast=quux&rft.aufirst=corge&rft.issue=grault&rft.volume=garply&rft.jtitle=waldo&rft.date=fred&rft.atitle=plugh&rft.issn=xyzzy&rft.isbn=thud&rft.genre=baz&spage=foo&volume=garply&title=waldo&atitle=plugh&aulast=quux&aufirst=corge&date=fred&isbn=thud&issn=xyzzy';
+        const expected = 'https://hollis.harvard.edu/openurl/01HVD/HVD_URL?url_ver=Z39.88-2004&rft_val_fmt=info:ofi/fmt:kev:mtx:baz&rfr_id=info:sid/ADS&sid=ADS&rft.spage=foo&id=doi:bar&genre=dissertation&rft_id=info:doi/bar&rft_id=info:bibcode/fooPhDTbar&rft.degree=PhD&rft.aulast=quux&rft.aufirst=corge&rft.issue=grault&rft.volume=garply&rft.jtitle=waldo&rft.date=fred&rft.atitle=plugh&rft.issn=xyzzy&rft.isbn=thud&rft.genre=dissertation&spage=foo&volume=garply&title=waldo&atitle=plugh&aulast=quux&aufirst=corge&date=fred&isbn=thud&issn=xyzzy';
         expect(openUrl).to.eql(expected);
         expect(getParams(openUrl)).to.eql(getParams(expected));
       });
