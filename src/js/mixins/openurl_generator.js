@@ -77,12 +77,17 @@ define([
       bibcode.includes('MsT') ? 'Masters' : false
     );
 
+    // genre is "disseration" for phd thesis, otherwise use doctype/article
+    const genre = isString(doctype) && isString(bibcode) &&
+      bibcode.includes('PhDT') ?
+      'dissertation' : isString(doctype) ? doctype : 'article';
+
     // parse various fields to create a context object
     const parsed = {
       ...STATIC_FIELDS,
       'rft.spage': isArray(page) ? page[0].split('-')[0] : false,
       'id': isArray(doi) ? 'doi:' + doi[0] : false,
-      'genre': isString(doctype) ? doctype : 'article',
+      'genre': genre,
       'rft_id': [
         isArray(doi) ? 'info:doi/' + doi[0] : false,
         isString(bibcode) ? 'info:bibcode/' + bibcode : false
@@ -97,7 +102,7 @@ define([
       'rft.atitle': isArray(title) ? title[0] : false,
       'rft.issn': isArray(issn) ? issn[0] : false,
       'rft.isbn': isArray(isbn) ? isbn[0] : false,
-      'rft.genre': isString(doctype) ? doctype : 'article',
+      'rft.genre': genre,
       'rft_val_fmt': STATIC_FIELDS.rft_val_fmt + (isString(doctype) ? doctype : 'article'),
     };
 
