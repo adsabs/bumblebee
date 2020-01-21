@@ -16,6 +16,19 @@
     display:block;
   }
 
+  .s-results-links {
+    display: none;
+  }
+
+  .s-label {
+    display: none;
+  }
+
+  .identifier {
+    display: block !important;
+    float: left !important;
+    margin-right: 1.2rem !important;
+  }
 
   //general, any page adjustments
   .s-results-control-row-container, #navbar-container, .s-stable-search-bar-height, .s-metrics-metadata, .footer  {
