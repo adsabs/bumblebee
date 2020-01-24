@@ -32,7 +32,7 @@ define(['underscore', 'react', 'react-dom', 'react-redux'], function(
             this.el
           );
         } else {
-          ReactDOM.render(React.createElement(component), this.props, this.el);
+          ReactDOM.render(React.createElement(component, this.props), this.el);
         }
         return this;
       },

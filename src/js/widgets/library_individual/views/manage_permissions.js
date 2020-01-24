@@ -3,11 +3,13 @@ define([
   'hbs!js/widgets/library_individual/templates/manage-permissions-container',
   'hbs!js/widgets/library_individual/templates/make-public',
   'hbs!../templates/transfer-ownership-modal',
+  'reactify!js/react/BumblebeeWidget?LibraryCollaborators',
 ], function(
   Marionette,
   ManagePermissionsContainer,
   MakePublicTemplate,
-  transferOwnershipModal
+  transferOwnershipModal,
+  LibraryCollaboratorsComponent
 ) {
   var PermissionsModel = Backbone.Model.extend({});
   var PermissionsCollection = Backbone.Collection.extend({
@@ -127,13 +129,13 @@ define([
 
   var ManagePermissionsView = Marionette.ItemView.extend({
     className: 'library-admin-view',
-    initialize: function(options) {
-      var options = options || {};
+    initialize: function(options = {}) {
       this.model.set('host', window.location.host);
       this.modal = new TransferOwnershipModalView();
 
       // just forward any trigger calls
       this.modal.on('all', (...args) => this.trigger(...args));
+      this.libraryCollaboratorsComponent = new LibraryCollaboratorsComponent();
     },
     events: {
       'click .public-button': 'togglePublicState',
@@ -146,9 +148,18 @@ define([
       'change:public': 'render',
     },
     template: ManagePermissionsContainer,
+    renderCollaboratorsView() {
+      const $collabContainer = $('#permissions-list', this.$el);
+      if ($collabContainer.has('*')) {
+        this.libraryCollaboratorsComponent.view.setElement(
+          $collabContainer.get(0)
+        );
+        this.libraryCollaboratorsComponent.view.render();
+      }
+    },
     onRender: function() {
       this.$('.public-container').html(MakePublicTemplate(this.model.toJSON()));
-
+      this.renderCollaboratorsView();
       this.modal.render();
     },
   });
