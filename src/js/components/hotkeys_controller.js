@@ -15,11 +15,12 @@ define([
     activate(beehive) {
       this.setBeeHive(beehive);
       hotkeys('shift+s', this.createEvent('hotkey/search'));
-      hotkeys('shift+right,;', this.createEvent('hotkey/next'));
-      hotkeys('shift+left,l', this.createEvent('hotkey/prev'));
-      hotkeys('down,j', this.createEvent('hotkey/item-next'));
-      hotkeys('up,k', this.createEvent('hotkey/item-prev'));
-      hotkeys('space', this.createEvent('hotkey/item-select'));
+      hotkeys('right', this.createEvent('hotkey/next'));
+      hotkeys('left', this.createEvent('hotkey/prev'));
+      hotkeys('down, alt+shift+down', this.createEvent('hotkey/item-next'));
+      hotkeys('up, alt+shift+up', this.createEvent('hotkey/item-prev'));
+      hotkeys('space, alt+shift+s', this.createEvent('hotkey/item-select'));
+      hotkeys('shift+`', this.createEvent('hotkey/show-help'));
     },
     hardenedInterface: {},
   });
