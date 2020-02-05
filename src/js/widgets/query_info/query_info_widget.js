@@ -55,6 +55,7 @@ define([
     triggers: {
       'click .clear-selected': 'clear-selected',
       'click .limit-to-selected': 'limit-to-selected',
+      'click .exclude-selected': 'exclude-selected'
     },
 
     events: {
@@ -153,6 +154,7 @@ define([
     viewEvents: {
       'clear-selected': 'clearSelected',
       'limit-to-selected': 'limitToSelected',
+      'exclude-selected': 'excludeSelected',
       'library-add': 'libraryAddSubmit',
       'library-create': 'libraryCreateSubmit',
     },
@@ -214,11 +216,15 @@ define([
 
     limitToSelected: function() {
       const ps = this.getPubSub();
-      console.log('limit to selected');
       ps.publish(ps.CUSTOM_EVENT, 'second-order-search/limit');
     },
 
-    libraryAddSubmit: function(data) {
+    excludeSelected: function () {
+      const ps = this.getPubSub();
+      ps.publish(ps.CUSTOM_EVENT, 'second-order-search/exclude');
+    },
+
+    libraryAddSubmit: function (data) {
       var options = {};
       var that = this;
 
