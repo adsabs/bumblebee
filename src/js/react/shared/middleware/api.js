@@ -16,10 +16,13 @@ define([], function() {
       };
 
       const fail = (error = defaultFail) => {
-        const { responseJSON } = error;
+        let response = error.responseJSON;
+        if (!response) {
+          response = defaultFail.responseJSON;
+        }
         dispatch({
           type: `${action.scope}_API_REQUEST_FAILURE`,
-          error: responseJSON.error,
+          error: response.error,
         });
       };
 
@@ -36,7 +39,8 @@ define([], function() {
           type,
           done,
           fail,
-          data,
+          data: JSON.stringify(data),
+          contentType: 'application/json',
         },
       });
     }

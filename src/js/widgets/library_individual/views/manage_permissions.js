@@ -78,6 +78,11 @@ define([
           $('input', this.$el).focus();
         });
     },
+    destroy() {
+      $('#transferOwnershipModal')
+        .parent()
+        .remove();
+    },
     events: {
       'click .confirm-button': '_onConfirm',
       'submit form': '_onConfirm',
@@ -135,7 +140,9 @@ define([
 
       // just forward any trigger calls
       this.modal.on('all', (...args) => this.trigger(...args));
-      this.libraryCollaboratorsComponent = new LibraryCollaboratorsComponent();
+      this.libraryCollaboratorsComponent = new LibraryCollaboratorsComponent({
+        initialData: this.model.toJSON(),
+      });
     },
     events: {
       'click .public-button': 'togglePublicState',
@@ -160,6 +167,7 @@ define([
     onRender: function() {
       this.$('.public-container').html(MakePublicTemplate(this.model.toJSON()));
       this.renderCollaboratorsView();
+      this.modal.destroy();
       this.modal.render();
     },
   });

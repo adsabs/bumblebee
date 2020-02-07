@@ -10,10 +10,11 @@ define([], function() {
           // inject the react component as the view
           onload(
             loadedModule.extend({
-              initialize: function() {
+              initialize: function(args) {
                 this.view = new Component();
                 loadedModule.prototype.initialize.call(this, {
                   componentId: component,
+                  ...args,
                 });
               },
             })

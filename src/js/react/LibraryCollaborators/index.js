@@ -1,5 +1,5 @@
 define([
-  'es6!./components/App.jsx',
+  'es6!./components/Dashboard.jsx',
   'js/react/WithBackboneView',
   'js/react/configureStore',
   'react-redux',
@@ -7,9 +7,9 @@ define([
   './middleware',
   './reducer',
   'js/react/shared/helpers',
-  'js/react/shared/middleware/api',
+  'js/react/shared/middleware/index',
 ], function(
-  App,
+  Dashboard,
   WithBackboneView,
   configureStore,
   { connect },
@@ -19,22 +19,34 @@ define([
   { withContext },
   sharedMiddleware
 ) {
-  const mapStateToProps = ({ page, editingNotification }) => ({
-    page,
-    editingNotification,
+  const mapStateToProps = ({ library, collaborators, requests }) => ({
+    library,
+    permissions: collaborators,
+    requests: {
+      add: requests.ADD_COLLABORATOR,
+      get: requests.GET_COLLABORATORS,
+      edit: requests.EDIT_COLLABORATOR,
+    },
   });
 
-  const {} = actions;
+  const {
+    getInitialData,
+    getCollaborators,
+    addCollaborator,
+    editCollaborator,
+  } = actions;
 
-  const actionCreators = {};
+  const actionCreators = {
+    getInitialData,
+    getCollaborators,
+    addCollaborator,
+    editCollaborator,
+  };
+
+  const middlewares = [middleware, ...sharedMiddleware];
 
   return WithBackboneView(
-    connect(mapStateToProps, actionCreators)(App),
-    (context) =>
-      configureStore(
-        context,
-        reducer,
-        withContext(middleware, sharedMiddleware)
-      )
+    connect(mapStateToProps, actionCreators)(Dashboard),
+    (context) => configureStore(context, reducer, withContext(...middlewares))
   );
 });

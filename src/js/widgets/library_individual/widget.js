@@ -92,9 +92,9 @@ define([
     updateSubView: function() {
       this.view.main.empty();
 
-      var that = this;
-      var id = this.model.get('id');
-      var view = this.model.get('subView');
+      var that = this,
+        id = this.model.get('id'),
+        view = this.model.get('subView');
 
       if (!id || !view) {
         console.warn(
@@ -153,8 +153,8 @@ define([
 
       switch (event) {
         case 'update-public-status':
-          var data = { public: arg1 };
-          var id = this.model.get('id');
+          var data = { public: arg1 },
+            id = this.model.get('id');
           libController
             .updateLibraryMetadata(id, data)
             .done(function(response, status) {
@@ -180,10 +180,10 @@ define([
     },
 
     handleHeaderEvents: function(event, arg1, arg2) {
-      var that = this;
-      var id = this.model.get('id');
-      var pubsub = this.getBeeHive().getService('PubSub');
-      var libController = this.getBeeHive().getObject('LibraryController');
+      var that = this,
+        id = this.model.get('id'),
+        pubsub = this.getBeeHive().getService('PubSub'),
+        libController = this.getBeeHive().getObject('LibraryController');
 
       console.log('headerEvent', event);
 
