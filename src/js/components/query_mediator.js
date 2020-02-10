@@ -268,6 +268,8 @@ define([
      * Happens at the beginning of the new search cycle. This is the 'race started' signal
      */
     startSearchCycle: function(apiQuery, senderKey) {
+      this.resetFailures();
+
       // we have to clear selected records in app storage here too
       if (this.getBeeHive().getObject('AppStorage')) {
         this.getBeeHive()
@@ -622,6 +624,14 @@ define([
       return this._executeRequest(apiRequest, senderKey);
     },
 
+    getFailCacheValue(key) {
+      const failCache = this.failedRequestsCache;
+      return (
+        (failCache && failCache.getSync(key)) ||
+        (failCache._cache[key] && failCache._cache[key].value)
+      );
+    },
+
     _executeRequest: function(apiRequest, senderKey) {
       // for altering widget queries
       // from regular solr requests to execute_query requests
@@ -640,7 +650,7 @@ define([
       var api = this.getBeeHive().getService('Api');
 
       var requestKey = this._getCacheKey(apiRequest);
-      var maxTry = this.failedRequestsCache.getSync(requestKey) || 0;
+      var maxTry = this.getFailCacheValue(requestKey) || 0;
 
       if (maxTry >= this.maxRetries) {
         this.onApiRequestFailure.apply(
@@ -796,7 +806,7 @@ define([
         console.warn('[QM]: request failed', jqXHR, textStatus, errorThrown);
       }
 
-      var errCount = qm.failedRequestsCache.getSync(this.requestKey) || 0;
+      var errCount = qm.getFailCacheValue(this.requestKey) || 0;
       qm.failedRequestsCache.put(this.requestKey, errCount + 1);
 
       if (qm.tryToRecover.apply(this, arguments)) {
