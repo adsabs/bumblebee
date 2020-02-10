@@ -16,11 +16,18 @@ hideCloseButton=true widgetLoadingSize="big"}} {{else if error}}
   {{/if}}
 </h2>
 
-{{#if authorAff.length}} {{#if hasAffiliation}}
 <button class="btn btn-xs btn-default-flat s-toggle-aff" id="toggle-aff">
   Show affiliations
 </button>
-{{/if}} {{#if hasMoreAuthors}}
+<span id="pending-aff" style="display: none;"
+  ><i class="fa fa-spinner fa-spin" aria-hidden="true"></i
+  ><span class="sr-only">Loading affiliations</span></span
+>
+<span id="fail-aff" class="text-danger" style="display: none;"
+  ><i class="fa fa-times" aria-hidden="true"></i
+  ><span class="sr-only">affiliations loading</span></span
+>
+{{#if authorAff.length}} {{#if hasMoreAuthors}}
 <button
   class="btn btn-xs btn-default-flat s-toggle-authors"
   id="toggle-more-authors"

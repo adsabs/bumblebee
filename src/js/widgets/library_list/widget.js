@@ -230,7 +230,7 @@ define([
 
     defaultQueryArguments: {
       fl:
-        'title,bibcode,author,keyword,pub,aff,volume,year,links_data,[citations],property,esources,data,pubdate,abstract',
+        'title,bibcode,author,keyword,pub,volume,year,links_data,[citations],property,esources,data,pubdate,abstract',
       rows: 25,
       start: 0,
       sort: 'date desc',
@@ -468,8 +468,8 @@ define([
             return m.get('bibcode');
           });
           if (chosen.length > 0) {
-            var data = { bibcode: chosen, action: 'remove' };
-            var id = this.model.get('libraryID');
+            var data = { bibcode: chosen, action: 'remove' },
+              id = this.model.get('libraryID');
             this.getBeeHive()
               .getObject('LibraryController')
               .updateLibraryContents(id, data)
