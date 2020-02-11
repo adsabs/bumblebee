@@ -8,8 +8,8 @@ module.exports = {
   install: [
     'bower:install',
     'curl:google-analytics',
-    'exec:install_enzyme',
-    'exec:install_dsjslib_cache',
+    'curl:enzyme',
+    'curl:dsjslib-cache',
   ],
   hash_require: ['hash_require:js', 'hash_require:css'],
 };
