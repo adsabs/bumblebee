@@ -2,30 +2,48 @@
 <div class="row s-top-row">
     <div class="col-xs-1 s-checkbox-col s-top-row-col">
         <label>
-            {{indexToShow}}
+            <span class="hidden-xs">{{indexToShow}}</span>
             {{#if showCheckbox}}
             <input type="checkbox" value={{identifier}} name="identifier" {{#if chosen}} checked {{/if}} aria-label="select item {{indexToShow}}">
             {{/if}}
         </label>
     </div>
 
-    <div class="hidden-xs col-sm-3 s-top-row-col identifier s-identifier">
+    <div class="col-xs-4 col-sm-3 s-top-row-col identifier s-identifier">
         <a href="#abs/{{encodedIdentifier}}/abstract" aria-label="bibcode" class="abs-redirect-link">
             {{identifier}}
         </a>
     </div>
-    <div class="col-xs-1 col-md-1 col-md-offset-0 s-top-row-col" aria-label="date published">
+    <div class="hidden-xs col-xs-1 col-md-1 col-md-offset-0 s-top-row-col" aria-label="date published">
         {{formattedDate}}
     </div>
-    <div class="col-xs-4 col-sm-5 col-md-3 s-top-row-col">
-        {{#if citation_count }}
-            {{#if normCiteSort}}
-            <a href="#abs/{{encodedIdentifier}}/citations" title="citation count" class="citations-redirect-link">cited (n): {{citationCountNorm}}</a>
-            {{else}}
-            <a href="#abs/{{encodedIdentifier}}/citations" title="citation count" class="citations-redirect-link">cited: {{citation_count}}</a>
-            {{/if}}
-        {{/if}}
+
+    <div class="hidden-xs">
+      <div class="col-xs-3 col-sm-5 col-md-3 s-top-row-col">
+          {{#if citation_count }}
+              {{#if normCiteSort}}
+              <a href="#abs/{{encodedIdentifier}}/citations" title="citation count" class="citations-redirect-link" aria-label="{{citationCountNorm}} normalized citations"><span class="hidden-xs">cited (n):</span> {{citationCountNorm}}</a>
+              {{else}}
+              <a href="#abs/{{encodedIdentifier}}/citations" title="citation count" class="citations-redirect-link" aria-label="{{citation_count}} citations"><span class="hidden-xs">cited:</span> {{citation_count}}</a>
+              {{/if}}
+          {{/if}}
+      </div>
     </div>
+
+    <div class="hidden-sm hidden-md hidden-lg">
+      <div class="col-xs-3 col-sm-5 col-md-3 s-top-row-col text-right">
+          {{#if citation_count }}
+              {{#if normCiteSort}}
+              <a href="#abs/{{encodedIdentifier}}/citations" title="citation count" class="citations-redirect-link" aria-label="{{citationCountNorm}} normalized citations"><span class="hidden-xs">cited (n):</span> {{citationCountNorm}}</a>
+              {{else}}
+              <a href="#abs/{{encodedIdentifier}}/citations" title="citation count" class="citations-redirect-link" aria-label="{{citation_count}} citations"><span class="hidden-xs">cited:</span> {{citation_count}}</a>
+              {{/if}}
+          {{/if}}
+      </div>
+    </div>
+
+
+
     <div class="col-xs-4 col-sm-4 pull-right">
         <div class="s-results-links">
 
