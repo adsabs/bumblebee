@@ -582,9 +582,6 @@ define([
       onPageChange: function(msg) {
         msg = msg.replace('Switching to: ', '');
         this._currentPage = msg;
-        analytics('send', 'pageview', {
-          page: msg,
-        });
       },
 
       getCurrentPage: function() {
