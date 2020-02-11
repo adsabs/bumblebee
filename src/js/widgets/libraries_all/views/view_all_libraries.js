@@ -5,6 +5,7 @@ define([
   'hbs!js/widgets/libraries_all/templates/no-libraries',
   'hbs!js/widgets/libraries_all/templates/loading-libraries',
   'hbs!js/widgets/libraries_all/templates/error-libraries',
+  'hbs!js/widgets/libraries_all/templates/no-result',
   'moment',
 ], function(
   Marionette,
@@ -13,6 +14,7 @@ define([
   NoLibrariesTemplate,
   LoadingTemplate,
   ErrorTemplate,
+  NoResultTemplate,
   moment
 ) {
   var LibraryItemView = Marionette.ItemView.extend({
@@ -115,25 +117,28 @@ define([
     render: function() {
       if (this.collection.length > 0) {
         return Marionette.CompositeView.prototype.render.apply(this, arguments);
-      }
-
-      if (this.model.get('loading')) {
+      } else if (this.model.get('loading')) {
         this.$el.html(LoadingTemplate());
-        return this;
-      }
-
-      if (this.model.get('error')) {
+      } else if (this.model.get('error')) {
         this.$el.html(ErrorTemplate());
-        return this;
+      } else if (this.model.get('search_value') !== '') {
+        this.$el.html(NoResultTemplate(this.model.toJSON()));
+        this.focusAndSelectInput();
+      } else {
+        this.$el.html(NoLibrariesTemplate());
       }
 
-      this.$el.html(NoLibrariesTemplate());
       return this;
     },
+    focusAndSelectInput() {
+      setTimeout(() => {
+        this.$('#library-search-bar')
+          .focus()
+          .val(this.model.get('search_value'));
+      }, 10);
+    },
     onRender() {
-      this.$('#library-search-bar')
-        .focus()
-        .val(this.model.get('search_value'));
+      this.focusAndSelectInput();
     },
   });
 
