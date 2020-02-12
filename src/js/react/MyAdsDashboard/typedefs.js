@@ -6,7 +6,7 @@ const TemplateTypes = {
   AUTHORS: 'authors',
   CITATIONS: 'citations',
   KEYWORD: 'keyword',
-  GENERAL: 'general'
+  GENERAL: 'general',
 };
 
 /**
@@ -15,7 +15,7 @@ const TemplateTypes = {
  * @property {string} name
  * @property {TemplateTypes} type
  * @property {string} frequency
- * @property {string} created
+ * @property {string} updated
  * @property {boolean} active
  *
  * @typedef Request

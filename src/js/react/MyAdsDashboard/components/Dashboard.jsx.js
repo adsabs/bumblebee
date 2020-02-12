@@ -346,7 +346,11 @@ define([
                       {getFriendlyDateString(item.updated)}
                     </td>
                     <td>
-                      <Dropdown disabled={disable} dropup={true}>
+                      <Dropdown
+                        disabled={disable}
+                        dropup={true}
+                        id={`actions-dropdown-${item.id}`}
+                      >
                         <Dropdown.Toggle>
                           <i className="fa fa-cog" aria-hidden="true"></i>{' '}
                           Actions
@@ -355,9 +359,8 @@ define([
                           style={{ overflow: 'visible !important' }}
                         >
                           <MenuItem
-                            eventKey="1"
                             href="javascript:void(0);"
-                            onSelect={() => this.onToggleActive(item)}
+                            onClick={() => this.onToggleActive(item)}
                           >
                             {item.active ? (
                               <i
@@ -374,9 +377,8 @@ define([
                           </MenuItem>
                           {isGeneral && (
                             <MenuItem
-                              eventKey="2"
                               href="javascript:void(0);"
-                              onSelect={() => this.onRunQuery(item)}
+                              onClick={() => this.onRunQuery(item)}
                             >
                               <i
                                 className="fa fa-bolt fa-fw"
@@ -386,9 +388,8 @@ define([
                             </MenuItem>
                           )}
                           <MenuItem
-                            eventKey="3"
                             href="javascript:void(0);"
-                            onSelect={() => this.onEdit(item)}
+                            onClick={() => this.onEdit(item)}
                           >
                             <i
                               className="fa fa-pencil fa-fw"
@@ -397,9 +398,8 @@ define([
                             Edit
                           </MenuItem>
                           <MenuItem
-                            eventKey="4"
                             href="javascript:void(0);"
-                            onSelect={() => this.onDelete(item)}
+                            onClick={() => this.onDelete(item)}
                           >
                             <i
                               className="fa fa-trash fa-fw"
@@ -415,11 +415,11 @@ define([
               })}
             </tbody>
           </table>
-          {ids.length === 0 ? (
-            this.state.searchValue && (
-              <div>Your search is not matching any notifications.</div>
-            )
-          ) : (
+
+          {ids.length === 0 && this.state.searchValue && (
+            <div>Your search is not matching any notifications.</div>
+          )}
+          {ids.length === 0 && !this.state.searchValue && (
             <div>You don't have any notifications yet!</div>
           )}
         </div>
