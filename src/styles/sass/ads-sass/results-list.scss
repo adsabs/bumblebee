@@ -1,4 +1,3 @@
-
 // results list css
 
 //icons for links
@@ -24,29 +23,27 @@
   z-index: $z-index-4;
   margin-left: -30%;
   min-width: 160px;
-  font-weight:normal;
+  font-weight: normal;
 }
 
 .s-letter-icon {
-
   display: inline-block;
-  position:relative;
+  position: relative;
   margin-right: 10%;
   margin-top: 0px;
   margin-bottom: -4px;
-  font-size : 1.05em;
+  font-size: 1.05em;
 
   i {
-    color : darken($gray-lighter, 2%);
+    color: darken($gray-lighter, 2%);
     cursor: default;
-    font-size : 17px;
+    font-size: 17px;
   }
 
   .s-active-link {
-
     i {
       cursor: pointer !important;
-      color : $brand-primary;
+      color: $brand-primary;
     }
   }
 }
@@ -71,7 +68,7 @@
 }
 
 .just-authors {
-  display: inline-block
+  display: inline-block;
 }
 
 .s-result-item-buffer {
@@ -94,43 +91,39 @@
 .s-results-title {
   margin-top: -3px;
   margin-bottom: 4px;
-  font-size:16px;
+  font-size: 16px;
   /*need to investigate why this gets overridden in the case of 2 links*/
   color: darken($brand-primary-faded, 13%);
   font-weight: 500;
   line-height: 1.2;
-  letter-spacing: .01em;
-  word-spacing: .05em;
-
+  letter-spacing: 0.01em;
+  word-spacing: 0.05em;
 }
 
 .s-results-authors {
-  padding-left: .5%;
+  padding-left: 0.5%;
 }
 
 .s-highlight-list {
-  padding: 20px 0px 0px 10px
+  padding: 20px 0px 0px 10px;
 }
 
 .s-more-info {
-
   border-left: 6px solid $gray-lighter;
   padding: 5px 0 0 20px;
   margin-left: 10.8%;
   margin-top: 10px;
 
   //for highlights
-  .s-search-snippets
-  {
+  .s-search-snippets {
     font-style: italic;
     margin-bottom: 10px;
 
     em {
-      background-color : lighten($brand-info, 32%);
+      background-color: lighten($brand-info, 32%);
       color: $brand-primary;
       font-weight: 400;
       padding: 2px;
-
     }
   }
 
@@ -144,8 +137,8 @@
 
   blockquote {
     margin: 0em 1em;
-    padding:.5em 5em;
-    font-size: 1em
+    padding: 0.5em 5em;
+    font-size: 1em;
   }
 
   /* title for abstract*/
@@ -153,7 +146,7 @@
     font-size: $font-size-base;
     margin: 0px 0 4px 0;
     //targeting only the "Abstract" link
-    a{
+    a {
       color: $brand-primary;
       font-weight: 500;
     }
@@ -164,7 +157,6 @@
     top: -16px;
     font-weight: 300;
   }
-
 }
 
 .s-checkbox-col {
@@ -178,9 +170,8 @@
 
   //default hidden for all except results widget
   input {
-    display : none;
+    display: none;
   }
-
 }
 
 .s-open-access {
@@ -188,28 +179,26 @@
 }
 
 .s-results-list {
-
   padding-left: 2%;
   label {
-    font-weight: initial
+    font-weight: initial;
   }
 
   //represents an individual entry
   li > div {
-    padding: .3em 0;
+    padding: 0.3em 0;
     border-left: 5px solid #fff;
 
     &.chosen {
       border-left: 5px solid $brand-success;
     }
-
   }
 }
 
 .s-results-widget {
   //checkbox only visible for results
   .s-checkbox-col input {
-    display : inline-block;
+    display: inline-block;
   }
 }
 
@@ -228,13 +217,12 @@
   margin-top: 10px;
 }
 
-
 .per-page-controls {
   margin: 21px 0;
 }
 
 .per-page-controls input {
-  width:60px;
+  width: 60px;
   display: inline;
 }
 
@@ -244,7 +232,7 @@
 }
 
 .field-options span {
-  display: block
+  display: block;
 }
 
 li.article-author {
@@ -253,11 +241,10 @@ li.article-author {
   font-weight: 400;
 }
 
-
 //only target the results list
 
 .s-results-page-layout .s-results-border-bottom {
-  padding-left: .9%;
+  padding-left: 0.9%;
   margin: 0 15px 10px 15px;
   margin-left: 15px;
   margin-right: 15px;
@@ -267,8 +254,9 @@ li.article-author {
 }
 
 .s-back-button-container {
-  padding-top : 3%;
-  padding-left : 2%;
+  height: 86px;
+  padding-top: 37px;
+  padding-left: 2em;
 }
 
 // get rid of top padding when the search bar is in scroll mode
@@ -276,22 +264,20 @@ li.article-author {
   .s-back-button-container {
     padding-top: 5px;
   }
-  @media (max-width: $screen-md-min){
-       display:none;
-   }
+  @media (max-width: $screen-md-min) {
+    display: none;
+  }
 }
 
-@media (max-width :$screen-sm-min) {
-
+@media (max-width: $screen-sm-min) {
   .s-results-title {
     font-size: 17px;
-    font-weight:500;
+    font-weight: 500;
   }
 
-  .s-results-authors{
+  .s-results-authors {
     font-size: 14px;
   }
-
 }
 
 .s-list-description {
@@ -330,7 +316,7 @@ li.article-author {
 }
 
 .s-results-widget {
-  input[type="checkbox"]{
+  input[type='checkbox'] {
     width: 14px;
     height: 14px;
   }
@@ -342,23 +328,22 @@ li.article-author {
   #select-all-docs {
     position: relative;
     top: 25px;
-    }
   }
+}
 
-.show-details{
+.show-details {
   .icon-details {
     margin-top: -8px;
   }
 }
 
 .s-operator {
-  font-size : 17px;
+  font-size: 17px;
   font-weight: 300;
   a {
-    font-weight:400;
+    font-weight: 400;
   }
 }
-
 
 .per-page-container {
   margin: 23px 0 0 6.3%;

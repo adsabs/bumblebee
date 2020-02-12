@@ -9,7 +9,7 @@
 .s-results-control-row {
   padding-bottom: 1%;
   background-color: $darker-background;
-  div[data-widget="ExportDropdown"] {
+  div[data-widget='ExportDropdown'] {
     margin-right: 4%;
   }
   .s-sort-widget {
@@ -20,6 +20,9 @@
     padding: 10px 0;
     > .btn {
       font-size: 16px;
+    }
+    &:last-child {
+      margin-right: 1em;
     }
   }
   div.dropdown-menu {
@@ -90,7 +93,7 @@
   }
   .s-library-add-title {
     background: $brand-info;
-    transition: background .4s;
+    transition: background 0.4s;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
     color: white;
     font-weight: 300;
