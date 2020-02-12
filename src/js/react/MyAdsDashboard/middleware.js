@@ -5,16 +5,13 @@ define(['underscore', './actions', './constants'], function(
 ) {
   const {
     SET_NOTIFICATIONS,
-    EDIT_NOTIFICATION,
     SET_EDITING_NOTIFICATION,
     RESET_EDITING_NOTIFICATION,
     TOGGLE_ACTIVE,
-    GET_QUERY,
     getQuery,
     runQuery,
     goTo,
     getNotifications,
-    getNotification,
     updateNotification,
   } = actions;
 
@@ -145,10 +142,22 @@ define(['underscore', './actions', './constants'], function(
     }
   };
 
+  const reloadNotificationsAfterGoTo = (
+    { trigger },
+    { dispatch, getState }
+  ) => (next) => (action) => {
+    next(action);
+
+    if (action.type === 'GOTO' && action.payload === page.DASHBOARD) {
+      dispatch(getNotifications());
+    }
+  };
+
   return {
     resetAfterRequest,
     updateNotifications,
     resetEditingNotificationAfterGoTo,
     importNotifications,
+    reloadNotificationsAfterGoTo,
   };
 });
