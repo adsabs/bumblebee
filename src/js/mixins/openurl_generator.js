@@ -1,7 +1,4 @@
-define([
-  'underscore'
-], function (_) {
-
+define(['underscore'], function(_) {
   /**
    * @typedef Metadata
    * @property {string[]} page
@@ -39,7 +36,7 @@ define([
     url_ver: 'Z39.88-2004',
     rft_val_fmt: 'info:ofi/fmt:kev:mtx:',
     rfr_id: 'info:sid/ADS',
-    sid: 'ADS'
+    sid: 'ADS',
   };
 
   /**
@@ -50,11 +47,7 @@ define([
    * @returns {string} the openUrl url
    */
   const getOpenUrl = (options) => {
-
-    const {
-      metadata,
-      linkServer = ''
-    } = options || {};
+    const { metadata, linkServer = '' } = options || {};
 
     const {
       page,
@@ -68,29 +61,35 @@ define([
       year,
       title,
       issn,
-      isbn
+      isbn,
     } = metadata || {};
 
     // parse out degree based on bibcode
-    const degree = isString(bibcode) && (
-      bibcode.includes('PhDT') ? 'PhD' :
-      bibcode.includes('MsT') ? 'Masters' : false
-    );
+    const degree =
+      isString(bibcode) &&
+      (bibcode.includes('PhDT')
+        ? 'PhD'
+        : bibcode.includes('MsT')
+        ? 'Masters'
+        : false);
 
     // genre is "disseration" for phd thesis, otherwise use doctype/article
-    const genre = isString(doctype) && isString(bibcode) &&
-      bibcode.includes('PhDT') ?
-      'dissertation' : isString(doctype) ? doctype : 'article';
+    const genre =
+      isString(doctype) && isString(bibcode) && bibcode.includes('PhDT')
+        ? 'dissertation'
+        : isString(doctype)
+        ? doctype
+        : 'article';
 
     // parse various fields to create a context object
     const parsed = {
       ...STATIC_FIELDS,
       'rft.spage': isArray(page) ? page[0].split('-')[0] : false,
-      'id': isArray(doi) ? 'doi:' + doi[0] : false,
-      'genre': genre,
-      'rft_id': [
+      id: isArray(doi) ? 'doi:' + doi[0] : false,
+      genre: genre,
+      rft_id: [
         isArray(doi) ? 'info:doi/' + doi[0] : false,
-        isString(bibcode) ? 'info:bibcode/' + bibcode : false
+        isString(bibcode) ? 'info:bibcode/' + bibcode : false,
       ],
       'rft.degree': degree,
       'rft.aulast': isString(author) ? author.split(', ')[0] : false,
@@ -103,7 +102,8 @@ define([
       'rft.issn': isArray(issn) ? issn[0] : false,
       'rft.isbn': isArray(isbn) ? isbn[0] : false,
       'rft.genre': genre,
-      'rft_val_fmt': STATIC_FIELDS.rft_val_fmt + (isString(doctype) ? doctype : 'article'),
+      rft_val_fmt:
+        STATIC_FIELDS.rft_val_fmt + (isString(doctype) ? doctype : 'article'),
     };
 
     // add extra fields to context object
@@ -117,11 +117,13 @@ define([
       aufirst: parsed['rft.aufirst'],
       date: parsed['rft.date'],
       isbn: parsed['rft.isbn'],
-      issn: parsed['rft.issn']
-    }
+      issn: parsed['rft.issn'],
+    };
 
     // if the linkServer has query string, just append to the end
-    const openUrl = linkServer.includes('?') ? linkServer + '&' : linkServer + '?';
+    const openUrl = linkServer.includes('?')
+      ? linkServer + '&'
+      : linkServer + '?';
 
     // generate array of query params from the context object
     const fields = Object.keys(context)
@@ -130,18 +132,18 @@ define([
         if (context[key]) {
           if (isArray(context[key])) {
             return context[key]
-              .filter(v => v)
-              .map((val) => `${ key }=${ val }`)
+              .filter((v) => v)
+              .map((val) => `${key}=${val}`)
               .join('&');
           }
-          return `${ key }=${ context[key] }`;
+          return `${key}=${context[key]}`;
         }
       });
 
     return encodeURI(openUrl + fields.join('&'));
-  }
+  };
 
   return {
-    getOpenUrl
+    getOpenUrl,
   };
 });

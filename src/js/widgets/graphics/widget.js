@@ -6,8 +6,8 @@ define([
   'js/components/api_query',
   'hbs!js/widgets/graphics/templates/grid',
   'hbs!js/widgets/graphics/templates/sidebar',
-  'js/components/api_targets'
-], function (
+  'js/components/api_targets',
+], function(
   Marionette,
   BaseWidget,
   ApiRequest,
@@ -18,65 +18,60 @@ define([
   ApiTargets
 ) {
   var GraphicsModel = Backbone.Model.extend({
-
-    defaults: function () {
+    defaults: function() {
       return {
         graphics: undefined,
         title: undefined,
-        linkSentence: undefined
+        linkSentence: undefined,
       };
-    }
-
+    },
   });
 
-
   var GridView = Marionette.ItemView.extend({
-
     template: gridTemplate,
 
     className: 's-graphics-grid',
 
     modelEvents: {
-      change: 'render'
-    }
+      change: 'render',
+    },
   });
 
   var SidebarView = Marionette.ItemView.extend({
-
     template: sidebarTemplate,
 
     className: 's-graphics-sidebar graphics-sidebar',
 
     modelEvents: {
-      'change:graphics': 'render'
+      'change:graphics': 'render',
     },
 
     triggers: {
-      'click .graphics-container': 'showGraphicsGrid'
+      'click .graphics-container': 'showGraphicsGrid',
     },
 
-    serializeData: function () {
+    serializeData: function() {
       var graphics = this.model.toJSON().graphics;
       if (graphics) {
         return { sampleGraphic: graphics[_.keys(graphics)[0]].thumbnail };
       }
 
       return { sampleGraphic: undefined };
-    }
+    },
   });
 
-
   var GraphicsWidget = BaseWidget.extend({
-
-    initialize: function (options) {
+    initialize: function(options) {
       options = options || {};
       this.model = new GraphicsModel();
-      this.view = (options.sidebar === true) ?
-        new SidebarView({ model: this.model }) : new GridView({ model: this.model });
+      this.view =
+        options.sidebar === true
+          ? new SidebarView({ model: this.model })
+          : new GridView({ model: this.model });
       BaseWidget.prototype.initialize.apply(this, arguments);
     },
 
-    activate: function (beehive) {
+    activate: function(beehive) {
       this.setBeeHive(beehive);
       var pubsub = this.getPubSub();
       _.bindAll(this, ['processResponse', 'onDisplayDocuments']);
@@ -84,7 +79,7 @@ define([
       pubsub.subscribe(pubsub.DELIVERING_RESPONSE, this.processResponse);
     },
 
-    onDisplayDocuments: function (apiQuery) {
+    onDisplayDocuments: function(apiQuery) {
       var self = this;
 
       const bibcode = this.parseIdentifierFromQuery(apiQuery);
@@ -93,23 +88,25 @@ define([
         return;
       }
 
-      this.loadBibcodeData(bibcode).done(function () {
-        self.trigger('page-manager-event', 'widget-ready', { isActive: true, widget: self });
-      });
-      this.getResponseDeferred().fail(function () {
+      this.loadBibcodeData(bibcode).done(function() {
         self.trigger('page-manager-event', 'widget-ready', {
-
+          isActive: true,
+          widget: self,
+        });
+      });
+      this.getResponseDeferred().fail(function() {
+        self.trigger('page-manager-event', 'widget-ready', {
           // this will set us to inActive and navigate to ShowAbstract
           shouldReset: bibcode !== this._bibcode,
           isActive: false,
-          widget: self
+          widget: self,
         });
         this._bibcode = bibcode;
       });
     },
 
     // load data, return a promise
-    loadBibcodeData: function (bibcode) {
+    loadBibcodeData: function(bibcode) {
       if (bibcode === this._bibcode) {
         this.deferredObject = $.Deferred();
         this.deferredObject.resolve(this.model);
@@ -120,7 +117,7 @@ define([
       this.deferredObject = $.Deferred();
       var request = new ApiRequest({
         target: ApiTargets.GRAPHICS + '/' + this._bibcode,
-        query: new ApiQuery()
+        query: new ApiQuery(),
       });
       this.getPubSub().publish(this.getPubSub().DELIVERING_REQUEST, request);
 
@@ -133,14 +130,14 @@ define([
 
         var request = new ApiRequest({
           target: ApiTargets.SEARCH,
-          query: query
+          query: query,
         });
         this.getPubSub().publish(this.getPubSub().DELIVERING_REQUEST, request);
       }
       return this.deferredObject.promise();
     },
 
-    getResponseDeferred: function () {
+    getResponseDeferred: function() {
       if (!this._deferred || this._deferred.state() === 'resolved') {
         this._deferred = $.Deferred();
       }
@@ -148,9 +145,8 @@ define([
     },
 
     // if there is no data, there will be no response
-    processResponse: function (response) {
+    processResponse: function(response) {
       if (!(response instanceof ApiResponse)) {
-
         var responseDef = this.getResponseDeferred();
         // it's from the graphics service
 
@@ -164,19 +160,26 @@ define([
         }
 
         var graphics = {};
-        _.each(response.get('figures'), function (dict) {
-          graphics[dict.figure_label] = dict.images[0];
+        _.each(
+          response.get('figures'),
+          function(dict) {
+            graphics[dict.figure_label] = dict.images[0];
 
-          // check for interactive graphics
-          if (dict.figure_type === 'interactive') {
-            graphics[dict.figure_label].interactive = true;
-          }
-        }, this);
+            // check for interactive graphics
+            if (dict.figure_type === 'interactive') {
+              graphics[dict.figure_label].interactive = true;
+            }
+          },
+          this
+        );
 
-        this.model.set({ graphics: graphics, linkSentence: response.get('header') });
+        this.model.set({
+          graphics: graphics,
+          linkSentence: response.get('header'),
+        });
       } else {
-        var title = response.get('response.docs[0][\'title\']', false, '');
-        title = (title && title.length) ? title[0] : '';
+        var title = response.get("response.docs[0]['title']", false, '');
+        title = title && title.length ? title[0] : '';
         this.model.set('title', title);
       }
 
@@ -188,16 +191,15 @@ define([
     },
 
     viewEvents: {
-      showGraphicsGrid: 'triggerShowGrid'
+      showGraphicsGrid: 'triggerShowGrid',
     },
 
-    triggerShowGrid: function () {
+    triggerShowGrid: function() {
       this.getPubSub().publish(this.getPubSub().NAVIGATE, 'ShowGraphics', {
         href: '#abs/' + encodeURIComponent(this._bibcode) + '/graphics',
-        bibcode: this._bibcode
+        bibcode: this._bibcode,
       });
-    }
-
+    },
   });
 
   return GraphicsWidget;

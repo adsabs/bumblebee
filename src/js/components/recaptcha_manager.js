@@ -7,53 +7,45 @@ define([
   'backbone',
   'js/components/generic_module',
   'js/mixins/hardened',
-  'js/mixins/dependon'
-],
-function (
-  Backbone,
-  GenericModule,
-  Hardened,
-  Dependon
-) {
-
-
+  'js/mixins/dependon',
+], function(Backbone, GenericModule, Hardened, Dependon) {
   var RecaptchaManager = GenericModule.extend({
-
-    initialize: function () {
+    initialize: function() {
       this.grecaptchaDeferred = window.__grecaptcha__;
       this.siteKeyDeferred = $.Deferred();
       this.when = $.when(this.siteKeyDeferred, this.grecaptchaDeferred);
       this.execPromise = $.Deferred();
     },
 
-    activate: function (beehive) {
+    activate: function(beehive) {
       this.setBeeHive(beehive);
       var pubsub = this.getPubSub();
       _.bindAll(this, ['getRecaptchaKey']);
       pubsub.subscribe(pubsub.APP_STARTED, this.getRecaptchaKey);
     },
 
-    getRecaptchaKey: function () {
-      var siteKey = this.getBeeHive().getObject('AppStorage').getConfigCopy().recaptchaKey;
+    getRecaptchaKey: function() {
+      var siteKey = this.getBeeHive()
+        .getObject('AppStorage')
+        .getConfigCopy().recaptchaKey;
       this.siteKeyDeferred.resolve(siteKey);
     },
 
     /**
-       * widgets use this to attach a callback to the recaptcha promise
-       * the callback  will automatically put the completed recaptcha into the view's model
-       * view template needs an element with the class of "g-recaptcha" for this to work
-       *
-       * @param view to render recaptcha on
-       */
-    activateRecaptcha: function (view) {
-
+     * widgets use this to attach a callback to the recaptcha promise
+     * the callback  will automatically put the completed recaptcha into the view's model
+     * view template needs an element with the class of "g-recaptcha" for this to work
+     *
+     * @param view to render recaptcha on
+     */
+    activateRecaptcha: function(view) {
       if (this.when.state() !== 'resolved') {
         this.renderLoading(view);
       }
 
       var self = this;
       clearTimeout(this.to);
-      this.to = setTimeout(function () {
+      this.to = setTimeout(function() {
         if (self.when.state() !== 'resolved') {
           self.renderError(view);
         }
@@ -61,68 +53,63 @@ function (
 
       this.when
         .done(_.partial(_.bind(this.renderRecaptcha, this), view))
-        .fail(function () {
+        .fail(function() {
           self.renderError(view);
         });
     },
 
-    getEl: function (view) {
+    getEl: function(view) {
       return view.$('.g-recaptcha');
     },
 
-    execute: function () {
+    execute: function() {
       this.execPromise = $.Deferred();
       grecaptcha.execute();
       return this.execPromise.promise();
     },
 
-    renderLoading: function (view) {
-      this.getEl(view).html(
-        '<p><i class="fa fa-spinner fa-spin"></i></p>'
-      );
+    renderLoading: function(view) {
+      this.getEl(view).html('<p><i class="fa fa-spinner fa-spin"></i></p>');
       this.enableSubmit(view, false);
     },
 
-    enableSubmit: function (view, bool) {
+    enableSubmit: function(view, bool) {
       view.$('button[type=submit],input[type=submit]').attr('disabled', !bool);
     },
 
-    renderError: function (view) {
+    renderError: function(view) {
       var msg = 'Error loading ReCAPTCHA, please try again';
-      this.getEl(view).html(
-        '<p class="text-danger">' + msg + '</p>'
-      );
+      this.getEl(view).html('<p class="text-danger">' + msg + '</p>');
       this.enableSubmit(view, false);
     },
 
-    renderRecaptcha: function (view, siteKey, undefined) {
+    renderRecaptcha: function(view, siteKey, undefined) {
       const $el = this.getEl(view);
-      const msg = $('<div class="form-group"></div>')
-        .append('<small class="recaptcha-msg">This site is protected by reCAPTCHA and the Google Privacy Policy and Terms of Service apply.</small>');
+      const msg = $('<div class="form-group"></div>').append(
+        '<small class="recaptcha-msg">This site is protected by reCAPTCHA and the Google Privacy Policy and Terms of Service apply.</small>'
+      );
       $el.closest('form').append(msg);
-      grecaptcha.render($el[0],
-        {
-          sitekey: siteKey,
-          size: 'invisible',
-          badge: 'inline',
-          callback: (response) => {
-            // this might need to be inserted into the model.
-            // or in the case of feedback form, it just needs
-            // to be in the serialized form
-            if (view.model) {
-              view.model.set('g-recaptcha-response', response);
-            }
-            this.execPromise.resolve(response);
+      grecaptcha.render($el[0], {
+        sitekey: siteKey,
+        size: 'invisible',
+        badge: 'inline',
+        callback: (response) => {
+          // this might need to be inserted into the model.
+          // or in the case of feedback form, it just needs
+          // to be in the serialized form
+          if (view.model) {
+            view.model.set('g-recaptcha-response', response);
           }
-        });
+          this.execPromise.resolve(response);
+        },
+      });
       this.enableSubmit(view, true);
     },
 
     hardenedInterface: {
       activateRecaptcha: 'activateRecaptcha',
-      execute: 'execute'
-    }
-
+      execute: 'execute',
+    },
   });
 
   _.extend(RecaptchaManager.prototype, Hardened, Dependon.BeeHive);

@@ -1,7 +1,4 @@
-
-define([
-  'underscore'
-], function (_) {
+define(['underscore'], function(_) {
   // Action Constants
   const SET_DIRECTION = 'SET_DIRECTION';
   const SET_SORT = 'SET_SORT';
@@ -45,7 +42,7 @@ define([
     // if a direction isn't passed, then just toggle
     if (_.isUndefined(value)) {
       const { direction } = getState();
-      value = (direction === 'asc') ? 'desc' : 'asc';
+      value = direction === 'asc' ? 'desc' : 'asc';
     }
     dispatch({ type: SET_DIRECTION, value });
 
@@ -58,14 +55,14 @@ define([
    *
    * @param {object} value - the new query
    */
-  const setQuery = value => ({ type: SET_QUERY, value });
+  const setQuery = (value) => ({ type: SET_QUERY, value });
 
   /**
    * Set the current locked value
    *
    * @param {boolean} value - the new locked value
    */
-  const setLocked = value => (dispatch, getState) => {
+  const setLocked = (value) => (dispatch, getState) => {
     // grab the current timer (if exists)
     const { lockTimer } = getState();
     if (lockTimer) {
@@ -73,7 +70,10 @@ define([
     }
 
     // create a new timer, which resets the locked state after a period of time
-    const timer = setTimeout(() => dispatch({ type: SET_LOCKED, value: false }), 30000);
+    const timer = setTimeout(
+      () => dispatch({ type: SET_LOCKED, value: false }),
+      30000
+    );
 
     // dispatch the new state
     dispatch({ type: SET_LOCKED, value, timer: timer });
@@ -82,40 +82,65 @@ define([
   // initial state
   const initialState = {
     options: [
-      { id: 'author_count', text: 'Author Count', desc: 'sort by number of authors' },
+      {
+        id: 'author_count',
+        text: 'Author Count',
+        desc: 'sort by number of authors',
+      },
       { id: 'bibcode', text: 'Bibcode', desc: 'sort by bibcode' },
-      { id: 'citation_count', text: 'Citation Count', desc: 'sort by number of citations' },
-      { id: 'citation_count_norm', text: 'Normalized Citation Count', desc: 'sort by number of normalized citations' },
-      { id: 'classic_factor', text: 'Classic Factor', desc: 'sort using classical score' },
-      { id: 'first_author', text: 'First Author', desc: 'sort by first author' },
+      {
+        id: 'citation_count',
+        text: 'Citation Count',
+        desc: 'sort by number of citations',
+      },
+      {
+        id: 'citation_count_norm',
+        text: 'Normalized Citation Count',
+        desc: 'sort by number of normalized citations',
+      },
+      {
+        id: 'classic_factor',
+        text: 'Classic Factor',
+        desc: 'sort using classical score',
+      },
+      {
+        id: 'first_author',
+        text: 'First Author',
+        desc: 'sort by first author',
+      },
       { id: 'date', text: 'Date', desc: 'sort by publication date' },
-      { id: 'entry_date', text: 'Entry Date', desc: 'sort by date work entered the database' },
+      {
+        id: 'entry_date',
+        text: 'Entry Date',
+        desc: 'sort by date work entered the database',
+      },
       { id: 'read_count', text: 'Read Count', desc: 'sort by number of reads' },
-      { id: 'score', text: 'Score', desc: 'sort by the relative score' }
+      { id: 'score', text: 'Score', desc: 'sort by the relative score' },
     ],
     sort: { id: 'date', text: 'Date' },
     direction: 'desc',
     query: null,
     locked: false,
-    lockTimer: null
+    lockTimer: null,
   };
 
   // reducer
   const reducer = (state = initialState, action) => {
     switch (action.type) {
       case SET_SORT:
-          return { ...state, sort: action.value };
+        return { ...state, sort: action.value };
       case SET_DIRECTION:
-          return { ...state, direction: action.value };
+        return { ...state, direction: action.value };
       case SET_QUERY:
         return { ...state, query: action.value };
       case SET_LOCKED:
         return {
           ...state,
           locked: action.value,
-          lockTimer: action.timer
+          lockTimer: action.timer,
         };
-      default: return initialState;
+      default:
+        return initialState;
     }
   };
 
@@ -125,6 +150,6 @@ define([
     setQuery: setQuery,
     setLocked: setLocked,
     initialState: initialState,
-    reducer: reducer
+    reducer: reducer,
   };
 });

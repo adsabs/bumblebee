@@ -11,19 +11,11 @@ define([
   'js/components/generic_module',
   'js/mixins/dependon',
   'js/mixins/hardened',
-  'js/components/services_container'
-],
-function (
-  Backbone,
-  _,
-  GenericModule,
-  Dependon,
-  Hardened,
-  ServicesContainer
-) {
+  'js/components/services_container',
+], function(Backbone, _, GenericModule, Dependon, Hardened, ServicesContainer) {
   var hiveOptions = [];
   var BeeHive = GenericModule.extend({
-    initialize: function (options) {
+    initialize: function(options) {
       _.extend(this, _.pick(options, hiveOptions));
       this.Services = new ServicesContainer();
       this.Objects = new ServicesContainer();
@@ -31,59 +23,59 @@ function (
       this.active = true;
     },
 
-    activate: function () {
+    activate: function() {
       this.Services.activate.apply(this.Services, arguments);
       this.Objects.activate(this);
       this.active = true;
     },
 
-    destroy: function () {
+    destroy: function() {
       this.Services.destroy(arguments);
       this.Objects.destroy(arguments);
       this.active = false;
     },
 
-    getService: function (name) {
+    getService: function(name) {
       return this.Services.get(name);
     },
 
-    hasService: function (name) {
+    hasService: function(name) {
       return this.Services.has(name);
     },
 
-    addService: function (name, service) {
+    addService: function(name, service) {
       return this.Services.add(name, service);
     },
 
-    removeService: function (name) {
+    removeService: function(name) {
       return this.Services.remove(name);
     },
 
-    getObject: function (name) {
+    getObject: function(name) {
       return this.Objects.get(name);
     },
 
-    hasObject: function (name) {
+    hasObject: function(name) {
       return this.Objects.has(name);
     },
 
-    addObject: function (name, service) {
+    addObject: function(name, service) {
       return this.Objects.add(name, service);
     },
 
-    removeObject: function (name) {
+    removeObject: function(name) {
       return this.Objects.remove(name);
     },
 
-    getDebug: function () {
+    getDebug: function() {
       return this.debug;
     },
 
-    getAllServices: function () {
+    getAllServices: function() {
       return this.Services.getAll();
     },
 
-    getAllObjects: function () {
+    getAllObjects: function() {
       return this.Objects.getAll();
     },
 
@@ -98,34 +90,35 @@ function (
       Objects: 'objects container',
       debug: 'state of the app',
       active: 'active or not',
-      getHardenedInstance: 'allow to create clone of the already hardened instance'
-    }
-
-
+      getHardenedInstance:
+        'allow to create clone of the already hardened instance',
+    },
   });
 
   _.extend(BeeHive.prototype, Hardened, {
-    getHardenedInstance: function (iface) {
+    getHardenedInstance: function(iface) {
       iface = _.clone(iface || this.hardenedInterface);
 
       // because 'facade' functions are normally bound to the
       // original object, we have to do this to access 'facade'
-      iface.getService = function (name) { // 'get service X (but only the hardened ones)',
+      iface.getService = function(name) {
+        // 'get service X (but only the hardened ones)',
         return hardened.Services.get(name);
       };
-      iface.hasService = function (name) {
+      iface.hasService = function(name) {
         return hardened.Services.has(name);
       };
-      iface.getObject = function (name) { // 'get object X (but only the hardened ones)',
+      iface.getObject = function(name) {
+        // 'get object X (but only the hardened ones)',
         return hardened.Objects.get(name);
       };
-      iface.hasObject = function (name) {
+      iface.hasObject = function(name) {
         return hardened.Objects.has(name);
       };
 
       var hardened = this._getHardenedInstance(iface, this);
       return hardened;
-    }
+    },
   });
 
   return BeeHive;

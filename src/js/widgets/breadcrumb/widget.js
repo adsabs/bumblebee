@@ -21,10 +21,8 @@ define([
   'js/components/pubsub_events',
   'hbs!js/widgets/breadcrumb/templates/widget-view',
   'hbs!js/widgets/breadcrumb/templates/item-view',
-  'js/mixins/dependon'
-],
-
-function (
+  'js/mixins/dependon',
+], function(
   _,
   $,
   Backbone,
@@ -36,11 +34,11 @@ function (
   Dependon
 ) {
   // Model
-  var KeyValue = Backbone.Model.extend({ });
+  var KeyValue = Backbone.Model.extend({});
 
   // Collection of data
   var KeyValueCollection = Backbone.Collection.extend({
-    model: KeyValue
+    model: KeyValue,
   });
 
   var ItemView = Marionette.ItemView.extend({
@@ -48,30 +46,27 @@ function (
     template: ItemTemplate,
     events: {
       'click .remove': 'onRemove',
-      'click': 'onClick'
+      click: 'onClick',
     },
-    onClick: function (ev) {
+    onClick: function(ev) {
       this.trigger('item-click', this.model);
       return false;
     },
-    onRemove: function (ev) {
+    onRemove: function(ev) {
       this.trigger('item-remove', this.model);
       return false;
-    }
+    },
   });
 
   var WidgetView = Marionette.CompositeView.extend({
     template: WidgetTemplate,
     childView: ItemView,
     childViewContainer: '#simple-breadcrumb',
-    events: {
-    }
-
+    events: {},
   });
 
   var WidgetController = Marionette.Controller.extend({
-
-    initialize: function (apiQuery) {
+    initialize: function(apiQuery) {
       if (!apiQuery || !(apiQuery instanceof ApiQuery)) {
         apiQuery = new ApiQuery(); // empty
       }
@@ -82,7 +77,7 @@ function (
       return this;
     },
 
-    activate: function (beehive) {
+    activate: function(beehive) {
       this.setBeeHive(beehive);
       _.bindAll(this, 'onNewQuery', 'onRequest', 'onResponse', 'onAllPubSub');
       var pubsub = this.getPubSub();
@@ -94,38 +89,40 @@ function (
       this.maxSize = 100; // make configurable?
     },
 
-    render: function () {
+    render: function() {
       this.view.render();
       return this.view.el;
     },
 
-    onNewQuery: function (apiQuery, key) {
+    onNewQuery: function(apiQuery, key) {
       console.log('START_SEARCH', apiQuery.url(), key);
       this.listening = true;
     },
 
-    onRequest: function (apiRequest, key) {
+    onRequest: function(apiRequest, key) {
       if (!this.listening) return;
 
       var q = apiRequest.get('query');
       if (q) {
         console.log('NEW REQUEST', q);
         // remember who initiated the new-query
-        this.getPubSub().subscribeOnce(this.getPubSub().DELIVERING_RESPONSE + key.getId(), this.onResponse);
+        this.getPubSub().subscribeOnce(
+          this.getPubSub().DELIVERING_RESPONSE + key.getId(),
+          this.onResponse
+        );
         this.listening = false;
       }
     },
 
-    onResponse: function (apiResponse) {
+    onResponse: function(apiResponse) {
       console.log('NEW RESPONSE', apiResponse);
     },
 
-
     /**
-       * Catches and displays ApiQuery that has travelled through the
-       * PubSub queue
-       */
-    onAllPubSub: function () {
+     * Catches and displays ApiQuery that has travelled through the
+     * PubSub queue
+     */
+    onAllPubSub: function() {
       var event = arguments[0];
       if (event == this.eventKey) {
         console.log('[debug:ApiQueryWidget]', arguments[0]);
@@ -134,8 +131,7 @@ function (
       }
     },
 
-
-    onLoad: function (apiQuery) {
+    onLoad: function(apiQuery) {
       if (this.collection) {
         this.collection.reset(this.getData(apiQuery));
       } else {
@@ -143,13 +139,12 @@ function (
       }
     },
 
-
     /**
-       * This is the central function - listening to all events
-       * in this widget's views; and manipulating the models
-       * that back views
-       */
-    onAllInternalEvents: function () {
+     * This is the central function - listening to all events
+     * in this widget's views; and manipulating the models
+     * that back views
+     */
+    onAllInternalEvents: function() {
       // console.log('onAll', arguments[0]);
       var event = arguments[0];
 
@@ -162,13 +157,13 @@ function (
     },
 
     /**
-       * Function to massage input values and return what we want to
-       * pass to the model
-       *
-       * @param apiQuery
-       * @returns {*|Array}
-       */
-    getData: function (apiQuery) {
+     * Function to massage input values and return what we want to
+     * pass to the model
+     *
+     * @param apiQuery
+     * @returns {*|Array}
+     */
+    getData: function(apiQuery) {
       if (!apiQuery) {
         throw Error('Wrong input!');
       }
@@ -176,11 +171,11 @@ function (
         apiQuery = new ApiQuery().load(apiQuery);
       }
 
-      var pairs = _.map(apiQuery.pairs(), function (pair) {
+      var pairs = _.map(apiQuery.pairs(), function(pair) {
         return { key: pair[0], value: pair[1].join('|') };
       });
       return pairs;
-    }
+    },
   });
 
   _.extend(WidgetController.prototype, Dependon.BeeHive);

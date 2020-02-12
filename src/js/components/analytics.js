@@ -1,7 +1,4 @@
-define([
-  'underscore',
-  'jquery'
-], function (_, $) {
+define(['underscore', 'jquery'], function(_, $) {
   /*
    * Set of targets
    * each has a set of hooks which coorespond to the event label passed
@@ -14,15 +11,21 @@ define([
         'toc-link-followed',
         'abstract-link-followed',
         'citations-link-followed',
-        'associated-link-followed'
+        'associated-link-followed',
       ],
       types: [
-        'abstract', 'citations', 'references',
-        'metrics', 'coreads', 'similar', 'graphics', 'associated',
-        'toc'
+        'abstract',
+        'citations',
+        'references',
+        'metrics',
+        'coreads',
+        'similar',
+        'graphics',
+        'associated',
+        'toc',
       ],
-      url: _.template('link_gateway/<%= bibcode %>/<%= target %>')
-    }
+      url: _.template('link_gateway/<%= bibcode %>/<%= target %>'),
+    },
   };
 
   /**
@@ -31,7 +34,7 @@ define([
    * @param {string} url
    * @param {object} data
    */
-  var sendEvent = function (url) {
+  var sendEvent = function(url) {
     $.ajax({ url: url, type: 'GET' });
   };
 
@@ -43,13 +46,12 @@ define([
    * @param {string} label - the event label
    * @param {object} data - the event data
    */
-  var adsLogger = function (label, data) {
+  var adsLogger = function(label, data) {
     // if label or data is not present, do nothing
     if (_.isString(label) && _.isPlainObject(data) && _.has(data, 'target')) {
-      _.forEach(TARGETS, function (val) {
-
+      _.forEach(TARGETS, function(val) {
         var target = null;
-        _.forEach(val.types, function (type) {
+        _.forEach(val.types, function(type) {
           if (_.isArray(type)) {
             if (type[0] === data.target && _.has(type[1], 'redirectTo')) {
               target = type[1].redirectTo;
@@ -69,16 +71,19 @@ define([
   };
 
   var ga = window[window.GoogleAnalyticsObject];
-  window[window.GoogleAnalyticsObject] = function (...args) {
+  window[window.GoogleAnalyticsObject] = function(...args) {
     try {
       const $dd = $.Deferred();
       ga.q = ga.q || [];
       ga.q.push(args);
-      ga.apply(ga, [...args, {
-        hitCallback: () => {
-          $dd.resolve();
-        }
-      }]);
+      ga.apply(ga, [
+        ...args,
+        {
+          hitCallback: () => {
+            $dd.resolve();
+          },
+        },
+      ]);
       setTimeout(() => $dd.resolve(), 1000);
       return $dd.promise();
     } catch (e) {
@@ -86,10 +91,12 @@ define([
     }
   };
 
-  var Analytics = function () {
+  var Analytics = function() {
     adsLogger.apply(null, _.rest(arguments, 3));
-    return window[window.GoogleAnalyticsObject]
-      && window[window.GoogleAnalyticsObject].apply(this, arguments);
+    return (
+      window[window.GoogleAnalyticsObject] &&
+      window[window.GoogleAnalyticsObject].apply(this, arguments)
+    );
   };
 
   return Analytics;

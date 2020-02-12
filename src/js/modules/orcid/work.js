@@ -1,8 +1,4 @@
-
-define([
-  'underscore',
-  'jsonpath'
-], function (_, jp) {
+define(['underscore', 'jsonpath'], function(_, jp) {
   var ADSPATHS = {
     status: '$.status',
     title: '$.title',
@@ -11,7 +7,7 @@ define([
     lastModifiedDate: '$.updated',
     sourceName: '$.source',
     putCode: '$.putcode',
-    identifier: '$.identifier'
+    identifier: '$.identifier',
   };
   var ORCIDPATHS = {
     createdDate: '$["created-date"].value',
@@ -39,21 +35,29 @@ define([
     publicationDateDay: '$["publication-date"].day.value',
     publicationDateMedia: '$["publication-date"]["media-type"]',
     url: '$.url.value',
-    contributorOrcidUri: '$["contributors"].contributor..["contributor-orcid"].uri',
-    contributorOrcidPath: '$["contributors"].contributor..["contributor-orcid"].path',
-    contributorOrcidHost: '$["contributors"].contributor..["contributor-orcid"].host',
+    contributorOrcidUri:
+      '$["contributors"].contributor..["contributor-orcid"].uri',
+    contributorOrcidPath:
+      '$["contributors"].contributor..["contributor-orcid"].path',
+    contributorOrcidHost:
+      '$["contributors"].contributor..["contributor-orcid"].host',
     contributorName: '$["contributors"].contributor..["credit-name"].value',
-    contributorEmail: '$["contributors"].contributor..["contributor-email"].value',
-    contributorAttributes: '$["contributors"].contributor..["contributor-attributes"]',
-    contributorSequence: '$["contributors"].contributor..["contributor-attributes"]["contributor-sequence"]',
-    contributorRole: '$["contributors"].contributor..["contributor-attributes"]["contributor-role"]',
+    contributorEmail:
+      '$["contributors"].contributor..["contributor-email"].value',
+    contributorAttributes:
+      '$["contributors"].contributor..["contributor-attributes"]',
+    contributorSequence:
+      '$["contributors"].contributor..["contributor-attributes"]["contributor-sequence"]',
+    contributorRole:
+      '$["contributors"].contributor..["contributor-attributes"]["contributor-role"]',
     externalIdValue: '$["external-ids"]["external-id"]..["external-id-value"]',
     externalIdType: '$["external-ids"]["external-id"]..["external-id-type"]',
     externalIdUrl: '$["external-ids"]["external-id"]..["external-id-url"]',
-    externalIdRelationship: '$["external-ids"]["external-id"]..["external-id-relationship"]',
+    externalIdRelationship:
+      '$["external-ids"]["external-id"]..["external-id-relationship"]',
     country: '$.country.value',
     visibility: '$.visibility.value',
-    identifier: '$.identifier'
+    identifier: '$.identifier',
   };
 
   /**
@@ -78,7 +82,7 @@ define([
      *
      * @returns {Array} - the sources
      */
-    this.getSources = function () {
+    this.getSources = function() {
       if (_.isEmpty(this.sources)) {
         return [this.getSourceName()];
       }
@@ -92,7 +96,7 @@ define([
      * @param {Array} sources
      * @returns {Array} - the sources
      */
-    this.setSources = function (sources) {
+    this.setSources = function(sources) {
       if (_.isArray(sources)) {
         this.sources = sources;
       }
@@ -105,11 +109,12 @@ define([
      * @param {string} path - path on _root element to find
      * @returns {*} - value found at path
      */
-    this.get = function (path) {
+    this.get = function(path) {
       var val = jp.query(this._root, path);
       if (_.isEmpty(val)) {
         return null;
-      } if (_.isArray(val) && val.length <= 1) {
+      }
+      if (_.isArray(val) && val.length <= 1) {
         return val[0];
       }
       return val;
@@ -121,20 +126,24 @@ define([
      *
      * @returns {*} - ORCiD formatted object
      */
-    this.getAsOrcid = function () {
-      return _.reduce(ORCIDPATHS, _.bind(function (res, p) {
-        var val = this.get(p);
-        if (val) {
-          if (_.isArray(val)) {
-            _.forEach(val, function (v, i) {
-              jp.value(res, p.replace('..', '[' + i + ']'), v);
-            });
-          } else {
-            jp.value(res, p, val);
+    this.getAsOrcid = function() {
+      return _.reduce(
+        ORCIDPATHS,
+        _.bind(function(res, p) {
+          var val = this.get(p);
+          if (val) {
+            if (_.isArray(val)) {
+              _.forEach(val, function(v, i) {
+                jp.value(res, p.replace('..', '[' + i + ']'), v);
+              });
+            } else {
+              jp.value(res, p, val);
+            }
           }
-        }
-        return res;
-      }, this), {});
+          return res;
+        }, this),
+        {}
+      );
     };
 
     /**
@@ -142,8 +151,7 @@ define([
      *
      * @returns {*} - ADS formatted object
      */
-    this.toADSFormat = function () {
-
+    this.toADSFormat = function() {
       var ids;
       if (this.useOrcidPaths) {
         ids = this.getExternalIds();
@@ -153,15 +161,19 @@ define([
         ids.identifier = _.values(ids)[0];
       }
 
-      return _.extend({}, {
-        'title': [this.getTitle()],
-        'formattedDate': this.getFormattedPubDate(),
-        'source_name': this.getSources().join('; '),
-        'identifier': this.getIdentifier(),
-        '_work': this
-      }, ids);
+      return _.extend(
+        {},
+        {
+          title: [this.getTitle()],
+          formattedDate: this.getFormattedPubDate(),
+          source_name: this.getSources().join('; '),
+          identifier: this.getIdentifier(),
+          _work: this,
+        },
+        ids
+      );
     };
-      
+
     /**
      * Creates an object containing all external ids
      * @example
@@ -169,7 +181,7 @@ define([
      *
      * @returns {Object} - object containing external ids
      */
-    this.getExternalIds = function () {
+    this.getExternalIds = function() {
       var types = this.getExternalIdType();
       var values = this.getExternalIdValue();
       types = _.isArray(types) ? types : [types];
@@ -178,10 +190,14 @@ define([
         return {};
       }
 
-      return _.reduce(types, function (res, t, i) {
-        res[t] = values[i];
-        return res;
-      }, {});
+      return _.reduce(
+        types,
+        function(res, t, i) {
+          res[t] = values[i];
+          return res;
+        },
+        {}
+      );
     };
 
     /**
@@ -189,7 +205,7 @@ define([
      *
      * @returns {string} - formatted pub date
      */
-    this.getFormattedPubDate = function () {
+    this.getFormattedPubDate = function() {
       var year = this.getPublicationDateYear() || '????';
       var month = this.getPublicationDateMonth() || '??';
       return year + '/' + month;
@@ -199,13 +215,17 @@ define([
     var paths = this.useOrcidPaths ? ORCIDPATHS : ADSPATHS;
 
     // create getters for each of the PATHS
-    _.reduce(paths, function (obj, p, k) {
-      if (_.isString(k) && k.slice) {
-        var prop = k[0].toUpperCase() + k.slice(1);
-        obj['get' + prop] = _.partial(obj.get, p);
-      }
-      return obj;
-    }, this);
+    _.reduce(
+      paths,
+      function(obj, p, k) {
+        if (_.isString(k) && k.slice) {
+          var prop = k[0].toUpperCase() + k.slice(1);
+          obj['get' + prop] = _.partial(obj.get, p);
+        }
+        return obj;
+      },
+      this
+    );
   };
 
   /**
@@ -216,23 +236,23 @@ define([
    * @param {Number} [putCode] putCode - putcode to apply to work
    * @returns {Object} - the ORCiD work
    */
-  Work.adsToOrcid = function (adsWork, putCode) {
+  Work.adsToOrcid = function(adsWork, putCode) {
     var ads = {
-      'pubdate': '$.pubdate',
-      'abstract': '$.abstract',
-      'bibcode': '$.bibcode',
-      'pub': '$.pub',
-      'doi': '$.doi[0]',
-      'author': '$.author[*]',
-      'title': '$.title[0]',
-      'type': '$.doctype',
-      'all_ids': '$.all_ids'
+      pubdate: '$.pubdate',
+      abstract: '$.abstract',
+      bibcode: '$.bibcode',
+      pub: '$.pub',
+      doi: '$.doi[0]',
+      author: '$.author[*]',
+      title: '$.title[0]',
+      type: '$.doctype',
+      all_ids: '$.all_ids',
     };
 
-    var put = function (obj, p, val) {
+    var put = function(obj, p, val) {
       if (val) {
         if (_.isArray(val)) {
-          _.forEach(val, function (v, i) {
+          _.forEach(val, function(v, i) {
             jp.value(obj, p.replace('..', '[' + i + ']'), v);
           });
         } else {
@@ -241,40 +261,41 @@ define([
       }
       return obj;
     };
-    var get = function (path) {
+    var get = function(path) {
       var val = jp.query(adsWork, path);
       if (_.isEmpty(val)) {
         return null;
-      } if (_.isArray(val) && val.length <= 1) {
+      }
+      if (_.isArray(val) && val.length <= 1) {
         return val[0] || '';
       }
       return val || '';
     };
     var work = {};
-    var worktype = function (adsType) {
+    var worktype = function(adsType) {
       var oType = {
-        'article': 'JOURNAL_ARTICLE',
-        'inproceedings': 'CONFERENCE_PAPER',
-        'abstract': 'CONFERENCE_ABSTRACT',
-        'eprint': 'WORKING_PAPER',
-        'phdthesis': 'DISSERTATION',
-        'techreport': 'RESEARCH_TECHNIQUE',
-        'inbook': 'BOOK_CHAPTER',
-        'circular': 'RESEARCH_TOOL',
-        'misc': 'OTHER',
-        'book': 'BOOK',
-        'proceedings': 'BOOK',
-        'bookreview': 'BOOK_REVIEW',
-        'erratum': 'JOURNAL_ARTICLE',
-        'proposal': 'OTHER',
-        'newsletter': 'NEWSLETTER_ARTICLE',
-        'catalog': 'DATA_SET',
-        'intechreport': 'RESEARCH_TECHNIQUE',
-        'mastersthesis': 'DISSERTATION',
-        'obituary': 'OTHER',
-        'pressrelease': 'OTHER',
-        'software': 'RESEARCH_TECHNIQUE',
-        'talk': 'LECTURE_SPEECH'
+        article: 'JOURNAL_ARTICLE',
+        inproceedings: 'CONFERENCE_PAPER',
+        abstract: 'CONFERENCE_ABSTRACT',
+        eprint: 'WORKING_PAPER',
+        phdthesis: 'DISSERTATION',
+        techreport: 'RESEARCH_TECHNIQUE',
+        inbook: 'BOOK_CHAPTER',
+        circular: 'RESEARCH_TOOL',
+        misc: 'OTHER',
+        book: 'BOOK',
+        proceedings: 'BOOK',
+        bookreview: 'BOOK_REVIEW',
+        erratum: 'JOURNAL_ARTICLE',
+        proposal: 'OTHER',
+        newsletter: 'NEWSLETTER_ARTICLE',
+        catalog: 'DATA_SET',
+        intechreport: 'RESEARCH_TECHNIQUE',
+        mastersthesis: 'DISSERTATION',
+        obituary: 'OTHER',
+        pressrelease: 'OTHER',
+        software: 'RESEARCH_TECHNIQUE',
+        talk: 'LECTURE_SPEECH',
       };
       return oType[adsType] || 'JOURNAL_ARTICLE';
     };
@@ -282,7 +303,7 @@ define([
       var exIds = {
         types: [],
         values: [],
-        relationships: []
+        relationships: [],
       };
 
       // handle doi or bibcode not existing
@@ -301,9 +322,9 @@ define([
       var all_ids = get(ads.all_ids);
       var arxiv = false;
       if (_.isArray(all_ids)) {
-        arxiv = all_ids.find(function (element) {
-          return element.toLowerCase().startsWith('arxiv')
-          });
+        arxiv = all_ids.find(function(element) {
+          return element.toLowerCase().startsWith('arxiv');
+        });
       }
       if (arxiv) {
         arxiv = arxiv.substr(6);
@@ -316,18 +337,26 @@ define([
       if (get(ads.pubdate).split('-')[1] === '00') {
         put(work, ORCIDPATHS.publicationDateMonth, null);
       } else {
-        put(work, ORCIDPATHS.publicationDateMonth, get(ads.pubdate).split('-')[1]);
+        put(
+          work,
+          ORCIDPATHS.publicationDateMonth,
+          get(ads.pubdate).split('-')[1]
+        );
       }
-      put(work, ORCIDPATHS.shortDescription, get(ads.abstract).slice(0, 4997) + '...');
+      put(
+        work,
+        ORCIDPATHS.shortDescription,
+        get(ads.abstract).slice(0, 4997) + '...'
+      );
       put(work, ORCIDPATHS.externalIdType, exIds.types);
       put(work, ORCIDPATHS.externalIdValue, exIds.values);
       put(work, ORCIDPATHS.externalIdRelationship, exIds.relationships);
       put(work, ORCIDPATHS.journalTitle, get(ads.pub));
       put(work, ORCIDPATHS.type, worktype(get(ads.type)));
       var author = get(ads.author);
-      author = (_.isArray(author)) ? author : [author];
+      author = _.isArray(author) ? author : [author];
       put(work, ORCIDPATHS.contributorName, author);
-      var roles = _.map(author, function () {
+      var roles = _.map(author, function() {
         return 'AUTHOR';
       });
       put(work, ORCIDPATHS.contributorRole, roles);

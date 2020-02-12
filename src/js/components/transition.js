@@ -1,9 +1,5 @@
-define(['underscore'
-],
-function (
-  _
-) {
-  var Transition = function (endpoint, options) {
+define(['underscore'], function(_) {
+  var Transition = function(endpoint, options) {
     if (!_.isString(endpoint)) {
       throw new Error('Endpoint name must be a string');
     }
@@ -15,11 +11,10 @@ function (
     trigger: false,
     replace: false,
     title: false,
-    execute: function () {
+    execute: function() {
       throw new Error('You must override this method');
-    }
+    },
   });
 
   return Transition;
-}
-);
+});

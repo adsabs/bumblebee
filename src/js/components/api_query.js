@@ -12,18 +12,12 @@
 
  */
 
-
 define([
   'backbone',
   'underscore',
   'js/components/solr_params',
-  'js/components/facade'
-], function (
-  Backbone,
-  _,
-  ApiQueryImplementation,
-  Facade
-) {
+  'js/components/facade',
+], function(Backbone, _, ApiQueryImplementation, Facade) {
   var hardenedInterface = {
     add: 'add values',
     set: 'set (replace existing)',
@@ -44,11 +38,10 @@ define([
     values: 'only values',
     hasChanged: 'whether this object has modification (since its creation)',
     previousAttributes: 'get all changed attributes',
-    previous: 'previous values for a given attribute'
-
+    previous: 'previous values for a given attribute',
   };
 
-  var ApiQuery = function (data, options) {
+  var ApiQuery = function(data, options) {
     // Facade pattern, we want to expose only limited API
     // despite the fact that the underlying instance has
     // all power of the Backbone.Model
@@ -56,25 +49,28 @@ define([
     if (data instanceof ApiQueryImplementation) {
       this.innerQuery = new Facade(hardenedInterface, data);
     } else {
-      this.innerQuery = new Facade(hardenedInterface, new ApiQueryImplementation(data, options));
+      this.innerQuery = new Facade(
+        hardenedInterface,
+        new ApiQueryImplementation(data, options)
+      );
     }
   };
 
   var toInsert = {};
-  _.each(_.keys(hardenedInterface), function (element, index, list) {
-    toInsert[element] = function () {
+  _.each(_.keys(hardenedInterface), function(element, index, list) {
+    toInsert[element] = function() {
       return this.innerQuery[element].apply(this.innerQuery, arguments);
     };
   });
   _.extend(ApiQuery.prototype, toInsert, {
-    clone: function () {
+    clone: function() {
       var clone = this.innerQuery.clone.apply(this.innerQuery, arguments);
       return new ApiQuery(clone);
     },
-    load: function () {
+    load: function() {
       var clone = this.innerQuery.load.apply(this.innerQuery, arguments);
       return new ApiQuery(clone);
-    }
+    },
   });
 
   return ApiQuery;

@@ -348,9 +348,20 @@ define([
     },
 
     buildWCDict: function() {
-      var dict, numWords, meanTF, meanIDF, wordDict, min, max;
-      var sliderRange, currentSliderVal;
-      var freq, idf, modifiedVal, wordList, renderVals;
+      var dict;
+      var numWords;
+      var meanTF;
+      var meanIDF;
+      var wordDict;
+      var min;
+      var max;
+      var sliderRange;
+      var currentSliderVal;
+      var freq;
+      var idf;
+      var modifiedVal;
+      var wordList;
+      var renderVals;
 
       dict = this.get('tfidfData');
 
@@ -589,7 +600,9 @@ define([
 
     onAllInternalEvents: function(ev) {
       if (ev === 'submitFacet') {
-        var filterList, q, newQ;
+        var filterList;
+        var q;
+        var newQ;
 
         filterList = this.listView.model.get('selectedWords');
         q = this.getCurrentQuery();

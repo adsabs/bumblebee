@@ -37,7 +37,6 @@
  *
  */
 
-
 define([
   'underscore',
   'bootstrap',
@@ -55,9 +54,8 @@ define([
   'js/components/api_feedback',
   'js/modules/orcid/work',
   'js/modules/orcid/profile',
-  'js/modules/orcid/bio'
-],
-function (
+  'js/modules/orcid/bio',
+], function(
   _,
   Bootstrap,
   $,
@@ -77,11 +75,10 @@ function (
   Bio
 ) {
   var OrcidApi = GenericModule.extend({
-
     /**
      * Initialize the service
      */
-    initialize: function () {
+    initialize: function() {
       this.userData = {};
       this.addCache = [];
       this.deleteCache = [];
@@ -108,7 +105,7 @@ function (
      *
      * @param {BeeHive} beehive
      */
-    activate: function (beehive) {
+    activate: function(beehive) {
       var storage = beehive.getService('PersistentStorage');
       var config = beehive.getObject('DynamicConfig');
       this.setBeeHive(beehive);
@@ -134,11 +131,13 @@ function (
      *
      * @returns {jQuery.Promise}
      */
-    checkAccessOrcidApiAccess: function () {
+    checkAccessOrcidApiAccess: function() {
       if (this.hasAccess()) {
         return this.getUserProfile();
       }
-      return $.Deferred().reject().promise();
+      return $.Deferred()
+        .reject()
+        .promise();
     },
 
     /**
@@ -146,7 +145,7 @@ function (
      * from ORCiD, and if that information has expired or not
      * @returns {boolean}
      */
-    hasAccess: function () {
+    hasAccess: function() {
       if (this.authData && this.authData.expires) {
         return this.authData.expires > new Date().getTime();
       }
@@ -159,12 +158,15 @@ function (
      *
      * @param {String} [targetRoute='#user/orcid'] targetRoute
      */
-    signIn: function (targetRoute) {
+    signIn: function(targetRoute) {
       this.getPubSub().publish(this.getPubSub().APP_EXIT, {
         type: 'orcid',
-        url: this.config.loginUrl
-          + '&redirect_uri=' + encodeURIComponent(this.config.redirectUrlBase
-          + (targetRoute || '/user/orcid'))
+        url:
+          this.config.loginUrl +
+          '&redirect_uri=' +
+          encodeURIComponent(
+            this.config.redirectUrlBase + (targetRoute || '/user/orcid')
+          ),
       });
 
       // make sure to redirect to the proper page after sign in
@@ -177,11 +179,14 @@ function (
      * @param {Object} userData - user data to update
      * @returns {*|jQuery.Promise}
      */
-    setADSUserData: function (userData) {
-      var url = this.getBeeHive().getService('Api').url
-        + ApiTargets.ORCID_PREFERENCES + '/' + this.authData.orcid;
+    setADSUserData: function(userData) {
+      var url =
+        this.getBeeHive().getService('Api').url +
+        ApiTargets.ORCID_PREFERENCES +
+        '/' +
+        this.authData.orcid;
       var request = this.createRequest(url, { method: 'POST' }, userData);
-      request.fail(function () {
+      request.fail(function() {
         var msg = 'ADS ORCiD preferences could not be set';
         console.error.apply(console, [msg].concat(arguments));
       });
@@ -194,45 +199,55 @@ function (
      *
      * @returns {*|jQuery.Promise}
      */
-    getADSUserData: function () {
+    getADSUserData: function() {
       var self = this;
-      var url = this.getBeeHive().getService('Api').url
-        + ApiTargets.ORCID_PREFERENCES + '/' + this.authData.orcid;
+      var url =
+        this.getBeeHive().getService('Api').url +
+        ApiTargets.ORCID_PREFERENCES +
+        '/' +
+        this.authData.orcid;
       var request = this.createRequest(url);
-      request.fail(function () {
+      request.fail(function() {
         self.signOut();
-        self.getBeeHive().getObject('User').setOrcidMode(0);
+        self
+          .getBeeHive()
+          .getObject('User')
+          .setOrcidMode(0);
         var title = 'Expired ORCID login';
-          var msg = [
-            'Your ORCID login has expired.',
-            'Please reload the page and sign in again to access the page.',
-            '',
-            '<button onclick="location.reload()" class="btn btn-primary" role="button">Reload</button>'
-          ];
-          var pubSub = self.getPubSub();
-          pubSub.publish(pubSub.ALERT, new ApiFeedback({
+        var msg = [
+          'Your ORCID login has expired.',
+          'Please reload the page and sign in again to access the page.',
+          '',
+          '<button onclick="location.reload()" class="btn btn-primary" role="button">Reload</button>',
+        ];
+        var pubSub = self.getPubSub();
+        pubSub.publish(
+          pubSub.ALERT,
+          new ApiFeedback({
             title: title,
             msg: msg.join('<br/>'),
             modal: true,
-            type: 'warning'
-          }));
-
-
+            type: 'warning',
+          })
+        );
       });
       return request;
     },
 
-    getUserBio: function () {
+    getUserBio: function() {
       var dd = new $.Deferred();
-      var url = this.getBeeHive().getService('Api').url
-        + ApiTargets.ORCID_NAME + '/' + this.authData.orcid;
+      var url =
+        this.getBeeHive().getService('Api').url +
+        ApiTargets.ORCID_NAME +
+        '/' +
+        this.authData.orcid;
       var request = this.createRequest(url);
-      request.fail(function () {
-          var msg = 'ADS name could not be retrieved';
-          console.error.apply(console, [msg].concat(arguments));
-          dd.reject();
+      request.fail(function() {
+        var msg = 'ADS name could not be retrieved';
+        console.error.apply(console, [msg].concat(arguments));
+        dd.reject();
       });
-      request.done(function (bio) {
+      request.done(function(bio) {
         var orcidBio = new Bio(bio);
         dd.resolve(orcidBio);
       });
@@ -242,7 +257,7 @@ function (
     /**
      * Forgets the OAuth access_token
      */
-    signOut: function () {
+    signOut: function() {
       this.saveAccessData(null);
       this.getPubSub().publish(this.getPubSub().ORCID_ANNOUNCEMENT, 'logout');
     },
@@ -253,7 +268,7 @@ function (
      * @param {String} searchString
      * @returns {boolean}
      */
-    hasExchangeCode: function (searchString) {
+    hasExchangeCode: function(searchString) {
       return !!this.getExchangeCode(searchString);
     },
 
@@ -262,8 +277,11 @@ function (
      * @param {String} [searchString=window.location.search] searchString
      * @returns {*|String|Undefined}
      */
-    getExchangeCode: function (searchString) {
-      return this.getUrlParameter('code', searchString || window.location.search);
+    getExchangeCode: function(searchString) {
+      return this.getUrlParameter(
+        'code',
+        searchString || window.location.search
+      );
     },
 
     /**
@@ -273,7 +291,7 @@ function (
      * @param {String} searchString - string to search
      * @returns {String|Undefined} - value of param, if found
      */
-    getUrlParameter: function (sParam, searchString) {
+    getUrlParameter: function(sParam, searchString) {
       var sPageURL = searchString.substring(1);
       var sURLVariables = sPageURL.split('&');
       for (var i = 0; i < sURLVariables.length; i++) {
@@ -295,7 +313,7 @@ function (
      * @param {String} oAuthCode
      * @returns {jQuery.Promise}
      */
-    getAccessData: function (oAuthCode) {
+    getAccessData: function(oAuthCode) {
       var api = this.getBeeHive().getService('Api');
       var promise = $.Deferred();
 
@@ -306,17 +324,19 @@ function (
         always: _.bind(promise.always, promise),
         headers: {
           Accept: 'application/json',
-          Authorization: api.access_token
-        }
+          Authorization: api.access_token,
+        },
       };
 
       api.request(
         new ApiRequest({
           target: this.config.exchangeTokenUrl,
           query: new ApiQuery({
-            code: oAuthCode
-          })
-        }), opts);
+            code: oAuthCode,
+          }),
+        }),
+        opts
+      );
       return promise.promise();
     },
 
@@ -326,11 +346,12 @@ function (
      *
      * @param {object} authData - the authentication data
      */
-    saveAccessData: function (authData) {
+    saveAccessData: function(authData) {
       var beehive = this.getBeeHive();
 
       if (authData && !authData.expires && authData.expires_in) {
-        authData.expires = new Date().getTime() + ((authData.expires_in * 1000) - 1000);
+        authData.expires =
+          new Date().getTime() + (authData.expires_in * 1000 - 1000);
       }
       this.authData = authData;
       var storage = beehive.getService('PersistentStorage');
@@ -353,17 +374,17 @@ function (
      * @param {Array|Number} [putCodes] putCodes - putcodes to append to end of url
      * @returns {string} - the url
      */
-    getUrl: function (name, putCodes) {
+    getUrl: function(name, putCodes) {
       var targets = {
         profile_bib: '/orcid-profile/simple',
         profile_full: '/orcid-profile/full?update=True',
         works: '/orcid-works',
-        work: '/orcid-work'
+        work: '/orcid-work',
       };
-      var url = this.config.apiEndpoint + '/'
-        + this.authData.orcid + targets[name];
+      var url =
+        this.config.apiEndpoint + '/' + this.authData.orcid + targets[name];
 
-      var end = (_.isArray(putCodes)) ? putCodes.join(',') : putCodes;
+      var end = _.isArray(putCodes) ? putCodes.join(',') : putCodes;
 
       if (end) {
         url += '/' + end;
@@ -378,7 +399,7 @@ function (
      * @param {Object} [data] data - payload of message
      * @returns {jQuery.Promise} promise object for request
      */
-    createRequest: function (url, options, data) {
+    createRequest: function(url, options, data) {
       if (_.isUndefined(url)) {
         throw new Error('Url must be defined');
       }
@@ -399,23 +420,29 @@ function (
      * with the most up-to-date response.  So a single response to resolve them
      * all is good enough.
      */
-    _getUserProfile: function () {
+    _getUserProfile: function() {
       var self = this;
       var request = this.createRequest(this.getUrl('profile_full'));
 
       // get everything so far in the cache
       var cache = self.getUserProfileCache.splice(0);
 
-      request.done(function (profile) {
-        _.forEach(cache, function (promise) {
+      request.done(function(profile) {
+        _.forEach(cache, function(promise) {
           orcidProfile = new Profile(profile);
-          promise.resolve(orcidProfile.setWorks(_.map(profile, function (profile, idx) {return new Work(profile)})));
+          promise.resolve(
+            orcidProfile.setWorks(
+              _.map(profile, function(profile, idx) {
+                return new Work(profile);
+              })
+            )
+          );
         });
       });
 
-      request.fail(function () {
+      request.fail(function() {
         var args = arguments;
-        _.forEach(cache, function (promise) {
+        _.forEach(cache, function(promise) {
           promise.reject.apply(promise, args);
         });
       });
@@ -429,7 +456,7 @@ function (
      *
      * @returns {jQuery.Promise<Profile>} - Promise that resolves with profile
      */
-    getUserProfile: function () {
+    getUserProfile: function() {
       var $dd = $.Deferred();
 
       this.getUserProfileCache.push($dd);
@@ -447,12 +474,13 @@ function (
      * @param {Number} putCode - putcode to be retrieved
      * @returns {jQuery.Promise<Work>} - promise that resolves with the work
      */
-    getWork: function (putCode) {
+    getWork: function(putCode) {
       var $dd = $.Deferred();
       this.createRequest(this.getUrl('works', putCode))
-        .done(function (work) {
+        .done(function(work) {
           $dd.resolve(new Work(work));
-        }).fail(_.bind($dd.reject, $dd));
+        })
+        .fail(_.bind($dd.reject, $dd));
       return $dd.promise();
     },
 
@@ -464,7 +492,7 @@ function (
      * @param {Array} putCodes - putcodes to be retrieved
      * @returns {jQuery.Promise<Work[]>}
      */
-    getWorks: function (putCodes) {
+    getWorks: function(putCodes) {
       if (!_.isArray(putCodes)) {
         throw new TypeError('putcodes must be an Array');
       }
@@ -479,7 +507,7 @@ function (
 
       var reqs = $.when.apply($, proms);
       reqs.done(_.bind($dd.resolve, $dd));
-      reqs.fail(function () {
+      reqs.fail(function() {
         // we are passed an array for EACH argument, so passing the whole thing
         $dd.reject(arguments);
       });
@@ -494,14 +522,16 @@ function (
      * @param {Number} work["put-code"] - putcode to update
      * @returns {jQuery.Promise} - promise for the request
      */
-    updateWork: function (work) {
+    updateWork: function(work) {
       if (!_.isPlainObject(work)) {
         throw new TypeError('Work should be a simple object');
       }
 
       var putcode = work['put-code'];
       if (!putcode) {
-        return $.Deferred().reject().promise();
+        return $.Deferred()
+          .reject()
+          .promise();
       }
 
       var url = this.getUrl('works', putcode);
@@ -514,17 +544,16 @@ function (
      * @param {Number} putCode - putcode of work to be deleted
      * @returns {jQuery.Promise} - promise for the request
      */
-    deleteWork: function (putCode) {
+    deleteWork: function(putCode) {
       if (!_.isNumber(putCode)) {
         throw new TypeError('putcode should be a number');
       }
       var $dd = $.Deferred();
       this.deleteCache.push({
-
         // create unique request id to ride along with request
         id: _.uniqueId(),
         putCode: putCode,
-        promise: $dd
+        promise: $dd,
       });
       this._deleteWork.call(this);
       return $dd.promise();
@@ -534,7 +563,7 @@ function (
      * Debounced method that takes chunks of deletes and fires them off
      * in batches, this way we don't send 100 at once.
      */
-    _deleteWork: function () {
+    _deleteWork: function() {
       var self = this;
       var cachedDeletes = this.deleteCache.slice(0);
       var chunk;
@@ -548,8 +577,8 @@ function (
       }
 
       // take each chunk, loop through them creating a request for each
-      _.forEach(chunks, function (c, i) {
-        _.forEach(c, function (del) {
+      _.forEach(chunks, function(c, i) {
+        _.forEach(c, function(del) {
           // add the promise object to array for checking later
           promises.push(del.promise.promise());
 
@@ -558,14 +587,17 @@ function (
           // 2nd request -> wait 6 seconds
           // 3rd request -> wait 9 seconds
           // ...
-          _.delay(function () {
+          _.delay(function() {
             // create the request for each delete
-            var request = self.createRequest(self.getUrl('works', del.putCode), {
-              beforeSend: function (xhr) {
-                xhr._id = del.id;
-              },
-              method: 'DELETE'
-            });
+            var request = self.createRequest(
+              self.getUrl('works', del.putCode),
+              {
+                beforeSend: function(xhr) {
+                  xhr._id = del.id;
+                },
+                method: 'DELETE',
+              }
+            );
 
             // apply the promise handlers
             request
@@ -581,12 +613,17 @@ function (
       });
 
       // resolve remaining promises
-      var finalizeCacheEntries = function () {
-        self.deleteCache = _.reduce(self.deleteCache, function (res, entry) {
-          entry.promise.state() === 'pending'
-            ? entry.promise.reject() : res.push(entry);
-          return res;
-        }, []);
+      var finalizeCacheEntries = function() {
+        self.deleteCache = _.reduce(
+          self.deleteCache,
+          function(res, entry) {
+            entry.promise.state() === 'pending'
+              ? entry.promise.reject()
+              : res.push(entry);
+            return res;
+          },
+          []
+        );
       };
 
       $.when.apply($, promises).always(finalizeCacheEntries);
@@ -600,17 +637,16 @@ function (
      *
      * @param {Object} orcidWork
      */
-    addWork: function (orcidWork) {
+    addWork: function(orcidWork) {
       if (!_.isPlainObject(orcidWork)) {
         throw new TypeError('Should be plain object');
       }
       var $dd = $.Deferred();
       this.addCache.push({
-
         // create unique request id to ride along with request
         id: _.uniqueId(),
         work: orcidWork,
-        promise: $dd
+        promise: $dd,
       });
       this._addWork.call(this);
       return $dd.promise();
@@ -628,17 +664,17 @@ function (
      * @private
      * @returns {*}
      */
-    _addWork: function () {
+    _addWork: function() {
       var self = this;
       var cachedWorks = _.map(self.addCache, 'work');
       var cachedIds = _.map(self.addCache, 'id');
       var prom = self._addWorks(cachedWorks, cachedIds);
 
       // On success, create a new work and remove the entry from the cache
-      prom.done(function (workResponse) {
+      prom.done(function(workResponse) {
         // workResponse will be in ID:WORK format
-        _.forEach(workResponse, function (work, id) {
-          var cacheEntry = _.find(self.addCache, function (e) {
+        _.forEach(workResponse, function(work, id) {
+          var cacheEntry = _.find(self.addCache, function(e) {
             return e.id === id;
           });
 
@@ -674,9 +710,9 @@ function (
 
       // on fail, reject the promises
       // this should receive a list of ids which we can finish up with
-      prom.fail(function (ids) {
+      prom.fail(function(ids) {
         var args = arguments;
-        _.forEach(ids, function (id) {
+        _.forEach(ids, function(id) {
           // find the cache entry
           var idx = _.findIndex(self.addCache, { id: id });
           if (idx >= 0) {
@@ -705,7 +741,7 @@ function (
      * @param {Object[]} orcidWorks
      * @param {Number[]} ids
      */
-    _addWorks: function (orcidWorks, ids) {
+    _addWorks: function(orcidWorks, ids) {
       var self = this;
       if (!_.isArray(orcidWorks) || !_.isArray(ids)) {
         throw new TypeError('works and ids must be arrays');
@@ -721,41 +757,54 @@ function (
 
         // create bulk object
         var bulkWorks = { bulk: [] };
-        _.each(chunk, function (w) {
+        _.each(chunk, function(w) {
           bulkWorks.bulk.push({ work: w });
         });
 
         var url = this.getUrl('works');
-        promises.push(this.createRequest(url, {
-          beforeSend: function (xhr) {
-            xhr.cacheIds = chunkIds;
-          },
-          method: 'POST'
-        }, bulkWorks));
+        promises.push(
+          this.createRequest(
+            url,
+            {
+              beforeSend: function(xhr) {
+                xhr.cacheIds = chunkIds;
+              },
+              method: 'POST',
+            },
+            bulkWorks
+          )
+        );
       }
 
       // when all the promises finish, aggregate the result and index by id
-      $.when.apply($, promises).then(function () {
-        // make sure arguments is an 2d array
-        var doneArgs = _.isArray(arguments[0]) ? arguments : [arguments];
+      $.when.apply($, promises).then(
+        function() {
+          // make sure arguments is an 2d array
+          var doneArgs = _.isArray(arguments[0]) ? arguments : [arguments];
 
-        var obj = _.reduce(doneArgs, function (res, args) {
-          var works = args && args[0] && args[0].bulk;
-          var ids = args && args[2] && args[2].cacheIds;
+          var obj = _.reduce(
+            doneArgs,
+            function(res, args) {
+              var works = args && args[0] && args[0].bulk;
+              var ids = args && args[2] && args[2].cacheIds;
 
-          // build response object, indexed by ids
-          _.forEach(ids, function (id, idx) {
-            res[id] = works[idx];
-          });
+              // build response object, indexed by ids
+              _.forEach(ids, function(id, idx) {
+                res[id] = works[idx];
+              });
 
-          return res;
-        }, {});
+              return res;
+            },
+            {}
+          );
 
-        $dd.resolve(obj);
-      }, function (xhr) {
-        self.setDirty();
-        $dd.reject.apply($dd, [xhr.cacheIds].concat(arguments));
-      });
+          $dd.resolve(obj);
+        },
+        function(xhr) {
+          self.setDirty();
+          $dd.reject.apply($dd, [xhr.cacheIds].concat(arguments));
+        }
+      );
 
       return $dd.promise();
     },
@@ -770,7 +819,7 @@ function (
      * @param {Object} [opts={}] opts - request options
      * @returns {*}
      */
-    sendData: function (url, data, opts) {
+    sendData: function(url, data, opts) {
       var result = $.Deferred();
       opts = opts || {};
 
@@ -782,7 +831,7 @@ function (
         timeout: this.orcidApiTimeout,
         done: _.bind(result.resolve, result),
         fail: _.bind(result.reject, result),
-        always: _.bind(result.always, result)
+        always: _.bind(result.always, result),
       };
 
       if (data) {
@@ -795,8 +844,11 @@ function (
         options.converters = {
           '* text': window.String,
           'text html': true,
-          'text json': function (input) { input = input || '{}'; return $.parseJSON(input); },
-          'text xml': $.parseXML
+          'text json': function(input) {
+            input = input || '{}';
+            return $.parseJSON(input);
+          },
+          'text xml': $.parseXML,
         };
       } else {
         options.data = null; // to prevent api.request() from adding {} to the url params
@@ -812,7 +864,8 @@ function (
 
       options.headers.Authorization = api.access_token;
       if (!options.headers['Orcid-Authorization'] && this.authData) {
-        options.headers['Orcid-Authorization'] = 'Bearer ' + this.authData.access_token;
+        options.headers['Orcid-Authorization'] =
+          'Bearer ' + this.authData.access_token;
       }
       if (!options.headers['Content-Type']) {
         options.headers['Content-Type'] = 'application/json';
@@ -821,11 +874,13 @@ function (
         options.headers.Accept = 'application/json';
       }
 
-      api.request(new ApiRequest({
-        target: url,
-        query: new ApiQuery(),
-        options: options
-      }));
+      api.request(
+        new ApiRequest({
+          target: url,
+          query: new ApiQuery(),
+          options: options,
+        })
+      );
       return result.promise();
     },
 
@@ -848,59 +903,68 @@ function (
      * @returns {jQuery.Promise<Object>} - request promise
      * @private
      */
-    _checkIdsInADS: function (apiQuery) {
+    _checkIdsInADS: function(apiQuery) {
       var api = this.getBeeHive().getService('Api');
       var dd = $.Deferred();
 
       apiQuery.set('fl', 'bibcode, doi, alternate_bibcode');
       apiQuery.set('rows', '5000');
 
-      var onDone = function (data) {
+      var onDone = function(data) {
         if (!data || !data.response || !data.response.docs) {
           return dd.resolve({});
         }
 
         // we have to create an identifier string for each
-        var ret = _.reduce(data.response.docs, function (res, doc) {
-          var bibcode = doc.bibcode.toLowerCase();
-          var key = 'identifier:' + bibcode;
-          res[key] = bibcode;
-          _.each(doc.doi, function (doi) {
-            var key = 'identifier:' + doi.toLowerCase().replace('doi:', '');
+        var ret = _.reduce(
+          data.response.docs,
+          function(res, doc) {
+            var bibcode = doc.bibcode.toLowerCase();
+            var key = 'identifier:' + bibcode;
             res[key] = bibcode;
-          });
-          _.each(doc.alternate_bibcode, function (ab) {
-            var key = 'identifier:' + ab.toLowerCase();
-            res[key] = bibcode;
-          });
-          return res;
-        }, {});
+            _.each(doc.doi, function(doi) {
+              var key = 'identifier:' + doi.toLowerCase().replace('doi:', '');
+              res[key] = bibcode;
+            });
+            _.each(doc.alternate_bibcode, function(ab) {
+              var key = 'identifier:' + ab.toLowerCase();
+              res[key] = bibcode;
+            });
+            return res;
+          },
+          {}
+        );
 
         dd.resolve(ret);
       };
 
-      var onFail = function () {
+      var onFail = function() {
         dd.resolve({});
       };
 
-      api.request(new ApiRequest({
-        target: ApiTargets.SEARCH,
-        query: apiQuery,
-        options: {
-          done: onDone,
-          fail: onFail
-        }
-      })).fail(onFail);
+      api
+        .request(
+          new ApiRequest({
+            target: ApiTargets.SEARCH,
+            query: apiQuery,
+            options: {
+              done: onDone,
+              fail: onFail,
+            },
+          })
+        )
+        .fail(onFail);
 
       // reject after timeout, if necessary
       (function check(count) {
         if (dd.state() === 'pending' && count <= 0) {
           return dd.reject('Request Timeout');
-        } if (dd.state() === 'resolved') {
+        }
+        if (dd.state() === 'resolved') {
           return;
         }
         _.delay(check, 1000, --count);
-      }(this.adsQueryTimeout));
+      })(this.adsQueryTimeout);
 
       return dd.promise();
     },
@@ -932,13 +996,13 @@ function (
      * @returns {ApiQuery} - a new api query to use in a request
      * @private
      */
-    _buildQuery: function (query) {
+    _buildQuery: function(query) {
       if (_.isEmpty(query) || !query.identifier) {
         return null;
       }
 
       // reformat array as 'identifier:xxx OR identifier:xxx'
-      var q = _.filter(query.identifier, function (i) {
+      var q = _.filter(query.identifier, function(i) {
         // grab only non-empty entries
         return !_.isEmpty(i.trim()) || i === 'NONE';
       }).join(' OR ');
@@ -965,14 +1029,14 @@ function (
       this.dbUpdatePromise = $.Deferred();
 
       // set the database object and resolve the promise
-      var finishUpdate = function (db) {
+      var finishUpdate = function(db) {
         var dbPromise = self.dbUpdatePromise;
         self.setClean();
         self.db = db;
         if (dbPromise) {
           dbPromise.resolve();
         }
-        setTimeout(function () {
+        setTimeout(function() {
           if (dbPromise && dbPromise.state() !== 'pending') {
             dbPromise = null;
             self.setDirty();
@@ -997,7 +1061,7 @@ function (
             db[key.toLowerCase()] = {
               sourcedByADS: self.isSourcedByADS(w),
               putcode: w.getPutCode(),
-              idx: i
+              idx: i,
             };
           }
         });
@@ -1039,9 +1103,9 @@ function (
          * unset (-1) so that it won't be counted as an orcid record.
          *
          */
-        var querySuccess = function (ids) {
+        var querySuccess = function(ids) {
           // Update each orcid record with identifier info gained from ADS
-          _.each(db, function (v, key) {
+          _.each(db, function(v, key) {
             var bibcode = ids[key];
 
             // ADS did not find a record for this identifier
@@ -1056,9 +1120,11 @@ function (
         };
 
         // on fail, alert the console and finish the update
-        var queryFailure = function () {
-          console.error.apply(console, [
-            'Error processing response from ADS'].concat(arguments));
+        var queryFailure = function() {
+          console.error.apply(
+            console,
+            ['Error processing response from ADS'].concat(arguments)
+          );
           finishUpdate(db);
         };
 
@@ -1069,9 +1135,11 @@ function (
         update(profile);
       } else {
         // if we aren't passed a profile, get the current one
-        this.getUserProfile().done(update).fail(function () {
-          self.dbUpdatePromise.reject.apply(self.dbUpdatePromise, arguments);
-        });
+        this.getUserProfile()
+          .done(update)
+          .fail(function() {
+            self.dbUpdatePromise.reject.apply(self.dbUpdatePromise, arguments);
+          });
       }
 
       return self.dbUpdatePromise.promise();
@@ -1085,7 +1153,7 @@ function (
      *
      * @param {object} adsWork
      */
-    getRecordInfo: function (adsWork) {
+    getRecordInfo: function(adsWork) {
       var self = this;
       var dd = $.Deferred();
 
@@ -1106,7 +1174,7 @@ function (
           isCreatedByADS: false,
           isCreatedByOthers: false,
           isKnownToADS: false,
-          provenance: null
+          provenance: null,
         };
 
         /*
@@ -1114,7 +1182,7 @@ function (
         Then we can add some metadata like whether it was an ADS sourced
         record or not
           */
-        var updateRecord = function (v, k) {
+        var updateRecord = function(v, k) {
           // db is always 'identifier:xxx'
           var key = ('identifier:' + v).toLowerCase();
           var rec = self.db[key];
@@ -1133,9 +1201,15 @@ function (
           }
         };
 
-        var ids = _.pick(adsWork, 'identifier', 'bibcode', 'doi', 'alternate_bibcode');
+        var ids = _.pick(
+          adsWork,
+          'identifier',
+          'bibcode',
+          'doi',
+          'alternate_bibcode'
+        );
 
-        _.each(ids, function (value, key) {
+        _.each(ids, function(value, key) {
           if (_.isArray(value)) {
             _.each(value, updateRecord);
           } else {
@@ -1148,7 +1222,7 @@ function (
 
       if (this.needsUpdate()) {
         this.updateDatabase()
-          .done(function () {
+          .done(function() {
             dd.resolve(getRecordMetaData(adsWork));
           })
           .fail(_.bind(dd.reject, dd));
@@ -1165,15 +1239,15 @@ function (
      *
      * @returns {boolean}
      */
-    needsUpdate: function () {
+    needsUpdate: function() {
       return this.dirty;
     },
 
-    setDirty: function () {
+    setDirty: function() {
       this.dirty = true;
     },
 
-    setClean: function () {
+    setClean: function() {
       this.dirty = false;
     },
 
@@ -1190,8 +1264,8 @@ function (
       deleteWork: 'remove an entry from orcid',
       updateWork: 'update an orcid work',
       getWork: 'get an orcid work',
-      getWorks: 'get an array of orcid works'
-    }
+      getWorks: 'get an array of orcid works',
+    },
   });
 
   _.extend(OrcidApi.prototype, Mixins.BeeHive);

@@ -2,24 +2,16 @@ define([
   'underscore',
   'utils',
   'js/widgets/base/base_widget',
-  'js/components/api_query_updater'
-],
-function (
-  _,
-  utils,
-  BaseWidget,
-  ApiQueryUpdater
-) {
+  'js/components/api_query_updater',
+], function(_, utils, BaseWidget, ApiQueryUpdater) {
   var BaseFacetWidget = BaseWidget.extend({
-
-    initialize: function (options) {
+    initialize: function(options) {
       options = options || {};
       this.processResponse = options.processResponse;
       this.model = new Backbone.Model();
-      this.view = new options.graphView(_.extend(
-        options.graphViewOptions,
-        { model: this.model }
-      ));
+      this.view = new options.graphView(
+        _.extend(options.graphViewOptions, { model: this.model })
+      );
       this.isActive = false;
       this.isDone = false;
 
@@ -31,13 +23,21 @@ function (
       this.on('active', this.onActive);
       this.on('hidden', this.onHidden);
 
-      this.dispatchRequest = _.debounce(_.bind(this.dispatchRequest, this), 300);
+      this.dispatchRequest = _.debounce(
+        _.bind(this.dispatchRequest, this),
+        300
+      );
     },
 
-    activate: function (beehive) {
+    activate: function(beehive) {
       var self = this;
       this.setBeeHive(beehive);
-      _.bindAll(this, 'dispatchRequest', 'processResponse', 'onInvitingRequest');
+      _.bindAll(
+        this,
+        'dispatchRequest',
+        'processResponse',
+        'onInvitingRequest'
+      );
       // custom dispatchRequest function goes here
       var pubsub = this.getPubSub();
       pubsub.subscribe(pubsub.INVITING_REQUEST, this.onInvitingRequest);
@@ -46,7 +46,7 @@ function (
       this.attachGeneralHandler(this.onFeedback);
     },
 
-    onInvitingRequest: function (apiQuery) {
+    onInvitingRequest: function(apiQuery) {
       if (this._sortChanged.call(this, apiQuery)) {
         return;
       }
@@ -56,9 +56,12 @@ function (
       this.updateState(this.STATES.LOADING);
     },
 
-    _sortChanged: function (apiQuery) {
+    _sortChanged: function(apiQuery) {
       try {
-        var diff = utils.difference(apiQuery.toJSON(), this.getCurrentQuery().toJSON());
+        var diff = utils.difference(
+          apiQuery.toJSON(),
+          this.getCurrentQuery().toJSON()
+        );
       } catch (e) {
         // continue
       }
@@ -67,7 +70,7 @@ function (
       return diff && diff.sort && _.keys(diff).length === 1;
     },
 
-    dispatchRequest: function (apiQuery) {
+    dispatchRequest: function(apiQuery) {
       if (this.isActive && !this.isDone && apiQuery.has('q')) {
         // reset the graph
         this.model.unset('graphData');
@@ -80,13 +83,12 @@ function (
       }
     },
 
-    removeAnyOldConditions: function (query, fieldName) {
+    removeAnyOldConditions: function(query, fieldName) {
       var q = query.clone();
       var oldField = q.get('__' + this.facetField + '_' + fieldName);
 
       // check for field on current query
       if (oldField && oldField.length > 0) {
-
         // grab the last value and check to make sure it is actually in the query string
         var oldVal = _.last(oldField);
         if (q.get(fieldName)[0].indexOf(oldVal) > -1) {
@@ -96,10 +98,15 @@ function (
       return q;
     },
 
-    handleConditionApplied: function (val) {
+    handleConditionApplied: function(val) {
       var fieldName = 'q';
       var q = this.getCurrentQuery();
-      q.set('q', /^\(.*\)/.test(q.get('q')[0]) ? q.get('q')[0] : '(' + q.get('q')[0] + ')');
+      q.set(
+        'q',
+        /^\(.*\)/.test(q.get('q')[0])
+          ? q.get('q')[0]
+          : '(' + q.get('q')[0] + ')'
+      );
       val = this.facetField + ':' + val;
       q = q.clone();
       q = this.removeAnyOldConditions(q, fieldName);
@@ -108,7 +115,7 @@ function (
       this.dispatchNewQuery(q);
     },
 
-    onActive: function () {
+    onActive: function() {
       if (!this.isActive && this.isDone && this.model.get('error')) {
         this.isDone = false;
         this.model.set('error', false);
@@ -117,14 +124,14 @@ function (
       this.dispatchRequest(this.getCurrentQuery());
     },
 
-    onHidden: function () {
+    onHidden: function() {
       this.isActive = false;
     },
 
-    onFeedback: function () {
+    onFeedback: function() {
       this.model.set('error', true);
       this.updateState(this.STATES.ERRORED);
-    }
+    },
   });
 
   return BaseFacetWidget;

@@ -10,8 +10,8 @@ define([
   'bootstrap',
   'js/components/api_feedback',
   'js/components/api_targets',
-  'analytics'
-], function (
+  'analytics',
+], function(
   Marionette,
   BaseWidget,
   ApiResponse,
@@ -31,59 +31,66 @@ define([
       widgetName: 'CitationHelper',
       libraryID: null,
       permission: null,
-      libname: null
-    }
+      libname: null,
+    },
   });
 
   var View = Marionette.ItemView.extend({
-
     template: CitationHelperTemplate,
 
     events: {
       'click .close-widget': 'signalCloseWidget',
-      'click .submit-add-to-library': 'libraryAdd'
+      'click .submit-add-to-library': 'libraryAdd',
     },
 
     modelEvents: {
-      change: 'render'
+      change: 'render',
     },
 
-    libraryAdd: function () {
+    libraryAdd: function() {
       // show loading view
-      this.$('.submit-add-to-library').html('<i class="fa fa-spinner fa-pulse"></i>');
+      this.$('.submit-add-to-library').html(
+        '<i class="fa fa-spinner fa-pulse"></i>'
+      );
 
       var data = {};
 
       // we have the selected library in the model but only if there was a select event, so query DOM
       data.libraryID = this.model.get('libraryID');
       data.libname = this.model.get('libname');
-      var bibcodes = this.$('input:checked').map(function () { return this.value; }).get();
+      var bibcodes = this.$('input:checked')
+        .map(function() {
+          return this.value;
+        })
+        .get();
       data.recordsToAdd = bibcodes;
       this.trigger('library-add', data);
     },
 
-    signalCloseWidget: function () {
+    signalCloseWidget: function() {
       this.trigger('close-widget');
-    }
-
+    },
   });
 
   var CitationHelperWidget = BaseWidget.extend({
-
     viewEvents: {
       'close-widget': 'closeWidget',
-      'library-add': 'libraryAddSubmit'
+      'library-add': 'libraryAddSubmit',
     },
 
-    initialize: function (options) {
+    initialize: function(options) {
       options = options || {};
 
       this.model = new Model();
       this.view = new View({ model: this.model });
-      Marionette.bindEntityEvents(this, this.view, Marionette.getOption(this, 'viewEvents'));
+      Marionette.bindEntityEvents(
+        this,
+        this.view,
+        Marionette.getOption(this, 'viewEvents')
+      );
     },
 
-    activate: function (beehive) {
+    activate: function(beehive) {
       this.setBeeHive(beehive);
       _.bindAll(this, 'setCurrentQuery', 'processResponse');
       var pubsub = beehive.getService('PubSub');
@@ -92,48 +99,55 @@ define([
 
       // on initialization, store the current query
       if (this.getBeeHive().getObject('AppStorage')) {
-        this.setCurrentQuery(this.getBeeHive().getObject('AppStorage').getCurrentQuery());
+        this.setCurrentQuery(
+          this.getBeeHive()
+            .getObject('AppStorage')
+            .getCurrentQuery()
+        );
       }
     },
 
-    libraryAddSubmit: function (data) {
-      var options = {},
-        that = this;
+    libraryAddSubmit: function(data) {
+      var options = {};
+      var that = this;
 
       options.library = data.libraryID;
       options.bibcodes = data.recordsToAdd;
       name = data.libname;
 
       // this returns a promise
-      this.getBeeHive().getObject('LibraryController').addBibcodesToLib(options)
-        .done(function (response, status) {
-          var numAlreadyInLib = response.numBibcodesRequested - parseInt(response.number_added);
+      this.getBeeHive()
+        .getObject('LibraryController')
+        .addBibcodesToLib(options)
+        .done(function(response, status) {
+          var numAlreadyInLib =
+            response.numBibcodesRequested - parseInt(response.number_added);
           that.model.set('feedback', {
             success: true,
             name: name,
             id: data.libraryID,
             numRecords: response.number_added,
-            numAlreadyInLib: numAlreadyInLib
+            numAlreadyInLib: numAlreadyInLib,
           });
         })
-        .fail(function (response) {
+        .fail(function(response) {
           that.model.set('feedback', {
             success: false,
             name: name,
             id: data.libraryID,
-            error: JSON.parse(arguments[0].responseText).error
+            error: JSON.parse(arguments[0].responseText).error,
           });
         });
 
       this.clearFeedbackWithDelay();
     },
 
-    clearFeedbackWithDelay: function () {
-      var that = this,
-        // five seconds
-        timeout = 5000;
+    clearFeedbackWithDelay: function() {
+      var that = this;
+      // five seconds
+      var timeout = 5000;
 
-      setTimeout(function () {
+      setTimeout(function() {
         that.model.unset('feedback');
       }, timeout);
     },
@@ -143,22 +157,22 @@ define([
     //     {"bibcodes": [ ... list of bibcodes]}
     // and if actual results are found, the service will answer with a list of dictionaries
     // with each dictionary have 4 attributes: bibcode, title, author and score
-    getSuggestions: function (bibcodes) {
-      var d = $.Deferred(),
-        pubsub = this.getPubSub(),
-        options = {
-          type: 'POST',
-          contentType: 'application/json'
-        };
+    getSuggestions: function(bibcodes) {
+      var d = $.Deferred();
+      var pubsub = this.getPubSub();
+      var options = {
+        type: 'POST',
+        contentType: 'application/json',
+      };
 
       var request = new ApiRequest({
         target: ApiTargets.SERVICE_CITATION_HELPER,
         query: new ApiQuery({ bibcodes: bibcodes }),
-        options: options
+        options: options,
       });
       // so promise can be resolved
 
-      pubsub.subscribeOnce(pubsub.DELIVERING_RESPONSE, function (response) {
+      pubsub.subscribeOnce(pubsub.DELIVERING_RESPONSE, function(response) {
         d.resolve(response.toJSON());
       });
 
@@ -169,45 +183,50 @@ define([
     // Depending on the type of response we get, we either contact the Citation Helper end point
     // to get results, or we use the results retrieved from this end point to populate the
     // template and display the results
-    processResponse: function (response) {
+    processResponse: function(response) {
       // We received bibcodes from the search end point
       if (response instanceof ApiResponse) {
-        var bibcodes = _.map(response.get('response.docs'), function (d) { return d.bibcode; });
+        var bibcodes = _.map(response.get('response.docs'), function(d) {
+          return d.bibcode;
+        });
         // send the bibcodes to the Citation Helper end point
         this.getSuggestions(bibcodes);
       }
       // We got an answer from the Citation Helper end point:
-	  // the Citation Helper sends back a list of dictionaries
+      // the Citation Helper sends back a list of dictionaries
       // with keys 'bibcode', 'title', 'author', 'score'
       else if (response instanceof JsonResponse) {
         this.processSuggestions(response);
       }
     },
 
-    processSuggestions: function (response) {
+    processSuggestions: function(response) {
       // how is the json response formed? need to figure out why attributes is there
       response = response.attributes ? response.attributes : response;
-      if ((response.Error && response.Error === 'Unable to get results!') || (response.status == 500)) {
+      if (
+        (response.Error && response.Error === 'Unable to get results!') ||
+        response.status == 500
+      ) {
         this.model.set('msg', 'Citation Helper did not find any suggestions.');
       } else {
         this.model.set('items', response);
       }
     },
 
-    renderWidgetForCurrentQuery: function () {
+    renderWidgetForCurrentQuery: function() {
       this.reset();
       this.dispatchRequest(this.getCurrentQuery());
     },
 
-    reset: function () {
+    reset: function() {
       this.model.clear({ silent: true }).set('items', [], { silent: true });
     },
 
-    closeWidget: function () {
+    closeWidget: function() {
       this.getPubSub().publish(this.getPubSub().NAVIGATE, 'results-page');
     },
 
-    renderWidgetForListOfBibcodes: function (bibcodes, data) {
+    renderWidgetForListOfBibcodes: function(bibcodes, data) {
       this.reset();
 
       var request = new ApiRequest({
@@ -215,19 +234,18 @@ define([
         query: new ApiQuery({ bibcodes: bibcodes }),
         options: {
           type: 'POST',
-          contentType: 'application/json'
-        }
+          contentType: 'application/json',
+        },
       });
 
       this.model.set({
         libraryID: data.libid,
         permission: data.permission,
-        libname: data.libname
+        libname: data.libname,
       });
 
       this.getPubSub().publish(this.getPubSub().EXECUTE_REQUEST, request);
-    }
-
+    },
   });
 
   _.extend(CitationHelperWidget.prototype, Dependon.BeeHive);

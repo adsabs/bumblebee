@@ -44,7 +44,8 @@ define([
           nonRefData = nonRefData.pivot;
         }
 
-        var maxVal, minVal;
+        var maxVal;
+        var minVal;
 
         _.each(refData, function(d) {
           var val = parseInt(d.value);
@@ -147,16 +148,16 @@ define([
         var finalData = [];
 
         _.each(refData, function(d) {
-          var val = d.value,
-            count = d.count;
+          var val = d.value;
+          var count = d.count;
           _.each(_.range(count), function() {
             finalData.push({ refereed: true, x: undefined, y: val });
           });
         });
 
         _.each(nonRefData, function(d) {
-          var val = d.value,
-            count = d.count;
+          var val = d.value;
+          var count = d.count;
           _.each(_.range(count), function() {
             finalData.push({ refereed: false, x: undefined, y: val });
           });
@@ -235,16 +236,16 @@ define([
         var finalData = [];
 
         _.each(refData, function(d) {
-          var val = d.value,
-            count = d.count;
+          var val = d.value;
+          var count = d.count;
           _.each(_.range(count), function() {
             finalData.push({ refereed: true, x: undefined, y: val });
           });
         });
 
         _.each(nonRefData, function(d) {
-          var val = d.value,
-            count = d.count;
+          var val = d.value;
+          var count = d.count;
           _.each(_.range(count), function() {
             finalData.push({ refereed: false, x: undefined, y: val });
           });

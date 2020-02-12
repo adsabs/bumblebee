@@ -1,4 +1,3 @@
-
 define([
   'backbone',
   'js/components/generic_module',
@@ -7,10 +6,8 @@ define([
   'js/components/api_request',
   'js/components/api_feedback',
   'js/components/api_query',
-  'js/mixins/dependon'
-
-],
-function (
+  'js/mixins/dependon',
+], function(
   Backbone,
   GenericModule,
   Hardened,
@@ -21,72 +18,82 @@ function (
   Dependon
 ) {
   var LibraryModel = Backbone.Model.extend({
-
-    defaults: function () {
+    defaults: function() {
       // this is the data we expect to get from the server
       return {
-        'num_documents': 0,
-        'date_last_modified': undefined,
-        'permission': undefined,
-        'description': '',
-        'public': false,
-        'num_users': 1,
-        'owner': undefined,
-        'date_created': undefined,
-        'id': undefined,
-        'title': ''
-
+        num_documents: 0,
+        date_last_modified: undefined,
+        permission: undefined,
+        description: '',
+        public: false,
+        num_users: 1,
+        owner: undefined,
+        date_created: undefined,
+        id: undefined,
+        title: '',
       };
-    }
-
+    },
   });
 
   var LibraryCollection = Backbone.Collection.extend({
-    model: LibraryModel
+    model: LibraryModel,
   });
 
-
   var LibraryController = GenericModule.extend({
-
-    initialize: function () {
+    initialize: function() {
       // store all metadata entries here
       this.collection = new LibraryCollection();
     },
 
-    activate: function (beehive) {
+    activate: function(beehive) {
       var self = this;
       this.setBeeHive(beehive.getHardenedInstance());
       var pubsub = this.getBeeHive().getService('PubSub');
 
-      pubsub.subscribe(pubsub.INVITING_REQUEST, _.bind(this.updateCurrentQuery, this));
-      pubsub.subscribe(pubsub.USER_ANNOUNCEMENT, _.bind(this.handleUserAnnouncement, this));
-      pubsub.subscribe(pubsub.CUSTOM_EVENT, function (event) {
+      pubsub.subscribe(
+        pubsub.INVITING_REQUEST,
+        _.bind(this.updateCurrentQuery, this)
+      );
+      pubsub.subscribe(
+        pubsub.USER_ANNOUNCEMENT,
+        _.bind(this.handleUserAnnouncement, this)
+      );
+      pubsub.subscribe(pubsub.CUSTOM_EVENT, function(event) {
         if (event === 'invalidate-library-metadata') {
           self._metadataLoaded = false;
         }
       });
       /*
-         * the three events that come from changing a collection:
-         * -change if a model's contents were changed
-         * -add if models were added
-         * -reset if the entire collection was reset
-         * -remove when a model is removed (library deleted)
-         * */
-      _.each(['change', 'add', 'reset', 'remove'], function (ev) {
-        this.listenTo(this.collection, ev, function (arg1, arg2) {
-          if (ev == 'change' && arg1 instanceof Backbone.Model) {
-            // a single model changed, widgets might want to know which one
-            pubsub.publish(pubsub.LIBRARY_CHANGE, this.collection.toJSON(), { ev: ev, id: arg1.id });
-            // also clear out the bibcode cache if necessary
-            delete this._libraryBibcodeCache[arg1.id];
-          } else {
-            pubsub.publish(pubsub.LIBRARY_CHANGE, this.collection.toJSON(), { ev: ev });
-          }
-        });
-      }, this);
+       * the three events that come from changing a collection:
+       * -change if a model's contents were changed
+       * -add if models were added
+       * -reset if the entire collection was reset
+       * -remove when a model is removed (library deleted)
+       * */
+      _.each(
+        ['change', 'add', 'reset', 'remove'],
+        function(ev) {
+          this.listenTo(this.collection, ev, function(arg1, arg2) {
+            if (ev == 'change' && arg1 instanceof Backbone.Model) {
+              // a single model changed, widgets might want to know which one
+              pubsub.publish(pubsub.LIBRARY_CHANGE, this.collection.toJSON(), {
+                ev: ev,
+                id: arg1.id,
+              });
+              // also clear out the bibcode cache if necessary
+              delete this._libraryBibcodeCache[arg1.id];
+            } else {
+              pubsub.publish(pubsub.LIBRARY_CHANGE, this.collection.toJSON(), {
+                ev: ev,
+              });
+            }
+          });
+        },
+        this
+      );
     },
 
-    handleUserAnnouncement: function (event) {
+    handleUserAnnouncement: function(event) {
       if (event == 'user_signed_in') {
         this._fetchAllMetadata();
       } else if (event == 'user_signed_out') {
@@ -95,30 +102,32 @@ function (
     },
 
     /*
-       * private methods
-       */
+     * private methods
+     */
 
-    updateCurrentQuery: function (apiQuery) {
+    updateCurrentQuery: function(apiQuery) {
       this._currentQuery = apiQuery;
     },
 
-    composeRequest: function (target, method, options) {
-      var request,
-        options = options || {},
-        data = options.data || undefined;
+    composeRequest: function(target, method, options) {
+      var request;
+      var options = options || {};
+      var data = options.data || undefined;
 
-        // using "endpoint" to mean the actual url string
-        // get data from the relevant model based on the endpoint
+      // using "endpoint" to mean the actual url string
+      // get data from the relevant model based on the endpoint
 
       var deferred = $.Deferred();
 
       function done() {
-        var args = [_.extend(arguments[0], options.extraArguments), [].slice(arguments, 1)];
+        var args = [
+          _.extend(arguments[0], options.extraArguments),
+          [].slice(arguments, 1),
+        ];
         deferred.resolve.apply(undefined, args);
       }
 
       function fail(error) {
-
         // on fail, send a custom event to alert library widgets
         var ps = this.getPubSub();
         ps.publish(ps.CUSTOM_EVENT, 'libraries:request:fail', error);
@@ -133,40 +142,46 @@ function (
           data: JSON.stringify(data),
           contentType: 'application/json',
           done: done,
-          fail: fail
-        }
+          fail: fail,
+        },
       });
 
-      this.getBeeHive().getService('Api').request(request);
+      this.getBeeHive()
+        .getService('Api')
+        .request(request);
 
       return deferred.promise();
     },
 
-    _executeApiRequest: function (apiQuery) {
+    _executeApiRequest: function(apiQuery) {
       var req = new ApiRequest({
         target: ApiTargets.SEARCH,
-        query: apiQuery
+        query: apiQuery,
       });
       var defer = $.Deferred();
       var pubsub = this.getPubSub();
-      pubsub.subscribeOnce(pubsub.DELIVERING_RESPONSE, _.bind(function (data) {
-        defer.resolve(data);
-      }), this);
+      pubsub.subscribeOnce(
+        pubsub.DELIVERING_RESPONSE,
+        _.bind(function(data) {
+          defer.resolve(data);
+        }),
+        this
+      );
 
       pubsub.publish(pubsub.EXECUTE_REQUEST, req);
 
       return defer.promise();
     },
 
-    _getBibcodes: function (options) {
-      var deferred = $.Deferred(),
-        that = this;
+    _getBibcodes: function(options) {
+      var deferred = $.Deferred();
+      var that = this;
 
       if (options.bibcodes == 'all') {
-        var limit = options.limit || 2000,
-          start = 0,
-          rows = 100,
-          bibcodes = [];
+        var limit = options.limit || 2000;
+        var start = 0;
+        var rows = 100;
+        var bibcodes = [];
 
         var q = this._currentQuery.clone();
         q.unlock();
@@ -176,8 +191,8 @@ function (
         function makeRequest() {
           q.set('start', start);
 
-          this._executeApiRequest(q).done(function (apiResponse) {
-            var bibs = _.map(apiResponse.get('response.docs'), function (d) {
+          this._executeApiRequest(q).done(function(apiResponse) {
+            var bibs = _.map(apiResponse.get('response.docs'), function(d) {
               return d.bibcode;
             });
 
@@ -192,7 +207,9 @@ function (
         }
         makeRequest.call(this);
       } else if (options.bibcodes == 'selected') {
-        var bibs = this.getBeeHive().getObject('AppStorage').getSelectedPapers();
+        var bibs = this.getBeeHive()
+          .getObject('AppStorage')
+          .getSelectedPapers();
         deferred.resolve(bibs);
       }
       // for abstract widget
@@ -205,28 +222,28 @@ function (
       return deferred.promise();
     },
 
-    _fetchAllMetadata: function () {
+    _fetchAllMetadata: function() {
       var that = this;
 
       var endpoint = ApiTargets.LIBRARIES;
-      return this.composeRequest(endpoint, 'GET').done(function (data) {
+      return this.composeRequest(endpoint, 'GET').done(function(data) {
         that._metadataLoaded = true;
         that.collection.reset(data.libraries);
       });
     },
 
     /*
-       * public methods
-       *
-       */
+     * public methods
+     *
+     */
     /*
-      * this is how widgets/controllers can learn about
-      * all libraries
-      * if you provide an id, you just get info
-      * about the lib with that id
-      * */
+     * this is how widgets/controllers can learn about
+     * all libraries
+     * if you provide an id, you just get info
+     * about the lib with that id
+     * */
 
-    getLibraryMetadata: function (id) {
+    getLibraryMetadata: function(id) {
       // check to see if the id is even in the collection,
       // if not return fetchLibraryMetadata;
       if (id && !this.collection.get(id)) {
@@ -236,37 +253,41 @@ function (
       var that = this;
       // if this is the initial check, just wait until we can load the metadata
       if (!this._metadataLoaded) {
-        this._fetchAllMetadata().done(function (data) {
+        this._fetchAllMetadata().done(function(data) {
           // make sure the collection is refilled before this promise is resolved
-          setTimeout(function () {
-            var data = id ? that.collection.get(id).toJSON() : that.collection.toJSON();
+          setTimeout(function() {
+            var data = id
+              ? that.collection.get(id).toJSON()
+              : that.collection.toJSON();
             deferred.resolve(data);
           }, 1);
         });
       } else {
-        var data = id ? that.collection.get(id).toJSON() : that.collection.toJSON();
+        var data = id
+          ? that.collection.get(id).toJSON()
+          : that.collection.toJSON();
         deferred.resolve(data);
       }
       return deferred.promise();
     },
 
     /*
-      * fetch the data especially -- useful for public libraries but also
-      * in case the new data hasn't been added to the collection yet
-      * */
+     * fetch the data especially -- useful for public libraries but also
+     * in case the new data hasn't been added to the collection yet
+     * */
 
-    fetchLibraryMetadata: function (id) {
+    fetchLibraryMetadata: function(id) {
       var that = this;
       if (!id) throw new Error('need to provide a library id');
       var deferred = $.Deferred();
 
       this.composeRequest(ApiTargets.LIBRARIES + '/' + id)
-        .done(function (data) {
+        .done(function(data) {
           deferred.resolve(data.metadata);
           // set into collection
           that.collection.add(data.metadata, { merge: true });
         })
-        .fail(function () {
+        .fail(function() {
           // just navigate to a 404 page
           that.getPubSub().publish(that.getPubSub().NAVIGATE, '404');
         });
@@ -274,50 +295,54 @@ function (
       return deferred.promise();
     },
 
-
     /*
-      *
-      * here, store lists of bibcodes requested from the 'getLibraryBibcodes'
-      * method. they are stored here so that if a user quickly toggles back
-      * and forth between the export/metrics/vis widget, we won't have to re-fetch
-      * the bibcodes
-      * */
+     *
+     * here, store lists of bibcodes requested from the 'getLibraryBibcodes'
+     * method. they are stored here so that if a user quickly toggles back
+     * and forth between the export/metrics/vis widget, we won't have to re-fetch
+     * the bibcodes
+     * */
 
     _libraryBibcodeCache: {},
 
     /*
-      * get list of 2000 bibcodes,
-      * this is used for fetching data for export, metrics, etc
-      *
-      * */
+     * get list of 2000 bibcodes,
+     * this is used for fetching data for export, metrics, etc
+     *
+     * */
 
-    getLibraryBibcodes: function (id) {
-      var deferred = $.Deferred(),
-        that = this,
-        // hard limit, no more than 10,000 records can be exported to search results page
-        maxReturned = 10000;
+    getLibraryBibcodes: function(id) {
+      var deferred = $.Deferred();
+      var that = this;
+      // hard limit, no more than 10,000 records can be exported to search results page
+      var maxReturned = 10000;
 
-        // we already have it in the cache, so just resolve + return promise
+      // we already have it in the cache, so just resolve + return promise
       if (this._libraryBibcodeCache[id]) {
         deferred.resolve(this._libraryBibcodeCache[id]);
         return deferred.promise();
       }
 
-      var limit = maxReturned,
-        // start gets incremented
-        start = 0,
-        rows = 100,
-        bibcodes = [],
-        endpoint = ApiTargets.LIBRARIES + '/' + id,
-        that = this;
+      var limit = maxReturned;
+      // start gets incremented
+      var start = 0;
+      var rows = 100;
+      var bibcodes = [];
+      var endpoint = ApiTargets.LIBRARIES + '/' + id;
+      var that = this;
 
-        // this function gets called repeatedly
+      // this function gets called repeatedly
       function done(data) {
-        limit = data.solr.response.numFound > maxReturned ? maxReturned : data.solr.response.numFound;
+        limit =
+          data.solr.response.numFound > maxReturned
+            ? maxReturned
+            : data.solr.response.numFound;
         var bibs = _.pluck(data.solr.response.docs, 'bibcode');
         [].push.apply(bibcodes, bibs);
         start += rows;
-        if (start < limit) { makeRequest(); } else {
+        if (start < limit) {
+          makeRequest();
+        } else {
           that._libraryBibcodeCache[id] = bibcodes;
           deferred.resolve(bibcodes);
         }
@@ -337,10 +362,13 @@ function (
             context: this,
             contentType: 'application/x-www-form-urlencoded',
             done: done,
-            fail: this.handleError
-          }
+            fail: this.handleError,
+          },
         });
-        that.getBeeHive().getService('Api').request(request);
+        that
+          .getBeeHive()
+          .getService('Api')
+          .request(request);
       }
 
       makeRequest.call(this);
@@ -348,67 +376,108 @@ function (
     },
 
     /*
-       * requires id, name, description
-       */
+     * requires id, name, description
+     */
 
-    createLibrary: function (data) {
+    createLibrary: function(data) {
       var that = this;
 
       var endpoint = ApiTargets.LIBRARIES;
-      return this.composeRequest(endpoint, 'POST', { data: data })
-        .done(function () {
+      return this.composeRequest(endpoint, 'POST', { data: data }).done(
+        function() {
           // refresh collection
           that._fetchAllMetadata();
-        });
+        }
+      );
     },
 
-    deleteLibrary: function (id, name) {
-      var that = this,
-        endpoint = ApiTargets.DOCUMENTS + '/' + id,
-        name;
+    deleteLibrary: function(id, name) {
+      var that = this;
+      var endpoint = ApiTargets.DOCUMENTS + '/' + id;
+      var name;
 
       var promise = this.composeRequest(endpoint, 'DELETE')
-        .done(function () {
+        .done(function() {
           // delete library from internal representation
           that.collection.remove(id);
           // take care of ui
-          that.getBeeHive().getService('PubSub').publish(that.getBeeHive().getService('PubSub').NAVIGATE, 'AllLibrariesWidget', 'libraries');
+          that
+            .getBeeHive()
+            .getService('PubSub')
+            .publish(
+              that.getBeeHive().getService('PubSub').NAVIGATE,
+              'AllLibrariesWidget',
+              'libraries'
+            );
           var message = 'Library <b>' + name + '</b> was successfully deleted';
-          that.getBeeHive().getService('PubSub').publish(that.getBeeHive().getService('PubSub').ALERT, new ApiFeedback({ code: 0, msg: message, type: 'success' }));
+          that
+            .getBeeHive()
+            .getService('PubSub')
+            .publish(
+              that.getBeeHive().getService('PubSub').ALERT,
+              new ApiFeedback({ code: 0, msg: message, type: 'success' })
+            );
         })
-        .fail(function (jqXHR) {
+        .fail(function(jqXHR) {
           var error = JSON.parse(jqXHR.responseText).error;
-          var message = 'Library <b>' + name + '</b> could not be deleted : (' + error + ')';
-          that.getBeeHive().getService('PubSub').publish(that.getBeeHive().getService('PubSub').ALERT, new ApiFeedback({ code: 0, msg: message, type: 'danger' }));
+          var message =
+            'Library <b>' +
+            name +
+            '</b> could not be deleted : (' +
+            error +
+            ')';
+          that
+            .getBeeHive()
+            .getService('PubSub')
+            .publish(
+              that.getBeeHive().getService('PubSub').ALERT,
+              new ApiFeedback({ code: 0, msg: message, type: 'danger' })
+            );
         });
 
       return promise;
     },
 
     /*
-       * @param id
-       * @param updateData e.g. {bibcode:[1,2,3], action: "add/remove" }
-       *
-       */
-    updateLibraryContents: function (id, updateData) {
-      var that = this,
-        data = { data: updateData, extraArguments: { numBibcodesRequested: updateData.bibcode.length } };
+     * @param id
+     * @param updateData e.g. {bibcode:[1,2,3], action: "add/remove" }
+     *
+     */
+    updateLibraryContents: function(id, updateData) {
+      var that = this;
+      var data = {
+        data: updateData,
+        extraArguments: { numBibcodesRequested: updateData.bibcode.length },
+      };
 
       var endpoint = ApiTargets.DOCUMENTS + '/' + id;
       return this.composeRequest(endpoint, 'POST', data)
-        .done(function () {
+        .done(function() {
           that.fetchLibraryMetadata(id);
         })
-        .fail(function (jqXHR) {
+        .fail(function(jqXHR) {
           var error = JSON.parse(jqXHR.responseText).error;
-          var message = 'Library <b>' + that.collection.get(id).title + '</b> could not be updated: (' + error + ')';
-          that.getBeeHive().getService('PubSub').publish(that.getBeeHive().getService('PubSub').ALERT, new ApiFeedback({ code: 0, msg: message, type: 'danger' }));
+          var message =
+            'Library <b>' +
+            that.collection.get(id).title +
+            '</b> could not be updated: (' +
+            error +
+            ')';
+          that
+            .getBeeHive()
+            .getService('PubSub')
+            .publish(
+              that.getBeeHive().getService('PubSub').ALERT,
+              new ApiFeedback({ code: 0, msg: message, type: 'danger' })
+            );
         });
     },
 
-    performLibraryOperation: function (libId, options) {
+    performLibraryOperation: function(libId, options) {
       if (!options) {
-        throw new Error('must provide options object with action and set of secondary libraries (if necessary)');
+        throw new Error(
+          'must provide options object with action and set of secondary libraries (if necessary)'
+        );
       }
       var data = {};
       var action = options.action && options.action.toLowerCase();
@@ -418,13 +487,16 @@ function (
       var isCopyAction = /^copy$/.test(action);
       var isEmptyAction = /^empty$/.test(action);
 
-      if (!_.isString(action) || (!isAdvancedAction && !isCopyAction && !isEmptyAction)) {
-        throw new Error(action +' is not one of the defined actions');
+      if (
+        !_.isString(action) ||
+        (!isAdvancedAction && !isCopyAction && !isEmptyAction)
+      ) {
+        throw new Error(action + ' is not one of the defined actions');
       }
       if (!_.isString(libId)) {
         throw new Error('must pass library ID as first parameter');
       }
-      if (isAdvancedAction && (!_.isArray(libraries))) {
+      if (isAdvancedAction && !_.isArray(libraries)) {
         throw new Error('libraries must be an array');
       }
       if (isCopyAction && (!_.isArray(libraries) || libraries.length !== 1)) {
@@ -445,7 +517,7 @@ function (
       return this.composeRequest(endpoint, 'POST', { data: data });
     },
 
-    transferOwnership: function (libId, newOwnerEmail) {
+    transferOwnership: function(libId, newOwnerEmail) {
       if (!newOwnerEmail || !_.isString(newOwnerEmail)) {
         throw 'new owner email address must be a string';
       }
@@ -456,7 +528,6 @@ function (
       const data = { email: newOwnerEmail };
       return this.composeRequest(endpoint, 'POST', { data });
     },
-
 
     //      /*
     //      * email, permission, value
@@ -479,98 +550,135 @@ function (
     //
     //      },
 
-    updateLibraryMetadata: function (id, data) {
+    updateLibraryMetadata: function(id, data) {
       var that = this;
 
       var endpoint = ApiTargets.DOCUMENTS + '/' + id;
       return this.composeRequest(endpoint, 'PUT', { data: data })
-        .done(function (data) {
+        .done(function(data) {
           that.collection.get(id).set(data);
         })
-        .fail(function (jqXHR) {
+        .fail(function(jqXHR) {
           var error = JSON.parse(jqXHR.responseText).error;
-          var message = 'Library <b>' + that.collection.get(id).get('name') + '</b> could not be updated: (' + error + ')';
-          that.getBeeHive().getService('PubSub').publish(that.getBeeHive().getService('PubSub').ALERT, new ApiFeedback({ code: 0, msg: message, type: 'danger' }));
+          var message =
+            'Library <b>' +
+            that.collection.get(id).get('name') +
+            '</b> could not be updated: (' +
+            error +
+            ')';
+          that
+            .getBeeHive()
+            .getService('PubSub')
+            .publish(
+              that.getBeeHive().getService('PubSub').ALERT,
+              new ApiFeedback({ code: 0, msg: message, type: 'danger' })
+            );
         });
     },
 
     /* fetches bibcodes, then submits them to library endpoint
-       *
-       * @param data e.g. {"library": [library_id], "bibcodes": ["all"/ "selected"]}
-       *
-       */
-    addBibcodesToLib: function (data) {
-      var that = this,
-        promise = this._getBibcodes(data).then(function (bibcodes) {
+     *
+     * @param data e.g. {"library": [library_id], "bibcodes": ["all"/ "selected"]}
+     *
+     */
+    addBibcodesToLib: function(data) {
+      var that = this;
+      var promise = this._getBibcodes(data).then(function(bibcodes) {
         // should return success or fail message
-          return that.updateLibraryContents(data.library, { bibcode: bibcodes, action: 'add' })
-            .fail(function () {
-              var message = 'Library <b>' + that.collection.get(data.library).title + '</b> could not be updated';
-              that.getBeeHive().getService('PubSub').publish(that.getBeeHive().getService('PubSub').ALERT, new ApiFeedback({ code: 0, msg: message, type: 'danger' }));
-            });
-        });
+        return that
+          .updateLibraryContents(data.library, {
+            bibcode: bibcodes,
+            action: 'add',
+          })
+          .fail(function() {
+            var message =
+              'Library <b>' +
+              that.collection.get(data.library).title +
+              '</b> could not be updated';
+            that
+              .getBeeHive()
+              .getService('PubSub')
+              .publish(
+                that.getBeeHive().getService('PubSub').ALERT,
+                new ApiFeedback({ code: 0, msg: message, type: 'danger' })
+              );
+          });
+      });
 
       return promise;
     },
 
     /* fetch the bibcodes, then POST to the create endpoint with the bibcodes
-       *
-       * @param data: e.g. {bibcodes: ["all"/"selected"], name: "ddddd"}
-       *
-       */
+     *
+     * @param data: e.g. {bibcodes: ["all"/"selected"], name: "ddddd"}
+     *
+     */
 
-    createLibAndAddBibcodes: function (data) {
-      var that = this,
-        promise = this._getBibcodes(data).then(function (bibcodes) {
-          if (!bibcodes) {
-            throw new Error('Solr returned no bibcodes, can\'t put them in the new library');
-          }
-          data.bibcode = bibcodes;
-          var createLibraryPromise = that.createLibrary(data)
-            .fail(function () {
-              var message = 'Library <b>' + name + '</b> could not be created';
-              that.getBeeHive().getService('PubSub').publish(that.getBeeHive().getService('PubSub').ALERT, new ApiFeedback({ code: 0, msg: message, type: 'danger' }));
-            });
-
-          return createLibraryPromise;
+    createLibAndAddBibcodes: function(data) {
+      var that = this;
+      var promise = this._getBibcodes(data).then(function(bibcodes) {
+        if (!bibcodes) {
+          throw new Error(
+            "Solr returned no bibcodes, can't put them in the new library"
+          );
+        }
+        data.bibcode = bibcodes;
+        var createLibraryPromise = that.createLibrary(data).fail(function() {
+          var message = 'Library <b>' + name + '</b> could not be created';
+          that
+            .getBeeHive()
+            .getService('PubSub')
+            .publish(
+              that.getBeeHive().getService('PubSub').ALERT,
+              new ApiFeedback({ code: 0, msg: message, type: 'danger' })
+            );
         });
+
+        return createLibraryPromise;
+      });
 
       return promise;
     },
 
-    importLibraries: function (service) {
-      var endpoint,
-        d = $.Deferred(),
-        that = this;
+    importLibraries: function(service) {
+      var endpoint;
+      var d = $.Deferred();
+      var that = this;
       if (service === 'classic') {
         endpoint = ApiTargets.LIBRARY_IMPORT_CLASSIC_TO_BBB;
       } else if (service === 'twopointoh') {
         endpoint = ApiTargets.LIBRARY_IMPORT_ADS2_TO_BBB;
       } else {
-        console.error('didn\'t recognize library endpoint! should be one of \'classic\' or \'twopointoh\' ');
+        console.error(
+          "didn't recognize library endpoint! should be one of 'classic' or 'twopointoh' "
+        );
         return;
       }
 
-      this.getBeeHive().getService('Api').request(new ApiRequest({
-        target: endpoint,
-        options: {
-          done: function (data) {
-            d.resolve.apply(undefined, [].slice.apply(arguments));
-            // re-fetch metadata, since new libs were imported
-            that._fetchAllMetadata();
-          },
-          fail: function (data) {
-            d.reject.apply(undefined, [].slice.apply(arguments));
-          }
-        }
-      }));
+      this.getBeeHive()
+        .getService('Api')
+        .request(
+          new ApiRequest({
+            target: endpoint,
+            options: {
+              done: function(data) {
+                d.resolve.apply(undefined, [].slice.apply(arguments));
+                // re-fetch metadata, since new libs were imported
+                that._fetchAllMetadata();
+              },
+              fail: function(data) {
+                d.reject.apply(undefined, [].slice.apply(arguments));
+              },
+            },
+          })
+        );
 
       return d.promise();
     },
 
-
     hardenedInterface: {
-      getLibraryMetadata: 'returns json list of libraries, optional lib id as param',
+      getLibraryMetadata:
+        'returns json list of libraries, optional lib id as param',
       createLibrary: 'createLibrary',
 
       // these two functions fetch bibcodes based on the arguments given
@@ -589,9 +697,8 @@ function (
       // lists of bibs to pass to export, metrics, vis widgets etc
       getLibraryBibcodes: 'getLibraryBibcodes',
 
-      performLibraryOperation: 'performLibraryOperation'
-    }
-
+      performLibraryOperation: 'performLibraryOperation',
+    },
   });
 
   _.extend(LibraryController.prototype, Hardened, Dependon.BeeHive);

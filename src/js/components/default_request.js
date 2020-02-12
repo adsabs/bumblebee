@@ -6,15 +6,9 @@ define([
   'underscore',
   'backbone',
   'js/components/api_query',
-  'js/components/multi_params'
-],
-function (
-  _,
-  Backbone,
-  ApiQuery,
-  MultiParams
-) {
-  var basicCheck = function (s) {
+  'js/components/multi_params',
+], function(_, Backbone, ApiQuery, MultiParams) {
+  var basicCheck = function(s) {
     if (_.isString(s)) {
       return true;
     }
@@ -30,7 +24,7 @@ function (
     return true;
   };
   var allowedAttrs = {
-    query: function (v) {
+    query: function(v) {
       if (_.isUndefined(v)) {
         return true;
       }
@@ -38,28 +32,28 @@ function (
     },
     target: basicCheck,
     sender: basicCheck,
-    options: basicCheck
+    options: basicCheck,
   };
 
   var checker = {
-    target: function (s) {
+    target: function(s) {
       if (s && s.substring(0, 1) !== '/') {
         return '/' + s;
       }
-    }
+    },
   };
 
   var Request = MultiParams.extend({
     /**
-       * Internal method: we allow only certain keys
-       *
-       * @param attributes
-       * @param options
-       * @returns {boolean}
-       * @private
-       */
-    _validate: function (attributes, options) {
-      _.forOwn(attributes, function (val, attr) {
+     * Internal method: we allow only certain keys
+     *
+     * @param attributes
+     * @param options
+     * @returns {boolean}
+     * @private
+     */
+    _validate: function(attributes, options) {
+      _.forOwn(attributes, function(val, attr) {
         var tempVal = attributes[attr];
 
         if (!(attr in allowedAttrs)) {
@@ -75,15 +69,15 @@ function (
     },
 
     /**
-       * Modified version of the multi-valued set(); we do not insist
-       * on having the values in array
-       *
-       * @param key
-       * @param val
-       * @param options
-       * @returns {Request}
-       */
-    set: function (key, val, options) {
+     * Modified version of the multi-valued set(); we do not insist
+     * on having the values in array
+     *
+     * @param key
+     * @param val
+     * @param options
+     * @returns {Request}
+     */
+    set: function(key, val, options) {
       this._checkLock();
       var attrs;
 
@@ -101,7 +95,7 @@ function (
     },
 
     // for requests, we use all components: path, query, hash
-    _checkParsed: function (attrs) {
+    _checkParsed: function(attrs) {
       if (_.isObject(attrs)) {
         var ret = {};
         if ('#query' in attrs && !_.isEmpty(attrs['#query'])) {
@@ -111,7 +105,14 @@ function (
           ret.target = attrs['#path'][0];
         }
         if ('#hash' in attrs) {
-          _.extend(ret, _.each(attrs['#hash'], function (val, key, obj) { if (val.length == 1) { obj[key] = val[0]; } }));
+          _.extend(
+            ret,
+            _.each(attrs['#hash'], function(val, key, obj) {
+              if (val.length == 1) {
+                obj[key] = val[0];
+              }
+            })
+          );
         }
         return ret;
       }
@@ -119,12 +120,12 @@ function (
     },
 
     /*
-       * Return the url string encoding all parameters that made
-       * this request. The parameters will be sorted alphabetically
-       * by their keys and URL encoded so that they can be used
-       * in requests.
-       */
-    url: function (whatToSort) {
+     * Return the url string encoding all parameters that made
+     * this request. The parameters will be sorted alphabetically
+     * by their keys and URL encoded so that they can be used
+     * in requests.
+     */
+    url: function(whatToSort) {
       if (!whatToSort) {
         whatToSort = this.attributes;
       }
@@ -136,23 +137,27 @@ function (
         url += '?' + whatToSort.query.url();
       }
       if ('sender' in whatToSort) {
-        url += '#' + MultiParams.prototype.url.call(this, { sender: whatToSort.sender });
+        url +=
+          '#' +
+          MultiParams.prototype.url.call(this, { sender: whatToSort.sender });
       }
       return url;
     },
 
     /**
-       * Re-constructs the query from the url string, returns the json attributes;
-       * cannot be used it the instance is locked
-       *
-       * @param query (String)
-       * @returns {Model}
-       */
-    load: function (query) {
-      return MultiParams.prototype.load.call(this, query.indexOf('?') > -1 ? query : query + '?');
-    }
+     * Re-constructs the query from the url string, returns the json attributes;
+     * cannot be used it the instance is locked
+     *
+     * @param query (String)
+     * @returns {Model}
+     */
+    load: function(query) {
+      return MultiParams.prototype.load.call(
+        this,
+        query.indexOf('?') > -1 ? query : query + '?'
+      );
+    },
   });
-
 
   return Request;
 });

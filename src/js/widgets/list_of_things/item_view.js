@@ -7,7 +7,7 @@ define([
   'hbs!js/widgets/list_of_things/templates/item-template',
   'analytics',
   'mathjax',
-], function (
+], function(
   Marionette,
   Backbone,
   ApiRequest,
@@ -20,7 +20,7 @@ define([
   var ItemView = Marionette.ItemView.extend({
     tagName: 'li',
     template: ItemTemplate,
-    constructor: function (options) {
+    constructor: function(options) {
       var self = this;
       if (options) {
         _.defaults(
@@ -33,7 +33,7 @@ define([
       return Marionette.ItemView.prototype.constructor.apply(this, arguments);
     },
 
-    render: function () {
+    render: function() {
       if (this.model.get('visible')) {
         return Marionette.ItemView.prototype.render.apply(this, arguments);
       }
@@ -45,13 +45,16 @@ define([
       return this;
     },
 
-    onRender: function () {
+    onRender: function() {
       // this is necessary on every render after the initial one, since the
       // containe rview also calls mathjax initially
       if (MathJax) MathJax.Hub.Queue(['Typeset', MathJax.Hub, this.el]);
       $('>', this.$el).on('keyup', (e) => {
         if (e.which === 13) {
-          $('a.abs-redirect-link', this.$el).mousedown().mouseup().click();
+          $('a.abs-redirect-link', this.$el)
+            .mousedown()
+            .mouseup()
+            .click();
         }
       });
     },
@@ -86,7 +89,7 @@ define([
       'change:visible': 'render',
     },
 
-    emitAnalyticsEvent: function (e) {
+    emitAnalyticsEvent: function(e) {
       analytics(
         'send',
         'event',
@@ -96,7 +99,7 @@ define([
       );
     },
 
-    onAbsLinkClick: function (e) {
+    onAbsLinkClick: function(e) {
       var bibcode = this.model.get('bibcode');
       analytics('send', 'event', 'interaction', 'abstract-link-followed', {
         target: 'abstract',
@@ -104,7 +107,7 @@ define([
       });
     },
 
-    onCitationsLinkClick: function (e) {
+    onCitationsLinkClick: function(e) {
       var bibcode = this.model.get('bibcode');
       analytics('send', 'event', 'interaction', 'citations-link-followed', {
         target: 'citations',
@@ -112,31 +115,31 @@ define([
       });
     },
 
-    showAllAuthors: function (e) {
+    showAllAuthors: function(e) {
       this.$('.s-results-authors.less-authors').addClass('hidden');
       this.$('.s-results-authors.all-authors').removeClass('hidden');
       return false;
     },
 
-    showLessAuthors: function (e) {
+    showLessAuthors: function(e) {
       this.$('.s-results-authors.less-authors').removeClass('hidden');
       this.$('.s-results-authors.all-authors').addClass('hidden');
       return false;
     },
 
-    showFullAbstract: function () {
+    showFullAbstract: function() {
       this.$('.short-abstract').addClass('hidden');
       this.$('.full-abstract').removeClass('hidden');
       return false;
     },
 
-    hideFullAbstract: function () {
+    hideFullAbstract: function() {
       this.$('.short-abstract').removeClass('hidden');
       this.$('.full-abstract').addClass('hidden');
       return false;
     },
 
-    toggleSelect: function () {
+    toggleSelect: function() {
       var isChosen = !this.model.get('chosen');
 
       this.trigger('toggleSelect', {
@@ -146,11 +149,11 @@ define([
       this.model.set('chosen', isChosen);
     },
 
-    resetToggle: function () {
+    resetToggle: function() {
       this.setToggleTo(false);
     },
 
-    setToggleTo: function (to) {
+    setToggleTo: function(to) {
       var $checkbox = $('input[name=identifier]');
       if (to) {
         this.$el.addClass('chosen');
@@ -169,25 +172,25 @@ define([
      * open the quick links
      * */
 
-    removeActiveQuickLinkState: function ($node) {
+    removeActiveQuickLinkState: function($node) {
       $node.find('i').removeClass('s-icon-draw-attention');
       $node.find('.link-details').addClass('hidden');
       $node.find('ul').attr('aria-expanded', false);
     },
 
-    addActiveQuickLinkState: function ($node) {
+    addActiveQuickLinkState: function($node) {
       $node.find('i').addClass('s-icon-draw-attention');
       $node.find('.link-details').removeClass('hidden');
       $node.find('ul').attr('aria-expanded', true);
     },
 
-    deactivateOtherQuickLinks: function ($c) {
+    deactivateOtherQuickLinks: function($c) {
       var $hasList = this.$('.letter-icon')
-        .filter(function () {
+        .filter(function() {
           if (
             $(this)
-            .find('i')
-            .hasClass('s-icon-draw-attention')
+              .find('i')
+              .hasClass('s-icon-draw-attention')
           ) {
             return true;
           }
@@ -201,7 +204,7 @@ define([
       }
     },
 
-    showLinks: function (e) {
+    showLinks: function(e) {
       var $c = $(e.currentTarget);
       if (!$c.find('.active-link').length) {
         return;
@@ -211,19 +214,20 @@ define([
       this.addActiveQuickLinkState($c);
     },
 
-    hideLinks: function (e) {
+    hideLinks: function(e) {
       var $c = $(e.currentTarget);
       this.removeActiveQuickLinkState($c);
     },
 
-    orcidAction: function (e) {
+    orcidAction: function(e) {
       if (!e) return false;
 
       var $target = $(e.currentTarget);
 
       var msg = {
-        action: $target.data('action') ?
-          $target.data('action') : $target.text().trim(),
+        action: $target.data('action')
+          ? $target.data('action')
+          : $target.text().trim(),
         model: this.model,
         view: this,
         target: $target,

@@ -1,21 +1,17 @@
-
-define([
-  'react',
-  'react-prop-types'
-], function (React, PropTypes) {
+define(['react', 'react-prop-types'], function(React, PropTypes) {
   const styles = {
     button: {
-      width: '50%'
+      width: '50%',
     },
     img: {
-      marginBottom: 7
-    }
+      marginBottom: 7,
+    },
   };
 
   const initialState = {
     action: '',
     fire: () => {},
-    showConfirm: false
+    showConfirm: false,
   };
 
   class OrcidSelectorApp extends React.Component {
@@ -29,7 +25,7 @@ define([
       this.setState({
         action: 'claim',
         fire: this.props.onClaim,
-        showConfirm: true
+        showConfirm: true,
       });
     }
 
@@ -37,7 +33,7 @@ define([
       this.setState({
         action: 'delete',
         fire: this.props.onDelete,
-        showConfirm: true
+        showConfirm: true,
       });
     }
 
@@ -61,9 +57,7 @@ define([
         return (
           <div className="s-right-col-widget-container container-fluid">
             <div className="row">
-              <div className="sr-only">
-                Orcid Bulk Actions
-              </div>
+              <div className="sr-only">Orcid Bulk Actions</div>
               <div className="text-center">
                 <img
                   src="../../styles/img/orcid-active.svg"
@@ -73,49 +67,68 @@ define([
                   style={styles.img}
                 />
                 <span>
-                <strong>&nbsp;Bulk Actions</strong>
-              </span>
+                  <strong>&nbsp;Bulk Actions</strong>
+                </span>
               </div>
             </div>
             <div className="row">
               <div className="col-xs-12">
-                <div className="btn-group btn-group-justified btn-group-sm" role="group">
+                <div
+                  className="btn-group btn-group-justified btn-group-sm"
+                  role="group"
+                >
                   <button
                     type="button"
-                    className={`btn btn-primary-faded ${len === 0 ? 'disabled' : ''}`}
+                    className={`btn btn-primary-faded ${
+                      len === 0 ? 'disabled' : ''
+                    }`}
                     title="Claim all selected papers from Orcid"
                     style={styles.button}
                     onClick={() => this.onClaim()}
-                  >Claim</button>
+                  >
+                    Claim
+                  </button>
                   <button
                     type="button"
                     className={`btn btn-danger ${len === 0 ? 'disabled' : ''}`}
                     title="Delete all selected papers from Orcid"
                     style={styles.button}
                     onClick={() => this.onDelete()}
-                  >Delete</button>
+                  >
+                    Delete
+                  </button>
                 </div>
               </div>
             </div>
-            {this.state.showConfirm
-            && <div className="row" style={{ marginTop: 5 }}>
-              <div className="col-xs-12 text-center">
-                Attempt to {this.state.action} {len} paper{`${len > 1 ? 's' : ''}`}?
-              </div>
-              <div className="col-xs-12" style={{ marginTop: 5 }}>
-                <div className="btn-group btn-group-sm pull-right" role="group">
-                  <button
-                    className="btn btn-sm btn-success"
-                    title={`${this.state.action} selected papers`}
-                    onClick={() => this.onConfirm(true)}>Apply</button>
-                  <button
-                    title={`Cancel ${this.state.action} selected papers`}
-                    className="btn btn-sm btn-danger"
-                    onClick={() => this.onConfirm(false)}>Cancel</button>
+            {this.state.showConfirm && (
+              <div className="row" style={{ marginTop: 5 }}>
+                <div className="col-xs-12 text-center">
+                  Attempt to {this.state.action} {len} paper
+                  {`${len > 1 ? 's' : ''}`}?
+                </div>
+                <div className="col-xs-12" style={{ marginTop: 5 }}>
+                  <div
+                    className="btn-group btn-group-sm pull-right"
+                    role="group"
+                  >
+                    <button
+                      className="btn btn-sm btn-success"
+                      title={`${this.state.action} selected papers`}
+                      onClick={() => this.onConfirm(true)}
+                    >
+                      Apply
+                    </button>
+                    <button
+                      title={`Cancel ${this.state.action} selected papers`}
+                      className="btn btn-sm btn-danger"
+                      onClick={() => this.onConfirm(false)}
+                    >
+                      Cancel
+                    </button>
+                  </div>
                 </div>
               </div>
-            </div>
-            }
+            )}
           </div>
         );
       }
@@ -125,7 +138,7 @@ define([
   }
 
   OrcidSelectorApp.propTypes = {
-    app: PropTypes.object.isRequired
+    app: PropTypes.object.isRequired,
   };
 
   return OrcidSelectorApp;

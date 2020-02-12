@@ -30,7 +30,14 @@ define([
 
     buildGraph: function() {
       var that = this;
-      var data, xLabels, x, y, xAxis, yAxis, chart, bar;
+      var data;
+      var xLabels;
+      var x;
+      var y;
+      var xAxis;
+      var yAxis;
+      var chart;
+      var bar;
       var standardFormatter = d3.format('s');
       data = _.clone(this.model.get('graphData'));
       data = this.binData(data, this.bins);
@@ -158,7 +165,12 @@ define([
 
     // takes current data and binNum, returns correctly binned data
     binData: function(data, binNum) {
-      var extraBar, remainder, binSize, indexList, binnedX, binnedY;
+      var extraBar;
+      var remainder;
+      var binSize;
+      var indexList;
+      var binnedX;
+      var binnedY;
 
       if (data.length <= binNum) {
         this.binSize = 1;
@@ -244,7 +256,13 @@ define([
 
     graphChange: function(val1, val2) {
       var that = this;
-      var data, x, xLabels, y, xAxis, yAxis, bar;
+      var data;
+      var x;
+      var xLabels;
+      var y;
+      var xAxis;
+      var yAxis;
+      var bar;
       data = _.clone(this.model.get('graphData'));
 
       /* checking : do we need to signal
@@ -380,13 +398,13 @@ define([
         max: max,
         values: [min, max],
         stop: function(event, ui) {
-          var ui1 = ui.values[0],
-            ui2 = ui.values[1];
+          var ui1 = ui.values[0];
+          var ui2 = ui.values[1];
           that.graphChange(ui1, ui2);
         },
         slide: function(event, ui) {
-          var ui1 = ui.values[0],
-            ui2 = ui.values[1];
+          var ui1 = ui.values[0];
+          var ui2 = ui.values[1];
           that.$('.show-slider-data-first').val(ui1);
           that.$('.show-slider-data-second').val(ui2);
         },

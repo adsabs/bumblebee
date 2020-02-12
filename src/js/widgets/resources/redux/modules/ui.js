@@ -1,4 +1,4 @@
-define([], function () {
+define([], function() {
   const actions = {
     LINK_CLICKED: '[ui] LINK_CLICKED',
     SET_LOADING: '[ui] SET_LOADING',
@@ -6,7 +6,7 @@ define([], function () {
     SET_NO_RESULTS: '[ui] SET_NO_RESULTS',
     SET_FULL_TEXT_SOURCES: '[ui] SET_FULL_TEXT_SOURCES',
     SET_DATA_PRODUCTS: '[ui] SET_DATA_PRODUCTS',
-    RESET: '[ui] RESET'
+    RESET: '[ui] RESET',
   };
 
   const initialState = {
@@ -14,7 +14,7 @@ define([], function () {
     hasError: false,
     noResults: false,
     fullTextSources: [],
-    dataProducts: []
+    dataProducts: [],
   };
 
   const reducer = (state = initialState, action) => {
@@ -29,7 +29,10 @@ define([], function () {
         return { ...state, dataProducts: action.result };
       case actions.SET_HAS_ERROR:
         return {
-          ...initialState, hasError: action.result, noResults: true, loading: false
+          ...initialState,
+          hasError: action.result,
+          noResults: true,
+          loading: false,
         };
       case actions.RESET:
         return { ...initialState };
@@ -39,8 +42,8 @@ define([], function () {
   };
 
   // action creators
-  const handleLinkClick = result => ({ type: actions.LINK_CLICKED, result });
-  const setError = result => ({ type: actions.SET_HAS_ERROR, result });
+  const handleLinkClick = (result) => ({ type: actions.LINK_CLICKED, result });
+  const setError = (result) => ({ type: actions.SET_HAS_ERROR, result });
   const reset = () => ({ type: actions.RESET });
 
   return {
@@ -49,6 +52,6 @@ define([], function () {
     actions,
     handleLinkClick,
     setError,
-    reset
+    reset,
   };
 });

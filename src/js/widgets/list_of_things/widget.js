@@ -25,8 +25,9 @@ define([
   'hbs!js/widgets/list_of_things/templates/results-container-template',
   'js/mixins/add_stable_index_to_collection',
   './model',
-  './paginated_view'
-], function (Marionette,
+  './paginated_view',
+], function(
+  Marionette,
   Backbone,
   utils,
   ApiRequest,
@@ -39,12 +40,21 @@ define([
   PaginatedCollection,
   PaginatedView
 ) {
-
   var ListOfThingsWidget = BaseWidget.extend({
-    initialize: function (options) {
+    initialize: function(options) {
       options = options || {};
 
-      _.defaults(options, _.pick(this, ['view', 'collection', 'pagination', 'model', 'description', 'childView']));
+      _.defaults(
+        options,
+        _.pick(this, [
+          'view',
+          'collection',
+          'pagination',
+          'model',
+          'description',
+          'childView',
+        ])
+      );
 
       // widget.reset will restore these default pagination settings
       // for now, it doesn't make sense to pass them as options
@@ -60,7 +70,7 @@ define([
         currentQuery: undefined,
         start: 0,
         pageData: undefined,
-        focusedIndex: -1
+        focusedIndex: -1,
       };
 
       options.collection = options.collection || new PaginatedCollection();
@@ -70,26 +80,29 @@ define([
         options.view = new PaginatedView({
           collection: options.collection,
           model: options.model,
-          childView: options.childView
+          childView: options.childView,
         });
       }
 
       options.view.model.set(this.pagination, {
-        silent: true
+        silent: true,
       });
-      options.view.model.set({
-        // for the template button that opens search in search results page
-        sortOrder: options.sortOrder,
-        removeSelf: options.removeSelf,
-        queryOperator: options.queryOperator,
-        description: options.description
-      }, {
-        silent: true
-      });
+      options.view.model.set(
+        {
+          // for the template button that opens search in search results page
+          sortOrder: options.sortOrder,
+          removeSelf: options.removeSelf,
+          queryOperator: options.queryOperator,
+          description: options.description,
+        },
+        {
+          silent: true,
+        }
+      );
 
       _.extend(this, {
         model: options.view.model,
-        view: options.view
+        view: options.view,
       });
 
       // this is the hidden collection (just to hold data)
@@ -101,23 +114,27 @@ define([
       this.on('all', this.onAllInternalEvents);
       this.model.on('change:page', () => {
         this.model.set('focusedIndex', -1, {
-          silent: true
+          silent: true,
         });
-      })
+      });
 
       this.changePage = _.debounce(this.changePage.bind(this), 500);
       BaseWidget.prototype.initialize.call(this, options);
     },
 
     // this must be extended by inheriting widgets to listen to display events
-    activate: function (beehive) {
+    activate: function(beehive) {
       this.setBeeHive(beehive);
       _.bindAll(this, ['updatePaginationPreferences']);
       const ps = this.getPubSub();
 
-
-      if (this.getBeeHive().getObject('User') && this.getBeeHive().getObject('User').getLocalStorage) {
-        var perPage = this.getBeeHive().getObject('User').getLocalStorage().perPage;
+      if (
+        this.getBeeHive().getObject('User') &&
+        this.getBeeHive().getObject('User').getLocalStorage
+      ) {
+        var perPage = this.getBeeHive()
+          .getObject('User')
+          .getLocalStorage().perPage;
         if (perPage) {
           // set the pagination perPage value to whatever is in local storage,
           // otherwise it will be the default val from the initialize function
@@ -167,7 +184,7 @@ define([
         focusedIndex += change;
       }
       this.model.set('focusedIndex', focusedIndex, {
-        silent: true
+        silent: true,
       });
       const view = this.view.children.findByIndex(focusedIndex);
       if (view && view.el) {
@@ -177,22 +194,26 @@ define([
 
     changePage(change) {
       this.updatePagination({
-        page: (this.model.get('page') || 0) + change
+        page: (this.model.get('page') || 0) + change,
       });
     },
 
-    onApiFeedback: function (feedback) {
+    onApiFeedback: function(feedback) {
       if (feedback.error) {
         this.view.model.set('error', feedback.error);
         this.updateState(this.STATES.ERRORED);
       }
     },
 
-    updatePaginationPreferences: function (event, data) {
-      if (event == 'user_info_change' && data.perPage && data.perPage !== this.pagination.perPage) {
+    updatePaginationPreferences: function(event, data) {
+      if (
+        event == 'user_info_change' &&
+        data.perPage &&
+        data.perPage !== this.pagination.perPage
+      ) {
         // update per-page value
         this.updatePagination({
-          perPage: data.perPage
+          perPage: data.perPage,
         });
       }
     },
@@ -205,9 +226,13 @@ define([
      * @returns {string} - the query string
      * @private
      */
-    _getCurrentQueryString: function (apiResponse) {
+    _getCurrentQueryString: function(apiResponse) {
       var q = '';
-      var res = (apiResponse) || this.getBeeHive().getObject('AppStorage').getCurrentQuery();
+      var res =
+        apiResponse ||
+        this.getBeeHive()
+          .getObject('AppStorage')
+          .getCurrentQuery();
 
       // check for simbids
       if (!_.isUndefined(res)) {
@@ -227,32 +252,33 @@ define([
       return q;
     },
 
-    processResponse: function (apiResponse) {
+    processResponse: function(apiResponse) {
       var docs = this.extractDocs(apiResponse);
-      var numFound = apiResponse.has('response.numFound') ?
-        apiResponse.get('response.numFound') : this.hiddenCollection.length;
-      var start = apiResponse.has('response.start') ?
-        apiResponse.get('response.start') : this.model.get('start');
+      var numFound = apiResponse.has('response.numFound')
+        ? apiResponse.get('response.numFound')
+        : this.hiddenCollection.length;
+      var start = apiResponse.has('response.start')
+        ? apiResponse.get('response.start')
+        : this.model.get('start');
       var pagination = this.getPaginationInfo(apiResponse, docs);
       docs = this.processDocs(apiResponse, docs, pagination);
       var self = this;
 
       if (docs && docs.length) {
-
         // make sure the new docs close highlights if they aren't there
-        var newDocs = _.map(docs, function (d) {
+        var newDocs = _.map(docs, function(d) {
           return _.extend(d, {
             showHighlights: !_.isEmpty(d.highlights),
-            showCheckbox: !!self.model.get('showCheckboxes')
+            showCheckbox: !!self.model.get('showCheckboxes'),
           });
         });
 
         this.hiddenCollection.add(newDocs, {
-          merge: true
+          merge: true,
         });
 
         // finally, if there aren't any highlights, close the button
-        var hasHighlights = this.hiddenCollection.filter(function (m) {
+        var hasHighlights = this.hiddenCollection.filter(function(m) {
           return m.get('highlights');
         });
         if (hasHighlights.length === 0) {
@@ -263,30 +289,41 @@ define([
           // we must update the model before updating collection because the showRange
           // can automatically start fetching documents
           this.model.set(pagination);
-          this.hiddenCollection.showRange(pagination.showRange[0], pagination.showRange[1]);
+          this.hiddenCollection.showRange(
+            pagination.showRange[0],
+            pagination.showRange[1]
+          );
         }
         this.view.collection.reset(this.hiddenCollection.getVisibleModels());
         this.view.model.set('query', false);
       } else {
         var params = apiResponse.get('responseHeader.params');
         this.view.model.set({
-          isTugboat: !!params['__tb'],
+          isTugboat: !!params.__tb,
           query: this._getCurrentQueryString(apiResponse),
-          currentQuery: apiResponse.getApiQuery()
+          currentQuery: apiResponse.getApiQuery(),
         });
       }
 
       // XXX:rca - hack, to be solved later
       this.trigger('page-manager-event', 'widget-ready', {
-        numFound: numFound
+        numFound: numFound,
       });
 
-      var allLoaded = this.model.has('perPage') && this.model.get('perPage') === this.collection.length;
-      var isLastPage = this.model.has('pageData') && this.model.get('pageData').nextPossible === false;
+      var allLoaded =
+        this.model.has('perPage') &&
+        this.model.get('perPage') === this.collection.length;
+      var isLastPage =
+        this.model.has('pageData') &&
+        this.model.get('pageData').nextPossible === false;
       var noItems = this.view.collection.length === 0;
 
       // finally, loading view (from pagination template) can be removed or added
-      if (noItems || allLoaded || (isLastPage && numFound <= start + docs.length)) {
+      if (
+        noItems ||
+        allLoaded ||
+        (isLastPage && numFound <= start + docs.length)
+      ) {
         this.model.set('loading', false);
         this.updateState(this.STATES.IDLE);
       } else {
@@ -294,9 +331,9 @@ define([
       }
     },
 
-    extractDocs: function (apiResponse) {
+    extractDocs: function(apiResponse) {
       var docs = apiResponse.get('response.docs');
-      docs = _.map(docs, function (d) {
+      docs = _.map(docs, function(d) {
         d.all_ids = d.identifier;
         if (d.bibcode) {
           d.identifier = d.bibcode ? d.bibcode : d.identifier;
@@ -306,26 +343,27 @@ define([
       return docs;
     },
 
-    getPaginationInfo: function (apiResponse, docs) {
+    getPaginationInfo: function(apiResponse, docs) {
       var q = apiResponse.getApiQuery();
 
       // this information is important for calculation of pages
       var numFound = apiResponse.get('response.numFound') || 0;
-      var perPage = this.model.get('perPage') || (q.has('rows') ? q.get('rows')[0] : 10);
+      var perPage =
+        this.model.get('perPage') || (q.has('rows') ? q.get('rows')[0] : 10);
       var start = this.model.get('start') || 0;
 
       // compute the page number of this request
       var page = PaginationMixin.getPageVal(start, perPage);
 
       // compute which documents should be made visible
-      var showRange = [page * perPage, ((page + 1) * perPage) - 1];
+      var showRange = [page * perPage, (page + 1) * perPage - 1];
 
       // means that we were fetching the missing documents (to fill gaps in the collection)
       var fillingGaps = q.has('__fetch_missing');
       if (fillingGaps) {
         return {
           start: start,
-          showRange: showRange
+          showRange: showRange,
         };
       }
 
@@ -338,14 +376,14 @@ define([
         page: page,
         showRange: showRange,
         pageData: pageData,
-        currentQuery: q
+        currentQuery: q,
       };
     },
 
     /*
      * data for the page numbers template at the bottom
      * */
-    _getPaginationData: function (page, perPage, numFound) {
+    _getPaginationData: function(page, perPage, numFound) {
       // page is zero indexed
       return {
         // copying this here for convenience
@@ -353,43 +391,50 @@ define([
         totalPages: Math.ceil(numFound / perPage),
         currentPage: page + 1,
         previousPossible: page > 0,
-        nextPossible: (page + 1) * perPage < numFound
+        nextPossible: (page + 1) * perPage < numFound,
       };
     },
 
-    processDocs: function (apiResponse, docs, paginationInfo) {
+    processDocs: function(apiResponse, docs, paginationInfo) {
       if (!apiResponse.has('response')) return [];
       var params = apiResponse.get('response');
-      var start = params.start || (paginationInfo.start || 0);
+      var start = params.start || paginationInfo.start || 0;
       docs = PaginationMixin.addPaginationToDocs(docs, start);
       return docs;
     },
 
     defaultQueryArguments: {
       fl: 'id',
-      start: 0
+      start: 0,
     },
 
     /*
      * right now only perPage value can be updated by list of things
      * */
 
-    updateLocalStorage: function (options) {
+    updateLocalStorage: function(options) {
       // if someone has selected perPage, save it in to localStorage
-      if (options.hasOwnProperty('perPage') && _.contains([25, 50, 100, 200, 500], options.perPage)) {
-        this.getBeeHive().getObject('User').setLocalStorage({
-          perPage: options.perPage
-        });
-        console.log('set user\'s page preferences in localStorage: ' + options.perPage);
+      if (
+        options.hasOwnProperty('perPage') &&
+        _.contains([25, 50, 100, 200, 500], options.perPage)
+      ) {
+        this.getBeeHive()
+          .getObject('User')
+          .setLocalStorage({
+            perPage: options.perPage,
+          });
+        console.log(
+          "set user's page preferences in localStorage: " + options.perPage
+        );
       }
       // updatePagination will be called after localStorage triggers an event
     },
 
-    updatePagination: function (options) {
+    updatePagination: function(options) {
       // update the current model based on the data passed in
       var opts = _.defaults({}, options, {
         silentIndexUpdate: false,
-        updateHash: true
+        updateHash: true,
       });
       var currentPageData = this.model.get('pageData');
       var start = this.model.get('start');
@@ -434,7 +479,11 @@ define([
         }
       } else {
         // otherwise compute the page using the start and perPage value
-        if (_.isEmpty(this.collection.models) && _.isNumber(start) && _.isNumber(opts.perPage)) {
+        if (
+          _.isEmpty(this.collection.models) &&
+          _.isNumber(start) &&
+          _.isNumber(opts.perPage)
+        ) {
           update.page = PaginationMixin.getPageVal(start, opts.perPage);
         } else if (_.isNumber(start) && _.isNumber(opts.perPage)) {
           var resIdx = this.collection.models[0].get('resultsIndex');
@@ -443,31 +492,44 @@ define([
       }
 
       var page = _.isNumber(update.page) ? update.page : this.model.get('page');
-      var perPage = _.isNumber(update.perPage) ? update.perPage : this.model.get('perPage');
-      var numFound = _.isNumber(update.numFound) ? update.numFound : this.model.get('numFound');
+      var perPage = _.isNumber(update.perPage)
+        ? update.perPage
+        : this.model.get('perPage');
+      var numFound = _.isNumber(update.numFound)
+        ? update.numFound
+        : this.model.get('numFound');
 
       // once the hash is updated, this is called again, return here so we don't recompute, and only on results page
-      const frag = Backbone.history && Backbone.history.getFragment &&
+      const frag =
+        Backbone.history &&
+        Backbone.history.getFragment &&
         Backbone.history.getFragment();
-      if (('' + page) !== (_.isArray(pageParam) && pageParam[0]) &&
-        opts.updateHash && /search/.test(frag) &&
-        utils.qs('p_', frag) !== ('' + page)
+      if (
+        '' + page !== (_.isArray(pageParam) && pageParam[0]) &&
+        opts.updateHash &&
+        /search/.test(frag) &&
+        utils.qs('p_', frag) !== '' + page
       ) {
-        Backbone.history && Backbone.history.navigate &&
+        Backbone.history &&
+          Backbone.history.navigate &&
           Backbone.history.navigate(utils.updateHash('p_', page, frag));
       }
 
       // compute the new start and pageData values
       update.start = this.getPageStart(page, perPage, numFound);
       update.pageData = this._getPaginationData(page, perPage, numFound);
-      update.showRange = [page * perPage, (page * perPage) + perPage - 1];
+      update.showRange = [page * perPage, page * perPage + perPage - 1];
 
       // start updating
       this.model.set(update);
       this.view.render();
-      this.hiddenCollection.showRange(update.showRange[0], update.showRange[1], {
-        silent: !!opts.silentIndexUpdate
-      });
+      this.hiddenCollection.showRange(
+        update.showRange[0],
+        update.showRange[1],
+        {
+          silent: !!opts.silentIndexUpdate,
+        }
+      );
       this.collection.reset(this.hiddenCollection.getVisibleModels());
 
       // finally, scroll back to the top
@@ -475,7 +537,7 @@ define([
       $('#app-container').scrollTop(0);
     },
 
-    onAllInternalEvents: function (ev, arg1, arg2) {
+    onAllInternalEvents: function(ev, arg1, arg2) {
       // for testing, allow widget to not have been activated
       try {
         var pubsub = this.getPubSub();
@@ -483,41 +545,50 @@ define([
 
       if (ev === 'pagination:changePerPage') {
         this.updateLocalStorage({
-          perPage: arg1
+          perPage: arg1,
         });
         this.updatePagination({
           page: 0,
-          perPage: arg1
+          perPage: arg1,
         });
         this.view.model.set('showHighlights', 'closed');
       } else if (ev === 'pagination:select') {
         this.view.model.set('showHighlights', 'closed');
         return this.updatePagination({
-          page: arg1
+          page: arg1,
         });
       } else if (ev === 'show:missing') {
-        _.each(arg1, function (gap) {
-          var numFound = this.model.get('numFound');
-          var start = gap.start;
-          var perPage = this.model.get('perPage');
-          var currStart = this.model.get('start');
+        _.each(
+          arg1,
+          function(gap) {
+            var numFound = this.model.get('numFound');
+            var start = gap.start;
+            var perPage = this.model.get('perPage');
+            var currStart = this.model.get('start');
 
-          if (!numFound || start >= numFound || (start !== currStart && currStart > 0)) return; // ignore this
+            if (
+              !numFound ||
+              start >= numFound ||
+              (start !== currStart && currStart > 0)
+            )
+              return; // ignore this
 
-          var q = this.model.get('currentQuery').clone();
-          q.unset('hl');
-          q.unset('hl.fl');
-          q.unset('hl.maxAnalyzedChars');
-          q.unset('hl.requireFieldMatch');
-          q.unset('hl.usePhraseHighlighter');
-          q.set('__fetch_missing', 'true');
-          q.set('start', start);
-          q.set('rows', perPage - start <= 0 ? perPage : perPage - start);
-          var req = this.composeRequest(q);
+            var q = this.model.get('currentQuery').clone();
+            q.unset('hl');
+            q.unset('hl.fl');
+            q.unset('hl.maxAnalyzedChars');
+            q.unset('hl.requireFieldMatch');
+            q.unset('hl.usePhraseHighlighter');
+            q.set('__fetch_missing', 'true');
+            q.set('start', start);
+            q.set('rows', perPage - start <= 0 ? perPage : perPage - start);
+            var req = this.composeRequest(q);
 
-          // allows widgets to override if necessary
-          this.executeRequest(req);
-        }, this);
+            // allows widgets to override if necessary
+            this.executeRequest(req);
+          },
+          this
+        );
       } else if (ev == 'childview:toggleSelect') {
         pubsub.publish(pubsub.PAPER_SELECTION, arg2.data.identifier);
       } else if (ev === 'toggle-highlights') {
@@ -531,17 +602,16 @@ define([
         var divisor = perPage > 300 ? 5 : perPage <= 50 ? 1 : 2;
 
         // request runner
-        var runRequest = _.bind(function (start, rows) {
-
+        var runRequest = _.bind(function(start, rows) {
           var q = this.model.get('currentQuery').clone();
           q.set({
-            'hl': 'true',
+            hl: 'true',
             'hl.fl': 'title,abstract,body,ack',
             'hl.maxAnalyzedChars': '150000',
             'hl.requireFieldMatch': 'true',
             'hl.usePhraseHighlighter': 'true',
             start: pageStart + start,
-            rows: rows
+            rows: rows,
           });
           var req = this.composeRequest(q);
 
@@ -549,41 +619,49 @@ define([
           this.executeRequest(req);
         }, this);
 
-        var chunkRequests = _.debounce(_.bind(function () {
-          // batch requests, spacing them out by 300ms
-          var withHighlights = this.hiddenCollection.filter(function (m) {
-            return m.get('highlights');
-          });
+        var chunkRequests = _.debounce(
+          _.bind(function() {
+            // batch requests, spacing them out by 300ms
+            var withHighlights = this.hiddenCollection.filter(function(m) {
+              return m.get('highlights');
+            });
 
-          var start = withHighlights.length;
-          var batchSize = Math.ceil((perPage - start) / divisor);
-          for (var i = start, j = 1; i < perPage; i = i + batchSize, j++) {
-            if (i === start) {
-              runRequest(i, batchSize);
-            } else {
-              setTimeout(runRequest, 500 * j, i, batchSize);
+            var start = withHighlights.length;
+            var batchSize = Math.ceil((perPage - start) / divisor);
+            for (var i = start, j = 1; i < perPage; i += batchSize, j++) {
+              if (i === start) {
+                runRequest(i, batchSize);
+              } else {
+                setTimeout(runRequest, 500 * j, i, batchSize);
+              }
             }
-          }
-        }, this), 3000);
+          }, this),
+          3000
+        );
 
         chunkRequests();
       }
     },
 
-    executeRequest: function (req) {
+    executeRequest: function(req) {
       this.getPubSub().publish(this.getPubSub().EXECUTE_REQUEST, req);
     },
 
-    reset: function () {
+    reset: function() {
       this.collection.reset();
       this.hiddenCollection.reset();
       // reset the model, favoring values in this.pagination
-      this.model.set(_.defaults({
-        currentQuery: this.getCurrentQuery(),
-        query: false
-      }, this.pagination, this.model.defaults()));
-    }
-
+      this.model.set(
+        _.defaults(
+          {
+            currentQuery: this.getCurrentQuery(),
+            query: false,
+          },
+          this.pagination,
+          this.model.defaults()
+        )
+      );
+    },
   });
 
   _.extend(ListOfThingsWidget.prototype, PaginationMixin);

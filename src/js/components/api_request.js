@@ -3,16 +3,11 @@
  */
 
 define([
-  'underscore', 'backbone',
+  'underscore',
+  'backbone',
   'js/components/facade',
-  'js/components/default_request'
-],
-function (
-  _,
-  Backbone,
-  Facade,
-  ApiRequestImpl
-) {
+  'js/components/default_request',
+], function(_, Backbone, Facade, ApiRequestImpl) {
   var hardenedInterface = {
     // add makes no sense with request
     get: 'get a key',
@@ -32,10 +27,10 @@ function (
     values: 'only values',
     hasChanged: 'whether this object has modification (since its creation)',
     previousAttributes: 'get all changed attributes',
-    previous: 'previous values for a given attribute'
+    previous: 'previous values for a given attribute',
   };
 
-  var ApiRequest = function (data, options) {
+  var ApiRequest = function(data, options) {
     // Facade pattern, we want to expose only limited API
     // despite the fact that the underlying instance has
     // all power of the Backbone.Model
@@ -43,23 +38,28 @@ function (
     if (data instanceof ApiRequestImpl) {
       this.innerRequest = new Facade(hardenedInterface, data);
     } else {
-      this.innerRequest = new Facade(hardenedInterface, new ApiRequestImpl(data, options));
+      this.innerRequest = new Facade(
+        hardenedInterface,
+        new ApiRequestImpl(data, options)
+      );
     }
   };
 
   var toInsert = {};
-  _.each(_.keys(hardenedInterface), function (element, index, list) {
-    toInsert[element] = function () { return this.innerRequest[element].apply(this.innerRequest, arguments); };
+  _.each(_.keys(hardenedInterface), function(element, index, list) {
+    toInsert[element] = function() {
+      return this.innerRequest[element].apply(this.innerRequest, arguments);
+    };
   });
   _.extend(ApiRequest.prototype, toInsert, {
-    clone: function () {
+    clone: function() {
       var clone = this.innerRequest.clone.apply(this.innerRequest, arguments);
       return new ApiRequest(clone);
     },
-    load: function () {
+    load: function() {
       var clone = this.innerRequest.load.apply(this.innerRequest, arguments);
       return new ApiRequest(clone);
-    }
+    },
   });
 
   return ApiRequest;

@@ -1,8 +1,4 @@
-
-define([
-  'react',
-  'react-prop-types'
-], function (React, PropTypes) {
+define(['react', 'react-prop-types'], function(React, PropTypes) {
   const SortApp = ({ setSort, setDirection, app }) => {
     const { options, sort, direction } = app;
 
@@ -24,12 +20,13 @@ define([
           type="button"
           className="btn btn-default"
           onClick={setDirection}
-          title={direction === 'asc'
-            ? 'Change sort direction to descending'
-            : 'Change sort direction to ascending'
+          title={
+            direction === 'asc'
+              ? 'Change sort direction to descending'
+              : 'Change sort direction to ascending'
           }
-          >
-          <i className={`fa fa-sort-amount-${direction}`} aria-hidden="true"/>
+        >
+          <i className={`fa fa-sort-amount-${direction}`} aria-hidden="true" />
         </button>
         <button
           style={{ minWidth: 100 }}
@@ -37,21 +34,21 @@ define([
           className="btn btn-default dropdown-toggle"
           data-toggle="dropdown"
           title="Select a sort option"
-          >
-          {sort.text} <span className="caret" aria-hidden="true"/>
+        >
+          {sort.text} <span className="caret" aria-hidden="true" />
         </button>
         <ul className="dropdown-menu" role="menu">
-          {
-            options.map(o => (
-              <li key={o.id}>
-                <a
-                  href="javascript:void(0)"
-                  title={o.desc}
-                  onClick={e => onSelect(o, e)}
-                >{o.text}</a>
-              </li>
-            ))
-          }
+          {options.map((o) => (
+            <li key={o.id}>
+              <a
+                href="javascript:void(0)"
+                title={o.desc}
+                onClick={(e) => onSelect(o, e)}
+              >
+                {o.text}
+              </a>
+            </li>
+          ))}
         </ul>
       </div>
     );
@@ -60,7 +57,7 @@ define([
   SortApp.propTypes = {
     app: PropTypes.object.isRequired,
     setSort: PropTypes.func.isRequired,
-    setDirection: PropTypes.func.isRequired
+    setDirection: PropTypes.func.isRequired,
   };
 
   return SortApp;

@@ -1,4 +1,3 @@
-
 define([
   'underscore',
   'backbone',
@@ -12,17 +11,28 @@ define([
   'es6!./redux/configure-store',
   'es6!./redux/modules/api',
   'es6!./redux/modules/ui',
-  'es6!./containers/app'
-], function (
-  _, Backbone, React, ReactDOM, ReactRedux, analytics, ApiQuery, BaseWidget, LinkGenerator,
-  configureStore, api, ui, App
+  'es6!./containers/app',
+], function(
+  _,
+  Backbone,
+  React,
+  ReactDOM,
+  ReactRedux,
+  analytics,
+  ApiQuery,
+  BaseWidget,
+  LinkGenerator,
+  configureStore,
+  api,
+  ui,
+  App
 ) {
   const View = Backbone.View.extend({
-    initialize: function (options) {
+    initialize: function(options) {
       // provide this with all the options passed in
       _.assign(this, options);
     },
-    render: function () {
+    render: function() {
       // create provider component, that passes the store to <App>
       ReactDOM.render(
         <ReactRedux.Provider store={this.store}>
@@ -32,14 +42,14 @@ define([
       );
       return this;
     },
-    destroy: function () {
+    destroy: function() {
       // on destroy, make sure the React DOM is unmounted
       ReactDOM.unmountComponentAtNode(this.el);
-    }
+    },
   });
 
   const Widget = BaseWidget.extend({
-    initialize: function () {
+    initialize: function() {
       // create the store, using the configurator
       this.store = configureStore(this);
 
@@ -47,15 +57,16 @@ define([
       this.view = new View({ store: this.store });
     },
     defaultQueryArguments: {
-      fl: 'bibcode,data,doctype,doi,esources,first_author,genre,isbn,issn,issue,page,property,pub,title,volume,year,links_data'
+      fl:
+        'bibcode,data,doctype,doi,esources,first_author,genre,isbn,issn,issue,page,property,pub,title,volume,year,links_data',
     },
-    activate: function (beehive) {
+    activate: function(beehive) {
       const { dispatch } = this.store;
       const self = this;
       this.setBeeHive(beehive);
       this.activateWidget();
       const pubsub = this.getPubSub();
-      pubsub.subscribe(pubsub.DISPLAY_DOCUMENTS, function (apiQuery) {
+      pubsub.subscribe(pubsub.DISPLAY_DOCUMENTS, function(apiQuery) {
         const { query: currentQuery } = self.store.getState().api;
 
         if (apiQuery && _.isFunction(apiQuery.toJSON)) {
@@ -71,7 +82,7 @@ define([
           dispatch(ui.setError('did not receive query'));
         }
       });
-      pubsub.subscribe(pubsub.DELIVERING_RESPONSE, function (apiResponse) {
+      pubsub.subscribe(pubsub.DELIVERING_RESPONSE, function(apiResponse) {
         if (apiResponse && _.isFunction(apiResponse.toJSON)) {
           dispatch(api.processResponse(apiResponse.toJSON()));
         } else {
@@ -81,7 +92,7 @@ define([
       this.attachGeneralHandler(this.onApiFeedback);
       this._updateLinkServer();
     },
-    _updateLinkServer: function () {
+    _updateLinkServer: function() {
       const { dispatch } = this.store;
       const beehive = this.getBeeHive();
       if (_.isPlainObject(beehive)) {
@@ -94,19 +105,25 @@ define([
         }
       }
     },
-    dispatchRequest: function (options) {
+    dispatchRequest: function(options) {
       const query = new ApiQuery(options);
       BaseWidget.prototype.dispatchRequest.call(this, query);
     },
-    emitAnalytics: function (text) {
-      analytics('send', 'event', 'interaction', 'full-text-link-followed', text);
+    emitAnalytics: function(text) {
+      analytics(
+        'send',
+        'event',
+        'interaction',
+        'full-text-link-followed',
+        text
+      );
     },
-    onApiFeedback: function (feedback) {
+    onApiFeedback: function(feedback) {
       const { dispatch } = this.store;
       if (_.isPlainObject(feedback.error)) {
         dispatch(ui.setError(feedback.error));
       }
-    }
+    },
   });
 
   _.extend(Widget.prototype, LinkGenerator);

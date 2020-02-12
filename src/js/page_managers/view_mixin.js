@@ -1,17 +1,10 @@
-define([
-  'underscore',
-  'jquery'
-],
-function (
-  _,
-  $
-) {
+define(['underscore', 'jquery'], function(_, $) {
   var PageManagerMixin = {
-    getWidgetsFromTemplate: function (template, isDebug) {
+    getWidgetsFromTemplate: function(template, isDebug) {
       var widgets = {};
       var widgetTargets = $(template).find('[data-widget]');
       if (widgetTargets.length > 0) {
-        _.each(widgetTargets, function (widgetTarget) {
+        _.each(widgetTargets, function(widgetTarget) {
           var widgetName = widgetTarget.getAttribute('data-widget');
           var isDebug = widgetTarget.getAttribute('data-debug');
 
@@ -23,7 +16,7 @@ function (
         });
       }
       return widgets;
-    }
+    },
   };
 
   return PageManagerMixin;

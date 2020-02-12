@@ -8,7 +8,6 @@
  * callback 'success' once all of the requests were finished
  */
 
-
 /**
  * class R.ApiRequestQueue
  *
@@ -18,17 +17,17 @@
  *   be called for every queued request, instead of just the final one.
  *   Default: false
  * */
-define(['underscore', 'js/components/api_request'], function (_, ApiRequest) {
+define(['underscore', 'js/components/api_request'], function(_, ApiRequest) {
   var ApiRequestQueue = ApiRequest.extend({
     _queue: [],
     _lock: false,
     _options: {},
     successAllCallback: null,
-    initialize: function (attrs, options) {
+    initialize: function(attrs, options) {
       _.extend(this, _.pick(attrs, ['successAllCallback']));
     },
 
-    push: function (request) {
+    push: function(request) {
       if (!(request instanceof ApiRequest)) {
         throw Error('ApiRequestQueue works only with ApiRequest instances');
       }
@@ -39,14 +38,15 @@ define(['underscore', 'js/components/api_request'], function (_, ApiRequest) {
       }
     },
 
-    _processQueue: function () {
+    _processQueue: function() {
       if (!this.isEmpty()) {
-        var doNothing = function () {};
+        var doNothing = function() {};
         var args = this._queue.shift();
         var _success = args.success ? args.success : doNothing;
         var _error = args.error ? args.error : doNothing;
         var self = this;
-        args.success = function (response) { // Wrap the success callback
+        args.success = function(response) {
+          // Wrap the success callback
           if (self._callAllSuccessCallbacks || self.isEmpty()) {
             _success(response);
           }
@@ -57,14 +57,17 @@ define(['underscore', 'js/components/api_request'], function (_, ApiRequest) {
 
           self._processQueue();
         };
-        args.error = function (response) { // Wrap the error callback
+        args.error = function(response) {
+          // Wrap the error callback
           _error(response);
           // Cancel the queued commands on error.
           // Aborting requests on error is the appropriate behavior because
           // queued requests depend on the outcome of the previous requests.
           // If the outcome is unsuccessful, the subsequent requests are probably invalid.
           if (!self.isEmpty()) {
-            console.error('Error encountered while processing queued commands. Remaining commands will not be processed.');
+            console.error(
+              'Error encountered while processing queued commands. Remaining commands will not be processed.'
+            );
             self._queue = [];
           }
           self.unlock();
@@ -73,21 +76,21 @@ define(['underscore', 'js/components/api_request'], function (_, ApiRequest) {
       }
     },
 
-    lock: function () {
+    lock: function() {
       this._lock = true;
     },
 
-    unlock: function () {
+    unlock: function() {
       this._lock = false;
     },
 
-    isLocked: function () {
+    isLocked: function() {
       return this._lock;
     },
 
-    isEmpty: function () {
+    isEmpty: function() {
       return this._queue.length === 0;
-    }
+    },
   });
 
   return ApiRequestQueue;

@@ -5,24 +5,24 @@
  even if you try to set strings, you will always have
  list of strings
  */
-define(['backbone', 'underscore', 'jquery'], function (Backbone, _, $) {
+define(['backbone', 'underscore', 'jquery'], function(Backbone, _, $) {
   var Model = Backbone.Model.extend({
     locked: false,
-    _checkLock: function () {
+    _checkLock: function() {
       if (this.locked === true) {
         throw Error('Object locked for modifications');
       }
     },
-    isLocked: function () {
+    isLocked: function() {
       return this.locked;
     },
-    lock: function () {
+    lock: function() {
       this.locked = true;
     },
-    unlock: function () {
+    unlock: function() {
       this.locked = false;
     },
-    clone: function () {
+    clone: function() {
       if (this.isLocked()) {
         var c = new this.constructor(this.attributes);
         c.lock();
@@ -31,13 +31,13 @@ define(['backbone', 'underscore', 'jquery'], function (Backbone, _, $) {
       return new this.constructor(this.attributes);
     },
 
-    hasVal: function (key) {
+    hasVal: function(key) {
       return !_.isEmpty(this.get(key));
     },
 
     // we allow only strings and numbers; instead of sending
     // signal we throw a direct error
-    _validate: function (attributes, options) {
+    _validate: function(attributes, options) {
       // check we have only numbers and/or finite numbers
       for (var attr in attributes) {
         if (!_.isString(attr)) {
@@ -46,7 +46,14 @@ define(['backbone', 'underscore', 'jquery'], function (Backbone, _, $) {
         // remove empty strings
         var tempVal = attributes[attr];
 
-        tempVal = _.without(_.flatten(tempVal), '', false, null, undefined, NaN);
+        tempVal = _.without(
+          _.flatten(tempVal),
+          '',
+          false,
+          null,
+          undefined,
+          NaN
+        );
 
         if (!_.isArray(tempVal)) {
           throw new Error('Values were not converted to an Array');
@@ -56,9 +63,11 @@ define(['backbone', 'underscore', 'jquery'], function (Backbone, _, $) {
           throw new Error('Empty values not allowed');
         }
 
-        if (!(_.every(tempVal, function (v) {
-          return _.isString(v) || (_.isNumber(v) && !_.isNaN(v));
-        }))) {
+        if (
+          !_.every(tempVal, function(v) {
+            return _.isString(v) || (_.isNumber(v) && !_.isNaN(v));
+          })
+        ) {
           throw new Error('Invalid value (not a string or number): ' + tempVal);
         }
 
@@ -67,10 +76,9 @@ define(['backbone', 'underscore', 'jquery'], function (Backbone, _, $) {
       return true;
     },
 
-
     // Every value is going to be multi-valued by default
     // in this way we can treat all objects in the same way
-    set: function (key, val, options) {
+    set: function(key, val, options) {
       this._checkLock();
       var attrs;
 
@@ -88,7 +96,7 @@ define(['backbone', 'underscore', 'jquery'], function (Backbone, _, $) {
         var tempVal = attrs[attr];
 
         // convert to array if necessary
-        if (!(_.isArray(tempVal))) {
+        if (!_.isArray(tempVal)) {
           attrs[attr] = _.flatten([tempVal]);
         }
       }
@@ -96,14 +104,13 @@ define(['backbone', 'underscore', 'jquery'], function (Backbone, _, $) {
       Backbone.Model.prototype.set.call(this, attrs, options);
     },
 
-    unset: function () {
+    unset: function() {
       this._checkLock();
       Backbone.Model.prototype.unset.apply(this, arguments);
     },
 
-
     // adds values to existing (like set, but keeps the old vals)
-    add: function (key, val, options) {
+    add: function(key, val, options) {
       this._checkLock();
       var attrs;
 
@@ -121,7 +128,7 @@ define(['backbone', 'underscore', 'jquery'], function (Backbone, _, $) {
         var tempVal = attrs[attr];
 
         // convert to array if necessary
-        if (!(_.isArray(tempVal))) {
+        if (!_.isArray(tempVal)) {
           tempVal = _.flatten([tempVal]);
         }
         if (this.has(attr)) {
@@ -135,7 +142,7 @@ define(['backbone', 'underscore', 'jquery'], function (Backbone, _, $) {
     },
 
     // synchronization is disabled
-    sync: function () {
+    sync: function() {
       throw Error('MultiParams cannot be saved to server');
     },
 
@@ -145,12 +152,14 @@ define(['backbone', 'underscore', 'jquery'], function (Backbone, _, $) {
      * by their keys and URL encoded so that they can be used
      * in requests.
      */
-    url: function (whatToSort) {
+    url: function(whatToSort) {
       if (!whatToSort) {
         whatToSort = this.attributes;
       }
       // sort keys alphabetically
-      var sorted = _.pairs(whatToSort).sort(function (a, b) { return (a[0] > b[0]) ? 1 : (a[0] < b[0] ? -1 : 0); });
+      var sorted = _.pairs(whatToSort).sort(function(a, b) {
+        return a[0] > b[0] ? 1 : a[0] < b[0] ? -1 : 0;
+      });
 
       // June1:rca - I need to preserve order of values (becuaes of the query modifications/updates) the logic
       // just requires us to be careful and we need order to be preserved when the query is cloned
@@ -179,7 +188,7 @@ define(['backbone', 'underscore', 'jquery'], function (Backbone, _, $) {
      * @param options
      * @returns {*}
      */
-    parse: function (resp, options) {
+    parse: function(resp, options) {
       if (_.isString(resp)) {
         var attrs = {};
         resp = decodeURI(resp);
@@ -198,17 +207,17 @@ define(['backbone', 'underscore', 'jquery'], function (Backbone, _, $) {
       return this._checkParsed(resp); // else return resp object
     },
 
-    _parse: function (resp) {
-      var attrs = {},
-        hash;
+    _parse: function(resp) {
+      var attrs = {};
+      var hash;
       if (!resp.trim()) {
         return attrs;
       }
       var hashes = resp.slice(resp.indexOf('?') + 1).split('&');
 
       // resp = decodeURIComponent(resp);
-      var key,
-        value;
+      var key;
+      var value;
       for (var i = 0; i < hashes.length; i++) {
         hash = hashes[i].split('=');
         key = decodeURIComponent(hash[0].split('+').join(' ')); // optimized: .replace(/\+/g, " ")
@@ -231,7 +240,7 @@ define(['backbone', 'underscore', 'jquery'], function (Backbone, _, $) {
 
     // default behaviour is just to keep the query parameters
     // after the string was parsed, you can override it to suit other needs
-    _checkParsed: function (attrs) {
+    _checkParsed: function(attrs) {
       if (_.isObject(attrs)) {
         if ('#query' in attrs) {
           return attrs['#query'];
@@ -247,16 +256,14 @@ define(['backbone', 'underscore', 'jquery'], function (Backbone, _, $) {
      * @param query (String)
      * @returns {Model}
      */
-    load: function (query) {
+    load: function(query) {
       this._checkLock();
       var vals = this.parse(query);
       this.clear();
       this.set(vals);
       return this;
-    }
-
+    },
   });
-
 
   return Model;
 });

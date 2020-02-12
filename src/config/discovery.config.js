@@ -2,15 +2,14 @@
 require.config({
   // Initialize the application with the main application file or if we run
   // as a test, then load the test unittests
-  deps: (function () {
+  deps: (function() {
     if (typeof window !== 'undefined' && window.skipMain) {
       return ['common.config'];
-    } else {
-      return ['config/common.config', 'js/apps/discovery/main'];
     }
+    return ['config/common.config', 'js/apps/discovery/main'];
   })(),
 
-  //this will be overridden in the compiled file
+  // this will be overridden in the compiled file
   waitSeconds: 30,
 
   // Configuration we want to make available to modules of ths application
@@ -36,7 +35,7 @@ require.config({
           AlertsController: 'js/wraps/alerts_mediator',
           Orcid: 'js/modules/orcid/module',
           SecondOrderController: 'js/components/second_order_controller',
-          HotkeysController: 'js/components/hotkeys_controller'
+          HotkeysController: 'js/components/hotkeys_controller',
         },
         services: {
           Api: 'js/services/api',
@@ -67,11 +66,13 @@ require.config({
         AuthenticationPage: 'js/wraps/authentication_page_manager',
         SettingsPage: 'js/wraps/user_settings_page_manager/user_page_manager',
         OrcidPage: 'js/wraps/orcid_page_manager/orcid_page_manager',
-        OrcidInstructionsPage: 'js/wraps/orcid-instructions-page-manager/manager',
+        OrcidInstructionsPage:
+          'js/wraps/orcid-instructions-page-manager/manager',
 
         LibrariesPage: 'js/wraps/libraries_page_manager/libraries_page_manager',
         HomePage: 'js/wraps/home_page_manager/home_page_manager',
-        PublicLibrariesPage: 'js/wraps/public_libraries_page_manager/public_libraries_manager',
+        PublicLibrariesPage:
+          'js/wraps/public_libraries_page_manager/public_libraries_manager',
         ErrorPage: 'js/wraps/error_page_manager/error_page_manager',
 
         Authentication: 'js/widgets/authentication/widget',
@@ -96,7 +97,8 @@ require.config({
         PaperNetwork: 'js/wraps/paper_network',
         ConceptCloud: 'js/widgets/wordcloud/widget',
         BubbleChart: 'js/widgets/bubble_chart/widget',
-        AuthorAffiliationTool: 'es6!js/widgets/author_affiliation_tool/widget.jsx',
+        AuthorAffiliationTool:
+          'es6!js/widgets/author_affiliation_tool/widget.jsx',
 
         Metrics: 'js/widgets/metrics/widget',
         CitationHelper: 'js/widgets/citation_helper/widget',
@@ -127,7 +129,7 @@ require.config({
         ShowCoreads: 'js/wraps/coreads',
         ShowSimilar: 'js/wraps/similar',
         MetaTagsWidget: 'js/widgets/meta_tags/widget',
-        //can't camel case because router only capitalizes first letter
+        // can't camel case because router only capitalizes first letter
         ShowToc: 'js/wraps/table_of_contents',
         ShowResources: 'es6!js/widgets/resources/widget.jsx',
         ShowAssociated: 'es6!js/widgets/associated/widget.jsx',
@@ -154,8 +156,8 @@ require.config({
   },
 
   paths: {
-    //TODO: these libs will need manual optimization (they dont come with minified sources)
-    //TODO: require-handlebars-js, d3-cloud, jquery-hoverIntent, dsjslib/cache, query-builder
+    // TODO: these libs will need manual optimization (they dont come with minified sources)
+    // TODO: require-handlebars-js, d3-cloud, jquery-hoverIntent, dsjslib/cache, query-builder
 
     // bumblebee components (here we'll lists simple names), paths are relative
     // to the config (the module that bootstraps our application; look at the html)
@@ -175,7 +177,7 @@ require.config({
     async: 'libs/requirejs-plugins/async',
     babel: 'libs/requirejs-babel-plugin/babel-5.8.34.min',
     backbone: [
-      //'//cdnjs.cloudflare.com/ajax/libs/backbone.js/1.1.2/backbone-min',
+      // '//cdnjs.cloudflare.com/ajax/libs/backbone.js/1.1.2/backbone-min',
       'libs/backbone/backbone',
     ],
     'backbone-validation': [

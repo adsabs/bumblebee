@@ -1,14 +1,8 @@
-define([
-  'underscore'
-], function (
-  _
-
-) {
+define(['underscore'], function(_) {
   // some functions to be used by form views which auto-validate
   var formFunctions = {
-
     // for the view
-    checkValidationState: function () {
+    checkValidationState: function() {
       // hide help
       if (this.model.isValidSafe()) {
         this.$('button[type=submit]')
@@ -21,7 +15,7 @@ define([
     // for the view
     // when someone clicks on submit button
     // parent views/controllers need to listen for "submit-form" event
-    triggerSubmit: function (e) {
+    triggerSubmit: function(e) {
       // (only show error messages if submit == true), so once user has unsuccessfully
       // submitted 1 time
       // don't need to reset because view will be disposed of after successful submit event
@@ -46,24 +40,28 @@ define([
     },
 
     // for the view, to be called onRender
-    activateValidation: function () {
+    activateValidation: function() {
       Backbone.Validation.bind(this, {
-        forceUpdate: true
+        forceUpdate: true,
       });
       this.stickit();
     },
 
     // for the model
     // a way to validate all fields without causing invalid states for empty fields
-    isValidSafe: function () {
+    isValidSafe: function() {
       // check everything that has required=true before you do this.isValid(), and make sure it isn't empty
       // otherwise the way it is set up, the form will show invalid markers for unentered fields
       var allRequired = true;
-      _.each(this.validation, function (v, k) {
-        if (v.required && !this.get(k)) {
-          allRequired = false;
-        }
-      }, this);
+      _.each(
+        this.validation,
+        function(v, k) {
+          if (v.required && !this.get(k)) {
+            allRequired = false;
+          }
+        },
+        this
+      );
 
       if (allRequired && this.isValid(true)) {
         return true;
@@ -72,16 +70,19 @@ define([
 
     // for the model, if it has a validation hash from backbone-validation
     // right now, useful only for user setting models that combine user-entered info and info from the server
-    reset: function () {
+    reset: function() {
       var valKeys = _.keys(this.validation);
-      _.each(this.attributes, function (v, k) {
-        if (_.contains(valKeys, k)) {
-          this.unset(k, { silent: true });
-        }
-      }, this);
-    }
+      _.each(
+        this.attributes,
+        function(v, k) {
+          if (_.contains(valKeys, k)) {
+            this.unset(k, { silent: true });
+          }
+        },
+        this
+      );
+    },
   };
-
 
   return formFunctions;
 });

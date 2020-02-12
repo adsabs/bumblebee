@@ -29,7 +29,9 @@
  *
  */
 
-define(['underscore', 'backbone',
+define([
+  'underscore',
+  'backbone',
   'js/components/query_mediator',
   'js/services/pubsub',
   'js/components/beehive',
@@ -37,8 +39,8 @@ define(['underscore', 'backbone',
   'js/components/api_query',
   'js/components/api_request',
   'js/components/api_feedback',
-  'js/components/api_response'
-], function (
+  'js/components/api_response',
+], function(
   _,
   BackBone,
   QueryMediator,
@@ -50,14 +52,14 @@ define(['underscore', 'backbone',
   ApiFeedback,
   ApiResponse
 ) {
-  var MinimalPubsub = function () {
+  var MinimalPubsub = function() {
     this.beehive = null;
     this.pubsub = null;
     this.initialize.apply(this, arguments);
   };
 
   _.extend(MinimalPubsub.prototype, Backbone.Events, PubSubEvents, {
-    initialize: function (options) {
+    initialize: function(options) {
       options = options || {};
       if (options.verbose) {
         console.log('[MinSub]', 'starting');
@@ -69,25 +71,28 @@ define(['underscore', 'backbone',
       this.pubsub.debug = true;
       this.beehive.addService('PubSub', this.pubsub);
       var self = this;
-      this.beehive.addService('Api', options.Api || {
-        request: function (req, context) {
-          self.requestCounter += 1;
-          if (!context) {
-            context = req.get('options');
-          }
-          var response = self.request.apply(self, arguments);
-          if (!response) return;
-          if (self.verbose) {
-            console.log('[MinSub]', 'request', self.requestCounter, response);
-          }
-          var defer = $.Deferred();
-          defer.done(function () {
-            context.done.call(context.context, response);
-          });
-          defer.resolve(response);
-          return defer.promise();
+      this.beehive.addService(
+        'Api',
+        options.Api || {
+          request: function(req, context) {
+            self.requestCounter += 1;
+            if (!context) {
+              context = req.get('options');
+            }
+            var response = self.request.apply(self, arguments);
+            if (!response) return;
+            if (self.verbose) {
+              console.log('[MinSub]', 'request', self.requestCounter, response);
+            }
+            var defer = $.Deferred();
+            defer.done(function() {
+              context.done.call(context.context, response);
+            });
+            defer.resolve(response);
+            return defer.promise();
+          },
         }
-      });
+      );
       this.beehive.activate(this.beehive);
 
       // add Query-mediator; it is using an app object, so we'll feed it
@@ -96,7 +101,7 @@ define(['underscore', 'backbone',
         recoveryDelayInMs: 0,
         shortDelayInMs: 0,
         longDelayInMs: 0,
-        monitoringDelayInMs: 5
+        monitoringDelayInMs: 5,
       });
       qM.activate(this.beehive, this.fakeApp); // fake application object
       this.beehive.addObject('QueryMediator', qM);
@@ -106,63 +111,67 @@ define(['underscore', 'backbone',
       _.extend(this, options);
     },
 
-    listen: function () {
-      this.pubsub.subscribe(this.pubsub.getPubSubKey(), 'all', _.bind(this.logAll, this));
+    listen: function() {
+      this.pubsub.subscribe(
+        this.pubsub.getPubSubKey(),
+        'all',
+        _.bind(this.logAll, this)
+      );
     },
 
-    destroy: function () {
+    destroy: function() {
       if (this.verbose) {
         console.log('[MinSub]', 'closing');
       }
       this.beehive.destroy();
     },
 
-    logAll: function (ev) {
+    logAll: function(ev) {
       if (this.verbose) {
         var args = Array.prototype.slice.call(arguments, 1);
         console.log('[PubSub]', ev, args);
       }
     },
 
-    publish: function () {
+    publish: function() {
       var args = _.toArray(arguments);
       args.unshift(this.key);
       this.pubsub.publish.apply(this.pubsub, args);
     },
 
-    subscribe: function (signal, callback) {
+    subscribe: function(signal, callback) {
       var args = _.toArray(arguments);
       args.unshift(this.key);
       this.pubsub.subscribe.apply(this.pubsub, args);
     },
-    subscribeOnce: function (signal, callback) {
+    subscribeOnce: function(signal, callback) {
       var args = _.toArray(arguments);
       args.unshift(this.key);
       this.pubsub.subscribeOnce.apply(this.pubsub, args);
     },
-    on: function () {
+    on: function() {
       this.pubsub.on.apply(this.pubsub, arguments);
     },
-    off: function () {
+    off: function() {
       this.pubsub.on.apply(this.pubsub, arguments);
     },
 
-    request: function (apiRequest, params) {
+    request: function(apiRequest, params) {
       if (this.verbose) {
         console.log('[Api]', 'request', apiRequest, params);
       }
       return {};
     },
 
-    createQuery: function (data) {
+    createQuery: function(data) {
       return new ApiQuery(data);
     },
 
-    createRequest: function (data) {
+    createRequest: function(data) {
       return new ApiRequest(data);
     },
 
-    createFeedback: function (data) {
+    createFeedback: function(data) {
       return new ApiFeedback(data);
     },
 
@@ -170,9 +179,8 @@ define(['underscore', 'backbone',
       RESPONSE: ApiResponse,
       REQUEST: ApiRequest,
       QUERY: ApiQuery,
-      FEEDBACK: ApiFeedback
-    }
-
+      FEEDBACK: ApiFeedback,
+    },
   });
 
   MinimalPubsub.extend = Backbone.Model.extend;

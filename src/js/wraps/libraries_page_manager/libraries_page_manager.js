@@ -3,8 +3,8 @@ define([
   'js/page_managers/toc_widget',
   'js/page_managers/three_column_view',
   'hbs!js/wraps/libraries_page_manager/libraries-page-layout',
-  'hbs!js/wraps/libraries_page_manager/libraries-nav'
-], function (
+  'hbs!js/wraps/libraries_page_manager/libraries-nav',
+], function(
   TOCController,
   TOCView,
   PageManagerView,
@@ -12,12 +12,10 @@ define([
   TOCTemplate
 ) {
   var PageManager = TOCController.extend({
-
     TOCTemplate: TOCTemplate,
 
     TOCEvents: {
-
-      'click button.create-library': function () {
+      'click button.create-library': function() {
         function createLib() {
           var that = this;
 
@@ -30,34 +28,41 @@ define([
           // don't allow a super long string
           name = name.slice(0, 30);
 
-          this.getBeeHive().getObject('LibraryController')
+          this.getBeeHive()
+            .getObject('LibraryController')
             .createLibrary({ name: name })
-            .done(function (data) {
-              that.getPubSub().publish(that.getPubSub().NAVIGATE, 'IndividualLibraryWidget', { sub: 'library', id: data.id });
+            .done(function(data) {
+              that
+                .getPubSub()
+                .publish(that.getPubSub().NAVIGATE, 'IndividualLibraryWidget', {
+                  sub: 'library',
+                  id: data.id,
+                });
             })
-            .fail(function (res) {
+            .fail(function(res) {
               if (res.responseJSON && res.responseJSON.error) {
                 alert('Library Not Created\n' + res.responseJSON.error);
               }
             });
         }
-        this.trigger('page-manager-event', 'apply-function', { func: createLib });
-      }
+        this.trigger('page-manager-event', 'apply-function', {
+          func: createLib,
+        });
+      },
     },
 
-    createView: function (options) {
+    createView: function(options) {
       options = options || {};
       options.template = options.template || PageManagerTemplate;
 
       return new PageManagerView({
         template: PageManagerTemplate,
         className: 's-libraries-layout s-100-height',
-        id: 'libraries-layout'
+        id: 'libraries-layout',
       });
     },
 
-    navConfig: []
-
+    navConfig: [],
   });
   return PageManager;
 });

@@ -18,8 +18,8 @@ define([
   'js/components/json_response',
   'hbs!js/modules/orcid/widget/templates/empty-template',
   'js/modules/orcid/extension',
-  'js/modules/orcid/bio'
-], function (
+  'js/modules/orcid/bio',
+], function(
   _,
   ListOfThingsWidget,
   BaseWidget,
@@ -36,37 +36,42 @@ define([
   OrcidBio
 ) {
   var ResultsWidget = ListOfThingsWidget.extend({
-
-    initialize: function (options) {
+    initialize: function(options) {
       ListOfThingsWidget.prototype.initialize.apply(this, arguments);
 
       var that = this;
 
       // now adjusting the List Model
-      this.view.getEmptyView = function () {
+      this.view.getEmptyView = function() {
         return Marionette.ItemView.extend({
-          template: EmptyViewTemplate
+          template: EmptyViewTemplate,
         });
       };
 
       _.extend(this.view.events, {
-        'click .search-author-name': function () {
-          var searchTerm,
-            viewThis = this;
-          var orcidName = this.model.get('orcidLastName') + ', ' + this.model.get('orcidFirstName');
+        'click .search-author-name': function() {
+          var searchTerm;
+          var viewThis = this;
+          var orcidName =
+            this.model.get('orcidLastName') +
+            ', ' +
+            this.model.get('orcidFirstName');
           var oApi = that.getBeeHive().getService('OrcidApi');
 
           var searchTerm = 'author:"' + orcidName + '"';
-          oApi.getADSUserData()
-            .done(function (data) {
+          oApi
+            .getADSUserData()
+            .done(function(data) {
               if (data && data.nameVariations) {
                 data.nameVariations.push(orcidName);
-                searchTerm = 'author:("' + data.nameVariations.join('" OR "') + '")';
+                searchTerm =
+                  'author:("' + data.nameVariations.join('" OR "') + '")';
               }
-            }).always(function () {
+            })
+            .always(function() {
               viewThis.trigger('search-author-name', searchTerm);
             }); // end done function
-        } // end click handler
+        }, // end click handler
       });
 
       this.view.delegateEvents();
@@ -74,20 +79,23 @@ define([
       this.view.template = ContainerTemplate;
       this.view.model.set({ mainResults: true }, { silent: true });
       this.listenTo(this.collection, 'reset', this.checkDetails);
-      this.listenTo(this.view, 'search-author-name', function (searchTerm) {
-        var pubsub = this.getPubSub(),
-          query = new ApiQuery({ q: searchTerm, sort: 'date desc' });
+      this.listenTo(this.view, 'search-author-name', function(searchTerm) {
+        var pubsub = this.getPubSub();
+        var query = new ApiQuery({ q: searchTerm, sort: 'date desc' });
         pubsub.publish(pubsub.NAVIGATE, 'search-page', { q: query });
       });
     },
 
     orcidWidget: true,
 
-    activate: function (beehive) {
-      ListOfThingsWidget.prototype.activate.apply(this, [].slice.apply(arguments));
+    activate: function(beehive) {
+      ListOfThingsWidget.prototype.activate.apply(
+        this,
+        [].slice.apply(arguments)
+      );
 
       _.bindAll(this, 'processResponse');
-      this.on('orcidAction:delete', function (model) {
+      this.on('orcidAction:delete', function(model) {
         this.collection.remove(model);
       });
     },
@@ -100,13 +108,13 @@ define([
      * This func is called after the resolution of the bibcodes, so you
      * can expect to have a canonical bibcode in the 'identifier' field
      */
-    mergeDuplicateRecords: function (docs) {
+    mergeDuplicateRecords: function(docs) {
       var dmap = {};
-      var id,
-        dupsFound,
-        c = 0;
+      var id;
+      var dupsFound;
+      var c = 0;
       if (docs) {
-        _.each(docs, function (doc) {
+        _.each(docs, function(doc) {
           doc._dupIdx = c++;
           id = doc.identifier;
           if (id) {
@@ -120,7 +128,7 @@ define([
           }
         });
       } else {
-        this.hiddenCollection.each(function (model) {
+        this.hiddenCollection.each(function(model) {
           id = model.get('identifier');
           model.attributes._dupIdx = c++;
           if (id) {
@@ -136,15 +144,18 @@ define([
       }
 
       if (dupsFound) {
-        var toRemove = {},
-          toUpdate = [];
+        var toRemove = {};
+        var toUpdate = [];
 
-        _.each(dmap, function (value, key) {
+        _.each(dmap, function(value, key) {
           if (value.length > 1) {
             // decide which record is ours (or pick the first one)
             var toPick = 0;
-            _.each(value, function (doc, idx) {
-              if (doc.source_name && doc.source_name.toLowerCase() == 'nasa ads') {
+            _.each(value, function(doc, idx) {
+              if (
+                doc.source_name &&
+                doc.source_name.toLowerCase() == 'nasa ads'
+              ) {
                 toPick = idx;
               }
             });
@@ -153,39 +164,47 @@ define([
             var authoritativeRecord = value[toPick];
             value.splice(toPick, 1);
             toUpdate.push(authoritativeRecord._dupIdx);
-            authoritativeRecord.source_name = authoritativeRecord.source_name || '';
+            authoritativeRecord.source_name =
+              authoritativeRecord.source_name || '';
 
-            _.each(value, function (doc) {
-              if (doc.source_name) authoritativeRecord.source_name += '; ' + doc.source_name;
+            _.each(value, function(doc) {
+              if (doc.source_name)
+                authoritativeRecord.source_name += '; ' + doc.source_name;
               toRemove[doc._dupIdx] = true;
             });
           }
         });
 
-        var recomputeIndexes = function (models) {
+        var recomputeIndexes = function(models) {
           var i = 0;
-          _.each(models, function (m) {
+          _.each(models, function(m) {
             m.resultsIndex = i++;
             m.indexToShow = i;
           });
         };
 
-
-        if (docs) { // we are updating the data before they get displayed
+        if (docs) {
+          // we are updating the data before they get displayed
           toRemove = _.keys(toRemove);
-          toRemove.sort(function (a, b) { return b - a; }); // reverse order
-          _.each(toRemove, function (idx) {
+          toRemove.sort(function(a, b) {
+            return b - a;
+          }); // reverse order
+          _.each(toRemove, function(idx) {
             docs.splice(idx, 1); // will be wasty for large collections
           });
           recomputeIndexes(docs);
-        } else { // we are updating the collection (it was already displayed
-          _.each(toUpdate, function (idx) {
+        } else {
+          // we are updating the collection (it was already displayed
+          _.each(toUpdate, function(idx) {
             var model = this.hiddenCollection.models[idx]; // force re-paint
-            model.set('source_name', model.attributes.source_name, { silent: true });
+            model.set('source_name', model.attributes.source_name, {
+              silent: true,
+            });
           });
           var newModels = [];
-          this.hiddenCollection.each(function (model) {
-            if (!toRemove[model.attributes._dupIdx]) newModels.push(model.attributes);
+          this.hiddenCollection.each(function(model) {
+            if (!toRemove[model.attributes._dupIdx])
+              newModels.push(model.attributes);
           });
           recomputeIndexes(newModels);
           this.hiddenCollection.reset(newModels);
@@ -194,10 +213,10 @@ define([
       }
     },
 
-    processDocs: function (jsonResponse, docs) {
+    processDocs: function(jsonResponse, docs) {
       var start = 0;
       var docs = PaginationMixin.addPaginationToDocs(docs, start);
-      _.each(docs, function (d, i) {
+      _.each(docs, function(d, i) {
         // let each doc know if it's on the orcid widget page
         d.isOrcidWidget = true;
         docs[i] = PapersUtilsMixin.prepareDocForViewing(d);
@@ -205,19 +224,18 @@ define([
       return docs;
     },
 
-
-    getPaginationInfo: function (jsonResponse, docs) {
+    getPaginationInfo: function(jsonResponse, docs) {
       // this information is important for calculation of pages
       var numFound = docs.length;
       var perPage = this.model.get('perPage') || 10;
       var start = 0;
-      var apiQuery = jsonResponse.getApiQuery() || new ApiQuery({ orcid: 'author X' });
+      var apiQuery =
+        jsonResponse.getApiQuery() || new ApiQuery({ orcid: 'author X' });
       // compute the page number of this request
       var page = PaginationMixin.getPageVal(start, perPage);
       // compute which documents should be made visible
-      var showRange = [page * perPage, ((page + 1) * perPage) - 1];
+      var showRange = [page * perPage, (page + 1) * perPage - 1];
       var pageData = this._getPaginationData(page, perPage, numFound);
-
 
       return {
         numFound: numFound,
@@ -226,11 +244,11 @@ define([
         page: page,
         showRange: showRange,
         pageData: pageData,
-        currentQuery: apiQuery
+        currentQuery: apiQuery,
       };
     },
 
-    onShow: function () {
+    onShow: function() {
       var oApi = this.getBeeHive().getService('OrcidApi');
       var self = this;
       if (oApi) {
@@ -242,7 +260,7 @@ define([
         var orcidBio = oApi.getUserBio();
         var orcidProfile = oApi.getUserProfile();
 
-        $.when(orcidBio, orcidProfile).done(function (bio, profile) {
+        $.when(orcidBio, orcidProfile).done(function(bio, profile) {
           var response = new JsonResponse(profile.toADSFormat());
           var bioResponse = new JsonResponse(bio.toADSFormat());
           var params = bioResponse.get('responseHeader.params');
@@ -256,31 +274,34 @@ define([
             orcidFirstName: firstName,
             orcidLastName: lastName,
             totalPapers: response.get('response.numFound') || 0,
-            loading: false
+            loading: false,
           });
 
           response.setApiQuery(new ApiQuery(params));
           self.processResponse(response);
         });
 
-        orcidProfile.fail(function () {
+        orcidProfile.fail(function() {
           self.model.set({
-            loading: false
+            loading: false,
           });
           var title = 'Something Went Wrong';
           var msg = [
             'We were unable to retrieve your profile from ORCiD',
             'Please reload the page to try again',
             '',
-            '<button onclick="location.reload()" class="btn btn-primary" role="button">Reload</button>'
+            '<button onclick="location.reload()" class="btn btn-primary" role="button">Reload</button>',
           ];
           var pubSub = self.getPubSub();
-          pubSub.publish(pubSub.ALERT, new ApiFeedback({
-            title: title,
-            msg: msg.join('<br/>'),
-            modal: true,
-            type: 'warning'
-          }));
+          pubSub.publish(
+            pubSub.ALERT,
+            new ApiFeedback({
+              title: title,
+              msg: msg.join('<br/>'),
+              modal: true,
+              type: 'warning',
+            })
+          );
         });
       }
     },
@@ -301,12 +322,14 @@ define([
      *    null - the record was created by an external client and we
      *           dont have a bibcode for it
      */
-    update: function (options) {
+    update: function(options) {
       options = options || {};
 
       if (this.hiddenCollection && this.view.collection) {
         if (!this._originalCollection) {
-          this._originalCollection = new this.hiddenCollection.constructor(this.hiddenCollection.models);
+          this._originalCollection = new this.hiddenCollection.constructor(
+            this.hiddenCollection.models
+          );
         }
 
         var coll = this._originalCollection;
@@ -317,28 +340,34 @@ define([
             cond = [cond];
           }
           for (var c in cond) {
-            if (!_.contains(allowedVals, cond[c])) throw Error('Unknown value for the filter: ' + cond[c]);
+            if (!_.contains(allowedVals, cond[c]))
+              throw Error('Unknown value for the filter: ' + cond[c]);
           }
 
-          var predicate = function (model) {
-            if (model.attributes.orcid && _.contains(cond, model.attributes.orcid.provenance)) return true;
+          var predicate = function(model) {
+            if (
+              model.attributes.orcid &&
+              _.contains(cond, model.attributes.orcid.provenance)
+            )
+              return true;
           };
           coll = new this.hiddenCollection.constructor(coll.filter(predicate));
         }
 
-
         if (_.has(options, 'sortBy') && options.sortBy) {
           var idx = 0;
-          coll = new this.hiddenCollection.constructor(_.map(coll.sortBy(options.sortBy), function (x) {
-            x.attributes.resultsIndex = idx++;
-            return x;
-          }));
+          coll = new this.hiddenCollection.constructor(
+            _.map(coll.sortBy(options.sortBy), function(x) {
+              x.attributes.resultsIndex = idx++;
+              return x;
+            })
+          );
         }
 
         this.hiddenCollection.reset(coll.models);
         this.updatePagination({});
       }
-    }
+    },
   });
   return OrcidExtension(ResultsWidget);
 });

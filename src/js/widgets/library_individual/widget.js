@@ -5,9 +5,8 @@ define([
   './views/library_header',
   './views/manage_permissions',
   'hbs!js/widgets/library_individual/templates/layout-container',
-  'hbs!js/widgets/library_individual/templates/loading-library'
-],
-function (
+  'hbs!js/widgets/library_individual/templates/loading-library',
+], function(
   Marionette,
   ApiQuery,
   BaseWidget,
@@ -17,34 +16,30 @@ function (
   LoadingTemplate
 ) {
   var LoadingView = Marionette.ItemView.extend({
-    template: LoadingTemplate
+    template: LoadingTemplate,
   });
 
   var ContainerView = Marionette.LayoutView.extend({
-
     className: 'library-widget s-library-widget',
     template: ContainerTemplate,
     regions: {
       header: '.header',
-      main: '.main'
-    }
+      main: '.main',
+    },
   });
 
   var StateModel = Backbone.Model.extend({
-
-    defaults: function () {
+    defaults: function() {
       return {
         id: undefined,
         subView: undefined,
-        publicView: false
+        publicView: false,
       };
-    }
-
+    },
   });
 
   var Library = BaseWidget.extend({
-
-    initialize: function (options) {
+    initialize: function(options) {
       options = options || {};
       this.view = new ContainerView();
       this.model = new StateModel();
@@ -57,7 +52,7 @@ function (
       this.view.header.show(this.headerView);
     },
 
-    activate: function (beehive) {
+    activate: function(beehive) {
       this.setBeeHive(beehive);
       _.bindAll(this);
       var pubsub = beehive.getService('PubSub');
@@ -66,24 +61,26 @@ function (
       this.headerView.on('all', this.handleHeaderEvents, this);
     },
 
-    onLibraryChange: function (collectionJSON, info) {
+    onLibraryChange: function(collectionJSON, info) {
       // record was deleted from within widget, just update metadata
       if (info.ev == 'change' && info.id == this.model.get('id')) {
         this.updateSubView();
       }
     },
 
-    updateHeader: function () {
+    updateHeader: function() {
       var done = function done(metadata) {
         // updating header
-        var loggedIn = this.getBeeHive().getObject('User').isLoggedIn();
-        this.headerModel.set(_.extend(metadata,
-          {
+        var loggedIn = this.getBeeHive()
+          .getObject('User')
+          .isLoggedIn();
+        this.headerModel.set(
+          _.extend(metadata, {
             active: this.model.get('subView'),
             publicView: this.model.get('publicView'),
-            loggedIn: loggedIn
-          }
-        ));
+            loggedIn: loggedIn,
+          })
+        );
       }.bind(this);
 
       this.getBeeHive()
@@ -92,15 +89,17 @@ function (
         .done(done);
     },
 
-    updateSubView: function () {
+    updateSubView: function() {
       this.view.main.empty();
 
-      var that = this,
-        id = this.model.get('id'),
-        view = this.model.get('subView');
+      var that = this;
+      var id = this.model.get('id');
+      var view = this.model.get('subView');
 
       if (!id || !view) {
-        console.warn('library widget\'s updateSubView called without requisite library id and view name in model');
+        console.warn(
+          "library widget's updateSubView called without requisite library id and view name in model"
+        );
         return;
       }
 
@@ -109,23 +108,32 @@ function (
       // create header
       this.updateHeader();
 
-      if (['library', 'export', 'authoraff', 'metrics', 'visualization', 'citation_helper'].indexOf(view) > -1) {
+      if (
+        [
+          'library',
+          'export',
+          'authoraff',
+          'metrics',
+          'visualization',
+          'citation_helper',
+        ].indexOf(view) > -1
+      ) {
         that.view.main.empty();
       } else if (view === 'admin') {
         var subView = new AdminView({ model: this.headerModel });
         subView.on('all', that.handleAdminEvents, that);
         this.view.main.show(subView);
       } else {
-        throw new Error('don\'t recognize that subview: ', view);
+        throw new Error("don't recognize that subview: ", view);
       }
     },
 
     /*
-       * ****this is the only way to change the state of the view***
-       * called by the navigator
-       * */
+     * ****this is the only way to change the state of the view***
+     * called by the navigator
+     * */
 
-    setSubView: function (data) {
+    setSubView: function(data) {
       // this can be used to refresh the view with new data or just to reflect
       // changes in the model that came from elsewhere, like a library change event
 
@@ -138,60 +146,56 @@ function (
       this.updateSubView();
     },
 
-    handleAdminEvents: function (event, arg1, arg2) {
+    handleAdminEvents: function(event, arg1, arg2) {
       var that = this;
 
       const libController = this.getBeeHive().getObject('LibraryController');
 
       switch (event) {
         case 'update-public-status':
-          var data = { 'public': arg1 },
-            id = this.model.get('id');
-            libController
+          var data = { public: arg1 };
+          var id = this.model.get('id');
+          libController
             .updateLibraryMetadata(id, data)
-            .done(function (response, status) {
+            .done(function(response, status) {
               // re-render the admin view
               that.headerModel.set('public', response.public);
             })
-            .fail(function () {
-            });
+            .fail(function() {});
           break;
         case 'confirm-transfer-ownership':
           libController
             .transferOwnership(this.model.get('id'), arg1)
             .done(arg2.done)
             .fail(arg2.fail);
-        break;
+          break;
         case 'reset-and-navigate':
           const ps = this.getPubSub();
 
           // invalidates the cache of entries so the list gets refreshed
           ps.publish(ps.CUSTOM_EVENT, 'invalidate-library-metadata');
           ps.publish(ps.NAVIGATE, 'AllLibrariesWidget');
-        break;
+          break;
       }
     },
 
-    handleHeaderEvents: function (event, arg1, arg2) {
-      var that = this,
-        id = this.model.get('id'),
-        pubsub = this.getBeeHive().getService('PubSub'),
-        libController = this.getBeeHive().getObject('LibraryController');
+    handleHeaderEvents: function(event, arg1, arg2) {
+      var that = this;
+      var id = this.model.get('id');
+      var pubsub = this.getBeeHive().getService('PubSub');
+      var libController = this.getBeeHive().getObject('LibraryController');
 
       console.log('headerEvent', event);
 
       switch (event) {
         case 'updateVal':
           // from header view
-          libController
-            .updateLibraryMetadata(id, arg1)
-            .done(function (data) {
-              that.headerModel.set(data);
-            });
+          libController.updateLibraryMetadata(id, arg1).done(function(data) {
+            that.headerModel.set(data);
+          });
           break;
 
         case 'navigate':
-
           this.model.set('subView', arg1);
 
           var data = {
@@ -200,12 +204,17 @@ function (
             // subview is dependent on the tab and is used exclusively by individuallibrarywidget
             // in the nav function
             // to figure out which tab to highlight
-            subView: arg1
+            subView: arg1,
           };
           /*
-              * these subviews require requesting bibcode data first
-              * */
-          if (_.contains(['export', 'metrics', 'visualization', 'citation_helper'], data.subView)) {
+           * these subviews require requesting bibcode data first
+           * */
+          if (
+            _.contains(
+              ['export', 'metrics', 'visualization', 'citation_helper'],
+              data.subView
+            )
+          ) {
             switch (arg1) {
               case 'export':
                 data.widgetName = 'ExportWidget';
@@ -224,7 +233,7 @@ function (
                 data.additional = {
                   libid: id,
                   permission: this.headerModel.get('permission'),
-                  libname: this.headerModel.get('name')
+                  libname: this.headerModel.get('name'),
                 };
                 break;
             }
@@ -242,10 +251,12 @@ function (
 
         case 'start-search':
           this.headerView.triggerMethod('search:started');
-          pubsub.publish(pubsub.CUSTOM_EVENT, 'second-order-search/library', { libraryId: this.model.get('id') });
+          pubsub.publish(pubsub.CUSTOM_EVENT, 'second-order-search/library', {
+            libraryId: this.model.get('id'),
+          });
           break;
       }
-    }
+    },
   });
 
   return Library;

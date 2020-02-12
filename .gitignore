@@ -42,3 +42,4 @@ grunt/requirejs.js
 
 package-lock.json
 !.nvmrc
+!.prettierrc.json

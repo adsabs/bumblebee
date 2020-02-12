@@ -15,8 +15,8 @@
  * functionality
  */
 
-define(['underscore'], function (_) {
-  var PubSubKey = function (options) {
+define(['underscore'], function(_) {
+  var PubSubKey = function(options) {
     _.extend(this, options);
   };
 
@@ -33,20 +33,20 @@ define(['underscore'], function (_) {
      * k.getCreator() === k;
      *
      */
-    newInstance: function (options) {
+    newInstance: function(options) {
       var priv = {
         id: _.has(options, 'id') ? options.id : _.uniqueId(':psk'),
-        creator: _.has(options, 'creator') ? options.creator : null
+        creator: _.has(options, 'creator') ? options.creator : null,
       };
       return new PubSubKey({
-        getId: function () {
+        getId: function() {
           return priv.id;
         },
-        getCreator: function () {
+        getCreator: function() {
           return priv.creator;
-        }
+        },
       });
-    }
+    },
   });
   return PubSubKey;
 });

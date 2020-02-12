@@ -1,11 +1,4 @@
-define([
-  'js/widgets/dropdown-menu/widget'
-
-], function (
-
-  DropdownWidget
-
-) {
+define(['js/widgets/dropdown-menu/widget'], function(DropdownWidget) {
   // config
 
   var links = [
@@ -16,16 +9,18 @@ define([
     { description: 'Concept Cloud', navEvent: 'show-concept-cloud' },
     { description: 'Results Graph', navEvent: 'show-bubble-chart' },
     { divider: true },
-    { section: 'Operations', icon: {
+    {
+      section: 'Operations',
+      icon: {
         class: 'icon-help',
         href: '//adsabs.github.io/help/search/second-order',
-        description: 'Discover more about second-order operators'
-      }
+        description: 'Discover more about second-order operators',
+      },
     },
     { description: 'Co-reads', pubsubEvent: 'second-order-search/trending' },
     { description: 'Reviews', pubsubEvent: 'second-order-search/reviews' },
     { description: 'Useful', pubsubEvent: 'second-order-search/useful' },
-    { description: 'Similar', pubsubEvent: 'second-order-search/similar' }
+    { description: 'Similar', pubsubEvent: 'second-order-search/similar' },
   ];
 
   var btnType = 'btn-primary-faded';
@@ -34,16 +29,14 @@ define([
   var rightAlign = true;
   var selectedOption = true;
 
-
-  return function () {
+  return function() {
     var VisDropdown = new DropdownWidget({
       links: links,
       btnType: btnType,
       dropdownTitle: dropdownTitle,
       iconClass: iconClass,
       rightAlign: rightAlign,
-      selectedOption: selectedOption
-
+      selectedOption: selectedOption,
     });
 
     return VisDropdown;

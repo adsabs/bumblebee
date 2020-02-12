@@ -1,11 +1,10 @@
-
-define([
-  'underscore',
-  'jsonpath',
-  'js/modules/orcid/work'
-], function (_, jp, Work) {
+define(['underscore', 'jsonpath', 'js/modules/orcid/work'], function(
+  _,
+  jp,
+  Work
+) {
   var PATHS = {
-    workSummaries: '$'
+    workSummaries: '$',
   };
 
   /**
@@ -24,11 +23,12 @@ define([
      * @param {String} path - path to search
      * @returns {*} value found at path
      */
-    this.get = function (path) {
+    this.get = function(path) {
       var val = jp.query(this._root, path);
       if (_.isEmpty(val)) {
         return null;
-      } if (_.isArray(val) && val.length <= 1) {
+      }
+      if (_.isArray(val) && val.length <= 1) {
         return val[0];
       }
       return val;
@@ -40,7 +40,7 @@ define([
      *
      * @returns {Work[]} - the array of Work summaries
      */
-    this.getWorks = function () {
+    this.getWorks = function() {
       return this.works;
     };
 
@@ -49,7 +49,7 @@ define([
      *
      * @param {*} works
      */
-    this.setWorks = function (works) {
+    this.setWorks = function(works) {
       this.works = works;
       return this;
     };
@@ -73,38 +73,42 @@ define([
      *  }
      * }}
      */
-    this.toADSFormat = function () {
-      var docs = _.sortBy(this.getWorks(), function (w) {
+    this.toADSFormat = function() {
+      var docs = _.sortBy(this.getWorks(), function(w) {
         return w.getTitle();
       });
 
-      docs = _.map(docs, function (d) {
+      docs = _.map(docs, function(d) {
         return d.toADSFormat();
       });
 
       return {
         responseHeader: {
-          params: {}
-          },
+          params: {},
+        },
         response: {
           numFound: docs.length,
           start: 0,
-          docs: docs
-        }
+          docs: docs,
+        },
       };
     };
 
     // generate getters for each path on PATHS
-    _.reduce(PATHS, function (obj, p, k) {
-      if (_.isString(k) && k.slice) {
-        var prop = k[0].toUpperCase() + k.slice(1);
-        obj['get' + prop] = _.partial(obj.get, p);
-      }
-      return obj;
-    }, this);
+    _.reduce(
+      PATHS,
+      function(obj, p, k) {
+        if (_.isString(k) && k.slice) {
+          var prop = k[0].toUpperCase() + k.slice(1);
+          obj['get' + prop] = _.partial(obj.get, p);
+        }
+        return obj;
+      },
+      this
+    );
 
     // to maintain old behavior, make sure works is filled when the profile is created
-    this.works = _.map(this.getWorkSummaries(), function (w) {
+    this.works = _.map(this.getWorkSummaries(), function(w) {
       return new Work(w);
     });
   };

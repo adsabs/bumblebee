@@ -13,40 +13,33 @@
  *
  */
 
-define([
-  'module',
-],
-function (
-  module
-) {
+define(['module'], function(module) {
   require([
     'router',
     'js/components/application',
     'js/apps/bumblebox/bootstrap',
     'dynamic_config',
     'es5-shim',
-    'underscore'
-  ],
-  function (
-    Router,
-    Application,
-    AppBootstrap,
-    DynamicConfig,
-    Es5Shim,
-    _
-  ) {
+    'underscore',
+  ], function(Router, Application, AppBootstrap, DynamicConfig, Es5Shim, _) {
     Application.prototype.shim();
 
     // load the urls of dynamic config from the script element
-    _.each(document.getElementsByTagName('script'), function (scriptNode) {
-      if (scriptNode.hasAttribute('data-main')
-          && (scriptNode.getAttribute('data-main') || '').indexOf('embed.config') > -1
-          && !scriptNode.hasAttribute('data-bbb-inuse')) {
+    _.each(document.getElementsByTagName('script'), function(scriptNode) {
+      if (
+        scriptNode.hasAttribute('data-main') &&
+        (scriptNode.getAttribute('data-main') || '').indexOf('embed.config') >
+          -1 &&
+        !scriptNode.hasAttribute('data-bbb-inuse')
+      ) {
         scriptNode.setAttribute('data-bbb-inuse', true);
         var c = scriptNode.getAttribute('data-load');
         if (c) {
           var urls = c.split(',');
-          DynamicConfig.bootstrapUrls = _.union(DynamicConfig.bootstrapUrls || [], urls);
+          DynamicConfig.bootstrapUrls = _.union(
+            DynamicConfig.bootstrapUrls || [],
+            urls
+          );
         }
       }
     });
@@ -55,15 +48,20 @@ function (
     var debug = window.location.href.indexOf('debug=true') > -1;
 
     // app object will load everything
-    var app = new (Application.extend(AppBootstrap))({ debug: debug, timeout: 30000 });
+    var app = new (Application.extend(AppBootstrap))({
+      debug: debug,
+      timeout: 30000,
+    });
 
-    app.bootstrap(DynamicConfig)
-      .done(function (loadedConfig) {
+    app
+      .bootstrap(DynamicConfig)
+      .done(function(loadedConfig) {
         var loadConfig = app.onBootstrap(module.config(), loadedConfig);
 
         // load the objects/widgets/modules
-        app.loadModules(loadConfig)
-          .done(function () {
+        app
+          .loadModules(loadConfig)
+          .done(function() {
             // this will activate all loaded modules
             app.activate();
 
@@ -72,7 +70,10 @@ function (
 
             // set some important urls, parameters before doing anything
             app.configure(loadedConfig);
-            pubsub.publish(pubsub.getCurrentPubSubKey(), pubsub.APP_BOOTSTRAPPED);
+            pubsub.publish(
+              pubsub.getCurrentPubSubKey(),
+              pubsub.APP_BOOTSTRAPPED
+            );
 
             pubsub.publish(pubsub.getCurrentPubSubKey(), pubsub.APP_STARTING);
             app.start(Router);
@@ -84,16 +85,22 @@ function (
               window.bbb = app;
             }
           })
-          .fail(function (err) {
+          .fail(function(err) {
             if (debug) {
               // so error messages remain in the console
               return;
             }
-            console.error('Failed to load the application (stage: loading modules)', err);
+            console.error(
+              'Failed to load the application (stage: loading modules)',
+              err
+            );
           });
       })
-      .fail(function (err) {
-        console.error('Failed to load the application (stage: bootstrap-config)', err);
+      .fail(function(err) {
+        console.error(
+          'Failed to load the application (stage: bootstrap-config)',
+          err
+        );
       });
   });
 });

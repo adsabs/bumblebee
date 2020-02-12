@@ -1,10 +1,4 @@
-define([
-  'backbone',
-  'marionette'
-], function (
-  Backbone,
-  Marionette
-) {
+define(['backbone', 'marionette'], function(Backbone, Marionette) {
   /*
    * widget to coordinate the showing of other widgets within the framework of a TOC page manager
    * You need to provide a template with a nav that looks like this: (with the data attributes
@@ -26,9 +20,8 @@ define([
    the toc controller will call a navigate event when the toc widget emits a "widget-selected" event
    * */
 
-
   var WidgetData = Backbone.Model.extend({
-    defaults: function () {
+    defaults: function() {
       return {
         id: undefined, // widgetId
         path: undefined,
@@ -39,28 +32,26 @@ define([
         isSelected: false,
         numFound: 0,
         showCount: true,
-        alwaysThere: false
+        alwaysThere: false,
       };
-    }
+    },
   });
 
   var WidgetCollection = Backbone.Collection.extend({
     model: WidgetData,
-    initialize: function () {
-
+    initialize: function() {
       // trigger when one of the models is selected, this ensures that
       // we capture any initial load (like on page load, not directly clicked)
-      this.on('change:isSelected', function (model) {
-
+      this.on('change:isSelected', function(model) {
         // only trigger if going from false -> true
         if (model.get('isSelected')) {
           this.trigger('widget-selected', model);
         }
       });
     },
-    selectOne: function (widgetId) {
+    selectOne: function(widgetId) {
       var s = null;
-      this.each(function (m) {
+      this.each(function(m) {
         if (m.id == widgetId) {
           s = m;
         } else {
@@ -69,31 +60,28 @@ define([
       });
 
       // make sure that `s` exists, otherwise just set it to the first element
-      s = s ? s : this.first();
+      s = s || this.first();
       s.set('isSelected', true);
     },
 
-    comparator: function (m) {
+    comparator: function(m) {
       return m.get('order');
-    }
+    },
   });
 
-
   var WidgetModel = Backbone.Model.extend({
-
-    defaults: function () {
+    defaults: function() {
       return {
         bibcode: undefined,
         query: undefined,
         path: undefined,
-        idAttribute: undefined
+        idAttribute: undefined,
       };
-    }
+    },
   });
 
   var TocNavigationView = Marionette.ItemView.extend({
-
-    initialize: function (options) {
+    initialize: function(options) {
       options = options || {};
 
       this.collection = options.collection || new WidgetCollection();
@@ -101,12 +89,12 @@ define([
       this.on('page-manager-message', this.onPageManagerMessage);
 
       // if any of the models in the collection are selected, trigger an event here
-      this.listenTo(this.collection, 'widget-selected', function (model) {
+      this.listenTo(this.collection, 'widget-selected', function(model) {
         var val = model.get('id').split('__');
         this.model.set({
           path: model.get('path'),
           idAttribute: val[0],
-          subView: val.length > 1 ? val[1] : undefined
+          subView: val.length > 1 ? val[1] : undefined,
         });
 
         // trigger when collection selection is made
@@ -114,21 +102,29 @@ define([
       });
       if (!options.template) {
         // for testing
-        this.template = function () { return ''; };
+        this.template = function() {
+          return '';
+        };
       }
     },
 
     // or else controller will detach, and then never put it back
     noDetach: true,
 
-    serializeData: function () {
-      var data = this.model.toJSON(),
-        col = this.collection.toJSON(),
-        groupedCollectionJSON;
+    serializeData: function() {
+      var data = this.model.toJSON();
+      var col = this.collection.toJSON();
+      var groupedCollectionJSON;
 
       // if any entries from the data has a "category" param, group by that, otherwise, just return it
-      if (_.find(col, function (c) { return c.category !== undefined; })) {
-        groupedCollectionJSON = _.groupBy(this.collection.toJSON(), function (object) {
+      if (
+        _.find(col, function(c) {
+          return c.category !== undefined;
+        })
+      ) {
+        groupedCollectionJSON = _.groupBy(this.collection.toJSON(), function(
+          object
+        ) {
           return object.category;
         });
         data = _.extend(data, groupedCollectionJSON);
@@ -139,12 +135,12 @@ define([
     },
 
     events: {
-      'click a': 'navigateToPage'
+      'click a': 'navigateToPage',
     },
 
-    navigateToPage: function (e) {
-      var $t = $(e.currentTarget),
-        idAttribute = $t.attr('data-widget-id');
+    navigateToPage: function(e) {
+      var $t = $(e.currentTarget);
+      var idAttribute = $t.attr('data-widget-id');
 
       var data = { idAttribute: idAttribute };
 
@@ -168,14 +164,14 @@ define([
 
     modelEvents: {
       'change:bibcode': 'resetActiveStates',
-      'change': 'render'
+      change: 'render',
     },
 
     collectionEvents: {
-      'add': 'render',
+      add: 'render',
       'change:isActive': 'render',
       'change:isSelected': 'render',
-      'change:numFound': 'render'
+      'change:numFound': 'render',
     },
 
     /*
@@ -183,14 +179,14 @@ define([
      clear the collection of isactive and numfound in the models of the toc widget, so that the next view on
      the widget will show the appropriate defaults
      */
-    resetActiveStates: function () {
+    resetActiveStates: function() {
       var path = this.model.get('path');
-      this.collection.each(function (model) {
+      this.collection.each(function(model) {
         // if idAttr is set, then set that one as selected
         model.set({
           isSelected: path === model.get('path'),
           isActive: true,
-          numFound: 0
+          numFound: 0,
         });
       });
 
@@ -198,8 +194,7 @@ define([
       this.triggerSelection();
     },
 
-    triggerSelection: function () {
-
+    triggerSelection: function() {
       // if nothing is selected, select the abstract element and return
       if (this.collection.where({ isSelected: true }).length === 0) {
         return this.collection.selectOne('ShowAbstract');
@@ -211,15 +206,15 @@ define([
         idAttribute: this.model.get('idAttribute') || 'showAbstract',
         subView: this.model.get('subView') || '',
         href: 'abs/' + (encodedId || '') + '/' + path,
-        bibcode: this.model.get('bibcode')
+        bibcode: this.model.get('bibcode'),
       };
       this.trigger('page-manager-event', 'widget-selected', data);
     },
 
-    selectDefaultNavItem: function () {
+    selectDefaultNavItem: function() {
       var tocConfig = Marionette.getOption(this, 'navConfig');
       var found = tocConfig[0];
-      _.each(tocConfig, function (v, k) {
+      _.each(tocConfig, function(v, k) {
         if (v.isSelected) {
           found = k;
           return false;
@@ -228,12 +223,12 @@ define([
       this.collection.selectOne(found);
     },
 
-    onPageManagerMessage: function (event, data) {
+    onPageManagerMessage: function(event, data) {
       if (event == 'new-widget') {
         // building the toc collection
 
-        var widgetId = arguments[1],
-          tocData = Marionette.getOption(this, 'navConfig');
+        var widgetId = arguments[1];
+        var tocData = Marionette.getOption(this, 'navConfig');
 
         var widgetData = tocData[widgetId];
 
@@ -243,17 +238,20 @@ define([
         } else {
           // it might be a widget name + subview in the form ShowExport__bibtex
           // id consists of widgetId + arg param
-          var widgetsWithSubViews = _.pick(tocData, function (v, k) {
-            return k.split('__') && (k.split('__')[0] == widgetId);
+          var widgetsWithSubViews = _.pick(tocData, function(v, k) {
+            return k.split('__') && k.split('__')[0] == widgetId;
           });
-          _.each(widgetsWithSubViews, function (v, k) {
-            // arg is the identifying factor-- joining with double underscore so it can be split later
-            var toAdd = _.extend(_.clone(v), { id: k });
-            this.collection.add(toAdd);
-          }, this);
+          _.each(
+            widgetsWithSubViews,
+            function(v, k) {
+              // arg is the identifying factor-- joining with double underscore so it can be split later
+              var toAdd = _.extend(_.clone(v), { id: k });
+              this.collection.add(toAdd);
+            },
+            this
+          );
         }
       } else if (event == 'widget-ready') {
-
         // if there are no docs then go to the default view and exit here
         if (data.noDocs) {
           return this.selectDefaultNavItem();
@@ -277,10 +275,8 @@ define([
       } else if (event == 'dynamic-nav') {
         // expects object like {links : [{title: x, id : y}]}
         // insert dynamic nav entries into the nav template
-
       }
-    }
-
+    },
   });
 
   return TocNavigationView;

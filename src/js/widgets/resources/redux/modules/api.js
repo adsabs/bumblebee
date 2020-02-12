@@ -1,6 +1,4 @@
-define([
-
-], function () {
+define([], function() {
   const actions = {
     QUERY_PROVIDED: '[api] QUERY_PROVIDED',
     RECEIVED_RESPONSE: '[api] RECEIVED_RESPONSE',
@@ -8,12 +6,12 @@ define([
     FETCH_DATA: '[api] FETCH_DATA',
     FETCHING_DATA: '[api] FETCHING_DATA',
     SET_LINK_SERVER: '[api] SET_LINK_SERVER',
-    SEND_ANALYTICS: '[api] SEND_ANALYTICS'
+    SEND_ANALYTICS: '[api] SEND_ANALYTICS',
   };
 
   const initialState = {
     linkServer: null,
-    query: null
+    query: null,
   };
 
   const reducer = (state = initialState, action) => {
@@ -21,16 +19,22 @@ define([
       case actions.SET_LINK_SERVER:
         return { ...state, linkServer: action.result };
       case actions.CURRENT_QUERY_UPDATED:
-        return { ...state, query: action.result }
+        return { ...state, query: action.result };
       default:
         return state;
     }
   };
 
   // action creators
-  const displayDocuments = result => ({ type: actions.QUERY_PROVIDED, result });
-  const processResponse = result => ({ type: actions.RECEIVED_RESPONSE, result });
-  const setLinkServer = result => ({ type: actions.SET_LINK_SERVER, result });
+  const displayDocuments = (result) => ({
+    type: actions.QUERY_PROVIDED,
+    result,
+  });
+  const processResponse = (result) => ({
+    type: actions.RECEIVED_RESPONSE,
+    result,
+  });
+  const setLinkServer = (result) => ({ type: actions.SET_LINK_SERVER, result });
 
   return {
     reducer,
@@ -38,6 +42,6 @@ define([
     actions,
     displayDocuments,
     processResponse,
-    setLinkServer
+    setLinkServer,
   };
 });

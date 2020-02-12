@@ -1,5 +1,3 @@
-
-
 /**
  * Collects and combines all reducers
  */
@@ -8,8 +6,8 @@ define([
   'js/components/api_targets',
   'es6!../actions/index',
   'js/widgets/config',
-  'redux'
-], function (_, ApiTargets, actions, config, Redux) {
+  'redux',
+], function(_, ApiTargets, actions, config, Redux) {
   const {
     SET_QUERY,
     SET_FORMAT,
@@ -42,15 +40,18 @@ define([
     SET_BIBTEX_ABS_MAX_AUTHORS,
     SET_BIBTEX_ABS_KEY_FORMAT,
     SET_BIBTEX_AUTHOR_CUTOFF,
-    SET_BIBTEX_ABS_AUTHOR_CUTOFF
+    SET_BIBTEX_ABS_AUTHOR_CUTOFF,
   } = actions;
 
   // format reducer
-  const format = (state = {
-    label: 'BibTeX',
-    value: 'bibtex',
-    id: '0'
-  }, action) => {
+  const format = (
+    state = {
+      label: 'BibTeX',
+      value: 'bibtex',
+      id: '0',
+    },
+    action
+  ) => {
     switch (action.type) {
       case SET_FORMAT:
         return action.format;
@@ -59,7 +60,7 @@ define([
     }
   };
 
-  const exFormats = _.map(config.export.formats, function (f, idx) {
+  const exFormats = _.map(config.export.formats, function(f, idx) {
     return _.extend(f, { id: String(idx) });
   });
 
@@ -74,10 +75,14 @@ define([
   };
 
   // error messages reducer
-  const error = (state = {
-    hasError: false,
-    errorMsg: 'Sorry, something happened during the request. Please try again'
-  }, action) => {
+  const error = (
+    state = {
+      hasError: false,
+      errorMsg:
+        'Sorry, something happened during the request. Please try again',
+    },
+    action
+  ) => {
     switch (action.type) {
       case SET_HAS_ERROR:
         return { ...state, hasError: action.hasError };
@@ -89,34 +94,40 @@ define([
   };
 
   // exports reducer (main export functionality)
-  const exports = (state = {
-    isFetching: false,
-    output: '',
-    progress: 0,
-    ids: [],
-    sort: 'date desc, bibcode desc',
-    count: 0,
-    page: 0,
-    maxCount: ApiTargets._limits.ExportWidget.default,
-    batchSize: ApiTargets._limits.ExportWidget.default,
-    ignore: false,
-    totalRecs: 0,
-    customFormatString: '',
-    customFormats: [],
-    snapshot: {},
-    bibtexKeyFormat: null,
-    bibtexMaxAuthors: 0,
-    bibtexAuthorCutoff: 200,
-    bibtexABSKeyFormat: null,
-    bibtexABSMaxAuthors: 0,
-    bibtexABSAuthorCutoff: 200
-  }, action) => {
+  const exports = (
+    state = {
+      isFetching: false,
+      output: '',
+      progress: 0,
+      ids: [],
+      sort: 'date desc, bibcode desc',
+      count: 0,
+      page: 0,
+      maxCount: ApiTargets._limits.ExportWidget.default,
+      batchSize: ApiTargets._limits.ExportWidget.default,
+      ignore: false,
+      totalRecs: 0,
+      customFormatString: '',
+      customFormats: [],
+      snapshot: {},
+      bibtexKeyFormat: null,
+      bibtexMaxAuthors: 0,
+      bibtexAuthorCutoff: 200,
+      bibtexABSKeyFormat: null,
+      bibtexABSMaxAuthors: 0,
+      bibtexABSAuthorCutoff: 200,
+    },
+    action
+  ) => {
     switch (action.type) {
       case REQUEST_IDS:
         return { ...state, isFetching: true, progress: 0 };
       case RECEIVE_IDS:
         return {
-          ...state, isFetching: false, progress: 100, ids: action.ids
+          ...state,
+          isFetching: false,
+          progress: 100,
+          ids: action.ids,
         };
       case SET_TOTAL_RECS:
         return { ...state, totalRecs: action.totalRecs };
@@ -144,13 +155,13 @@ define([
           isFetching: false,
           progress: 100,
           output: action.exports,
-          ignore: false
+          ignore: false,
         };
       case REQUEST_FAILED:
         return {
           ...state,
           isFetching: false,
-          progress: 0
+          progress: 0,
         };
       case REQUEST_CANCELLED:
         return {
@@ -158,7 +169,7 @@ define([
           ignore: true,
           isFetching: false,
           progress: 0,
-          output: ''
+          output: '',
         };
       case SET_IGNORE:
         return { ...state, ignore: action.ignore };
@@ -169,12 +180,15 @@ define([
       case SET_COUNT:
         return {
           ...state,
-          count: (action.count > state.maxCount) ? state.maxCount : action.count
+          count: action.count > state.maxCount ? state.maxCount : action.count,
         };
       case SET_MAX_COUNT:
         return {
           ...state,
-          maxCount: action.maxCount > state.totalRecs ? state.totalRecs : action.maxCount
+          maxCount:
+            action.maxCount > state.totalRecs
+              ? state.totalRecs
+              : action.maxCount,
         };
       case SET_PAGE:
         return { ...state, page: action.page };
@@ -191,15 +205,18 @@ define([
   };
 
   // main state reducer
-  const main = (state = {
-    query: {},
-    showCloser: true,
-    showSlider: true,
-    origin: 'results-page',
-    showReset: true,
-    splitCols: true,
-    autoSubmit: false
-  }, action) => {
+  const main = (
+    state = {
+      query: {},
+      showCloser: true,
+      showSlider: true,
+      origin: 'results-page',
+      showReset: true,
+      splitCols: true,
+      autoSubmit: false,
+    },
+    action
+  ) => {
     switch (action.type) {
       case SET_SHOW_CLOSER:
         return { ...state, showCloser: action.showCloser };
@@ -213,7 +230,7 @@ define([
           splitCols: action.origin === 'results-page',
           showReset: action.origin === 'results-page',
           autoSubmit: action.origin !== 'results-page',
-          origin: action.origin
+          origin: action.origin,
         };
       default:
         return state;
@@ -221,7 +238,11 @@ define([
   };
 
   const appReducer = Redux.combineReducers({
-    format, formats, error, exports, main
+    format,
+    formats,
+    error,
+    exports,
+    main,
   });
 
   const rootReducer = (state, action) => {

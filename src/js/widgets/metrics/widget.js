@@ -133,35 +133,35 @@ define([
         ? this.model.get('normalizedGraphData')
         : this.model.get('graphData');
 
-      var n = graphData.length,
-        stack = d3.layout.stack(),
-        layers = stack(
-          graphData.map(function(g) {
-            return g.values;
-          })
-        ),
-        yGroupMax = d3.max(layers, function(layer) {
-          return d3.max(layer, function(d) {
-            return d.y;
-          });
-        }),
-        yStackMax = d3.max(layers, function(layer) {
-          return d3.max(layer, function(d) {
-            return d.y0 + d.y;
-          });
+      var n = graphData.length;
+      var stack = d3.layout.stack();
+      var layers = stack(
+        graphData.map(function(g) {
+          return g.values;
+        })
+      );
+      var yGroupMax = d3.max(layers, function(layer) {
+        return d3.max(layer, function(d) {
+          return d.y;
         });
+      });
+      var yStackMax = d3.max(layers, function(layer) {
+        return d3.max(layer, function(d) {
+          return d.y0 + d.y;
+        });
+      });
 
       var svg = d3.select(this.$('svg')[0]);
       var that = this;
 
       var margin = {
-          top: 20,
-          right: 10,
-          bottom: 20,
-          left: 50,
-        },
-        width = 480 - margin.left - margin.right,
-        height = 250 - margin.top - margin.bottom;
+        top: 20,
+        right: 10,
+        bottom: 20,
+        left: 50,
+      };
+      var width = 480 - margin.left - margin.right;
+      var height = 250 - margin.top - margin.bottom;
 
       var years = this.model.get('graphData')[0].values.map(function(o) {
         return o.x;
@@ -416,15 +416,15 @@ define([
         return o.x;
       });
 
-      var svg = d3.select(this.$('svg')[0]),
-        margin = {
-          top: 20,
-          right: 80,
-          bottom: 30,
-          left: 50,
-        },
-        width = 480 - margin.left - margin.right,
-        height = 250 - margin.top - margin.bottom;
+      var svg = d3.select(this.$('svg')[0]);
+      var margin = {
+        top: 20,
+        right: 80,
+        bottom: 30,
+        left: 50,
+      };
+      var width = 480 - margin.left - margin.right;
+      var height = 250 - margin.top - margin.bottom;
       g = svg
         .append('g')
         .attr('transform', 'translate(' + margin.left + ',' + margin.top + ')')
@@ -1351,11 +1351,11 @@ define([
 
       var that = this;
 
-      var allBibcodes = [],
-        rows = 1000,
-        start = 0,
-        numFound = undefined,
-        limit = ApiTargets._limits.Metrics.default;
+      var allBibcodes = [];
+      var rows = 1000;
+      var start = 0;
+      var numFound = undefined;
+      var limit = ApiTargets._limits.Metrics.default;
 
       q.set('rows', rows);
 
@@ -1417,11 +1417,11 @@ define([
 
     // just get indicators
     getIndicators: function() {
-      var pubsub = this.getPubSub(),
-        options = {
-          type: 'POST',
-          contentType: 'application/json',
-        };
+      var pubsub = this.getPubSub();
+      var options = {
+        type: 'POST',
+        contentType: 'application/json',
+      };
 
       var query = new ApiQuery({
         bibcodes: this.containerModel.get('bibcodes'),

@@ -1,15 +1,11 @@
-
-define([
-  'underscore',
-  'js/components/api_feedback'
-], function (_, ApiFeedback) {
+define(['underscore', 'js/components/api_feedback'], function(_, ApiFeedback) {
   /**
    * Abstract error pubsub-like manager.  Allows for hooks to be applied that
    * match API feedback codes
    *
    * @constructor
    */
-  var ErrorHandlerManager = function () {
+  var ErrorHandlerManager = function() {
     this.handlers = {};
 
     /**
@@ -18,7 +14,7 @@ define([
      * @param {Number} code - feedback code
      * @param {function} cb - callback function
      */
-    this.on = function (code, cb) {
+    this.on = function(code, cb) {
       this.handlers[code].push(cb);
     };
 
@@ -27,8 +23,8 @@ define([
      *
      * @param {function} cb - callback function
      */
-    this.off = function (cb) {
-      _.forEach(this.handlers, function (v, k) {
+    this.off = function(cb) {
+      _.forEach(this.handlers, function(v, k) {
         var idx = v.indexOf(cb);
         if (idx > -1) {
           v.splice(idx, 1);
@@ -43,16 +39,20 @@ define([
      * @param {Array} args - arguments to pass to the callback
      * @param {object} ctx - callback's `this` property
      */
-    this.fire = function (code, args, ctx) {
-      _.forEach(this.handlers[code], function (cb) {
+    this.fire = function(code, args, ctx) {
+      _.forEach(this.handlers[code], function(cb) {
         cb.apply(ctx, args);
       });
     };
 
-    _.reduce(ApiFeedback.CODES, function (res, code) {
-      res[code] = [];
-      return res;
-    }, this.handlers);
+    _.reduce(
+      ApiFeedback.CODES,
+      function(res, code) {
+        res[code] = [];
+        return res;
+      },
+      this.handlers
+    );
   };
 
   /*
@@ -76,19 +76,18 @@ define([
     events the widget doesn't care about.
    */
   var WidgetStateManagerMixin = {
-
     STATES: {
       LOADING: 'loading',
       ERRORED: 'errored',
       IDLE: 'idle',
-      READY: 'ready'
+      READY: 'ready',
     },
 
     /**
      * Creates a new instance of the handlerManager and subscribes to the
      * api feedback calls.  It also sets the first state update.
      */
-    activateWidget: function () {
+    activateWidget: function() {
       this.__widgetHandlerManager = new ErrorHandlerManager();
       var pubsub = this.getPubSub();
       pubsub.subscribe(pubsub.FEEDBACK, _.bind(this.__handleFeedback, this));
@@ -105,8 +104,10 @@ define([
      * @param {PubSubKey} pubSubKey
      * @private
      */
-    __handleFeedback: function (feedback, pubSubKey) {
-      var id = this.getPubSub().getCurrentPubSubKey().getId();
+    __handleFeedback: function(feedback, pubSubKey) {
+      var id = this.getPubSub()
+        .getCurrentPubSubKey()
+        .getId();
       if (id === pubSubKey.getId()) {
         this.__widgetHandlerManager.fire(feedback.code, arguments, this);
       }
@@ -118,7 +119,7 @@ define([
      * @param {Number} code - feedback code
      * @param {function} handler - handler function
      */
-    attachHandler: function (code, handler) {
+    attachHandler: function(code, handler) {
       try {
         this.__widgetHandlerManager.on(code, handler);
       } catch (e) {
@@ -133,12 +134,15 @@ define([
      *
      * @param {function} handler - handler function
      */
-    attachGeneralHandler: function (handler) {
-      _.forEach(ApiFeedback.CODES, _.bind(function (code) {
-        if (code > 0 || code === ApiFeedback.CODES.API_REQUEST_ERROR) {
-          this.attachHandler(code, handler);
-        }
-      }, this));
+    attachGeneralHandler: function(handler) {
+      _.forEach(
+        ApiFeedback.CODES,
+        _.bind(function(code) {
+          if (code > 0 || code === ApiFeedback.CODES.API_REQUEST_ERROR) {
+            this.attachHandler(code, handler);
+          }
+        }, this)
+      );
     },
 
     /**
@@ -146,7 +150,7 @@ define([
      *
      * @param cb
      */
-    detachHandler: function (cb) {
+    detachHandler: function(cb) {
       this.__widgetHandlerManager.off(cb);
     },
 
@@ -181,7 +185,7 @@ define([
      *
      * @param {string} state - the state to update to
      */
-    updateState: function (state) {
+    updateState: function(state) {
       if (!state || !_.isString(state) || state === this.__state) {
         // do nothing
         return;
@@ -195,7 +199,7 @@ define([
     /**
      * Get the current state value
      */
-    getState: function () {
+    getState: function() {
       return this.__state;
     },
 
@@ -205,14 +209,14 @@ define([
      *
      * @private
      */
-    __fireStateHandler: function () {
+    __fireStateHandler: function() {
       var handlers = {};
       handlers.ready = this.onReady;
       handlers.loading = this.onLoading;
       handlers.idle = this.onIdle;
       handlers.errored = this.onErrored;
       handlers[this.__state] && handlers[this.__state].call(this, this);
-    }
+    },
   };
 
   return WidgetStateManagerMixin;

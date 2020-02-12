@@ -1,4 +1,3 @@
-
 define([
   'underscore',
   'backbone',
@@ -11,10 +10,20 @@ define([
   'js/components/api_query',
   'js/widgets/base/base_widget',
   'js/components/api_feedback',
-  'es6!./containers/sort-container'
-], function (
-  _, Backbone, analytics, React, ReactRedux, ReactDOM, configureStore,
-  SortApp, ApiQuery, BaseWidget, ApiFeedback, SortContainer
+  'es6!./containers/sort-container',
+], function(
+  _,
+  Backbone,
+  analytics,
+  React,
+  ReactRedux,
+  ReactDOM,
+  configureStore,
+  SortApp,
+  ApiQuery,
+  BaseWidget,
+  ApiFeedback,
+  SortContainer
 ) {
   /**
    * Main App View
@@ -25,10 +34,10 @@ define([
    * All sub-components will automatically have `store` available via context
    */
   const View = Backbone.View.extend({
-    initialize: function (options) {
+    initialize: function(options) {
       _.assign(this, options);
     },
-    render: function () {
+    render: function() {
       ReactDOM.render(
         <ReactRedux.Provider store={this.store}>
           <SortContainer />
@@ -37,9 +46,9 @@ define([
       );
       return this;
     },
-    destroy: function () {
+    destroy: function() {
       ReactDOM.unmountComponentAtNode(this.el);
-    }
+    },
   });
 
   /**
@@ -47,11 +56,10 @@ define([
    * the application
    */
   const Widget = BaseWidget.extend({
-
     /**
      * Initialize the widget
      */
-    initialize: function () {
+    initialize: function() {
       // create the store, using the configurator
       this.store = configureStore(this);
 
@@ -67,7 +75,7 @@ define([
      *
      * @param {object} beehive
      */
-    activate: function (beehive) {
+    activate: function(beehive) {
       this.setBeeHive(beehive);
       this.activateWidget();
       const pubsub = this.getPubSub();
@@ -83,7 +91,7 @@ define([
      * Finally it will start a new search using the updated sort param and the
      * stored query.
      */
-    onSortChange: function () {
+    onSortChange: function() {
       const pubsub = this.getPubSub();
       const app = this.store.getState();
       const sort = app.sort.id;
@@ -93,7 +101,9 @@ define([
 
       // try local app storage if we don't have one stored
       if (_.isNull(query)) {
-        query = this.getBeeHive().getObject('AppStorage').getCurrentQuery();
+        query = this.getBeeHive()
+          .getObject('AppStorage')
+          .getCurrentQuery();
       }
 
       // play nice with the sort, don't destroy what's there
@@ -108,7 +118,9 @@ define([
       // don't do anything if we weren't able to find a query
       if (query) {
         query.sort = [newSort];
-        pubsub.publish(pubsub.NAVIGATE, 'search-page', { q: new ApiQuery(query) });
+        pubsub.publish(pubsub.NAVIGATE, 'search-page', {
+          q: new ApiQuery(query),
+        });
         analytics('send', 'event', 'interaction', 'sort-applied', newSort);
       }
     },
@@ -122,26 +134,28 @@ define([
      *
      * @param {ApiFeedback} feedback - the feedback object
      */
-    handleFeedback: function (feedback) {
+    handleFeedback: function(feedback) {
       const { dispatch } = this.store;
-      const {
-        setQuery, setSort, setDirection, setLocked
-      } = SortApp;
+      const { setQuery, setSort, setDirection, setLocked } = SortApp;
 
       switch (feedback.code) {
-        case ApiFeedback.CODES.SEARCH_CYCLE_STARTED: {
-          const query = feedback && feedback.query && feedback.query.toJSON();
-          if (query) {
-            const sortStr = this.extractSort(query.sort[0]);
-            dispatch(setQuery(query));
-            dispatch(setSort(sortStr.sort, true));
-            dispatch(setDirection(sortStr.direction, true));
+        case ApiFeedback.CODES.SEARCH_CYCLE_STARTED:
+          {
+            const query = feedback && feedback.query && feedback.query.toJSON();
+            if (query) {
+              const sortStr = this.extractSort(query.sort[0]);
+              dispatch(setQuery(query));
+              dispatch(setSort(sortStr.sort, true));
+              dispatch(setDirection(sortStr.direction, true));
+              dispatch(setLocked(true));
+            }
+          }
+          break;
+        case ApiFeedback.CODES.SEARCH_CYCLE_PROGRESS:
+          {
             dispatch(setLocked(true));
           }
-        } break;
-        case ApiFeedback.CODES.SEARCH_CYCLE_PROGRESS: {
-          dispatch(setLocked(true));
-        } break;
+          break;
         case ApiFeedback.CODES.SEARCH_CYCLE_FAILED_TO_START:
         case ApiFeedback.CODES.SEARCH_CYCLE_FINISHED: {
           dispatch(setLocked(false));
@@ -156,12 +170,12 @@ define([
      * @param {string} sort - the string to break apart
      * @returns {{sort: string, direction: string}}
      */
-    extractSort: function (sort) {
+    extractSort: function(sort) {
       // grab only the first sort and break it apart
       let sortStr = sort.split(/,\s?/)[0] || 'date desc';
       sortStr = sortStr.split(' ');
       return { sort: sortStr[0], direction: sortStr[1] };
-    }
+    },
   });
 
   return Widget;

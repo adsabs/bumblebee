@@ -64,10 +64,12 @@ define([], function() {
     // register helpers
     // http://doginthehat.com.au/2012/02/comparison-block-helper-for-handlebars-templates/#comment-44
 
-    //eg  (where current is a variable): {{#compare current 1 operator=">"}}
+    // eg  (where current is a variable): {{#compare current 1 operator=">"}}
 
     Handlebars.registerHelper('compare', function(lvalue, rvalue, options) {
-      var operators, result, operator;
+      var operators;
+      var result;
+      var operator;
       if (arguments.length < 3) {
         throw new Error("Handlerbars Helper 'compare' needs 2 parameters");
       }
@@ -104,7 +106,7 @@ define([], function() {
           return l >= r;
         },
         typeof: function(l, r) {
-          return typeof l == r;
+          return typeof l === r;
         },
       };
       if (!operators[operator]) {
@@ -115,18 +117,17 @@ define([], function() {
       result = operators[operator](lvalue, rvalue);
       if (result) {
         return options.fn(this);
-      } else {
-        return options.inverse(this);
       }
+      return options.inverse(this);
     });
     Handlebars.registerHelper('toJSON', function(object) {
       return JSON.stringify(object);
     });
   });
 
-  //set validation callbacks used by authentication and user settings widgets
+  // set validation callbacks used by authentication and user settings widgets
   require(['backbone-validation'], function() {
-    //this allows for instant validation of form fields using the backbone-validation plugin
+    // this allows for instant validation of form fields using the backbone-validation plugin
     _.extend(Backbone.Validation.callbacks, {
       valid: function(view, attr, selector) {
         var $el = view.$('input[name=' + attr + ']');
@@ -143,7 +144,7 @@ define([], function() {
         $group = $el.closest('.form-group');
 
         if (view.submit === true) {
-          //only show error states if there has been a submit event
+          // only show error states if there has been a submit event
           $group.addClass('has-error');
           $group
             .find('.help-block')
@@ -173,12 +174,12 @@ define([], function() {
     (function() {
       d3.legend = function(g) {
         g.each(function() {
-          var g = d3.select(this),
-            items = {},
-            svg = d3.select(g.property('nearestViewportElement')),
-            legendPadding = g.attr('data-style-padding') || 5,
-            lb = g.selectAll('.legend-box').data([true]),
-            li = g.selectAll('.legend-items').data([true]);
+          var g = d3.select(this);
+          var items = {};
+          var svg = d3.select(g.property('nearestViewportElement'));
+          var legendPadding = g.attr('data-style-padding') || 5;
+          var lb = g.selectAll('.legend-box').data([true]);
+          var li = g.selectAll('.legend-items').data([true]);
 
           lb.enter()
             .append('rect')

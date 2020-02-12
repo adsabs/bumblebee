@@ -13,8 +13,8 @@
  * you call 'setMaxNum' -- this typically happens after the first
  * batch of results arrives from server (the widget must call 'setMaxNum')
  */
-define(['underscore'], function (_) {
-  var Paginator = function (options) {
+define(['underscore'], function(_) {
+  var Paginator = function(options) {
     this.start = options.start || 0; // the beginning offset
     this.rows = options.rows || 20; // how many to fetch in one go
     this.initialStart = options.start || 0; // useful for reset
@@ -25,7 +25,6 @@ define(['underscore'], function (_) {
   };
 
   _.extend(Paginator.prototype, {
-
     /**
      * Changes ApiQuery setting the correct parameters for the next
      * pagination
@@ -33,7 +32,7 @@ define(['underscore'], function (_) {
      * @param apiQuery
      * @returns {*}
      */
-    run: function (apiQuery) {
+    run: function(apiQuery) {
       if (!this.hasMore()) {
         return apiQuery;
       }
@@ -50,22 +49,21 @@ define(['underscore'], function (_) {
       return apiQuery;
     },
 
-
-    reset: function (initialStart) {
+    reset: function(initialStart) {
       this.start = initialStart || this.initialStart;
       this.maxNum = -1;
       this.cycle = 0;
     },
 
-    getCycle: function () {
+    getCycle: function() {
       return this.cycle;
     },
 
-    setMaxNum: function (maxNum) {
+    setMaxNum: function(maxNum) {
       this.maxNum = maxNum;
     },
 
-    hasMore: function () {
+    hasMore: function() {
       if (this.maxNum == -1 || this.maxNum > this.start) {
         return true;
       }
@@ -76,12 +74,11 @@ define(['underscore'], function (_) {
      * Removes any notion of pagination from the ApiQuery
      * @returns {ApiQuery}
      */
-    cleanQuery: function (apiQuery) {
+    cleanQuery: function(apiQuery) {
       apiQuery.unset(this.startName);
       apiQuery.unset(this.rowsName);
       return apiQuery;
-    }
-
+    },
   });
 
   return Paginator;

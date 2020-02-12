@@ -1,11 +1,17 @@
-define(['marionette',
+define([
+  'marionette',
   'hbs!js/widgets/library_individual/templates/manage-permissions-container',
   'hbs!js/widgets/library_individual/templates/make-public',
-  'hbs!../templates/transfer-ownership-modal'
-], function (Marionette, ManagePermissionsContainer, MakePublicTemplate, transferOwnershipModal) {
+  'hbs!../templates/transfer-ownership-modal',
+], function(
+  Marionette,
+  ManagePermissionsContainer,
+  MakePublicTemplate,
+  transferOwnershipModal
+) {
   var PermissionsModel = Backbone.Model.extend({});
   var PermissionsCollection = Backbone.Collection.extend({
-    model: PermissionsModel
+    model: PermissionsModel,
   });
 
   const TransferOwnershipModalView = Backbone.View.extend({
@@ -15,15 +21,21 @@ define(['marionette',
       this.model = new (Backbone.Model.extend({
         defaults: {
           error: false,
-          loading: false
-        }
-      }));
+          loading: false,
+        },
+      }))();
       const container = document.createElement('div');
       document.body.appendChild(container);
       this.setElement(container);
-      this.model.on('change:error', () => { this.showErrorMessage(); });
-      this.model.on('change:loading', () => { this.showLoading(); });
-      this.model.on('change:success', () => { this.showSuccessMessage(); });
+      this.model.on('change:error', () => {
+        this.showErrorMessage();
+      });
+      this.model.on('change:loading', () => {
+        this.showLoading();
+      });
+      this.model.on('change:success', () => {
+        this.showSuccessMessage();
+      });
     },
     showErrorMessage() {
       const error = this.model.get('error');
@@ -55,15 +67,18 @@ define(['marionette',
     },
     render() {
       this.$el.html(transferOwnershipModal(this.model.toJSON()));
-      this.getModal().off().on('show.bs.modal', () => {
-        this.model.clear().set(this.model.defaults);
-      }).on('shown.bs.modal', () => {
-        $('input', this.$el).focus();
-      });
+      this.getModal()
+        .off()
+        .on('show.bs.modal', () => {
+          this.model.clear().set(this.model.defaults);
+        })
+        .on('shown.bs.modal', () => {
+          $('input', this.$el).focus();
+        });
     },
     events: {
       'click .confirm-button': '_onConfirm',
-      'submit form': '_onConfirm'
+      'submit form': '_onConfirm',
     },
     getEmailAddress() {
       return $('input', this.el).val();
@@ -71,19 +86,18 @@ define(['marionette',
     _onConfirm(e) {
       this.model.set({
         loading: true,
-        error: false
+        error: false,
       });
-      
+
       const msg = 'Are you sure?';
       if (confirm(msg)) {
         this.onConfirm(e);
       } else {
         this.model.set({
           loading: false,
-          error: true
+          error: true,
         });
       }
-
     },
     onConfirm(e) {
       e.preventDefault();
@@ -91,8 +105,8 @@ define(['marionette',
       this.trigger('confirm-transfer-ownership', email, {
         done: () => {
           this.model.set({
-            success: `Success! Ownership has been transferred to ${ email }`,
-            loading: false
+            success: `Success! Ownership has been transferred to ${email}`,
+            loading: false,
           });
           setTimeout(() => {
             this.getModal().modal('hide');
@@ -103,17 +117,17 @@ define(['marionette',
           if (responseJSON && responseJSON.error) {
             this.model.set({
               error: responseJSON.error,
-              loading: false
+              loading: false,
             });
           }
-        }
+        },
       });
-    }
+    },
   });
 
   var ManagePermissionsView = Marionette.ItemView.extend({
     className: 'library-admin-view',
-    initialize: function (options) {
+    initialize: function(options) {
       var options = options || {};
       this.model.set('host', window.location.host);
       this.modal = new TransferOwnershipModalView();
@@ -122,22 +136,21 @@ define(['marionette',
       this.modal.on('all', (...args) => this.trigger(...args));
     },
     events: {
-      'click .public-button': 'togglePublicState'
+      'click .public-button': 'togglePublicState',
     },
-    togglePublicState: function (e) {
+    togglePublicState: function(e) {
       var pub = $(e.target).hasClass('make-public');
       this.trigger('update-public-status', pub);
     },
     modelEvents: {
-      'change:public': 'render'
+      'change:public': 'render',
     },
     template: ManagePermissionsContainer,
-    onRender: function () {
-      this.$('.public-container').html(MakePublicTemplate(this.model
-        .toJSON()));
+    onRender: function() {
+      this.$('.public-container').html(MakePublicTemplate(this.model.toJSON()));
 
       this.modal.render();
-    }
+    },
   });
   return ManagePermissionsView;
 });

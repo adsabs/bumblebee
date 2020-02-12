@@ -1,9 +1,5 @@
-
-define([
-  'es6!../constants/actionNames',
-  'moment'
-], function (ACTIONS, Moment) {
-  const currentYear = Number((new Moment()).year());
+define(['es6!../constants/actionNames', 'moment'], function(ACTIONS, Moment) {
+  const currentYear = Number(new Moment().year());
 
   // Initial state
   const initialState = {
@@ -14,7 +10,7 @@ define([
       '| Lastname, Firstname | Affiliation | Last Active Date | [excel]',
       '| Lastname | Firstname | Affiliation | Last Active Date | [excel]',
       'Lastname, Firstname(Affiliation)Last Active Date[text]',
-      'Lastname, Firstname(Affiliation)Last Active Date[browser]'
+      'Lastname, Firstname(Affiliation)Last Active Date[browser]',
     ],
     format: '| Lastname, Firstname | Affiliation | Last Active Date | [csv]',
     toggle: false,
@@ -25,7 +21,7 @@ define([
     exporting: false,
     author: 3,
     showReload: false,
-    ids: []
+    ids: [],
   };
 
   // Reducers
@@ -34,29 +30,52 @@ define([
       // Set the current data and stop any loading
       case ACTIONS.setData:
         return {
-          ...state, data: action.value, loading: false, message: { ...state.message, show: false }
+          ...state,
+          data: action.value,
+          loading: false,
+          message: { ...state.message, show: false },
         };
 
       // Flip the current toggle
       case ACTIONS.setToggle:
-        return { ...state, toggle: !state.toggle, message: { ...state.message, show: false } };
+        return {
+          ...state,
+          toggle: !state.toggle,
+          message: { ...state.message, show: false },
+        };
 
       // Reset the current format
       case ACTIONS.setFormat:
-        return { ...state, format: action.value, message: { ...state.message, show: false } };
+        return {
+          ...state,
+          format: action.value,
+          message: { ...state.message, show: false },
+        };
 
       // Reset the current year
       case ACTIONS.setYear:
-        return { ...state, year: action.value, message: { ...state.message, show: false } };
+        return {
+          ...state,
+          year: action.value,
+          message: { ...state.message, show: false },
+        };
 
       // updates the current number of authors
       case ACTIONS.setAuthor:
-        return { ...state, author: action.value, message: { ...state.message, show: false } };
+        return {
+          ...state,
+          author: action.value,
+          message: { ...state.message, show: false },
+        };
 
       // Start loading
       case ACTIONS.fetchData:
         return {
-          ...state, loading: true, ids: action.value, message: { ...state.message, show: false }, showReload: false
+          ...state,
+          loading: true,
+          ids: action.value,
+          message: { ...state.message, show: false },
+          showReload: false,
         };
 
       // set the current message
@@ -78,7 +97,8 @@ define([
         return initialState;
 
       // return the current state
-      default: return state;
+      default:
+        return state;
     }
   };
 

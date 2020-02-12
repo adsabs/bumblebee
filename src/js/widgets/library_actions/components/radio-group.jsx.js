@@ -1,7 +1,4 @@
-define([
-  'react'
-], function (React) {
-
+define(['react'], function(React) {
   const capitalize = (word) => {
     if (word.length < 3) return word;
     return word.toLowerCase()[0].toUpperCase() + word.slice(1);
@@ -12,13 +9,13 @@ define([
       super(props);
 
       this.state = {
-        selection: props.options[0]
-      }
+        selection: props.options[0],
+      };
 
       this.onChange = (selection) => {
         this.setState({ selection });
         this.props.onChange(selection);
-      }
+      };
     }
 
     render() {
@@ -30,18 +27,27 @@ define([
 
       return (
         <div className="form-group">
-          <p style={{ fontWeight: 'bold', marginBottom: '5px', fontSize: '15px' }}>{label}</p>
-          {options.map((val, i) =>
+          <p
+            style={{
+              fontWeight: 'bold',
+              marginBottom: '5px',
+              fontSize: '15px',
+            }}
+          >
+            {label}
+          </p>
+          {options.map((val, i) => (
             <label className={radioClass} key={id + i}>
               <input
                 type="radio"
                 name={id + i}
                 value={val}
                 checked={selection === val}
-                onChange={e => this.onChange(val)}
-              /> {capitalize(val)}
+                onChange={(e) => this.onChange(val)}
+              />{' '}
+              {capitalize(val)}
             </label>
-          )}
+          ))}
         </div>
       );
     }
@@ -51,7 +57,7 @@ define([
     options: [],
     label: 'Radio Group',
     direction: null,
-    onChange: () => {}
+    onChange: () => {},
   };
 
   return RadioGroup;

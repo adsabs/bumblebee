@@ -93,13 +93,15 @@ define([
   var ToggleList = createReactClass({
     render: function() {
       var data =
-          this.props.currentLevel === 1
-            ? this.props.reduxState
-            : this.props.reduxState.facets[this.props.id],
-        open = data.state.open,
-        visible = data.state.visible,
-        finished = data.pagination.finished || false,
-        facets = _.values(_.pick(this.props.reduxState.facets, data.children));
+        this.props.currentLevel === 1
+          ? this.props.reduxState
+          : this.props.reduxState.facets[this.props.id];
+      var open = data.state.open;
+      var visible = data.state.visible;
+      var finished = data.pagination.finished || false;
+      var facets = _.values(
+        _.pick(this.props.reduxState.facets, data.children)
+      );
 
       var stateMessage = '';
       if (data.pagination.state === 'loading') {
@@ -107,7 +109,7 @@ define([
       } else if (data.pagination.state === 'failure') {
         stateMessage = (
           <span>
-            <i className="icon-danger"></i>
+            <i className="icon-danger" />
             request failed
           </span>
         );
@@ -116,7 +118,7 @@ define([
       }
 
       if (!facets.length) {
-        var list = <li></li>;
+        var list = <li />;
       } else {
         var list = facets.slice(0, visible).map(function(c, i) {
           var props = {
@@ -155,14 +157,14 @@ define([
         }, this);
       }
 
-      var showMore = !finished || facets.length > visible,
-        moreButtonClasses = showMore
+      var showMore = !finished || facets.length > visible;
+      var moreButtonClasses = showMore
+        ? 'btn btn-default btn-xs facet__pagination-button'
+        : ' hidden';
+      var lessButtonClasses =
+        visible > 5
           ? 'btn btn-default btn-xs facet__pagination-button'
-          : ' hidden',
-        lessButtonClasses =
-          visible > 5
-            ? 'btn btn-default btn-xs facet__pagination-button'
-            : 'hidden';
+          : 'hidden';
 
       var facetList;
       // level will be either 1 or 2

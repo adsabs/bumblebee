@@ -1,19 +1,18 @@
-define([
-  'js/widgets/facet/factory',
-  'analytics'
-], function (
+define(['js/widgets/facet/factory', 'analytics'], function(
   FacetFactory,
   analytics
 ) {
-  return function () {
+  return function() {
     var widget = FacetFactory.makeHierarchicalCheckboxFacet({
       facetField: 'doctype_facet_hier',
       facetTitle: 'Publication Type',
-      logicOptions: { single: ['limit to', 'exclude'], multiple: ['or', 'exclude'] }
+      logicOptions: {
+        single: ['limit to', 'exclude'],
+        multiple: ['or', 'exclude'],
+      },
     });
 
-
-    widget.handleLogicalSelection = function (operator) {
+    widget.handleLogicalSelection = function(operator) {
       var q = this.getCurrentQuery();
       var paginator = this.findPaginator(q).paginator;
       var conditions = this.queryUpdater.removeTmpEntry(q, 'SelectedItems');
@@ -23,7 +22,7 @@ define([
 
       if (conditions && _.keys(conditions).length > 0) {
         conditions = _.values(conditions);
-        _.each(conditions, function (c, i, l) {
+        _.each(conditions, function(c, i, l) {
           l[i] = 'doctype:"' + c.title + '"';
         });
 
@@ -59,7 +58,17 @@ define([
         q.unset('facet');
         this.dispatchNewQuery(paginator.cleanQuery(q));
 
-        analytics('send', 'event', 'interaction', 'facet-applied', JSON.stringify({ name: this.facetField, logic: operator, conditions: conditions }));
+        analytics(
+          'send',
+          'event',
+          'interaction',
+          'facet-applied',
+          JSON.stringify({
+            name: this.facetField,
+            logic: operator,
+            conditions: conditions,
+          })
+        );
       }
     };
     return widget;

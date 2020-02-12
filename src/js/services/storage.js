@@ -1,7 +1,4 @@
-define([
-  'underscore',
-  'js/components/persistent_storage'
-], function (
+define(['underscore', 'js/components/persistent_storage'], function(
   _,
   PersistentStorage
 ) {
@@ -10,13 +7,13 @@ define([
   // let them do that; but we'll not care for it
 
   var Storage = PersistentStorage.extend({
-    activate: function (beehive) {
+    activate: function(beehive) {
       // this.setBeeHive(beehive);
       // var pubsub = beehive.getService('PubSub');
       // pubsub.subscribeOnce(pubsub.getPubSubKey(), pubsub.APP_BOOTSTRAPPED, this.onAppBootstrapped);
     },
 
-    onAppBootstrapped: function () {
+    onAppBootstrapped: function() {
       var beehive = this.getBeeHive();
       var rconf = beehive.getObject('DynamicConfig');
       if (!rconf) {
@@ -24,14 +21,16 @@ define([
       }
       var name = rconf.namespace; // the unique id that identifies this application (it serves as a namespace)
       if (!name) {
-        console.warn('Application namespace not set; persistent storage will be created without it');
+        console.warn(
+          'Application namespace not set; persistent storage will be created without it'
+        );
         name = '';
       }
       this._store = this._createStore(name);
-    }
+    },
   });
 
-  return function () {
+  return function() {
     return new Storage({ name: 'storage-service' });
   };
 });

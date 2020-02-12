@@ -39,9 +39,9 @@ define([
     model: LibraryModel,
 
     comparator: function(model1, model2) {
-      var sort = this.containerModel.get('sort'),
-        type = this.containerModel.get('type'),
-        order = this.containerModel.get('order');
+      var sort = this.containerModel.get('sort');
+      var type = this.containerModel.get('type');
+      var order = this.containerModel.get('order');
 
       if (type == 'string') {
         if (order == 'asc') {

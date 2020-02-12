@@ -219,7 +219,7 @@ define([
         return;
       }
       const query = currentQuery.clone();
-      let q = [];
+      const q = [];
 
       q.push(query.get('q'));
       _.forEach(Object.keys(query.toJSON()), (key) => {
