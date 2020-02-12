@@ -179,9 +179,7 @@ define([
         .filter(
           (m) => m.get('name').match(regex) || m.get('description').match(regex)
         );
-      if (result.length > 0) {
-        this.updateCollection(result);
-      }
+      this.updateCollection(result);
     },
 
     handleSubViewEvents: function(event, arg1, arg2) {
