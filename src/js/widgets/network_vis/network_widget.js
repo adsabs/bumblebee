@@ -252,13 +252,13 @@ define([
       allX = _.uniq(allX);
 
       var margin = {
-          top: 20,
-          right: 80,
-          bottom: 30,
-          left: 50,
-        },
-        width = 960 - margin.left - margin.right,
-        height = 500 - margin.top - margin.bottom;
+        top: 20,
+        right: 80,
+        bottom: 30,
+        left: 50,
+      };
+      var width = 960 - margin.left - margin.right;
+      var height = 500 - margin.top - margin.bottom;
 
       var x = d3.scale.linear().range([0, width]);
 
@@ -591,12 +591,12 @@ define([
       selected.select('.node-path').classed('selected-node', true);
 
       // now, get the data
-      var allPapers = [],
-        children,
-        data = {},
-        label,
-        papers = [],
-        graphData = this.model.get('graphData');
+      var allPapers = [];
+      var children;
+      var data = {};
+      var label;
+      var papers = [];
+      var graphData = this.model.get('graphData');
 
       // author node
       if (!d.children) {
@@ -1081,7 +1081,10 @@ define([
       (svg = d3.select(that.$('.real-container-of-stuff')[0])),
         (tooltip = d3.select(that.$('.d3-tooltip')[0])),
         (bibDict = this.model.get('graphData').bibcode_dict);
-      var links, bundle, line, linkContainer;
+      var links;
+      var bundle;
+      var line;
+      var linkContainer;
 
       links = _.map(that.model.get('graphData').link_data, function(l) {
         var linkData = {};
@@ -1156,9 +1159,9 @@ define([
           'hsla(250, 50%, 47%, 1)',
         ]);
 
-      var sizes = [],
-        citation_counts = [],
-        read_counts = [];
+      var sizes = [];
+      var citation_counts = [];
+      var read_counts = [];
 
       _.each(graphData.root.children, function(group) {
         _.each(group.children, function(c) {
@@ -1215,8 +1218,8 @@ define([
     /* functions to deal with user interaction */
     showSelectedEntity: function() {
       var selected = this.model.get('selectedEntity');
-      var that = this,
-        $div = that.$('.network-detail-area');
+      var that = this;
+      var $div = that.$('.network-detail-area');
 
       this.cachedVals.svg
         .selectAll('.node-path')

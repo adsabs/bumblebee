@@ -1,5 +1,4 @@
-
-define([], function () {
+define([], function() {
   // set of targets corresponding to actions (helps with dispatching)
   const target = {
     fetchData: 'FETCHING_DATA',
@@ -13,7 +12,7 @@ define([], function () {
     setExporting: 'SET_EXPORTING',
     setAuthor: 'SET_AUTHOR',
     appReset: 'APP_RESET',
-    setShowReload: 'SET_SHOW_RELOAD'
+    setShowReload: 'SET_SHOW_RELOAD',
   };
 
   return target;

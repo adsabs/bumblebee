@@ -5,26 +5,24 @@
  *
  *
  */
-define(['underscore'], function (_) {
+define(['underscore'], function(_) {
   var WidgetPaginator = {
-
     /**
      * returns zero-indexed start val (we expect the page
      * to be zero-indexed!)
      */
 
-    getPageStart: function (page, perPage, numFound) {
+    getPageStart: function(page, perPage, numFound) {
       return numFound ? Math.min(page * perPage, numFound) : page * perPage;
     },
 
     /**
      * returns final row value for constructing a page (inclusive)
      */
-    getPageEnd: function (page, perPage, numFound) {
+    getPageEnd: function(page, perPage, numFound) {
       var endVal = this.getPageStart(page, perPage) + perPage;
-      return (endVal > numFound) ? numFound : endVal;
+      return endVal > numFound ? numFound : endVal;
     },
-
 
     /**
      * Returns the page number (on which the position falls)
@@ -34,10 +32,9 @@ define(['underscore'], function (_) {
      * @param perPage
      * @returns {number}
      */
-    getPageVal: function (start, perPage) {
+    getPageVal: function(start, perPage) {
       return Math.floor(start / perPage);
     },
-
 
     /**
      * Add 'resultsIndex' attribute into the model.
@@ -46,17 +43,16 @@ define(['underscore'], function (_) {
      * @param start
      * @returns {*}
      */
-    addPaginationToDocs: function (docs, start) {
+    addPaginationToDocs: function(docs, start) {
       var s = _.isArray(start) ? start[0] : parseInt(start);
-      _.each(docs, function (d) {
+      _.each(docs, function(d) {
         d.resultsIndex = s;
         // non zero-indexed
         d.indexToShow = s + 1;
         s += 1;
       });
       return docs;
-    }
-
+    },
   };
 
   return WidgetPaginator;

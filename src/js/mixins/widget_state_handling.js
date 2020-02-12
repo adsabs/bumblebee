@@ -10,14 +10,7 @@ define([
   'js/widgets/widget_states',
   'hbs!js/widgets/base/templates/loading-template',
   'hbs!js/widgets/base/templates/loading-template-small',
-
-], function (
-  _,
-  $,
-  WidgetStates,
-  LoadingTemplate,
-  LoadingTemplateSmall
-) {
+], function(_, $, WidgetStates, LoadingTemplate, LoadingTemplateSmall) {
   /**
    * This function tries hard to grab the topmost container (view)
    * of the widget (just using some probable locations)
@@ -25,12 +18,12 @@ define([
    * @param widget
    * @returns {*}
    */
-  var getView = function (widget) {
-    if (widget.view && widget.view.itemContainerView) return widget.view.itemContainerView;
+  var getView = function(widget) {
+    if (widget.view && widget.view.itemContainerView)
+      return widget.view.itemContainerView;
     if (_.isFunction(widget.getView)) return widget.getView();
     if (widget.view) return widget.view;
   };
-
 
   var handlers = {};
 
@@ -41,40 +34,40 @@ define([
    * @param state
    */
   handlers[WidgetStates.ERRORED] = {
-    set: function (state) {
+    set: function(state) {
       var view = getView(this);
       if (view && view.$el) {
         view.$el.addClass('s-error'); // TODO: eventually, add an error msg
       }
     },
-    revert: function () {
+    revert: function() {
       var view = getView(this);
       if (view && view.$el) {
         view.$el.removeClass('s-error');
       }
-    }
+    },
   };
-
 
   handlers[WidgetStates.IDLE] = {
-    set: function (state) {
-      this._getStateHandler({ state: WidgetStates.WAITING }).revert.apply(this, state);
+    set: function(state) {
+      this._getStateHandler({ state: WidgetStates.WAITING }).revert.apply(
+        this,
+        state
+      );
     },
-    revert: function () {
+    revert: function() {
       // pass
-    }
+    },
   };
 
-
   var Mixin = {
-
     widgetStateHandlers: handlers,
 
     /**
      * This is the entry point for controllers to provide
      * feedback to the user
      */
-    changeState: function (newState) {
+    changeState: function(newState) {
       this._states = this._states || [];
 
       if (newState.state == WidgetStates.RESET) {
@@ -97,7 +90,7 @@ define([
       this._saveNewState(newState);
     },
 
-    _getStateHandler: function (newState) {
+    _getStateHandler: function(newState) {
       return this.widgetStateHandlers[newState.state];
     },
 
@@ -107,12 +100,14 @@ define([
      *
      * @param newState
      */
-    _saveNewState: function (newState) {
-      var s = _.object(_.filter(_.pairs(newState), function (p) { return !_.isObject(p[1]) && !_.isArray(p[1]); }));
+    _saveNewState: function(newState) {
+      var s = _.object(
+        _.filter(_.pairs(newState), function(p) {
+          return !_.isObject(p[1]) && !_.isArray(p[1]);
+        })
+      );
       this._states.push(s);
-    }
-
-
+    },
   };
 
   return Mixin;

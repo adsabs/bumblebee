@@ -1,15 +1,11 @@
 // this module is not loaded directly, it must be loaded using reactify!
 // in order for the view to be dynamically injected
 
-define([
-  'underscore',
-  'js/widgets/base/base_widget'
-], function (_, BaseWidget) {
-
+define(['underscore', 'js/widgets/base/base_widget'], function(_, BaseWidget) {
   const BumblebeeWidget = BaseWidget.extend({
-    initialize: function ({ componentId }) {
+    initialize: function({ componentId }) {
       this.view.on({
-        sendRequest: _.bind(this.onSendRequest, this)
+        sendRequest: _.bind(this.onSendRequest, this),
       });
 
       this.listenTo(this, 'page-manager-message', (ev, data) => {
@@ -18,13 +14,13 @@ define([
         }
       });
     },
-    activate: function (beehive) {
+    activate: function(beehive) {
       this.setBeeHive(beehive);
     },
-    onSendRequest: function (options) {
+    onSendRequest: function(options) {
       // send a request
     },
   });
 
   return BumblebeeWidget;
-})
+});

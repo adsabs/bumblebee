@@ -5,14 +5,7 @@
  * and any related limits
  */
 
-define([
-  'underscore',
-  'backbone'
-],
-function (
-  _,
-  Backbone
-) {
+define(['underscore', 'backbone'], function(_, Backbone) {
   var config = {
     BOOTSTRAP: '/accounts/bootstrap',
     SEARCH: 'search/query',
@@ -78,48 +71,49 @@ function (
     PERMISSIONS: 'biblib/permissions',
     REFERENCE: 'reference/text',
 
-
     /*
-      * this is used by the mixin 'user_change_rows' to set max allowed/default requested
-      */
-
+     * this is used by the mixin 'user_change_rows' to set max allowed/default requested
+     */
 
     _limits: {
       // use the same name from discovery.config.js
 
       ExportWidget: {
-        'default': 500, 'limit': 3000
+        default: 500,
+        limit: 3000,
       },
 
       Metrics: {
-        'default': 7000, 'limit': 7000
+        default: 7000,
+        limit: 7000,
       },
 
       AuthorNetwork: {
-        'default': 400, 'limit': 1000
+        default: 400,
+        limit: 1000,
       },
 
       PaperNetwork: {
-        'default': 400, 'limit': 1000
+        default: 400,
+        limit: 1000,
       },
 
       ConceptCloud: {
-        'default': 150, 'limit': 150
+        default: 150,
+        limit: 150,
       },
 
       BubbleChart: {
         // default == limit
-        'default': 1500
-      }
-    }
-
+        default: 1500,
+      },
+    },
   };
 
-    // add credential info
+  // add credential info
 
-    // doesn't require cross domain cookies
+  // doesn't require cross domain cookies
   config._doesntNeedCredentials = [
-
     config.SEARCH,
     config.QTREE,
     config.BIGQUERY,
@@ -130,10 +124,8 @@ function (
     config.SERVICE_METRICS,
     config.RECOMMENDER,
     config.GRAPHICS,
-    config.FEEDBACK
-
+    config.FEEDBACK,
   ];
-
 
   return config;
 });

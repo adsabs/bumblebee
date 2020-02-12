@@ -1,4 +1,3 @@
-
 define([
   'underscore',
   'backbone',
@@ -8,10 +7,17 @@ define([
   'es6!./redux/configure-store',
   'es6!./redux/modules/orcid-selector-app',
   'js/widgets/base/base_widget',
-  'es6!./containers/orcid-selector-container'
-], function (
-  _, Backbone, React, ReactRedux, ReactDOM, configureStore,
-  OrcidSelectorApp, BaseWidget, OrcidSelectorContainer
+  'es6!./containers/orcid-selector-container',
+], function(
+  _,
+  Backbone,
+  React,
+  ReactRedux,
+  ReactDOM,
+  configureStore,
+  OrcidSelectorApp,
+  BaseWidget,
+  OrcidSelectorContainer
 ) {
   /**
    * Main App View
@@ -22,21 +28,21 @@ define([
    * All sub-components will automatically have `store` available via context
    */
   const View = Backbone.View.extend({
-    initialize: function (options) {
+    initialize: function(options) {
       _.assign(this, options);
     },
-    render: function () {
+    render: function() {
       ReactDOM.render(
         <ReactRedux.Provider store={this.store}>
-          <OrcidSelectorContainer/>
+          <OrcidSelectorContainer />
         </ReactRedux.Provider>,
         this.el
       );
       return this;
     },
-    destroy: function () {
+    destroy: function() {
       ReactDOM.unmountComponentAtNode(this.el);
-    }
+    },
   });
 
   /**
@@ -44,11 +50,10 @@ define([
    * the application
    */
   const Widget = BaseWidget.extend({
-
     /**
      * Initialize the widget
      */
-    initialize: function () {
+    initialize: function() {
       // create the store, using the configurator
       this.store = configureStore(this);
 
@@ -61,38 +66,43 @@ define([
      *
      * @param {object} beehive
      */
-    activate: function (beehive) {
+    activate: function(beehive) {
       this.setBeeHive(beehive);
       this.activateWidget();
       const pubsub = this.getPubSub();
 
       // grab the current mode while activating, in case we should render
-      const mode = beehive.hasObject('User') && beehive.getObject('User').isOrcidModeOn();
+      const mode =
+        beehive.hasObject('User') && beehive.getObject('User').isOrcidModeOn();
       this.store.dispatch(OrcidSelectorApp.updateMode(mode));
 
-      pubsub.subscribe(pubsub.STORAGE_PAPER_UPDATE,
-        _.bind(this.onStoragePaperChange, this));
-      pubsub.subscribe(pubsub.USER_ANNOUNCEMENT,
-        _.bind(this.onUserAnnouncement, this));
+      pubsub.subscribe(
+        pubsub.STORAGE_PAPER_UPDATE,
+        _.bind(this.onStoragePaperChange, this)
+      );
+      pubsub.subscribe(
+        pubsub.USER_ANNOUNCEMENT,
+        _.bind(this.onUserAnnouncement, this)
+      );
     },
 
-    onStoragePaperChange: function () {
+    onStoragePaperChange: function() {
       const beehive = this.getBeeHive();
       const selected = beehive.getObject('AppStorage').getSelectedPapers();
       this.store.dispatch(OrcidSelectorApp.updateSelected(selected));
     },
 
-    onUserAnnouncement: function (msg, data) {
+    onUserAnnouncement: function(msg, data) {
       // watch for orcid mode change
       if (_.has(data, 'isOrcidModeOn')) {
         this.store.dispatch(OrcidSelectorApp.updateMode(data.isOrcidModeOn));
       }
     },
 
-    fireOrcidEvent: function (event, bibcodes) {
+    fireOrcidEvent: function(event, bibcodes) {
       const pubsub = this.getPubSub();
       pubsub.publish(pubsub.CUSTOM_EVENT, event, bibcodes);
-    }
+    },
   });
 
   return Widget;

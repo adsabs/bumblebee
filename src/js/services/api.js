@@ -1,5 +1,3 @@
-
-
 define([
   'underscore',
   'jquery',
@@ -11,9 +9,8 @@ define([
   'js/components/api_feedback',
   'js/mixins/hardened',
   'js/mixins/api_access',
-  'moment'
-],
-function (
+  'moment',
+], function(
   _,
   $,
   GenericModule,
@@ -36,19 +33,24 @@ function (
     expire_in: null,
     defaultTimeoutInMs: 60000,
 
-    activate: function (beehive) {
+    activate: function(beehive) {
       this.setBeeHive(beehive);
     },
 
-    done: function (data, textStatus, jqXHR) {
+    done: function(data, textStatus, jqXHR) {
       // TODO: check the status responses
       var response = new ApiResponse(data);
       response.setApiQuery(this.request.get('query'));
       this.api.trigger('api-response', response);
     },
 
-    fail: function (jqXHR, textStatus, errorThrown) {
-      console.error('API call failed:', JSON.stringify(this.request.url()), jqXHR.status, errorThrown);
+    fail: function(jqXHR, textStatus, errorThrown) {
+      console.error(
+        'API call failed:',
+        JSON.stringify(this.request.url()),
+        jqXHR.status,
+        errorThrown
+      );
       var pubsub = this.api.hasBeeHive() ? this.api.getPubSub() : null;
       if (pubsub) {
         var feedback = new ApiFeedback({
@@ -59,57 +61,67 @@ function (
           psk: this.key || this.api.getPubSub().getCurrentPubSubKey(),
           errorThrown: errorThrown,
           text: textStatus,
-          beVerbose: true
+          beVerbose: true,
         });
         pubsub.publish(pubsub.FEEDBACK, feedback);
-      } else if (this.api) this.api.trigger('api-error', this, jqXHR, textStatus, errorThrown);
+      } else if (this.api)
+        this.api.trigger('api-error', this, jqXHR, textStatus, errorThrown);
     },
 
-    initialize: function () {
-      this.always = _.bind(function () { this.outstandingRequests--; }, this);
+    initialize: function() {
+      this.always = _.bind(function() {
+        this.outstandingRequests--;
+      }, this);
     },
 
-    getNumOutstandingRequests: function () {
+    getNumOutstandingRequests: function() {
       return this.outstandingRequests;
     },
 
     // used by api_access.js
-    setVals: function (obj) {
-      _.each(obj, function (v, k) {
-        this[k] = v;
-      }, this);
+    setVals: function(obj) {
+      _.each(
+        obj,
+        function(v, k) {
+          this[k] = v;
+        },
+        this
+      );
     },
 
     /**
-       * Before executing an ajax request, this will be passed
-       * the options and can modify them. Typically, clients
-       * make want to provide their own implementation.
-       *
-       * @param opts
-       */
-    modifyRequestOptions: function (opts) {
+     * Before executing an ajax request, this will be passed
+     * the options and can modify them. Typically, clients
+     * make want to provide their own implementation.
+     *
+     * @param opts
+     */
+    modifyRequestOptions: function(opts) {
       // do nothing
     },
 
     hardenedInterface: {
       request: 'make a request to the API',
-      setVals: 'set a value on API (such as new access token)'
-    }
+      setVals: 'set a value on API (such as new access token)',
+    },
   });
 
-  Api.prototype._request = function (request, options) {
+  Api.prototype._request = function(request, options) {
     options = _.extend({}, options, request.get('options'));
 
-    var data,
-      self = this,
-      query = request.get('query');
+    var data;
+    var self = this;
+    var query = request.get('query');
 
     if (query && !(query instanceof ApiQuery)) {
       throw Error('Api.query must be instance of ApiQuery');
     }
 
     if (query) {
-      data = options.contentType === 'application/json' ? JSON.stringify(query.toJSON()) : query.url();
+      data =
+        options.contentType === 'application/json'
+          ? JSON.stringify(query.toJSON())
+          : query.url();
     }
 
     var target = request.get('target') || '';
@@ -118,13 +130,21 @@ function (
     if (target.indexOf('http') > -1) {
       u = target;
     } else {
-      u = this.url + ((target.length > 0 && target.indexOf('/') == 0) ? target : (target ? '/' + target : target));
+      u =
+        this.url +
+        (target.length > 0 && target.indexOf('/') == 0
+          ? target
+          : target
+          ? '/' + target
+          : target);
     }
 
-    u = u.substring(0, this.url.length - 2) + u.substring(this.url.length - 2, u.length).replace('//', '/');
+    u =
+      u.substring(0, this.url.length - 2) +
+      u.substring(this.url.length - 2, u.length).replace('//', '/');
 
     if (!u) {
-      throw Error('Sorry, you can\'t use api without url');
+      throw Error("Sorry, you can't use api without url");
     }
 
     var opts = {
@@ -136,7 +156,7 @@ function (
       context: { request: request, api: self },
       timeout: this.defaultTimeoutInMs,
       headers: {},
-      cache: true // do not generate _ parameters (let browser cache responses),
+      cache: true, // do not generate _ parameters (let browser cache responses),
     };
 
     if (options.timeout) {
@@ -169,44 +189,53 @@ function (
     // use the native fetch api for sending the request
     // this can help with downloading blob and other non-text responses
     if (options.useFetch && options.fetchOptions) {
-      var fetchOpts = _.assign({
-        credentials: 'include',
-        mode: 'cors',
-        timeout: this.defaultTimeoutInMs
-      }, options.fetchOptions);
+      var fetchOpts = _.assign(
+        {
+          credentials: 'include',
+          mode: 'cors',
+          timeout: this.defaultTimeoutInMs,
+        },
+        options.fetchOptions
+      );
 
-      fetchOpts.headers = _.assign({
-        'Content-Type': opts.contentType
-      }, opts.headers, options.fetchOptions.headers);
+      fetchOpts.headers = _.assign(
+        {
+          'Content-Type': opts.contentType,
+        },
+        opts.headers,
+        options.fetchOptions.headers
+      );
 
-      var prom = window.fetch(opts.url, fetchOpts).then(function (response) {
-        self.always.call(opts.context, response);
+      var prom = window
+        .fetch(opts.url, fetchOpts)
+        .then(function(response) {
+          self.always.call(opts.context, response);
 
-        if (_.isFunction(opts.always)) {
-          opts.always.call(opts.context, response);
-        }
+          if (_.isFunction(opts.always)) {
+            opts.always.call(opts.context, response);
+          }
 
-        // handle any response errors (404, 500, etc.)
-        if (!response.ok) {
-          (opts.fail || self.fail).call(opts.context, response);
-          throw Error(response.statusText);
-        }
+          // handle any response errors (404, 500, etc.)
+          if (!response.ok) {
+            (opts.fail || self.fail).call(opts.context, response);
+            throw Error(response.statusText);
+          }
 
-        // otherwise call done
-        (opts.done || self.done).call(opts.context, response);
-      })
+          // otherwise call done
+          (opts.done || self.done).call(opts.context, response);
+        })
 
         // handle network errors
-        .catch(function (error) {
+        .catch(function(error) {
           (opts.fail || self.fail).call(opts.context, error);
           throw Error(error);
         });
 
-        // add a done property to the promise so it plays well with
-        // methods expecting jquery
+      // add a done property to the promise so it plays well with
+      // methods expecting jquery
       return _.extend(prom, {
         done: prom.then,
-        fail: prom.catch
+        fail: prom.catch,
       });
     }
 
@@ -221,22 +250,23 @@ function (
   };
 
   // stubbable for testing
-  Api.prototype.getCurrentUTCMoment = function () {
+  Api.prototype.getCurrentUTCMoment = function() {
     return Moment().utc();
   };
 
-  Api.prototype.request = function (request, options) {
+  Api.prototype.request = function(request, options) {
     var that = this;
     var refreshRetries = 3;
-    var refreshToken = function () {
+    var refreshToken = function() {
       var d = $.Deferred();
       var req = that.getApiAccess({ tokenRefresh: true, reconnect: true });
-      req.done(function () {
+      req.done(function() {
         d.resolve(that._request(request, options));
       });
-      req.fail(function () {
-        (--refreshRetries > 0)
-          ? _.delay(refreshToken, 1000) : d.reject.apply(d, arguments);
+      req.fail(function() {
+        --refreshRetries > 0
+          ? _.delay(refreshToken, 1000)
+          : d.reject.apply(d, arguments);
       });
       return d.promise();
     };
@@ -252,7 +282,7 @@ function (
     var difference = now.diff(expiration, 'minutes');
     // fewer than 2 minutes before token expires
 
-    return (difference > -2) ? refreshToken() : that._request(request, options);
+    return difference > -2 ? refreshToken() : that._request(request, options);
   };
 
   _.extend(Api.prototype, Mixin.BeeHive, Hardened, ApiAccess);

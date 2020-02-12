@@ -4,41 +4,40 @@ define([
   'underscore',
   'js/widgets/base/base_widget',
   'hbs!js/widgets/meta_tags/template/metatags',
-  'js/mixins/link_generator_mixin'
-], function ($, Backbone, _, BaseWidget, metatagsTemplate, LinkGenerator) {
+  'js/mixins/link_generator_mixin',
+], function($, Backbone, _, BaseWidget, metatagsTemplate, LinkGenerator) {
   var View = Backbone.View.extend({
-    destroy: function () {
+    destroy: function() {
       this.remove();
-    }
+    },
   });
 
   var Widget = BaseWidget.extend({
-    initialize: function (options) {
+    initialize: function(options) {
       this.options = options || {};
       this.view = new View();
       this._bibcode = null;
     },
-    activate: function (beehive) {
+    activate: function(beehive) {
       this.setBeeHive(beehive);
       var pubsub = beehive.getService('PubSub');
-      _.bindAll(this, [
-        'onDisplayDocuments',
-        'processResponse'
-      ]);
+      _.bindAll(this, ['onDisplayDocuments', 'processResponse']);
       pubsub.subscribe(pubsub.DELIVERING_RESPONSE, this.processResponse);
       pubsub.subscribe(pubsub.DISPLAY_DOCUMENTS, this.onDisplayDocuments);
     },
-    processResponse: function (apiResponse) {
+    processResponse: function(apiResponse) {
       var data = apiResponse.get('response.docs[0]', false, {});
       this.updateMetaTags(data);
     },
-    getCachedDoc: function (bibcode) {
+    getCachedDoc: function(bibcode) {
       var fields = this.defaultQueryArguments.fl.split(',');
 
       // Attempt to shortcut the request by using stashed docs
-      var docs = this.getBeeHive().getObject('DocStashController').getDocs();
+      var docs = this.getBeeHive()
+        .getObject('DocStashController')
+        .getDocs();
 
-      var found = docs.filter(function (doc) {
+      var found = docs.filter(function(doc) {
         return doc.bibcode === bibcode;
       });
 
@@ -47,7 +46,7 @@ define([
         // These are optional
         var optionalFields = {
           issn: undefined,
-          isbn: undefined
+          isbn: undefined,
         };
         found.unshift(optionalFields);
         found = _.merge.apply(_, found);
@@ -63,7 +62,7 @@ define([
       }
       return null;
     },
-    onDisplayDocuments: function (apiQuery) {
+    onDisplayDocuments: function(apiQuery) {
       var currentQuery = this.getCurrentQuery();
       if (_.isEqual(currentQuery.toJSON(), apiQuery.toJSON())) {
         return;
@@ -83,7 +82,7 @@ define([
 
       this.dispatchRequest(apiQuery.clone());
     },
-    updateMetaTags: function (data) {
+    updateMetaTags: function(data) {
       data.url = Backbone.history.location.href;
 
       var sources = {};
@@ -94,8 +93,11 @@ define([
       }
 
       // Look for `PDF` in title of the source
-      if (_.isArray(sources.fullTextSources) && sources.fullTextSources.length > 0) {
-        var found = _.find(sources.fullTextSources, function (source) {
+      if (
+        _.isArray(sources.fullTextSources) &&
+        sources.fullTextSources.length > 0
+      ) {
+        var found = _.find(sources.fullTextSources, function(source) {
           return /PDF/.test(source.name);
         });
         if (found) {
@@ -108,17 +110,17 @@ define([
       }
 
       if (data.aff && data.author) {
-        data.author = _.map(data.author, function (author, n) {
+        data.author = _.map(data.author, function(author, n) {
           return {
             name: author,
-            aff: data.aff[n]
+            aff: data.aff[n],
           };
         });
       }
 
       // Update the <head> with the meta tags
-      $('head').append(function () {
-        return $(metatagsTemplate(data)).filter(function () {
+      $('head').append(function() {
+        return $(metatagsTemplate(data)).filter(function() {
           var name = $(this).attr('name');
           if (name) {
             // check to see if the tag already exists
@@ -136,21 +138,19 @@ define([
      * this helps third-party extensions/applications which rely on events for
      * performing actions on the page
      */
-    emitDOMEvents: function () {
-      _.forEach([
-        'ZoteroItemUpdated',
-        'ADSPageLoaded'
-      ], function (ev) {
+    emitDOMEvents: function() {
+      _.forEach(['ZoteroItemUpdated', 'ADSPageLoaded'], function(ev) {
         window.document.dispatchEvent(new Event(ev), {
           bubbles: true,
-          cancelable: true
+          cancelable: true,
         });
       });
     },
     defaultQueryArguments: {
-      fl: 'links_data,[citations],keyword,property,first_author,year,issn,isbn,title,aff,abstract,bibcode,pub,volume,author,issue,pubdate,doi,page,esources,data',
-      rows: 1
-    }
+      fl:
+        'links_data,[citations],keyword,property,first_author,year,issn,isbn,title,aff,abstract,bibcode,pub,volume,author,issue,pubdate,doi,page,esources,data',
+      rows: 1,
+    },
   });
 
   _.extend(Widget.prototype, LinkGenerator);

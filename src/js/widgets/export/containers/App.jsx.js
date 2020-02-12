@@ -1,16 +1,21 @@
-
-
 define([
   'underscore',
-  'react', 'react-redux',
+  'react',
+  'react-redux',
   'react-prop-types',
   'es6!../actions/index',
   'es6!../components/Closer.jsx',
   'es6!../components/Setup.jsx',
-  'es6!../components/Export.jsx'
-], function (
-  _, React, ReactRedux, ReactPropTypes,
-  actions, Closer, Setup, Export
+  'es6!../components/Export.jsx',
+], function(
+  _,
+  React,
+  ReactRedux,
+  ReactPropTypes,
+  actions,
+  Closer,
+  Setup,
+  Export
 ) {
   const {
     closeComponent,
@@ -22,7 +27,7 @@ define([
     cancelRequest,
     reset,
     downloadFile,
-    getCustomFormats
+    getCustomFormats,
   } = actions;
 
   class App extends React.Component {
@@ -38,7 +43,7 @@ define([
         'handleResetClick',
         'handleDownloadFileClick',
         'onCopyText',
-        'onCustomFormatClick'
+        'onCustomFormatClick',
       ]);
       const { dispatch } = props;
 
@@ -57,7 +62,7 @@ define([
       this.state = {
         count: '0',
         showAlert: false,
-        customFormatDirectEntry: true
+        customFormatDirectEntry: true,
       };
     }
 
@@ -74,7 +79,7 @@ define([
     onCopyText() {
       this.setState({
         showAlert: true,
-        alertMsg: 'Text Copied!'
+        alertMsg: 'Text Copied!',
       });
       _.delay(() => this.setState({ showAlert: false }), 5000);
     }
@@ -125,11 +130,14 @@ define([
     }
 
     onCustomFormatClick() {
-      if (this.state.customFormatDirectEntry && this.props.customFormats.length > 0) {
+      if (
+        this.state.customFormatDirectEntry &&
+        this.props.customFormats.length > 0
+      ) {
         this.onCustomFormatChange(this.props.customFormats[0].code);
       }
       this.setState({
-        'customFormatDirectEntry': !this.state.customFormatDirectEntry
+        customFormatDirectEntry: !this.state.customFormatDirectEntry,
       });
     }
 
@@ -140,7 +148,7 @@ define([
      */
     handleFormatChange(id) {
       const { dispatch, formats, autoSubmit } = this.props;
-      let format = _.find(formats, { id: id });
+      const format = _.find(formats, { id: id });
 
       if (format.value === 'custom' && this.props.customFormats.length > 0) {
         this.onCustomFormatChange(this.props.customFormats[0].code);
@@ -164,34 +172,52 @@ define([
       this.setState({
         count: '' + next.count,
         hasMore: remaining > 0,
-        remaining: remaining > next.batchSize ? next.batchSize : remaining
+        remaining: remaining > next.batchSize ? next.batchSize : remaining,
       });
     }
 
     render() {
       const {
-        format, formats, isFetching, output, batchSize, showCloser, showReset,
-        progress, maxCount, hasError, errorMsg, totalRecs, showSlider, splitCols,
-        autoSubmit, customFormat, customFormats
+        format,
+        formats,
+        isFetching,
+        output,
+        batchSize,
+        showCloser,
+        showReset,
+        progress,
+        maxCount,
+        hasError,
+        errorMsg,
+        totalRecs,
+        showSlider,
+        splitCols,
+        autoSubmit,
+        customFormat,
+        customFormats,
       } = this.props;
       const {
-        count, hasMore, showAlert, alertMsg, remaining, customFormatDirectEntry
+        count,
+        hasMore,
+        showAlert,
+        alertMsg,
+        remaining,
+        customFormatDirectEntry,
       } = this.state;
 
       const low = maxCount - batchSize;
       const lower = low === 0 ? 1 : low;
-      const upper = Number(count) + (low);
+      const upper = Number(count) + low;
 
-      const shouldShowSlider = (totalRecs > 1) && showSlider;
+      const shouldShowSlider = totalRecs > 1 && showSlider;
 
       return (
         <div className="container-fluid export-container">
           <span>
-            {showCloser
-              && <Closer onClick={this.handleCloseClick}/>
-            }
+            {showCloser && <Closer onClick={this.handleCloseClick} />}
             <div className="h4">
-              Exporting record(s) <strong>{lower}</strong> to <strong>{upper}</strong> <small>(total: {totalRecs})</small>
+              Exporting record(s) <strong>{lower}</strong> to{' '}
+              <strong>{upper}</strong> <small>(total: {totalRecs})</small>
             </div>
           </span>
           <div>
@@ -221,21 +247,21 @@ define([
                 setCount={this.handleCountChange}
                 onCustomFormatClick={this.onCustomFormatClick}
               />
-              {hasError
-              && <div className="row">
-                <div className="col-sm-10">
-                  <div className="alert alert-danger">{errorMsg}</div>
+              {hasError && (
+                <div className="row">
+                  <div className="col-sm-10">
+                    <div className="alert alert-danger">{errorMsg}</div>
+                  </div>
                 </div>
-              </div>
-              }
+              )}
 
-              {showAlert
-              && <div className="row">
-                <div className="col-sm-10">
-                  <div className="alert alert-info">{alertMsg}</div>
+              {showAlert && (
+                <div className="row">
+                  <div className="col-sm-10">
+                    <div className="alert alert-info">{alertMsg}</div>
+                  </div>
                 </div>
-              </div>
-              }
+              )}
             </div>
             <div className={splitCols ? 'col-sm-6' : 'col-sm-12'}>
               <Export
@@ -257,13 +283,15 @@ define([
     format: ReactPropTypes.shape({
       id: ReactPropTypes.string,
       value: ReactPropTypes.string,
-      label: ReactPropTypes.string
+      label: ReactPropTypes.string,
     }).isRequired,
-    formats: ReactPropTypes.arrayOf(ReactPropTypes.shape({
-      id: ReactPropTypes.string,
-      value: ReactPropTypes.string,
-      label: ReactPropTypes.string
-    })).isRequired,
+    formats: ReactPropTypes.arrayOf(
+      ReactPropTypes.shape({
+        id: ReactPropTypes.string,
+        value: ReactPropTypes.string,
+        label: ReactPropTypes.string,
+      })
+    ).isRequired,
     isFetching: ReactPropTypes.bool.isRequired,
     output: ReactPropTypes.string.isRequired,
     progress: ReactPropTypes.number.isRequired,
@@ -277,10 +305,10 @@ define([
     showSlider: ReactPropTypes.bool.isRequired,
     splitCols: ReactPropTypes.bool.isRequired,
     showReset: ReactPropTypes.bool.isRequired,
-    autoSubmit: ReactPropTypes.bool.isRequired
+    autoSubmit: ReactPropTypes.bool.isRequired,
   };
 
-  const mapStateToProps = state => ({
+  const mapStateToProps = (state) => ({
     format: state.format,
     formats: state.formats,
     output: state.exports.output,
@@ -300,7 +328,7 @@ define([
     showReset: state.main.showReset,
     ids: state.exports.ids,
     query: state.main.query,
-    customFormats: state.exports.customFormats
+    customFormats: state.exports.customFormats,
   });
 
   return ReactRedux.connect(mapStateToProps)(App);

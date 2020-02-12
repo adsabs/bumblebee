@@ -1,35 +1,35 @@
-define([
-  'underscore'
-], function (
-  _
-) {
+define(['underscore'], function(_) {
   // http://redux.js.org/docs/basics/Actions.html
 
   var actions = {};
 
-  actions.data_requested = function (id) {
+  actions.data_requested = function(id) {
     return {
       type: 'DATA_REQUESTED',
-      id: id
+      id: id,
     };
   };
 
   /*
    * resets visible variable to 5
    * */
-  actions.reset_visible = function (id) {
+  actions.reset_visible = function(id) {
     return {
       type: 'RESET_VISIBLE',
-      id: id
+      id: id,
     };
   };
 
-  actions.increase_visible = function (id) {
-    return function (dispatch, getState) {
+  actions.increase_visible = function(id) {
+    return function(dispatch, getState) {
       var num = 5;
       // check to see if more need to be requested
-      var numLoadedRecords = id ? getState().facets[id].children.length : getState().children.length;
-      var numVisible = id ? getState().facets[id].state.visible : getState().state.visible;
+      var numLoadedRecords = id
+        ? getState().facets[id].children.length
+        : getState().children.length;
+      var numVisible = id
+        ? getState().facets[id].state.visible
+        : getState().state.visible;
       // want to make sure there is always an extra cycle available to
       // minimize impression of loading
       if (numLoadedRecords - (numVisible + num) <= num) {
@@ -39,7 +39,7 @@ define([
       dispatch({
         type: 'INCREASE_VISIBLE',
         id: id,
-        num: num
+        num: num,
       });
 
       // was the parent selected while the children already exist?
@@ -51,62 +51,66 @@ define([
     }.bind(this);
   };
 
-  actions.data_received = function (data, id) {
+  actions.data_received = function(data, id) {
     return {
       type: 'DATA_RECEIVED',
       data: data,
-      id: id
+      id: id,
     };
   };
 
-  actions.toggle_facet = function (id, open) {
-    return function (dispatch, getState) {
-      var currentOpen = id ? getState().facets[id].state.open : getState().state.open;
+  actions.toggle_facet = function(id, open) {
+    return function(dispatch, getState) {
+      var currentOpen = id
+        ? getState().facets[id].state.open
+        : getState().state.open;
       // if open was not supplied, just toggle the facet
       open = _.isBoolean(open) ? open : !currentOpen;
-      var hasData = id ? getState().facets[id].children.length : getState().children.length;
+      var hasData = id
+        ? getState().facets[id].children.length
+        : getState().children.length;
       // fetch the data now
       if (open && !hasData) dispatch(this.fetch_data(id));
 
       dispatch({
         type: 'FACET_TOGGLED',
         open: open,
-        id: id
+        id: id,
       });
     }.bind(this);
   };
 
-  actions.fetch_data = function (id, offset) {
+  actions.fetch_data = function(id, offset) {
     // must be overridden by widget
     throw new Error('this was supposed to be overridden!');
   };
 
-  actions.select_facet = function (id) {
+  actions.select_facet = function(id) {
     return {
       type: 'FACET_SELECTED',
-      id: id
+      id: id,
     };
   };
 
-  actions.unselect_facet = function (id) {
+  actions.unselect_facet = function(id) {
     return {
       type: 'FACET_UNSELECTED',
-      id: id
+      id: id,
     };
   };
 
-  actions.submit_filter = function (logicOption) {
+  actions.submit_filter = function(logicOption) {
     // must be overridden by widget
     throw new Error('this was supposed to be overridden!');
   };
 
-  actions.reset_state = function () {
+  actions.reset_state = function() {
     return {
-      type: 'RESET_STATE'
+      type: 'RESET_STATE',
     };
   };
 
-  return function () {
+  return function() {
     return Object.create(actions);
   };
 });

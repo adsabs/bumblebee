@@ -1,20 +1,12 @@
-
 define([
   'es6!js/widgets/export/widget.jsx',
   'js/components/api_query',
-  'js/components/json_response'
-],
-
-function (
-  ExportWidget,
-  ApiQuery,
-  JsonResponse
-) {
+  'js/components/json_response',
+], function(ExportWidget, ApiQuery, JsonResponse) {
   var Widget = ExportWidget.extend({
-
-    initialize: function (options) {
+    initialize: function(options) {
       // other widgets can send us data through page manager
-      this.on('page-manager-message', function (event, data) {
+      this.on('page-manager-message', function(event, data) {
         if (event === 'broadcast-payload') {
           this.ingestBroadcastedPayload(data);
         }
@@ -22,7 +14,7 @@ function (
       ExportWidget.prototype.initialize.call(this, options);
     },
 
-    activate: function (beehive) {
+    activate: function(beehive) {
       this.setBeeHive(beehive);
       _.bindAll(this, 'setCurrentQuery', 'processResponse');
       var pubsub = this.getPubSub();
@@ -30,18 +22,17 @@ function (
       ExportWidget.prototype.activate.call(this, beehive);
     },
 
-    ingestBroadcastedPayload: function (bibcode) {
+    ingestBroadcastedPayload: function(bibcode) {
       if (bibcode) {
         this.bibcode = bibcode;
       }
     },
 
-    setSubView: function (format) {
+    setSubView: function(format) {
       if (this.bibcode && format) {
         this.renderWidgetForListOfBibcodes([this.bibcode], { format: format });
       }
-    }
-
+    },
   });
 
   return Widget;

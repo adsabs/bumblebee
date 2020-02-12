@@ -1,11 +1,11 @@
-define([], function () {
+define([], function() {
   var f = {};
 
   /*
-  * takes a number or string, returns a string
-  * */
+   * takes a number or string, returns a string
+   * */
 
-  f.formatNum = function (num) {
+  f.formatNum = function(num) {
     var withCommas = [];
     num += '';
     var parts = num.split('.');
@@ -18,7 +18,7 @@ define([], function () {
       return num + extra;
     }
     num = num.split('').reverse();
-    _.each(num, function (n, i) {
+    _.each(num, function(n, i) {
       withCommas.unshift(n);
       if ((i + 1) % 3 === 0 && i !== num.length - 1) {
         withCommas.unshift(',');
@@ -27,7 +27,6 @@ define([], function () {
 
     return withCommas.join('') + extra;
   };
-
 
   return f;
 });

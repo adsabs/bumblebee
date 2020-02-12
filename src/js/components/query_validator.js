@@ -1,6 +1,4 @@
-define([
-  'underscore'
-], function (_) {
+define(['underscore'], function(_) {
   /**
    * Validator object
    * provides value checking
@@ -12,7 +10,7 @@ define([
     var matcher = new RegExp(match, opts);
 
     return function test(str) {
-      return (matcher.test(str)) ? null : str;
+      return matcher.test(str) ? null : str;
     };
   }
 
@@ -39,7 +37,7 @@ define([
      * @param q
      * @returns {Array}
      */
-    var parseTokens = function (q) {
+    var parseTokens = function(q) {
       var splitter = new RegExp(/:/);
       var tokens = q.split(/\s+\b/);
       var parsedTokens = [];
@@ -51,7 +49,9 @@ define([
           continue;
         }
 
-        parsedTokens.push(new QueryToken(subTokens[0], subTokens[1], tokens[j]));
+        parsedTokens.push(
+          new QueryToken(subTokens[0], subTokens[1], tokens[j])
+        );
       }
       return parsedTokens;
     };
@@ -61,7 +61,7 @@ define([
      * @param res
      * @returns {boolean}
      */
-    var completeValidation = function (res) {
+    var completeValidation = function(res) {
       return res !== null;
     };
 
@@ -72,14 +72,14 @@ define([
      * @param tokens
      * @returns {Array}
      */
-    var test = function (validators, tokens) {
+    var test = function(validators, tokens) {
       var tests = [];
       for (var i in tokens) {
         var res = _.compose.apply(_, validators)(tokens[i].value);
         if (!res) {
           tests.push({
             token: tokens[i].token,
-            result: res
+            result: res,
           });
         }
       }
@@ -91,9 +91,9 @@ define([
      * @param apiQuery
      * @returns {object}
      */
-    this.validate = function (apiQuery) {
+    this.validate = function(apiQuery) {
       var output = {
-        result: true
+        result: true,
       };
 
       // Validators - This should match things you DON'T want in the query
@@ -110,7 +110,10 @@ define([
 
       // Attempt to parse the query string to tokens
       try {
-        var q = apiQuery.get('q').join(' ').trim();
+        var q = apiQuery
+          .get('q')
+          .join(' ')
+          .trim();
         if (!q.length) {
           // query is empty string, continue on
           return output;

@@ -1,13 +1,9 @@
-define([
-  'marionette',
-  'hbs!js/widgets/success/success_template'
-], function (
+define(['marionette', 'hbs!js/widgets/success/success_template'], function(
   Marionette,
   SuccessTemplate
 ) {
   var SuccessView = Marionette.ItemView.extend({
-
-    initialize: function (options) {
+    initialize: function(options) {
       _.extend(this, options);
     },
 
@@ -15,10 +11,9 @@ define([
     message: 'Check your email for further instructions.',
     template: SuccessTemplate,
 
-    serializeData: function () {
+    serializeData: function() {
       return { title: this.title, message: this.message };
-    }
-
+    },
   });
 
   return SuccessView;

@@ -18,13 +18,8 @@ define([
   'underscore',
   'backbone',
   'js/components/solr_response',
-  'js/components/facade'
-], function (
-  _,
-  Backbone,
-  ApiResponseImplementation,
-  Facade
-) {
+  'js/components/facade',
+], function(_, Backbone, ApiResponseImplementation, Facade) {
   var hardenedInterface = {
     set: 'set (replace existing)',
     get: 'get values',
@@ -36,10 +31,10 @@ define([
     lock: true,
     unlock: true,
     setApiQuery: 'sets the ApiQuery',
-    getApiQuery: 'gets the query'
+    getApiQuery: 'gets the query',
   };
 
-  var ApiResponse = function (data, options) {
+  var ApiResponse = function(data, options) {
     // Facade pattern, we want to expose only limited API
     // despite the fact that the underlying instance has
     // all power of the Backbone.Model
@@ -47,21 +42,24 @@ define([
     if (data instanceof ApiResponseImplementation) {
       this.innerResponse = new Facade(hardenedInterface, data);
     } else {
-      this.innerResponse = new Facade(hardenedInterface, new ApiResponseImplementation(data, options));
+      this.innerResponse = new Facade(
+        hardenedInterface,
+        new ApiResponseImplementation(data, options)
+      );
     }
   };
 
   var toInsert = {};
-  _.each(_.keys(hardenedInterface), function (element, index, list) {
-    toInsert[element] = function () {
+  _.each(_.keys(hardenedInterface), function(element, index, list) {
+    toInsert[element] = function() {
       return this.innerResponse[element].apply(this.innerResponse, arguments);
     };
   });
   _.extend(ApiResponse.prototype, toInsert, {
-    clone: function () {
+    clone: function() {
       var clone = this.innerResponse.clone.apply(this.innerResponse, arguments);
       return new ApiResponse(clone);
-    }
+    },
   });
 
   return ApiResponse;

@@ -1,27 +1,27 @@
 /**
  * manages the state of the side bars
  */
-define([
-  'backbone',
-  'js/components/api_feedback'
-], function (Backbone, ApiFeedback) {
-
+define(['backbone', 'js/components/api_feedback'], function(
+  Backbone,
+  ApiFeedback
+) {
   var state = new (Backbone.Model.extend({
     defaults: {
       recent: true,
-      show: true
-    }
+      show: true,
+    },
   }))();
 
   var SideBarManager = {
-
     /**
      * Try to get the current sidebar state from user data
      * This will be the value coming from user settings
      */
-    _getUpdateFromUserData: function () {
+    _getUpdateFromUserData: function() {
       try {
-        var ud = this.getBeeHive().getObject('User').getUserData();
+        var ud = this.getBeeHive()
+          .getObject('User')
+          .getUserData();
         if (!ud) return false;
         return /show/i.test(ud.defaultHideSidebars);
       } catch (e) {
@@ -33,9 +33,13 @@ define([
      * Initialize the manager
      * this will start subscriptions and do an initial check on user data
      */
-    init: function () {
+    init: function() {
       this.setSidebarState(this._getUpdateFromUserData());
-      _.bindAll(this, ['_onFeedback', '_onUserAnnouncement', '_updateSidebarState']);
+      _.bindAll(this, [
+        '_onFeedback',
+        '_onUserAnnouncement',
+        '_updateSidebarState',
+      ]);
       var ps = this.getPubSub();
       if (!ps) return;
       ps.subscribe(ps.FEEDBACK, this._onFeedback);
@@ -47,7 +51,7 @@ define([
      * Update the sidebar state, this will trigger/broadcast the change
      * and update the view to actually spread the middle panel to full screen
      */
-    _updateSidebarState: _.throttle(function () {
+    _updateSidebarState: _.throttle(function() {
       var val = this.getSidebarState();
       var view = this.view;
       if (view && view.showCols) {
@@ -60,8 +64,7 @@ define([
     /**
      * On user announcement (user data change) update the sidebar state
      */
-    _onUserAnnouncement: function (ev, changed) {
-
+    _onUserAnnouncement: function(ev, changed) {
       // only update if the changed key was defaultHideSidebars
       if (_.contains('defaultHideSidebars', _.keys(changed))) {
         this.setSidebarState(this._getUpdateFromUserData());
@@ -73,18 +76,20 @@ define([
      * this will update the state when either of the *_SPACE events are called
      * @param {ApiFeedback} feedback
      */
-    _onFeedback: function (feedback) {
-      switch(feedback.code) {
-        case ApiFeedback.CODES.MAKE_SPACE: return this.onMakeSpace();
-        case ApiFeedback.CODES.UNMAKE_SPACE: return this.onUnMakeSpace();
-      };
+    _onFeedback: function(feedback) {
+      switch (feedback.code) {
+        case ApiFeedback.CODES.MAKE_SPACE:
+          return this.onMakeSpace();
+        case ApiFeedback.CODES.UNMAKE_SPACE:
+          return this.onUnMakeSpace();
+      }
     },
 
     /**
      * Save the current state and
      * set the sidebar state to `false`
      */
-    onMakeSpace: function () {
+    onMakeSpace: function() {
       state.set('recent', this.getSidebarState());
       this.setSidebarState(false);
     },
@@ -95,7 +100,7 @@ define([
      *
      * only "unmake space" if "make space" was called previously
      */
-    onUnMakeSpace: function () {
+    onUnMakeSpace: function() {
       if (state.has('recent')) {
         this.setSidebarState(state.get('recent'));
         state.unset('recent');
@@ -105,7 +110,7 @@ define([
     /**
      * Toggle the current state
      */
-    toggleSidebarState: function () {
+    toggleSidebarState: function() {
       this.setSidebarState(!this.getSidebarState());
     },
 
@@ -114,7 +119,7 @@ define([
      * this will trigger an update even if the value doesn't change
      * @param {Boolean} value - the new state value
      */
-    setSidebarState: function (value) {
+    setSidebarState: function(value) {
       state.set('show', value);
       state.trigger('change:show');
     },
@@ -123,9 +128,9 @@ define([
      * get the current sidebar state
      * @returns {Boolean} - the current state
      */
-    getSidebarState: function () {
+    getSidebarState: function() {
       return state.get('show');
-    }
+    },
   };
 
   return SideBarManager;

@@ -100,8 +100,8 @@ define([
     },
 
     sortCollection: function(e) {
-      var sortData = $(e.currentTarget).data('sort'),
-        sort = sortData.sort;
+      var sortData = $(e.currentTarget).data('sort');
+      var sort = sortData.sort;
 
       var order =
         sort !== this.model.get('sort')

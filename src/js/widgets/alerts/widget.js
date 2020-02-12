@@ -15,10 +15,8 @@ define([
   './page_top_alert',
   'jquery',
   'jquery-ui',
-  'bootstrap'
-
-],
-function (
+  'bootstrap',
+], function(
   Marionette,
   BaseWidget,
   ApiQuery,
@@ -36,21 +34,21 @@ function (
       msg: undefined,
       title: undefined,
       events: undefined,
-      modal: false
-    }
+      modal: false,
+    },
   });
 
   /*
-      * function called in onRender method of all alert views
-      * this allows for custom events to be added to the alert views
-      * when the events happen, a promise is resolved with the name of the event
-      * NOTE: this assumes there is only 1 event per alert view
-      *
-      * Need to add events object to apiFeedback passed into alerts:
-      * events: {
-      *   'click': 'button[data-dismiss=modal]'
-      * }
-      * */
+   * function called in onRender method of all alert views
+   * this allows for custom events to be added to the alert views
+   * when the events happen, a promise is resolved with the name of the event
+   * NOTE: this assumes there is only 1 event per alert view
+   *
+   * Need to add events object to apiFeedback passed into alerts:
+   * events: {
+   *   'click': 'button[data-dismiss=modal]'
+   * }
+   * */
 
   function delegateAdditionalEvents() {
     var self = this;
@@ -66,15 +64,15 @@ function (
     // when 'event' is fired, it will call/resolve the
     // promise object with the name of the event
     if (events) {
-      _.each(events, function (evtValue, evt) {
+      _.each(events, function(evtValue, evt) {
         var match = evt.match(delegateEventSplitter);
-        var eventName = match[1],
-          selector = match[2];
+        var eventName = match[1];
+        var selector = match[2];
         var key = evt;
 
         // create an event listener that resolves the promise
         // with the supplied data when there is the proper event
-        var method = function (ev) {
+        var method = function(ev) {
           var promise = this.model.get('promise');
           var evts = this.model.get('events');
           if (evts[key]) {
@@ -102,36 +100,34 @@ function (
 
   var modalOnRender = ModalView.prototype.onRender;
 
-  ModalView.prototype.onRender = function () {
+  ModalView.prototype.onRender = function() {
     delegateAdditionalEvents.apply(this, arguments);
     if (modalOnRender) modalOnRender.apply(this, arguments);
   };
 
   var bannerOnRender = BannerView.prototype.onRender;
 
-  BannerView.prototype.onRender = function () {
+  BannerView.prototype.onRender = function() {
     delegateAdditionalEvents.apply(this, arguments);
     if (bannerOnRender) bannerOnRender.apply(this, arguments);
   };
 
-
   var AlertsWidget = BaseWidget.extend({
-
-    initialize: function (options) {
+    initialize: function(options) {
       this.model = new AlertModel();
       this.view = new BannerView({ model: this.model });
       this.modalView = new ModalView({ model: this.model });
       BaseWidget.prototype.initialize.apply(this, arguments);
     },
 
-    activate: function (beehive) {
+    activate: function(beehive) {
       this.setBeeHive(beehive);
       // listen to navigate event and close widget
       var pubsub = this.getPubSub();
       pubsub.subscribe(pubsub.NAVIGATE, this.modalView.closeModal);
     },
 
-    alert: function (feedback) {
+    alert: function(feedback) {
       var promise = $.Deferred();
       this.model.set({
         msg: feedback.msg,
@@ -139,16 +135,15 @@ function (
         title: feedback.title,
         type: feedback.type || 'info',
         modal: feedback.modal,
-        promise: promise
+        promise: promise,
       });
       return promise.promise();
     },
 
-    closeView: function () {
+    closeView: function() {
       this.view.close();
       this.modalView.closeModal();
-    }
-
+    },
   });
 
   return AlertsWidget;

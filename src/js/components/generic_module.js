@@ -3,11 +3,11 @@
  * just complicates things. For simple things, just use this class.
  */
 
-define(['backbone', 'underscore'], function (Backbone, _) {
+define(['backbone', 'underscore'], function(Backbone, _) {
   // A list of options to be attached directly to the module, if provided.
   var moduleOptions = ['className', 'activate'];
 
-  var Module = function (options) {
+  var Module = function(options) {
     var defaults;
     options = options || {};
     this.mid = _.uniqueId('module');
@@ -18,11 +18,11 @@ define(['backbone', 'underscore'], function (Backbone, _) {
   // every module has the Events mixin
   _.extend(Module.prototype, Backbone.Events, {
     className: 'GenericModule',
-    initialize: function () {},
-    destroy: function () {},
-    activate: function (options) {
+    initialize: function() {},
+    destroy: function() {},
+    activate: function(options) {
       _.extend(this, _.pick(options, moduleOptions));
-    }
+    },
   });
 
   // give the module subclassing functionality

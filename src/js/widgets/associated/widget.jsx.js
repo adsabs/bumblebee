@@ -1,4 +1,3 @@
-
 define([
   'underscore',
   'backbone',
@@ -13,17 +12,29 @@ define([
   'es6!./redux/configure-store',
   'es6!./redux/modules/api',
   'es6!./redux/modules/ui',
-  'es6!./containers/app'
-], function (
-  _, Backbone, React, ReactDOM, ReactRedux, analytics, ApiQuery, ApiRequest, ApiTargets,
-  BaseWidget, configureStore, api, ui, App
+  'es6!./containers/app',
+], function(
+  _,
+  Backbone,
+  React,
+  ReactDOM,
+  ReactRedux,
+  analytics,
+  ApiQuery,
+  ApiRequest,
+  ApiTargets,
+  BaseWidget,
+  configureStore,
+  api,
+  ui,
+  App
 ) {
   const View = Backbone.View.extend({
-    initialize: function (options) {
+    initialize: function(options) {
       // provide this with all the options passed in
       _.assign(this, options);
     },
-    render: function () {
+    render: function() {
       // create provider component, that passes the store to <App>
       ReactDOM.render(
         <ReactRedux.Provider store={this.store}>
@@ -33,14 +44,14 @@ define([
       );
       return this;
     },
-    destroy: function () {
+    destroy: function() {
       // on destroy, make sure the React DOM is unmounted
       ReactDOM.unmountComponentAtNode(this.el);
-    }
+    },
   });
 
   const Widget = BaseWidget.extend({
-    initialize: function () {
+    initialize: function() {
       // create the store, using the configurator
       this.store = configureStore(this);
 
@@ -48,11 +59,14 @@ define([
       this.view = new View({ store: this.store });
 
       if (!window.__BUMBLEBEE_TESTING_MODE__) {
-        this.processAbstractData = _.debounce(_.bind(this.processAbstractData, this), 300);
+        this.processAbstractData = _.debounce(
+          _.bind(this.processAbstractData, this),
+          300
+        );
       }
     },
     defaultQueryArguments: {},
-    activate: function (beehive) {
+    activate: function(beehive) {
       const { dispatch } = this.store;
       this.setBeeHive(beehive);
       this.activateWidget();
@@ -73,7 +87,7 @@ define([
           this.processAbstractData(data);
         }
       });
-      pubsub.subscribe(pubsub.DELIVERING_RESPONSE, function (apiResponse) {
+      pubsub.subscribe(pubsub.DELIVERING_RESPONSE, function(apiResponse) {
         if (apiResponse && _.isFunction(apiResponse.toJSON)) {
           dispatch(api.processResponse(apiResponse.toJSON()));
         } else {
@@ -81,7 +95,7 @@ define([
         }
       });
     },
-    processAbstractData: function (data) {
+    processAbstractData: function(data) {
       const { dispatch } = this.store;
       if (data && data.property && data.property.includes('ASSOCIATED')) {
         this.dispatchRequest(new ApiQuery());
@@ -89,27 +103,27 @@ define([
         dispatch(ui.setError('no associated property'));
       }
     },
-    composeRequest: function () {
+    composeRequest: function() {
       const { bibcode } = this.store.getState().api;
 
       return new ApiRequest({
         target: `${ApiTargets.RESOLVER}/${bibcode}/associated`,
-        query: new ApiQuery()
+        query: new ApiQuery(),
       });
     },
-    emitAnalytics: function (data) {
+    emitAnalytics: function(data) {
       analytics('send', 'event', 'interaction', 'associated-link-followed', {
         target: 'associated',
-        url: data.rawUrl
+        url: data.rawUrl,
       });
     },
-    onApiFeedback: function (feedback) {
+    onApiFeedback: function(feedback) {
       const { dispatch } = this.store;
       if (_.isPlainObject(feedback.error)) {
         dispatch(ui.setError(feedback.error));
         dispatch(api.fallbackOnError());
       }
-    }
+    },
   });
 
   return Widget;

@@ -11,9 +11,8 @@ define([
   'js/components/pubsub_events',
   'hbs!js/widgets/api_query/templates/widget-view',
   'hbs!js/widgets/api_query/templates/item-view',
-  'js/mixins/dependon'
-],
-function (
+  'js/mixins/dependon',
+], function(
   _,
   $,
   Backbone,
@@ -25,11 +24,11 @@ function (
   Dependon
 ) {
   // Model
-  var KeyValue = Backbone.Model.extend({ });
+  var KeyValue = Backbone.Model.extend({});
 
   // Collection of data
   var KeyValueCollection = Backbone.Collection.extend({
-    model: KeyValue
+    model: KeyValue,
   });
 
   var ItemView = Marionette.ItemView.extend({
@@ -38,9 +37,9 @@ function (
     events: {
       'click .remove': 'removeItem',
       'blur input[name=key]': 'onChange',
-      'blur input[name=value]': 'onChange'
+      'blur input[name=value]': 'onChange',
     },
-    onChange: function (ev) {
+    onChange: function(ev) {
       var container = $(ev.target);
       var attr = _.clone(this.model.attributes);
       var newVal = $(ev.target).val();
@@ -51,10 +50,10 @@ function (
         this.trigger('value-changed', this.model, newVal);
       }
     },
-    removeItem: function (ev) {
+    removeItem: function(ev) {
       this.trigger('remove-clicked', this.model);
       return false;
-    }
+    },
   });
 
   var WidgetView = Marionette.CompositeView.extend({
@@ -65,22 +64,22 @@ function (
       'click button#api-query-load': 'loadApiQuery',
       'click button#api-query-add': 'addNewItem',
       'click button#api-query-run': 'runApiQuery',
-      'submit form': 'loadApiQuery'
+      'submit form': 'loadApiQuery',
     },
-    addNewItem: function (ev) {
+    addNewItem: function(ev) {
       this.trigger('add-new-item', this);
       return false;
     },
-    loadApiQuery: function (ev) {
+    loadApiQuery: function(ev) {
       var data = this.$el.find('input#api-query-input').val();
       if (data && _.isString(data) && data.trim().length > 0) {
         this.trigger('load-api-query', data);
       }
       return false;
     },
-    runApiQuery: function (ev) {
+    runApiQuery: function(ev) {
       var q = new ApiQuery();
-      _.map(this.collection.models, function (a) {
+      _.map(this.collection.models, function(a) {
         var attr = a.attributes;
         if (attr.key) {
           q.set(attr.key, attr.value.split('|'));
@@ -90,35 +89,34 @@ function (
       this.trigger('run-api-query', q);
       return false;
     },
-    updateInputBox: function (data) {
+    updateInputBox: function(data) {
       this.$el.find('input#api-query-input').val(data);
     },
-    removeKey: function (data) {
+    removeKey: function(data) {
       this.trigger('remove-key', data);
-    }
-
+    },
   });
 
   var WidgetController = Marionette.Controller.extend({
-
-    initialize: function (apiQuery) {
+    initialize: function(apiQuery) {
       if (!apiQuery || !(apiQuery instanceof ApiQuery)) {
         apiQuery = new ApiQuery(); // empty
       }
       this.collection = new KeyValueCollection(this.getData(apiQuery));
-      this.view = new WidgetView({ collection: this.collection, model: new KeyValue({ initialValue: apiQuery.url() || 'q=planet' }) });
+      this.view = new WidgetView({
+        collection: this.collection,
+        model: new KeyValue({ initialValue: apiQuery.url() || 'q=planet' }),
+      });
       this.listenTo(this.view, 'all', this.onAll);
       return this;
     },
 
-
-    render: function () {
+    render: function() {
       this.view.render();
       return this.view;
     },
 
-
-    onLoad: function (apiQuery) {
+    onLoad: function(apiQuery) {
       if (this.collection) {
         this.collection.reset(this.getData(apiQuery));
       } else {
@@ -126,13 +124,12 @@ function (
       }
     },
 
-
     /**
-       * This is the central function - listening to all events
-       * in this widget's views; and manipulating the models
-       * that back views
-       */
-    onAll: function () {
+     * This is the central function - listening to all events
+     * in this widget's views; and manipulating the models
+     * that back views
+     */
+    onAll: function() {
       // console.log('onAll', arguments[0]);
       var event = arguments[0];
 
@@ -153,13 +150,13 @@ function (
     },
 
     /**
-       * Function to massage input values and return what we want to
-       * pass to the model
-       *
-       * @param apiQuery
-       * @returns {*|Array}
-       */
-    getData: function (apiQuery) {
+     * Function to massage input values and return what we want to
+     * pass to the model
+     *
+     * @param apiQuery
+     * @returns {*|Array}
+     */
+    getData: function(apiQuery) {
       if (!apiQuery) {
         throw Error('Wrong input!');
       }
@@ -167,31 +164,34 @@ function (
         apiQuery = new ApiQuery().load(apiQuery);
       }
 
-      var pairs = _.map(apiQuery.pairs(), function (pair) {
+      var pairs = _.map(apiQuery.pairs(), function(pair) {
         return { key: pair[0], value: pair[1].join('|') };
       });
       return pairs;
     },
 
     /**
-       * The methods below are only working if you activate the widget and
-       * pass it BeeHive
-       *
-       * @param beehive
-       */
-    activate: function (beehive) {
+     * The methods below are only working if you activate the widget and
+     * pass it BeeHive
+     *
+     * @param beehive
+     */
+    activate: function(beehive) {
       this.setBeeHive(beehive);
       var pubsub = this.getPubSub();
       pubsub.subscribe('all', _.bind(this.onAllPubSub, this));
     },
 
     /**
-       * Catches and displays ApiQuery that has travelled through the
-       * PubSub queue
-       */
-    onAllPubSub: function () {
+     * Catches and displays ApiQuery that has travelled through the
+     * PubSub queue
+     */
+    onAllPubSub: function() {
       var event = arguments[0];
-      if (event == PubSubEvents.START_SEARCH || event == PubSubEvents.INVITING_REQUEST) {
+      if (
+        event == PubSubEvents.START_SEARCH ||
+        event == PubSubEvents.INVITING_REQUEST
+      ) {
         console.log('[debug:ApiQueryWidget]', arguments[0]);
         // this.onLoad(arguments[1]);
         this.view.updateInputBox(arguments[1].url()); // update the input
@@ -199,17 +199,16 @@ function (
     },
 
     /**
-       * Called by the UI View when 'Run' is clicked; you can override
-       * the method to provide your own impl
-       *
-       * @param ApiQuery
-       */
-    onRun: function (apiQuery) {
+     * Called by the UI View when 'Run' is clicked; you can override
+     * the method to provide your own impl
+     *
+     * @param ApiQuery
+     */
+    onRun: function(apiQuery) {
       if (this.hasPubSub()) {
         this.getPubSub().publish(this.getPubSub().START_SEARCH, apiQuery);
       }
-    }
-
+    },
   });
 
   _.extend(WidgetController.prototype, Dependon.BeeHive);

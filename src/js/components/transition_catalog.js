@@ -1,29 +1,22 @@
-define(['underscore',
-  'js/components/transition'
-],
-function (
-  _,
-  Transition
-) {
-  var TransitionCatalog = function (options) {
+define(['underscore', 'js/components/transition'], function(_, Transition) {
+  var TransitionCatalog = function(options) {
     this._catalog = {};
   };
   _.extend(TransitionCatalog.prototype, {
-    add: function (transition) {
+    add: function(transition) {
       if (!(transition instanceof Transition)) {
         throw new Error('You can add only Transition objects');
       }
       this._catalog[transition.endpoint] = transition;
       return transition;
     },
-    get: function (name) {
+    get: function(name) {
       return this._catalog[name];
     },
-    remove: function (name) {
+    remove: function(name) {
       delete this._catalog[name];
-    }
+    },
   });
 
   return TransitionCatalog;
-}
-);
+});

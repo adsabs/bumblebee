@@ -5,13 +5,9 @@
  * orcid/extension provides functionality for the widget controllers)
  *
  */
-define([
-  'backbone',
-  'underscore'
-],
-function (Backbone, _) {
+define(['backbone', 'underscore'], function(Backbone, _) {
   return {
-    showOrcidActions: function (isWorkInCollection) {
+    showOrcidActions: function(isWorkInCollection) {
       var $icon = this.$('.mini-orcid-icon');
       $icon.removeClass('green');
       $icon.removeClass('gray');
@@ -42,12 +38,12 @@ function (Backbone, _) {
       }
     },
 
-    hideOrcidActions: function () {
+    hideOrcidActions: function() {
       var $orcidActions = this.$('.orcid-actions');
       $orcidActions.addClass('hidden');
     },
 
-    orcidAction: function (e) {
+    orcidAction: function(e) {
       var $c = $(e.currentTarget);
       var $orcidActions = this.$('.orcid-actions');
       $orcidActions.addClass('orcid-wait');
@@ -65,11 +61,11 @@ function (Backbone, _) {
       var msg = {
         actionType: actionType,
         model: this.model.attributes,
-        modelType: 'adsData'
+        modelType: 'adsData',
       };
 
       this.trigger('OrcidAction', msg);
       return false;
-    }
+    },
   };
 });

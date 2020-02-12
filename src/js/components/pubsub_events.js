@@ -18,9 +18,8 @@
  *
  */
 
-define([], function () {
+define([], function() {
   var PubSubEvents = {
-
     /**
      * Usually called by OC's as a first step in the query processing.
      * It means: 'user did something', we need to start reacting. The OC
@@ -48,7 +47,6 @@ define([], function () {
      */
     EXECUTE_REQUEST: '[PubSub]-Execute-Request',
 
-
     /**
      * Called from the router, the QID will be passed; the query needs to be
      * loaded and executed
@@ -66,7 +64,6 @@ define([], function () {
      *  - output: ApiResponse
      */
     DELIVERING_RESPONSE: '[PubSub]-New-Response',
-
 
     /**
      * The walls of the FC are being closed; and no new requests will be served
@@ -96,7 +93,6 @@ define([], function () {
     BIG_FIRE: '[PubSub]-Big-Problem',
     CITY_BURNING: '[PubSub]-Disaster',
 
-
     /**
      * A message containing feedback from the FC; traveling towards OC
      * The feedback will be instance of ApiFeedback
@@ -119,10 +115,10 @@ define([], function () {
     NAVIGATE: '[Router]-Navigate-With-Trigger',
 
     /*
-    * so navigator can notify interested widgets about a change
-    * from search page to user page, for instance-- navigator cannot
-    * to this since it listens to many events including widget-show events
-    * */
+     * so navigator can notify interested widgets about a change
+     * from search page to user page, for instance-- navigator cannot
+     * to this since it listens to many events including widget-show events
+     * */
     PAGE_CHANGE: '[Navigator]Page-Changed',
 
     /* for custom widget-to-widget events */
@@ -132,7 +128,6 @@ define([], function () {
 
     /* anything to do with changing the state of the user, including session events */
     USER_ANNOUNCEMENT: '[PubSub]-User-Announcement',
-
 
     /**
      * A message/action that should be displayed to the user (on prominent)
@@ -154,7 +149,6 @@ define([], function () {
     APP_STARTED: '[App]-Application-Started',
     APP_EXIT: '[App]-Exit',
 
-
     /**
      * Is triggered when user selects/deselects records
      */
@@ -163,12 +157,11 @@ define([], function () {
     // instead of toggling, adds all papers
     BULK_PAPER_SELECTION: '[User]-Bulk-Paper-Selection',
     /*
-    * is triggered by app storage itself when list of selected papers changes
-    * */
+     * is triggered by app storage itself when list of selected papers changes
+     * */
     STORAGE_PAPER_UPDATE: '[User]-Paper-Update',
 
-    LIBRARY_CHANGE: '[PubSub]-Library-Change'
-
+    LIBRARY_CHANGE: '[PubSub]-Library-Change',
   };
 
   return PubSubEvents;

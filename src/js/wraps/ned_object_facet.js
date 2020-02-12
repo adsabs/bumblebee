@@ -8,8 +8,8 @@ define([
   'analytics',
   'cache',
   'underscore',
-  'js/widgets/facet/reducers'
-], function (
+  'js/widgets/facet/reducers',
+], function(
   ApiResponse,
   ApiRequest,
   ApiQuery,
@@ -21,30 +21,31 @@ define([
   _,
   Reducers
 ) {
-  return function () {
+  return function() {
     var widget = FacetFactory.makeHierarchicalCheckboxFacet({
       facetField: 'ned_object_facet_hier',
       facetTitle: 'NED Objects',
       logicOptions: {
         single: ['limit to', 'exclude'],
-        multiple: ['and', 'or', 'exclude']
-      }
+        multiple: ['and', 'or', 'exclude'],
+      },
     });
 
-
-    widget._dispatchRequest = function (id, offset) {
-      var pubsub = this.getPubSub(),
-        that = this;
+    widget._dispatchRequest = function(id, offset) {
+      var pubsub = this.getPubSub();
+      var that = this;
 
       this.store.dispatch(this.actions.data_requested(id));
 
       if (!id) {
         // top level
-        pubsub.subscribeOnce(pubsub.DELIVERING_RESPONSE, function (apiResponse) {
-          that.store.dispatch(that.actions.data_received(apiResponse.toJSON(), id));
+        pubsub.subscribeOnce(pubsub.DELIVERING_RESPONSE, function(apiResponse) {
+          that.store.dispatch(
+            that.actions.data_received(apiResponse.toJSON(), id)
+          );
         });
       } else {
-        pubsub.subscribeOnce(pubsub.DELIVERING_RESPONSE, function (apiResponse) {
+        pubsub.subscribeOnce(pubsub.DELIVERING_RESPONSE, function(apiResponse) {
           that.translateNedid(apiResponse, id);
         });
       }
@@ -59,7 +60,9 @@ define([
         }
       }
       var q = this.customizeQuery(query);
-      var children = id ? this.store.getState().facets[id].children : this.store.getState().children;
+      var children = id
+        ? this.store.getState().facets[id].children
+        : this.store.getState().children;
       var offset = children.length || 0;
 
       q.set('facet.offset', offset);
@@ -73,35 +76,40 @@ define([
     widget._nedidCache = {};
 
     /**
-    * called with facet data, fetches and returns human readable names for simibds
-    */
-    widget.translateNedid = function (apiResponse, id) {
+     * called with facet data, fetches and returns human readable names for simibds
+     */
+    widget.translateNedid = function(apiResponse, id) {
       var that = this;
 
-      var nedids = apiResponse.toJSON().facet_counts.facet_fields.ned_object_facet_hier
-        .map(function (id, i) {
+      var nedids = apiResponse
+        .toJSON()
+        .facet_counts.facet_fields.ned_object_facet_hier.map(function(id, i) {
           if (i % 2 == 0) return id.split('/')[id.split('/').length - 1];
-        }).filter(function (id) {
+        })
+        .filter(function(id) {
           if (id) return id;
         });
 
       function done(data) {
         var enhancedResponse = apiResponse.toJSON();
-        enhancedResponse.facet_counts
-          .facet_fields.ned_object_facet_hier = enhancedResponse
-            .facet_counts.facet_fields.ned_object_facet_hier.map(
-              function (facet, i) {
-                if (i % 2 == 0) {
-                  var facetParts = facet.split('/');
-                  var nedid = facetParts[facetParts.length - 1];
-                  // in the form "1/Star/* bet Pic"
-                  var facetVal = facetParts.slice(0, 2).concat([data[nedid].canonical]).join('/');
-                  // store it in case the widget is submitted later
-                  widget._nedidCache[facetVal] = nedid;
-                  return facetVal;
-                }
-                return facet;
-              }, this);
+        enhancedResponse.facet_counts.facet_fields.ned_object_facet_hier = enhancedResponse.facet_counts.facet_fields.ned_object_facet_hier.map(
+          function(facet, i) {
+            if (i % 2 == 0) {
+              var facetParts = facet.split('/');
+              var nedid = facetParts[facetParts.length - 1];
+              // in the form "1/Star/* bet Pic"
+              var facetVal = facetParts
+                .slice(0, 2)
+                .concat([data[nedid].canonical])
+                .join('/');
+              // store it in case the widget is submitted later
+              widget._nedidCache[facetVal] = nedid;
+              return facetVal;
+            }
+            return facet;
+          },
+          this
+        );
         that.store.dispatch(that.actions.data_received(enhancedResponse, id));
       }
 
@@ -112,28 +120,33 @@ define([
           contentType: 'application/json',
           data: JSON.stringify({
             source: 'NED',
-            identifiers: nedids
+            identifiers: nedids,
           }),
-          done: done
-        }
+          done: done,
+        },
       });
 
-	  var pubsub = this.getPubSub();
-	  pubsub.publish(pubsub.EXECUTE_REQUEST, request);
+      var pubsub = this.getPubSub();
+      pubsub.publish(pubsub.EXECUTE_REQUEST, request);
     };
 
-    widget.submitFilter = function (operator) {
+    widget.submitFilter = function(operator) {
       var q = this.getCurrentQuery().clone();
       q.unlock();
 
       var facetField = this.store.getState().config.facetField;
       var fieldName = 'fq_' + facetField;
-      var selectedFacets = Reducers.getActiveFacets(this.store.getState(), this.store.getState().state.selected);
+      var selectedFacets = Reducers.getActiveFacets(
+        this.store.getState(),
+        this.store.getState().state.selected
+      );
 
-      var conditions = selectedFacets.map(function (c) {
+      var conditions = selectedFacets.map(function(c) {
         // it's a second level facet, replace the name part with the nedid (unique for object facet)
         if (this._nedidCache[c]) {
-          var facetName = c.split('/').slice(0, 2)
+          var facetName = c
+            .split('/')
+            .slice(0, 2)
             .concat([this._nedidCache[c]])
             .join('/');
         } else {
@@ -181,12 +194,15 @@ define([
         // and NGC_789 in this example). These should be present as keys in the cache generated in
         // the object facet widget, returning the associated (canonical) object names
         // create an array with just the user-friendly names of the facets
-        var prop = _.find(_.keys(q.toJSON()), function (k) {
+        var prop = _.find(_.keys(q.toJSON()), function(k) {
           return k.match(/fq_ned_object_facet_hier/i);
         });
         if (prop) {
           var logic = q.get(prop)[0];
-          q.set('filter_ned_object_facet_hier_fq_ned_object_facet_hier', [logic].concat(selectedFacets));
+          q.set(
+            'filter_ned_object_facet_hier_fq_ned_object_facet_hier',
+            [logic].concat(selectedFacets)
+          );
           q.unset('__ned_object_facet_hier_fq_ned_object_facet_hier');
         }
       }
@@ -197,11 +213,17 @@ define([
       q.unset('rows');
       this.dispatchNewQuery(q);
 
-      analytics('send', 'event', 'interaction', 'facet-applied', JSON.stringify({
-        name: facetField,
-        logic: operator,
-        conditions: conditions
-      }));
+      analytics(
+        'send',
+        'event',
+        'interaction',
+        'facet-applied',
+        JSON.stringify({
+          name: facetField,
+          logic: operator,
+          conditions: conditions,
+        })
+      );
     };
     return widget;
   };

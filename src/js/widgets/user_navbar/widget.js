@@ -1,37 +1,33 @@
 define([
   'marionette',
   'hbs!js/widgets/user_navbar/nav_template',
-  'js/mixins/dependon'
-], function (Marionette, NavTemplate, Dependon) {
+  'js/mixins/dependon',
+], function(Marionette, NavTemplate, Dependon) {
   var NavModel = Backbone.Model.extend({
-
-    defaults: function () {
+    defaults: function() {
       return {
         page: undefined,
-        userName: undefined
+        userName: undefined,
       };
-    }
+    },
   });
 
   var NavView = Marionette.ItemView.extend({
-
     template: NavTemplate,
 
     modelEvents: {
-      change: 'render'
-    }
-
+      change: 'render',
+    },
   });
 
   var NavWidget = Marionette.Controller.extend({
-
-    initialize: function (options) {
+    initialize: function(options) {
       options = options || {};
       this.model = new NavModel();
       this.view = new NavView({ model: this.model });
     },
 
-    activate: function (beehive) {
+    activate: function(beehive) {
       this.setBeeHive(beehive);
       var pubsub = beehive.getService('PubSub');
 
@@ -42,11 +38,11 @@ define([
       pubsub.subscribe(pubsub.USER_ANNOUNCEMENT, this.updateUser);
     },
 
-    updateCurrentView: function (page) {
+    updateCurrentView: function(page) {
       this.model.set('page', page);
     },
 
-    updateUser: function (event, arg) {
+    updateUser: function(event, arg) {
       var user = this.getBeeHive().getObject('User');
       if (event == user.USER_SIGNED_IN) {
         var userName = arg;
@@ -59,12 +55,10 @@ define([
       }
     },
 
-    render: function () {
+    render: function() {
       this.view.render();
       return this.view.el;
-    }
-
-
+    },
   });
 
   _.extend(NavWidget.prototype, Dependon.BeeHive);

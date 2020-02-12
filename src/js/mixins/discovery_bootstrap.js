@@ -1,4 +1,3 @@
-
 /*
  * This module contains a set of utilities to bootstrap Discovery app
  */
@@ -9,9 +8,8 @@ define([
   'js/components/api_request',
   'js/components/pubsub_events',
   'hbs',
-  'js/components/api_targets'
-],
-function (
+  'js/components/api_targets',
+], function(
   _,
   Backbone,
   ApiQuery,
@@ -20,8 +18,7 @@ function (
   HandleBars,
   ApiTargets
 ) {
-
-  var startGlobalHandler = function () {
+  var startGlobalHandler = function() {
     var routes = [
       'classic-form',
       'paper-form',
@@ -31,21 +28,23 @@ function (
       'abs',
       'user',
       'orcid-instructions',
-      'public-libraries'
+      'public-libraries',
     ];
-    var regx = new RegExp('^#(\/?(' + routes.join('|') + ').*\/?)?$', 'i');
+    var regx = new RegExp('^#(/?(' + routes.join('|') + ').*/?)?$', 'i');
 
-    var isPushState = function () {
-      return Backbone.history
-        && Backbone.history.options
-        && Backbone.history.options.pushState;
+    var isPushState = function() {
+      return (
+        Backbone.history &&
+        Backbone.history.options &&
+        Backbone.history.options.pushState
+      );
     };
 
-    var transformHref = _.memoize(function (href) {
+    var transformHref = _.memoize(function(href) {
       return regx.test(href) ? href.replace(/^\/?#\/?/, '/') : false;
     });
 
-    var navigate = function (ev) {
+    var navigate = function(ev) {
       if (window.bbb) {
         try {
           var nav = bbb.getBeeHive().getService('Navigator');
@@ -60,7 +59,7 @@ function (
     };
 
     var metaKey = false;
-    var handleNavigation = function (event) {
+    var handleNavigation = function(event) {
       if (!isPushState()) return;
       var $el = $(this);
 
@@ -79,7 +78,8 @@ function (
         if (event.metaKey || event.ctrlKey) {
           metaKey = true;
           return;
-        } else if (metaKey && event.type === 'focusin') {
+        }
+        if (metaKey && event.type === 'focusin') {
           metaKey = false;
           return;
         }
@@ -89,7 +89,7 @@ function (
         $el.one('click', { url: url }, navigate);
 
         // reset to the old url
-        $el.one('mouseup blur', function () {
+        $el.one('mouseup blur', function() {
           $el.attr('href', old);
         });
         return false;
@@ -99,8 +99,7 @@ function (
   };
 
   var Mixin = {
-
-    configure: function () {
+    configure: function() {
       var conf = this.getObject('DynamicConfig');
 
       if (conf) {
@@ -126,12 +125,15 @@ function (
 
         // ApiTargets has a _needsCredentials array that contains all endpoints
         // that require cookies
-        api.modifyRequestOptions = function (opts, request) {
+        api.modifyRequestOptions = function(opts, request) {
           // there is a list of endpoints that DONT require cookies, if this endpoint
           // is not in that list,
-          if (ApiTargets._doesntNeedCredentials.indexOf(request.get('target')) == -1) {
+          if (
+            ApiTargets._doesntNeedCredentials.indexOf(request.get('target')) ==
+            -1
+          ) {
             opts.xhrFields = {
-              withCredentials: true
+              withCredentials: true,
             };
           }
         };
@@ -150,7 +152,7 @@ function (
       }
     },
 
-    bootstrap: function () {
+    bootstrap: function() {
       // XXX:rca - solve this better, through config
       var beehive = this.getBeeHive();
       var dynConf = this.getObject('DynamicConfig');
@@ -160,7 +162,11 @@ function (
       // check out the local storage to see if we have a copy
       var storage = beehive.getService('PersistentStorage');
       var config = storage.get('appConfig');
-      if (config && config.expire_in && new Date(config.expire_in) > new Date()) {
+      if (
+        config &&
+        config.expire_in &&
+        new Date(config.expire_in) > new Date()
+      ) {
         return defer.resolve(config).promise();
       }
 
@@ -174,45 +180,49 @@ function (
 
         // harvest information from the remote urls and merge it into one object
         var opts = {
-          done: function (data) {
+          done: function(data) {
             pendingReqs--;
             _.extend(retVal, data);
             if (pendingReqs <= 0) defer.resolve(retVal);
           },
-          fail: function () {
+          fail: function() {
             pendingReqs--;
             if (pendingReqs <= 0) defer.resolve(retVal);
           },
           type: 'GET',
-          timeout: timeout - 1
+          timeout: timeout - 1,
         };
 
-        _.each(this.bootstrapUrls, function (url) {
+        _.each(this.bootstrapUrls, function(url) {
           if (url.indexOf('http') > -1) {
             opts.u = url;
-            api.request(new ApiRequest({
-              query: new ApiQuery(),
-              target: ''
-            }),
-            opts);
+            api.request(
+              new ApiRequest({
+                query: new ApiQuery(),
+                target: '',
+              }),
+              opts
+            );
           } else {
             delete opts.u;
-            api.request(new ApiRequest({
-              query: new ApiQuery(),
-              target: url
-            }),
-            opts);
+            api.request(
+              new ApiRequest({
+                query: new ApiQuery(),
+                target: url,
+              }),
+              opts
+            );
           }
         });
 
-        setTimeout(function () {
+        setTimeout(function() {
           if (defer.state() === 'resolved') {
             return;
           }
           defer.reject(new Error('Timed out while loading modules'));
         }, timeout);
       } else {
-        setTimeout(function () {
+        setTimeout(function() {
           defer.resolve({});
         }, 1);
       }
@@ -224,7 +234,7 @@ function (
      * If the url already contains 'bbbRedirect', redirect to the error page.
      * @param errorPage
      */
-    reload: function (endPage) {
+    reload: function(endPage) {
       if (location.search.indexOf('debug') > -1) {
         console.warn('Debug stop, normally would reload to: ' + endPage);
         return; // do nothing
@@ -233,10 +243,12 @@ function (
       if (location.search && location.search.indexOf('bbbRedirect=1') > -1) {
         return this.redirect(endPage);
       }
-      location.search = location.search ? location.search + '&bbbRedirect=1' : 'bbbRedirect=1';
+      location.search = location.search
+        ? location.search + '&bbbRedirect=1'
+        : 'bbbRedirect=1';
     },
 
-    redirect: function (endPage) {
+    redirect: function(endPage) {
       if (this.router) {
         location.pathname = this.router.root + endPage;
       }
@@ -244,11 +256,18 @@ function (
       // router is not yet available; therefore it should hit situations when the app
       // was not loaded (but it is not bulletproof - the urls can vary greatly)
       // TODO: intelligently explore the rigth url (by sending HEAD requests)
-      location.href = location.protocol + '//' + location.hostname + ':' + location.port
-        + location.pathname.substring(0, location.pathname.lastIndexOf('/')) + '/' + endPage;
+      location.href =
+        location.protocol +
+        '//' +
+        location.hostname +
+        ':' +
+        location.port +
+        location.pathname.substring(0, location.pathname.lastIndexOf('/')) +
+        '/' +
+        endPage;
     },
 
-    start: function (Router) {
+    start: function(Router) {
       var defer = $.Deferred();
       var app = this;
       var beehive = this.getBeeHive();
@@ -257,10 +276,14 @@ function (
 
       // set the config into the appstorage
       // TODO: find a more elegant solution
-      this.getBeeHive().getObject('AppStorage').setConfig(conf);
+      this.getBeeHive()
+        .getObject('AppStorage')
+        .setConfig(conf);
 
-      var complain = function (x) {
-        throw new Error('Ooops. Check you config! There is no ' + x + ' component @#!');
+      var complain = function(x) {
+        throw new Error(
+          'Ooops. Check you config! There is no ' + x + ' component @#!'
+        );
       };
 
       var navigator = app.getBeeHive().Services.get('Navigator');
@@ -292,24 +315,31 @@ function (
         var noPushState = location.search.indexOf('pushstate=false') > -1;
 
         // Trigger the initial route and enable HTML5 History API support
-        var newConf = _.defaults({
-          pushState: noPushState ? false : undefined
-        }, conf && conf.routerConf);
+        var newConf = _.defaults(
+          {
+            pushState: noPushState ? false : undefined,
+          },
+          conf && conf.routerConf
+        );
         Backbone.history.start(newConf);
 
         // apply a global link handler for push state (after router is started)
         startGlobalHandler();
 
-        $(document).on('scroll', function () {
+        $(document).on('scroll', function() {
           if ($('#landing-page-layout').length > 0) {
             return;
           }
           // navbar is currently 40 px height
           if ($(window).scrollTop() > 50) {
             $('.s-quick-add').addClass('hidden');
-            $('.s-search-bar-full-width-container').addClass('s-search-bar-motion');
+            $('.s-search-bar-full-width-container').addClass(
+              's-search-bar-motion'
+            );
           } else {
-            $('.s-search-bar-full-width-container').removeClass('s-search-bar-motion');
+            $('.s-search-bar-full-width-container').removeClass(
+              's-search-bar-motion'
+            );
             $('.s-quick-add').removeClass('hidden');
           }
         });
@@ -317,8 +347,7 @@ function (
       });
 
       return defer.promise();
-    }
-
+    },
   };
 
   return Mixin;

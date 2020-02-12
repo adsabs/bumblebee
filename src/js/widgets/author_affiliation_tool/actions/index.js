@@ -1,17 +1,16 @@
-
 define([
   'underscore',
   'es6!../models/authorAffiliation',
   'es6!../constants/actionNames',
-  'filesaver'
-], function (_, authorAffiliation, ACTIONS) {
+  'filesaver',
+], function(_, authorAffiliation, ACTIONS) {
   /**
    * Format the data into something the server will accept
    *
    * @param {Array} arr
    * @returns {Array}
    */
-  const createSelectedString = function (arr) {
+  const createSelectedString = function(arr) {
     const out = [];
     _.forEach(arr, (entry) => {
       const val = [];
@@ -24,7 +23,9 @@ define([
       selectedDate = selectedDate ? selectedDate.date : ' ';
 
       // get the selected affiliations
-      const selectedAffiliations = _.filter(entry.affiliations, { selected: true });
+      const selectedAffiliations = _.filter(entry.affiliations, {
+        selected: true,
+      });
 
       // if no affiliations, then just make a ' ' instead
       if (_.isEmpty(selectedAffiliations)) {
@@ -33,7 +34,9 @@ define([
 
       // pull everything together into a big pipe-delimited string
       _.forEach(selectedAffiliations, (a) => {
-        if (!a.selected) { return; }
+        if (!a.selected) {
+          return;
+        }
         val.push(entry.author);
         val.push(a.name);
         val.push(selectedDate);
@@ -52,10 +55,8 @@ define([
    * @param {*} val
    * @returns {Array} the new array
    */
-  const swap = function (arr, idx, val) {
-    return [
-      ...arr.slice(0, idx), val, ...arr.slice(idx + 1)
-    ];
+  const swap = function(arr, idx, val) {
+    return [...arr.slice(0, idx), val, ...arr.slice(idx + 1)];
   };
 
   /**
@@ -66,19 +67,28 @@ define([
    *
    * @param {Array} data - the current array of data points
    */
-  const reset = _.memoize(data => data.map((d, i) => ({
-    ...d,
+  const reset = _.memoize(
+    (data) =>
+      data.map((d, i) => ({
+        ...d,
 
-    // set this author to be selected (that is default)
-    selected: true,
+        // set this author to be selected (that is default)
+        selected: true,
 
-    // for affiliations only the first element is selected
-    affiliations: d.affiliations.map((a, i) => ({ ...a, selected: i === 0 })),
+        // for affiliations only the first element is selected
+        affiliations: d.affiliations.map((a, i) => ({
+          ...a,
+          selected: i === 0,
+        })),
 
-    // same for last active dates (only first is selected)
-    lastActiveDates: d.lastActiveDates.map((l, i) => ({ ...l, selected: i === 0 }))
-  })),
-  () => 0);
+        // same for last active dates (only first is selected)
+        lastActiveDates: d.lastActiveDates.map((l, i) => ({
+          ...l,
+          selected: i === 0,
+        })),
+      })),
+    () => 0
+  );
 
   /**
    * Toggle all the current selected states
@@ -86,15 +96,19 @@ define([
    * @param {Array} data - the current array of data points
    * @param {boolean} toggle - flag to toggle entries
    */
-  const toggleAll = _.memoize((data, toggle) => data.map(d => ({
-    ...d,
-    selected: toggle,
-    affiliations: d.affiliations.map(a => ({ ...a, selected: toggle })),
-    lastActiveDates: d.lastActiveDates.map((l, i) => ({
-      ...l,
-      selected: toggle && i === 0
-    }))
-  })), (data, toggle) => toggle);
+  const toggleAll = _.memoize(
+    (data, toggle) =>
+      data.map((d) => ({
+        ...d,
+        selected: toggle,
+        affiliations: d.affiliations.map((a) => ({ ...a, selected: toggle })),
+        lastActiveDates: d.lastActiveDates.map((l, i) => ({
+          ...l,
+          selected: toggle && i === 0,
+        })),
+      })),
+    (data, toggle) => toggle
+  );
 
   /**
    * This will toggle the selected state the affiliation section of a particular
@@ -107,7 +121,13 @@ define([
    * @param {object} innerData - the affiliation data
    * @returns {Array} the new data set with the affiliation section (at index) toggled
    */
-  const toggleAffiliationRow = (data, affIdx, authorIdx, authorData, innerData) => {
+  const toggleAffiliationRow = (
+    data,
+    affIdx,
+    authorIdx,
+    authorData,
+    innerData
+  ) => {
     /*
       Take the current affiliations (at index) and swap out the selected one
       for a modified version (toggled).
@@ -117,7 +137,7 @@ define([
      */
     const affiliations = swap(data[authorIdx].affiliations, affIdx, {
       ...innerData,
-      selected: !innerData.selected
+      selected: !innerData.selected,
     });
 
     /*
@@ -126,8 +146,9 @@ define([
       If any of the affiliations or lastActiveDates are selected, it will
       set the author to be selected as well.
      */
-    const selected = _.any(affiliations, { selected: true })
-      || _.any(data[authorIdx].lastActiveDates, { selected: true });
+    const selected =
+      _.any(affiliations, { selected: true }) ||
+      _.any(data[authorIdx].lastActiveDates, { selected: true });
 
     /*
       TODO: Find a more elegant solution, this is quite expensive
@@ -139,7 +160,7 @@ define([
     return swap(data, authorIdx, {
       ...authorData,
       selected: selected,
-      affiliations: affiliations
+      affiliations: affiliations,
     });
   };
 
@@ -155,10 +176,16 @@ define([
    * @param {object} innerData - the affiliation data
    * @returns {Array} the new data set with the lastActiveDate section (at index) toggled
    */
-  const toggleLastActiveDateRow = (data, authorIdx, dateIdx, innerData, authorData) => {
+  const toggleLastActiveDateRow = (
+    data,
+    authorIdx,
+    dateIdx,
+    innerData,
+    authorData
+  ) => {
     // get the current ON date
     const currentSelectedIdx = _.findIndex(data[authorIdx].lastActiveDates, {
-      selected: true
+      selected: true,
     });
 
     /*
@@ -167,20 +194,21 @@ define([
      */
     let lastActiveDates = swap(data[authorIdx].lastActiveDates, dateIdx, {
       ...innerData,
-      selected: !innerData.selected
+      selected: !innerData.selected,
     });
 
     // Only allow one selected lastActiveDate (functions like radio buttons)
     if (currentSelectedIdx >= 0) {
       lastActiveDates = swap(lastActiveDates, currentSelectedIdx, {
         ...lastActiveDates[currentSelectedIdx],
-        selected: false
+        selected: false,
       });
     }
 
     // figure out if the whole row (author) should be selected
-    const selected = _.any(lastActiveDates, { selected: true })
-      || _.any(data[authorIdx].affiliations, { selected: true });
+    const selected =
+      _.any(lastActiveDates, { selected: true }) ||
+      _.any(data[authorIdx].affiliations, { selected: true });
 
     /*
       Finally, return a new set of data that has all the old values except for
@@ -192,7 +220,7 @@ define([
     return swap(data, authorIdx, {
       ...authorData,
       selected: selected,
-      lastActiveDates: lastActiveDates
+      lastActiveDates: lastActiveDates,
     });
   };
 
@@ -212,23 +240,28 @@ define([
    * @param {number} authorData - the parent row data
    * @returns {Array} the new data set with the author row (at index) toggled
    */
-  const toggleAuthorRow = (data, authorIdx, authorData) => swap(data, authorIdx, {
-    ...authorData,
+  const toggleAuthorRow = (data, authorIdx, authorData) =>
+    swap(data, authorIdx, {
+      ...authorData,
 
-    selected: !authorData.selected,
+      selected: !authorData.selected,
 
-    // flip all the affiliations to false if turning off author
-    affiliations: (authorData.selected) ? data[authorIdx].affiliations.map(a => ({
-      ...a,
-      selected: false
-    })) : data[authorIdx].affiliations,
+      // flip all the affiliations to false if turning off author
+      affiliations: authorData.selected
+        ? data[authorIdx].affiliations.map((a) => ({
+            ...a,
+            selected: false,
+          }))
+        : data[authorIdx].affiliations,
 
-    // same here with active dates (flip them all off)
-    lastActiveDates: (authorData.selected) ? data[authorIdx].lastActiveDates.map(l => ({
-      ...l,
-      selected: false
-    })) : data[authorIdx].lastActiveDates
-  });
+      // same here with active dates (flip them all off)
+      lastActiveDates: authorData.selected
+        ? data[authorIdx].lastActiveDates.map((l) => ({
+            ...l,
+            selected: false,
+          }))
+        : data[authorIdx].lastActiveDates,
+    });
 
   /**
    * Based on the format string, determine the file type
@@ -263,11 +296,10 @@ define([
   };
 
   const actions = {
-
     /**
      * Reset the store to initial values
      */
-    appReset: () => dispatch => dispatch({ type: ACTIONS.appReset }),
+    appReset: () => (dispatch) => dispatch({ type: ACTIONS.appReset }),
 
     /**
      * Reset the current data set
@@ -293,7 +325,7 @@ define([
      *
      * @param {array} data - the raw data from the server
      */
-    setAffiliationData: data => (dispatch) => {
+    setAffiliationData: (data) => (dispatch) => {
       data = _(data)
         .groupBy('authorName')
         .map((affs, author) => authorAffiliation.create(author, affs))
@@ -316,7 +348,10 @@ define([
      * @param {string} [message=''] - the message
      * @param {number} [timeout=5000] - the timeout of the alert
      */
-    showMessage: (type = 'success', message = '', timeout = 5000) => (dispatch, getState) => {
+    showMessage: (type = 'success', message = '', timeout = 5000) => (
+      dispatch,
+      getState
+    ) => {
       if (timeout !== 0) {
         _.delay(() => {
           dispatch({ type: ACTIONS.setMessage, value: { show: false } });
@@ -334,8 +369,8 @@ define([
         value: {
           type: type,
           message: message,
-          show: true
-        }
+          show: true,
+        },
       });
     },
 
@@ -348,7 +383,7 @@ define([
       actions._reload(getState, widget);
     },
 
-    updateYear: year => (dispatch, getState, widget) => {
+    updateYear: (year) => (dispatch, getState, widget) => {
       const state = getState();
 
       try {
@@ -364,7 +399,7 @@ define([
       widget.fetchAffiliationData(state.ids, year, state.author);
     },
 
-    updateAuthor: author => (dispatch, getState, widget) => {
+    updateAuthor: (author) => (dispatch, getState, widget) => {
       const state = getState();
 
       try {
@@ -378,7 +413,7 @@ define([
 
       // fetch data
       widget.fetchAffiliationData(state.ids, state.year, author);
-    }
+    },
   };
 
   /**
@@ -392,9 +427,9 @@ define([
    */
   actions.toggleSelection = (authorData, innerData) => (dispatch, getState) => {
     const { data } = getState();
-    let affIdx = -1,
-      dateIdx = -1,
-      newData = [];
+    let affIdx = -1;
+    let dateIdx = -1;
+    let newData = [];
 
     // find the author index
     const authorIdx = _.indexOf(data, authorData);
@@ -407,9 +442,21 @@ define([
 
     // if an index is found for the innerData, run the toggle method for that section
     if (affIdx >= 0) {
-      newData = toggleAffiliationRow(data, affIdx, authorIdx, authorData, innerData);
+      newData = toggleAffiliationRow(
+        data,
+        affIdx,
+        authorIdx,
+        authorData,
+        innerData
+      );
     } else if (dateIdx >= 0) {
-      newData = toggleLastActiveDateRow(data, authorIdx, dateIdx, innerData, authorData);
+      newData = toggleLastActiveDateRow(
+        data,
+        authorIdx,
+        dateIdx,
+        innerData,
+        authorData
+      );
     } else if (authorIdx >= 0) {
       newData = toggleAuthorRow(data, authorIdx, authorData);
     } else {
@@ -434,34 +481,40 @@ define([
     dispatch({ type: ACTIONS.setExporting, value: true });
 
     // do the actual export using the method on the widget
-    widget.exportAffiliationData({
-      selected: createSelectedString(data),
-      format: format
-    })
+    widget
+      .exportAffiliationData({
+        selected: createSelectedString(data),
+        format: format,
+      })
 
-    // after the export, decide how to show/download the data
+      // after the export, decide how to show/download the data
       .done((res) => {
-      // if browser, then open a new tab and show message if it's blocked
+        // if browser, then open a new tab and show message if it's blocked
         if (file.ext === 'browser') {
-          res.text().then(t => openInNewTab(t));
-          dispatch(actions.showMessage(
-            'info',
-            'If new tab doesn\'t appear, you will need to allow popups'
-          ));
+          res.text().then((t) => openInNewTab(t));
+          dispatch(
+            actions.showMessage(
+              'info',
+              "If new tab doesn't appear, you will need to allow popups"
+            )
+          );
         } else {
-          res.blob().then(b => saveAs(b, `authorAffiliations.${file.ext}`));
+          res.blob().then((b) => saveAs(b, `authorAffiliations.${file.ext}`));
 
           // show a message about successful download
           dispatch(actions.showMessage('success', 'Export Successful!'));
         }
       })
 
-    // on failure, show error message
+      // on failure, show error message
       .fail(() => {
-        actions.showMessage('danger', 'Something happened with the request, please try again');
+        actions.showMessage(
+          'danger',
+          'Something happened with the request, please try again'
+        );
       })
 
-    // always stop loading
+      // always stop loading
       .always(() => dispatch({ type: ACTIONS.setExporting, value: false }));
     actions.showMessage('info', 'Exporting...');
   };

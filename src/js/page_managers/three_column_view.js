@@ -3,38 +3,30 @@ define([
   'marionette',
   'hbs!js/page_managers/templates/results-page-layout',
   'hbs!js/page_managers/templates/results-control-row',
-  'js/widgets/base/base_widget'
-],
-function (
-  _,
-  Marionette,
-  pageTemplate,
-  controlRowTemplate
-) {
+  'js/widgets/base/base_widget',
+], function(_, Marionette, pageTemplate, controlRowTemplate) {
   /*
-       * keeps track of the open/closed state of the three columns
-       * */
+   * keeps track of the open/closed state of the three columns
+   * */
   var ResultsStateModel = Backbone.Model.extend({
-    defaults: function () {
+    defaults: function() {
       return {
         left: 'open',
         right: 'open',
         user_left: null,
         user_right: null,
       };
-    }
+    },
   });
 
-
   var ThreeColumnView = Marionette.ItemView.extend({
-
-    initialize: function (options) {
+    initialize: function(options) {
       var options = options || {};
       this.widgets = options.widgets;
       this.model = new ResultsStateModel();
     },
 
-    destroy: function () {
+    destroy: function() {
       Marionette.ItemView.prototype.destroy.call(this, arguments);
     },
 
@@ -46,12 +38,11 @@ function (
     },
 
     events: {
-      'click .btn-expand': 'onClickToggleColumns'
+      'click .btn-expand': 'onClickToggleColumns',
     },
 
-    onRender: function () {
-      this.$('#results-control-row')
-        .append(controlRowTemplate());
+    onRender: function() {
+      this.$('#results-control-row').append(controlRowTemplate());
 
       this.displaySearchBar(this.options.displaySearchBar);
       this.displayControlRow(this.options.displayControlRow);
@@ -60,36 +51,35 @@ function (
       this.displayMiddleColumn(this.options.displayMiddleColumn);
     },
 
-    onShow: function () {
+    onShow: function() {
       // these functions must be called every time the template is inserted
       this.displaySearchBar(true);
     },
 
-    displaySearchBar: function (show) {
+    displaySearchBar: function(show) {
       $('#search-bar-row').toggle(show === undefined ? true : show);
     },
 
-    displayLeftColumn: function (show) {
+    displayLeftColumn: function(show) {
       this.$('.s-left-col-container').toggle(show === undefined ? true : show);
     },
 
-    displayControlRow: function (show) {
+    displayControlRow: function(show) {
       this.$('#results-control-row').toggle(show === undefined ? true : show);
     },
 
-    displayRightColumn: function (show) {
+    displayRightColumn: function(show) {
       this.$('.s-left-col-container').toggle(show === undefined ? true : show);
     },
 
-    displayMiddleColumn: function (show) {
+    displayMiddleColumn: function(show) {
       this.$('.s-left-col-container').toggle(show === undefined ? true : show);
     },
 
-
-    _returnBootstrapClasses: function () {
+    _returnBootstrapClasses: function() {
       var classes = this.classList;
       var toRemove = [];
-      _.each(classes, function (c) {
+      _.each(classes, function(c) {
         if (c.indexOf('col-') !== -1) {
           toRemove.push(c);
         }
@@ -98,14 +88,14 @@ function (
     },
 
     /**
-         * Method to display/hide columns, accepts object with keys:
-         *  left: true/false
-         *  right: true|false
-         *  force: true if you want to override user action (i.e. open
-         *         column, even if they changed it manually)
-         * @param options
-         */
-    showCols: function (options) {
+     * Method to display/hide columns, accepts object with keys:
+     *  left: true/false
+     *  right: true|false
+     *  force: true if you want to override user action (i.e. open
+     *         column, even if they changed it manually)
+     * @param options
+     */
+    showCols: function(options) {
       options = options || { left: true, right: true, force: false };
       var keys = ['left', 'right'];
       for (var i = 0; i < keys.length; i++) {
@@ -122,13 +112,12 @@ function (
       }
     },
 
-
-    _updateColumnView: function () {
-      var leftState,
-        rightState,
-        $leftCol,
-        $rightCol,
-        $middleCol;
+    _updateColumnView: function() {
+      var leftState;
+      var rightState;
+      var $leftCol;
+      var $rightCol;
+      var $middleCol;
 
       leftState = this.model.get('left');
       rightState = this.model.get('right');
@@ -137,21 +126,27 @@ function (
       $rightCol = this.$('#results-right-column');
       $middleCol = this.$('#results-middle-column');
 
-
-      _.each([['left', leftState, $leftCol], ['right', rightState, $rightCol]], function (x) {
-        if (x[1] == 'open') {
-          x[2].removeClass('hidden');
-          var $col = x[2];
-          setTimeout(function () {
-            $col.children().show(0);
-          }, 200);
-        } else {
-          x[2].addClass('hidden');
+      _.each(
+        [
+          ['left', leftState, $leftCol],
+          ['right', rightState, $rightCol],
+        ],
+        function(x) {
+          if (x[1] == 'open') {
+            x[2].removeClass('hidden');
+            var $col = x[2];
+            setTimeout(function() {
+              $col.children().show(0);
+            }, 200);
+          } else {
+            x[2].addClass('hidden');
+          }
         }
-      });
+      );
 
       if (leftState === 'open' && rightState === 'open') {
-        $middleCol.removeClass(this._returnBootstrapClasses)
+        $middleCol
+          .removeClass(this._returnBootstrapClasses)
           .addClass('col-sm-9 col-md-7');
       }
       // else if (leftState === "closed" && rightState === "open") {
@@ -163,11 +158,11 @@ function (
       //      .addClass("col-md-10 col-sm-8")
       // }
       else if (leftState === 'closed' && rightState === 'closed') {
-        $middleCol.removeClass(this._returnBootstrapClasses)
+        $middleCol
+          .removeClass(this._returnBootstrapClasses)
           .addClass('col-md-12 col-sm-12');
       }
-    }
-
+    },
   });
   return ThreeColumnView;
 });

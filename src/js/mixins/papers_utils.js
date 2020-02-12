@@ -1,13 +1,4 @@
-define([
-  'underscore',
-  'jquery-ui',
-  'jquery'
-],
-function (
-  _,
-  $ui,
-  $
-) {
+define(['underscore', 'jquery-ui', 'jquery'], function(_, $ui, $) {
   var Utils = {
     /**
      * Receives the  ISO8601 date string (actually, browsers will be able to parse
@@ -26,22 +17,22 @@ function (
      *    unknown publication dates) or when a day or month are missing
      * @returns {*}
      */
-    formatDate: function (dateString, format) {
+    formatDate: function(dateString, format) {
       if (format && !_.isObject(format)) {
         throw new Error('format must be an object of string formats');
       }
-      format = _.defaults((format || {}), {
+      format = _.defaults(format || {}, {
         format: 'yy/mm/dd',
         missing: { day: 'yy/mm', month: 'yy' },
         separator: '-',
-        junk: '-00'
+        junk: '-00',
       });
 
       var fooIndex = ['day', 'month'];
 
-      var localDatePretendingToBeUtc,
-        utc,
-        formatToUse;
+      var localDatePretendingToBeUtc;
+      var utc;
+      var formatToUse;
       formatToUse = format.format;
 
       utc = new Date(dateString);
@@ -66,7 +57,8 @@ function (
           }
           i += 1;
         }
-        if (_.isNaN(utc.getYear())) throw new Error('Error parsing input: ' + dateString);
+        if (_.isNaN(utc.getYear()))
+          throw new Error('Error parsing input: ' + dateString);
       } else {
         // it parsed well, but the string was too short
         var s = format.separator;
@@ -86,12 +78,14 @@ function (
       // the 'utc' contains UTC time, but it is displayed by browser in local time zone
       // so we'll create another time, which will pretend to be UTC (but in reality it
       // is just UTC+local offset); but it will display things as UTC; confused? ;-)
-      localDatePretendingToBeUtc = new Date(utc.getTime() + utc.getTimezoneOffset() * 60000);
+      localDatePretendingToBeUtc = new Date(
+        utc.getTime() + utc.getTimezoneOffset() * 60000
+      );
 
       return $.datepicker.formatDate(formatToUse, localDatePretendingToBeUtc);
     },
 
-    shortenAbstract: function (abs, maxLen) {
+    shortenAbstract: function(abs, maxLen) {
       maxLen = maxLen || 300;
       // if this function returns undefined,
       // the template knows to just show the whole abstract
@@ -105,7 +99,7 @@ function (
      *
      * @returns {*}
      */
-    prepareDocForViewing: function (data) {
+    prepareDocForViewing: function(data) {
       var shownAuthors;
       var maxAuthorNames = 3;
 
@@ -117,7 +111,7 @@ function (
       }
 
       if (data.author) {
-        var format = function (d, i, arr) {
+        var format = function(d, i, arr) {
           var l = arr.length - 1;
           if (i === l || l === 0) {
             return d; // last one, or only one
@@ -128,15 +122,26 @@ function (
         data.allAuthorFormatted = _.map(data.author, format);
       }
 
-      data.formattedDate = data.formattedDate || (data.pubdate ? this.formatDate(data.pubdate) : undefined);
-      data.shortAbstract = data.abstract ? this.shortenAbstract(data.abstract) : undefined;
-      data.details = data.details || { 'shortAbstract': data.shortAbstract, 'pub': data.pub, 'abstract': data.abstract };
-      data.num_citations = data['[citations]'] ? data['[citations]'].num_citations : undefined;
+      data.formattedDate =
+        data.formattedDate ||
+        (data.pubdate ? this.formatDate(data.pubdate) : undefined);
+      data.shortAbstract = data.abstract
+        ? this.shortenAbstract(data.abstract)
+        : undefined;
+      data.details = data.details || {
+        shortAbstract: data.shortAbstract,
+        pub: data.pub,
+        abstract: data.abstract,
+      };
+      data.num_citations = data['[citations]']
+        ? data['[citations]'].num_citations
+        : undefined;
       data.identifier = data.bibcode ? data.bibcode : data.identifier;
 
       // make sure undefined doesn't become "undefined"
       data.encodedIdentifier = _.isUndefined(data.identifier)
-        ? data.identifier : encodeURIComponent(data.identifier);
+        ? data.identifier
+        : encodeURIComponent(data.identifier);
 
       if (data.pubdate || data.shortAbstract) {
         data.popover = true;
@@ -145,7 +150,7 @@ function (
       if (this.model) data.orderNum = this.model.get('resultsIndex') + 1;
 
       return data;
-    }
+    },
   };
 
   return Utils;

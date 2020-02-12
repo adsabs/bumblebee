@@ -24,7 +24,14 @@ define([
     },
 
     buildGraph: function() {
-      var data, xLabels, x, y, xAxis, yAxis, chart, line;
+      var data;
+      var xLabels;
+      var x;
+      var y;
+      var xAxis;
+      var yAxis;
+      var chart;
+      var line;
 
       data = _.clone(this.model.get('graphData'));
 
@@ -206,7 +213,12 @@ define([
     },
 
     graphChange: function(val) {
-      var data, max, x, y, xAxis, yAxis;
+      var data;
+      var max;
+      var x;
+      var y;
+      var xAxis;
+      var yAxis;
 
       data = _.clone(this.model.get('graphData'));
 

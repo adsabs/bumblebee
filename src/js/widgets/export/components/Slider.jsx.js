@@ -1,9 +1,4 @@
-
-
-define([
-  'react',
-  'react-prop-types'
-], function (React, ReactPropTypes) {
+define(['react', 'react-prop-types'], function(React, ReactPropTypes) {
   const Slider = ({ count, setCount }) => (
     <div>
       <label htmlFor="ex-range">
@@ -16,14 +11,14 @@ define([
         max="3000"
         step="1"
         defaultValue={count}
-        onChange={e => setCount(e.target.value)}
+        onChange={(e) => setCount(e.target.value)}
       />
     </div>
   );
 
   Slider.propTypes = {
     count: ReactPropTypes.number.isRequired,
-    setCount: ReactPropTypes.func.isRequired
+    setCount: ReactPropTypes.func.isRequired,
   };
 
   return Slider;

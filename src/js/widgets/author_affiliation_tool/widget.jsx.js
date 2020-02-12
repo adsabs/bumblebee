@@ -1,4 +1,3 @@
-
 define([
   'jquery',
   'underscore',
@@ -15,47 +14,60 @@ define([
   'es6!./containers/App.jsx',
   'es6!./constants/actionNames',
   'es6!./actions/index',
-  'es6!./reducers/index'
-], function (
-  $, _, Backbone, React, ReactRedux, ReactDOM, Redux, ReduxThunk,
-  ApiTargets, ApiQuery, ApiRequest, BaseWidget, App, ACTIONS, actions, reducers
+  'es6!./reducers/index',
+], function(
+  $,
+  _,
+  Backbone,
+  React,
+  ReactRedux,
+  ReactDOM,
+  Redux,
+  ReduxThunk,
+  ApiTargets,
+  ApiQuery,
+  ApiRequest,
+  BaseWidget,
+  App,
+  ACTIONS,
+  actions,
+  reducers
 ) {
   /**
    * Main entry point
    * this is where react will take over control of the view
    */
   var View = Backbone.View.extend({
-    initialize: function (options) {
+    initialize: function(options) {
       _.assign(this, options);
     },
-    render: function () {
+    render: function() {
       ReactDOM.render(
         <ReactRedux.Provider store={this.store}>
-          <App/>
+          <App />
         </ReactRedux.Provider>,
         this.el
       );
       return this;
     },
-    destroy: function () {
+    destroy: function() {
       ReactDOM.unmountComponentAtNode(this.el);
-    }
+    },
   });
 
   var Widget = BaseWidget.extend({
-
     /**
      * Initialize the widget
      */
-    initialize: function () {
+    initialize: function() {
       // setup the thunk middleware
       var middleware = Redux.applyMiddleware(
         ReduxThunk.default.withExtraArgument(this)
       );
 
       // add redux devtools extension hook (safe for production)
-      const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__
-        || Redux.compose;
+      const composeEnhancers =
+        window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || Redux.compose;
 
       // setup the store
       this.store = Redux.createStore(reducers, composeEnhancers(middleware));
@@ -69,7 +81,7 @@ define([
      *
      * @param {object} beehive
      */
-    activate: function (beehive) {
+    activate: function(beehive) {
       this.setBeeHive(beehive);
       this.activateWidget();
     },
@@ -79,7 +91,7 @@ define([
      *
      * @param {object} currentQuery
      */
-    renderWidgetForCurrentQuery: function ({ currentQuery }) {
+    renderWidgetForCurrentQuery: function({ currentQuery }) {
       const pubsub = this.getPubSub();
 
       // reset on load
@@ -96,7 +108,6 @@ define([
         const req = this.composeRequest(q);
 
         req.set('options', {
-
           // extract ids
           done: (res) => {
             const ids = _.map(res.response.docs, 'bibcode');
@@ -109,7 +120,7 @@ define([
           // stop loading after this either way
           always: () => {
             this.store.dispatch({ type: ACTIONS.setLoading, value: false });
-          }
+          },
         });
 
         pubsub.publish(pubsub.EXECUTE_REQUEST, req);
@@ -123,7 +134,7 @@ define([
      * @param {Array} ids
      * @returns {*}
      */
-    renderWidgetForListOfBibcodes: function (ids) {
+    renderWidgetForListOfBibcodes: function(ids) {
       // reset on load
       this.store.dispatch(actions.appReset());
       return this.fetchAffiliationData(ids);
@@ -137,7 +148,7 @@ define([
      * @param {number} [numyears=4] numyears - the years to go back
      * @param {number} [maxauthor=4] maxauthor - max number of authors to list
      */
-    fetchAffiliationData: function (ids = [], numyears = 4, maxauthor = 3) {
+    fetchAffiliationData: function(ids = [], numyears = 4, maxauthor = 3) {
       const pubsub = this.getPubSub();
       const $dd = $.Deferred();
 
@@ -154,8 +165,8 @@ define([
           contentType: 'application/json',
           done: (...args) => $dd.resolve(...args),
           fail: (...args) => $dd.reject(...args),
-          always: (...args) => $dd.always(...args)
-        }
+          always: (...args) => $dd.always(...args),
+        },
       });
 
       // when done set the data into the store
@@ -171,9 +182,12 @@ define([
       $dd.fail(() => this.onError());
 
       // stop loading either way
-      $dd.always(() => this.store.dispatch({
-        type: ACTIONS.setLoading, value: false
-      }));
+      $dd.always(() =>
+        this.store.dispatch({
+          type: ACTIONS.setLoading,
+          value: false,
+        })
+      );
 
       pubsub.publish(pubsub.EXECUTE_REQUEST, req);
       return $dd.promise();
@@ -184,7 +198,7 @@ define([
      *
      * @param {object} data
      */
-    exportAffiliationData: function (data) {
+    exportAffiliationData: function(data) {
       const pubsub = this.getPubSub();
       const $dd = $.Deferred();
 
@@ -197,22 +211,25 @@ define([
             body: JSON.stringify(data),
             method: 'POST',
             headers: {
-              'Content-Type': 'application/json'
-            }
+              'Content-Type': 'application/json',
+            },
           },
           done: (...args) => $dd.resolve(...args),
           fail: (...args) => $dd.reject(...args),
-          always: (...args) => $dd.always(...args)
-        }
+          always: (...args) => $dd.always(...args),
+        },
       });
 
       // handle errors
       $dd.fail(() => this.onError());
 
       // stop loading either way
-      $dd.always(() => this.store.dispatch({
-        type: ACTIONS.setLoading, value: false
-      }));
+      $dd.always(() =>
+        this.store.dispatch({
+          type: ACTIONS.setLoading,
+          value: false,
+        })
+      );
 
       pubsub.publish(pubsub.EXECUTE_REQUEST, req);
       return $dd.promise();
@@ -221,7 +238,7 @@ define([
     /**
      * Close the widget
      */
-    closeWidget: function () {
+    closeWidget: function() {
       const pubsub = this.getPubSub();
       pubsub.publish(pubsub.NAVIGATE, 'results-page');
     },
@@ -229,12 +246,16 @@ define([
     /**
      * Show an error message
      */
-    onError: function () {
+    onError: function() {
       const { dispatch } = this.store;
-      dispatch(actions.showMessage(
-        'danger',
-        'Something happened during the request, please try again', 0));
-    }
+      dispatch(
+        actions.showMessage(
+          'danger',
+          'Something happened during the request, please try again',
+          0
+        )
+      );
+    },
   });
 
   return Widget;

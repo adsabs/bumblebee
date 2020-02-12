@@ -1,9 +1,9 @@
-define([
-  'underscore',
-  'backbone',
-  'js/mixins/hardened'],
-function (_, Backbone, Hardened) {
-  var ApiFeedback = function (options) {
+define(['underscore', 'backbone', 'js/mixins/hardened'], function(
+  _,
+  Backbone,
+  Hardened
+) {
+  var ApiFeedback = function(options) {
     _.extend(this, _.defaults(options || {}, { code: 200, msg: undefined }));
     this.setCode(this.code);
   };
@@ -25,7 +25,6 @@ function (_, Backbone, Hardened) {
     KEEP_WAITING: 190,
     TESTING: 0,
 
-
     // Internal events
     MAKE_SPACE: -1,
     UNMAKE_SPACE: -1.1,
@@ -38,55 +37,58 @@ function (_, Backbone, Hardened) {
     ALERT: -8,
     CANNOT_ROUTE: -9,
     API_REQUEST_ERROR: -10,
-    BIBCODE_DATA_REQUESTED: -11
+    BIBCODE_DATA_REQUESTED: -11,
   };
 
   var _codes = {};
-  _.each(_.pairs(ApiFeedback.CODES), function (p) {
+  _.each(_.pairs(ApiFeedback.CODES), function(p) {
     _codes[p[1]] = p[0];
   });
 
-  _.extend(ApiFeedback.prototype, {
-    hardenedInterface: {
-      code: 'integer value of the code',
-      msg: 'string message',
-      toJSON: 'for cloning',
-      getApiRequest: 'to get the original request',
-      getSenderKey: 'retrieve the senders key'
+  _.extend(
+    ApiFeedback.prototype,
+    {
+      hardenedInterface: {
+        code: 'integer value of the code',
+        msg: 'string message',
+        toJSON: 'for cloning',
+        getApiRequest: 'to get the original request',
+        getSenderKey: 'retrieve the senders key',
+      },
+      initialize: function() {},
+      toJSON: function() {
+        return { code: this.code, msg: this.msg };
+      },
+      setCode: function(c) {
+        if (!_codes[c]) {
+          throw new Error(
+            'This code is not in the list ApiCodes - please extend js/components/api_feedback first:',
+            this.code
+          );
+        }
+        this.code = c;
+      },
+      setApiRequest: function(apiRequest) {
+        this.req = apiRequest;
+      },
+      getApiRequest: function() {
+        return this.req;
+      },
 
-    },
-    initialize: function () {
-    },
-    toJSON: function () {
-      return { code: this.code, msg: this.msg };
-    },
-    setCode: function (c) {
-      if (!(_codes[c])) {
-        throw new Error('This code is not in the list ApiCodes - please extend js/components/api_feedback first:', this.code);
-      }
-      this.code = c;
-    },
-    setApiRequest: function (apiRequest) {
-      this.req = apiRequest;
-    },
-    getApiRequest: function () {
-      return this.req;
-    },
+      setMsg: function(msg) {
+        this.msg = msg;
+      },
 
-    setMsg: function (msg) {
-      this.msg = msg;
+      getSenderKey: function() {
+        return this.senderKey;
+      },
+
+      setSenderKey: function(key) {
+        this.senderKey = key;
+      },
     },
-
-    getSenderKey: function () {
-      return this.senderKey;
-    },
-
-    setSenderKey: function (key) {
-      this.senderKey = key;
-    }
-
-
-  }, Hardened);
+    Hardened
+  );
 
   ApiFeedback.extend = Backbone.Model.extend;
   return ApiFeedback;

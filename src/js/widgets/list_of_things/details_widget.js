@@ -9,9 +9,8 @@ define([
   'js/mixins/add_stable_index_to_collection',
   'js/mixins/link_generator_mixin',
   'js/mixins/papers_utils',
-  'js/components/api_query'
-],
-function (
+  'js/components/api_query',
+], function(
   ListOfThings,
   PaginationMixin,
   LinkGenerator,
@@ -20,56 +19,65 @@ function (
 ) {
   var DetailsWidget = ListOfThings.extend({
     defaultQueryArguments: {
-      fl: 'title,bibcode,author,keyword,pub,aff,volume,year,[citations],property,pubdate,abstract,esources,data',
+      fl:
+        'title,bibcode,author,keyword,pub,aff,volume,year,[citations],property,pubdate,abstract,esources,data',
       rows: 25,
-      start: 0
+      start: 0,
     },
 
-    initialize: function (options) {
+    initialize: function(options) {
       ListOfThings.prototype.initialize.call(this, options);
 
       // other widgets can send us data through page manager
       // here it is used just to get the title of the main article page
-      this.on('page-manager-message', function (event, data) {
+      this.on('page-manager-message', function(event, data) {
         if (event === 'broadcast-payload') {
-
           // set the current title
           this.model.set({
             title: data.title,
 
             // hide checkboxes on abstract sub-pages
-            showCheckboxes: false
+            showCheckboxes: false,
           });
           this.canLoad = false;
           this.ingestBroadcastedPayload(data);
         }
 
-        if (event === 'widget-selected' && data.idAttribute === this.name && !this.canLoad) {
-          var doDispatch = _.bind(function () {
+        if (
+          event === 'widget-selected' &&
+          data.idAttribute === this.name &&
+          !this.canLoad
+        ) {
+          var doDispatch = _.bind(function() {
             this.canLoad = true;
 
             // have to delay this so the view has to time to initialize
-            setTimeout(_.bind(function (title) {
-              if (!this.model.has('title')) {
-                this.model.set('title', title);
-              }
-            }, this), 0, this.model.get('title'));
+            setTimeout(
+              _.bind(function(title) {
+                if (!this.model.has('title')) {
+                  this.model.set('title', title);
+                }
+              }, this),
+              0,
+              this.model.get('title')
+            );
             this.dispatchRequest(data.bibcode);
           }, this);
 
-          this.model.has('title') ? doDispatch() :
-            this.model.once('change:title', doDispatch);
+          this.model.has('title')
+            ? doDispatch()
+            : this.model.once('change:title', doDispatch);
         }
       });
 
       // clear the collection when the model is reset with a new bibcode
       // and set the model to default values
-      this.listenTo(this.model, 'change:bibcode', function () {
+      this.listenTo(this.model, 'change:bibcode', function() {
         this.reset();
       });
     },
 
-    activate: function (beehive) {
+    activate: function(beehive) {
       ListOfThings.prototype.activate.apply(this, [].slice.apply(arguments));
       var pubsub = beehive.getService('PubSub');
       _.bindAll(this, 'dispatchRequest', 'processResponse');
@@ -78,11 +86,9 @@ function (
       pubsub.subscribe(pubsub.DELIVERING_RESPONSE, this.processResponse);
     },
 
-
     ingestBroadcastedPayload: _.noop,
 
-    dispatchRequest: function (bibcodeOrQuery) {
-
+    dispatchRequest: function(bibcodeOrQuery) {
       var apiQuery = bibcodeOrQuery;
       if (!(bibcodeOrQuery instanceof ApiQuery) && _.isString(bibcodeOrQuery)) {
         apiQuery = new ApiQuery({ q: 'identifier:' + bibcodeOrQuery });
@@ -110,13 +116,14 @@ function (
       ListOfThings.prototype.dispatchRequest.call(this, apiQuery);
     },
 
-    customizeQuery: function () {
+    customizeQuery: function() {
       var q = ListOfThings.prototype.customizeQuery.apply(this, arguments);
       if (Marionette.getOption(this, 'sortOrder')) {
         q.set('sort', Marionette.getOption(this, 'sortOrder'));
       }
       if (this.model.get('queryOperator')) {
-        var query = this.model.get('queryOperator') + '(' + q.get('q').join(' ') + ')';
+        var query =
+          this.model.get('queryOperator') + '(' + q.get('q').join(' ') + ')';
         // special case for trending aka 'also read'
         if (this.model.get('queryOperator') === 'trending') {
           // remove the bibcode from the set of returned results by
@@ -131,12 +138,12 @@ function (
       return q;
     },
 
-    processDocs: function (apiResponse, docs, paginationInfo) {
+    processDocs: function(apiResponse, docs, paginationInfo) {
       var self = this;
       var params = apiResponse.get('response');
-      var start = params.start || (paginationInfo.start || 0);
+      var start = params.start || paginationInfo.start || 0;
 
-      _.each(docs, function (d, i) {
+      _.each(docs, function(d, i) {
         docs[i] = self.prepareDocForViewing(d);
       });
 
@@ -146,7 +153,7 @@ function (
         // do nothing
       }
       return PaginationMixin.addPaginationToDocs(docs, start);
-    }
+    },
   });
 
   _.extend(DetailsWidget.prototype, LinkGenerator);

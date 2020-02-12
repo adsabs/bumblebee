@@ -1,8 +1,8 @@
-
-
-define([
-  'clipboard', 'react', 'react-prop-types'
-], function (Clipboard, React, ReactPropTypes) {
+define(['clipboard', 'react', 'react-prop-types'], function(
+  Clipboard,
+  React,
+  ReactPropTypes
+) {
   class ClipboardBtn extends React.Component {
     componentWillUnmount() {
       this.clipboard.destroy();
@@ -19,10 +19,10 @@ define([
         <button
           className="btn btn-default"
           disabled={disabled}
-          ref={e => this.element = e}
+          ref={(e) => (this.element = e)}
           data-clipboard-target={target}
         >
-          <i className="fa fa-copy fa-fw"/>
+          <i className="fa fa-copy fa-fw" />
           Copy to Clipboard
         </button>
       );
@@ -32,7 +32,7 @@ define([
   ClipboardBtn.propTypes = {
     disabled: ReactPropTypes.bool.isRequired,
     target: ReactPropTypes.string.isRequired,
-    onCopy: ReactPropTypes.func.isRequired
+    onCopy: ReactPropTypes.func.isRequired,
   };
 
   return ClipboardBtn;

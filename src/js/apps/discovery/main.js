@@ -13,21 +13,19 @@
  *
  */
 
-define(['config/discovery.config', 'module'], function (config, module) {
+define(['config/discovery.config', 'module'], function(config, module) {
   require([
     'router',
     'js/components/application',
     'js/mixins/discovery_bootstrap',
     'js/mixins/api_access',
     'analytics',
-    'es5-shim'
-  ], function (Router,
-    Application,
-    DiscoveryBootstrap,
-    ApiAccess,
-    analytics) {
-    var updateProgress = (typeof window.__setAppLoadingProgress === 'function')
-      ? window.__setAppLoadingProgress : function () {};
+    'es5-shim',
+  ], function(Router, Application, DiscoveryBootstrap, ApiAccess, analytics) {
+    var updateProgress =
+      typeof window.__setAppLoadingProgress === 'function'
+        ? window.__setAppLoadingProgress
+        : function() {};
 
     var timeStart = Date.now();
 
@@ -39,7 +37,7 @@ define(['config/discovery.config', 'module'], function (config, module) {
     // app object will load everything
     var app = new (Application.extend(DiscoveryBootstrap))({
       debug: debug,
-      timeout: 300000 // 5 minutes
+      timeout: 300000, // 5 minutes
     });
 
     // load the objects/widgets/modules (using discovery.config.js)
@@ -47,7 +45,7 @@ define(['config/discovery.config', 'module'], function (config, module) {
 
     updateProgress(20, 'Starting Application');
 
-    var startApp = function () {
+    var startApp = function() {
       updateProgress(50, 'Modules Loaded');
       var timeLoaded = Date.now();
 
@@ -61,7 +59,7 @@ define(['config/discovery.config', 'module'], function (config, module) {
       app.configure();
 
       updateProgress(95, 'Finishing Up...');
-      app.bootstrap().done(function (data) {
+      app.bootstrap().done(function(data) {
         updateProgress(100);
 
         app.onBootstrap(data);
@@ -69,13 +67,13 @@ define(['config/discovery.config', 'module'], function (config, module) {
 
         pubsub.publish(pubsub.getCurrentPubSubKey(), pubsub.APP_STARTING);
         app.start(Router).done(function() {
-
           pubsub.publish(pubsub.getCurrentPubSubKey(), pubsub.APP_STARTED);
 
-          var getUserData = function () {
+          var getUserData = function() {
             try {
               var beehive = _.isFunction(this.getBeeHive) && this.getBeeHive();
-              var user = _.isFunction(beehive.getObject) && beehive.getObject('User');
+              var user =
+                _.isFunction(beehive.getObject) && beehive.getObject('User');
               if (user) {
                 return user.getUserData('USER_DATA');
               }
@@ -83,39 +81,56 @@ define(['config/discovery.config', 'module'], function (config, module) {
               // do nothing
             }
             return {};
-          }
+          };
 
           // handle user preferences for external link actions
-          var updateExternalLinkBehavior = _.debounce(function () {
-            var userData = getUserData.call(app);
-            var action = userData.externalLinkAction && userData.externalLinkAction.toUpperCase() || 'AUTO';
-            if (action === 'OPEN IN CURRENT TAB') {
-              var max = 10;
-              var timeout;
-              (function updateLinks(count) {
-                clearTimeout(timeout);
-                if (count < max) {
-                  $('a[target="_blank"]').attr('target', '');
-                  timeout = setTimeout(updateLinks, 1000, count + 1);
-                }
-              })(0);
-            }
-          }, 3000, { leading: true, trailing: false }, false);
-          pubsub.subscribe(pubsub.getCurrentPubSubKey(), pubsub.NAVIGATE, updateExternalLinkBehavior);
+          var updateExternalLinkBehavior = _.debounce(
+            function() {
+              var userData = getUserData.call(app);
+              var action =
+                (userData.externalLinkAction &&
+                  userData.externalLinkAction.toUpperCase()) ||
+                'AUTO';
+              if (action === 'OPEN IN CURRENT TAB') {
+                var max = 10;
+                var timeout;
+                (function updateLinks(count) {
+                  clearTimeout(timeout);
+                  if (count < max) {
+                    $('a[target="_blank"]').attr('target', '');
+                    timeout = setTimeout(updateLinks, 1000, count + 1);
+                  }
+                })(0);
+              }
+            },
+            3000,
+            { leading: true, trailing: false },
+            false
+          );
+          pubsub.subscribe(
+            pubsub.getCurrentPubSubKey(),
+            pubsub.NAVIGATE,
+            updateExternalLinkBehavior
+          );
           updateExternalLinkBehavior();
 
           // some global event handlers, not sure if right place
-          $('body').on('click', 'button.toggle-menu', function (e) {
-            var $button = $(e.target),
-              $sidebar = $button.parents().eq(1).find('.nav-container');
+          $('body').on('click', 'button.toggle-menu', function(e) {
+            var $button = $(e.target);
+            var $sidebar = $button
+              .parents()
+              .eq(1)
+              .find('.nav-container');
 
             $sidebar.toggleClass('show');
-            var text = $sidebar.hasClass('show') ? '  <i class="fa fa-close"></i> Close Menu' : ' <i class="fa fa-bars"></i> Show Menu';
+            var text = $sidebar.hasClass('show')
+              ? '  <i class="fa fa-close"></i> Close Menu'
+              : ' <i class="fa fa-bars"></i> Show Menu';
             $button.html(text);
           });
 
           // accessibility: skip to main content
-          $('body').on('click', '#skip-to-main-content', function () {
+          $('body').on('click', '#skip-to-main-content', function() {
             return false;
           });
 
@@ -132,7 +147,7 @@ define(['config/discovery.config', 'module'], function (config, module) {
               hitType: 'timing',
               timingCategory: 'Application',
               timingVar: 'Loaded',
-              timingValue: time
+              timingValue: time,
             });
             if (debug) {
               console.log('Application Started: ' + time + 'ms');
@@ -145,7 +160,7 @@ define(['config/discovery.config', 'module'], function (config, module) {
       });
     };
 
-    var failedLoad = function () {
+    var failedLoad = function() {
       analytics('send', 'event', 'introspection', 'failed-load', arguments);
 
       if (!debug) {
@@ -153,8 +168,14 @@ define(['config/discovery.config', 'module'], function (config, module) {
       }
     };
 
-    var failedReload = function () {
-      analytics('send', 'event', 'introspection', 'failed-reloading', arguments);
+    var failedReload = function() {
+      analytics(
+        'send',
+        'event',
+        'introspection',
+        'failed-reloading',
+        arguments
+      );
 
       if (debug) {
         // so error messages remain in the console

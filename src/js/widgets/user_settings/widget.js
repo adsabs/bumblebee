@@ -10,9 +10,9 @@ define([
   'hbs!js/widgets/user_settings/templates/delete_account',
   'backbone-validation',
   'backbone.stickit',
-  'bootstrap'
-
-], function (Marionette,
+  'bootstrap',
+], function(
+  Marionette,
   BaseWidget,
   FormFunctions,
   SuccessView,
@@ -21,83 +21,79 @@ define([
   EmailTemplate,
   PasswordTemplate,
   DeleteAccountTemplate,
-  Bootstrap) {
+  Bootstrap
+) {
   var passwordRegex = /(?=.*\d)(?=.*[a-zA-Z]).{5,}/;
 
-  var FormView,
-    FormModel;
+  var FormView;
+  var FormModel;
 
   FormView = Marionette.ItemView.extend({
-
     activateValidation: FormFunctions.activateValidation,
     checkValidationState: FormFunctions.checkValidationState,
     triggerSubmit: FormFunctions.triggerSubmit,
 
     modelEvents: {
-      change: 'checkValidationState'
+      change: 'checkValidationState',
     },
     events: {
-      'click button[type=submit]': 'triggerSubmit'
-    }
+      'click button[type=submit]': 'triggerSubmit',
+    },
   });
 
   FormModel = Backbone.Model.extend({
     isValidSafe: FormFunctions.isValidSafe,
-    reset: FormFunctions.reset
+    reset: FormFunctions.reset,
   });
 
-
-  var ChangeEmailView,
-    ChangeEmailModel;
+  var ChangeEmailView;
+  var ChangeEmailModel;
 
   ChangeEmailModel = FormModel.extend({
-
     validation: {
-      'email': {
+      email: {
         required: true,
         pattern: 'email',
-        msg: '(A valid email is required)'
+        msg: '(A valid email is required)',
       },
       'confirm-email': {
         required: true,
         pattern: 'email',
         equalTo: 'email',
-        msg: '(This email must be valid and match the one above)'
+        msg: '(This email must be valid and match the one above)',
       },
-      'password': {
+      password: {
         required: true,
         pattern: passwordRegex,
-        msg: '(A valid password is required)'
-      }
-    }
-
+        msg: '(A valid password is required)',
+      },
+    },
   });
 
   ChangeEmailView = FormView.extend({
-
     template: EmailTemplate,
     className: 'change-email',
 
-    onShow: function () {
+    onShow: function() {
       setTimeout(() => this.model.set('hasError', null), 10000);
     },
 
-    triggerSubmit: function (e) {
+    triggerSubmit: function(e) {
       e.preventDefault();
       this.model.unset('user');
-      this.listenToOnce(this.model, 'change:hasError', function () {
+      this.listenToOnce(this.model, 'change:hasError', function() {
         this.resetPage('email');
       });
       return FormFunctions.triggerSubmit.apply(this, arguments);
     },
 
-    resetPage: function (page) {
+    resetPage: function(page) {
       this.trigger('resetpage', page);
     },
 
     // for the view
     // checks whether to show a green submit button on model change
-    checkValidationState: function () {
+    checkValidationState: function() {
       // hide possible submit button message
       if (this.model.isValidSafe()) {
         // don't go for actual submit button, that is on the modal
@@ -109,72 +105,68 @@ define([
     },
 
     events: {
-      'click button[type=submit]': 'triggerSubmit'
+      'click button[type=submit]': 'triggerSubmit',
     },
 
     modelEvents: {
-      'change:hasError': 'render'
+      'change:hasError': 'render',
     },
 
     bindings: {
       'input[name=email]': {
         observe: 'email',
         setOptions: {
-          validate: true
-        }
+          validate: true,
+        },
       },
       'input[name=confirm-email]': {
         observe: 'confirm-email',
         setOptions: {
-          validate: true
-        }
+          validate: true,
+        },
       },
       'input[name=password]': {
         observe: 'password',
         setOptions: {
-          validate: true
-        }
-      }
+          validate: true,
+        },
+      },
     },
 
-    onRender: function () {
+    onRender: function() {
       this.activateValidation();
-    }
+    },
   });
 
-  var ChangePasswordView,
-    ChangePasswordModel;
+  var ChangePasswordView;
+  var ChangePasswordModel;
 
   ChangePasswordModel = FormModel.extend({
-
     validation: {
       old_password: {
         required: true,
         pattern: passwordRegex,
-        msg: '(A valid password is required)'
+        msg: '(A valid password is required)',
       },
       new_password1: {
         required: true,
         pattern: passwordRegex,
-        msg: '(A valid password is required)'
-
+        msg: '(A valid password is required)',
       },
       new_password2: {
         required: true,
         equalTo: 'new_password1',
         pattern: passwordRegex,
-        msg: '(The passwords do not match)'
-      }
-    }
-
+        msg: '(The passwords do not match)',
+      },
+    },
   });
 
   ChangePasswordView = FormView.extend({
-
     template: PasswordTemplate,
     className: 'change-password',
 
-    onRender: function () {
+    onRender: function() {
       this.activateValidation();
     },
 
@@ -182,109 +174,100 @@ define([
       'input[name=old_password]': {
         observe: 'old_password',
         setOptions: {
-          validate: true
-        }
+          validate: true,
+        },
       },
       'input[name=new_password1]': {
         observe: 'new_password1',
         setOptions: {
-          validate: true
-        }
+          validate: true,
+        },
       },
       'input[name=new_password2]': {
         observe: 'new_password2',
         setOptions: {
-          validate: true
-        }
-      }
-    }
-
+          validate: true,
+        },
+      },
+    },
   });
 
-  var ChangeTokenView,
-    ChangeTokenModel;
+  var ChangeTokenView;
+  var ChangeTokenModel;
 
   ChangeTokenModel = Backbone.Model.extend({
-
-    defaults: function () {
+    defaults: function() {
       return {
         access_token: undefined,
-        loading: false
+        loading: false,
       };
-    }
-
+    },
   });
 
   ChangeTokenView = Marionette.ItemView.extend({
-
     template: TokenTemplate,
     className: 'change-token',
     triggerSubmit: FormFunctions.triggerSubmit,
 
     events: {
-      'click button[type=submit]': 'triggerSubmit'
+      'click button[type=submit]': 'triggerSubmit',
     },
 
     // a promise could put the token in the model
     // after render has already been called by "show"
     modelEvents: {
       'change:access_token': 'render',
-      'change:loading': 'render'
-    }
-
+      'change:loading': 'render',
+    },
   });
 
-  var DeleteAccountView,
-    DeleteAccountModel;
+  var DeleteAccountView;
+  var DeleteAccountModel;
 
-  DeleteAccountModel = FormModel.extend({
-
-  });
+  DeleteAccountModel = FormModel.extend({});
 
   DeleteAccountView = FormView.extend({
-
     template: DeleteAccountTemplate,
     className: 'delete-account',
     events: {
-      'click #delete-account': 'confirm'
+      'click #delete-account': 'confirm',
     },
 
-    confirm: function () {
+    confirm: function() {
       var msg = 'This action cannot be reversed\n\nAre you sure?';
       if (confirm(msg)) {
         FormFunctions.triggerSubmit.call(this);
       }
-    }
+    },
   });
 
-  var UserSettingsView,
-    UserSettings;
+  var UserSettingsView;
+  var UserSettings;
 
   UserSettingsView = Marionette.LayoutView.extend({
-
-    template: function () {
+    template: function() {
       return '<div class="content-container"></div>';
     },
 
     className: 's-user-settings s-form-widget',
 
     regions: {
-      content: '.content-container'
+      content: '.content-container',
     },
 
     events: {
-      'click .user-pill-nav a:not(.dropdown-toggle)': 'stopPropagation'
+      'click .user-pill-nav a:not(.dropdown-toggle)': 'stopPropagation',
     },
 
-    stopPropagation: function () {
+    stopPropagation: function() {
       return false;
     },
 
-    setSubView: function (subView) {
-      var config = Marionette.getOption(this, 'config'),
-        viewModel = new config[subView].model(),
-        viewToShow = new config[subView].view({ model: viewModel }),
-        that = this;
+    setSubView: function(subView) {
+      var config = Marionette.getOption(this, 'config');
+      var viewModel = new config[subView].model();
+      var viewToShow = new config[subView].view({ model: viewModel });
+      var that = this;
 
       // cache the subView
       this.model.set('subView', subView);
@@ -294,7 +277,7 @@ define([
           viewModel.set('access_token', this.model.get('access_token'));
         } else {
           viewModel.set('loading', true);
-          this.getToken().done(function (data) {
+          this.getToken().done(function(data) {
             // keep for next time
             that.model.set('access_token', data.access_token);
             // set in current viewmodel
@@ -312,59 +295,59 @@ define([
     },
 
     // special success views
-    showPasswordSuccessView: function () {
-      this.content.show(new SuccessView({ title: 'Password Changed', message: 'Next time you log in, please use your new password' }));
+    showPasswordSuccessView: function() {
+      this.content.show(
+        new SuccessView({
+          title: 'Password Changed',
+          message: 'Next time you log in, please use your new password',
+        })
+      );
     },
 
-    forwardSubmit: function (model) {
+    forwardSubmit: function(model) {
       this.trigger('submit-form', model);
     },
 
-    resetPage: function (page) {
-
+    resetPage: function(page) {
       // grab current model
       const model = this.content.currentView.model.toJSON();
       this.setSubView(page);
 
       // update the new view's model
       this.content.currentView.model.set(model);
-    }
-
+    },
   });
 
   var UserSettingsModel = Backbone.Model.extend({
-
-    defaults: function () {
+    defaults: function() {
       return {
         user: undefined,
         token: undefined,
-        subView: undefined
+        subView: undefined,
       };
-    }
-
+    },
   });
 
   UserSettings = BaseWidget.extend({
-
     config: {
-      'email': { view: ChangeEmailView, model: ChangeEmailModel },
-      'password': { view: ChangePasswordView, model: ChangePasswordModel },
-      'token': { view: ChangeTokenView, model: ChangeTokenModel },
-      'delete': { view: DeleteAccountView, model: DeleteAccountModel }
+      email: { view: ChangeEmailView, model: ChangeEmailModel },
+      password: { view: ChangePasswordView, model: ChangePasswordModel },
+      token: { view: ChangeTokenView, model: ChangeTokenModel },
+      delete: { view: DeleteAccountView, model: DeleteAccountModel },
     },
 
-    initialize: function (options) {
+    initialize: function(options) {
       options = options || {};
 
       this.model = new UserSettingsModel();
       this.view = new UserSettingsView({
         model: this.model,
-        config: this.config
+        config: this.config,
       });
       BaseWidget.prototype.initialize.apply(this, arguments);
     },
 
-    setSubView: function (subView) {
+    setSubView: function(subView) {
       if (_.isArray(subView)) {
         // XXX:figure out why array
         subView = subView[0];
@@ -373,24 +356,32 @@ define([
       this.view.setSubView(subView);
     },
 
-    activate: function (beehive) {
+    activate: function(beehive) {
       var that = this;
       this.setBeeHive(beehive);
       var pubsub = beehive.getService('PubSub');
       _.bindAll(this, ['handleUserAnnouncement']);
       pubsub.subscribe(pubsub.USER_ANNOUNCEMENT, this.handleUserAnnouncement);
-      this.view.getToken = function () {
-        return that.getBeeHive().getObject('User').getToken();
+      this.view.getToken = function() {
+        return that
+          .getBeeHive()
+          .getObject('User')
+          .getToken();
       };
 
-      this.model.set('user', this.getBeeHive().getObject('User').getUserName());
+      this.model.set(
+        'user',
+        this.getBeeHive()
+          .getObject('User')
+          .getUserName()
+      );
     },
 
     viewEvents: {
-      'submit-form': 'submitForm'
+      'submit-form': 'submitForm',
     },
 
-    handleUserAnnouncement: function (announcement, arg1) {
+    handleUserAnnouncement: function(announcement, arg1) {
       var user = this.getBeeHive().getObject('User');
       if (announcement == user.USER_SIGNED_IN) {
         this.model.set('user', arg1);
@@ -399,12 +390,12 @@ define([
       }
     },
 
-    submitForm: function (model) {
-      var User = this.getBeeHive().getObject('User'),
-        that = this;
+    submitForm: function(model) {
+      var User = this.getBeeHive().getObject('User');
+      var that = this;
 
       if (model instanceof this.config.token.model) {
-        User.generateToken().done(function (data) {
+        User.generateToken().done(function(data) {
           that.model.set('access_token', data.access_token);
           // show new token view with new token
           that.setSubView('token');
@@ -412,19 +403,17 @@ define([
       } else if (model instanceof this.config.delete.model) {
         User.deleteAccount();
       } else if (model instanceof this.config.email.model) {
-        User.changeEmail(model.toJSON())
-          .fail((err) => {
-            if (err && err.responseJSON) {
-              model.set('hasError', err.responseJSON.message);
-            }
-          });
+        User.changeEmail(model.toJSON()).fail((err) => {
+          if (err && err.responseJSON) {
+            model.set('hasError', err.responseJSON.message);
+          }
+        });
       } else if (model instanceof this.config.password.model) {
-        User.changePassword(model.toJSON())
-          .done(function () {
-            that.view.showPasswordSuccessView();
-          });
+        User.changePassword(model.toJSON()).done(function() {
+          that.view.showPasswordSuccessView();
+        });
       }
-    }
+    },
   });
 
   return UserSettings;

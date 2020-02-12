@@ -47,9 +47,9 @@ define([
 
   // 'hbs!' is 'handlebars' template pre-processor, it will load the file and give you
   // executable template
-  'hbs!js/widgets/hello_world/templates/layout'
-],
-function ( // all of the following names must correspond to the import above
+  'hbs!js/widgets/hello_world/templates/layout',
+], function(
+  // all of the following names must correspond to the import above
   _,
   $,
   Backbone,
@@ -63,79 +63,74 @@ function ( // all of the following names must correspond to the import above
   WidgetTemplate
 ) {
   /**
-     * Model is a very useful thing, it has methods to save, load, and query itself.
-     * For most part, you just need to know these:
-     *  - get()
-     *  - set()
-     *
-     */
+   * Model is a very useful thing, it has methods to save, load, and query itself.
+   * For most part, you just need to know these:
+   *  - get()
+   *  - set()
+   *
+   */
 
   var Model = Backbone.Model.extend({
     defaults: {
-      msg: undefined
-    }
+      msg: undefined,
+    },
   });
 
-
-    /**
-     * View is 'bound' to the model, so everytime the model changes, the View will
-     * update itself (ie. redraw)
-     *
-     * The idea is simple: your controller will update the model, and the view
-     * will then show the model. Your controller will not be updating the view
-     * directly. But it can ask the view to provide some information.
-     *
-     *
-     * There exist several view types in Marionette and BBB:
-     *
-     *  Marionette.ItemView
-     *    - the most basic view, it displays one model
-     *  Marionette.CollectionView
-     *    - the view for multiple models (i.e. list of items)
-     *  Marionette.CompositeView
-     *    - for multiple models + one global model (ie. if you
-     *      want to display list of items, but at the same time
-     *      some extra information around)
-     *
-     *  Bumblebee also has some views,the notable is:
-     *
-     *  js/widgets/list_of_things/paginated_view
-     *    - use it when you want to have (you guessed it) pagination
-     *      requires that you use special model (js/widgets/list_of_things/model)
-     *
-     *  js/widgets/facet/tree_view
-     *    - for hierarchical (nested) view on facets
-     */
+  /**
+   * View is 'bound' to the model, so everytime the model changes, the View will
+   * update itself (ie. redraw)
+   *
+   * The idea is simple: your controller will update the model, and the view
+   * will then show the model. Your controller will not be updating the view
+   * directly. But it can ask the view to provide some information.
+   *
+   *
+   * There exist several view types in Marionette and BBB:
+   *
+   *  Marionette.ItemView
+   *    - the most basic view, it displays one model
+   *  Marionette.CollectionView
+   *    - the view for multiple models (i.e. list of items)
+   *  Marionette.CompositeView
+   *    - for multiple models + one global model (ie. if you
+   *      want to display list of items, but at the same time
+   *      some extra information around)
+   *
+   *  Bumblebee also has some views,the notable is:
+   *
+   *  js/widgets/list_of_things/paginated_view
+   *    - use it when you want to have (you guessed it) pagination
+   *      requires that you use special model (js/widgets/list_of_things/model)
+   *
+   *  js/widgets/facet/tree_view
+   *    - for hierarchical (nested) view on facets
+   */
   var View = Marionette.ItemView.extend({
-
     tagName: 'div', // this view will create <div class="s-hello">....</div> html node
     className: 's-hello',
 
     template: WidgetTemplate,
 
     events: {
-      'click button.hello': 'onButtonClick'
+      'click button.hello': 'onButtonClick',
     },
 
     modelEvents: {
       // if we say 'change': 'render' the view will call 'render' on every change
       // 'change:msg' will ignore changes in 'name'
-      change: 'render'
+      change: 'render',
     },
 
-    onButtonClick: function (ev) {
+    onButtonClick: function(ev) {
       if (ev) {
         ev.stopPropagation();
       }
       // send the data back to the controller, which will decide what to do with it
       this.trigger('name-changed', this.$el.find('input').val());
-    }
-
+    },
   });
 
-
   var Controller = BaseWidget.extend({
-
     // you can use this to track changes happening to the model (ie. the view can put something
     // inside the model)
     // modelEvents: {
@@ -144,37 +139,41 @@ function ( // all of the following names must correspond to the import above
 
     // you can also track the view
     viewEvents: {
-      'name-changed': 'onNameChanged'
+      'name-changed': 'onNameChanged',
     },
 
-    initialize: function (options) {
+    initialize: function(options) {
       this.model = new Model();
       this.view = new View({ model: this.model });
       BaseWidget.prototype.initialize.apply(this, arguments);
     },
 
     /**
-       * This function is important: you can start listening to internal
-       * chatter of the BBB application. Beehive is a central component,
-       * you can get access to other services/objects through it.
-       *
-       * Here, we subscribe to a search.
-       * You can read more about the search signals in:
-       *
-       *  docs/search-cycle.md
-       *
-       * @param beehive
-       */
-    activate: function (beehive) {
+     * This function is important: you can start listening to internal
+     * chatter of the BBB application. Beehive is a central component,
+     * you can get access to other services/objects through it.
+     *
+     * Here, we subscribe to a search.
+     * You can read more about the search signals in:
+     *
+     *  docs/search-cycle.md
+     *
+     * @param beehive
+     */
+    activate: function(beehive) {
       this.setBeeHive(beehive); // most widgets will hold reference, to query BeeHive later...
       var pubsub = beehive.getService('PubSub');
       pubsub.subscribe(pubsub.INVITING_REQUEST, _.bind(this.onRequest, this));
-      pubsub.subscribe(pubsub.DELIVERING_RESPONSE, _.bind(this.onResponse, this));
+      pubsub.subscribe(
+        pubsub.DELIVERING_RESPONSE,
+        _.bind(this.onResponse, this)
+      );
     },
 
     // triggered externally (e.g. by an user submitting a query)
-    onRequest: function (apiQuery) {
-      if (!(apiQuery instanceof ApiQuery) || !apiQuery.has('q')) throw new Error('You are kidding me!');
+    onRequest: function(apiQuery) {
+      if (!(apiQuery instanceof ApiQuery) || !apiQuery.has('q'))
+        throw new Error('You are kidding me!');
 
       var q = apiQuery.clone(); // we are bit parranoid, the queries arrive locked against changes
       q.unlock(); // so you have to create a copy and unlock it for modifications
@@ -184,22 +183,26 @@ function ( // all of the following names must correspond to the import above
     },
 
     // triggered externally, by a query-mediator, when it receives data for our query
-    onResponse: function (apiResponse) {
+    onResponse: function(apiResponse) {
       if (apiResponse.has('response.numFound')) {
-        this.model.set('msg', 'The query found: ' + apiResponse.get('response.numFound') + ' results.');
+        this.model.set(
+          'msg',
+          'The query found: ' +
+            apiResponse.get('response.numFound') +
+            ' results.'
+        );
       }
     },
 
     // this is triggered from the view
-    onNameChanged: function (name) {
+    onNameChanged: function(name) {
       if (name.toLowerCase() == 'bumblebee') {
         this.model.set('name', 'wonderful ' + name);
       } else {
         this.model.set('name', name);
       }
-    }
+    },
   });
-
 
   return Controller;
 });

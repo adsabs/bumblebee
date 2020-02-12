@@ -15,10 +15,10 @@
  *  var htmlInterface = new Facade(remoteInterface, htmlRemote);
  *
  */
-define(['underscore', 'js/components/facade'], function (_, Facade) {
+define(['underscore', 'js/components/facade'], function(_, Facade) {
   // The Facade encapsulates objectIn according to the description
   // The exposed facade is guaranteed to have exactly the functions described in description.
-  var Facade = function (description, objectIn) {
+  var Facade = function(description, objectIn) {
     var facade;
 
     // TODO: add enforce of "new"
@@ -33,9 +33,9 @@ define(['underscore', 'js/components/facade'], function (_, Facade) {
     return facade;
   };
 
-  Facade.prototype.mixIn = function (description, objectIn, facade) {
-    var property,
-      propertyValue;
+  Facade.prototype.mixIn = function(description, objectIn, facade) {
+    var property;
+    var propertyValue;
 
     facade = facade || this;
 
@@ -45,21 +45,42 @@ define(['underscore', 'js/components/facade'], function (_, Facade) {
       if (property in objectIn) {
         var p = objectIn[property];
 
-        if (typeof propertyValue === 'function') { // redefining the method
+        if (typeof propertyValue === 'function') {
+          // redefining the method
           facade[property] = _.bind(propertyValue, objectIn);
-        } else if (typeof p === 'function') { // exposing the method
+        } else if (typeof p === 'function') {
+          // exposing the method
           facade[property] = _.bind(p, objectIn);
         } else if (_.isUndefined(p)) {
           // pass
-        } else if (_.isString(p) || _.isNumber(p) || _.isBoolean(p) || _.isDate(p) || _.isNull(p) || _.isRegExp(p)) { // build getter method
-          facade['get' + property.substring(0, 1).toUpperCase() + property.substring(1)] = _.bind(function () { return this.ctx[this.name]; }, { ctx: objectIn, name: property });
+        } else if (
+          _.isString(p) ||
+          _.isNumber(p) ||
+          _.isBoolean(p) ||
+          _.isDate(p) ||
+          _.isNull(p) ||
+          _.isRegExp(p)
+        ) {
+          // build getter method
+          facade[
+            'get' +
+              property.substring(0, 1).toUpperCase() +
+              property.substring(1)
+          ] = _.bind(
+            function() {
+              return this.ctx[this.name];
+            },
+            { ctx: objectIn, name: property }
+          );
           facade[property] = p; // copy the value (it is immutable anyways)
-        } else if (p.hasOwnProperty('__facade__') && p.__facade__) { // exposing internal facade
+        } else if (p.hasOwnProperty('__facade__') && p.__facade__) {
+          // exposing internal facade
           facade[property] = p;
-        } else if (_.isObject(p) && 'getHardenedInstance' in p) { // builds a facade
+        } else if (_.isObject(p) && 'getHardenedInstance' in p) {
+          // builds a facade
           facade[property] = p.getHardenedInstance();
         } else {
-          throw new Error('Sorry, you can\'t wrap \'' + property + '\': ' + p);
+          throw new Error("Sorry, you can't wrap '" + property + "': " + p);
         }
       } else if (typeof propertyValue === 'function') {
         facade[property] = _.bind(propertyValue, objectIn);
@@ -71,7 +92,13 @@ define(['underscore', 'js/components/facade'], function (_, Facade) {
     if (objectIn) {
       // .name is not supported in IE
       // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Function/name
-      facade.__facade__ = Boolean(objectIn.constructor ? (objectIn.constructor.name ? objectIn.constructor.name : true) : true);
+      facade.__facade__ = Boolean(
+        objectIn.constructor
+          ? objectIn.constructor.name
+            ? objectIn.constructor.name
+            : true
+          : true
+      );
     } else {
       facade.__facade__ = true;
     }

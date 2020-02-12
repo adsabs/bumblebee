@@ -7,9 +7,8 @@ define([
   'js/components/api_feedback',
   'js/components/api_request',
   'js/components/api_targets',
-  'js/components/api_query_updater'
-],
-function (
+  'js/components/api_query_updater',
+], function(
   $,
   _,
   Backbone,
@@ -21,21 +20,23 @@ function (
   ApiQueryUpdater
 ) {
   var Router = Backbone.Router.extend({
-    initialize: function (options) {
+    initialize: function(options) {
       options = options || {};
       this.queryUpdater = new ApiQueryUpdater('Router');
     },
-    activate: function (beehive) {
+    activate: function(beehive) {
       this.setBeeHive(beehive);
       if (!this.hasPubSub()) {
-        throw new Error('Ooops! Who configured this #@$%! There is no PubSub service!');
+        throw new Error(
+          'Ooops! Who configured this #@$%! There is no PubSub service!'
+        );
       }
     },
     /*
-      * if you don't want the navigator to duplicate the route in history,
-      * use this function instead of pubsub.publish(pubsub.NAVIGATE ...)
-      * */
-    routerNavigate: function (route, options) {
+     * if you don't want the navigator to duplicate the route in history,
+     * use this function instead of pubsub.publish(pubsub.NAVIGATE ...)
+     * */
+    routerNavigate: function(route, options) {
       options = options || {};
       _.extend(options, { replace: true });
       this.getPubSub().publish(this.getPubSub().NAVIGATE, route, options);
@@ -43,16 +44,16 @@ function (
 
     routes: {
       '': 'index',
-      '*invalidRoute': 'noPageFound'
+      '*invalidRoute': 'noPageFound',
     },
 
-    index: function (query) {
+    index: function(query) {
       this.routerNavigate('index-page', query);
     },
 
-    noPageFound: function () {
+    noPageFound: function() {
       this.getPubSub().publish(this.getPubSub().NAVIGATE, '404');
-    }
+    },
   });
 
   _.extend(Router.prototype, Dependon.BeeHive);

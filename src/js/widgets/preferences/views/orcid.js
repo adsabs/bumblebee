@@ -1,14 +1,9 @@
 define([
   'marionette',
   'hbs!js/widgets/preferences/templates/orcid',
-  'hbs!js/widgets/preferences/templates/orcid-name-row-template'
-], function (
-  Marionette,
-  orcidTemplate,
-  orcidNameRowTemplate
-) {
+  'hbs!js/widgets/preferences/templates/orcid-name-row-template',
+], function(Marionette, orcidTemplate, orcidNameRowTemplate) {
   var OrcidView = Marionette.ItemView.extend({
-
     template: orcidTemplate,
 
     className: 'panel panel-default s-form-container',
@@ -17,10 +12,10 @@ define([
       'click  .submit': 'submitForm',
       'change .authorized-ads-user': 'toggleWarning',
       'click .add-another-orcid-name': 'addNameRow',
-      'click .remove-name': 'removeNameRow'
+      'click .remove-name': 'removeNameRow',
     },
 
-    toggleWarning: function (e) {
+    toggleWarning: function(e) {
       if (this.$('.authorized-ads-user').is(':checked')) {
         this.$('.orcid-name-container .warning').addClass('hidden');
       } else {
@@ -28,29 +23,35 @@ define([
       }
     },
 
-    addNameRow: function (e) {
+    addNameRow: function(e) {
       this.$('.add-another-orcid-name').before(orcidNameRowTemplate());
     },
 
-    removeNameRow: function (e) {
-      $(arguments[0].currentTarget).parent().remove();
+    removeNameRow: function(e) {
+      $(arguments[0].currentTarget)
+        .parent()
+        .remove();
     },
 
     triggers: {
-      'click .orcid-authenticate': 'orcid-authenticate'
+      'click .orcid-authenticate': 'orcid-authenticate',
     },
 
     modelEvents: {
-      change: 'render'
+      change: 'render',
     },
 
-    submitForm: function (e) {
+    submitForm: function(e) {
       var data = {};
       data.currentAffiliation = this.$('#aff-input').val();
       data.authorizedUser = this.$('.authorized-ads-user').is(':checked');
-      data.nameVariations = this.$('.orcid-name-row').map(function (index) {
-        return $(this).find('input').val();
-      }).get();
+      data.nameVariations = this.$('.orcid-name-row')
+        .map(function(index) {
+          return $(this)
+            .find('input')
+            .val();
+        })
+        .get();
 
       var loadingString = '<i class="fa fa-spinner fa-pulse"></i> Loading';
       this.$('.submit').html(loadingString);
@@ -58,8 +59,7 @@ define([
 
       this.trigger('orcid-form-submit', data);
       return false;
-    }
-
+    },
   });
 
   return OrcidView;

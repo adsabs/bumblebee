@@ -5,20 +5,20 @@ define(['jquery', 'underscore', 'analytics'], function($, _, analytics) {
     var match = (str || location.hash).match(new RegExp(pattern, 'g'));
     if (!match) {
       return null;
-    } else {
-      var clean = [];
-      // remove 'key=' from string, combine with optional separator and unquote spaces
-      for (var i = 0; i < match.length; i++) {
-        clean.push(match[i].replace(new RegExp('(^|[\\?&])' + k + '='), ''));
-      }
-      if (separator) {
-        var msg = clean.join(separator); // works even if separator is undefined
+    }
+    var clean = [];
+    // remove 'key=' from string, combine with optional separator and unquote spaces
+    for (var i = 0; i < match.length; i++) {
+      clean.push(match[i].replace(new RegExp('(^|[\\?&])' + k + '='), ''));
+    }
+    if (separator) {
+      var msg = clean.join(separator); // works even if separator is undefined
+      return decodeURIComponent(msg.replace(/\+/g, ' '));
+    }
+    if (separator === false) {
+      return _.map(clean, function(msg) {
         return decodeURIComponent(msg.replace(/\+/g, ' '));
-      } else if (separator === false) {
-        return _.map(clean, function(msg) {
-          return decodeURIComponent(msg.replace(/\+/g, ' '));
-        });
-      }
+      });
     }
   };
 
@@ -105,7 +105,8 @@ define(['jquery', 'underscore', 'analytics'], function($, _, analytics) {
       const $el = $(...args);
       if ($el.length) {
         return $dd.resolve($el);
-      } else if (n >= timeout) {
+      }
+      if (n >= timeout) {
         return $dd.reject('timeout');
       }
       ref = setTimeout(() => {

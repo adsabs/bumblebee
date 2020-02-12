@@ -1,4 +1,3 @@
-
 /*
 Subclass of the multi-param with a functionality specific for
 SOLR queries. Do not use this class directly inside your app!
@@ -21,33 +20,43 @@ Instead, import 'api_query' and configure it properly
  * @class ParameterStore
  */
 
-
-define(['js/components/multi_params', 'backbone', 'underscore', 'jquery'], function (MultiParams, Backbone, _, $) {
+define([
+  'js/components/multi_params',
+  'backbone',
+  'underscore',
+  'jquery',
+], function(MultiParams, Backbone, _, $) {
   var SolrParams = MultiParams.extend({
-
     fieldsToConcatenate: [],
     defaultOperator: ' ',
     fieldProcessors: {
-      '*': function (vals, self) {
+      '*': function(vals, self) {
         return [vals.join(self.defaultOperator)];
-      }
+      },
     },
 
-    initialize: function (attributes, options) {
+    initialize: function(attributes, options) {
       if (options) {
-        _.extend(this, _.pick(options, ['fieldsToConcatenate', 'defaultOperator', 'fieldProcessors']));
+        _.extend(
+          this,
+          _.pick(options, [
+            'fieldsToConcatenate',
+            'defaultOperator',
+            'fieldProcessors',
+          ])
+        );
       }
     },
 
-    url: function (resp, options) {
+    url: function(resp, options) {
       // first massage the fields, but do not touch the original values
       // lodash has a parameter isDeep that can be set to true, but
       // for compatibility reasons with underscore, lets' not use it
       // the values should always be only one level deep
       var values = _.clone(this.attributes);
 
-      var l = this.fieldsToConcatenate.length,
-        k = '';
+      var l = this.fieldsToConcatenate.length;
+      var k = '';
 
       for (var i = 0; i < l; i++) {
         k = this.fieldsToConcatenate[i];
@@ -62,8 +71,7 @@ define(['js/components/multi_params', 'backbone', 'underscore', 'jquery'], funct
       }
       // then call the default implementation of the url handling
       return MultiParams.prototype.url.call(this, values);
-    }
-
+    },
   });
 
   return SolrParams;

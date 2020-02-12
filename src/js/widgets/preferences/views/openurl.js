@@ -2,24 +2,18 @@ define([
   'marionette',
   'hbs!js/widgets/preferences/templates/openurl',
   'bootstrap',
-  'select2'
-], function (
-  Marionette,
-  OpenURLTemplate,
-  Bootstrap,
-  Select2
-) {
+  'select2',
+], function(Marionette, OpenURLTemplate, Bootstrap, Select2) {
   var OpenURLView = Marionette.ItemView.extend({
-
     template: OpenURLTemplate,
 
     className: 'panel panel-default s-form-container',
 
-    onRender: function () {
+    onRender: function() {
       this.$('select[name=set-link-server]').select2();
     },
 
-    serializeData: function () {
+    serializeData: function() {
       var data = this.model.toJSON();
 
       if (data.openURLError) {
@@ -53,7 +47,7 @@ define([
       'change:editing': 'render',
       'change:confirming': 'render',
       'change:loading': 'render',
-      'change:openURLError': 'render'
+      'change:openURLError': 'render',
     },
 
     events: {
@@ -62,18 +56,23 @@ define([
       'click #change-link-server': 'onChangeClick',
       'click #clear-link-server': 'onClearClick',
       'click #clear-link-server-confirm': 'onConfirmClear',
-      'click #clear-link-server-cancel': 'onConfirmCancel'
+      'click #clear-link-server-cancel': 'onConfirmCancel',
     },
 
-    changeLinkServer: function (e) {
+    changeLinkServer: function(e) {
       var newVal = this.$('#set-link-server').val();
 
       // check for a re-apply
-      if (this.model.has('link_server') && newVal === this.model.get('link_server')) {
+      if (
+        this.model.has('link_server') &&
+        newVal === this.model.get('link_server')
+      ) {
         return this.model.set('editing', false);
       }
 
-      this.$(e.currentTarget).html('<i class="fa fa-spinner fa-pulse"></i> Loading');
+      this.$(e.currentTarget).html(
+        '<i class="fa fa-spinner fa-pulse"></i> Loading'
+      );
 
       // otherwise, trigger the update
       this.trigger('change:link_server', newVal);
@@ -81,46 +80,46 @@ define([
       return false;
     },
 
-    onCancelLinkServer: function () {
+    onCancelLinkServer: function() {
       this.model.set({
         editing: false,
         confirming: false,
-        showConfirm: false
+        showConfirm: false,
       });
     },
 
-    onChangeClick: function () {
+    onChangeClick: function() {
       if (this.model.get('editing')) {
         return this.model.set('editing', false);
       }
       this.model.set({
         confirming: false,
-        editing: true
+        editing: true,
       });
     },
 
-    onClearClick: function () {
+    onClearClick: function() {
       this.model.set({
         editing: false,
-        confirming: true
+        confirming: true,
       });
     },
 
-    onConfirmCancel: function () {
+    onConfirmCancel: function() {
       this.model.set({
         editing: false,
-        confirming: false
+        confirming: false,
       });
     },
 
-    onConfirmClear: function () {
+    onConfirmClear: function() {
       this.trigger('change:link_server', '');
       this.model.set({
         openURLName: '',
         editing: false,
-        confirming: false
+        confirming: false,
       });
-    }
+    },
   });
 
   return OpenURLView;

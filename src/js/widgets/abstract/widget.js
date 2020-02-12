@@ -14,9 +14,8 @@ define([
   'js/mixins/papers_utils',
   'mathjax',
   'bootstrap',
-  'utils'
-],
-function (
+  'utils',
+], function(
   Marionette,
   Backbone,
   $,
@@ -31,34 +30,36 @@ function (
   Bootstrap,
   utils
 ) {
-
   var AbstractModel = Backbone.Model.extend({
-    defaults: function () {
+    defaults: function() {
       return {
-        'abstract': undefined,
-        'title': undefined,
-        'authorAff': undefined,
-        'page': undefined,
-        'pub': undefined,
-        'pubdate': undefined,
-        'keywords': undefined,
-        'bibcode': undefined,
-        'pub_raw': undefined,
-        'doi': undefined,
-        'citation_count': undefined,
-        'titleLink': undefined,
-        'pubnote': undefined,
-        'loading': true,
-        'error': false
+        abstract: undefined,
+        title: undefined,
+        authorAff: undefined,
+        page: undefined,
+        pub: undefined,
+        pubdate: undefined,
+        keywords: undefined,
+        bibcode: undefined,
+        pub_raw: undefined,
+        doi: undefined,
+        citation_count: undefined,
+        titleLink: undefined,
+        pubnote: undefined,
+        loading: true,
+        error: false,
       };
     },
 
-    parse: function (doc, maxAuthors) {
+    parse: function(doc, maxAuthors) {
       var maxAuthors = maxAuthors || 20;
 
       // add doi link
       if (_.isArray(doc.doi) && _.isPlainObject(LinkGeneratorMixin)) {
-        doc.doi = { doi: doc.doi, href: LinkGeneratorMixin.createUrlByType(doc.bibcode, 'doi', doc.doi) };
+        doc.doi = {
+          doi: doc.doi,
+          href: LinkGeneratorMixin.createUrlByType(doc.bibcode, 'doi', doc.doi),
+        };
       }
       // "aff" is the name of the affiliations array that comes from solr
       doc.aff = doc.aff || [];
@@ -79,12 +80,17 @@ function (
       // only true if there was an author array
       // now add urls
       if (doc.authorAff) {
-        _.each(doc.authorAff, function (el, index) {
-          doc.authorAff[index][2] = encodeURIComponent('"' + el[0] + '"').replace(/%20/g, '+');
+        _.each(doc.authorAff, function(el, index) {
+          doc.authorAff[index][2] = encodeURIComponent(
+            '"' + el[0] + '"'
+          ).replace(/%20/g, '+');
         });
 
         if (doc.authorAff.length > maxAuthors) {
-          doc.authorAffExtra = doc.authorAff.slice(maxAuthors, doc.authorAff.length);
+          doc.authorAffExtra = doc.authorAff.slice(
+            maxAuthors,
+            doc.authorAff.length
+          );
           doc.authorAff = doc.authorAff.slice(0, maxAuthors);
         }
 
@@ -92,7 +98,10 @@ function (
       }
 
       if (doc.pubdate) {
-        doc.formattedDate = PapersUtils.formatDate(doc.pubdate, { format: 'MM d yy', missing: { day: 'MM yy', month: 'yy' } });
+        doc.formattedDate = PapersUtils.formatDate(doc.pubdate, {
+          format: 'MM d yy',
+          missing: { day: 'MM yy', month: 'yy' },
+        });
       }
 
       if (doc.title && doc.title.length) {
@@ -105,7 +114,7 @@ function (
           doc.title = doc.title.replace(docTitleLink[0], '').trim();
           doc.titleLink = {
             href: docTitleLink[1],
-            text: docTitleLink[2]
+            text: docTitleLink[2],
           };
 
           if (doc.titleLink.href.match(/^\/abs/)) {
@@ -123,29 +132,32 @@ function (
       }
 
       if (doc.identifier) {
-        var id = _.find(doc.identifier, function (d) {
+        var id = _.find(doc.identifier, function(d) {
           return d.toLowerCase().startsWith('arxiv');
         });
         if (id) {
           doc.arxiv = {
             id: id,
-            href: LinkGeneratorMixin.createUrlByType(doc.bibcode, 'arxiv', id.split(':')[1])
-          }
+            href: LinkGeneratorMixin.createUrlByType(
+              doc.bibcode,
+              'arxiv',
+              id.split(':')[1]
+            ),
+          };
         }
       }
 
       return doc;
-    }
+    },
   });
 
   var AbstractView = Marionette.ItemView.extend({
-
     tagName: 'article',
 
     className: 's-abstract-metadata',
 
     modelEvents: {
-      change: 'render'
+      change: 'render',
     },
 
     template: abstractTemplate,
@@ -155,10 +167,10 @@ function (
       'click #toggle-more-authors': 'toggleMoreAuthors',
       'click a[data-target="more-authors"]': 'toggleMoreAuthors',
       'click a[target="prev"]': 'onClick',
-      'click a[target="next"]': 'onClick'
+      'click a[target="next"]': 'onClick',
     },
 
-    toggleMoreAuthors: function () {
+    toggleMoreAuthors: function() {
       this.$('.author.extra').toggleClass('hide');
       this.$('.author.extra-dots').toggleClass('hide');
       if (this.$('.author.extra').hasClass('hide')) {
@@ -169,7 +181,7 @@ function (
       return false;
     },
 
-    toggleAffiliation: function (ev) {
+    toggleAffiliation: function(ev) {
       this.$('.affiliation').toggleClass('hide');
       if (this.$('.affiliation').hasClass('hide')) {
         this.$('#toggle-aff').text('Show affiliations');
@@ -179,23 +191,32 @@ function (
       return false;
     },
 
-    onClick: function (ev) {
+    onClick: function(ev) {
       this.trigger($(ev.target).attr('target'));
       return false;
     },
 
-    onRender: function () {
-      this.$('.icon-help').popover({ trigger: 'hover', placement: 'right', html: true, container: 'body' });
+    onRender: function() {
+      this.$('.icon-help').popover({
+        trigger: 'hover',
+        placement: 'right',
+        html: true,
+        container: 'body',
+      });
 
       if (MathJax) MathJax.Hub.Queue(['Typeset', MathJax.Hub, this.el]);
-    }
+    },
   });
 
   var AbstractWidget = BaseWidget.extend({
-    initialize: function (options) {
+    initialize: function(options) {
       options = options || {};
-      this.model = options.data ? new AbstractModel(options.data, { parse: true }) : new AbstractModel();
-      this.view = utils.withPrerenderedContent(new AbstractView({ model: this.model }));
+      this.model = options.data
+        ? new AbstractModel(options.data, { parse: true })
+        : new AbstractModel();
+      this.view = utils.withPrerenderedContent(
+        new AbstractView({ model: this.model })
+      );
 
       this.listenTo(this.view, 'all', this.onAllInternalEvents);
 
@@ -204,21 +225,25 @@ function (
       this.maxAuthors = 20;
     },
 
-    activate: function (beehive) {
+    activate: function(beehive) {
       this.setBeeHive(beehive);
       this.activateWidget();
       this.attachGeneralHandler(this.onApiFeedback);
       var pubsub = beehive.getService('PubSub');
 
-      _.bindAll(this, ['onNewQuery', 'dispatchRequest', 'processResponse', 'onDisplayDocuments']);
+      _.bindAll(this, [
+        'onNewQuery',
+        'dispatchRequest',
+        'processResponse',
+        'onDisplayDocuments',
+      ]);
       pubsub.subscribe(pubsub.START_SEARCH, this.onNewQuery);
       pubsub.subscribe(pubsub.INVITING_REQUEST, this.dispatchRequest);
       pubsub.subscribe(pubsub.DELIVERING_RESPONSE, this.processResponse);
       pubsub.subscribe(pubsub.DISPLAY_DOCUMENTS, this.onDisplayDocuments);
     },
 
-    onApiFeedback: function (feedback) {
-
+    onApiFeedback: function(feedback) {
       // there was an error
       if (feedback && feedback.error) {
         this.showError();
@@ -227,36 +252,43 @@ function (
     },
 
     defaultQueryArguments: {
-      fl: 'identifier,[citations],abstract,aff,author,bibcode,citation_count,comment,doi,id,keyword,page,property,pub,pub_raw,pubdate,pubnote,read_count,title,volume',
-      rows: 1
+      fl:
+        'identifier,[citations],abstract,aff,author,bibcode,citation_count,comment,doi,id,keyword,page,property,pub,pub_raw,pubdate,pubnote,read_count,title,volume',
+      rows: 1,
     },
 
-    mergeStashedDocs: function (docs) {
-      _.each(docs, function (d) {
-        if (!this._docs[d.bibcode]) {
-          this._docs[d.bibcode] = this.model.parse(d);
-        }
-      }, this);
+    mergeStashedDocs: function(docs) {
+      _.each(
+        docs,
+        function(d) {
+          if (!this._docs[d.bibcode]) {
+            this._docs[d.bibcode] = this.model.parse(d);
+          }
+        },
+        this
+      );
     },
 
-    onNewQuery: function (apiQuery) {
+    onNewQuery: function(apiQuery) {
       // only empty docs array if it truly is a new query
       var newQueryJSON = apiQuery.toJSON();
 
-      var currentStreamlined = _.pick(this.getCurrentQuery().toJSON(), _.keys(newQueryJSON));
+      var currentStreamlined = _.pick(
+        this.getCurrentQuery().toJSON(),
+        _.keys(newQueryJSON)
+      );
       if (JSON.stringify(newQueryJSON) != JSON.stringify(currentStreamlined)) {
         this._docs = {};
       }
     },
 
-    dispatchRequest: function (apiQuery) {
+    dispatchRequest: function(apiQuery) {
       this.setCurrentQuery(apiQuery);
       BaseWidget.prototype.dispatchRequest.apply(this, arguments);
     },
 
     // bibcode is already in _docs
-    displayBibcode: function (bibcode) {
-
+    displayBibcode: function(bibcode) {
       // if _docs is empty, stop here
       if (_.isEmpty(this._docs)) {
         return;
@@ -271,7 +303,7 @@ function (
       // let other widgets know details
       var c = this._docs[bibcode]['[citations]'] || {
         num_citations: 0,
-        num_references: 0
+        num_references: 0,
       };
       var resolved_citations = c ? c.num_citations : 0;
 
@@ -282,33 +314,44 @@ function (
         bibcode: bibcode,
 
         // used by citation list widget
-        citation_discrepancy: this._docs[bibcode].citation_count - resolved_citations,
+        citation_discrepancy:
+          this._docs[bibcode].citation_count - resolved_citations,
         citation_count: this._docs[bibcode].citation_count,
         references_count: c.num_references,
         read_count: this._docs[bibcode].read_count,
-        property: this._docs[bibcode].property
+        property: this._docs[bibcode].property,
       });
 
       if (this.hasPubSub()) {
         var ps = this.getPubSub();
-        ps.publish(ps.CUSTOM_EVENT, 'update-document-title', this._docs[bibcode].title);
-        ps.publish(ps.CUSTOM_EVENT, 'latest-abstract-data', this._docs[bibcode]);
+        ps.publish(
+          ps.CUSTOM_EVENT,
+          'update-document-title',
+          this._docs[bibcode].title
+        );
+        ps.publish(
+          ps.CUSTOM_EVENT,
+          'latest-abstract-data',
+          this._docs[bibcode]
+        );
       }
       this.updateState(this.STATES.IDLE);
     },
 
-    onAbstractPage: function () {
+    onAbstractPage: function() {
       // hacky way of confirming the page we're on
       return /\/abstract$/.test(Backbone.history.getFragment());
     },
 
-    onDisplayDocuments: function (apiQuery) {
+    onDisplayDocuments: function(apiQuery) {
       this.updateState(this.STATES.LOADING);
 
       // check to see if a query is already in progress (the way bbb is set up, it will be)
       // if so, auto fill with docs initially requested by results widget
       try {
-        var stashedDocs = this.getBeeHive().getObject('DocStashController').getDocs();
+        var stashedDocs = this.getBeeHive()
+          .getObject('DocStashController')
+          .getDocs();
       } catch (e) {
         stashedDocs = [];
       } finally {
@@ -324,7 +367,8 @@ function (
         return;
       }
 
-      if (this._docs[bibcode]) { // we have already loaded it
+      if (this._docs[bibcode]) {
+        // we have already loaded it
         // this.onAbstractPage() && this.updateState(this.STATES.LOADING);
         this.displayBibcode(bibcode);
         // this.onAbstractPage() && this.updateState(this.STATES.IDLE);
@@ -337,7 +381,7 @@ function (
       }
     },
 
-    onAllInternalEvents: function (ev) {
+    onAllInternalEvents: function(ev) {
       if ((ev == 'next' || ev == 'prev') && this._current) {
         var keys = _.keys(this._docs);
         var pubsub = this.getPubSub();
@@ -352,21 +396,23 @@ function (
       }
     },
 
-    processResponse: function (apiResponse) {
+    processResponse: function(apiResponse) {
       var r = apiResponse.toJSON();
       var self = this;
       if (r.response && r.response.docs) {
         var docs = r.response.docs;
         var __show = apiResponse.get('responseHeader.params.__show', false, '');
-        _.each(docs, function (doc) {
+        _.each(docs, function(doc) {
           var d = self.model.parse(doc, self.maxAuthors);
           var ids = d.identifier;
 
           // if __show is defined and it is found in the list of identifiers or only a single document
           // was provided - then set the __show value to the bibcode of the document
-          if (__show && (
-            (ids && ids.length > 0 && _.contains(ids, __show)) || docs.length === 1
-          )) {
+          if (
+            __show &&
+            ((ids && ids.length > 0 && _.contains(ids, __show)) ||
+              docs.length === 1)
+          ) {
             __show = d.bibcode;
           }
           self._docs[d.bibcode] = d;
@@ -386,17 +432,15 @@ function (
       this.trigger('page-manager-event', 'widget-ready', msg);
     },
 
-    showError: function (opts) {
-
+    showError: function(opts) {
       const options = opts || {};
 
       // if noDocs, do not set error
       this.model.set({
         error: !options.noDocs,
-        loading: false
+        loading: false,
       });
-    }
-
+    },
   });
 
   return AbstractWidget;

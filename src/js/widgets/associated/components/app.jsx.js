@@ -1,33 +1,33 @@
-define([
-  'underscore',
-  'react',
-  'react-prop-types',
-], function (_, React, PropTypes) {
+define(['underscore', 'react', 'react-prop-types'], function(
+  _,
+  React,
+  PropTypes
+) {
   // component styles
   const styles = {
     title: {
       fontSize: '1.1em',
       color: '#335baf',
-      textTransform: 'uppercase'
+      textTransform: 'uppercase',
     },
     list: {
       listStyleType: 'none',
       marginLeft: '-10px',
-      padding: '0'
+      padding: '0',
     },
     link: {
-      fontSize: '1em'
+      fontSize: '1em',
     },
     icon: {
-      'fontSize': '1.4em',
-      'padding-right': '5px'
-    }
+      fontSize: '1.4em',
+      'padding-right': '5px',
+    },
   };
 
   // create the title element
   const Title = ({ children }) => (
     <div style={styles.title}>
-      <i className="fa fa-folder-open" style={styles.icon}/>
+      <i className="fa fa-folder-open" style={styles.icon} />
       {children}
     </div>
   );
@@ -35,12 +35,17 @@ define([
   // create the links element
   const Links = ({ items, onClick }) => (
     <ul style={styles.list}>
-      {items.map(i => <li key={i.id} style={styles.link}>
-        {i.circular ? i.name
-          : <a href={i.url} onClick={e => onClick(i)}>{i.name}</a>
-        }
+      {items.map((i) => (
+        <li key={i.id} style={styles.link}>
+          {i.circular ? (
+            i.name
+          ) : (
+            <a href={i.url} onClick={(e) => onClick(i)}>
+              {i.name}
+            </a>
+          )}
         </li>
-      )}
+      ))}
     </ul>
   );
 
@@ -53,7 +58,9 @@ define([
 
   // simple button
   const ShowAllBtn = ({ onClick }) => (
-    <button className="btn btn-default btn-xs" onClick={e => onClick(e)}>Show All</button>
+    <button className="btn btn-default btn-xs" onClick={(e) => onClick(e)}>
+      Show All
+    </button>
   );
 
   // Associated Articles Widget
@@ -62,7 +69,7 @@ define([
       super(props);
       this.state = {
         showAllBtn: false,
-        items: []
+        items: [],
       };
     }
 
@@ -71,7 +78,7 @@ define([
       e.preventDefault();
       this.setState({
         showAllBtn: false,
-        items: this.props.items
+        items: this.props.items,
       });
     }
 
@@ -80,7 +87,7 @@ define([
       if (props.items.length > 4) {
         this.setState({
           items: props.items.slice(0, 4),
-          showAllBtn: true
+          showAllBtn: true,
         });
       } else {
         this.setState({ items: props.items });
@@ -96,7 +103,7 @@ define([
           <Container>
             <Title>Associated Works ({this.props.items.length})</Title>
             <Links items={items} onClick={handleLinkClick} />
-            {showAllBtn && <ShowAllBtn onClick={e => this.onShowAll(e)} />}
+            {showAllBtn && <ShowAllBtn onClick={(e) => this.onShowAll(e)} />}
           </Container>
         );
       }
@@ -108,14 +115,14 @@ define([
     hasError: PropTypes.bool,
     items: PropTypes.array,
     loading: PropTypes.bool,
-    handleLinkClick: PropTypes.func
+    handleLinkClick: PropTypes.func,
   };
 
   App.defaultProps = {
     hasError: false,
     items: [],
     loading: false,
-    handleLinkClick: () => {}
+    handleLinkClick: () => {},
   };
 
   return App;

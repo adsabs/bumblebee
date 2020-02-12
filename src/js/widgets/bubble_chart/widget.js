@@ -24,7 +24,6 @@ define([
       this.on('change:solrData', () => {
         if (_.isEmpty(this.get('solrData'))) {
           this.reset(false);
-          return;
         } else {
           this.set('loading', false);
           this.modifyData();
@@ -33,7 +32,8 @@ define([
     },
 
     modifyData: function() {
-      var bibs, journalNames;
+      var bibs;
+      var journalNames;
 
       if (_.isEmpty(this.get('solrData'))) {
         return;
@@ -247,12 +247,12 @@ define([
     setScales: function() {
       this.scales = {};
 
-      var data = this.model.get('currentGraphData'),
-        that = this,
-        dateRange,
-        yExtent,
-        xExtent,
-        newDateRange = [];
+      var data = this.model.get('currentGraphData');
+      var that = this;
+      var dateRange;
+      var yExtent;
+      var xExtent;
+      var newDateRange = [];
 
       // journal scale
       if (this.model.get('journalNames').length) {
@@ -358,10 +358,10 @@ define([
     },
 
     finalProcess: function() {
-      var that = this,
-        data = this.model.get('modifiedSolrData'),
-        yExtent,
-        xExtent;
+      var that = this;
+      var data = this.model.get('modifiedSolrData');
+      var yExtent;
+      var xExtent;
 
       // do last minute scale adjustments if necessary
 
@@ -425,15 +425,15 @@ define([
       this.finalProcess();
       this.resetSelection();
 
-      var svg = this.cache.svg,
-        realSvg = this.cache.realSvg,
-        data,
-        yAxis,
-        circles,
-        journalNames = this.model.get('journalNames'),
-        pubName,
-        xTickFormat,
-        that = this;
+      var svg = this.cache.svg;
+      var realSvg = this.cache.realSvg;
+      var data;
+      var yAxis;
+      var circles;
+      var journalNames = this.model.get('journalNames');
+      var pubName;
+      var xTickFormat;
+      var that = this;
 
       realSvg.select('rect.selection').remove();
 
@@ -653,8 +653,8 @@ define([
 
     // so that the fake radio buttons work
     attachLogLinearEventListeners: function() {
-      var realSvg = this.cache.realSvg,
-        that = this;
+      var realSvg = this.cache.realSvg;
+      var that = this;
 
       var config = [
         { container: '.y-label', scale: 'yScale' },
@@ -689,16 +689,16 @@ define([
       this.cacheVals();
       this.finalProcess();
 
-      var svg = this.cache.svg,
-        realSvg = this.cache.realSvg,
-        data,
-        that = this,
-        journalNames = that.model.get('journalNames'),
-        isMousePressed = false,
-        xLabel,
-        xAxis,
-        yLabel,
-        yAxis;
+      var svg = this.cache.svg;
+      var realSvg = this.cache.realSvg;
+      var data;
+      var that = this;
+      var journalNames = that.model.get('journalNames');
+      var isMousePressed = false;
+      var xLabel;
+      var xAxis;
+      var yLabel;
+      var yAxis;
 
       data = this.model.get('currentGraphData');
 
@@ -876,17 +876,17 @@ define([
           d3.select(d3.event.target).classed('paper-circle') &&
           !isMousePressed
         ) {
-          var yVal = that.model.get('yValue'),
-            xVal = that.model.get('xValue'),
-            radius = that.model.get('radius'),
-            xOffset = d3.mouse(this.parentElement)[0],
-            yOffset = d3.mouse(this.parentElement)[1],
-            toReturn = {},
-            allData,
-            height,
-            outerD = d3.event.target.__data__,
-            xPadding,
-            xPosition;
+          var yVal = that.model.get('yValue');
+          var xVal = that.model.get('xValue');
+          var radius = that.model.get('radius');
+          var xOffset = d3.mouse(this.parentElement)[0];
+          var yOffset = d3.mouse(this.parentElement)[1];
+          var toReturn = {};
+          var allData;
+          var height;
+          var outerD = d3.event.target.__data__;
+          var xPadding;
+          var xPosition;
 
           xPosition =
             d3.mouse(this.parentElement)[0] - that.config.margin.left > 500
@@ -975,17 +975,17 @@ define([
           var s = realSvg.select('rect.selection');
 
           if (!s.empty()) {
-            var p = d3.mouse(this),
-              d = {
-                x: parseInt(s.attr('x'), 10),
-                y: parseInt(s.attr('y'), 10),
-                width: parseInt(s.attr('width'), 10),
-                height: parseInt(s.attr('height'), 10),
-              },
-              move = {
-                x: p[0] - d.x,
-                y: p[1] - d.y,
-              };
+            var p = d3.mouse(this);
+            var d = {
+              x: parseInt(s.attr('x'), 10),
+              y: parseInt(s.attr('y'), 10),
+              width: parseInt(s.attr('width'), 10),
+              height: parseInt(s.attr('height'), 10),
+            };
+            var move = {
+              x: p[0] - d.x,
+              y: p[1] - d.y,
+            };
 
             d.width = move.x;
             d.height = move.y;
@@ -1015,9 +1015,9 @@ define([
             s.attr(d);
 
             realSvg.selectAll('.paper-circle').each(function(paperD, i) {
-              var d3this = d3.select(this),
-                cx = parseInt(d3this.attr('cx')),
-                cy = parseInt(d3this.attr('cy'));
+              var d3this = d3.select(this);
+              var cx = parseInt(d3this.attr('cx'));
+              var cy = parseInt(d3this.attr('cy'));
 
               if (
                 cx + that.config.margin.left >= d.x &&
@@ -1134,8 +1134,8 @@ define([
     },
 
     onFilterBibs: function() {
-      var bibs = this.model.get('selectedBibs'),
-        newQuery = this.getCurrentQuery().clone();
+      var bibs = this.model.get('selectedBibs');
+      var newQuery = this.getCurrentQuery().clone();
 
       if (!bibs.length) {
         return;
