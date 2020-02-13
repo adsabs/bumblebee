@@ -156,9 +156,6 @@ require.config({
   },
 
   paths: {
-    // TODO: these libs will need manual optimization (they dont come with minified sources)
-    // TODO: require-handlebars-js, d3-cloud, jquery-hoverIntent, dsjslib/cache, query-builder
-
     // bumblebee components (here we'll lists simple names), paths are relative
     // to the config (the module that bootstraps our application; look at the html)
     // as a convention, all modules should be loaded using 'symbolic' names
