@@ -178,7 +178,8 @@ define([
       if (
         (selectedIds.length === 0 || !options.onlySelected) &&
         field !== SecondOrderController.FIELDS.LIMIT &&
-        field !== SecondOrderController.FIELDS.LIBRARY
+        field !== SecondOrderController.FIELDS.LIBRARY &&
+        field !== SecondOrderController.FIELDS.EXCLUDE
       ) {
         this.transformCurrentQuery(field, options.query);
       } else if (field === SecondOrderController.FIELDS.LIBRARY) {
@@ -270,6 +271,13 @@ define([
           q: `docs(library/${id})`,
           sort: 'date desc',
         });
+      } else if (field === SecondOrderController.FIELDS.EXCLUDE) {
+        // modify current query, to negate set of docs
+        const currentQuery = this.getCurrentQuery() || new ApiQuery();
+        newQuery = currentQuery.clone();
+        newQuery.set({
+          q: `-docs(${id}) ${currentQuery.get('q')}`
+        });
       } else {
         // replace the current query with our operator
         newQuery = new ApiQuery({
@@ -292,6 +300,7 @@ define([
     REVIEWS: 'reviews',
     LIMIT: 'limit',
     LIBRARY: 'library',
+    EXCLUDE: 'exclude'
   };
 
   _.extend(SecondOrderController.prototype, Dependon.BeeHive);
