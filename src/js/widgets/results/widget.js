@@ -80,13 +80,19 @@ define([
       );
       var resultsFields = this.defaultQueryArguments.fl.split(',');
       resultsFields = _.union(abstractFields, resultsFields);
+
+      // remove 'aff' if in list
+      const affIdx = resultsFields.indexOf('aff');
+      if (affIdx > -1) {
+        resultsFields.splice(affIdx, 1);
+      }
       this.defaultQueryArguments.fl = resultsFields.join(',');
       this.on('page-manager-message', _.bind(this.onPageManagerMessage, this));
     },
 
     defaultQueryArguments: {
       fl:
-        'title,abstract,bibcode,author,keyword,id,links_data,property,esources,data,citation_count,citation_count_norm,[citations],pub,aff,email,volume,pubdate,doi,doctype,identifier',
+        'title,abstract,bibcode,author,keyword,id,links_data,property,esources,data,citation_count,citation_count_norm,[citations],pub,email,volume,pubdate,doi,doctype,identifier',
       rows: 25,
       start: 0,
     },

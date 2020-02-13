@@ -3,6 +3,8 @@
  */
 define([
   'marionette',
+  'js/components/api_request',
+  'js/components/api_targets',
   'backbone',
   'jquery',
   'underscore',
@@ -17,6 +19,8 @@ define([
   'utils',
 ], function(
   Marionette,
+  ApiRequest,
+  ApiTargets,
   Backbone,
   $,
   _,
@@ -30,6 +34,8 @@ define([
   Bootstrap,
   utils
 ) {
+  const MAX_AUTHORS = 20;
+
   var AbstractModel = Backbone.Model.extend({
     defaults: function() {
       return {
@@ -51,9 +57,7 @@ define([
       };
     },
 
-    parse: function(doc, maxAuthors) {
-      var maxAuthors = maxAuthors || 20;
-
+    parse: function(doc, maxAuthors = MAX_AUTHORS) {
       // add doi link
       if (_.isArray(doc.doi) && _.isPlainObject(LinkGeneratorMixin)) {
         doc.doi = {
@@ -182,12 +186,24 @@ define([
     },
 
     toggleAffiliation: function(ev) {
-      this.$('.affiliation').toggleClass('hide');
-      if (this.$('.affiliation').hasClass('hide')) {
-        this.$('#toggle-aff').text('Show affiliations');
-      } else {
-        this.$('#toggle-aff').text('Hide affiliations');
-      }
+      this.$('fail-aff').hide();
+      this.$('#pending-aff').show();
+      this.trigger('fetchAffiliations', (err) => {
+        this.$('#pending-aff').hide();
+        if (err) {
+          this.$('#fail-aff').show();
+          setTimeout(() => {
+            this.$('#fail-aff').hide();
+          }, 3000);
+          return;
+        }
+        this.$('.affiliation').toggleClass('hide');
+        if (this.$('.affiliation').hasClass('hide')) {
+          this.$('#toggle-aff').text('Show affiliations');
+        } else {
+          this.$('#toggle-aff').text('Hide affiliations');
+        }
+      });
       return false;
     },
 
@@ -217,12 +233,12 @@ define([
       this.view = utils.withPrerenderedContent(
         new AbstractView({ model: this.model })
       );
-
       this.listenTo(this.view, 'all', this.onAllInternalEvents);
 
       BaseWidget.prototype.initialize.apply(this, arguments);
       this._docs = {};
-      this.maxAuthors = 20;
+      this.maxAuthors = MAX_AUTHORS;
+      this.isFetchingAff = false;
     },
 
     activate: function(beehive) {
@@ -253,7 +269,7 @@ define([
 
     defaultQueryArguments: {
       fl:
-        'identifier,[citations],abstract,aff,author,bibcode,citation_count,comment,doi,id,keyword,page,property,pub,pub_raw,pubdate,pubnote,read_count,title,volume',
+        'identifier,[citations],abstract,author,bibcode,citation_count,comment,doi,id,keyword,page,property,pub,pub_raw,pubdate,pubnote,read_count,title,volume',
       rows: 1,
     },
 
@@ -369,19 +385,17 @@ define([
 
       if (this._docs[bibcode]) {
         // we have already loaded it
-        // this.onAbstractPage() && this.updateState(this.STATES.LOADING);
         this.displayBibcode(bibcode);
-        // this.onAbstractPage() && this.updateState(this.STATES.IDLE);
       } else {
         if (apiQuery.has('__show')) return; // cycle protection
-        q = apiQuery.clone();
+        const q = apiQuery.clone();
         q.set('__show', bibcode);
         // this will add required fields
         this.dispatchRequest(q);
       }
     },
 
-    onAllInternalEvents: function(ev) {
+    onAllInternalEvents: function(ev, arg1) {
       if ((ev == 'next' || ev == 'prev') && this._current) {
         var keys = _.keys(this._docs);
         var pubsub = this.getPubSub();
@@ -393,6 +407,62 @@ define([
             pubsub.publish(pubsub.DISPLAY_DOCUMENTS, keys[curr - 1]);
           }
         }
+      }
+
+      if (ev === 'fetchAffiliations') {
+        this.fetchAffiliations(arg1);
+      }
+    },
+
+    fetchAffiliations: function(cb) {
+      if (
+        (!this.model.has('aff') || this.model.get('aff').length === 0) &&
+        !this.isFetchingAff
+      ) {
+        this.isFetchingAff = true;
+        const ps = this.getPubSub();
+        const query = this.getCurrentQuery().clone();
+        query.unlock();
+        const { bibcode, author } = this.model.toJSON();
+        query.set('q', `identifier:${bibcode}`);
+        query.set('fl', ['aff']);
+        query.set('rows', 1);
+        ps.publish(
+          ps.EXECUTE_REQUEST,
+          new ApiRequest({
+            target: ApiTargets.SEARCH,
+            query: query,
+            options: {
+              always: () => {
+                this.isFetchingAff = false;
+              },
+              done: (resp) => {
+                if (
+                  resp &&
+                  resp.response &&
+                  resp.response.docs &&
+                  resp.response.docs.length > 0
+                ) {
+                  const newEntries = this.model.parse({
+                    author: author,
+                    aff: resp.response.docs[0].aff,
+                  });
+                  this._docs[bibcode] = {
+                    ...this._docs[bibcode],
+                    ...newEntries,
+                  };
+                  this.model.set(newEntries);
+                }
+                cb();
+              },
+              fail: (err) => {
+                cb(err);
+              },
+            },
+          })
+        );
+      } else {
+        cb();
       }
     },
 
