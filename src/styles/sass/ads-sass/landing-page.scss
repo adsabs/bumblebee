@@ -1,4 +1,4 @@
-$landing-page-hero-background : desaturate(lighten($brand-info, 20%), 15%);
+$landing-page-hero-background: desaturate(lighten($brand-info, 20%), 15%);
 
 .s-landing-page-layout {
   margin-left: -15px;
@@ -8,7 +8,12 @@ $landing-page-hero-background : desaturate(lighten($brand-info, 20%), 15%);
 }
 
 .s-starry-background-wrapper {
-  background-image: linear-gradient(to bottom, rgba(0, 0, 0, 0.2), rgba(0, 0, 0, .5)), url("../img/background.jpg");
+  background-image: linear-gradient(
+      to bottom,
+      rgba(0, 0, 0, 0.2),
+      rgba(0, 0, 0, 0.5)
+    ),
+    url('../img/background.jpg');
   margin: 0 -15px;
   background-attachment: fixed;
 }
@@ -29,22 +34,16 @@ $landing-page-hero-background : desaturate(lighten($brand-info, 20%), 15%);
     max-height: 66px;
   }
 
-  >div {
-    position: relative;
-    left: -2%;
-  }
+  display: flex;
+  justify-content: center;
 
   background-attachment: fixed;
   @extend .row;
   padding-top: 20px;
   text-align: center;
-
-  }
-
-
+}
 
 .s-landing-tabs {
-
   text-align: center;
 
   .landing-tab {
@@ -53,14 +52,13 @@ $landing-page-hero-background : desaturate(lighten($brand-info, 20%), 15%);
     width: 32%;
     font-size: 18px;
     border-radius: 4px;
-    position:relative;
+    position: relative;
     top: 4px;
     min-width: 100px;
 
-    @media (min-width: $screen-sm-min){
-     font-size: 20px;
+    @media (min-width: $screen-sm-min) {
+      font-size: 20px;
       width: 160px;
-
     }
 
     a {
@@ -73,15 +71,14 @@ $landing-page-hero-background : desaturate(lighten($brand-info, 20%), 15%);
         text-decoration: none;
       }
     }
-
   }
 
-  .landing-tab:not(.active){
+  .landing-tab:not(.active) {
     a {
       color: $gray-lighter;
     }
     &:hover {
-      background-color: hsla(360, 100%, 100%, .15);
+      background-color: hsla(360, 100%, 100%, 0.15);
     }
   }
 
@@ -89,8 +86,6 @@ $landing-page-hero-background : desaturate(lighten($brand-info, 20%), 15%);
     background-color: #fff;
     color: lighten($brand-primary-faded, 5%);
   }
-
-
 }
 
 .s-search-bar-rows-container {
@@ -105,7 +100,6 @@ $landing-page-hero-background : desaturate(lighten($brand-info, 20%), 15%);
 }
 
 .s-bumblebee-info {
-
   h2 {
     color: $brand-primary-faded;
     font-size: 22px;
@@ -120,7 +114,6 @@ $landing-page-hero-background : desaturate(lighten($brand-info, 20%), 15%);
   .s-second-action {
     text-align: center;
   }
-
 }
 
 .s-landing-section-4 {
@@ -148,11 +141,9 @@ $landing-page-hero-background : desaturate(lighten($brand-info, 20%), 15%);
     font-style: italic;
     font-weight: 300;
   }
-
 }
 
 .s-landing-page-layout {
-
   .s-search-bar-rows-container {
     border-radius: $border-radius-large;
     background-color: #fff;
@@ -167,15 +158,13 @@ $landing-page-hero-background : desaturate(lighten($brand-info, 20%), 15%);
   }
 
   .s-tab-container {
-    box-shadow : 0 2px 2px -1px rgba(0, 0, 0, .2);
+    box-shadow: 0 2px 2px -1px rgba(0, 0, 0, 0.2);
   }
-
 }
 
 //classic form widget
 
 .classic-form__logic-group {
-
   label {
     font-variant: small-caps;
     font-weight: 400;
@@ -184,21 +173,18 @@ $landing-page-hero-background : desaturate(lighten($brand-info, 20%), 15%);
   }
 }
 
-div[data-field=date] {
-
+div[data-field='date'] {
   input {
     width: 90px !important;
     display: inline-block !important;
     margin: 0 6px;
   }
-  input:first-of-type{
+  input:first-of-type {
     margin: 0 6px 0 0;
   }
 }
 
-
 .classic-form {
-
   margin: 10px auto 60px auto;
 
   label {
@@ -214,7 +200,8 @@ div[data-field=date] {
   .col-sm-6 {
     padding: 0;
 
-    .classic-author-label, .classic-object-label {
+    .classic-author-label,
+    .classic-object-label {
       position: absolute;
       top: 2px;
     }
@@ -225,7 +212,8 @@ div[data-field=date] {
     }
   }
 
-  #classic-author, #classic-object {
+  #classic-author,
+  #classic-object {
     resize: vertical;
   }
 }
@@ -236,10 +224,9 @@ div[data-field=date] {
   text-align: center;
 }
 
-
 .landing-faq {
   border-top: 1px solid $gray-lighter;
-  max-width:750px;
+  max-width: 750px;
   margin: auto;
 }
 
