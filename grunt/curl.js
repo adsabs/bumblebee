@@ -21,4 +21,9 @@ module.exports = {
       'https://raw.githubusercontent.com/thostetler/enzyme/7c39296c83ed3a8fc09907c9d013aee8d91bde5e/enzyme.2.7.1.js',
     dest: 'src/libs/enzyme/index.js',
   },
+  'react-transition-group': {
+    src:
+      'https://raw.githubusercontent.com/thostetler/react-transition-group/master/react-transition-group.min.js',
+    dest: 'src/libs/react-transition-group/index.js',
+  },
 };

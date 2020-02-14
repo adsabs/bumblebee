@@ -10,6 +10,7 @@ module.exports = {
     'curl:google-analytics',
     'curl:enzyme',
     'curl:dsjslib-cache',
+    'curl:react-transition-group',
   ],
   hash_require: ['hash_require:js', 'hash_require:css'],
 };

@@ -102,9 +102,9 @@ define([
 
     setUpIntercepts: function() {
       const widgets = [
-        'AuthorFacet',
-        'RefereedFacet',
-        'DatabaseFacet',
+        // 'AuthorFacet',
+        // 'RefereedFacet',
+        // 'DatabaseFacet',
         'GraphTabs',
       ];
       const interceptRequests = (widget) => {
@@ -192,7 +192,9 @@ define([
               };
 
               if (w.widgets && w.widgets.length > 0) {
-                _.forEach(w.widgets, (sub) => (sub.onIdle = handler));
+                _.forEach(w.widgets, (sub) => {
+                  sub.onIdle = handler;
+                });
               }
               w.onIdle = handler;
             });
