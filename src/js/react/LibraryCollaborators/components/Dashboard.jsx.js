@@ -127,15 +127,17 @@ define([
     }
 
     render() {
+      const { permissions, requests } = this.props;
+      const { showAddCollaboratorModal } = this.state;
+
       return (
         <section>
           <div className="row">
             <h3 className="h3">Collaborators</h3>
           </div>
-          <div className="row">
+          <div>
             <div className="row">
               <Button
-                bsSize="lg"
                 onClick={() =>
                   this.setState({ showAddCollaboratorModal: true })
                 }
@@ -145,10 +147,10 @@ define([
               </Button>
             </div>
 
-            {Object.keys(this.props.permissions).length ? (
+            {Object.keys(permissions).length ? (
               <div className="row">
                 <PermissionList
-                  permissions={this.props.permissions}
+                  permissions={permissions}
                   onRevokeAccess={this.onRevokeAccess}
                   onChangePermission={this.onChangePermission}
                 />
@@ -161,9 +163,9 @@ define([
                 </div>
               </div>
             )}
-            {renderAlerts(this.props.requests)}
+            {renderAlerts(requests)}
             <AddCollaboratorModal
-              show={this.state.showAddCollaboratorModal}
+              show={showAddCollaboratorModal}
               onHide={() => this.setState({ showAddCollaboratorModal: false })}
               onSubmit={this.onAddCollaborator}
             />
@@ -185,6 +187,7 @@ define([
     addCollaborator: PropTypes.func,
     changePermission: PropTypes.func,
     revokeAccess: PropTypes.func,
+    requests: PropTypes.object,
   };
 
   return Dashboard;

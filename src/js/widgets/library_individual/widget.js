@@ -185,8 +185,6 @@ define([
         pubsub = this.getBeeHive().getService('PubSub'),
         libController = this.getBeeHive().getObject('LibraryController');
 
-      console.log('headerEvent', event);
-
       switch (event) {
         case 'updateVal':
           // from header view

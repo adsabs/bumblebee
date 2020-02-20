@@ -67,7 +67,6 @@ define([
                   <ManageButton
                     onChange={this.onManagePermissions}
                     permission={this.state.permission}
-                    bsSize="lg"
                   />
                 </div>
               </FormGroup>
@@ -76,7 +75,6 @@ define([
                 <FormControl
                   type="email"
                   id="new_collab_email"
-                  bsSize="lg"
                   value={this.state.email}
                   onChange={this.onChangeEmail}
                   placeholder="collaborator@example.com"
@@ -92,10 +90,8 @@ define([
               </FormGroup>
             </Modal.Body>
             <Modal.Footer>
-              <Button bsSize="lg" onClick={this.props.onHide}>
-                Cancel
-              </Button>
-              <Button bsSize="lg" bsStyle="success" type="submit">
+              <Button onClick={this.props.onHide}>Cancel</Button>
+              <Button bsStyle="success" type="submit">
                 Add Collaborator
               </Button>
             </Modal.Footer>
