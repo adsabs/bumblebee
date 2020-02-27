@@ -185,7 +185,7 @@ define([
       return false;
     },
 
-    toggleAffiliation: function(ev) {
+    toggleAffiliation: function() {
       this.$('fail-aff').hide();
       this.$('#pending-aff').show();
       this.trigger('fetchAffiliations', (err) => {
@@ -220,7 +220,18 @@ define([
         container: 'body',
       });
 
-      if (MathJax) MathJax.Hub.Queue(['Typeset', MathJax.Hub, this.el]);
+      if (MathJax) {
+        MathJax.Hub.Queue([
+          'Typeset',
+          MathJax.Hub,
+          this.$('.s-abstract-title', this.el).get(0),
+        ]);
+        MathJax.Hub.Queue([
+          'Typeset',
+          MathJax.Hub,
+          this.$('.s-abstract-text', this.el).get(0),
+        ]);
+      }
     },
   });
 
@@ -293,7 +304,7 @@ define([
         this.getCurrentQuery().toJSON(),
         _.keys(newQueryJSON)
       );
-      if (JSON.stringify(newQueryJSON) != JSON.stringify(currentStreamlined)) {
+      if (JSON.stringify(newQueryJSON) !== JSON.stringify(currentStreamlined)) {
         this._docs = {};
       }
     },
@@ -321,7 +332,7 @@ define([
         num_citations: 0,
         num_references: 0,
       };
-      var resolved_citations = c ? c.num_citations : 0;
+      var resolvedCitations = c ? c.num_citations : 0;
 
       this.trigger('page-manager-event', 'broadcast-payload', {
         title: this._docs[bibcode].title,
@@ -331,7 +342,7 @@ define([
 
         // used by citation list widget
         citation_discrepancy:
-          this._docs[bibcode].citation_count - resolved_citations,
+          this._docs[bibcode].citation_count - resolvedCitations,
         citation_count: this._docs[bibcode].citation_count,
         references_count: c.num_references,
         read_count: this._docs[bibcode].read_count,
@@ -361,11 +372,11 @@ define([
 
     onDisplayDocuments: function(apiQuery) {
       this.updateState(this.STATES.LOADING);
-
+      let stashedDocs = [];
       // check to see if a query is already in progress (the way bbb is set up, it will be)
       // if so, auto fill with docs initially requested by results widget
       try {
-        var stashedDocs = this.getBeeHive()
+        stashedDocs = this.getBeeHive()
           .getObject('DocStashController')
           .getDocs();
       } catch (e) {
@@ -396,12 +407,12 @@ define([
     },
 
     onAllInternalEvents: function(ev, arg1) {
-      if ((ev == 'next' || ev == 'prev') && this._current) {
+      if ((ev === 'next' || ev === 'prev') && this._current) {
         var keys = _.keys(this._docs);
         var pubsub = this.getPubSub();
         var curr = _.indexOf(keys, this._current);
         if (curr > -1) {
-          if (ev == 'next' && curr + 1 < keys.length) {
+          if (ev === 'next' && curr + 1 < keys.length) {
             pubsub.publish(pubsub.DISPLAY_DOCUMENTS, keys[curr + 1]);
           } else if (curr - 1 > 0) {
             pubsub.publish(pubsub.DISPLAY_DOCUMENTS, keys[curr - 1]);
