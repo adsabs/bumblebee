@@ -1,14 +1,14 @@
 define(['jquery', 'underscore', 'analytics'], function($, _, analytics) {
   const qs = function(key, str, separator) {
-    const k = key.replace(/[*+?^$.\[\]{}()|\\\/]/g, '\\$&'); // escape RegEx meta chars
+    const k = key.replace(/[*+?^$.[\]{}()|\\/]/g, '\\$&'); // escape RegEx meta chars
     var pattern = '(^|[\\?&])' + k + '=[^&]*';
-    var match = (str || location.hash).match(new RegExp(pattern, 'g'));
+    var match = (str || window.location.hash).match(new RegExp(pattern, 'g'));
     if (!match) {
       return null;
     }
     var clean = [];
     // remove 'key=' from string, combine with optional separator and unquote spaces
-    for (var i = 0; i < match.length; i++) {
+    for (var i = 0; i < match.length; i += 1) {
       clean.push(match[i].replace(new RegExp('(^|[\\?&])' + k + '='), ''));
     }
     if (separator) {
@@ -20,11 +20,12 @@ define(['jquery', 'underscore', 'analytics'], function($, _, analytics) {
         return decodeURIComponent(msg.replace(/\+/g, ' '));
       });
     }
+    return null;
   };
 
   const updateHash = function(key, value, hash) {
-    const k = key.replace(/[*+?^$.\[\]{}()|\\\/]/g, '\\$&');
-    const h = _.isString(hash) ? hash : location.hash;
+    const k = key.replace(/[*+?^$.[\]{}()|\\/]/g, '\\$&');
+    const h = _.isString(hash) ? hash : window.location.hash;
     const match = h.match(new RegExp('&?' + k + '=([^&]+)(&|$)'));
     if (match) {
       const mat = match[0].replace(match[1], value);
@@ -53,12 +54,16 @@ define(['jquery', 'underscore', 'analytics'], function($, _, analytics) {
     const timeoutId = setTimeout(() => {
       $dd.reject();
     }, 3000);
-    require(['bowser'], (bowser) => {
-      window.clearTimeout(timeoutId);
-      $dd.resolve(bowser.parse(window.navigator.userAgent));
-    }, () => {
-      $dd.reject();
-    });
+    window.require(
+      ['bowser'],
+      (bowser) => {
+        window.clearTimeout(timeoutId);
+        $dd.resolve(bowser.parse(window.navigator.userAgent));
+      },
+      () => {
+        $dd.reject();
+      }
+    );
 
     return $dd.promise();
   };
@@ -110,8 +115,11 @@ define(['jquery', 'underscore', 'analytics'], function($, _, analytics) {
         return $dd.reject('timeout');
       }
       ref = setTimeout(() => {
-        window.requestAnimationFrame(() => check(++n));
+        window.requestAnimationFrame(() => {
+          check((n += 1));
+        });
       }, 100);
+      return null;
     })(0);
     $dd.promise.destroy = () => {
       window.clearTimeout(ref);
@@ -123,18 +131,23 @@ define(['jquery', 'underscore', 'analytics'], function($, _, analytics) {
   const withPrerenderedContent = (view) => {
     view.handlePrerenderedContent = (content, $el) => {
       // setup the elements so events are properly delegated
-      view.$el = $(view.tagName + '.' + view.className, $el);
+      const selector = view.tagName + '.' + view.className;
+      view.$el = $(selector, $el);
+
+      // stops mathjax from pre-rendering before we replace the content
+      $('>', view.$el).addClass('tex2jax_ignore');
       view.el = view.$el.get(0);
       view.delegateEvents();
 
-      // reset on first model change
-      view.model.once(
-        'change',
-        () => (view.getTemplate = () => view.getOption('template'))
-      );
+      // replace the current marionette template renderer for a moment
+      const _renderTmpl = view._renderTemplate;
+      view._renderTemplate = () => {};
 
-      // override the template to provide our pre-rendered content
-      view.getTemplate = () => content;
+      // attach content and reset template renderer on first model change
+      view.model.once('change', () => {
+        view.attachElContent(content);
+        view._renderTemplate = _renderTmpl;
+      });
     };
     return view;
   };
