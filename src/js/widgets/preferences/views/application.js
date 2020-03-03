@@ -53,6 +53,14 @@ define([
     bibtexKeyFormat: {
       initialValue: '',
     },
+    bibtexJournalFormat: {
+      initialValue: 'Use AASTeX macros',
+      initialOptions: [
+        'Use AASTeX macros',
+        'Use Journal Abbreviations',
+        'Use Full Journal Name',
+      ],
+    },
     bibtexABSMaxAuthors: {
       initialValue: 10,
       initialOptions: [
@@ -84,6 +92,7 @@ define([
     'addCustomFormatOptions',
     'bibtexMaxAuthorsSelected',
     'bibtexKeyFormatSelected',
+    'bibtexJournalFormatSelected',
     'bibtexABSMaxAuthorsSelected',
     'bibtexABSKeyFormatSelected',
     'bibtexAuthorCutoffSelected',
@@ -114,6 +123,9 @@ define([
       var bibtexKeyFormat =
         this.model.get('bibtexKeyFormat') ||
         DEFAULTS.bibtexKeyFormat.initialValue;
+      var bibtexJournalFormat =
+        this.model.get('bibtexJournalFormat') ||
+        DEFAULTS.bibtexJournalFormat.initialValue;
       var bibtexMaxAuthors =
         this.model.get('bibtexMaxAuthors') ||
         DEFAULTS.bibtexMaxAuthors.initialValue;
@@ -151,6 +163,9 @@ define([
         addCustomFormatOptions: _.clone(addCustomFormatOptions),
         bibtexKeyFormatDefault: DEFAULTS.bibtexKeyFormat.initialValue,
         bibtexKeyFormatSelected: _.clone(bibtexKeyFormat),
+        bibtexJournalFormatDefault: DEFAULTS.bibtexJournalFormat.initialValue,
+        bibtexJournalFormatOptions: DEFAULTS.bibtexJournalFormat.initialOptions,
+        bibtexJournalFormatSelected: _.clone(bibtexJournalFormat),
         bibtexMaxAuthorsDefault: DEFAULTS.bibtexMaxAuthors.initialValue,
         bibtexMaxAuthorsOptions: DEFAULTS.bibtexMaxAuthors.initialOptions,
         bibtexMaxAuthorsSelected: this._convertToNumber(
@@ -286,6 +301,7 @@ define([
             : this.model.get('bibtexMaxAuthorsSelected')
         ),
         bibtexKeyFormat: this.model.get('bibtexKeyFormatSelected'),
+        bibtexJournalFormat: this.model.get('bibtexJournalFormatSelected'),
         bibtexABSMaxAuthors: this._convertToString(
           this.model.get('bibtexABSMaxAuthorsSelected') === 'all'
             ? 0

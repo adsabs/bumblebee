@@ -43,6 +43,7 @@ define([
     SET_BIBTEX_ABS_MAX_AUTHORS: 'SET_BIBTEX_ABS_MAX_AUTHORS',
     SET_BIBTEX_AUTHOR_CUTOFF: 'SET_BIBTEX_AUTHOR_CUTOFF',
     SET_BIBTEX_ABS_AUTHOR_CUTOFF: 'SET_BIBTEX_ABS_AUTHOR_CUTOFF',
+    SET_BIBTEX_JOURNAL_FORMAT: 'SET_BIBTEX_JOURNAL_FORMAT',
   };
 
   actions.setTab = (tab) => ({ type: actions.SET_TAB, tab });
@@ -122,6 +123,10 @@ define([
   });
   actions.setBibtexABSAuthorCutoff = (payload) => ({
     type: actions.SET_BIBTEX_ABS_AUTHOR_CUTOFF,
+    payload,
+  });
+  actions.setBibtexJournalFormat = (payload) => ({
+    type: actions.SET_BIBTEX_JOURNAL_FORMAT,
     payload,
   });
 
@@ -260,6 +265,7 @@ define([
       // set maxauthor, convert it to number first
       q.set('maxauthor', +exports.bibtexMaxAuthors);
       q.set('authorcutoff', +exports.bibtexAuthorCutoff);
+      q.set('journalformat', exports.bibtexJournalFormat);
     } else if (format.value === 'bibtexabs') {
       if (exports.bibtexABSKeyFormat) {
         q.set('keyformat', exports.bibtexABSKeyFormat);
@@ -268,6 +274,9 @@ define([
       // set maxauthor, convert it to number first
       q.set('maxauthor', +exports.bibtexABSMaxAuthors);
       q.set('authorcutoff', +exports.bibtexABSAuthorCutoff);
+      q.set('journalformat', exports.bibtexJournalFormat);
+    } else if (format.value === 'aastex') {
+      q.set('journalformat', exports.bibtexJournalFormat);
     }
 
     const req = composeRequest(q);
