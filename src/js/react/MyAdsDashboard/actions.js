@@ -35,7 +35,7 @@ define([], function() {
       scope: actions.ADD_NOTIFICATION,
       options: {
         type: 'POST',
-        target: 'vault/notifications',
+        target: 'vault/_notifications',
         data: notification,
       },
     }),
@@ -44,7 +44,7 @@ define([], function() {
       scope: actions.GET_NOTIFICATIONS,
       options: {
         type: 'GET',
-        target: 'vault/notifications',
+        target: 'vault/_notifications',
       },
     }),
     getNotification: (id) => ({
@@ -52,7 +52,7 @@ define([], function() {
       scope: actions.GET_NOTIFICATION,
       options: {
         type: 'GET',
-        target: `vault/notifications/${id}`,
+        target: `vault/_notifications/${id}`,
       },
     }),
     updateNotification: (notification) => ({
@@ -60,7 +60,7 @@ define([], function() {
       scope: actions.UPDATE_NOTIFICATION,
       options: {
         type: 'PUT',
-        target: `vault/notifications/${notification.id}`,
+        target: `vault/_notifications/${notification.id}`,
         data: notification,
       },
     }),
@@ -69,7 +69,7 @@ define([], function() {
       scope: actions.REMOVE_NOTIFICATION,
       options: {
         type: 'DELETE',
-        target: `vault/notifications/${id}`,
+        target: `vault/_notifications/${id}`,
       },
     }),
     fetchClassicMirrors: () => ({
@@ -102,7 +102,7 @@ define([], function() {
       scope: actions.IMPORT_CLASSIC,
       options: {
         type: 'GET',
-        target: 'vault/myads-import',
+        target: 'vault/_myads-import',
       },
     }),
     importNotifications: () => ({ type: actions.IMPORT_NOTIFICATIONS }),

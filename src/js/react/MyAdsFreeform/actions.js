@@ -16,7 +16,7 @@ define([], function() {
       scope: actions.ADD_NOTIFICATION,
       options: {
         type: 'POST',
-        target: 'vault/notifications',
+        target: 'vault/_notifications',
         data: { ...notification, type: 'query' },
       },
     }),
