@@ -6,7 +6,28 @@ define([
   'js/widgets/base/base_widget',
   'js/components/api_request',
   'js/components/api_query',
-], function(_, BaseWidget, ApiRequest, ApiQuery) {
+  'analytics',
+], function(_, BaseWidget, ApiRequest, ApiQuery, analytics) {
+  const getBeeHive = () => {
+    return window.bbb.getBeeHive();
+  };
+
+  const getPubSub = () => {
+    const beehive = getBeeHive();
+    const ps = beehive.getService('PubSub');
+    return ps;
+  };
+
+  const subscribe = (...args) => {
+    const ps = getPubSub();
+    ps.subscribe(ps.pubSubKey, ...args);
+  };
+
+  const publish = (...args) => {
+    const ps = getPubSub();
+    ps.publish(ps.pubSubKey, ...args);
+  };
+
   const BumblebeeWidget = BaseWidget.extend({
     /**
      * @override
@@ -22,7 +43,7 @@ define([
       return true;
     },
 
-    initialize({ componentId, initialData }) {
+    initialize({ componentId }) {
       this.view.on({
         sendRequest: _.bind(this.onSendRequest, this),
         subscribeToPubSub: _.bind(this.subscribeToPubSub, this),
@@ -30,7 +51,7 @@ define([
         doSearch: _.bind(this.doSearch, this),
         getCurrentQuery: _.bind(this.onGetCurrentQuery, this),
         isLoggedIn: _.bind(this.isLoggedIn, this),
-        getInitialData: _.bind(this.getInitialData, this),
+        analyticsEvent: _.bind(this.analyticsEvent, this),
       });
 
       this.listenTo(this, 'page-manager-message', (ev, data) => {
@@ -38,7 +59,6 @@ define([
           this.view.destroy().render();
         }
       });
-      this.initialData = initialData;
       this.activate();
 
       this.onSendRequest = _.debounce(this.onSendRequest, 1000, {
@@ -51,43 +71,47 @@ define([
       }
     },
     dispatch({ type, ...args }) {
-      this._store.dispatch({ type, ...args });
+      if (this._store && typeof this._store.dispatch === 'function') {
+        this._store.dispatch({ type, ...args });
+      }
     },
     getState() {
       return this._store.getState();
     },
-    getInitialData(cb) {
-      if (typeof cb === 'function') {
-        cb(this.initialData);
-      }
+    activate() {
+      const ps = getPubSub();
+      subscribe(ps.USER_ANNOUNCEMENT, this.handleUserAnnouncement.bind(this));
+
+      const user = this.getBeeHive().getObject('User');
+      this.dispatch({
+        type: 'USER_ANNOUNCEMENT/user_signed_in',
+        payload: user.getUserName(),
+      });
     },
-    activate(beehive) {
-      this.setBeeHive(beehive);
-      const ps = this.getPubSub();
-      ps.subscribe(
-        ps.USER_ANNOUNCEMENT,
-        this.handleUserAnnouncement.bind(this)
-      );
+    handleUserAnnouncement(event, payload) {
+      const type = `USER_ANNOUNCEMENT/${event}`;
+      this.dispatch({ type, payload });
     },
-    handleUserAnnouncement() {},
     isLoggedIn(cb) {
       const user = this.getBeeHive().getObject('User');
-      cb(user.isLoggedIn());
+      if (typeof cb === 'function') {
+        cb(user.isLoggedIn());
+      }
     },
     onGetCurrentQuery(callback) {
       callback(this.getCurrentQuery());
     },
     subscribeToPubSub(event, callback) {
-      const ps = this.getPubSub();
-      ps.subscribe(ps[event], callback);
+      const ps = getPubSub();
+      subscribe(ps[event], callback);
     },
     publishToPubSub(event, ...args) {
-      const ps = this.getPubSub();
-      ps.publish(ps[event], ...args);
+      const ps = getPubSub();
+      publish(ps[event], ...args);
     },
     doSearch(queryParams) {
       const query = new ApiQuery();
-      if (typeof queryParams === 'string') {
+      if (_.isString(queryParams)) {
         query.load(queryParams);
       } else {
         query.set({ ...queryParams });
@@ -97,7 +121,7 @@ define([
       });
     },
     onSendRequest({ options, target, query }) {
-      const ps = this.getPubSub();
+      const ps = getPubSub();
       const request = new ApiRequest({
         target,
         query: new ApiQuery(query),
