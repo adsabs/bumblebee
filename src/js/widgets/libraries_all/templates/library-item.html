@@ -1,21 +1,24 @@
-
-
 <td>
-    {{libNum}}
+  {{libNum}}
 </td>
 <td>
-    {{#if public}}
-    <i class="fa fa-lg fa-unlock" title="this library is public"></i>
-    {{else}}
-    <i class="fa fa-lg fa-lock text-light" title="this library is private"></i>
-    {{/if}}
+  {{#if public}}
+  <i class="fa fa-lg fa-unlock" title="this library is public"></i>
+  {{else}}
+  <i class="fa fa-lg fa-lock text-light" title="this library is private"></i>
+  {{/if}}
 </td>
 
 <td>
-
-    <a href="#user/libraries/{{id}}"><h3 class="s-library-title">{{name}}</h3></a>
-    {{#if description}}<p class="library-description">{{description}}</p> {{/if}}
-
+  <a href="#user/libraries/{{id}}"
+    ><h3 class="s-library-title">
+      {{name}} {{#compare permission 'owner'}} {{else}}
+      <i class="fa fa-users" aria-hidden="true"></i> {{/compare}}
+    </h3></a
+  >
+  {{#if description}}
+  <p class="library-description">{{description}}</p>
+  {{/if}}
 </td>
 
 <td>{{num_documents}}</td>
