@@ -28,9 +28,7 @@ define(['underscore', './actions', './constants'], function(
     return { scope, status };
   };
 
-  const resetAfterRequest = ({ trigger }, { dispatch }) => (next) => (
-    action
-  ) => {
+  const resetAfterRequest = (_, { dispatch }) => (next) => (action) => {
     next(action);
 
     if (/_API_REQUEST_(SUCCESS|FAILURE)$/.test(action.type)) {
@@ -62,7 +60,7 @@ define(['underscore', './actions', './constants'], function(
     if (action.type === apiSuccess('GET_NOTIFICATION')) {
       const result = action.result[0];
 
-      if (getState().runQuery) {
+      if (getState().runQuery && result && result.qid) {
         dispatch(runQuery(false));
         dispatch(getQuery(result.qid));
         return;
@@ -74,7 +72,7 @@ define(['underscore', './actions', './constants'], function(
       const { template, type } = notifications[result.id];
       let form;
       if (type === 'query') {
-        form = page['GENERAL_FORM'];
+        form = page.GENERAL_FORM;
       } else {
         form = page[`${template.toUpperCase()}_FORM`];
       }
@@ -121,10 +119,9 @@ define(['underscore', './actions', './constants'], function(
   /**
    * When going to dashboard, reset the current editing notification
    */
-  const resetEditingNotificationAfterGoTo = (
-    { trigger },
-    { dispatch, getState }
-  ) => (next) => (action) => {
+  const resetEditingNotificationAfterGoTo = (_, { dispatch }) => (next) => (
+    action
+  ) => {
     next(action);
 
     if (action.type === 'GOTO' && action.payload === page.DASHBOARD) {
@@ -132,9 +129,7 @@ define(['underscore', './actions', './constants'], function(
     }
   };
 
-  const importNotifications = ({ trigger }, { dispatch, getState }) => (
-    next
-  ) => (action) => {
+  const importNotifications = (_, { dispatch }) => (next) => (action) => {
     next(action);
 
     if (action.type === 'IMPORT_NOTIFICATIONS') {
@@ -142,10 +137,9 @@ define(['underscore', './actions', './constants'], function(
     }
   };
 
-  const reloadNotificationsAfterGoTo = (
-    { trigger },
-    { dispatch, getState }
-  ) => (next) => (action) => {
+  const reloadNotificationsAfterGoTo = (_, { dispatch }) => (next) => (
+    action
+  ) => {
     next(action);
 
     if (action.type === 'GOTO' && action.payload === page.DASHBOARD) {
