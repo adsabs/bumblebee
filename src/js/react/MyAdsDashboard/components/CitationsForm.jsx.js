@@ -56,10 +56,10 @@ define([
         let entries = {};
         if (parts.length > 0) {
           entries = parts.map((str) => {
-            const [p, field, value] = /^(author|orcid):"(.*)"$/.exec(str);
+            const [p, type, text] = /^(author|orcid):"(.*)"$/.exec(str);
             return {
-              field: field === 'author' ? 'name' : 'orcid',
-              value,
+              type: type === 'author' ? 'Name' : 'ORCiD',
+              text,
             };
           });
         }
@@ -74,9 +74,10 @@ define([
     }
 
     createQueryString() {
-      return this.state.entries
-        .map(({ field, value }) => {
-          return `${field === 'name' ? 'author' : 'orcid'}:"${value}"`;
+      const { entries } = this.state;
+      return entries
+        .map(({ type, text }) => {
+          return `${type === 'Name' ? 'author' : 'orcid'}:"${text}"`;
         })
         .join(' OR ');
     }
@@ -162,7 +163,6 @@ define([
           )}
           <CitationsEntry
             entriesUpdated={this.entriesUpdated}
-            multiple
             initialState={{
               entries: this.state.entries,
             }}
