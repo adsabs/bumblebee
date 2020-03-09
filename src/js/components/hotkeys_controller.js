@@ -5,26 +5,41 @@ define([
   'js/components/api_feedback',
   'hotkeys',
 ], function(GenericModule, Dependon, Hardened, ApiFeedback, hotkeys) {
+  const MODIFIER = 'alt+shift';
+
+  const mod = (val) => {
+    const arr = Array.isArray(val) ? val : [val];
+    return arr.map((key) => `${MODIFIER}+${key}`).join(', ');
+  };
+
   const HOTKEYS = [
-    { hotkey: 'shift+s', event: 'search', description: 'Focus on search bar' },
-    { hotkey: 'left', event: 'prev', description: 'Previous results page' },
-    { hotkey: 'right', event: 'next', description: 'Next results page' },
+    { hotkey: mod('~'), event: 'search', description: 'Focus on search bar' },
     {
-      hotkey: 'down, alt+shift+down',
+      hotkey: mod('left'),
+      event: 'prev',
+      description: 'Previous results page',
+    },
+    {
+      hotkey: mod('right'),
+      event: 'next',
+      description: 'Next results page',
+    },
+    {
+      hotkey: mod('down'),
       event: 'item-next',
       description: 'Focus on next result entry',
     },
     {
-      hotkey: 'up, alt+shift+up',
+      hotkey: mod('up'),
       event: 'item-prev',
       description: 'Focus on previous result entry',
     },
     {
-      hotkey: 'space, alt+shift+s',
+      hotkey: mod('s'),
       event: 'item-select',
       description: 'Select currently focused result entry',
     },
-    { hotkey: 'shift+`', event: 'show-help', description: 'Show help dialog' },
+    { hotkey: mod('`'), event: 'show-help', description: 'Show help dialog' },
   ];
 
   const HotkeysController = GenericModule.extend({
