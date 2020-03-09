@@ -13,7 +13,7 @@ define([
   };
 
   const HOTKEYS = [
-    { hotkey: mod('~'), event: 'search', description: 'Focus on search bar' },
+    { hotkey: mod('a'), event: 'search', description: 'Focus on search bar' },
     {
       hotkey: mod('left'),
       event: 'prev',
