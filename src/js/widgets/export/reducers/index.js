@@ -41,6 +41,7 @@ define([
     SET_BIBTEX_ABS_KEY_FORMAT,
     SET_BIBTEX_AUTHOR_CUTOFF,
     SET_BIBTEX_ABS_AUTHOR_CUTOFF,
+    SET_BIBTEX_JOURNAL_FORMAT,
   } = actions;
 
   // format reducer
@@ -116,6 +117,7 @@ define([
       bibtexABSKeyFormat: null,
       bibtexABSMaxAuthors: 0,
       bibtexABSAuthorCutoff: 200,
+      bibtexJournalFormat: 1,
     },
     action
   ) => {
@@ -149,6 +151,8 @@ define([
         return { ...state, bibtexABSKeyFormat: action.keyFormat };
       case SET_BIBTEX_ABS_AUTHOR_CUTOFF:
         return { ...state, bibtexABSAuthorCutoff: action.payload };
+      case SET_BIBTEX_JOURNAL_FORMAT:
+        return { ...state, bibtexJournalFormat: action.payload };
       case RECEIVE_EXPORT:
         return {
           ...state,

@@ -95,6 +95,7 @@ define([
       this.bibtexABSMaxAuthors = 0;
       this.bibtexAuthorCutoff = 200;
       this.bibtexABSAuthorCutoff = 200;
+      this.bibtexJournalFormat = 1;
     },
 
     /**
@@ -155,6 +156,7 @@ define([
           'bibtexABSMaxAuthors',
           'bibtexAuthorCutoff',
           'bibtexABSAuthorCutoff',
+          'bibtexJournalFormat',
         ],
         (acc, prop) => {
           const value = _.has(userData, prop) ? userData[prop] : this[prop];
@@ -169,6 +171,19 @@ define([
         },
         {}
       );
+    },
+
+    getJournalFormatValue(format) {
+      switch (format) {
+        case 'Use AASTeX macros':
+          return 1;
+        case 'Use Journal Abbreviations':
+          return 2;
+        case 'Use Full Journal Name':
+          return 3;
+        default:
+          return 1;
+      }
     },
 
     /**
@@ -199,6 +214,7 @@ define([
         setBibtexABSMaxAuthors,
         setBibtexAuthorCutoff,
         setBibtexABSAuthorCutoff,
+        setBibtexJournalFormat,
       } = actions;
 
       const {
@@ -210,6 +226,7 @@ define([
         bibtexABSKeyFormat,
         bibtexAuthorCutoff,
         bibtexABSAuthorCutoff,
+        bibtexJournalFormat,
       } = this.getFieldsFromUserData();
 
       const fmt =
@@ -225,6 +242,9 @@ define([
       dispatch(setBibtexABSKeyFormat(bibtexABSKeyFormat));
       dispatch(setBibtexAuthorCutoff(bibtexAuthorCutoff));
       dispatch(setBibtexABSAuthorCutoff(bibtexABSAuthorCutoff));
+      dispatch(
+        setBibtexJournalFormat(this.getJournalFormatValue(bibtexJournalFormat))
+      );
 
       // set the origin of the request (abstract/results/etc.)
       dispatch(setOrigin(this.componentParams && this.componentParams.origin));
@@ -314,6 +334,7 @@ define([
         setBibtexABSMaxAuthors,
         setBibtexAuthorCutoff,
         setBibtexABSAuthorCutoff,
+        setBibtexJournalFormat,
       } = actions;
 
       const {
@@ -325,6 +346,7 @@ define([
         bibtexABSKeyFormat,
         bibtexAuthorCutoff,
         bibtexABSAuthorCutoff,
+        bibtexJournalFormat,
       } = this.getFieldsFromUserData();
 
       const format =
@@ -342,6 +364,9 @@ define([
       dispatch(setBibtexABSKeyFormat(bibtexABSKeyFormat));
       dispatch(setBibtexAuthorCutoff(bibtexAuthorCutoff));
       dispatch(setBibtexABSAuthorCutoff(bibtexABSAuthorCutoff));
+      dispatch(
+        setBibtexJournalFormat(this.getJournalFormatValue(bibtexJournalFormat))
+      );
       dispatch(setSort(sort));
       dispatch(setOrigin(this.componentParams && this.componentParams.origin));
       dispatch(receiveIds(recs));

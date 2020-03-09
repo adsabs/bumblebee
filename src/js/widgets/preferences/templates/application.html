@@ -309,6 +309,34 @@
           <input type="text" id="bibtexKeyFormat" value="{{bibtexKeyFormatSelected}}" data-no-convert="true" aria-describedby="collapsebibtexKeyFormat" placeholder="%1H:%Y:%q" class="form-control" title="bibtex key format" maxlength="30">
         </div>
 
+        <!-- Default TeX Journal Name Handling -->
+        <div class="form-group">
+          <label for="bibtexJournalFormat">
+            TeX Journal Name Handling
+            <a href="#collapseBibtexJournalFormat" data-toggle="collapse" role="button" aria-expanded="false"
+              aria-controls="collapseBibtexJournalFormat" aria-label="results list side bars">
+              <i class="fa fa-question-circle" aria-hidden="true"></i>
+            </a>
+          </label>
+          <p>
+            <div class="collapse" id="collapseBibtexJournalFormat">
+              <div class="card card-body text-muted">
+                <p>
+                  This setting is used to define how journal names are rendered in the output of the following TeX-based formats: BibTeX, BibTeX ABS, and AASTeX. If journal macros are used (default), the following file contains the proper journal definitions compatible with most Astronomy Journals: <a href="http://adsabs.harvard.edu/abs_doc/aas_macros.html">http://adsabs.harvard.edu/abs_doc/aas_macros.html</a>
+                  <br> (
+                  <strong>default: {{bibtexJournalFormatDefault}}</strong>)
+                </p>
+              </div>
+            </div>
+          </p>
+          <select class="form-control" id="bibtexJournalFormat" aria-describedby="collapseBibtexJournalFormat">
+            {{#each bibtexJournalFormatOptions}}
+            <option value="{{this}}" {{#compare this ../bibtexJournalFormatSelected}} selected="selected" {{/compare}}>{{this}}
+            </option>
+            {{/each}}
+          </select>
+        </div>
+
         <div class="row">
           <div class="col-sm-5">
             <!-- Set BibTeX key max authors  -->
