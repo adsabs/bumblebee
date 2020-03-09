@@ -88,7 +88,6 @@ define([
           return '';
         });
 
-      console.log('lsdkjf', this);
       chart = d3
         .select(this.el)
         .select('.chart')
