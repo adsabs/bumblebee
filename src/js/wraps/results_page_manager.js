@@ -102,9 +102,9 @@ define([
 
     setUpIntercepts: function() {
       const widgets = [
-        // 'AuthorFacet',
-        // 'RefereedFacet',
-        // 'DatabaseFacet',
+        'AuthorFacet',
+        'RefereedFacet',
+        'DatabaseFacet',
         'GraphTabs',
       ];
       const interceptRequests = (widget) => {
