@@ -177,7 +177,7 @@ define([
       var deferred = $.Deferred();
       var that = this;
 
-      if (options.bibcodes == 'all') {
+      if (options.bibcodes === 'all') {
         var limit = options.limit || 2000;
         var start = 0;
         var rows = 100;
@@ -192,9 +192,10 @@ define([
           q.set('start', start);
 
           this._executeApiRequest(q).done(function(apiResponse) {
-            var bibs = _.map(apiResponse.get('response.docs'), function(d) {
-              return d.bibcode;
-            });
+            var bibs = _.map(
+              apiResponse.get('response.docs'),
+              (d) => d.bibcode
+            );
 
             [].push.apply(bibcodes, bibs);
             start += rows;
@@ -326,10 +327,9 @@ define([
       var limit = maxReturned;
       // start gets incremented
       var start = 0;
-      var rows = 100;
+      var rows = 1000;
       var bibcodes = [];
       var endpoint = ApiTargets.LIBRARIES + '/' + id;
-      var that = this;
 
       // this function gets called repeatedly
       function done(data) {
@@ -350,7 +350,7 @@ define([
 
       function makeRequest() {
         var q = new ApiQuery();
-        q.set('rows', 100);
+        q.set('rows', 1000);
         q.set('fl', 'bibcode');
 
         q.set('start', start);

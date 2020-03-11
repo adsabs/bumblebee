@@ -892,7 +892,8 @@ define([
         pubsub.ALERT,
         new ApiFeedback({
           code: 0,
-          msg: 'Sorry Metrics are unavailable at this time, try again later',
+          msg:
+            'Metrics did not manage to complete your request in time, probably your dataset is too large',
           type: 'danger',
         })
       );
@@ -1597,7 +1598,7 @@ define([
        If this changed in the future, the checkIfSimpleRequired function would need to
        be refactored to create a bigquery, then send the qid to execute_query
        */
-      this.getMetrics(bibcodes, { simple: false });
+      this.getMetrics(bibcodes);
     },
   });
 
