@@ -203,7 +203,6 @@ require.config({
       '//cdnjs.cloudflare.com/ajax/libs/clipboard.js/1.7.1/clipboard.min',
       'libs/clipboard/clipboard',
     ],
-    'create-react-class': 'libs/create-react-class/index',
     d3: ['//cdnjs.cloudflare.com/ajax/libs/d3/3.4.6/d3.min', 'libs/d3/d3.min'],
     'd3-cloud': [
       '//cdnjs.cloudflare.com/ajax/libs/d3-cloud/1.2.5/d3.layout.cloud.min',
@@ -245,13 +244,16 @@ require.config({
       '//cdn.jsdelivr.net/npm/persist-js@0.3.1/src/persist.min',
       'libs/persist-js/src/persist',
     ],
-    react: ['//unpkg.com/react@16/umd/react.development', 'libs/react/index'],
+    react: [
+      '//unpkg.com/react@16/umd/react.production.min',
+      'libs/react/index',
+    ],
     'react-bootstrap': [
       '//cdnjs.cloudflare.com/ajax/libs/react-bootstrap/0.32.1/react-bootstrap.min',
       'libs/react-bootstrap/index',
     ],
     'react-dom': [
-      '//unpkg.com/react-dom@16/umd/react-dom.development',
+      '//unpkg.com/react-dom@16/umd/react-dom.production.min',
       'libs/react-dom/index',
     ],
     'react-prop-types': [
@@ -282,10 +284,6 @@ require.config({
       'libs/sprintf/sprintf',
     ],
     utils: 'js/utils',
-    reselect: [
-      '//cdnjs.cloudflare.com/ajax/libs/reselect/3.0.1/reselect.min',
-      'libs/reselect',
-    ],
     mocha: 'libs/mocha/mocha',
     chai: 'bower_components/chai/chai',
     sinon: 'https://cdnjs.cloudflare.com/ajax/libs/sinon.js/1.9.0/sinon.min',

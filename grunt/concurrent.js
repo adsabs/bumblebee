@@ -11,6 +11,11 @@ module.exports = {
     'curl:enzyme',
     'curl:dsjslib-cache',
     'curl:react-transition-group',
+    'curl:react',
+    'curl:react-bootstrap',
+    'curl:react-dom',
+    'curl:react-prop-types',
+    'curl:react-redux',
   ],
   hash_require: ['hash_require:js', 'hash_require:css'],
 };
