@@ -4,12 +4,14 @@ define([
   'es6!./TemplatePill.jsx',
   'moment',
   'react-bootstrap',
+  'es6!./ActionsDropdown.jsx',
 ], function(
   _,
   React,
   TemplatePill,
   moment,
-  { Dropdown, MenuItem, ButtonGroup, Button }
+  { ButtonGroup, Button },
+  ActionsDropdown
 ) {
   const getFriendlyDateString = (dateStr) => {
     return moment(dateStr).format('lll');
@@ -51,6 +53,10 @@ define([
         sortDir: null,
       };
       this.onFilter = _.debounce(this.onFilter, 100);
+      this.onRunQuery = this.onRunQuery.bind(this);
+      this.onToggleActive = this.onToggleActive.bind(this);
+      this.onDelete = this.onDelete.bind(this);
+      this.onEdit = this.onEdit.bind(this);
     }
 
     /**
@@ -121,9 +127,8 @@ define([
       };
     }
 
-    onRunQuery({ id }) {
-      this.props.runQuery(true);
-      this.props.editNotification(id);
+    onRunQuery({ id }, queryKey) {
+      this.props.runQuery(id, queryKey);
     }
 
     render() {
@@ -316,7 +321,6 @@ define([
               {ids.map((id, i) => {
                 /** @type {Notification} */
                 const item = this.props.notifications[id];
-                const isGeneral = item.type === 'query';
 
                 return (
                   <tr
@@ -331,7 +335,9 @@ define([
                       {i + 1}
                     </th>
                     <td className={item.active ? '' : 'text-faded'}>
-                      {item.name}
+                      <h4 className="h5" style={{ margin: 0, marginTop: 3 }}>
+                        {item.name}
+                      </h4>
                     </td>
                     <td>
                       <TemplatePill
@@ -346,69 +352,15 @@ define([
                       {getFriendlyDateString(item.updated)}
                     </td>
                     <td>
-                      <Dropdown
-                        disabled={disable}
-                        dropup={true}
-                        id={`actions-dropdown-${item.id}`}
-                      >
-                        <Dropdown.Toggle>
-                          <i className="fa fa-cog" aria-hidden="true"></i>{' '}
-                          Actions
-                        </Dropdown.Toggle>
-                        <Dropdown.Menu
-                          style={{ overflow: 'visible !important' }}
-                        >
-                          <MenuItem
-                            href="javascript:void(0);"
-                            onClick={() => this.onToggleActive(item)}
-                          >
-                            {item.active ? (
-                              <i
-                                className="fa fa-check-circle-o fa-fw"
-                                aria-hidden="true"
-                              ></i>
-                            ) : (
-                              <i
-                                className="fa fa-circle-o fa-fw"
-                                aria-hidden="true"
-                              ></i>
-                            )}{' '}
-                            {item.active ? 'Disable' : 'Enable'}
-                          </MenuItem>
-                          {isGeneral && (
-                            <MenuItem
-                              href="javascript:void(0);"
-                              onClick={() => this.onRunQuery(item)}
-                            >
-                              <i
-                                className="fa fa-bolt fa-fw"
-                                aria-hidden="true"
-                              ></i>{' '}
-                              Run Query
-                            </MenuItem>
-                          )}
-                          <MenuItem
-                            href="javascript:void(0);"
-                            onClick={() => this.onEdit(item)}
-                          >
-                            <i
-                              className="fa fa-pencil fa-fw"
-                              aria-hidden="true"
-                            ></i>{' '}
-                            Edit
-                          </MenuItem>
-                          <MenuItem
-                            href="javascript:void(0);"
-                            onClick={() => this.onDelete(item)}
-                          >
-                            <i
-                              className="fa fa-trash fa-fw"
-                              aria-hidden="true"
-                            ></i>{' '}
-                            Delete
-                          </MenuItem>
-                        </Dropdown.Menu>
-                      </Dropdown>
+                      <ActionsDropdown
+                        disable={disable}
+                        item={item}
+                        onDelete={this.onDelete}
+                        onEdit={this.onEdit}
+                        onRunQuery={this.onRunQuery}
+                        onToggleActive={this.onToggleActive}
+                        dropup={i > 2}
+                      />
                     </td>
                   </tr>
                 );

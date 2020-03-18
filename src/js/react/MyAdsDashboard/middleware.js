@@ -1,18 +1,22 @@
-define(['underscore', './actions', './constants'], function(
-  _,
-  actions,
-  { page }
-) {
+define([
+  'underscore',
+  './actions',
+  './constants',
+  '../shared/helpers',
+], function(_, actions, { page }, { middleware, apiSuccess }) {
   const {
     SET_NOTIFICATIONS,
     SET_EDITING_NOTIFICATION,
     RESET_EDITING_NOTIFICATION,
     TOGGLE_ACTIVE,
-    getQuery,
-    runQuery,
+    SET_NOTIFICATION_QUERY_KEY,
+    RUN_QUERY,
     goTo,
+    getQueryFromQID,
+    getNotification,
     getNotifications,
     updateNotification,
+    getNotificationQueries,
   } = actions;
 
   const delay = (cb) => {
@@ -21,7 +25,6 @@ define(['underscore', './actions', './constants'], function(
     }
     cb.toKey = setTimeout(cb, 3000);
   };
-  const apiSuccess = _.memoize((str) => `${str}_API_REQUEST_SUCCESS`);
 
   const parseScope = (requestType) => {
     const [scope, status] = requestType.split('_API_REQUEST_');
@@ -45,6 +48,60 @@ define(['underscore', './actions', './constants'], function(
     }
   };
 
+  const runQueries = middleware(
+    ({ action, next, dispatch, trigger, getState }) => {
+      next(action);
+
+      if (action.type === RUN_QUERY) {
+        const { id, queryKey } = action.payload;
+
+        const item = getState().notifications[id];
+        if (item && item.type === 'query') {
+          // if general query, then we must get the qid first
+          dispatch(getNotification(id));
+        } else {
+          dispatch({
+            type: SET_NOTIFICATION_QUERY_KEY,
+            payload: queryKey,
+          });
+          dispatch(getNotificationQueries(id));
+        }
+      }
+
+      if (action.type === apiSuccess('GET_NOTIFICATION_QUERIES')) {
+        const queryKey = getState().queryKey;
+        if (queryKey !== null && action.result && action.result.length > 0) {
+          try {
+            trigger('doSearch', action.result[queryKey]);
+          } catch (e) {
+            console.error(e);
+          }
+        }
+
+        // reset queryKey
+        dispatch({
+          type: SET_NOTIFICATION_QUERY_KEY,
+          payload: null,
+        });
+      }
+
+      if (action.type === apiSuccess('GET_QUERY_FROM_QID')) {
+        if (action.result && action.result.query) {
+          try {
+            trigger('doSearch', JSON.parse(action.result.query).query);
+          } catch (event) {
+            console.error(event);
+          }
+        } else {
+          console.error('no query found');
+        }
+        setTimeout(() => {
+          dispatch(goTo(page.DASHBOARD));
+        }, 1000);
+      }
+    }
+  );
+
   const updateNotifications = ({ trigger }, { dispatch, getState }) => (
     next
   ) => (action) => {
@@ -60,9 +117,9 @@ define(['underscore', './actions', './constants'], function(
     if (action.type === apiSuccess('GET_NOTIFICATION')) {
       const result = action.result[0];
 
-      if (getState().runQuery && result && result.qid) {
-        dispatch(runQuery(false));
-        dispatch(getQuery(result.qid));
+      // iterrupt here in case it is a general query so we can run it seperately
+      if (result && result.qid) {
+        dispatch(getQueryFromQID(result.qid));
         return;
       }
 
@@ -77,21 +134,6 @@ define(['underscore', './actions', './constants'], function(
         form = page[`${template.toUpperCase()}_FORM`];
       }
       dispatch(goTo(form));
-    }
-
-    if (action.type === apiSuccess('GET_QUERY')) {
-      if (action.result && action.result.query) {
-        try {
-          trigger('doSearch', JSON.parse(action.result.query).query);
-        } catch (event) {
-          console.error(event);
-        }
-      } else {
-        console.error('no query found');
-      }
-      setTimeout(() => {
-        dispatch(goTo(page.DASHBOARD));
-      }, 1000);
     }
 
     if (action.type === TOGGLE_ACTIVE) {
@@ -153,5 +195,6 @@ define(['underscore', './actions', './constants'], function(
     resetEditingNotificationAfterGoTo,
     importNotifications,
     reloadNotificationsAfterGoTo,
+    runQueries,
   };
 });

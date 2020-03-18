@@ -8,7 +8,7 @@ define(['./actions', 'redux', './constants'], function(
     SET_EDITING_NOTIFICATION,
     RESET_EDITING_NOTIFICATION,
     GOTO,
-    RUN_QUERY,
+    SET_NOTIFICATION_QUERY_KEY,
   } = actions;
 
   /**
@@ -45,14 +45,6 @@ define(['./actions', 'redux', './constants'], function(
   const page = (state = pageState, action) => {
     if (action.type === GOTO && action.payload) {
       return action.payload;
-    }
-    return state;
-  };
-
-  const runQueryState = false;
-  const runQuery = (state = runQueryState, action) => {
-    if (action.type === RUN_QUERY && action.result) {
-      return action.result;
     }
     return state;
   };
@@ -96,11 +88,19 @@ define(['./actions', 'redux', './constants'], function(
     return state;
   };
 
+  const queryKeyState = null;
+  const queryKey = (state = queryKeyState, action) => {
+    if (action.type === SET_NOTIFICATION_QUERY_KEY) {
+      return action.payload;
+    }
+    return state;
+  };
+
   return combineReducers({
     notifications,
     page,
-    runQuery,
     requests,
     editingNotification,
+    queryKey,
   });
 });

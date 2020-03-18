@@ -10,6 +10,7 @@ define([], function() {
     LOGIN_CLASSIC: 'LOGIN_CLASSIC',
     IMPORT_CLASSIC: 'IMPORT_CLASSIC',
     LOGIN_CLASSIC_CHECK: 'LOGIN_CLASSIC_CHECK',
+    SET_NOTIFICATION_QUERY_KEY: 'SET_NOTIFICATION_QUERY_KEY',
 
     // notifications state management
     SET_NOTIFICATIONS: 'SET_NOTIFICATIONS',
@@ -17,6 +18,8 @@ define([], function() {
     SET_EDITING_NOTIFICATION: 'SET_EDITING_NOTIFICATION',
     RESET_EDITING_NOTIFICATION: 'RESET_EDITING_NOTIFICATION',
     TOGGLE_ACTIVE: 'TOGGLE_ACTIVE',
+    SET_NOTIFICATION_QUERY: 'SET_NOTIFICATION_QUERY',
+    GET_NOTIFICATION_QUERIES: 'GET_NOTIFICATION_QUERIES',
 
     // paging
     GOTO: 'GOTO',
@@ -25,7 +28,7 @@ define([], function() {
     IMPORT_NOTIFICATIONS: 'IMPORT_NOTIFICATIONS',
 
     // searching
-    GET_QUERY: 'GET_QUERY',
+    GET_QUERY_FROM_QID: 'GET_QUERY_FROM_QID',
     RUN_QUERY: 'RUN_QUERY',
   };
 
@@ -109,17 +112,28 @@ define([], function() {
     goTo: (payload) => ({ type: actions.GOTO, payload }),
     editNotification: (id) => ({ type: actions.EDIT_NOTIFICATION, id }),
     toggleActive: (id) => ({ type: actions.TOGGLE_ACTIVE, id }),
-    getQuery: (qid) => ({
+    getNotificationQueries: (id) => ({
       type: 'API_REQUEST',
-      scope: 'GET_QUERY',
+      scope: actions.GET_NOTIFICATION_QUERIES,
+      options: {
+        type: 'GET',
+        target: `vault/_notification_query/${id}`,
+      },
+    }),
+    getQueryFromQID: (qid) => ({
+      type: 'API_REQUEST',
+      scope: 'GET_QUERY_FROM_QID',
       options: {
         type: 'GET',
         target: `vault/query/${qid}`,
       },
     }),
-    runQuery: (result) => ({
+    runQuery: (id, queryKey) => ({
       type: 'RUN_QUERY',
-      result,
+      payload: {
+        id,
+        queryKey,
+      },
     }),
   };
 
