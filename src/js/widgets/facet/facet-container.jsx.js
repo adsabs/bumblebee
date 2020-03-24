@@ -1,21 +1,143 @@
 define([
   'react',
   'react-redux',
-  'underscore',
+  'react-prop-types',
   'es6!./toggle_list.jsx',
+  'react-transition-group',
   './reducers',
-  'create-react-class',
-], function(React, ReactRedux, _, ToggleList, Reducers, createReactClass) {
-  function mapStateToProps(state, ownProps) {
+], function(
+  React,
+  { connect },
+  PropTypes,
+  ToggleList,
+  { CSSTransition },
+  { getActiveFacets }
+) {
+  const ContainerComponent = ({
+    activeFacets,
+    reduxState: state,
+    resetVisibleFacets,
+    selectFacet,
+    showMoreFacets,
+    submitFilter,
+    toggleFacet,
+    unselectFacet,
+  }) => {
+    const createDropdown = () => {
+      // no dropdown if no selected facets!
+      if (activeFacets.length === 0) {
+        return <div />;
+      }
+
+      let arr;
+      if (activeFacets.length > 25)
+        return (
+          <div className="facet__dropdown">
+            select no more than 25 facets at a time
+          </div>
+        );
+
+      if (activeFacets.length === 1) {
+        arr = state.config.logicOptions.single;
+      } else {
+        arr = state.config.logicOptions.multiple;
+      }
+
+      if (arr[0] === 'invalid choice') {
+        return <div className="facet__dropdown">invalid choice!</div>;
+      }
+
+      return (
+        <div className="facet__dropdown">
+          <div className="facet__dropdown__title">
+            <b>{activeFacets.length}</b> selected
+          </div>
+          {arr.map(function(val) {
+            return (
+              <label key={val} htmlFor={`facet_${state.config.facetTitle}`}>
+                <input
+                  id={`facet_${state.config.facetTitle}`}
+                  type="radio"
+                  onChange={() => submitFilter(val)}
+                />{' '}
+                {val}
+              </label>
+            );
+          }, this)}
+        </div>
+      );
+    };
+
+    var header = (
+      <div
+        role="button"
+        tabIndex="0"
+        onClick={() => toggleFacet(undefined)}
+        onKeyPress={(e) => {
+          if (e.which === 13) {
+            toggleFacet(undefined);
+          }
+        }}
+        style={{ display: 'inline-block' }}
+      >
+        <h3 className="facet__header">{state.config.facetTitle}</h3>
+      </div>
+    );
+
+    return (
+      <div className="facet__container">
+        <CSSTransition
+          transitionName="swoop"
+          transitionEnterTimeout={300}
+          transitionLeaveTimeout={300}
+        >
+          {createDropdown()}
+        </CSSTransition>
+
+        <ToggleList
+          reduxState={state}
+          currentLevel={1}
+          showMoreFacets={showMoreFacets}
+          resetVisibleFacets={resetVisibleFacets}
+          toggleFacet={toggleFacet}
+          selectFacet={selectFacet}
+          unselectFacet={unselectFacet}
+        >
+          {header}
+        </ToggleList>
+      </div>
+    );
+  };
+
+  ContainerComponent.defaultProps = {};
+
+  ContainerComponent.propTypes = {
+    activeFacets: PropTypes.arrayOf(PropTypes.object).isRequired,
+    reduxState: PropTypes.shape({
+      config: PropTypes.object,
+      state: PropTypes.object,
+      pagination: PropTypes.object,
+      children: PropTypes.array,
+      facets: PropTypes.object,
+    }).isRequired,
+    showMoreFacets: PropTypes.func.isRequired,
+    resetVisibleFacets: PropTypes.func.isRequired,
+    toggleFacet: PropTypes.func.isRequired,
+    selectFacet: PropTypes.func.isRequired,
+    unselectFacet: PropTypes.func.isRequired,
+    submitFilter: PropTypes.func.isRequired,
+  };
+
+  const mapStateToProps = (state) => {
     return {
       reduxState: state,
-      activeFacets: Reducers.getActiveFacets(state, state.state.selected),
+      activeFacets: getActiveFacets(state, state.state.selected),
     };
-  }
+  };
 
   // ownProps contains the widget's actions object which has
   // overridden certain methods to be unique to the widget
-  function mapDispatchToProps(dispatch, ownProps) {
+  const mapDispatchToProps = (dispatch, ownProps) => {
     return {
       selectFacet: function(id) {
         dispatch(ownProps.actions.select_facet(id));
@@ -36,90 +158,7 @@ define([
         dispatch(ownProps.actions.submit_filter(logicOption));
       },
     };
-  }
+  };
 
-  var ContainerComponent = createReactClass({
-    createDropdown: function() {
-      // no dropdown if no selected facets!
-      if (this.props.activeFacets.length === 0) return '';
-
-      var arr;
-      var dropdownContent;
-
-      if (this.props.activeFacets.length > 25)
-        return (
-          <div className="facet__dropdown">
-            select no more than 25 facets at a time
-          </div>
-        );
-
-      if (this.props.activeFacets.length === 1) {
-        arr = this.props.reduxState.config.logicOptions.single;
-      } else {
-        arr = this.props.reduxState.config.logicOptions.multiple;
-      }
-
-      if (arr[0] == 'invalid choice')
-        return <div className="facet__dropdown">invalid choice!</div>;
-
-      return (
-        <div className="facet__dropdown">
-          <div className="facet__dropdown__title">
-            <b>{this.props.activeFacets.length}</b> selected
-          </div>
-          {arr.map(function(val) {
-            return (
-              <label key={val}>
-                <input
-                  type="radio"
-                  onChange={_.partial(this.props.submitFilter, val)}
-                />{' '}
-                {val}
-              </label>
-            );
-          }, this)}
-        </div>
-      );
-    },
-
-    render: function() {
-      var header = (
-        <h3
-          className="facet__header"
-          onClick={_.partial(this.props.toggleFacet, undefined)}
-        >
-          {this.props.reduxState.config.facetTitle}
-        </h3>
-      );
-
-      return (
-        <div className="facet__container">
-          <React.addons.CSSTransitionGroup
-            transitionName="swoop"
-            transitionEnterTimeout={300}
-            transitionLeaveTimeout={300}
-          >
-            {this.createDropdown()}
-          </React.addons.CSSTransitionGroup>
-
-          <ToggleList
-            reduxState={this.props.reduxState}
-            currentLevel={1}
-            showMoreFacets={this.props.showMoreFacets}
-            resetVisibleFacets={this.props.resetVisibleFacets}
-            toggleFacet={this.props.toggleFacet}
-            selectFacet={this.props.selectFacet}
-            unselectFacet={this.props.unselectFacet}
-          >
-            {header}
-          </ToggleList>
-        </div>
-      );
-    },
-  });
-
-  return ReactRedux.connect(
-    mapStateToProps,
-    mapDispatchToProps
-  )(ContainerComponent);
+  return connect(mapStateToProps, mapDispatchToProps)(ContainerComponent);
 });

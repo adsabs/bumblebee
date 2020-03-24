@@ -203,10 +203,6 @@ require.config({
       '//cdnjs.cloudflare.com/ajax/libs/clipboard.js/1.7.1/clipboard.min',
       'libs/clipboard/clipboard',
     ],
-    'create-react-class': [
-      '//cdn.jsdelivr.net/npm/create-react-class@15.6.2/create-react-class.min',
-      'libs/create-react-class/index',
-    ],
     d3: ['//cdnjs.cloudflare.com/ajax/libs/d3/3.4.6/d3.min', 'libs/d3/d3.min'],
     'd3-cloud': [
       '//cdnjs.cloudflare.com/ajax/libs/d3-cloud/1.2.5/d3.layout.cloud.min',
@@ -249,7 +245,7 @@ require.config({
       'libs/persist-js/src/persist',
     ],
     react: [
-      '//cdnjs.cloudflare.com/ajax/libs/react/15.6.1/react-with-addons.min',
+      '//unpkg.com/react@16/umd/react.production.min',
       'libs/react/index',
     ],
     'react-bootstrap': [
@@ -257,17 +253,18 @@ require.config({
       'libs/react-bootstrap/index',
     ],
     'react-dom': [
-      '//cdnjs.cloudflare.com/ajax/libs/react/15.6.1/react-dom.min',
+      '//unpkg.com/react-dom@16/umd/react-dom.production.min',
       'libs/react-dom/index',
     ],
     'react-prop-types': [
-      '//cdnjs.cloudflare.com/ajax/libs/prop-types/15.6.0/prop-types.min',
+      '//cdnjs.cloudflare.com/ajax/libs/prop-types/15.7.2/prop-types.min',
       'libs/react-prop-types/index',
     ],
     'react-redux': [
-      '//cdnjs.cloudflare.com/ajax/libs/react-redux/4.4.5/react-redux.min',
+      '//cdnjs.cloudflare.com/ajax/libs/react-redux/7.1.3/react-redux.min',
       'libs/react-redux/index',
     ],
+    'react-transition-group': 'libs/react-transition-group/index',
     recaptcha: 'js/plugins/recaptcha',
     reactify: 'js/plugins/reactify',
     redux: [
@@ -287,10 +284,6 @@ require.config({
       'libs/sprintf/sprintf',
     ],
     utils: 'js/utils',
-    reselect: [
-      '//cdnjs.cloudflare.com/ajax/libs/reselect/3.0.1/reselect.min',
-      'libs/reselect',
-    ],
     mocha: 'libs/mocha/mocha',
     chai: 'bower_components/chai/chai',
     sinon: 'https://cdnjs.cloudflare.com/ajax/libs/sinon.js/1.9.0/sinon.min',

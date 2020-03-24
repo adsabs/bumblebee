@@ -1,232 +1,260 @@
-define([
-  'react',
-  'underscore',
-  'd3',
-  'react-prop-types',
-  'create-react-class',
-], function(React, _, d3, PropTypes, createReactClass) {
-  // putting FacetCheckbox and ToggleList in one file
-  // since requirejs forbids circular imports and they import eachother
+define(['react', 'd3', 'react-prop-types'], function(React, d3, PropTypes) {
+  const format = (count) => {
+    return d3
+      .format('s')(count)
+      .replace(/\.\d{2,}/, function(m) {
+        return m.slice(0, 2);
+      })
+      .replace('.0', '');
+  };
 
-  var FacetCheckbox = createReactClass({
-    format: function(count) {
-      return d3
-        .format('s')(count)
-        .replace(/\.\d{2,}/, function(m) {
-          return m.slice(0, 2);
-        })
-        .replace('.0', '');
-    },
-
-    updateFacetSelect: function(e) {
+  const FacetCheckbox = ({
+    reduxState: state,
+    toggleFacet,
+    unselectFacet,
+    value,
+    currentLevel,
+    showMoreFacets,
+    resetVisibleFacets,
+    selectFacet,
+    hierarchical,
+    isChecked,
+    name,
+    count,
+    id,
+  }) => {
+    const updateFacetSelect = (e) => {
       if (e.target.checked) {
         // toggle open author hierarchical facets here, so users can see what the hierarchy means
-        this.props.selectFacet(this.props.id);
-        if (
-          this.props.reduxState &&
-          this.props.reduxState.config.hierMaxLevels === 2
-        ) {
-          this.props.toggleFacet(this.props.id, true);
+        selectFacet(id);
+        if (state && state.config.hierMaxLevels === 2) {
+          toggleFacet(id, true);
         }
       } else {
-        this.props.unselectFacet(this.props.id);
+        unselectFacet(id);
       }
-    },
+    };
 
-    render: function() {
-      let label = '';
-      if (this.props.reduxState) {
-        label = `facet-label__title_${this.props.reduxState.config.facetField}_${this.props.label}`;
-      }
-      var checkbox = (
-        <label className="facet-label">
-          <input
-            type="checkbox"
-            onChange={this.updateFacetSelect}
-            checked={this.props.isChecked}
-            aria-describedby={label}
-          />
-          &nbsp;
-          <span>
-            <span className="facet-label__title" id={label}>
-              {this.props.name}
-            </span>
-            <span className="facet-label__amount" title={this.props.count}>
-              {this.format(this.props.count)}
-            </span>
+    let label = '';
+    if (state) {
+      label = `facet-label__title_${state.config.facetField}_${label}`;
+    }
+    var checkbox = (
+      <label className="facet-label" htmlFor={label}>
+        <input
+          type="checkbox"
+          id={label}
+          onChange={updateFacetSelect}
+          checked={isChecked}
+          aria-describedby={label}
+        />
+        &nbsp;
+        <span>
+          <span className="facet-label__title" id={label}>
+            {name}
           </span>
-        </label>
-      );
-
-      if (this.props.hierarchical) {
-        return (
-          <ToggleList
-            id={this.props.value}
-            reduxState={this.props.reduxState}
-            currentLevel={this.props.currentLevel + 1}
-            showMoreFacets={this.props.showMoreFacets}
-            resetVisibleFacets={this.props.resetVisibleFacets}
-            toggleFacet={this.props.toggleFacet}
-            selectFacet={this.props.selectFacet}
-            unselectFacet={this.props.unselectFacet}
-          >
-            {checkbox}
-          </ToggleList>
-        );
-      }
-      return checkbox;
-    },
-    propTypes: {
-      isChecked: PropTypes.bool.isRequired,
-      name: PropTypes.string.isRequired,
-      count: PropTypes.number.isRequired,
-      reduxState: PropTypes.object,
-      currentLevel: PropTypes.number,
-      showMoreFacets: PropTypes.func,
-      resetVisibleFacets: PropTypes.func,
-      toggleFacet: PropTypes.func,
-      selectFacet: PropTypes.func,
-      unselectFacet: PropTypes.func,
-    },
-  });
-
-  var ToggleList = createReactClass({
-    render: function() {
-      var data =
-        this.props.currentLevel === 1
-          ? this.props.reduxState
-          : this.props.reduxState.facets[this.props.id];
-      var open = data.state.open;
-      var visible = data.state.visible;
-      var finished = data.pagination.finished || false;
-      var facets = _.values(
-        _.pick(this.props.reduxState.facets, data.children)
-      );
-
-      var stateMessage = '';
-      if (data.pagination.state === 'loading') {
-        stateMessage = <span>loading...</span>;
-      } else if (data.pagination.state === 'failure') {
-        stateMessage = (
-          <span>
-            <i className="icon-danger" />
-            request failed
+          <span className="facet-label__amount" title={count}>
+            {format(count)}
           </span>
-        );
-      } else if (data.pagination.state === 'success' && !facets.length) {
-        stateMessage = <span>no data retrieved</span>;
-      }
+        </span>
+      </label>
+    );
 
-      if (!facets.length) {
-        var list = <li />;
-      } else {
-        var list = facets.slice(0, visible).map(function(c, i) {
-          var props = {
-            isChecked:
-              this.props.reduxState.state.selected.indexOf(c.value) > -1,
-            name: c.name,
-            count: c.count,
-            hierarchical:
-              this.props.reduxState.config.hierMaxLevels >
-              this.props.currentLevel,
-            value: c.value,
-            id: c.value,
-            selectFacet: this.props.selectFacet,
-            unselectFacet: this.props.unselectFacet,
-            label: i,
-          };
-          // if it's hierarchical, pass down some more data so that the checkbox can instantiate its own toggleList
-          if (props.hierarchical) {
-            _.extend(
-              props,
-              _.pick(this.props, [
-                'showMoreFacets',
-                'resetVisibleFacets',
-                'toggleFacet',
-                'reduxState',
-                'currentLevel',
-              ])
-            );
-          }
-
-          return (
-            <li key={c.value}>
-              <FacetCheckbox {...props} />
-            </li>
-          );
-        }, this);
-      }
-
-      var showMore = !finished || facets.length > visible;
-      var moreButtonClasses = showMore
-        ? 'btn btn-default btn-xs facet__pagination-button'
-        : ' hidden';
-      var lessButtonClasses =
-        visible > 5
-          ? 'btn btn-default btn-xs facet__pagination-button'
-          : 'hidden';
-
-      var facetList;
-      // level will be either 1 or 2
-      var parentClass =
-        this.props.currentLevel > 1
-          ? 'facet__list-container facet__list-container--child'
-          : 'facet__list-container';
-
-      if (open) {
-        facetList = (
-          <div className={parentClass}>
-            <ul className="facet__list">{list}</ul>
-            <div className="facet__state-message">{stateMessage}</div>
-            <div className="facet__pagination-container">
-              <button
-                className={lessButtonClasses}
-                onClick={_.partial(
-                  this.props.resetVisibleFacets,
-                  this.props.id
-                )}
-              >
-                less
-              </button>
-              <button
-                className={moreButtonClasses}
-                onClick={_.partial(this.props.showMoreFacets, this.props.id)}
-              >
-                more
-              </button>
-            </div>
-          </div>
-        );
-      }
-
+    if (hierarchical) {
       return (
-        <div>
-          <div className="facet__toggle">
-            <i
-              className={
-                open
-                  ? 'facet__icon facet__icon--open'
-                  : 'facet__icon facet__icon--closed'
-              }
-              onClick={_.partial(this.props.toggleFacet, this.props.id, !open)}
-            />{' '}
-            {this.props.children}
+        <ToggleList
+          id={value}
+          reduxState={state}
+          currentLevel={currentLevel + 1}
+          showMoreFacets={showMoreFacets}
+          resetVisibleFacets={resetVisibleFacets}
+          toggleFacet={toggleFacet}
+          selectFacet={selectFacet}
+          unselectFacet={unselectFacet}
+        >
+          {checkbox}
+        </ToggleList>
+      );
+    }
+    return checkbox;
+  };
+
+  FacetCheckbox.propTypes = {
+    isChecked: PropTypes.bool.isRequired,
+    name: PropTypes.string.isRequired,
+    count: PropTypes.number.isRequired,
+    reduxState: PropTypes.shape({
+      config: PropTypes.object,
+      state: PropTypes.object,
+      pagination: PropTypes.object,
+      children: PropTypes.array,
+      facets: PropTypes.object,
+    }).isRequired,
+    currentLevel: PropTypes.number,
+    showMoreFacets: PropTypes.func,
+    resetVisibleFacets: PropTypes.func,
+    toggleFacet: PropTypes.func,
+    selectFacet: PropTypes.func,
+    unselectFacet: PropTypes.func,
+    id: PropTypes.string,
+  };
+
+  const ToggleList = ({
+    reduxState: state,
+    currentLevel,
+    children,
+    selectFacet,
+    unselectFacet,
+    showMoreFacets,
+    resetVisibleFacets,
+    toggleFacet,
+    id,
+  }) => {
+    const data = currentLevel === 1 ? state : state.facets[id];
+    const open = data.state.open;
+    const visible = data.state.visible;
+    const finished = data.pagination.finished || false;
+    const facets = _.values(_.pick(state.facets, data.children));
+
+    let stateMessage = '';
+    if (data.pagination.state === 'loading') {
+      stateMessage = <span>loading...</span>;
+    } else if (data.pagination.state === 'failure') {
+      stateMessage = (
+        <span>
+          <i className="icon-danger" />
+          request failed
+        </span>
+      );
+    } else if (data.pagination.state === 'success' && !facets.length) {
+      stateMessage = <span>no data retrieved</span>;
+    }
+
+    let list = null;
+    if (!facets.length) {
+      list = <li />;
+    } else {
+      list = facets.slice(0, visible).map(function(c, i) {
+        let checkboxProps = {
+          isChecked: state.state.selected.indexOf(c.value) > -1,
+          name: c.name,
+          count: c.count,
+          hierarchical: state.config.hierMaxLevels > currentLevel,
+          value: c.value,
+          id: c.value,
+          selectFacet: selectFacet,
+          unselectFacet: unselectFacet,
+          label: i,
+        };
+        // if it's hierarchical, pass down some more data so that the checkbox can instantiate its own toggleList
+        if (checkboxProps.hierarchical) {
+          checkboxProps = {
+            ...checkboxProps,
+            showMoreFacets,
+            resetVisibleFacets,
+            toggleFacet,
+            reduxState: state,
+            currentLevel,
+          };
+        }
+
+        return (
+          <li key={c.value}>
+            {/* eslint-disable-next-line react/jsx-props-no-spreading */}
+            <FacetCheckbox {...checkboxProps} />
+          </li>
+        );
+      }, this);
+    }
+
+    var showMore = !finished || facets.length > visible;
+    var moreButtonClasses = showMore
+      ? 'btn btn-default btn-xs facet__pagination-button'
+      : ' hidden';
+    var lessButtonClasses =
+      visible > 5
+        ? 'btn btn-default btn-xs facet__pagination-button'
+        : 'hidden';
+
+    var facetList;
+    // level will be either 1 or 2
+    var parentClass =
+      currentLevel > 1
+        ? 'facet__list-container facet__list-container--child'
+        : 'facet__list-container';
+
+    if (open) {
+      facetList = (
+        <div className={parentClass}>
+          <ul className="facet__list">{list}</ul>
+          <div className="facet__state-message">{stateMessage}</div>
+          <div className="facet__pagination-container">
+            <button
+              type="button"
+              className={lessButtonClasses}
+              onClick={() => resetVisibleFacets(id)}
+            >
+              less
+            </button>
+            <button
+              type="button"
+              className={moreButtonClasses}
+              onClick={() => showMoreFacets(id)}
+            >
+              more
+            </button>
           </div>
-          {facetList}
         </div>
       );
-    },
+    }
 
-    propTypes: {
-      reduxState: PropTypes.object.isRequired,
-      currentLevel: PropTypes.number.isRequired,
-      showMoreFacets: PropTypes.func.isRequired,
-      resetVisibleFacets: PropTypes.func.isRequired,
-      toggleFacet: PropTypes.func.isRequired,
-      selectFacet: PropTypes.func.isRequired,
-      unselectFacet: PropTypes.func.isRequired,
-    },
-  });
+    return (
+      <div>
+        <div className="facet__toggle">
+          <i
+            role="button"
+            aria-label="facet toggle"
+            tabIndex="0"
+            className={
+              open
+                ? 'facet__icon facet__icon--open'
+                : 'facet__icon facet__icon--closed'
+            }
+            onClick={() => toggleFacet(id, !open)}
+            onKeyPress={(e) => {
+              if (e.which === 13) {
+                toggleFacet(id, !open);
+              }
+            }}
+          />{' '}
+          {children}
+        </div>
+        {facetList}
+      </div>
+    );
+  };
+
+  ToggleList.defaultProps = {
+    children: [],
+  };
+
+  ToggleList.propTypes = {
+    reduxState: PropTypes.shape({
+      config: PropTypes.object,
+      state: PropTypes.object,
+      pagination: PropTypes.object,
+      children: PropTypes.array,
+      facets: PropTypes.object,
+    }).isRequired,
+    children: PropTypes.children,
+    currentLevel: PropTypes.number.isRequired,
+    showMoreFacets: PropTypes.func.isRequired,
+    resetVisibleFacets: PropTypes.func.isRequired,
+    toggleFacet: PropTypes.func.isRequired,
+    selectFacet: PropTypes.func.isRequired,
+    unselectFacet: PropTypes.func.isRequired,
+    id: PropTypes.string.isRequired,
+  };
 
   return ToggleList;
 });
