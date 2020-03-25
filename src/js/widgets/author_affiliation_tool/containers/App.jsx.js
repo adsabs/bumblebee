@@ -251,7 +251,10 @@ define([
                     >
                       {/* If exporting, show a loading icon in the button */}
                       {exporting ? (
-                        <i className="fa fa-spinner fa-fw fa-spin" />
+                        <i
+                          className="fa fa-spinner fa-fw fa-spin"
+                          aria-hidden="true"
+                        />
                       ) : (
                         'Export'
                       )}

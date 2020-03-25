@@ -324,7 +324,7 @@ define([
       this.$('button[type=submit]').each(function() {
         var $el = $(this);
         var currHtml = $el.html();
-        $el.html('<i class="icon-loading"/>  Loading...');
+        $el.html('<i class="icon-loading" aria-hidden="true"/>  Loading...');
         setTimeout(function() {
           $el.html(currHtml);
         }, 3000);
@@ -472,7 +472,7 @@ define([
     onShow: function() {
       // clear the loading button
       this.view.$('button[type=submit]').each(function() {
-        $(this).html('<i class="fa fa-search"></i> Search');
+        $(this).html('<i class="fa fa-search" aria-hidden="true"></i> Search');
       });
       // set focus to author field
       this.setFocus('#classic-author');

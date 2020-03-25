@@ -371,13 +371,17 @@ define([
         function beforeSend() {
           $form
             .find('button[type=submit]')
-            .html('<i class="icon-loading"></i> Sending form...');
+            .html(
+              '<i class="icon-loading" aria-hidden="true"></i> Sending form...'
+            );
         }
 
         function done(data) {
           $form
             .find('button[type=submit]')
-            .html('<i class="icon-success"></i> Message sent!');
+            .html(
+              '<i class="icon-success" aria-hidden="true"></i> Message sent!'
+            );
 
           setTimeout(function() {
             $modal.modal('hide');
@@ -388,7 +392,9 @@ define([
           $form
             .find('button[type=submit]')
             .addClass('btn-danger')
-            .html('<i class="icon-danger"></i> There was an error!');
+            .html(
+              '<i class="icon-danger" aria-hidden="true"></i> There was an error!'
+            );
         }
 
         var request = new ApiRequest({

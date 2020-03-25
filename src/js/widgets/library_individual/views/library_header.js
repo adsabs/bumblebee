@@ -115,7 +115,9 @@ define([
       // Pass empty string if undefined
       data[this.currentEditField] = val;
       this.trigger('updateVal', data);
-      $(e.target).html('<i class="fa fa-spinner fa-pulse"></i>');
+      $(e.target).html(
+        '<i class="fa fa-spinner fa-pulse" aria-hidden="true"></i>'
+      );
       return false;
     },
 

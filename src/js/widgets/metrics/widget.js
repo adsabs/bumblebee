@@ -813,7 +813,8 @@ define([
 
     signalShowAll: function() {
       this.$('.show-all').html(
-        '<i class="icon-loading"/>&nbsp;&nbsp;' + this.$('.show-all').html()
+        '<i class="icon-loading" aria-hidden="true"/>&nbsp;&nbsp;' +
+          this.$('.show-all').html()
       );
       this.trigger('show-all');
     },

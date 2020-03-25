@@ -124,8 +124,8 @@ define(['config/discovery.config', 'module'], function(config, module) {
 
             $sidebar.toggleClass('show');
             var text = $sidebar.hasClass('show')
-              ? '  <i class="fa fa-close"></i> Close Menu'
-              : ' <i class="fa fa-bars"></i> Show Menu';
+              ? '  <i class="fa fa-close" aria-hidden="true"></i> Close Menu'
+              : ' <i class="fa fa-bars" aria-hidden="true"></i> Show Menu';
             $button.html(text);
           });
 

@@ -95,7 +95,7 @@ hideCloseButton=true widgetLoadingSize="big"}} {{else if error}}
   <dd>
     <span>
       <a href="{{doi.href}}" target="_blank" rel="noopener">{{doi.doi}}</a>
-      <i class="fa fa-external-link"></i>
+      <i class="fa fa-external-link" aria-hidden="true"></i>
     </span>
   </dd>
   {{/if}} {{#if arxiv}}
@@ -103,7 +103,7 @@ hideCloseButton=true widgetLoadingSize="big"}} {{else if error}}
   <dd>
     <span>
       <a href="{{arxiv.href}}" target="_blank" rel="noopener">{{arxiv.id}}</a>
-      <i class="fa fa-external-link"></i>
+      <i class="fa fa-external-link" aria-hidden="true"></i>
     </span>
   </dd>
   {{/if}}
@@ -115,8 +115,10 @@ hideCloseButton=true widgetLoadingSize="big"}} {{else if error}}
     </a>
     <i
       class="icon-help"
+      aria-hidden="true"
       data-toggle="popover"
       data-container="body"
+      aria-hidden="true"
       data-content="The bibcode is assigned by the ADS as a unique identifier for the paper."
     ></i>
   </dd>
@@ -153,8 +155,8 @@ hideCloseButton=true widgetLoadingSize="big"}} {{else if error}}
   title="Provide feedback or suggest corrections"
 >
   <span class="fa-stack">
-    <i class="fa fa-comment-o fa-stack-2x"></i>
-    <i class="fa fa-exclamation fa-stack-1x"></i>
+    <i class="fa fa-comment-o fa-stack-2x" aria-hidden="true"></i>
+    <i class="fa fa-exclamation fa-stack-1x" aria-hidden="true"></i>
   </span>
   Feedback/Corrections?
 </a>

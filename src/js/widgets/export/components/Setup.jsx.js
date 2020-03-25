@@ -47,7 +47,10 @@ define(['react', 'react-prop-types'], function(React, ReactPropTypes) {
         </div>
         {disabled && (
           <div className="col-sm-2">
-            <div className="export-loading-icon fa fa-spinner fa-spin fa-2x" />
+            <div
+              className="export-loading-icon fa fa-spinner fa-spin fa-2x"
+              aria-hidden="true"
+            />
           </div>
         )}
       </div>
@@ -66,7 +69,10 @@ define(['react', 'react-prop-types'], function(React, ReactPropTypes) {
                       rel="noopener"
                       href="https://adsabs.github.io/help/actions/export"
                     >
-                      <i className="fa fa-info-circle fa-invert" />
+                      <i
+                        className="fa fa-info-circle fa-invert"
+                        aria-hidden="true"
+                      />
                     </a>
                   </span>
                   <span style={{ marginLeft: 5 }}>
@@ -74,7 +80,7 @@ define(['react', 'react-prop-types'], function(React, ReactPropTypes) {
                       title="manage custom formats"
                       href="/#user/settings/application"
                     >
-                      <i className="fa fa-cog fa-invert" />
+                      <i className="fa fa-cog fa-invert" aria-hidden="true" />
                     </a>
                   </span>
                 </label>
@@ -109,7 +115,10 @@ define(['react', 'react-prop-types'], function(React, ReactPropTypes) {
                       rel="noopener"
                       href="https://adsabs.github.io/help/actions/export"
                     >
-                      <i className="fa fa-info-circle fa-invert" />
+                      <i
+                        className="fa fa-info-circle fa-invert"
+                        aria-hidden="true"
+                      />
                     </a>
                   </span>
                 </label>

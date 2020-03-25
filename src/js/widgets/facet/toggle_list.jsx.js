@@ -122,7 +122,7 @@ define(['react', 'd3', 'react-prop-types'], function(React, d3, PropTypes) {
     } else if (data.pagination.state === 'failure') {
       stateMessage = (
         <span>
-          <i className="icon-danger" />
+          <i className="icon-danger" aria-hidden="true" />
           request failed
         </span>
       );

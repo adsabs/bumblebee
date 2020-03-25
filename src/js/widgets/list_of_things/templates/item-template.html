@@ -198,7 +198,7 @@
 
             {{#if orcid.pending}}
             <button class="btn btn-default btn-sm s-orcid-loading" aria-disabled="true">
-                <i class="fa fa-lg fa-spinner fa-pulse"></i> Working...
+                <i class="fa fa-lg fa-spinner fa-pulse" aria-hidden="true"></i> Working...
             </button>
             {{else}}
             <!-- if provenance, it has been added by us or someone else-->
@@ -223,7 +223,7 @@
                             {{#compare this.action 'orcid-delete'}}
                             icon-clear-c
                             {{/compare}}
-                            "></i>
+                            " aria-hidden="true"></i>
                                 {{this.title}}</a>
                             {{/each}}
                         </li>
@@ -231,7 +231,7 @@
                 </div>
 
                 {{#if source_name}}<span class="s-orcid-source">({{source_name}})</span>{{/if}}
-                <span class="text-success s-orcid-success pull-right"> <i class="icon-success"></i>&nbsp;In ORCID&nbsp;</span>
+                <span class="text-success s-orcid-success pull-right"> <i class="icon-success" aria-hidden="true"></i>&nbsp;In ORCID&nbsp;</span>
 
             </div>
 
@@ -272,7 +272,7 @@
                         {{/each}}
                     </ul>
                 {{else}}
-                  <span class="text-muted"><i class="fa fa-spinner fa-pulse"></i> Loading Highlights...</span>
+                  <span class="text-muted"><i class="fa fa-spinner fa-pulse" aria-hidden="true"></i> Loading Highlights...</span>
                 {{/if}}
         </div>
         {{/if}}

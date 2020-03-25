@@ -22,7 +22,7 @@ define(['clipboard', 'react', 'react-prop-types'], function(
           ref={(e) => (this.element = e)}
           data-clipboard-target={target}
         >
-          <i className="fa fa-copy fa-fw" />
+          <i className="fa fa-copy fa-fw" aria-hidden="true" />
           Copy to Clipboard
         </button>
       );

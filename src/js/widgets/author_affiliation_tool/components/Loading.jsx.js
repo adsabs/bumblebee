@@ -14,7 +14,7 @@ define(['react'], function(React) {
   const Loading = ({}) => (
     <div className="row text-center" role="alert" aria-busy>
       <div className="col-xs-12" style={style.icon}>
-        <i className="fa fa-spinner fa-spin" />
+        <i className="fa fa-spinner fa-spin" aria-hidden="true" />
       </div>
       <div className="col-xs-12" style={style.text}>
         Loading...

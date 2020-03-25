@@ -10,7 +10,7 @@
     {{#if loading}}
       <div class="row">
         <div class="col-sm-12 text-center">
-          <i class="icon-loading"></i> Loading...
+          <i class="icon-loading" aria-hidden="true"></i> Loading...
         </div>
       </div>
     {{else}}
@@ -30,12 +30,12 @@
         </div>
         <div class="help-block">
           <button id="change-link-server" class="btn btn-primary">
-            <i class="fa fa-cog"></i> Update
+            <i class="fa fa-cog" aria-hidden="true"></i> Update
           </button>
           <button id="clear-link-server"
             class="btn btn-link {{#if editing}} disabled {{/if}} {{#compare openURLName undefined}} disabled {{/compare}}">
             <span class="text-danger">
-              <i class="fa fa-trash"></i> Clear
+              <i class="fa fa-trash" aria-hidden="true"></i> Clear
             </span>
           </button>
         </div>
@@ -80,7 +80,7 @@
         <div class="row">
           <div class="col-md-8">
             <div class="h4">
-              <i class="fa fa-question-circle"></i>
+              <i class="fa fa-question-circle" aria-hidden="true"></i>
               What Is a Library Link Server?
             </div>
             <p>
@@ -89,7 +89,7 @@
               links to the fulltext will be provided when viewing a record in the ADS.
             </p>
             <p>
-              After your selection, look for the <span class="link-server-univ-icon"><strong>My Institution</strong> <i class="fa fa-university"></i></span>
+              After your selection, look for the <span class="link-server-univ-icon"><strong>My Institution</strong> <i class="fa fa-university" aria-hidden="true"></i></span>
               entry in the source list on an abstract page.
             </p>
             <p>
@@ -103,7 +103,7 @@
         <div class="row">
           <div class="col-md-8">
               <div class="h4">
-                <i class="fa fa-exclamation-triangle"></i>
+                <i class="fa fa-exclamation-triangle" aria-hidden="true"></i>
                 Institution Not Found?
               </div>
               <p>
@@ -130,7 +130,7 @@
 
   {{#if loading}}
   <p>
-    <i class="icon-loading"></i>
+    <i class="icon-loading" aria-hidden="true"></i>
     Loading...
   </p>
   {{else}}
@@ -179,7 +179,7 @@
       <br/>
       <div>
         <div class="h3">
-          <i class="fa fa-question-circle"></i>
+          <i class="fa fa-question-circle" aria-hidden="true"></i>
           What Is a Library Link Server?
         </div>
         <p>
@@ -188,7 +188,7 @@
           links to the fulltext will be provided when viewing a record in the ADS.
         </p>
         <p>
-          Look for the <span class="link-server-univ-icon"><strong>My Institution</strong> <i class="fa fa-university"></i></span>
+          Look for the <span class="link-server-univ-icon"><strong>My Institution</strong> <i class="fa fa-university" aria-hidden="true"></i></span>
           entry in the source list on the abstract page.
         </p>
         <p>

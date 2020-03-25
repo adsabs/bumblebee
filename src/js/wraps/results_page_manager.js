@@ -78,7 +78,7 @@ define([
       var ret = PageManagerController.prototype.show.apply(this, arguments);
       var self = this;
       var button =
-        '<a href="javascript:void(0);" class="back-button btn btn-sm btn-default"> <i class="fa fa-arrow-left"></i> Start New Search</a>';
+        '<a href="javascript:void(0);" class="back-button btn btn-sm btn-default"> <i class="fa fa-arrow-left" aria-hidden="true"></i> Start New Search</a>';
       var $btn = ret.$el.find('.s-back-button-container');
       $btn
         .empty()

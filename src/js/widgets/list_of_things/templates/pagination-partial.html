@@ -1,7 +1,7 @@
 <div class="row">
     <div class="col-sm-12 page-loading" style="text-align:center">
             {{#if loading}}
-            <i class="icon-loading"></i>&nbsp;Loading more papers...
+            <i class="icon-loading" aria-hidden="true"></i>&nbsp;Loading more papers...
             {{/if}}
     </div>
 </div>
@@ -29,16 +29,16 @@
         <div class="col-xs-6">
             <nav aria-label="pagination controls">
                 <ul class="pager">
-                    <li class="{{#unless pageData.previousPossible}} disabled {{/unless}}"><a href="javascript:void(0)" class="page-control previous-page"><i class="fa fa-chevron-circle-left"></i> prev</a></li>
-                    <li><input type="text" value="{{pageData.currentPage}}" class="form-control page-control" style="display:inline-block;width:60px" aria-label="set the current page"> of {{pageData.totalPages}}</li>
-                    <li class="{{#unless pageData.nextPossible}} disabled {{/unless}}"><a href="javascript:void(0)" class="page-control next-page">next <i class="fa fa-chevron-circle-right"></i></a></li>
+                    <li class="{{#unless pageData.previousPossible}} disabled {{/unless}}"><a href="javascript:void(0)" class="page-control previous-page"><i class="fa fa-chevron-circle-left" aria-hidden="true"></i> prev</a></li>
+                    <li><input type="text" value="{{pageData.currentPage}}" class="form-control page-control" style="display:inline-block;width:60px" aria-label="set the current page" aria-hidden="true"> of {{pageData.totalPages}}</li>
+                    <li class="{{#unless pageData.nextPossible}} disabled {{/unless}}"><a href="javascript:void(0)" class="page-control next-page">next <i class="fa fa-chevron-circle-right" aria-hidden="true"></i></a></li>
                 </ul>
             </nav>
 
         </div>
     </div>
     {{/if}}
-    <button class="btn btn-link" id="backToTopBtn">Top <i class="fa fa-caret-up"></i></button>
+    <button class="btn btn-link" id="backToTopBtn">Top <i class="fa fa-caret-up" aria-hidden="true"></i></button>
 </div>
 {{/unless}}
 {{/unless}}

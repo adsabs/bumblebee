@@ -30,17 +30,17 @@
         <div class="form-group has-feedback">
           <div class="input-group">
             {{#if bigquery}} {{#if libraryName}}
-            <div class="btn btn-xs btn-info bigquery-tag"><i class="fa fa-book" />&nbsp;<span>{{libraryName}}</span>&nbsp;<i class="fa fa-close fa-lg bigquery-close" title="click to remove" /></div>
+            <div class="btn btn-xs btn-info bigquery-tag"><i class="fa fa-book" aria-hidden="true"> />&nbsp;<span>{{libraryName}}</span>&nbsp;<i class="fa fa-close fa-lg bigquery-close" aria-hidden="true"> title="click to remove" /></div>
             {{else}}
-            <div class="btn btn-xs btn-info bigquery-tag"><i class="fa fa-list-ul" />&nbsp;&nbsp;Bulk query&nbsp;&nbsp;<i class="fa fa-close fa-lg bigquery-close" title="click to remove" /></div>
+            <div class="btn btn-xs btn-info bigquery-tag"><i class="fa fa-list-ul" aria-hidden="true"> />&nbsp;&nbsp;Bulk query&nbsp;&nbsp;<i class="fa fa-close fa-lg bigquery-close" aria-hidden="true"> title="click to remove" /></div>
             {{/if}}
             <input type="text" class="form-control q hasbigquery" name="q" autofocus aria-label="Start typing a query here to begin an ADS Search" autocomplete="off" value={{currentQueryVal}}>
-            <i class="icon-clear s-clear-control"></i> {{else}}
+            <i class="icon-clear s-clear-control" aria-hidden="true"></i> {{else}}
             <input type="text" class="form-control q" name="q" autofocus aria-label="Start typing a query here to begin an ADS Search" autocomplete="off" value={{currentQueryVal}}>
-            <i class="icon-clear s-clear-control"></i> {{/if}}
+            <i class="icon-clear s-clear-control" aria-hidden="true"></i> {{/if}}
             <span class="input-group-btn">
                       <button type="submit" class="btn btn-primary search-submit s-search-submit" aria-label="submit">
-                          <i class="fa fa-search"></i></button>
+                          <i class="fa fa-search" aria-hidden="true"></i></button>
                   </span>
 
           </div>
@@ -83,7 +83,7 @@
           <dt>publication</dt>
           <dd>
             <button class="text-link">bibstem:ApJ</button>
-            <i class="icon-help" data-toggle="tooltip" title="this field requires the bibstem, or journal abbreviation--try going to the 'Paper' tab above for an easy-to-use form version"></i>
+            <i class="icon-help" aria-hidden="true" data-toggle="tooltip" title="this field requires the bibstem, or journal abbreviation--try going to the 'Paper' tab above for an easy-to-use form version"></i>
           </dd>
         </dl>
       </div>
@@ -92,32 +92,32 @@
           <dt>citations</dt>
           <dd>
             <button class="text-link">citations(author:"huchra, j")</button>
-            <i class="icon-help" data-toggle="tooltip" title="finds all papers that cite a given set of papers"></i>
+            <i class="icon-help" aria-hidden="true" data-toggle="tooltip" title="finds all papers that cite a given set of papers"></i>
           </dd>
           <dt>references</dt>
           <dd>
             <button class="text-link">references(author:"huchra, j")</button>
-            <i class="icon-help" data-toggle="tooltip" title="finds all papers referenced by a given set of papers"></i>
+            <i class="icon-help" aria-hidden="true" data-toggle="tooltip" title="finds all papers referenced by a given set of papers"></i>
           </dd>
           <dt>reviews</dt>
           <dd>
             <button class="text-link">reviews("gamma-ray bursts")</button>
-            <i class="icon-help" data-toggle="tooltip" title="finds articles citing the most relevant papers on the topic being researched"></i>
+            <i class="icon-help" aria-hidden="true" data-toggle="tooltip" title="finds articles citing the most relevant papers on the topic being researched"></i>
           </dd>
           <dt style="padding-top: 0.6em;">refereed</dt>
           <dd style="border-top: solid 1px #e8e8e8; padding-top: 0.5em;">
             <button class="text-link">property:refereed</button>
-            <i class="icon-help" data-toggle="tooltip" title="limit to non-refereed papers by searching property:notrefereed"></i>
+            <i class="icon-help" aria-hidden="true" data-toggle="tooltip" title="limit to non-refereed papers by searching property:notrefereed"></i>
           </dd>
           <dt>astronomy</dt>
           <dd>
             <button class="text-link">database:astronomy</button>
-            <i class="icon-help" data-toggle="tooltip" title="limit to physics papers by searching database:physics"></i>
+            <i class="icon-help" aria-hidden="true" data-toggle="tooltip" title="limit to physics papers by searching database:physics"></i>
           </dd>
           <dt>OR</dt>
           <dd>
             <button class="text-link">abs:(planet OR star)</button>
-            <i class="icon-help" data-toggle="tooltip" title="default logic is AND, e.g. abs:(planet star) would be interpreted as abs:(planet AND star)"></i>
+            <i class="icon-help" aria-hidden="true" data-toggle="tooltip" title="default logic is AND, e.g. abs:(planet star) would be interpreted as abs:(planet AND star)"></i>
           </dd>
         </dl>
       </div>

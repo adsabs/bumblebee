@@ -144,7 +144,8 @@ define([
        * has to update its internal store of library metadata on successful import
        * */
       function importLibraries(endpoint, view) {
-        var working = '<i class="fa fa-lg fa-spinner fa-pulse"></i> Working...';
+        var working =
+          '<i class="fa fa-lg fa-spinner fa-pulse" aria-hidden="true"></i> Working...';
         view
           .$('button.import-all-libraries')
           .addClass('disabled')

@@ -1,58 +1,48 @@
 <div class="s-list-controls">
+  <div class="s-results-border-bottom">
+    <div class="col-sm-1"></div>
 
-    <div class="s-results-border-bottom">
+    <div class="col-sm-6"></div>
 
-        <div class="col-sm-1">
-        </div>
+    <div class="col-sm-4 sort-container"></div>
 
-        <div class="col-sm-6">
-        </div>
+    <div class="col-sm-1"></div>
+  </div>
 
-        <div class="col-sm-4 sort-container">
-        </div>
-
-        <div class="col-sm-1"></div>
-
-</div>
-
-<div class="s-list-title">
-
+  <div class="s-list-title">
     {{#if description}}
     <div>
-        <h4 class="s-list-description">{{description}}</h4>
+      <h4 class="s-list-description">{{description}}</h4>
     </div>
-    {{/if}}
-
-    {{#if title}}
+    {{/if}} {{#if title}}
     <div>
-        <h2 class="s-article-title">{{{title}}}</h2>
+      <h2 class="s-article-title">{{{title}}}</h2>
     </div>
     {{/if}}
 
     <!--citation widget should show info if [citations] and citation_count don't match-->
-    {{#compare queryOperator "citations"}}
-        {{#if citation_discrepancy }}
-        <div>
-           <i class="fa fa-exclamation-triangle"></i>
-            This list is missing <b>{{citation_discrepancy}}</b> records, which could not be matched to papers in ADS.
-        </div>
-        <br>
+    {{#compare queryOperator "citations"}} {{#if citation_discrepancy }}
+    <div>
+      <i class="fa fa-exclamation-triangle" aria-hidden="true"></i>
+      This list is missing <b>{{citation_discrepancy}}</b> records, which could
+      not be matched to papers in ADS.
+    </div>
+    <br />
+    {{/if}} {{/compare}} {{#if queryOperator}}
+    <div class="s-operator">
+      <a href="{{queryURL}}" class="btn btn-sm btn-inverse btn-primary-faded"
+        ><i class="fa fa-search" aria-hidden="true"></i> view this list in a
+        search results page</a
+      >
+    </div>
     {{/if}}
-    {{/compare}}
+  </div>
 
-    {{#if queryOperator}}
-        <div class="s-operator">
-            <a href="{{queryURL}}" class="btn btn-sm btn-inverse btn-primary-faded"><i class="fa fa-search"></i> view this list in a search results page</a>
-         </div>
-    {{/if}}
+  <ul
+    class="results-list  s-results-list list-unstyled s-display-block"
+    aria-label="list of results"
+  ></ul>
 
-</div>
-
-    <ul class="results-list  s-results-list list-unstyled s-display-block" aria-label="list of results"></ul>
-
-
-    {{#if pagination}}
-         {{> js/widgets/list_of_things/templates/pagination-partial}}
-    {{/if}}
-
+  {{#if pagination}} {{>
+  js/widgets/list_of_things/templates/pagination-partial}} {{/if}}
 </div>
