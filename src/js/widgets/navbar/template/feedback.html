@@ -1,74 +1,137 @@
 <div class="modal fade" id="feedback-modal">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                <p class="modal-title">
-                  <span class="btn-group" id="feedback-back-btn" style="display: none">
-                    <button class="btn btn-sm btn-default">
-                      <i class="fa fa-chevron-left"></i> Back
-                    </button>
-                  </span>
-                  <span id="feedback-modal-title">How may we help you?</span>
-                </p>
-            </div>
-            <div class="modal-body">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button
+          type="button"
+          class="close"
+          data-dismiss="modal"
+          aria-label="Close"
+        >
+          <span aria-hidden="true">&times;</span>
+        </button>
+        <p class="modal-title">
+          <span class="btn-group" id="feedback-back-btn" style="display: none">
+            <button class="btn btn-sm btn-default">
+              <i class="fa fa-chevron-left"></i> Back
+            </button>
+          </span>
+          <span id="feedback-modal-title">How may we help you?</span>
+        </p>
+      </div>
+      <div class="modal-body">
+        <div class="list-group" id="feedback-select-group">
+          <a
+            href="http://adsabs.harvard.edu/adsfeedback/submit_abstract.php"
+            id="feedback_submit_abstract_link"
+            class="list-group-item"
+            target="_blank"
+            rel="noopener"
+          >
+            <h4>Missing/Incorrect Record</h4>
+            <p>Submit a missing record or correct an existing record.</p>
+          </a>
+          <a
+            href="http://adsabs.harvard.edu/adsfeedback/submit_missing_references.php"
+            class="list-group-item"
+            target="_blank"
+            rel="noopener"
+          >
+            <h4>Missing References</h4>
+            <p>Submit missing references to an existing ADS record.</p>
+          </a>
+          <a
+            href="http://adsabs.harvard.edu/adsfeedback/submit_associated_references.php"
+            class="list-group-item"
+            target="_blank"
+            rel="noopener"
+          >
+            <h4>Associated Articles</h4>
+            <p>
+              Submit associated articles to an existing record (e.g. arXiv /
+              published paper).
+            </p>
+          </a>
+          <a
+            href="javascript:void(0);"
+            class="list-group-item"
+            id="open-general-feedback"
+          >
+            <h4>General Feedback</h4>
+            <p>Send your comments and suggestions for improvements.</p>
+          </a>
+        </div>
+        <form
+          id="feedback-general-form"
+          class="feedback-form"
+          style="display: none"
+        >
+          <input type="hidden" name="_subject" value="Bumblebee Feedback" />
+          <input type="hidden" name="feedback-type" value="feedback" />
 
-              <div class="list-group" id="feedback-select-group">
-                <a href="http://adsabs.harvard.edu/adsfeedback/submit_abstract.php" id="feedback_submit_abstract_link" class="list-group-item" target="_blank" rel="noopener">
-                  <h4>Missing/Incorrect Record</h4>
-                  <p>Submit a missing record or correct an existing record.</p>
-                </a>
-                <a href="http://adsabs.harvard.edu/adsfeedback/submit_missing_references.php" class="list-group-item" target="_blank" rel="noopener">
-                  <h4>Missing References</h4>
-                  <p>Submit missing references to an existing ADS record.</p>
-                </a>
-                <a href="http://adsabs.harvard.edu/adsfeedback/submit_associated_references.php" class="list-group-item" target="_blank" rel="noopener">
-                  <h4>Associated Articles</h4>
-                  <p>Submit associated articles to an existing record (e.g. arXiv / published paper).</p>
-                </a>
-                <a href="javascript:void(0);" class="list-group-item" id="open-general-feedback">
-                  <h4>General Feedback</h4>
-                  <p>Send your comments and suggestions for improvements.</p>
-                </a>
-              </div>
-              <form id="feedback-general-form" class="feedback-form" style="display: none">
-                <input type="hidden" name="_subject" value="Bumblebee Feedback" />
-                <input type="hidden" name="feedback-type" value="feedback" />
+          <input type="text" name="_gotcha" style="display:none" />
 
-                <input type="text" name="_gotcha" style="display:none" />
+          <div class="form-group half-width">
+            <label>
+              Name
+              <input
+                class="form-control"
+                type="text"
+                name="name"
+                required
+                autofocus
+              />
+            </label>
+          </div>
+          <div class="form-group half-width">
+            <label>
+              Email
+              <input
+                class="form-control"
+                type="email"
+                name="_replyto"
+                required
+              />
+            </label>
+          </div>
 
-                <div class="form-group half-width">
-                  <label> Name
-                      <input class="form-control" type="text" name="name" required autofocus>
-                  </label>
-                </div>
-                <div class="form-group half-width">
-                  <label> Email
-                    <input class="form-control" type="email" name="_replyto" required>
-                  </label>
-                </div>
+          <div class="form-group">
+            <label
+              >Feedback <br />
+              <textarea
+                rows="8"
+                cols="50"
+                name="comments"
+                required
+                style="min-width: 500px; min-height: 180px"
+              />
+            </label>
+          </div>
+          <div class="form-group">
+            <button class="btn btn-success" type="submit" value="Send">
+              Submit
+            </button>
+          </div>
 
-                <div class="form-group">
-                  <label>Feedback <br/>
-                    <textarea rows="8" cols="50" name="comments" required style="min-width: 500px; min-height: 180px"/>
-                  </label>
-                </div>
-                <div class="form-group">
-                    <button class="btn btn-success" type="submit" value="Send">Submit</button>
-                </div>
-
-                <div class="form-group">
-                    <div class="g-recaptcha"></div>
-                </div>
-                <div class="form-group">
-                  <p class="alert alert-info text-center">You can also reach us at <b>adshelp [at] cfa.harvard.edu</b></p>
-                </div>
-              </form>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-default" data-dismiss="modal">Close without submitting</button>
-            </div>
-        </div><!-- /.modal-content -->
-    </div><!-- /.modal-dialog -->
-</div><!-- /.modal -->
+          <div class="form-group">
+            <div class="g-recaptcha"></div>
+          </div>
+          <div class="form-group">
+            <p class="alert alert-info text-center">
+              You can also reach us at
+              <span class="s-text-bold">adshelp [at] cfa.harvard.edu</span>
+            </p>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">
+          Close without submitting
+        </button>
+      </div>
+    </div>
+    <!-- /.modal-content -->
+  </div>
+  <!-- /.modal-dialog -->
+</div>
+<!-- /.modal -->

@@ -3,34 +3,52 @@
     <div class="s-results-border-bottom">
       <div class="col-xs-1 s-checkbox-col">
         {{#unless loading}}
-          <label for="#select-all-docs" class="sr-only">
-              select all on this page
-          </label>
-          <input title="select all on this page" type="checkbox" id="select-all-docs"/>
+        <label for="select-all-docs" class="sr-only">
+          select all on this page
+        </label>
+        <input
+          title="select all on this page"
+          type="checkbox"
+          id="select-all-docs"
+        />
         {{/unless}}
       </div>
 
       <div class="col-xs-11">
         <div class="s-show-details-container">
-          {{#unless loading}}
-            {{#if showHighlights}}
-              {{#compare showHighlights "open"}}
-              <button class="btn  btn-primary  btn-sm show-highlights"> Hide highlights</button>
-              {{else}}
-              <button class="btn btn-primary btn-sm btn-inverse show-highlights"> Show highlights</button>
-              {{/compare}}
-            {{/if}}
-            {{#compare showAbstract "open"}}
-              <button class="btn show-abstract btn-sm btn-primary"> Hide abstracts</button>
-            {{else}}
-              <button class="btn show-abstract btn-sm btn-inverse btn-primary"> Show abstracts</button>
-            {{/compare}}
-            {{#if showSidebars}}
-            <button class="btn btn-sm btn-inverse btn-primary toggle-sidebars hidden-xs hidden-sm">Hide Sidebars</button>
-            {{else}}
-            <button class="btn btn-sm btn-primary toggle-sidebars hidden-xs hidden-sm">Show Sidebars</button>
-            {{/if}}
-            <button class="btn-sm btn-link pull-right" id="go-to-bottom">Go To Bottom</button>
+          {{#unless loading}} {{#if showHighlights}} {{#compare showHighlights
+          "open"}}
+          <button class="btn  btn-primary  btn-sm show-highlights">
+            Hide highlights
+          </button>
+          {{else}}
+          <button class="btn btn-primary btn-sm btn-inverse show-highlights">
+            Show highlights
+          </button>
+          {{/compare}} {{/if}} {{#compare showAbstract "open"}}
+          <button class="btn show-abstract btn-sm btn-primary">
+            Hide abstracts
+          </button>
+          {{else}}
+          <button class="btn show-abstract btn-sm btn-inverse btn-primary">
+            Show abstracts
+          </button>
+          {{/compare}} {{#if showSidebars}}
+          <button
+            class="btn btn-sm btn-inverse btn-primary toggle-sidebars hidden-xs hidden-sm"
+          >
+            Hide Sidebars
+          </button>
+          {{else}}
+          <button
+            class="btn btn-sm btn-primary toggle-sidebars hidden-xs hidden-sm"
+          >
+            Show Sidebars
+          </button>
+          {{/if}}
+          <button class="btn-sm btn-link pull-right" id="go-to-bottom">
+            Go To Bottom
+          </button>
           {{/unless}}
         </div>
       </div>
@@ -38,15 +56,17 @@
   </div>
 
   <div class="row">
-      <h2 class="sr-only">Search Results</h2>
-      {{#if title}}
-        <div class="col-sm-12">
-          <h2 class="s-article-title">{{{title}}}</h2>
-        </div>
-      {{/if}}
-      <ul class="col-sm-12 results-list  s-results-list list-unstyled s-display-block" aria-label="list of results"></ul>
+    <h2 class="sr-only">Search Results</h2>
+    {{#if title}}
+    <div class="col-sm-12">
+      <h2 class="s-article-title">{{{title}}}</h2>
+    </div>
+    {{/if}}
+    <ul
+      class="col-sm-12 results-list  s-results-list list-unstyled s-display-block"
+      aria-label="list of results"
+    ></ul>
   </div>
-  {{#if pagination}}
-      {{> js/widgets/list_of_things/templates/pagination-partial}}
-  {{/if}}
+  {{#if pagination}} {{>
+  js/widgets/list_of_things/templates/pagination-partial}} {{/if}}
 </div>

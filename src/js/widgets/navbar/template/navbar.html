@@ -10,7 +10,7 @@
             </button>
             {{#unless hourly}}
             <a class="navbar-brand s-navbar-brand" href="#"><img class="s-ads-icon" src="/styles/img/transparent_logo.svg" alt="ads icon"/>
-                <h1> <b>ads</b></h1>
+                <h1 style="font-weight: bold;">ads</h1>
             </a>
             {{else}}
             <div class="s-hourly-warning">
@@ -57,7 +57,7 @@
                     <ul class="dropdown-menu" role="menu">
                         <li class="no-hover-style">
                             {{#if orcidLastName}} <h4> Signed in to ORCID as <br/> <strong>{{orcidFirstName}} {{orcidLastName}}</strong></h4> {{/if}}
-                            <div class="s-orcid-mode-label"><b>ORCID Mode</b></div>
+                            <div class="s-orcid-mode-label" style="font-weight: bold;">ORCID Mode</div>
                             <div class="s-orcid-label-container">
                                 off
                                 <div class="switch">
@@ -97,7 +97,7 @@
                     <ul class="dropdown-menu" role="menu">
                         <li class="no-hover-style">
                             {{#if orcidLastName}} <h4> Signed in to ORCID as <br/> <strong>{{orcidFirstName}} {{orcidLastName}}</strong></h4> {{/if}}
-                            <div class="s-orcid-mode-label"><b>ORCID Mode</b></div>
+                            <div class="s-orcid-mode-label" style="font-weight: bold;">ORCID Mode</div>
                             <div class="s-orcid-label-container">
                                 off
                                 <div class="switch clearfix">
@@ -169,7 +169,7 @@
                      <i class="fa fa-user"></i> Account <span class="caret"></span>
                     </button>
                     <ul class="dropdown-menu" role="menu">
-                        <li class="no-hover-style" style="padding:15px 10px;">You are signed in as <br/> <b>{{currentUser}}</b></li>
+                        <li class="no-hover-style" style="padding:15px 10px;">You are signed in as <br/> <span class="s-text-bold">{{currentUser}}</span></li>
                         <li ><a href="#user/home"> <i class="fa fa-user"></i> My Home Page</a></li>
                         <li><a href="#user/libraries"> <i class="fa fa-book"></i> ADS Libraries</a></li>
                         <li><a href="#user/settings/librarylink"> <i class="fa fa-cog"></i> Customize Settings</a></li>

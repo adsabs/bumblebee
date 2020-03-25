@@ -1,49 +1,56 @@
-<select class="quick-add-dropdown">
-<optgroup label="fields">
-  <option value="abs" data-field="abs">abstract</option>
-  <option value="abstract">abstract only</option>
-  <option value="ack">acknowledgements</option>
-  <option value="aff">affiliation</option>
-  <option value="arxiv_class">arXiv category</option>
-  <option value="author_count">author count</option>
-  <option value="author" data-field="author">author</option>
-  <option value="bibcode">bibcode</option>
-  <option value="bibgroup">bibliographic group</option>
-  <option value="bibstem">bib abbrev, e.g. ApJ</option>
-  <option value="body">body of article</option>
-  <option value="data">data archive</option>
-  <option value="collection">collection</option>
-  <option value="citation_count">citation count</option>
-  <option value="doctype">doctype</option>
-  <option value="doi">doi</option>
-  <option value="entdate" data-default-value="[2000-01-01 TO 2010-01-01]">entdate</option>
-  <option value="first-author" data-field="first-author">first author</option>
-  <option value="full" data-field="full">fulltext</option>
-  <option value="identifier">identifier</option>
-  <option value="keyword">keyword</option>
-  <option value="object">object</option>
-  <option value="orcid">orcid</option>
-  <option value="page">page</option>
-  <option value="property">property</option>
-  <option value="pub">publication full name</option>
-  <option value="pubdate" data-default-value="[2000-01 TO 2010-01]">date published</option>
-  <option value="title">title</option>
-  <option value="volume">volume</option>
-  <option value="year" data-field="year">year</option>
-</optgroup>
-<optgroup label="operators">
-  <option value="citations">citations()</option>
-  <option value="pos">pos()</option>
-  <option value="references">references()</option>
-  <option value="reviews">reviews()</option>
-  <option value="similar">similar()</option>
-  <option value="topn">topn()</option>
-  <option value="trending">trending()</option>
-  <option value="useful">useful()</option>
-</optgroup>
-<optgroup label="special characters">
-  <option value="?">single wildcard: ?</option>
-  <option value="*">wildcard: *</option>
-  <option value="=">exact match: =</option>
-</optgroup>
+<label for="quick-add-dropdown" class="sr-only"
+  >Select a field or operator</label
+>
+<select id="quick-add-dropdown" class="quick-add-dropdown">
+  <optgroup label="fields">
+    <option value="abs" data-field="abs">abstract</option>
+    <option value="abstract">abstract only</option>
+    <option value="ack">acknowledgements</option>
+    <option value="aff">affiliation</option>
+    <option value="arxiv_class">arXiv category</option>
+    <option value="author_count">author count</option>
+    <option value="author" data-field="author">author</option>
+    <option value="bibcode">bibcode</option>
+    <option value="bibgroup">bibliographic group</option>
+    <option value="bibstem">bib abbrev, e.g. ApJ</option>
+    <option value="body">body of article</option>
+    <option value="data">data archive</option>
+    <option value="collection">collection</option>
+    <option value="citation_count">citation count</option>
+    <option value="doctype">doctype</option>
+    <option value="doi">doi</option>
+    <option value="entdate" data-default-value="[2000-01-01 TO 2010-01-01]"
+      >entdate</option
+    >
+    <option value="first-author" data-field="first-author">first author</option>
+    <option value="full" data-field="full">fulltext</option>
+    <option value="identifier">identifier</option>
+    <option value="keyword">keyword</option>
+    <option value="object">object</option>
+    <option value="orcid">orcid</option>
+    <option value="page">page</option>
+    <option value="property">property</option>
+    <option value="pub">publication full name</option>
+    <option value="pubdate" data-default-value="[2000-01 TO 2010-01]"
+      >date published</option
+    >
+    <option value="title">title</option>
+    <option value="volume">volume</option>
+    <option value="year" data-field="year">year</option>
+  </optgroup>
+  <optgroup label="operators">
+    <option value="citations">citations()</option>
+    <option value="pos">pos()</option>
+    <option value="references">references()</option>
+    <option value="reviews">reviews()</option>
+    <option value="similar">similar()</option>
+    <option value="topn">topn()</option>
+    <option value="trending">trending()</option>
+    <option value="useful">useful()</option>
+  </optgroup>
+  <optgroup label="special characters">
+    <option value="?">single wildcard: ?</option>
+    <option value="*">wildcard: *</option>
+    <option value="=">exact match: =</option>
+  </optgroup>
 </select>
