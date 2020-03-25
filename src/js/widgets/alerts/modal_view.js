@@ -23,9 +23,16 @@ define([
       // this will prevent creation of infinite modals at the end of the document as before
       if (!$('#modal-alert-content').length) {
         // append to end of document
-        $('body').append(
-          '<div class="modal fade" id="alert-modal" tabindex="-1" role="dialog" aria-labelledby="alert-modal-label" aria-hidden="true"></div>'
-        );
+        $('body').append(() => {
+          let out = '';
+          if ($('#alert-modal-label').length === 0) {
+            out += '<div id="alert-modal-label">Alert</div>';
+          }
+
+          out +=
+            '<div class="modal fade" id="alert-modal" tabindex="-1" role="dialog" aria-labelledby="alert-modal-label" aria-hidden="true"></div>';
+          return out;
+        });
         this.setElement($('#alert-modal')[0]);
       }
 
