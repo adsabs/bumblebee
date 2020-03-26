@@ -34,9 +34,10 @@
             {{else}}
             <div class="btn btn-xs btn-info bigquery-tag"><i class="fa fa-list-ul" aria-hidden="true"> />&nbsp;&nbsp;Bulk query&nbsp;&nbsp;<i class="fa fa-close fa-lg bigquery-close" aria-hidden="true"> title="click to remove" /></div>
             {{/if}}
-            <input type="text" class="form-control q hasbigquery" name="q" autofocus aria-label="Start typing a query here to begin an ADS Search" autocomplete="off" value={{currentQueryVal}}>
+            <label for="query-search-input" clas="sr-only">ADS search</label>
+            <input type="text" class="form-control q hasbigquery" name="q" id="query-search-input" autofocus aria-label="Start typing a query here to begin an ADS Search" autocomplete="off" value={{currentQueryVal}}>
             <i class="icon-clear s-clear-control" aria-hidden="true"></i> {{else}}
-            <input type="text" class="form-control q" name="q" autofocus aria-label="Start typing a query here to begin an ADS Search" autocomplete="off" value={{currentQueryVal}}>
+            <input type="text" class="form-control q" name="q" autofocus id="query-search-input" aria-label="Start typing a query here to begin an ADS Search" autocomplete="off" value={{currentQueryVal}}>
             <i class="icon-clear s-clear-control" aria-hidden="true"></i> {{/if}}
             <span class="input-group-btn">
                       <button type="submit" class="btn btn-primary search-submit s-search-submit" aria-label="submit">

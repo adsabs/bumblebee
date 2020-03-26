@@ -3,7 +3,7 @@ define([
   'hbs!js/widgets/facet/graph-facet/templates/year-graph-legend',
   'marionette',
   'jquery-ui',
-], function(BaseGraphView, legendTemplate, Marionette, $ui) {
+], function(BaseGraphView, legendTemplate, Marionette) {
   var YearGraphView = BaseGraphView.extend({
     bins: 10,
 
@@ -23,7 +23,7 @@ define([
         .style('text-anchor', 'end')
         .attr('dx', '-.8em')
         .attr('dy', '-1.1em')
-        .attr('transform', function(d) {
+        .attr('transform', function() {
           return 'rotate(-65)';
         });
     },
@@ -38,10 +38,12 @@ define([
       var yAxis;
       var chart;
       var bar;
+      var maxVal;
       var standardFormatter = d3.format('s');
       data = _.clone(this.model.get('graphData'));
       data = this.binData(data, this.bins);
-      (xLabels = _.pluck(data, 'x')), (maxVal = d3.max(_.pluck(data, 'y')));
+      xLabels = _.pluck(data, 'x');
+      maxVal = d3.max(_.pluck(data, 'y'));
       x = d3.scale
         .ordinal()
         .domain(xLabels)
@@ -175,7 +177,7 @@ define([
       if (data.length <= binNum) {
         this.binSize = 1;
 
-        data = _.map(data, function(d, i) {
+        data = _.map(data, function(d) {
           return {
             x: '' + d.x,
             y: d.y,
@@ -203,14 +205,14 @@ define([
       binnedX = [];
       binnedY = [];
 
-      for (var i = 0; i < binNum; i++) {
+      for (var i = 0; i < binNum; i += 1) {
         indexList.push(binSize);
       }
       if (extraBar) {
         indexList.push(extraBar);
       }
 
-      _.each(indexList, function(d, i) {
+      _.each(indexList, function(d) {
         var totalCount = 0;
         var refCount = 0;
         var dateRange = [];
@@ -227,7 +229,7 @@ define([
         binnedY.push({ totalCount: totalCount, refCount: refCount });
       });
 
-      binnedX = _.map(binnedX, function(d, i) {
+      binnedX = _.map(binnedX, function(d) {
         if (d.length > 1) {
           return {
             x: d[0] + '-' + d[d.length - 1],
@@ -263,6 +265,7 @@ define([
       var xAxis;
       var yAxis;
       var bar;
+      var maxVal;
       data = _.clone(this.model.get('graphData'));
 
       /* checking : do we need to signal
@@ -279,7 +282,7 @@ define([
       }
 
       // now getting rid of anything outside of the new bounds
-      data = _.filter(data, function(d, i) {
+      data = _.filter(data, function(d) {
         return d.x >= val1 && d.x <= val2;
       });
 
@@ -291,7 +294,8 @@ define([
         });
       }
 
-      (xLabels = _.pluck(data, 'x')), (maxVal = d3.max(_.pluck(data, 'y')));
+      xLabels = _.pluck(data, 'x');
+      maxVal = d3.max(_.pluck(data, 'y'));
       x = d3.scale
         .ordinal()
         .domain(xLabels)
@@ -411,8 +415,14 @@ define([
         create: function(event) {
           const $handles = $('a', event.target);
           $handles.attr('href', 'javascript:void(0)');
-          $handles.first().attr('title', 'start slider handle');
-          $handles.last().attr('title', 'end slider handle');
+          $handles
+            .first()
+            .attr('title', 'start slider handle')
+            .html('<span class="sr-only">start slider handle</span>');
+          $handles
+            .last()
+            .attr('title', 'end slider handle')
+            .html('<span class="sr-only">end slider handle</span>');
         },
       });
       this.$('.show-slider-data-first').val(min);
