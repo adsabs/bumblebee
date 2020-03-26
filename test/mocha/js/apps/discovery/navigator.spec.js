@@ -4,17 +4,17 @@ define([
   'js/components/api_feedback',
   'js/components/session'
 
-], function(
-    Navigator,
-    MinPubSub,
-    ApiFeedback,
-    Session
+], function (
+  Navigator,
+  MinPubSub,
+  ApiFeedback,
+  Session
 
-){
+) {
 
-  describe("Navigator", function(){
+  describe("Navigator", function () {
 
-    it("should handle the orcid endpoint and authenticating if code is provided", function(){
+    it("should handle the orcid endpoint and authenticating if code is provided", function () {
 
       var n = new Navigator();
 
@@ -22,10 +22,10 @@ define([
 
       var orcidApi = {
         //only testing after orcid access has been provided
-        hasAccess : function(){
+        hasAccess: function () {
           return true
         },
-        getADSUserData : function(){
+        getADSUserData: function () {
           var d = $.Deferred();
           //pretending user hasnt filled in data yet
           d.resolve({});
@@ -33,27 +33,28 @@ define([
         }
       };
       var storage = {
-        get : function(val){
-          if (val == "orcidAuthenticating"){
+        get: function (val) {
+          if (val == "orcidAuthenticating") {
             return true;
           }
         },
-        remove : sinon.spy(function(val){
-        })
+        remove: sinon.spy(function (val) {})
       };
 
       var appStorage = {
-        executeStashedNav : sinon.spy(function(){
+        executeStashedNav: sinon.spy(function () {
           return true;
         }),
 
-        get : function(a){
-          if (a == "stashedNav") return ["UserPreferences", {"subView":"orcid"}];
+        get: function (a) {
+          if (a == "stashedNav") return ["UserPreferences", {
+            "subView": "orcid"
+          }];
         }
       };
 
       var AlertsController = {
-        alert : sinon.spy()
+        alert: sinon.spy()
       };
 
       var MasterPageManager = {
@@ -67,28 +68,24 @@ define([
         getService: function (obj) {
           if (obj == "OrcidApi") {
             return orcidApi
-          }
-          else if (obj == "PersistentStorage") {
+          } else if (obj == "PersistentStorage") {
             return storage
           }
         },
         getObject: function (obj) {
           if (obj == "AppStorage") {
             return appStorage;
-          }
-          else if (obj == "User") {
+          } else if (obj == "User") {
             return {
               isLoggedIn: function () {
                 return true
               }
             }
-          }
-          else if (obj === "MasterPageManager") {
+          } else if (obj === "MasterPageManager") {
             return MasterPageManager;
-          }
-          else if (obj === "LibraryController"){
+          } else if (obj === "LibraryController") {
             return {
-              getLibraryBibcodes : function(){
+              getLibraryBibcodes: function () {
                 return ["1", "2", "3"]
               }
             }
@@ -101,9 +98,9 @@ define([
           }
         },
 
-        getWidget : function(obj){
-          if (obj === "OrcidBigWidget"){
-            return sinon.spy(function(){
+        getWidget: function (obj) {
+          if (obj === "OrcidBigWidget") {
+            return sinon.spy(function () {
               var d = $.Deferred();
               d.resolve();
               return d;
@@ -126,11 +123,11 @@ define([
       //2. show the modal and redirect to orcidbigwidget
 
       var appStorage = {
-        executeStashedNav : sinon.spy(function(){
+        executeStashedNav: sinon.spy(function () {
           return false;
         }),
 
-        get : function(a){
+        get: function (a) {
           if (a == "stashedNav") return undefined;
         }
       };
@@ -148,27 +145,30 @@ define([
       expect(MasterPageManager.show.args[0][0]).to.eql("OrcidPage");
 
 
-  });
+    });
 
-    it("should have endpoints for library-export, library-metrics, and library-visualization", function(done){
+    it("should have endpoints for library-export, library-metrics, and library-visualization", function (done) {
 
       var n = new Navigator();
 
-      n.getPubSub = function(){
+      n.getPubSub = function () {
         return {
-          publish : sinon.spy()
+          publish: sinon.spy()
         }
       }
 
       var Export = {
-        renderWidgetForListOfBibcodes : sinon.spy()
+        renderWidgetForCurrentQuery: sinon.spy(),
+        setCurrentQuery: sinon.spy()
       };
       var Library = {
-        setSubView : sinon.spy()
+        setSubView: sinon.spy()
       };
 
       var MasterPageManager = {
-        show : sinon.spy(function() { return $.Deferred().resolve().promise()})
+        show: sinon.spy(function () {
+          return $.Deferred().resolve().promise()
+        })
       };
 
       var app = {
@@ -177,28 +177,36 @@ define([
 
           if (obj === "MasterPageManager") {
             return MasterPageManager;
-          }
-          else if (obj === "LibraryController"){
+          } else if (obj === "LibraryController") {
             return {
-              getLibraryBibcodes : function(){
+              getLibraryBibcodes: function () {
                 return $.Deferred().resolve(["1", "2", "3"]);
+              },
+              fetchLibraryMetadata: () => {
+                return $.Deferred().resolve({
+                  num_documents: 3
+                });
               }
             }
           }
         },
 
-        getWidget : function(obj){
+        getWidget: function (obj) {
           var d = $.Deferred();
-          if (obj === "ExportWidget"){
+          if (obj === "ExportWidget") {
             d.resolve(Export);
           }
-          if (obj === "IndividualLibraryWidget"){
+          if (obj === "IndividualLibraryWidget") {
             d.resolve(Library);
           }
 
           // we only grab this for the sort prop on the model
           if (obj === 'LibraryListWidget') {
-            d.resolve({ model: { get: _.constant('date desc') }});
+            d.resolve({
+              model: {
+                get: _.constant('date desc')
+              }
+            });
           }
           return d;
         }
@@ -207,7 +215,7 @@ define([
       n.start(app);
 
 
-      n.catalog.get("library-export").execute("library-export",    {
+      n.catalog.get("library-export").execute("library-export", {
         "id": "1",
         "publicView": false,
         "subView": "export",
@@ -215,29 +223,31 @@ define([
         "additional": {
           "format": "bibtex"
         }
-      }).done(function() {
+      }).done(function () {
 
-        expect(Export.renderWidgetForListOfBibcodes.callCount).to.eql(1);
-        expect(Export.renderWidgetForListOfBibcodes.args[0]).to.eql([
-          [
-            "1",
-            "2",
-            "3"
+        expect(Export.renderWidgetForCurrentQuery.callCount).to.eql(1);
+        expect(Export.renderWidgetForCurrentQuery.args[0][0]).to.exist;
+        const args = Export.renderWidgetForCurrentQuery.args[0][0];
+        expect(args.currentQuery.toJSON()).to.eql({
+          "q": [
+            "docs(library/1)"
           ],
-          {
-            "format": "bibtex",
-            "sort": "date desc"
-          }
-        ]);
+          "fl": [
+            "bibcode"
+          ],
+          "sort": [
+            "date desc"
+          ]
+        });
+        expect(args.format).to.eql('bibtex');
+        expect(args.numFound).to.eql(3)
 
         expect(Library.setSubView.callCount).to.eql(1);
-        expect(Library.setSubView.args[0]).to.eql([
-          {
-            "subView": "export",
-            "publicView": false,
-            "id": "1"
-          }
-        ]);
+        expect(Library.setSubView.args[0]).to.eql([{
+          "subView": "export",
+          "publicView": false,
+          "id": "1"
+        }]);
 
         expect(MasterPageManager.show.callCount).to.eql(1)
         expect(MasterPageManager.show.args[0]).to.eql([
@@ -252,17 +262,19 @@ define([
       })
     });
 
-    it("should handle the three verify routes which are contained in email links, passing verify token to servers ", function(done){
+    it("should handle the three verify routes which are contained in email links, passing verify token to servers ", function (done) {
 
-      var minsub = new MinPubSub({verbose: true});
+      var minsub = new MinPubSub({
+        verbose: true
+      });
       minsub.initialize({
-                      Api: {
-                        request: function() {
-                            return $.Deferred().promise();
-                          }
+        Api: {
+          request: function () {
+            return $.Deferred().promise();
+          }
 
-                      }
-                    });
+        }
+      });
 
       var navigator = new Navigator();
       var fakeSession = new Session();
@@ -273,7 +285,10 @@ define([
       sinon.spy(fakePubSub, 'publish');
 
       var getAccess = null;
-      navigator.getApiAccess = sinon.spy(function(){getAccess = $.Deferred(); return getAccess.promise()});
+      navigator.getApiAccess = sinon.spy(function () {
+        getAccess = $.Deferred();
+        return getAccess.promise()
+      });
       fakePubSub.publish = sinon.spy()
       fakeSession.setChangeToken = sinon.spy();
       beehive.addObject("Session", fakeSession);
@@ -283,13 +298,18 @@ define([
 
       //1. account verification email link
 
-      navigator.set('index-page', sinon.spy(function() {
+      navigator.set('index-page', sinon.spy(function () {
         return $.Deferred().resolve().promise();
       }))
 
-      var p = navigator.get('user-action').execute('user-action', {subView: "register", token: "fakeToken"});
+      var p = navigator.get('user-action').execute('user-action', {
+        subView: "register",
+        token: "fakeToken"
+      });
       expect(fakeApi.request.args[0][0].toJSON().target).to.eql("accounts/verify/fakeToken");
-      fakeApi.request.args[0][0].get("options").done.call(navigator, {email:"foo"});
+      fakeApi.request.args[0][0].get("options").done.call(navigator, {
+        email: "foo"
+      });
       expect(navigator.getApiAccess.callCount).to.eql(1);
       expect(navigator.get('index-page').execute.callCount).to.eql(0);
       expect(p.state()).to.eql('pending');
@@ -303,7 +323,11 @@ define([
 
 
       // pretend verification failed
-      fakeApi.request.args[0][0].get("options").fail.call(navigator, {responseJSON : {error : "fakeError"}});
+      fakeApi.request.args[0][0].get("options").fail.call(navigator, {
+        responseJSON: {
+          error: "fakeError"
+        }
+      });
       expect(navigator.get('index-page').execute.callCount).to.eql(2);
       expect(fakePubSub.publish.args[1][2].toJSON()).to.eql({
         "code": 0,
@@ -317,9 +341,14 @@ define([
 
       //2. change email link
 
-      p = navigator.get('user-action').execute('user-action', {subView: "change-email", token: "fakeToken2"});
+      p = navigator.get('user-action').execute('user-action', {
+        subView: "change-email",
+        token: "fakeToken2"
+      });
       expect(fakeApi.request.args[0][0].toJSON().target).to.eql("accounts/verify/fakeToken2");
-      fakeApi.request.args[0][0].get("options").done.call(navigator, {email:"foo2"});
+      fakeApi.request.args[0][0].get("options").done.call(navigator, {
+        email: "foo2"
+      });
       expect(navigator.getApiAccess.callCount).to.eql(1);
       expect(navigator.get('index-page').execute.callCount).to.eql(0);
       expect(p.state()).to.eql('pending');
@@ -333,7 +362,11 @@ define([
 
 
 
-      fakeApi.request.args[0][0].get("options").fail.call(navigator, {responseJSON : {error : "fakeError2"}});
+      fakeApi.request.args[0][0].get("options").fail.call(navigator, {
+        responseJSON: {
+          error: "fakeError2"
+        }
+      });
       expect(navigator.get('index-page').execute.callCount).to.eql(2);
       expect(fakePubSub.publish.args[1][2].toJSON()).to.eql({
         "code": 0,
@@ -349,7 +382,10 @@ define([
 
 
       //3. reset password is slightly more complicated, should redirect to part 2 of the form in authentication widget
-      p = navigator.get('user-action').execute('user-action', {subView: "reset-password", token: "fakeToken3"});
+      p = navigator.get('user-action').execute('user-action', {
+        subView: "reset-password",
+        token: "fakeToken3"
+      });
       expect(fakeApi.request.args[0][0].toJSON().target).to.eql("accounts/reset-password/fakeToken3");
       fakeApi.request.args[0][0].get("options").done.call(navigator);
 
@@ -363,7 +399,11 @@ define([
         }
       ]);
 
-      fakeApi.request.args[0][0].get("options").fail.call(navigator, {responseJSON : {error : "fakeErrorX"}});
+      fakeApi.request.args[0][0].get("options").fail.call(navigator, {
+        responseJSON: {
+          error: "fakeErrorX"
+        }
+      });
       expect(navigator.get('index-page').execute.callCount).to.eql(1);
       expect(fakePubSub.publish.args[1][2].toJSON()).to.eql({
         "code": 0,
@@ -371,7 +411,7 @@ define([
       })
 
       done();
-      })
+    })
 
 
 
