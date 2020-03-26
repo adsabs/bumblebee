@@ -30,9 +30,10 @@
         <div class="form-group has-feedback">
           <div class="input-group">
             {{#if bigquery}} {{#if libraryName}}
-            <div class="btn btn-xs btn-info bigquery-tag"><i class="fa fa-book" aria-hidden="true"> />&nbsp;<span>{{libraryName}}</span>&nbsp;<i class="fa fa-close fa-lg bigquery-close" aria-hidden="true"> title="click to remove" /></div>
+            <div class="btn btn-xs btn-info bigquery-tag">
+              <i class="fa fa-book" aria-hidden="true"></i>&nbsp;<span>{{libraryName}}</span>&nbsp;<i class="fa fa-close fa-lg bigquery-close" aria-hidden="true" title="click to remove"></i></div>
             {{else}}
-            <div class="btn btn-xs btn-info bigquery-tag"><i class="fa fa-list-ul" aria-hidden="true"> />&nbsp;&nbsp;Bulk query&nbsp;&nbsp;<i class="fa fa-close fa-lg bigquery-close" aria-hidden="true"> title="click to remove" /></div>
+            <div class="btn btn-xs btn-info bigquery-tag"><i class="fa fa-list-ul" aria-hidden="true"></i>&nbsp;&nbsp;Bulk query&nbsp;&nbsp;<i class="fa fa-close fa-lg bigquery-close" aria-hidden="true" title="click to remove" ></i></div>
             {{/if}}
             <label for="query-search-input" clas="sr-only">ADS search</label>
             <input type="text" class="form-control q hasbigquery" name="q" id="query-search-input" autofocus aria-label="Start typing a query here to begin an ADS Search" autocomplete="off" value={{currentQueryVal}}>
