@@ -9,20 +9,23 @@
     title="large libraries can take some time to export"
     data-toggle="tooltip"
   >
-    <i class="icon-loading" style="display:none"></i>
-    <i class="fa fa-arrow-right"></i> View library in search results page
+    <i class="icon-loading" style="display:none" aria-hidden="true"></i>
+    <i class="fa fa-arrow-right" aria-hidden="true"></i> View library in search
+    results page
   </button>
   {{else if noDocuments}}
   <div title="Add some papers to this library to gain this option">
     <button class="btn btn-default bigquery-export disabled" disabled>
-      <i class="icon-loading" style="display:none"></i>
-      <i class="fa fa-arrow-right"></i> View library in search results page
+      <i class="icon-loading" style="display:none" aria-hidden="true"></i>
+      <i class="fa fa-arrow-right" aria-hidden="true"></i> View library in
+      search results page
     </button>
   </div>
   {{else}}
   <button class="btn btn-default bigquery-export">
-    <i class="icon-loading" style="display:none"></i>
-    <i class="fa fa-arrow-right"></i> View library in search results page
+    <i class="icon-loading" style="display:none" aria-hidden="true"></i>
+    <i class="fa fa-arrow-right" aria-hidden="true"></i> View library in search
+    results page
   </button>
   {{/if}}
 </div>
@@ -61,31 +64,31 @@
     class="tab s-tab  {{#compare active 'library'}} active {{/compare}}"
     data-tab="library"
   >
-    <i class="fa fa-list"></i> View Library
+    <i class="fa fa-list" aria-hidden="true"></i> View Library
   </li>
   <li
     class="s-tab s-disabled"
     title="Add some papers to this library to gain this option"
   >
-    <i class="icon-export"></i> Export
+    <i class="icon-export" aria-hidden="true"></i> Export
   </li>
   <li
     class="s-tab s-disabled"
     title="Add some papers to this library to gain this option"
   >
-    <i class="icon-explore"></i> Metrics
+    <i class="icon-explore" aria-hidden="true"></i> Metrics
   </li>
   <li
     class="s-tab s-disabled"
     title="Add some papers to this library to gain this option"
   >
-    <i class="fa fa-eye"></i> Explore
+    <i class="fa fa-eye" aria-hidden="true"></i> Explore
   </li>
   <li
     class="s-tab s-disabled"
     title="Add some papers to this library to gain this option"
   >
-    <i class="fa fa-flask"></i> Citation Helper
+    <i class="fa fa-flask" aria-hidden="true"></i> Citation Helper
   </li>
 </ul>
 {{else}}
@@ -94,7 +97,7 @@
     class="tab s-tab  {{#compare active 'library'}} active {{/compare}}"
     data-tab="library"
   >
-    <i class="fa fa-list"></i> View Library
+    <i class="fa fa-list" aria-hidden="true"></i> View Library
   </li>
   <li
     class="tab s-tab dropdown {{#compare active 'export'}} active {{/compare}}"
@@ -105,8 +108,8 @@
       role="button"
       aria-expanded="false"
     >
-      <i class="icon-export"></i> Export
-      <span class="fa fa-lg fa-caret-down"></span>
+      <i class="icon-export" aria-hidden="true"></i> Export
+      <span class="fa fa-lg fa-caret-down" aria-hidden="true"></span>
     </a>
     <ul class="dropdown-menu" role="menu">
       <li data-tab="export-bibtex">BibTeX</li>
@@ -119,7 +122,7 @@
     class="tab s-tab  {{#compare active 'metrics'}} active {{/compare}}"
     data-tab="metrics"
   >
-    <i class="icon-explore"></i> Metrics
+    <i class="icon-explore" aria-hidden="true"></i> Metrics
   </li>
   <li
     class="tab s-tab dropdown  {{#compare active 'visualization'}} active {{/compare}}"
@@ -130,8 +133,8 @@
       role="button"
       aria-expanded="false"
     >
-      <i class="fa fa-eye"></i> Explore
-      <span class="fa fa-lg fa-caret-down"></span>
+      <i class="fa fa-eye" aria-hidden="true"></i> Explore
+      <span class="fa fa-lg fa-caret-down" aria-hidden="true"></span>
     </div>
     <ul class="dropdown-menu" role="menu">
       <li data-tab="visualization-AuthorNetwork">Author Network</li>
@@ -146,7 +149,7 @@
     class="tab s-tab  {{#compare active 'citation_helper'}} active {{/compare}}"
     data-tab="citation_helper"
   >
-    <i class="fa fa-flask"></i> Citation Helper
+    <i class="fa fa-flask" aria-hidden="true"></i> Citation Helper
   </li>
 </ul>
 {{/if}} {{else}}
@@ -161,20 +164,23 @@
     title="large libraries can take some time to export"
     data-toggle="tooltip"
   >
-    <i class="icon-loading" style="display:none"></i>
-    <i class="fa fa-arrow-right"></i> View library in search results page
+    <i class="icon-loading" style="display:none" aria-hidden="true"></i>
+    <i class="fa fa-arrow-right" aria-hidden="true"></i> View library in search
+    results page
   </button>
   {{else if noDocuments}}
   <div title="Add some papers to this library to gain this option">
     <button class="btn btn-default bigquery-export disabled" disabled>
-      <i class="icon-loading" style="display:none"></i>
-      <i class="fa fa-arrow-right"></i> View library in search results page
+      <i class="icon-loading" style="display:none" aria-hidden="true"></i>
+      <i class="fa fa-arrow-right" aria-hidden="true"></i> View library in
+      search results page
     </button>
   </div>
   {{else}}
   <button class="btn btn-default bigquery-export">
-    <i class="icon-loading" style="display:none"></i>
-    <i class="fa fa-arrow-right"></i> View library in search results page
+    <i class="icon-loading" style="display:none" aria-hidden="true"></i>
+    <i class="fa fa-arrow-right" aria-hidden="true"></i> View library in search
+    results page
   </button>
   {{/if}}
 </div>
@@ -184,7 +190,7 @@
     <button class="btn btn-link toggle-form" data-field="name">edit</button>
   </h2>
   <form class="hidden" data-field="name">
-    <label class="sr-only" for="#edit-library-title"> Change title </label>
+    <label class="sr-only" for="edit-library-title"> Change title </label>
     <input
       class="form-control"
       type="text"
@@ -193,7 +199,7 @@
       maxlength="50"
     />
     <button class="btn btn-small btn-success" type="submit">
-      <i class="fa fa-check"></i> submit
+      <i class="fa fa-check" aria-hidden="true"></i> submit
     </button>
     <button class="btn btn-small btn-default" type="reset">cancel</button>
   </form>
@@ -209,7 +215,7 @@
     {{#if description }}{{ description }}{{else}}(none) {{/if}}
   </p>
   <form class="hidden" data-field="description">
-    <label class="sr-only" for="#edit-library-description">
+    <label class="sr-only" for="edit-library-description">
       Change description
     </label>
     <textarea
@@ -220,7 +226,7 @@
 {{description}}</textarea
     >
     <button class="btn btn-small btn-success" type="submit">
-      <i class="fa fa-check"></i> submit
+      <i class="fa fa-check" aria-hidden="true"></i> submit
     </button>
     <button class="btn btn-small btn-default" type="reset">cancel</button>
   </form>
@@ -262,8 +268,8 @@
   {{#compare permission "read"}}
   <br />
   <p>
-    <i class="fa fa-cog"></i> You can <b>read</b> this library, but cannot alter
-    it in any way.
+    <i class="fa fa-cog" aria-hidden="true"></i> You can <b>read</b> this
+    library, but cannot alter it in any way.
   </p>
 
   {{else}}
@@ -275,7 +281,7 @@
     data-target="#library-actions"
     aria-expanded="false"
   >
-    <i class="fa fa-cog"></i> View editing options (You have
+    <i class="fa fa-cog" aria-hidden="true"></i> View editing options (You have
     <b>{{permission}}</b> privileges)
   </button>
   <div
@@ -308,7 +314,7 @@
       click this button, the library will be deleted forever!
     </p>
     <button class="btn btn-danger btn-sm delete-library">
-      <i class="fa fa-times"></i> Delete this library
+      <i class="fa fa-times" aria-hidden="true"></i> Delete this library
     </button>
     {{/compare}}
   </div>
@@ -324,14 +330,14 @@
     class="tab s-tab  {{#compare active 'library'}} active {{/compare}}"
     data-tab="library"
   >
-    <i class="fa fa-list"></i> View Library
+    <i class="fa fa-list" aria-hidden="true"></i> View Library
   </li>
   {{#if edit }}
   <li
     class="tab s-tab  {{#compare active 'admin'}} active {{/compare}}"
     data-tab="admin"
   >
-    <i class="fa fa-key"></i> Manage Access
+    <i class="fa fa-key" aria-hidden="true"></i> Manage Access
   </li>
   {{/if}}
 
@@ -339,25 +345,25 @@
     class="s-tab s-disabled"
     title="Add some papers to this library to gain this option"
   >
-    <i class="icon-export"></i> Export
+    <i class="icon-export" aria-hidden="true"></i> Export
   </li>
   <li
     class="s-tab s-disabled"
     title="Add some papers to this library to gain this option"
   >
-    <i class="icon-explore"></i> Metrics
+    <i class="icon-explore" aria-hidden="true"></i> Metrics
   </li>
   <li
     class="s-tab s-disabled"
     title="Add some papers to this library to gain this option"
   >
-    <i class="fa fa-eye"></i> Explore
+    <i class="fa fa-eye" aria-hidden="true"></i> Explore
   </li>
   <li
     class="s-tab s-disabled"
     title="Add some papers to this library to gain this option"
   >
-    <i class="fa fa-flask"></i> Citation Helper
+    <i class="fa fa-flask" aria-hidden="true"></i> Citation Helper
   </li>
 </ul>
 {{else}}
@@ -367,14 +373,14 @@
     class="tab s-tab  {{#compare active 'library'}} active {{/compare}}"
     data-tab="library"
   >
-    <i class="fa fa-list"></i> View Library
+    <i class="fa fa-list" aria-hidden="true"></i> View Library
   </li>
   {{#if edit }}
   <li
     class="tab s-tab  {{#compare active 'admin'}} active {{/compare}}"
     data-tab="admin"
   >
-    <i class="fa fa-key"></i> Manage Access
+    <i class="fa fa-key" aria-hidden="true"></i> Manage Access
   </li>
   {{/if}}
   <li
@@ -386,8 +392,8 @@
       role="button"
       aria-expanded="false"
     >
-      <i class="icon-export"></i> Export
-      <span class="fa fa-lg fa-caret-down"></span>
+      <i class="icon-export" aria-hidden="true"></i> Export
+      <span class="fa fa-lg fa-caret-down" aria-hidden="true"></span>
     </a>
     <ul class="dropdown-menu" role="menu">
       <li data-tab="export-bibtex">BibTeX</li>
@@ -402,7 +408,7 @@
     class="tab s-tab  {{#compare active 'metrics'}} active {{/compare}}"
     data-tab="metrics"
   >
-    <i class="icon-explore"></i> Metrics
+    <i class="icon-explore" aria-hidden="true"></i> Metrics
   </li>
   <li
     class="tab s-tab dropdown  {{#compare active 'visualization'}} active {{/compare}}"
@@ -413,8 +419,8 @@
       role="button"
       aria-expanded="false"
     >
-      <i class="fa fa-eye"></i> Explore
-      <span class="fa fa-lg fa-caret-down"></span>
+      <i class="fa fa-eye" aria-hidden="true"></i> Explore
+      <span class="fa fa-lg fa-caret-down" aria-hidden="true"></span>
     </div>
     <ul class="dropdown-menu" role="menu">
       <li data-tab="visualization-AuthorNetwork">Author Network</li>
@@ -429,7 +435,7 @@
     class="tab s-tab  {{#compare active 'citation_helper'}} active {{/compare}}"
     data-tab="citation_helper"
   >
-    <i class="fa fa-flask"></i> Citation Helper
+    <i class="fa fa-flask" aria-hidden="true"></i> Citation Helper
   </li>
 </ul>
 {{/if}} {{/if}}

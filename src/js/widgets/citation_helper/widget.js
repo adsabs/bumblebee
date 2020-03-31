@@ -50,7 +50,7 @@ define([
     libraryAdd: function() {
       // show loading view
       this.$('.submit-add-to-library').html(
-        '<i class="fa fa-spinner fa-pulse"></i>'
+        '<i class="fa fa-spinner fa-pulse" aria-hidden="true"></i>'
       );
 
       var data = {};

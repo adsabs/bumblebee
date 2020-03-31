@@ -1,11 +1,9 @@
-
-
 .no-padding-right {
   padding-right: 0px !important;
 }
 
 .no-show {
-  visibility: hidden
+  visibility: hidden;
 }
 
 .unselectable {
@@ -21,15 +19,13 @@
   display: none;
 }
 
-
 //for columns
 .no-right-padding {
   padding-right: 0;
 }
 
-
 .s-display-block {
-  display : block;
+  display: block;
 }
 
 .s-display-inline {
@@ -42,9 +38,8 @@
 }
 
 .s-large-close {
-
-  margin-top:10px;
-  margin-right:10px;
+  margin-top: 10px;
+  margin-right: 10px;
   background-color: $body-bg;
   font-weight: bold;
   font-size: 4em;
@@ -52,30 +47,30 @@
   color: $text-color;
   width: 1.2em;
   height: 1.2em;
-  padding-left: .3em;
+  padding-left: 0.3em;
   border: 1px solid $gray-light;
-  border-radius : 50px;
+  border-radius: 50px;
   line-height: 1;
   z-index: $z-index-2;
   float: right;
   cursor: pointer;
-  position:relative;
-  opacity:  .8;
+  position: relative;
+  opacity: 0.8;
 
   &:hover {
     border: 1px solid $gray;
     box-shadow: 0px 0px 6px gray;
-    opacity: 1
+    opacity: 1;
   }
 }
 
 .s-disabled {
-  color : lighten($gray-light, 10%);
+  color: lighten($gray-light, 10%);
 }
 
 .s-darker-background {
   min-height: 100%;
-  height:100%;
+  height: 100%;
   background-color: $darker-background;
   overflow-y: hidden;
 }
@@ -83,12 +78,12 @@
 //get rid of this later
 .s-full-height {
   height: auto;
-  min-height: 100%;  /* fallback for browsers that doesn't support "vh" */
+  min-height: 100%; /* fallback for browsers that doesn't support "vh" */
   min-height: 100vh;
 }
 
 .s-100-height {
-  height: 100%
+  height: 100%;
 }
 
 .s-center-text {
@@ -96,20 +91,19 @@
 }
 
 .s-position-relative {
-  position:relative;
+  position: relative;
 }
 
 .s-80-width {
-  display:inline-block;
+  display: inline-block;
   vertical-align: top;
   width: 79%;
 }
 
-.s-20-width{
-  display:inline-block;
+.s-20-width {
+  display: inline-block;
   vertical-align: top;
   width: 19%;
-
 }
 
 //loading template
@@ -119,11 +113,11 @@
 
 .s-loading {
   opacity: 1;
-  z-index : $z-index-3;
+  z-index: $z-index-3;
   background-color: white;
   position: absolute;
   top: 0px;
-  left:0px;
+  left: 0px;
   bottom: 0px;
   right: 0px;
 
@@ -132,23 +126,21 @@
     @extend .fa-pulse;
     @extend .fa-2x;
     color: $gray-light;
-    content : $fa-var-spinner;
+    content: $fa-var-spinner;
     position: absolute;
     top: 50%;
     right: 50%;
     z-index: $z-index-4;
-
   }
 }
 
 //for smaller widgets that just need a tiny loading image
-.s-loading.s-small{
-
-  &:before{
+.s-loading.s-small {
+  &:before {
     @extend .fa;
     @extend .fa-pulse;
     color: $gray-light;
-    content : $fa-var-spinner;
+    content: $fa-var-spinner;
     position: absolute;
     top: 50%;
     right: 50%;
@@ -159,8 +151,8 @@
 //a few alterations for list of results loading overlay
 .list-of-things {
   .s-loading {
-    opacity: .5;
-    z-index : $z-index-max;
+    opacity: 0.5;
+    z-index: $z-index-max;
     &:before {
       top: 10%;
     }
@@ -169,28 +161,26 @@
 
 //success template with just checkmark
 .s-success {
-    opacity: 1;
-    z-index : $z-index-3;
-    background-color: white;
+  opacity: 1;
+  z-index: $z-index-3;
+  background-color: white;
+  position: absolute;
+  top: 0px;
+  left: 0px;
+  bottom: 0px;
+  right: 0px;
+
+  &:before {
+    @extend .fa;
+    @extend .fa-3x;
+    color: $brand-success;
+    content: $fa-var-check;
     position: absolute;
-    top: 0px;
-    left:0px;
-    bottom: 0px;
-    right: 0px;
-
-    &:before {
-      @extend .fa;
-      @extend .fa-3x;
-      color: $brand-success;
-      content : $fa-var-check;
-      position: absolute;
-      top: 50%;
-      right: 50%;
-      z-index: $z-index-4;
-
-    }
+    top: 50%;
+    right: 50%;
+    z-index: $z-index-4;
+  }
 }
-
 
 .s-light-font {
   font-weight: 300;
@@ -209,13 +199,12 @@
   margin-bottom: 5px;
 }
 
-
 .s-light-font {
   font-weight: 300 !important;
 }
 
 .pull-right-sm {
-  @media(min-width: $screen-sm-min){
+  @media (min-width: $screen-sm-min) {
     float: right !important;
   }
 }
@@ -235,8 +224,8 @@
   margin: 40px auto;
 }
 
-
-.text-faded, .text-light {
+.text-faded,
+.text-light {
   color: $gray-light;
 }
 
@@ -249,4 +238,12 @@ button.text-link {
   background: none;
   border: none;
   text-align: left;
+}
+
+.s-text-bold {
+  font-weight: bold;
+}
+
+.s-text-italics {
+  font-style: italic;
 }

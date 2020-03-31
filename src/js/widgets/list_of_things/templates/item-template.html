@@ -54,13 +54,14 @@
                     {{#if links.text}}
 
                         <a href="{{links.text.[0].url}}" target="_blank" rel="noopener" class="btn-link active-link s-active-link" aria-disabled="false">
-                            <i class="s-text-icon" aria-label="quick access to full text links"></i>
+                            <i class="s-text-icon" aria-hidden="true"></i>
+                            <span class="sr-only">quick access to full text links</span>
                         </a>
                         <ul class="hidden list-unstyled link-details s-link-details" role="menu">
 
                             {{#each links.text}}
                             <li><a {{#if this.openAccess}} class="s-open-access"{{/if}} href="{{this.url}}"
-                                target="_blank" rel="noopener">{{this.name}}</a></li>
+                                target="_blank" rel="noopener" aria-label="open access link">{{this.name}}</a></li>
                             {{/each}}
                         </ul>
 
@@ -81,7 +82,8 @@
                 {{#if links.list}}
 
                 <a href="{{links.list.[0].url}}" class="btn-link active-link s-active-link" aria-disabled="false">
-                    <i class="s-list-icon" aria-label="quick links to lists of references, citations and more"></i>
+                    <i class="s-list-icon" aria-hidden="true"></i>
+                    <span class="sr-only">quick links to lists of references, citations and more</span>
                 </a>
 
                 <ul class="hidden list-unstyled list-unstyled link-details s-link-details" role="menu">
@@ -93,8 +95,9 @@
 
                 {{else}}
                 <div title="references, citations (none)">
-                    <a href="javascript:void(0)" class="btn-link disabled" aria-disabled="true" aria-label="quick links to lists of references, citations etc">
+                    <a href="javascript:void(0)" class="btn-link disabled" aria-disabled="true">
                         <i class="s-list-icon" aria-hidden="true"></i>
+                        <span class="sr-only">quick links to lists of references, citations etc</span>
                     </a>
                 </div>
 
@@ -107,7 +110,8 @@
                 {{#if links.data}}
 
                 <a href="{{links.data.[0].url}}" target="_blank" rel="noopener" class="btn-link active-link s-active-link" aria-disabled="false">
-                    <i class="s-data-icon" aria-label="quick links to data associated with this article"></i>
+                    <i class="s-data-icon" aria-hidden="true"></i>
+                    <span class="sr-only">quick links to data associated with this article</span>
                 </a>
 
                 <ul class="hidden list-unstyled link-details s-link-details" role="menu">
@@ -120,8 +124,9 @@
 
                 {{else}}
                     <div title="data products (none)">
-                        <a href="javascript:void(0)" class="btn-link disabled" aria-disabled="true" aria-label="quick links to data associated with this article">
+                        <a href="javascript:void(0)" class="btn-link disabled" aria-disabled="true">
                             <i class="s-data-icon" aria-hidden="true"></i>
+                            <span class="sr-only">quick links to data associated with this article</span>
                         </a>
                     </div>
 
@@ -198,7 +203,7 @@
 
             {{#if orcid.pending}}
             <button class="btn btn-default btn-sm s-orcid-loading" aria-disabled="true">
-                <i class="fa fa-lg fa-spinner fa-pulse"></i> Working...
+                <i class="fa fa-lg fa-spinner fa-pulse" aria-hidden="true"></i> Working...
             </button>
             {{else}}
             <!-- if provenance, it has been added by us or someone else-->
@@ -223,7 +228,7 @@
                             {{#compare this.action 'orcid-delete'}}
                             icon-clear-c
                             {{/compare}}
-                            "></i>
+                            " aria-hidden="true"></i>
                                 {{this.title}}</a>
                             {{/each}}
                         </li>
@@ -231,7 +236,7 @@
                 </div>
 
                 {{#if source_name}}<span class="s-orcid-source">({{source_name}})</span>{{/if}}
-                <span class="text-success s-orcid-success pull-right"> <i class="icon-success"></i>&nbsp;In ORCID&nbsp;</span>
+                <span class="text-success s-orcid-success pull-right"> <i class="icon-success" aria-hidden="true"></i>&nbsp;In ORCID&nbsp;</span>
 
             </div>
 
@@ -272,7 +277,7 @@
                         {{/each}}
                     </ul>
                 {{else}}
-                  <span class="text-muted"><i class="fa fa-spinner fa-pulse"></i> Loading Highlights...</span>
+                  <span class="text-muted"><i class="fa fa-spinner fa-pulse" aria-hidden="true"></i> Loading Highlights...</span>
                 {{/if}}
         </div>
         {{/if}}

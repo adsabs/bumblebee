@@ -10,9 +10,16 @@ define(['react', 'react-prop-types'], function(React, PropTypes) {
      */
     const onSelect = (item, e) => {
       e.preventDefault();
-      e.stopPropagation && e.stopPropagation();
+      if (e.stopPropagation) {
+        e.stopPropagation();
+      }
       setSort(item);
     };
+
+    const changeDirectionText =
+      direction === 'asc'
+        ? 'Change sort direction to descending'
+        : 'Change sort direction to ascending';
 
     return (
       <div className="btn-group">
@@ -20,13 +27,10 @@ define(['react', 'react-prop-types'], function(React, PropTypes) {
           type="button"
           className="btn btn-default"
           onClick={setDirection}
-          title={
-            direction === 'asc'
-              ? 'Change sort direction to descending'
-              : 'Change sort direction to ascending'
-          }
+          title={changeDirectionText}
         >
           <i className={`fa fa-sort-amount-${direction}`} aria-hidden="true" />
+          <span className="sr-only">{changeDirectionText}</span>
         </button>
         <button
           style={{ minWidth: 100 }}
@@ -55,7 +59,19 @@ define(['react', 'react-prop-types'], function(React, PropTypes) {
   };
 
   SortApp.propTypes = {
-    app: PropTypes.object.isRequired,
+    app: PropTypes.shape({
+      options: PropTypes.arrayOf(
+        PropTypes.shape({
+          id: PropTypes.string,
+          desc: PropTypes.string,
+          text: PropTypes.string,
+        })
+      ),
+      sort: PropTypes.shape({
+        text: PropTypes.string,
+      }),
+      direction: PropTypes.string,
+    }).isRequired,
     setSort: PropTypes.func.isRequired,
     setDirection: PropTypes.func.isRequired,
   };

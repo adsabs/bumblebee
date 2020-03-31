@@ -4,18 +4,18 @@
             <button type="button" class="navbar-toggle" data-toggle="collapse"
                     data-target="#bs-example-navbar-collapse-1">
                 <span class="sr-only">Toggle navigation</span>
-                <span class="icon-bar"></span>
-                <span class="icon-bar"></span>
-                <span class="icon-bar"></span>
+                <span class="icon-bar" aria-hidden="true"></span>
+                <span class="icon-bar" aria-hidden="true"></span>
+                <span class="icon-bar" aria-hidden="true"></span>
             </button>
             {{#unless hourly}}
             <a class="navbar-brand s-navbar-brand" href="#"><img class="s-ads-icon" src="/styles/img/transparent_logo.svg" alt="ads icon"/>
-                <h1> <b>ads</b></h1>
+                <h1 style="font-weight: bold;">ads</h1>
             </a>
             {{else}}
             <div class="s-hourly-warning">
-                <a class="navbar-brand s-navbar-brand" href="#"><i class="icon-danger fa-2x"></i> ADS TEST</a>
-                <span> Nothing you do here will be saved!  <a href="https://ui.adsabs.harvard.edu/">I want the real ADS <i class="fa fa-arrow-right"></i></a>
+                <a class="navbar-brand s-navbar-brand" href="#"><i class="icon-danger fa-2x" aria-hidden="true"></i> ADS TEST</a>
+                <span> Nothing you do here will be saved!  <a href="https://ui.adsabs.harvard.edu/">I want the real ADS <i class="fa fa-arrow-right" aria-hidden="true"></i></a>
                 </span>
             </div>
             {{/unless}}
@@ -33,12 +33,12 @@
                   <ul class="dropdown-menu" role="menu">
                     <li>
                       <a href="javascript:void(0);" data-target="#feedback-modal" data-toggle="modal" data-feedback-view="list">
-                        <i class="fa fa-pencil"></i> Submit Updates
+                        <i class="fa fa-pencil" aria-hidden="true"></i> Submit Updates
                       </a>
                     </li>
                     <li>
                       <a href="javascript:void(0);" data-target="#feedback-modal" data-toggle="modal" data-feedback-view="general">
-                        <i class="fa fa-envelope"></i> General Feedback
+                        <i class="fa fa-envelope" aria-hidden="true"></i> General Feedback
                       </a>
                     </li>
                   </ul>
@@ -57,7 +57,7 @@
                     <ul class="dropdown-menu" role="menu">
                         <li class="no-hover-style">
                             {{#if orcidLastName}} <h4> Signed in to ORCID as <br/> <strong>{{orcidFirstName}} {{orcidLastName}}</strong></h4> {{/if}}
-                            <div class="s-orcid-mode-label"><b>ORCID Mode</b></div>
+                            <div class="s-orcid-mode-label" style="font-weight: bold;">ORCID Mode</div>
                             <div class="s-orcid-label-container">
                                 off
                                 <div class="switch">
@@ -78,7 +78,7 @@
                         </li>
                         {{/if}}
                         <li>
-                            <a href="#orcid-instructions"> <i class="fa fa-info-circle"></i> Learn how to make ORCID claims using ADS</a>
+                            <a href="#orcid-instructions"> <i class="fa fa-info-circle" aria-hidden="true"></i> Learn how to make ORCID claims using ADS</a>
                         </li>
                         <li class="divider"></li>
                         <li>
@@ -97,7 +97,7 @@
                     <ul class="dropdown-menu" role="menu">
                         <li class="no-hover-style">
                             {{#if orcidLastName}} <h4> Signed in to ORCID as <br/> <strong>{{orcidFirstName}} {{orcidLastName}}</strong></h4> {{/if}}
-                            <div class="s-orcid-mode-label"><b>ORCID Mode</b></div>
+                            <div class="s-orcid-mode-label" style="font-weight: bold;">ORCID Mode</div>
                             <div class="s-orcid-label-container">
                                 off
                                 <div class="switch clearfix">
@@ -118,7 +118,7 @@
                         </li>
                         {{/if}}
                         <li>
-                            <a href="#orcid-instructions"> <i class="fa fa-info-circle"></i> Learn how to claim ORCID papers</a>
+                            <a href="#orcid-instructions"> <i class="fa fa-info-circle" aria-hidden="true"></i> Learn how to claim ORCID papers</a>
                         </li>
                         <li class="divider"></li>
                         <li>
@@ -149,14 +149,14 @@
 
                 <li class="dropdown">
                     <button type="button" class="btn btn-link dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
-                      <i class="fa fa-question-circle about-page-icon"></i> About <span class="caret"></span>
+                      <i class="fa fa-question-circle about-page-icon" aria-hidden="true"></i> About <span class="caret"></span>
                     </button>
                     <ul class="dropdown-menu" role="menu">
-                        <li> <a href="//ui.adsabs.harvard.edu/about/" target="_blank" rel="noopener"> <i class="fa fa-question-circle"></i> About ADS </a></li>
-                        <li> <a href="//adsabs.github.io/help/whats_new/" target="_blank" rel="noopener"> <i class="fa fa-bullhorn"></i> What's New </a></li>
-                        <li> <a href="//adsabs.github.io/blog/" target="_blank" rel="noopener"> <i class="fa fa-newspaper-o"></i> ADS Blog </a></li>
-                        <li> <a href="//adsabs.github.io/help/" target="_blank" rel="noopener"> <i class="fa fa-info-circle"></i> ADS Help Pages </a></li>
-                        <li> <a href="//ui.adsabs.harvard.edu/about/careers/" target="_blank" rel="noopener"> <i class="fa fa-group"></i> Careers@ADS </a></li>
+                        <li> <a href="//ui.adsabs.harvard.edu/about/" target="_blank" rel="noopener"> <i class="fa fa-question-circle" aria-hidden="true"></i> About ADS </a></li>
+                        <li> <a href="//adsabs.github.io/help/whats_new/" target="_blank" rel="noopener"> <i class="fa fa-bullhorn" aria-hidden="true"></i> What's New </a></li>
+                        <li> <a href="//adsabs.github.io/blog/" target="_blank" rel="noopener"> <i class="fa fa-newspaper-o" aria-hidden="true"></i> ADS Blog </a></li>
+                        <li> <a href="//adsabs.github.io/help/" target="_blank" rel="noopener"> <i class="fa fa-info-circle" aria-hidden="true"></i> ADS Help Pages </a></li>
+                        <li> <a href="//ui.adsabs.harvard.edu/about/careers/" target="_blank" rel="noopener"> <i class="fa fa-group" aria-hidden="true"></i> Careers@ADS </a></li>
                     </ul>
                 </li>
 
@@ -166,13 +166,13 @@
                 <!-- Single button -->
                 <li class="dropdown account-dropdown">
                     <button type="button" class="btn btn-link dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
-                     <i class="fa fa-user"></i> Account <span class="caret"></span>
+                     <i class="fa fa-user" aria-hidden="true"></i> Account <span class="caret"></span>
                     </button>
                     <ul class="dropdown-menu" role="menu">
-                        <li class="no-hover-style" style="padding:15px 10px;">You are signed in as <br/> <b>{{currentUser}}</b></li>
-                        <li ><a href="#user/home"> <i class="fa fa-user"></i> My Home Page</a></li>
-                        <li><a href="#user/libraries"> <i class="fa fa-book"></i> ADS Libraries</a></li>
-                        <li><a href="#user/settings/librarylink"> <i class="fa fa-cog"></i> Customize Settings</a></li>
+                        <li class="no-hover-style" style="padding:15px 10px;">You are signed in as <br/> <span class="s-text-bold">{{currentUser}}</span></li>
+                        <li ><a href="#user/home"> <i class="fa fa-user" aria-hidden="true"></i> My Home Page</a></li>
+                        <li><a href="#user/libraries"> <i class="fa fa-book" aria-hidden="true"></i> ADS Libraries</a></li>
+                        <li><a href="#user/settings/librarylink"> <i class="fa fa-cog" aria-hidden="true"></i> Customize Settings</a></li>
                         <li class="divider"></li>
                         <li><a href="javascript:void(0)" class="logout">Log Out</a></li>
                     </ul>

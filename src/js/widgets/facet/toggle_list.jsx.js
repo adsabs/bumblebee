@@ -1,4 +1,9 @@
-define(['react', 'd3', 'react-prop-types'], function(React, d3, PropTypes) {
+define(['react', 'd3', 'react-prop-types', 'react-redux'], function(
+  React,
+  d3,
+  PropTypes,
+  { useSelector }
+) {
   const format = (count) => {
     return d3
       .format('s')(count)
@@ -22,12 +27,15 @@ define(['react', 'd3', 'react-prop-types'], function(React, d3, PropTypes) {
     name,
     count,
     id,
+    index,
   }) => {
+    const config = useSelector((state) => state.config);
+
     const updateFacetSelect = (e) => {
       if (e.target.checked) {
         // toggle open author hierarchical facets here, so users can see what the hierarchy means
         selectFacet(id);
-        if (state && state.config.hierMaxLevels === 2) {
+        if (config.hierMaxLevels === 2) {
           toggleFacet(id, true);
         }
       } else {
@@ -35,15 +43,12 @@ define(['react', 'd3', 'react-prop-types'], function(React, d3, PropTypes) {
       }
     };
 
-    let label = '';
-    if (state) {
-      label = `facet-label__title_${state.config.facetField}_${label}`;
-    }
+    const label = `facet-label__title_${config.facetField}_${index}`;
     var checkbox = (
-      <label className="facet-label" htmlFor={label}>
+      <label className="facet-label" htmlFor={`${label}__checkbox`}>
         <input
           type="checkbox"
-          id={label}
+          id={`${label}__checkbox`}
           onChange={updateFacetSelect}
           checked={isChecked}
           aria-describedby={label}
@@ -97,6 +102,7 @@ define(['react', 'd3', 'react-prop-types'], function(React, d3, PropTypes) {
     selectFacet: PropTypes.func,
     unselectFacet: PropTypes.func,
     id: PropTypes.string,
+    index: PropTypes.number,
   };
 
   const ToggleList = ({
@@ -122,7 +128,7 @@ define(['react', 'd3', 'react-prop-types'], function(React, d3, PropTypes) {
     } else if (data.pagination.state === 'failure') {
       stateMessage = (
         <span>
-          <i className="icon-danger" />
+          <i className="icon-danger" aria-hidden="true" />
           request failed
         </span>
       );
@@ -161,7 +167,7 @@ define(['react', 'd3', 'react-prop-types'], function(React, d3, PropTypes) {
         return (
           <li key={c.value}>
             {/* eslint-disable-next-line react/jsx-props-no-spreading */}
-            <FacetCheckbox {...checkboxProps} />
+            <FacetCheckbox {...checkboxProps} index={i} />
           </li>
         );
       }, this);
@@ -214,6 +220,7 @@ define(['react', 'd3', 'react-prop-types'], function(React, d3, PropTypes) {
           <i
             role="button"
             aria-label="facet toggle"
+            aria-hidden="true"
             tabIndex="0"
             className={
               open

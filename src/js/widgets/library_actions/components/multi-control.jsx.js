@@ -57,6 +57,7 @@ define(['underscore', 'react'], function(_, React) {
           {!disableControls && (
             <div className="form-group btn-toolbar">
               <button
+                type="button"
                 id="addLibrary"
                 className="btn btn-default btn-sm"
                 disabled={count >= max}
@@ -66,6 +67,7 @@ define(['underscore', 'react'], function(_, React) {
               </button>
               {count > 1 && (
                 <button
+                  type="button"
                   id="removeLibrary"
                   className="btn btn-danger btn-sm"
                   onClick={(e) => this.updateCount(e, -1)}

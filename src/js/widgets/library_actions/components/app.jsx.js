@@ -38,7 +38,10 @@ define([
     >
       <div className="loading-container">
         <div className="loading">
-          <div className="loading-icon-big fa fa-spinner fa-spin" />
+          <div
+            className="loading-icon-big fa fa-spinner fa-spin"
+            aria-hidden="true"
+          />
           <div className="loading-text loading-text-big">Loading...</div>
         </div>
       </div>
@@ -48,7 +51,11 @@ define([
   const Title = () => (
     <div className="row">
       <div className="col-sm-offset-3 col-sm-6 text-center">
-        <i className="fa fa-wrench fa-2x" style={{ marginRight: '5px' }} />
+        <i
+          className="fa fa-wrench fa-2x"
+          style={{ marginRight: '5px' }}
+          aria-hidden="true"
+        />
         <span className="h3">Library Operations</span>
       </div>
     </div>

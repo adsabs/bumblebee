@@ -128,7 +128,9 @@ define([
     },
 
     removeRecord: function(view) {
-      view.$('.remove-record').html('<i class="fa fa-spinner fa-pulse"></i>');
+      view
+        .$('.remove-record')
+        .html('<i class="fa fa-spinner fa-pulse" aria-hidden="true"></i>');
       var bibcode = view.model.get('bibcode');
       this.trigger('removeRecord', bibcode);
     },
@@ -136,7 +138,7 @@ define([
     bulkDelete: function() {
       this.$('#bulk-delete')
         .toggleClass('disabled')
-        .html('<i class="fa fa-spinner fa-pulse"></i>');
+        .html('<i class="fa fa-spinner fa-pulse" aria-hidden="true"></i>');
       this.trigger('bulkDelete');
       this.model.set({
         numSelected: false,
@@ -147,7 +149,7 @@ define([
     bulkLimit: function() {
       this.$('#bulk-limit')
         .toggleClass('disabled')
-        .html('<i class="fa fa-spinner fa-pulse"></i>');
+        .html('<i class="fa fa-spinner fa-pulse" aria-hidden="true"></i>');
       this.trigger('bulkLimit');
     },
 

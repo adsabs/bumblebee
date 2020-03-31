@@ -1,7 +1,7 @@
 
 {{#if loading}}
     <div class="panel-heading">ORCID SETTINGS</div>
-<div class="panel-body"> <p><i class="icon-loading"></i> Loading...</p></div>
+<div class="panel-body"> <p><i class="icon-loading" aria-hidden="true"></i> Loading...</p></div>
 {{else}}
 
     <div class="panel-heading">
@@ -23,7 +23,7 @@
         <div class="form-group">
             <h4>1. Your Current Academic Affiliation</h4>
             <div class="form-group">
-                <label for="#aff-input" class="sr-only">your current academic affiliation</label>
+                <label for="aff-input" class="sr-only">your current academic affiliation</label>
                 <input type="text"
                        {{#if userSubmitted.currentAffiliation}} value="{{userSubmitted.currentAffiliation}}" {{/if}}
                 id="aff-input"
@@ -54,13 +54,13 @@
                 {{#each userSubmitted.nameVariations }}
                 <div class="orcid-name-row">
                     <input class="form-control input-list__input" type="text" placeholder="Last, First Middle"  value="{{this}}">
-                    <button class="btn btn-danger btn-inverse remove-name" title="remove this name"><i class="fa fa-minus-circle"></i></button>
+                    <button class="btn btn-danger btn-inverse remove-name" title="remove this name"><i class="fa fa-minus-circle" aria-hidden="true"></i></button>
                 </div>
                 {{/each}}
-                <button class="btn btn-primary-faded pull-right add-another-orcid-name"><i class="fa fa-plus"> </i> add a name</button>
+                <button class="btn btn-primary-faded pull-right add-another-orcid-name"><i class="fa fa-plus" aria-hidden="true"> </i> add a name</button>
 
                 <div class="warning {{#compare userSubmitted.authorizedUser false operator="!=="}} hidden {{/compare}}" style="clear:both;padding-top:15px" >
-                <i class="fa fa-lg fa-warning"></i>
+                <i class="fa fa-lg fa-warning" aria-hidden="true"></i>
                 To become an ADS-verified user and have the above name data used to enrich your ORCID matches in ADS, you must check the box below.
             </div>
         </div>

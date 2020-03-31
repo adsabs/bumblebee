@@ -49,6 +49,8 @@
     "indent": "off",
     "space-before-blocks": "off",
     "quote-props": "off",
-    "react/jsx-filename-extension": "off"
+    "react/jsx-filename-extension": "off",
+    "no-script-url": "off",
+    "jsx-a11y/anchor-is-valid": "off"
   }
 }

@@ -71,7 +71,7 @@ define([
       }
 
       this.$(e.currentTarget).html(
-        '<i class="fa fa-spinner fa-pulse"></i> Loading'
+        '<i class="fa fa-spinner fa-pulse" aria-hidden="true"></i> Loading'
       );
 
       // otherwise, trigger the update

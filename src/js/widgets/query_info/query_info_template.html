@@ -12,7 +12,7 @@
 {{#if loggedIn}}
 <div class="s-library-area">
     <div class="s-library-add-title library-add-title"  role="button" data-toggle="collapse" data-target="#library-console" aria-expanded="false">
-        <i class="fa fa-book fa-lg"></i> Add papers to library &nbsp; <i class="fa fa-lg fa-caret-down"></i>
+        <i class="fa fa-book fa-lg" aria-hidden="true"></i> Add papers to library &nbsp; <i class="fa fa-lg fa-caret-down" aria-hidden="true"></i>
     </div>
     <div class="collapse {{#if libraryDrawerOpen }} in {{/if}}" id="library-console" role="button">
 
@@ -23,7 +23,7 @@
             <option value="all"  {{#compare selectedVsAll "all"}} selected="true"{{/compare}}> all results</option>
         </select>
         {{else}}
-        add  <b>all results</b> <i class="icon-help" data-toggle="popover" data-container="body" data-content="All papers in your search results will be added, up to 1,000 records. To add only selected papers, click on the checkboxes next to the paper titles."></i>
+        add  <span class="s-text-bold">all results</span> <i class="icon-help" aria-hidden="true" data-toggle="popover" data-container="body" data-content="All papers in your search results will be added, up to 1,000 records. To add only selected papers, click on the checkboxes next to the paper titles."></i>
         from this query
         {{/compare}}
 
@@ -32,7 +32,7 @@
 
             {{#if libraries}}
             <div style="margin-top: 8px" class="">
-                <label for="#library-select">to an <b>existing library:</b></label>
+                <label for="library-select">to an <span class="s-text-bold">existing library:</span></label>
                 <select id="library-select" name="library-select" class="form-control input-sm s-library-select" aria-label="select existing library">
                     {{#each libraries}}
                     <option value="{{this.id}}" {{#compare id ../selectedLibrary}} selected="true" {{/compare}}>{{this.name}}</option>
@@ -45,7 +45,7 @@
             </div>
             {{/if}}
 
-            <label for="#create-new">create a new library </label>
+            <label for="create-new">create a new library </label>
             <input id="create-new"
               class="form-control input-sm new-library-name s-display-inline"
               type="text"

@@ -69,7 +69,9 @@ define([
     },
 
     renderLoading: function(view) {
-      this.getEl(view).html('<p><i class="fa fa-spinner fa-spin"></i></p>');
+      this.getEl(view).html(
+        '<p><i class="fa fa-spinner fa-spin" aria-hidden="true"></i></p>'
+      );
       this.enableSubmit(view, false);
     },
 

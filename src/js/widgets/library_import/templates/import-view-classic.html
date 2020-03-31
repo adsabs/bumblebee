@@ -1,40 +1,49 @@
-{{#unless classic_email}}
-    {{> js/widgets/library_import/templates/authentication-form-partial}}
-{{else}}
+{{#unless classic_email}} {{>
+js/widgets/library_import/templates/authentication-form-partial}} {{else}}
 
 <div>
-    You are currently authenticated as <b>{{classic_email}}</b>
-    with mirror site <b>{{classic_mirror}}</b>.
+  You are currently authenticated as <b>{{classic_email}}</b> with mirror site
+  <b>{{classic_mirror}}</b>.
 </div>
 
 <div>
-    <button class="btn btn-primary-faded import-all-libraries"> <i class="fa fa-arrow-circle-down"></i>  Import all Classic libraries</button>
+  <button class="btn btn-primary-faded import-all-libraries">
+    <i class="fa fa-arrow-circle-down" aria-hidden="true"></i> Import all
+    Classic libraries
+  </button>
 </div>
 
-<hr>
+<hr />
 
-    <button class="btn btn-default collapsed" data-toggle="collapse" data-target="#classic-form-container">
-        <i class="toggle-icon"></i>
-        Sign into a new Classic account
-    </button>
+<button
+  class="btn btn-default collapsed"
+  data-toggle="collapse"
+  data-target="#classic-form-container"
+>
+  <i class="toggle-icon"></i>
+  Sign into a new Classic account
+</button>
 <div class="collapse" id="classic-form-container">
-    {{> js/widgets/library_import/templates/authentication-form-partial}}
+  {{> js/widgets/library_import/templates/authentication-form-partial}}
 </div>
 
 {{/unless}}
 
 <div class="status">
-    {{#if errorMessage}}
-    <div class="alert alert-danger alert-dismissable" role="alert">
-        <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-        {{{errorMessage}}}
-    </div>
-    {{/if}}
-    {{#if successMessage}}
-    <div class="alert alert-success alert-dismissable" role="alert">
-        <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+  {{#if errorMessage}}
+  <div class="alert alert-danger alert-dismissable" role="alert">
+    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+      <span aria-hidden="true">&times;</span>
+    </button>
+    {{{errorMessage}}}
+  </div>
+  {{/if}} {{#if successMessage}}
+  <div class="alert alert-success alert-dismissable" role="alert">
+    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+      <span aria-hidden="true">&times;</span>
+    </button>
 
-        {{{successMessage}}}
-    </div>
-    {{/if}}
+    {{{successMessage}}}
+  </div>
+  {{/if}}
 </div>

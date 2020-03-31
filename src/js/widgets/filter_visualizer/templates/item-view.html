@@ -1,16 +1,16 @@
+{{#each this.elements}} {{#compare this.type "category"}}
 
-{{#each this.elements}}
+<h5>{{this.display}}</h5>
 
-    {{#compare this.type "category"}}
+{{else}}
 
-         <h5>{{this.display}}</h5>
+<span class="filter-{{this.type}}">{{this.display}}</span>
+<button
+  class="btn btn-xs filter-{{this.type}}-remove"
+  value="{{this.value}}"
+  title="remove this filter"
+>
+  <i class="fa fa-remove" aria-hidden="true"></i>
+</button>
 
-    {{else}}
-
-            <span class="filter-{{this.type}}">{{this.display}}</span>
-              <button class="btn btn-xs filter-{{this.type}}-remove" value="{{this.value}}" title="remove this filter">
-                <i class="fa fa-remove"></i></button>
-
-        {{/compare}}
-
-{{/each}}
+{{/compare}} {{/each}}

@@ -1,11 +1,18 @@
 <div class="loading-container">
   {{#unless hideCloseButton}}
   <div class="close-widget close-circle">
-    <a href="javascript:void(0)"><i class="fa fa-times fa-lg"></i></a>
+    <a href="javascript:void(0)"
+      ><i class="fa fa-times fa-lg" aria-hidden="true"></i
+    ></a>
   </div>
   {{/unless}}
   <div class="loading">
-    <div class="loading-icon-{{widgetLoadingSize}} fa fa-spinner fa-spin"></div>
-    <div class="loading-text loading-text-{{widgetLoadingSize}}">Loading...</div>
+    <div
+      class="loading-icon-{{widgetLoadingSize}} fa fa-spinner fa-spin"
+      aria-hidden="true"
+    ></div>
+    <div class="loading-text loading-text-{{widgetLoadingSize}}">
+      Loading...
+    </div>
   </div>
 </div>

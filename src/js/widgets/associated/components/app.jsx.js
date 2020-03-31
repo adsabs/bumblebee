@@ -27,7 +27,7 @@ define(['underscore', 'react', 'react-prop-types'], function(
   // create the title element
   const Title = ({ children }) => (
     <div style={styles.title}>
-      <i className="fa fa-folder-open" style={styles.icon} />
+      <i className="fa fa-folder-open" style={styles.icon} aria-hidden="true" />
       {children}
     </div>
   );

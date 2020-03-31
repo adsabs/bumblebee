@@ -55,7 +55,7 @@ define([
     triggers: {
       'click .clear-selected': 'clear-selected',
       'click .limit-to-selected': 'limit-to-selected',
-      'click .exclude-selected': 'exclude-selected'
+      'click .exclude-selected': 'exclude-selected',
     },
 
     events: {
@@ -82,7 +82,7 @@ define([
     libraryAdd: function() {
       // show loading view
       this.$('.submit-add-to-library').html(
-        '<i class="fa fa-spinner fa-pulse"></i>'
+        '<i class="fa fa-spinner fa-pulse" aria-hidden="true"></i>'
       );
 
       var data = {};
@@ -101,7 +101,7 @@ define([
     libraryCreate: function() {
       // show loading view
       this.$('.submit-create-library').html(
-        '<i class="fa fa-spinner fa-pulse"></i>'
+        '<i class="fa fa-spinner fa-pulse" aria-hidden="true"></i>'
       );
 
       var data = {};
@@ -219,12 +219,12 @@ define([
       ps.publish(ps.CUSTOM_EVENT, 'second-order-search/limit');
     },
 
-    excludeSelected: function () {
+    excludeSelected: function() {
       const ps = this.getPubSub();
       ps.publish(ps.CUSTOM_EVENT, 'second-order-search/exclude');
     },
 
-    libraryAddSubmit: function (data) {
+    libraryAddSubmit: function(data) {
       var options = {};
       var that = this;
 

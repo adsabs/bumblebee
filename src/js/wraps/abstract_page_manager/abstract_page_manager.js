@@ -97,7 +97,7 @@ define([
           .html(
             '<a href="#search/' +
               href +
-              '" class="back-button btn btn-sm btn-default"> <i class="fa fa-arrow-left"></i> Back to results</a>'
+              '" class="back-button btn btn-sm btn-default"> <i class="fa fa-arrow-left" aria-hidden="true"></i> Back to results</a>'
           );
       }
 

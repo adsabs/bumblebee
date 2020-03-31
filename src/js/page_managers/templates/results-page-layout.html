@@ -1,62 +1,87 @@
 <div id="results-page-layout" class="s-results-page-layout">
-    <div class="row s-stable-search-bar-height">
-        <div class="s-search-bar-full-width-container">
-            <div class="col-xs-0 col-sm-12 col-md-2 s-back-button-container">
-                <a href="/" class="back-button btn btn-sm btn-default"> <i class="fa fa-arrow-left"></i> Start New Search</a>
+  <div class="row s-stable-search-bar-height">
+    <div class="s-search-bar-full-width-container">
+      <div class="col-xs-0 col-sm-12 col-md-2 s-back-button-container">
+        <a href="/" class="back-button btn btn-sm btn-default">
+          <i class="fa fa-arrow-left" aria-hidden="true"></i> Start New
+          Search</a
+        >
+      </div>
+      <div
+        class="col-xs-12 col-sm-9 col-md-7 s-search-bar-row"
+        id="search-bar-row"
+        data-widget="SearchWidget"
+      ></div>
+    </div>
+  </div>
+  <div class="row s-message-control-row" id="message-control-row">
+    <span data-widget="AlertsWidgetx"></span>
+  </div>
+  <div class="row s-results-control-row" id="results-control-row"></div>
+  <div class="row">
+    <div class="col-xs-12 s-dynamic-page-body" id="dynamic-page-body">
+      <div class="max-width-wrapper">
+        <div class="row">
+          <div
+            class="hidden-xs col-sm-3 col-md-2 s-left-column s-results-column"
+            id="results-left-column"
+          >
+            <h2 class="sr-only">Filters for the Current Search</h2>
+            <div class="left-col-container s-left-col-container">
+              <div data-widget="AuthorFacet" />
+              <div data-widget="DatabaseFacet" />
+              <div data-widget="RefereedFacet" />
+              <div data-widget="AffiliationFacet" />
+              <div data-widget="KeywordFacet" />
+              <div data-widget="BibstemFacet" />
+              <div data-widget="BibgroupFacet" />
+              <div data-widget="ObjectFacet" />
+              <div data-widget="NedObjectFacet" />
+              <div data-widget="DataFacet" />
+              <div data-widget="VizierFacet" />
+              <div data-widget="PubtypeFacet" />
             </div>
-            <div class="col-xs-12 col-sm-9 col-md-7 s-search-bar-row" id="search-bar-row" data-widget="SearchWidget"></div>
-        </div>
-    </div>
-    <div class="row s-message-control-row" id="message-control-row"><span data-widget="AlertsWidgetx"></span></div>
-    <div class="row s-results-control-row" id="results-control-row">
-    </div>
-    <div class="row">
-        <div class="col-xs-12 s-dynamic-page-body" id="dynamic-page-body">
-            <div class="max-width-wrapper">
-                <div class="row">
-                    <div class="hidden-xs col-sm-3 col-md-2 s-left-column s-results-column" id="results-left-column">
-                        <h2 class="sr-only">Filters for the Current Search</h2>
-                        <div class="left-col-container s-left-col-container">
-                            <div data-widget="AuthorFacet"/>
-                            <div data-widget="DatabaseFacet"/>
-                            <div data-widget="RefereedFacet"/>
-                            <div data-widget="AffiliationFacet"/>
-                            <div data-widget="KeywordFacet"/>
-                            <div data-widget="BibstemFacet"/>
-                            <div data-widget="BibgroupFacet"/>
-                            <div data-widget="ObjectFacet"/>
-                            <div data-widget="NedObjectFacet"/>
-                            <div data-widget="DataFacet"/>
-                            <div data-widget="VizierFacet"/>
-                            <div data-widget="PubtypeFacet"/>
-                        </div>
-                    </div>
+          </div>
 
-                    <div class="col-sm-9 col-md-7  s-results-middle-column s-results-column" id="results-middle-column">
-                        <div class="main-content-container s-main-content-container" id="main-content" tabindex="-1" role="main" aria-label="container for search results and other main content">
-                            <div data-widget="Results"/>
-                            <div data-widget="AuthorAffiliationTool"/>
-                            <div data-widget="ExportWidget" data-origin="results-page"/>
-                            <div data-widget="AuthorNetwork"/>
-                            <div data-widget="PaperNetwork"/>
-                            <div data-widget="Metrics" data-allow-redirect="true"/>
-                            <div data-widget="BubbleChart"/>
-                            <div data-widget="ConceptCloud"/>
-                            <div data-widget="CitationHelper"/>
-                        </div>
-                    </div>
-
-                    <div class="hidden-xs col-sm-3 col-md-3 results-right-column s-right-column s-results-column" id="results-right-column">
-                        <h2 class="sr-only">Additional Functionality (Information about your query, and more search filters)</h2>
-
-                        <div data-widget="QueryInfo"/>
-                        <div data-widget="OrcidSelector"/>
-                        <div data-widget="GraphTabs"/>
-                        <div data-widget="QueryDebugInfo" data-debug="true"/>
-                    </div>
-                </div>
+          <div
+            class="col-sm-9 col-md-7  s-results-middle-column s-results-column"
+            id="results-middle-column"
+          >
+            <div
+              class="main-content-container s-main-content-container"
+              id="main-content"
+              tabindex="-1"
+              role="main"
+              aria-label="container for search results and other main content"
+            >
+              <div data-widget="Results" />
+              <div data-widget="AuthorAffiliationTool" />
+              <div data-widget="ExportWidget" data-origin="results-page" />
+              <div data-widget="AuthorNetwork" />
+              <div data-widget="PaperNetwork" />
+              <div data-widget="Metrics" data-allow-redirect="true" />
+              <div data-widget="BubbleChart" />
+              <div data-widget="ConceptCloud" />
+              <div data-widget="CitationHelper" />
             </div>
+          </div>
 
+          <div
+            class="hidden-xs col-sm-3 col-md-3 results-right-column s-right-column s-results-column"
+            id="results-right-column"
+          >
+            <h2 class="sr-only">
+              Additional Functionality (Information about your query, and more
+              search filters)
+            </h2>
+
+            <div data-widget="QueryInfo" />
+            <div data-widget="OrcidSelector" />
+            <div data-widget="GraphTabs" />
+            <div data-widget="QueryDebugInfo" data-debug="true" />
+          </div>
         </div>
+      </div>
     </div>
+  </div>
 </div>

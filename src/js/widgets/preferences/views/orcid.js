@@ -53,7 +53,8 @@ define([
         })
         .get();
 
-      var loadingString = '<i class="fa fa-spinner fa-pulse"></i> Loading';
+      var loadingString =
+        '<i class="fa fa-spinner fa-pulse" aria-hidden="true"></i> Loading';
       this.$('.submit').html(loadingString);
       // loading string will be removed when view is re-rendered
 

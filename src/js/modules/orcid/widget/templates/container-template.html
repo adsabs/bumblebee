@@ -8,7 +8,7 @@
         </h2>
         <!--loading user data-->
         {{#if loading}}
-            <p><i class="icon-loading"></i> Loading ORCID data...</p>
+            <p><i class="icon-loading" aria-hidden="true"></i> Loading ORCID data...</p>
         {{else}}
         <div style="margin-bottom: 10px;">
             <span style="width: 40%;">ORCID Username:&nbsp;<b>{{ orcidUserName }}</b></span>
@@ -16,7 +16,7 @@
             <span>ORCID ID:&nbsp;<b>{{orcidID}}</b></span>
         </div>
 
-         <p><i class="fa fa-info-circle"></i> To share this list of your ORCID papers:
+         <p><i class="fa fa-info-circle" aria-hidden="true"></i> To share this list of your ORCID papers:
                     <ul>
                       <li>
                           Search for your ORCID ID in ADS (orcid:{{orcidID}})
@@ -30,11 +30,11 @@
 
                     </ul>
           </p>
-          <p> <i class="fa fa-info-circle"></i>
+          <p> <i class="fa fa-info-circle" aria-hidden="true"></i>
                To claim papers in ORCID and add to this list <br>
               <div style="padding-left:5%;">
                 {{#if orcidUserName}}
-                <button class="btn btn-sm btn-default search-author-name"><i class="fa fa-search"></i> click here to search your name in ADS</button>
+                <button class="btn btn-sm btn-default search-author-name"><i class="fa fa-search" aria-hidden="true"></i> click here to search your name in ADS</button>
                 {{else}}
                 search your name in ADS</button>
                 {{/if}}
@@ -42,7 +42,7 @@
 
            </p>
         <br>
-        <p> <a href="#orcid-instructions"> <i class="fa fa-arrow-circle-o-right"></i> Learn more about using ORCID with ADS</a></p>
+        <p> <a href="#orcid-instructions"> <i class="fa fa-arrow-circle-o-right" aria-hidden="true"></i> Learn more about using ORCID with ADS</a></p>
         <br>
 
         {{/if}}

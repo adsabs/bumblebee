@@ -29,7 +29,7 @@ define([
     '<p>Papers are grouped by shared references, because ' +
     ' they are more likely to discuss similar topics.</p>' +
     ' <p>If your search returned a large enough set of papers, you will see two views:' +
-    ' a <b>summary view</b>  with groups of tightly linked papers, and a <b>detail view</b> ' +
+    ' a <span class="s-text-bold">summary view</span>  with groups of tightly linked papers, and a <span class="s-text-bold">detail view</span> ' +
     ' that gives you more information about the group </p>';
 
   var GraphModel = Backbone.Model.extend({

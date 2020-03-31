@@ -157,7 +157,9 @@ define(['backbone', 'marionette'], function(Backbone, Marionette) {
 
         // finally, close the mobile menu, which might be open
         this.$el.parent('.nav-container').removeClass('show');
-        $('button.toggle-menu').html(' <i class="fa fa-bars"></i> Show Menu');
+        $('button.toggle-menu').html(
+          ' <i class="fa fa-bars" aria-hidden="true"></i> Show Menu'
+        );
       }
       return false;
     },
