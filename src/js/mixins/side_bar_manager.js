@@ -82,6 +82,8 @@ define(['backbone', 'js/components/api_feedback'], function(
           return this.onMakeSpace();
         case ApiFeedback.CODES.UNMAKE_SPACE:
           return this.onUnMakeSpace();
+        default:
+          return null;
       }
     },
 
@@ -90,7 +92,9 @@ define(['backbone', 'js/components/api_feedback'], function(
      * set the sidebar state to `false`
      */
     onMakeSpace: function() {
-      state.set('recent', this.getSidebarState());
+      if (!state.has('recent')) {
+        state.set('recent', this.getSidebarState());
+      }
       this.setSidebarState(false);
     },
 
