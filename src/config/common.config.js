@@ -55,6 +55,12 @@ define([], function() {
           config.googleTrackingCode || '',
           config.googleTrackingOptions
         );
+
+        if (config.googleOptimizeCode) {
+          qa('require', config.googleOptimizeCode);
+          if (!config.debugExportBBB)
+            console.warn('AB testing will be loaded, but bbb object is not exposed. Change debugExportBBB if needed.');
+        }
       });
     }, 0);
   });
