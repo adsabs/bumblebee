@@ -433,26 +433,17 @@ define([
 
         function renderLibrarySub(id) {
           var defer = $.Deferred();
-
-          app.getWidget('LibraryListWidget').then(function(listWidget) {
-            var sort = listWidget.model.get('sort');
-            app.getWidget(widgetName).then(function(subWidget) {
-              app
-                .getObject('LibraryController')
-                .fetchLibraryMetadata(id)
-                .then(({ num_documents: numFound }) => {
-                  // use second order operator and library id to set query
-                  const currentQuery = new ApiQuery({
-                    q: `docs(library/${id})`,
-                    fl: 'bibcode',
-                    sort,
-                  });
-                  subWidget.setCurrentQuery(currentQuery);
-                  subWidget.renderWidgetForCurrentQuery({
-                    currentQuery,
-                    format,
-                    numFound,
-                  });
+          app
+            .getObject('LibraryController')
+            .getLibraryBibcodes(id)
+            .done(function(bibcodes) {
+              // XXX - this was async in the original version; likely wrong
+              // one block should be main...
+              app.getWidget('LibraryListWidget').then(function(listWidget) {
+                var sort = listWidget.model.get('sort');
+                app.getWidget(widgetName).then(function(subWidget) {
+                  additional = _.extend({}, additional, { sort: sort });
+                  subWidget.renderWidgetForListOfBibcodes(bibcodes, additional);
                   app
                     .getWidget('IndividualLibraryWidget')
                     .then(function(indWidget) {
@@ -464,8 +455,8 @@ define([
                       defer.resolve();
                     });
                 });
+              });
             });
-          });
           return defer.promise();
         }
 
