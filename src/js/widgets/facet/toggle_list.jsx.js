@@ -151,16 +151,16 @@ define(['react', 'd3', 'react-prop-types', 'react-redux'], function(
           selectFacet: selectFacet,
           unselectFacet: unselectFacet,
           label: i,
+          toggleFacet,
         };
         // if it's hierarchical, pass down some more data so that the checkbox can instantiate its own toggleList
         if (checkboxProps.hierarchical) {
           checkboxProps = {
             ...checkboxProps,
-            showMoreFacets,
+            showMoreFacets: showMoreFacets,
             resetVisibleFacets,
-            toggleFacet,
             reduxState: state,
-            currentLevel,
+            currentLevel: currentLevel,
           };
         }
 

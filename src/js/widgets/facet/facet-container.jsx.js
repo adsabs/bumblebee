@@ -3,16 +3,69 @@ define([
   'react-redux',
   'react-prop-types',
   'es6!./toggle_list.jsx',
-  'react-transition-group',
   './reducers',
 ], function(
   React,
-  { connect },
+  { connect, useSelector },
   PropTypes,
   ToggleList,
-  { CSSTransition },
   { getActiveFacets }
 ) {
+  const Dropdown = React.memo(({ activeFacets, onSubmitFilter }) => {
+    const { logicOptions, facetTitle } = useSelector((state) => ({
+      logicOptions: state.config.logicOptions,
+      facetTitle: state.config.facetTitle,
+    }));
+
+    // no dropdown if no selected facets!
+    if (activeFacets.length === 0) {
+      return <div />;
+    }
+
+    if (activeFacets.length > 25) {
+      return (
+        <div className="facet__dropdown">
+          select no more than 25 facets at a time
+        </div>
+      );
+    }
+
+    const arr = logicOptions[activeFacets.length === 1 ? 'single' : 'multiple'];
+
+    if (arr[0] === 'invalid choice') {
+      return <div className="facet__dropdown">invalid choice!</div>;
+    }
+    return (
+      <div className="facet__dropdown">
+        <div className="facet__dropdown__title">
+          <b>{activeFacets.length}</b> selected
+        </div>
+        {arr.map(function(val, i) {
+          return (
+            <label key={val} htmlFor={`facet_${facetTitle}_${i}`}>
+              <input
+                id={`facet_${facetTitle}_${i}`}
+                type="radio"
+                onChange={() => onSubmitFilter(val)}
+              />{' '}
+              {val}
+            </label>
+          );
+        }, this)}
+      </div>
+    );
+  });
+
+  Dropdown.defaultProps = {
+    activeFacets: [],
+    onSubmitFilter: () => {},
+  };
+
+  Dropdown.propTypes = {
+    activeFacets: PropTypes.arrayOf(PropTypes.string),
+    onSubmitFilter: PropTypes.func,
+  };
+
   const ContainerComponent = ({
     activeFacets,
     reduxState: state,
@@ -23,51 +76,6 @@ define([
     toggleFacet,
     unselectFacet,
   }) => {
-    const createDropdown = () => {
-      // no dropdown if no selected facets!
-      if (activeFacets.length === 0) {
-        return <div />;
-      }
-
-      let arr;
-      if (activeFacets.length > 25)
-        return (
-          <div className="facet__dropdown">
-            select no more than 25 facets at a time
-          </div>
-        );
-
-      if (activeFacets.length === 1) {
-        arr = state.config.logicOptions.single;
-      } else {
-        arr = state.config.logicOptions.multiple;
-      }
-
-      if (arr[0] === 'invalid choice') {
-        return <div className="facet__dropdown">invalid choice!</div>;
-      }
-
-      return (
-        <div className="facet__dropdown">
-          <div className="facet__dropdown__title">
-            <b>{activeFacets.length}</b> selected
-          </div>
-          {arr.map(function(val) {
-            return (
-              <label key={val} htmlFor={`facet_${state.config.facetTitle}`}>
-                <input
-                  id={`facet_${state.config.facetTitle}`}
-                  type="radio"
-                  onChange={() => submitFilter(val)}
-                />{' '}
-                {val}
-              </label>
-            );
-          }, this)}
-        </div>
-      );
-    };
-
     var header = (
       <div
         role="button"
@@ -86,14 +94,6 @@ define([
 
     return (
       <div className="facet__container">
-        <CSSTransition
-          transitionName="swoop"
-          transitionEnterTimeout={300}
-          transitionLeaveTimeout={300}
-        >
-          {createDropdown()}
-        </CSSTransition>
-
         <ToggleList
           reduxState={state}
           currentLevel={1}
@@ -105,6 +105,7 @@ define([
         >
           {header}
         </ToggleList>
+        <Dropdown activeFacets={activeFacets} onSubmitFilter={submitFilter} />
       </div>
     );
   };
