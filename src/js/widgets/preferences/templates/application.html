@@ -3,20 +3,20 @@
 <div class="panel-body" id="application-settings-container">
   <div class="row">
     <div class="col-md-12">
-      <form id="app-settings-form" role="form" class="form-horizontal">
+      <form id="app-settings-form" class="form-horizontal">
 
         <!-- NUM AUTHORS -->
         <div class="form-group">
           <label for="numAuthors">
             Authors Visible Per Result
-            <a href="#collapseNumAuthorsDesc" data-toggle="collapse" role="button" aria-expanded="false"
+            <button href="#collapseNumAuthorsDesc" data-toggle="collapse" class="btn-link" aria-expanded="false"
               aria-controls="collapseNumAuthorsDesc" aria-label="number of authors per result">
               <i class="fa fa-question-circle" aria-hidden="true"></i>
-            </a>
+            </button>
           </label>
           <p>
             <div class="collapse" id="collapseNumAuthorsDesc">
-              <div class="card card-body text-muted">
+              <div class="card card-body">
                 <p>
                   Specifies the number of authors to show under each result before the list is truncated.
                   <br> (
@@ -37,14 +37,14 @@
         <div class="form-group">
           <label for="externalLinks">
             Default Action For External Links
-            <a href="#collapseExternalLinks" data-toggle="collapse" role="button" aria-expanded="false"
+            <button href="#collapseExternalLinks" data-toggle="collapse" class="btn-link" aria-expanded="false"
               aria-controls="collapseExternalLinks" aria-label="default action for external links">
               <i class="fa fa-question-circle" aria-hidden="true"></i>
-            </a>
+          </button>
           </label>
           <p>
             <div class="collapse" id="collapseExternalLinks">
-              <div class="card card-body text-muted">
+              <div class="card card-body">
                 <p>
                   Select the default action when opening an external link.
                   <br> (
@@ -65,14 +65,14 @@
         <div class="form-group">
           <label for="homePage">
             Default Home Page
-            <a href="#collapseHomePage" data-toggle="collapse" role="button" aria-expanded="false"
+            <button href="#collapseHomePage" data-toggle="collapse" class="btn-link" aria-expanded="false"
               aria-controls="collapseHomePage" aria-label="default home page">
               <i class="fa fa-question-circle" aria-hidden="true"></i>
-            </a>
+            </button>
           </label>
           <p>
             <div class="collapse" id="collapseHomePage">
-              <div class="card card-body text-muted">
+              <div class="card card-body">
                 <p>
                   Select the default landing page shown when loading the application or starting a new search.
                   <br> (
@@ -91,16 +91,16 @@
 
         <!-- Default Collection -->
         <div class="form-group">
-          <label for="database">
+          <label id="defaultDatabaseLabel">
             Default Collection(s)
-            <a href="#collapseDatabase" data-toggle="collapse" role="button" aria-expanded="false"
+            <button href="#collapseDatabase" data-toggle="collapse" class="btn-link" aria-expanded="false"
               aria-controls="collapseDatabase" aria-label="default collection">
               <i class="fa fa-question-circle" aria-hidden="true"></i>
-            </a>
+            </button>
           </label>
           <p>
             <div class="collapse" id="collapseDatabase">
-              <div class="card card-body text-muted">
+              <div class="card card-body">
                 <p>
                   This will apply a default collection facet to each search. You can manually remove or alter it from there.
                   <br> (
@@ -109,7 +109,7 @@
               </div>
             </div>
           </p>
-          <div class="btn-group" data-toggle="buttons">
+          <div class="btn-group" data-toggle="buttons" role="group" aria-labelledby="defaultDatabaseLabel">
             {{#each databaseSelected}}
             <label class="database-select btn btn-default {{#if this.value}} active {{/if}}">
               <input type="checkbox" name="database" checked="{{this.value}}" id="database_{{this.name}}"> {{this.name}}
@@ -121,14 +121,14 @@
         <div class="form-group">
           <label for="exportFormat">
             Default Export Format
-            <a href="#collapseExportFormat" data-toggle="collapse" role="button" aria-expanded="false"
+            <button href="#collapseExportFormat" data-toggle="collapse" class="btn-link" aria-expanded="false"
               aria-controls="collapseExportFormat" aria-label="default export format">
               <i class="fa fa-question-circle" aria-hidden="true"></i>
-            </a>
+            </button>
           </label>
           <p>
             <div class="collapse" id="collapseExportFormat">
-              <div class="card card-body text-muted">
+              <div class="card card-body">
                 <p>
                   Select the default export format you would like to use when opening the Export tool.
                   <br> (
@@ -149,14 +149,14 @@
         <div class="form-group">
           <label for="addCustomFormat">
             Custom Formats
-            <a href="#collapseAddCustomFormat" data-toggle="collapse" role="button" aria-expanded="false"
+            <button href="#collapseAddCustomFormat" data-toggle="collapse" class="btn-link" aria-expanded="false"
               aria-controls="collapseAddCustomFormat" aria-label="custom formats">
               <i class="fa fa-question-circle" aria-hidden="true"></i>
-            </a>
+            </button>
           </label>
           <p>
             <div class="collapse" id="collapseAddCustomFormat">
-              <div class="card card-body text-muted">
+              <div class="card card-body">
                 <p>
                   Edit your saved custom formats
                 </p>
@@ -185,11 +185,11 @@
                   <input type="text" class="form-control custom-format-edit" placeholder="%l (%Y), %j, %V, %p.\n" id="custom-format-code-{{id}}" value="{{code}}" data-id="{{id}}">
                 </div>
                 <span class="col-xs-2 text-right">
-                  <button role="button" data-id="{{id}}" class="btn-link addCustomFormatConfirmEdit"
+                  <button data-id="{{id}}" class="btn-link addCustomFormatConfirmEdit"
                     title="confirm edit">
                     <i class="fa fa-check text-success" aria-hidden="true"></i>
                   </button>
-                  <button role="button" data-id="{{id}}" class="btn-link addCustomFormatCancelEdit"
+                  <button data-id="{{id}}" class="btn-link addCustomFormatCancelEdit"
                     title="cancel edit">
                     <i class="fa fa-times text-danger" aria-hidden="true"></i>
                   </button>
@@ -205,11 +205,11 @@
                   </p>
                 </div>
                 <span class="col-xs-2 text-right">
-                  <button role="button" data-id="{{id}}" class="btn-link addCustomFormatEdit"
+                  <button data-id="{{id}}" class="btn-link addCustomFormatEdit"
                     title="edit custom format">
                     <i class="fa fa-pencil text-primary" aria-hidden="true"></i>
                   </button>
-                  <button role="button" data-id="{{id}}" class="btn-link addCustomFormatEdit"
+                  <button data-id="{{id}}" class="btn-link addCustomFormatEdit"
                     title="delete custom format">
                     <i class="fa fa-times text-danger" aria-hidden="true"></i>
                   </button>
@@ -235,14 +235,14 @@
         <div class="form-group">
           <label for="hideSideBars">
             Results List Side Bars
-            <a href="#collapseHideSideBars" data-toggle="collapse" role="button" aria-expanded="false"
+            <button href="#collapseHideSideBars" data-toggle="collapse" class="btn-link" aria-expanded="false"
               aria-controls="collapseHideSideBars" aria-label="results list side bars">
               <i class="fa fa-question-circle" aria-hidden="true"></i>
-            </a>
+            </button>
           </label>
           <p>
             <div class="collapse" id="collapseHideSideBars">
-              <div class="card card-body text-muted">
+              <div class="card card-body">
                 <p>
                   Select the default state of the results list sidebars (hide/show)
                   <br> (
@@ -263,18 +263,21 @@
         <div class="form-group">
           <label for="bibtexKeyFormat">
             BibTeX Default Export Key Format
-            <a href="#collapsebibtexKeyFormat" data-toggle="collapse" role="button" aria-expanded="false"
+            <button href="#collapsebibtexKeyFormat" data-toggle="collapse" class="btn-link" aria-expanded="false"
               aria-controls="collapsebibtexKeyFormat" aria-label="bibtex default export key format">
               <i class="fa fa-question-circle" aria-hidden="true"></i>
-            </a>
+            </button>
           </label>
           <p>
             <div class="collapse" id="collapsebibtexKeyFormat">
-              <div class="card card-body text-muted">
+              <div class="card card-body">
                 <p>
                   Select the default key format when exporting in BibTeX (<a href="http://adsabs.github.io/help/actions/export" rel="noopener" target="_blank">Learn More <i
                       class="fa fa-external-link" aria-hidden="true"></i></a>)
                   <table class="table">
+                    <caption>
+                      Key format codes and descriptions
+                    </caption>
                     <thead>
                       <tr>
                         <th>Code</th>
@@ -313,14 +316,14 @@
         <div class="form-group">
           <label for="bibtexJournalFormat">
             TeX Journal Name Handling
-            <a href="#collapseBibtexJournalFormat" data-toggle="collapse" role="button" aria-expanded="false"
+            <button href="#collapseBibtexJournalFormat" data-toggle="collapse" class="btn-link" aria-expanded="false"
               aria-controls="collapseBibtexJournalFormat" aria-label="results list side bars">
               <i class="fa fa-question-circle" aria-hidden="true"></i>
-            </a>
+            </button>
           </label>
           <p>
             <div class="collapse" id="collapseBibtexJournalFormat">
-              <div class="card card-body text-muted">
+              <div class="card card-body">
                 <p>
                   This setting is used to define how journal names are rendered in the output of the following TeX-based formats: BibTeX, BibTeX ABS, and AASTeX. If journal macros are used (default), the following file contains the proper journal definitions compatible with most Astronomy Journals: <a href="http://adsabs.harvard.edu/abs_doc/aas_macros.html">http://adsabs.harvard.edu/abs_doc/aas_macros.html</a>
                   <br> (
@@ -343,14 +346,14 @@
             <div class="form-group">
               <label for="bibtexMaxAuthors">
                 BibTeX Default Export Max Authors
-                <a href="#collapsebibtexMaxAuthors" data-toggle="collapse" role="button" aria-expanded="false"
+                <a href="#collapsebibtexMaxAuthors" data-toggle="collapse" class="btn-link" aria-expanded="false"
                   aria-controls="collapsebibtexMaxAuthors" aria-label="bibtex default export max authors">
                   <i class="fa fa-question-circle" aria-hidden="true"></i>
                 </a>
               </label>
               <p>
                 <div class="collapse" id="collapsebibtexMaxAuthors">
-                  <div class="card card-body text-muted">
+                  <div class="card card-body">
                     <p>
                       Select the default max number of authors shown when exporting in BibTeX
                       <br> (
@@ -372,14 +375,14 @@
             <div class="form-group">
               <label for="bibtexAuthorCutoff">
                 BibTeX Default Author Cutoff
-                <a href="#collapsebibtexAuthorCutoff" data-toggle="collapse" role="button" aria-expanded="false"
+                <button href="#collapsebibtexAuthorCutoff" data-toggle="collapse" class="btn-link" aria-expanded="false"
                   aria-controls="collapsebibtexAuthorCutoff" aria-label="bibtex default author cutoff">
                   <i class="fa fa-question-circle" aria-hidden="true"></i>
-                </a>
+                </button>
               </label>
               <p>
                 <div class="collapse" id="collapsebibtexAuthorCutoff">
-                  <div class="card card-body text-muted">
+                  <div class="card card-body">
                     <p>
                         <p>
                           If the number of authors in the list is larger than the cutoff,
@@ -405,18 +408,21 @@
         <div class="form-group">
           <label for="bibtexABSKeyFormat">
             BibTeX ABS Default Export Key Format
-            <a href="#collapsebibtexABSKeyFormat" data-toggle="collapse" role="button" aria-expanded="false"
+            <button href="#collapsebibtexABSKeyFormat" data-toggle="collapse" class="btn-link" aria-expanded="false"
               aria-controls="collapsebibtexABSKeyFormat" aria-label="bibtex abs default export key format">
               <i class="fa fa-question-circle" aria-hidden="true"></i>
-            </a>
+            </button>
           </label>
           <p>
             <div class="collapse" id="collapsebibtexABSKeyFormat">
-              <div class="card card-body text-muted">
+              <div class="card card-body">
                 <p>
                   Select the default key format when exporting in BibTeX ABS (<a href="http://adsabs.github.io/help/actions/export" rel="noopener" target="_blank">Learn More <i
                       class="fa fa-external-link" aria-hidden="true"></i></a>)
                   <table class="table">
+                    <caption>
+                      Key format codes and descriptions
+                    </caption>
                     <thead>
                       <tr>
                         <th>Code</th>
@@ -457,14 +463,14 @@
             <div class="form-group">
               <label for="bibtexABSMaxAuthors">
                 BibTeX ABS Default Export Max Authors
-                <a href="#collapsebibtexABSMaxAuthors" data-toggle="collapse" role="button" aria-expanded="false"
+                <button href="#collapsebibtexABSMaxAuthors" data-toggle="collapse" class="btn-link" aria-expanded="false"
                   aria-controls="collapsebibtexABSMaxAuthors" aria-label="bibtex abs default export max authors">
                   <i class="fa fa-question-circle" aria-hidden="true"></i>
-                </a>
+                </button>
               </label>
                 <p>
                   <div class="collapse" id="collapsebibtexABSMaxAuthors">
-                    <div class="card card-body text-muted">
+                    <div class="card card-body">
                       <p>
                         Select the default max number of authors shown when exporting in BibTeX ABS
                         <br> (
@@ -486,14 +492,14 @@
             <div class="form-group">
               <label for="bibtexABSAuthorCutoff">
                 BibTeX ABS Default Author Cutoff
-                <a href="#collapsebibtexABSAuthorCutoff" data-toggle="collapse" role="button" aria-expanded="false"
+                <button href="#collapsebibtexABSAuthorCutoff" data-toggle="collapse" class="btn-link" aria-expanded="false"
                   aria-controls="collapsebibtexABSAuthorCutoff" aria-label="bibtex abs default author cutoff">
                   <i class="fa fa-question-circle" aria-hidden="true"></i>
-                </a>
+                </button>
               </label>
               <p>
                 <div class="collapse" id="collapsebibtexABSAuthorCutoff">
-                  <div class="card card-body text-muted">
+                  <div class="card card-body">
                     <p>
                         <p>
                           If the number of authors in the list is larger than the cutoff,
