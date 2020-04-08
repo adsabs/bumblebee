@@ -279,8 +279,8 @@ define([
         'UserPreferences',
         settingsPreferencesView(
           'UserPreferences',
-          'librarylink',
-          'Library Link Server'
+          'application',
+          'Application Settings'
         )
       );
 

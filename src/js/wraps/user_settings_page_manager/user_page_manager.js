@@ -35,7 +35,7 @@ define([
         category: 'preferences',
       },
       UserPreferences__orcid: {
-        title: 'ORCID Settings',
+        title: 'ORCID',
         path: 'user/settings/orcid',
         category: 'preferences',
       },
@@ -45,7 +45,7 @@ define([
         category: 'preferences',
       },
       UserPreferences__application: {
-        title: 'Application',
+        title: 'Search',
         path: 'user/settings/application',
         category: 'preferences',
       },

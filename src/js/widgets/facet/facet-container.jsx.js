@@ -3,14 +3,14 @@ define([
   'react-redux',
   'react-prop-types',
   'es6!./toggle_list.jsx',
-  'react-transition-group',
+  'es6!./facet-dropdown.jsx',
   './reducers',
 ], function(
   React,
   { connect },
   PropTypes,
   ToggleList,
-  { CSSTransition },
+  Dropdown,
   { getActiveFacets }
 ) {
   const ContainerComponent = ({
@@ -23,51 +23,6 @@ define([
     toggleFacet,
     unselectFacet,
   }) => {
-    const createDropdown = () => {
-      // no dropdown if no selected facets!
-      if (activeFacets.length === 0) {
-        return <div />;
-      }
-
-      let arr;
-      if (activeFacets.length > 25)
-        return (
-          <div className="facet__dropdown">
-            select no more than 25 facets at a time
-          </div>
-        );
-
-      if (activeFacets.length === 1) {
-        arr = state.config.logicOptions.single;
-      } else {
-        arr = state.config.logicOptions.multiple;
-      }
-
-      if (arr[0] === 'invalid choice') {
-        return <div className="facet__dropdown">invalid choice!</div>;
-      }
-
-      return (
-        <div className="facet__dropdown">
-          <div className="facet__dropdown__title">
-            <b>{activeFacets.length}</b> selected
-          </div>
-          {arr.map(function(val) {
-            return (
-              <label key={val} htmlFor={`facet_${state.config.facetTitle}`}>
-                <input
-                  id={`facet_${state.config.facetTitle}`}
-                  type="radio"
-                  onChange={() => submitFilter(val)}
-                />{' '}
-                {val}
-              </label>
-            );
-          }, this)}
-        </div>
-      );
-    };
-
     var header = (
       <div
         role="button"
@@ -86,14 +41,6 @@ define([
 
     return (
       <div className="facet__container">
-        <CSSTransition
-          transitionName="swoop"
-          transitionEnterTimeout={300}
-          transitionLeaveTimeout={300}
-        >
-          {createDropdown()}
-        </CSSTransition>
-
         <ToggleList
           reduxState={state}
           currentLevel={1}
@@ -104,6 +51,7 @@ define([
           unselectFacet={unselectFacet}
         >
           {header}
+          <Dropdown activeFacets={activeFacets} onSubmitFilter={submitFilter} />
         </ToggleList>
       </div>
     );
