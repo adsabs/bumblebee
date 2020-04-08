@@ -9,12 +9,12 @@
   color: $text-color;
   letter-spacing: 0.05rem;
   font-size: 18px;
-  position:relative;
+  position: relative;
   top: -2px;
   @extend .secondary-header;
   @media (min-width: $screen-lg-min) {
     font-size: 20px;
-    position:relative;
+    position: relative;
     top: -3px;
   }
 }
@@ -127,7 +127,6 @@
   @extend .s-ads-card;
   box-shadow: 0 0 20px rgba(77, 77, 77, 0.5);
   padding: 10px;
-
 }
 .facet__dropdown__title {
   border-bottom: 2px solid #4073dd;
@@ -135,7 +134,6 @@
   color: #666666;
   padding-bottom: 5px;
   margin-bottom: 5px;
-
 }
 
 .facet__dropdown label {
