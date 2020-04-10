@@ -7,7 +7,7 @@ define(['react', 'react-bootstrap', 'react-prop-types'], function(
   const renderRunButtons = (item, onSelect) => {
     let labels = [];
     if (item.type === 'query' || item.data === null) {
-      labels = ['Run Query'];
+      labels = ['Test Search'];
     } else if (item.type === 'template') {
       if (item.template === 'arxiv') {
         labels = [
@@ -17,17 +17,17 @@ define(['react', 'react-bootstrap', 'react-prop-types'], function(
       } else if (item.template === 'keyword') {
         labels = ['Recent Papers', 'Most Popular', 'Most Cited'];
       } else {
-        labels = ['Run Query'];
+        labels = ['Test Search'];
       }
     }
     return labels.map((l, i) => (
       <MenuItem
         href="javascript:void(0);"
         onSelect={onSelect}
-        aria-label={`Run Query: ${l}`}
+        aria-label={`Test Search: ${l}`}
         eventKey={i}
       >
-        <i className="fa fa-bolt fa-fw" aria-hidden="true" /> {l}
+        <i className="fa fa-search fa-fw" aria-hidden="true" /> {l}
       </MenuItem>
     ));
   };
@@ -52,7 +52,7 @@ define(['react', 'react-bootstrap', 'react-prop-types'], function(
           <i className="fa fa-cog" aria-hidden="true" /> Actions
         </Dropdown.Toggle>
         <Dropdown.Menu style={{ overflow: 'visible !important' }}>
-          <MenuItem header>Run</MenuItem>
+          <MenuItem header>Preview on results page</MenuItem>
           {renderRunButtons(item, (queryKey) => onRunQuery(item, queryKey))}
           <MenuItem divider />
           <MenuItem header>Actions</MenuItem>

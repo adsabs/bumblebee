@@ -3,16 +3,9 @@ define([
   'react',
   'es6!./TemplatePill.jsx',
   'moment',
-  'react-bootstrap',
   'es6!./ActionsDropdown.jsx',
-], function(
-  _,
-  React,
-  TemplatePill,
-  moment,
-  { ButtonGroup, Button },
-  ActionsDropdown
-) {
+  'react-prop-types',
+], function(_, React, TemplatePill, moment, ActionsDropdown, PropTypes) {
   const getFriendlyDateString = (dateStr) => {
     return moment(dateStr).format('lll');
   };
@@ -24,18 +17,30 @@ define([
           {children}
         </th>
       );
-    } else {
-      const caret = direction === 'desc' ? 'down' : 'up';
-      return (
-        <th
-          scope="col"
-          onClick={() => onClick(direction === 'desc' ? 'asc' : 'desc')}
-        >
-          {children}{' '}
-          <i className={`fa fa-caret-${caret}`} aria-hidden="true"></i>
-        </th>
-      );
     }
+    const caret = direction === 'desc' ? 'down' : 'up';
+    return (
+      <th
+        scope="col"
+        onClick={() => onClick(direction === 'desc' ? 'asc' : 'desc')}
+      >
+        {children} <i className={`fa fa-caret-${caret}`} aria-hidden="true" />
+      </th>
+    );
+  };
+
+  SortableHeader.defaultProps = {
+    active: false,
+    children: null,
+    direction: PropTypes.string,
+    onClick: PropTypes.func,
+  };
+
+  SortableHeader.propTypes = {
+    active: PropTypes.bool,
+    children: PropTypes.node,
+    direction: PropTypes.string,
+    onClick: PropTypes.func,
   };
 
   /**
@@ -59,36 +64,15 @@ define([
       this.onEdit = this.onEdit.bind(this);
     }
 
-    /**
-     * @param {Notification} item
-     */
-    onEdit(item) {
-      this.props.editNotification(item.id);
-    }
-
-    /**
-     * @param {Notification} item
-     */
-    onDelete(item) {
-      if (confirm('Are you sure?')) {
-        this.props.removeNotification(item.id);
+    componentDidMount() {
+      const { notifications, getNotifications } = this.props;
+      if (Object.keys(notifications).length === 0) {
+        getNotifications();
       }
     }
 
-    onCreateNewNotification() {
-      this.props.createNewNotification();
-    }
-
-    onImportNotifications() {
-      this.props.importNotifications();
-    }
-
-    /**
-     *
-     * @param {Notification} item
-     */
-    onToggleActive(item) {
-      this.props.toggleActive(item.id);
+    onLeaveItem() {
+      requestAnimationFrame(() => this.setState({ activeItem: null }));
     }
 
     /**
@@ -98,14 +82,42 @@ define([
       requestAnimationFrame(() => this.setState({ activeItem: id }));
     }
 
-    onLeaveItem() {
-      requestAnimationFrame(() => this.setState({ activeItem: null }));
+    /**
+     * @param {Notification} item
+     */
+    onEdit(item) {
+      const { editNotification } = this.props;
+      editNotification(item.id);
     }
 
-    componentDidMount() {
-      if (Object.keys(this.props.notifications).length === 0) {
-        this.props.getNotifications();
+    /**
+     * @param {Notification} item
+     */
+    onDelete(item) {
+      const { removeNotification } = this.props;
+      // eslint-disable-next-line no-alert
+      if (window.confirm('Are you sure?')) {
+        removeNotification(item.id);
       }
+    }
+
+    onCreateNewNotification() {
+      const { createNewNotification } = this.props;
+      createNewNotification();
+    }
+
+    onImportNotifications() {
+      const { importNotifications } = this.props;
+      importNotifications();
+    }
+
+    /**
+     *
+     * @param {Notification} item
+     */
+    onToggleActive(item) {
+      const { toggleActive } = this.props;
+      toggleActive(item.id);
     }
 
     onFilter(filterText) {
@@ -128,29 +140,45 @@ define([
     }
 
     onRunQuery({ id }, queryKey) {
-      this.props.runQuery(id, queryKey);
+      const { runQuery } = this.props;
+      runQuery(id, queryKey);
     }
 
     render() {
-      let ids = Object.keys(this.props.notifications);
-      if (this.state.filterText && this.state.filterText.length > 0) {
-        const regx = new RegExp('.*' + this.state.filterText + '.*', 'ig');
-        ids = Object.keys(this.props.notifications).filter((k) => {
-          if (!this.state.filterText) {
+      const {
+        notifications,
+        getNotificationsRequest: getRequest,
+        updateNotificationRequest: updateRequest,
+        removeNotificationRequest: removeRequest,
+      } = this.props;
+
+      const {
+        filterText,
+        sortCol,
+        sortDir,
+        searchValue,
+        activeItem,
+      } = this.state;
+
+      let ids = Object.keys(notifications);
+      if (filterText && filterText.length > 0) {
+        const regx = new RegExp('.*' + filterText + '.*', 'ig');
+        ids = Object.keys(notifications).filter((k) => {
+          if (!filterText) {
             return true;
           }
 
-          return _.values(this.props.notifications[k])
+          return _.values(notifications[k])
             .join(' ')
             .match(regx);
         });
       }
 
-      if (this.state.sortCol && this.state.sortDir) {
+      if (sortCol && sortDir) {
         ids = ids.sort((a, b) => {
-          const { [a]: left, [b]: right } = this.props.notifications;
-          const prop = this.state.sortCol === '#' ? 'id' : this.state.sortCol;
-          const dir = this.state.sortDir;
+          const { [a]: left, [b]: right } = notifications;
+          const prop = sortCol === '#' ? 'id' : sortCol;
+          const dir = sortDir;
           const leftVal = left[prop];
           const rightVal = right[prop];
           if (prop === 'updated') {
@@ -168,25 +196,20 @@ define([
           return 0;
         });
       }
-      const getRequest = this.props.getNotificationsRequest;
-      const updateRequest = this.props.updateNotificationRequest;
-      const removeRequest = this.props.removeNotificationRequest;
       const disable =
         removeRequest.status === 'pending' ||
         updateRequest.status === 'pending' ||
         getRequest.status === 'pending';
 
       if (ids.length === 0 && getRequest.status === 'pending') {
-        return (
+        return getRequest.status === 'pending' ? (
           <div className="row text-center">
             <h3 className="h4">
               <i className="fa fa-spinner fa-spin" aria-hidden="true" />{' '}
               Loading...
             </h3>
           </div>
-        );
-      } else if (ids.length === 0 && getRequest.status === 'failure') {
-        return (
+        ) : (
           <div className="row text-center">
             <h3 className="h4 text-danger">Error: {getRequest.error}</h3>
           </div>
@@ -215,7 +238,7 @@ define([
                 id="search"
                 className="form-control"
                 placeholder="Search..."
-                value={this.state.searchValue}
+                value={searchValue}
                 onChange={(e) => this.onSearch(e.target.value)}
               />
             </div>
@@ -227,6 +250,7 @@ define([
                   aria-label="group of action buttons"
                 >
                   <button
+                    type="button"
                     className="btn btn-default"
                     onClick={() => this.onCreateNewNotification()}
                     title="create new notification"
@@ -235,6 +259,7 @@ define([
                     <i className="fa fa-plus" aria-hidden="true" /> Create
                   </button>
                   <button
+                    type="button"
                     className="btn btn-default"
                     onClick={() => this.onImportNotifications()}
                     title="import notification"
@@ -253,6 +278,7 @@ define([
                 >
                   <div className="btn-group">
                     <button
+                      type="button"
                       className="btn btn-default"
                       onClick={() => this.onCreateNewNotification()}
                       title="create new notification"
@@ -263,6 +289,7 @@ define([
                   </div>
                   <div className="btn-group">
                     <button
+                      type="button"
                       className="btn btn-default"
                       onClick={() => this.onImportNotifications()}
                       title="import notification"
@@ -280,37 +307,37 @@ define([
               <tr>
                 <SortableHeader
                   onClick={this.onSort('#')}
-                  active={'#' === this.state.sortCol}
-                  direction={this.state.sortDir}
+                  active={sortCol === '#'}
+                  direction={sortDir}
                 >
                   #
                 </SortableHeader>
                 <SortableHeader
                   onClick={this.onSort('name')}
-                  active={'name' === this.state.sortCol}
-                  direction={this.state.sortDir}
+                  active={sortCol === 'name'}
+                  direction={sortDir}
                 >
                   Name
                 </SortableHeader>
                 <SortableHeader
                   onClick={this.onSort('template')}
-                  active={'template' === this.state.sortCol}
-                  direction={this.state.sortDir}
+                  active={sortCol === 'template'}
+                  direction={sortDir}
                 >
                   Type
                 </SortableHeader>
                 <SortableHeader
                   onClick={this.onSort('frequency')}
-                  active={'frequency' === this.state.sortCol}
-                  direction={this.state.sortDir}
+                  active={sortCol === 'frequency'}
+                  direction={sortDir}
                 >
                   Frequency
                 </SortableHeader>
 
                 <SortableHeader
                   onClick={this.onSort('updated')}
-                  active={'updated' === this.state.sortCol}
-                  direction={this.state.sortDir}
+                  active={sortCol === 'updated'}
+                  direction={sortDir}
                 >
                   Updated
                 </SortableHeader>
@@ -320,11 +347,11 @@ define([
             <tbody>
               {ids.map((id, i) => {
                 /** @type {Notification} */
-                const item = this.props.notifications[id];
+                const item = notifications[id];
 
                 return (
                   <tr
-                    className={this.state.activeItem === id ? 'info' : ''}
+                    className={activeItem === id ? 'info' : ''}
                     style={{
                       backgroundColor: item.active
                         ? 'inherit'
@@ -368,16 +395,60 @@ define([
             </tbody>
           </table>
 
-          {ids.length === 0 && this.state.searchValue && (
+          {ids.length === 0 && searchValue && (
             <div>Your search is not matching any notifications.</div>
           )}
-          {ids.length === 0 && !this.state.searchValue && (
-            <div>You don't have any notifications yet!</div>
+          {ids.length === 0 && !searchValue && (
+            <div>You don&apos;t have any notifications yet!</div>
           )}
         </div>
       );
     }
   }
+
+  MyAdsDashboard.defaultProps = {
+    createNewNotification: () => {},
+    editNotification: () => {},
+    getNotifications: () => {},
+    getRequest: () => {},
+    importNotifications: () => {},
+    notifications: [],
+    removeNotification: () => {},
+    removeRequest: () => {},
+    runQuery: () => {},
+    toggleActive: () => {},
+    updateRequest: () => {},
+    getNotificationsRequest: () => {},
+    updateNotificationRequest: () => {},
+    removeNotificationRequest: () => {},
+  };
+
+  MyAdsDashboard.propTypes = {
+    createNewNotification: PropTypes.func,
+    editNotification: PropTypes.func,
+    getNotifications: PropTypes.func,
+    getRequest: PropTypes.func,
+    importNotifications: PropTypes.func,
+    notifications: PropTypes.arrayOf(
+      PropTypes.shape({
+        id: PropTypes.string,
+        name: PropTypes.string,
+        type: PropTypes.string,
+        frequency: PropTypes.string,
+        updated: PropTypes.string,
+        active: PropTypes.bool,
+        template: PropTypes.string,
+      })
+    ),
+    removeNotification: PropTypes.func,
+    removeRequest: PropTypes.func,
+    runQuery: PropTypes.func,
+    toggleActive: PropTypes.func,
+    updateRequest: PropTypes.func,
+    getNotificationsRequest: PropTypes.func,
+    updateNotificationRequest: PropTypes.func,
+    removeNotificationRequest: PropTypes.func,
+  };
 
   return MyAdsDashboard;
 });
