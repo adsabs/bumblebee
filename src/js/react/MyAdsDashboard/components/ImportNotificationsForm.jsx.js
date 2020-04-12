@@ -4,6 +4,7 @@ define([
   'react',
   'react-bootstrap',
   '../containers/ClassicLoginForm',
+  'react-prop-types',
 ], function(
   { debounce },
   React,
@@ -17,7 +18,8 @@ define([
     Alert,
     Modal,
   },
-  ClassicLoginForm
+  ClassicLoginForm,
+  PropTypes
 ) {
   const getStatusMessage = ({ status, error }) => {
     switch (status) {

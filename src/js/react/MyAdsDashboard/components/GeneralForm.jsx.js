@@ -1,9 +1,15 @@
-define(['react', 'react-bootstrap', 'js/react/shared/helpers'], function(
+define([
+  'react',
+  'react-bootstrap',
+  'js/react/shared/helpers',
+  'react-prop-types',
+], function(
   React,
   { Form, FormGroup, ControlLabel, FormControl, Checkbox, Radio, Button },
-  { isEmpty }
+  { isEmpty },
+  PropTypes
 ) {
-  const getStatusMessage = ({ status, error, noSuccess }) => {
+  const getStatusMessage = ({ status, error, editing, noSuccess }) => {
     switch (status) {
       case 'pending':
         return (
@@ -17,10 +23,25 @@ define(['react', 'react-bootstrap', 'js/react/shared/helpers'], function(
       case 'success':
         return (
           <span className="text-success">
-            {noSuccess ? '' : 'Notification Created!'}
+            {noSuccess ? '' : `Notification ${editing ? 'saved' : 'created'}!`}
           </span>
         );
+      default:
+        return null;
     }
+  };
+  getStatusMessage.defaultProps = {
+    status: '',
+    error: '',
+    editing: false,
+    noSuccess: false,
+  };
+
+  getStatusMessage.propTypes = {
+    status: PropTypes.string,
+    error: PropTypes.string,
+    editing: PropTypes.bool,
+    noSuccess: PropTypes.bool,
   };
 
   const GeneralFormInitialState = {
@@ -117,16 +138,18 @@ define(['react', 'react-bootstrap', 'js/react/shared/helpers'], function(
     }
 
     render() {
+      const { editing, name, stateful, frequency, message } = this.state;
+
       return (
         <div>
-          {this.state.editing ? (
+          {editing ? (
             <Form onSubmit={this.onSubmit}>
               <FormGroup controlId="notification-name">
                 <ControlLabel>Notification Name</ControlLabel>
                 <FormControl
                   type="text"
                   placeholder="My Notification"
-                  value={this.state.name}
+                  value={name}
                   onChange={this.onFormChange('name')}
                   bsSize="large"
                   required
@@ -134,7 +157,7 @@ define(['react', 'react-bootstrap', 'js/react/shared/helpers'], function(
               </FormGroup>
               <FormGroup controlId="notification-stateful">
                 <Checkbox
-                  checked={this.state.stateful}
+                  checked={stateful}
                   onChange={this.onFormChange('stateful')}
                 >
                   Only receive new results
@@ -144,7 +167,7 @@ define(['react', 'react-bootstrap', 'js/react/shared/helpers'], function(
                 <ControlLabel id="frequency-check">Frequency</ControlLabel>
                 <Radio
                   name="frequency"
-                  checked={this.state.frequency === 'daily'}
+                  checked={frequency === 'daily'}
                   value="daily"
                   onChange={this.onFormChange('frequency')}
                   aria-labelledby="frequency-check"
@@ -153,7 +176,7 @@ define(['react', 'react-bootstrap', 'js/react/shared/helpers'], function(
                 </Radio>
                 <Radio
                   name="frequency"
-                  checked={this.state.frequency === 'weekly'}
+                  checked={frequency === 'weekly'}
                   value="weekly"
                   onChange={this.onFormChange('frequency')}
                   aria-labelledby="frequency-check"
@@ -179,12 +202,16 @@ define(['react', 'react-bootstrap', 'js/react/shared/helpers'], function(
                   </div>
                 </div>
                 <div className="col-sm-6" style={{ paddingTop: '1rem' }}>
-                  {getStatusMessage(this.props.requests.updateNotification)}
+                  {getStatusMessage({
+                    ...this.props.requests.updateNotification,
+                    editing,
+                  })}
                   {getStatusMessage({
                     ...this.props.requests.getQuery,
+                    editing,
                     noSuccess: true,
                   })}
-                  <span className="text-info">{this.state.message}</span>
+                  <span className="text-info">{message}</span>
                 </div>
               </div>
             </Form>

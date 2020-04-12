@@ -1,15 +1,17 @@
 define([
   'react',
   'react-bootstrap',
+  'react-prop-types',
   'es6!./CitationsEntry.jsx',
   'js/react/shared/helpers',
 ], function(
   React,
   { Form, FormGroup, ControlLabel, FormControl, HelpBlock },
+  PropTypes,
   CitationsEntry,
   { escape, unescape }
 ) {
-  const getStatusMessage = ({ status, error }) => {
+  const getStatusMessage = ({ status, error, editing }) => {
     switch (status) {
       case 'pending':
         return (
@@ -21,8 +23,25 @@ define([
       case 'failure':
         return <span className="text-danger">Request failed. ({error})</span>;
       case 'success':
-        return <span className="text-success">Notification Created!</span>;
+        return (
+          <span className="text-success">
+            Notification {editing ? 'saved' : 'created'}!
+          </span>
+        );
+      default:
+        return null;
     }
+  };
+  getStatusMessage.defaultProps = {
+    status: '',
+    error: '',
+    editing: false,
+  };
+
+  getStatusMessage.propTypes = {
+    status: PropTypes.string,
+    error: PropTypes.string,
+    editing: PropTypes.bool,
   };
 
   const CitationsFormInitialState = {
@@ -190,11 +209,12 @@ define([
               className="col-sm-7 col-sm-offset-1"
               style={{ paddingTop: '1rem' }}
             >
-              {getStatusMessage(
-                this.state.editing
+              {getStatusMessage({
+                ...(this.state.editing
                   ? this.props.updateNotificationRequest
-                  : this.props.addNotificationRequest
-              )}
+                  : this.props.addNotificationRequest),
+                editing: this.state.editing,
+              })}
               <span className="text-info">{this.state.message}</span>
             </div>
           </div>

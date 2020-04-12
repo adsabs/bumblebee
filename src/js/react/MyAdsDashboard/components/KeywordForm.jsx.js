@@ -1,8 +1,9 @@
-define(['react', 'react-bootstrap'], function(
+define(['react', 'react-bootstrap', 'react-prop-types'], function(
   React,
-  { Form, FormGroup, ControlLabel, FormControl, HelpBlock }
+  { Form, FormGroup, ControlLabel, FormControl, HelpBlock },
+  PropTypes
 ) {
-  const getStatusMessage = ({ status, error }) => {
+  const getStatusMessage = ({ status, error, editing }) => {
     switch (status) {
       case 'pending':
         return (
@@ -14,8 +15,25 @@ define(['react', 'react-bootstrap'], function(
       case 'failure':
         return <span className="text-danger">Request failed. ({error})</span>;
       case 'success':
-        return <span className="text-success">Notification Created!</span>;
+        return (
+          <span className="text-success">
+            Notification {editing ? 'saved' : 'created'}!
+          </span>
+        );
+      default:
+        return null;
     }
+  };
+  getStatusMessage.defaultProps = {
+    status: '',
+    error: '',
+    editing: false,
+  };
+
+  getStatusMessage.propTypes = {
+    status: PropTypes.string,
+    error: PropTypes.string,
+    editing: PropTypes.bool,
   };
 
   const KeywordFormInitialState = {
@@ -81,16 +99,16 @@ define(['react', 'react-bootstrap'], function(
       const updateStatus = next.updateNotificationRequest.status;
 
       // fires success handler if our request was successful
-      if (
-        addStatus === 'success' || updateStatus === 'success'
-      ) {
+      if (addStatus === 'success' || updateStatus === 'success') {
         setTimeout(() => this.props.onSuccess(), 1000);
       }
 
       // won't allow a request to go through if we're pending or had just failed
       if (
-        addStatus === 'pending' || updateStatus === 'pending' ||
-        addStatus === 'failure' || updateStatus === 'failure'
+        addStatus === 'pending' ||
+        updateStatus === 'pending' ||
+        addStatus === 'failure' ||
+        updateStatus === 'failure'
       ) {
         this.setState({ pending: true });
       } else if (!addStatus && !updateStatus) {
@@ -158,11 +176,12 @@ define(['react', 'react-bootstrap'], function(
               className="col-sm-7 col-sm-offset-1"
               style={{ paddingTop: '1rem' }}
             >
-              {getStatusMessage(
-                this.state.editing
+              {getStatusMessage({
+                ...(this.state.editing
                   ? this.props.updateNotificationRequest
-                  : this.props.addNotificationRequest
-              )}
+                  : this.props.addNotificationRequest),
+                editing: this.state.editing,
+              })}
               <span className="text-info">{this.state.message}</span>
             </div>
           </div>

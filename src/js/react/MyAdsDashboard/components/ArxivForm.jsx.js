@@ -9,7 +9,7 @@ define([
   ArxivClassList,
   PropTypes
 ) {
-  const getStatusMessage = ({ status, error }) => {
+  const getStatusMessage = ({ status, error, editing }) => {
     switch (status) {
       case 'pending':
         return (
@@ -21,7 +21,11 @@ define([
       case 'failure':
         return <span className="text-danger">Request failed. ({error})</span>;
       case 'success':
-        return <span className="text-success">Notification Created!</span>;
+        return (
+          <span className="text-success">
+            Notification {editing ? 'saved' : 'created'}!
+          </span>
+        );
       default:
         return null;
     }
@@ -29,11 +33,13 @@ define([
   getStatusMessage.defaultProps = {
     status: '',
     error: '',
+    editing: false,
   };
 
   getStatusMessage.propTypes = {
     status: PropTypes.string,
     error: PropTypes.string,
+    editing: PropTypes.bool,
   };
 
   class ArxivForm extends React.Component {
@@ -211,9 +217,12 @@ define([
               className="col-sm-7 col-sm-offset-1"
               style={{ paddingTop: '1rem' }}
             >
-              {getStatusMessage(
-                editing ? updateNotificationRequest : addNotificationRequest
-              )}
+              {getStatusMessage({
+                ...(editing
+                  ? updateNotificationRequest
+                  : addNotificationRequest),
+                editing,
+              })}
               <span className="text-info">{message}</span>
             </div>
           </div>
