@@ -116,8 +116,13 @@ define([
         },
         { ..._groups }
       );
-      setTimeout(() => this.setState({ groups: newGroups },
-        () => this.props.onSelection(this._groupsToArray())), 0);
+      setTimeout(
+        () =>
+          this.setState({ groups: newGroups }, () =>
+            this.props.onSelection(this._groupsToArray())
+          ),
+        0
+      );
     }
 
     _onSelect(key, value) {

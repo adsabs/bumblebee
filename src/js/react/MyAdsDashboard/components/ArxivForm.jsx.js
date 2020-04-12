@@ -1,7 +1,13 @@
-define(['react', 'react-bootstrap', 'es6!./ArxivClassList.jsx'], function(
+define([
+  'react',
+  'react-bootstrap',
+  'es6!./ArxivClassList.jsx',
+  'react-prop-types',
+], function(
   React,
   { Form, FormGroup, ControlLabel, FormControl, HelpBlock },
-  ArxivClassList
+  ArxivClassList,
+  PropTypes
 ) {
   const getStatusMessage = ({ status, error }) => {
     switch (status) {
@@ -16,7 +22,18 @@ define(['react', 'react-bootstrap', 'es6!./ArxivClassList.jsx'], function(
         return <span className="text-danger">Request failed. ({error})</span>;
       case 'success':
         return <span className="text-success">Notification Created!</span>;
+      default:
+        return null;
     }
+  };
+  getStatusMessage.defaultProps = {
+    status: '',
+    error: '',
+  };
+
+  getStatusMessage.propTypes = {
+    status: PropTypes.string,
+    error: PropTypes.string,
   };
 
   class ArxivForm extends React.Component {
@@ -24,11 +41,12 @@ define(['react', 'react-bootstrap', 'es6!./ArxivClassList.jsx'], function(
       super(props);
 
       let updatedState = {};
-      if (this.props.editingNotification) {
+      const { editingNotification } = this.props;
+      if (editingNotification) {
         updatedState = {
-          groups: this.props.editingNotification.classes,
-          keywords: this.props.editingNotification.data,
-          name: this.props.editingNotification.name,
+          groups: editingNotification.classes,
+          keywords: editingNotification.data,
+          name: editingNotification.name,
           editing: true,
         };
       }
@@ -45,10 +63,67 @@ define(['react', 'react-bootstrap', 'es6!./ArxivClassList.jsx'], function(
       this.onClassSelection = this.onClassSelection.bind(this);
     }
 
+    // eslint-disable-next-line camelcase
+    UNSAFE_componentWillReceiveProps(next) {
+      const addStatus = next.addNotificationRequest.status;
+      const updateStatus = next.updateNotificationRequest.status;
+      const { onSuccess } = this.props;
+
+      // fires success handler if our request was successful
+      if (addStatus === 'success' || updateStatus === 'success') {
+        setTimeout(() => onSuccess(), 1000);
+      }
+
+      // won't allow a request to go through if we're pending or had just failed
+      if (
+        addStatus === 'pending' ||
+        updateStatus === 'pending' ||
+        addStatus === 'failure' ||
+        updateStatus === 'failure'
+      ) {
+        this.setState({ pending: true });
+      } else if (!addStatus && !updateStatus) {
+        this.setState({ pending: false });
+      }
+    }
+
     onClassSelection(groups) {
       this.setState({
         groups,
       });
+    }
+
+    onSubmit(e) {
+      e.preventDefault();
+      const { keywords, groups, name, pending, editing } = this.state;
+      const {
+        updateNotification,
+        editingNotification,
+        addNotification,
+      } = this.props;
+
+      if (pending) {
+        return;
+      }
+
+      if (groups.length <= 0) {
+        this.showMessage('must select at least one group');
+      } else {
+        const payload = {
+          data: keywords,
+          classes: groups,
+          name: name,
+        };
+
+        if (editing) {
+          updateNotification({
+            ...editingNotification,
+            ...payload,
+          });
+        } else {
+          addNotification(payload);
+        }
+      }
     }
 
     showMessage(message) {
@@ -57,99 +132,59 @@ define(['react', 'react-bootstrap', 'es6!./ArxivClassList.jsx'], function(
       });
     }
 
-    onSubmit(e) {
-      e.preventDefault();
-      const { keywords, groups, name, pending } = this.state;
-
-      if (pending) {
-        return;
-      }
-
-      if (groups.length <= 0) {
-        return this.showMessage('must select at least one group');
-      }
-
-      const payload = {
-        data: keywords,
-        classes: groups,
-        name: name
-      };
-
-      if (this.state.editing) {
-        this.props.updateNotification({
-          ...this.props.editingNotification,
-          ...payload,
-        });
-      } else {
-        this.props.addNotification(payload);
-      }
-    }
-
-    componentWillReceiveProps(next) {
-      const addStatus = next.addNotificationRequest.status;
-      const updateStatus = next.updateNotificationRequest.status;
-
-      // fires success handler if our request was successful
-      if (
-        addStatus === 'success' || updateStatus === 'success'
-      ) {
-        setTimeout(() => this.props.onSuccess(), 1000);
-      }
-
-      // won't allow a request to go through if we're pending or had just failed
-      if (
-        addStatus === 'pending' || updateStatus === 'pending' ||
-        addStatus === 'failure' || updateStatus === 'failure'
-      ) {
-        this.setState({ pending: true });
-      } else if (!addStatus && !updateStatus) {
-        this.setState({ pending: false });
-      }
-    }
-
     render() {
+      const { editing, keywords, name, groups, message } = this.state;
+      const {
+        onCancel,
+        updateNotificationRequest,
+        addNotificationRequest,
+      } = this.props;
+
       return (
         <Form onSubmit={(e) => this.onSubmit(e)}>
-          {this.state.editing &&
+          {editing && (
             <FormGroup>
               <ControlLabel>Name</ControlLabel>
               <FormControl
                 type="text"
                 bsSize="large"
-                value={this.state.name}
+                value={name}
                 onChange={(e) => this.setState({ name: e.target.value })}
               />
-              <FormControl.Feedback/>
+              <FormControl.Feedback />
               <HelpBlock>Set the name for this notification</HelpBlock>
             </FormGroup>
-          }
+          )}
           <FormGroup>
-            <ControlLabel>Set of Keywords </ControlLabel>
+            <ControlLabel>Optional keywords</ControlLabel>
             <FormControl
               bsSize="large"
               type="text"
-              value={this.state.keywords}
+              value={keywords}
               placeholder="star OR planet"
               onChange={(e) => this.setState({ keywords: e.target.value })}
             />
             <FormControl.Feedback />
             <HelpBlock>
-              Boolean "AND" is assumed, but can be overriden by using explicit
-              logical operators between keywords
+              Boolean &quot;AND&quot; is assumed, but can be overriden by using
+              explicit logical operators between keywords
             </HelpBlock>
           </FormGroup>
 
           <FormGroup>
             <ControlLabel>
-              arXiv Groups{' '}
+              arXiv categories{' '}
               <span className="text-danger" aria-hidden="true">
                 *
               </span>{' '}
-              <span className="text-muted">(must choose one)</span>
+              <span className="text-muted">(must choose at least one)</span>
+              <span className="help-block">
+                All papers from selected categories will be shown
+              </span>
             </ControlLabel>
             <ArxivClassList
               onSelection={this.onClassSelection}
-              initialSelected={this.state.groups}
+              initialSelected={groups}
             />
             <HelpBlock>Select the groups to query</HelpBlock>
           </FormGroup>
@@ -161,13 +196,12 @@ define(['react', 'react-bootstrap', 'es6!./ArxivClassList.jsx'], function(
             <div className="col-sm-4">
               <div className="btn-toolbar">
                 <button type="submit" className="btn btn-primary">
-                  {this.state.editing
-                    ? 'Save notification'
-                    : 'Create notification'}
+                  {editing ? 'Save notification' : 'Create notification'}
                 </button>
                 <button
+                  type="button"
                   className="btn btn-default"
-                  onClick={this.props.onCancel}
+                  onClick={onCancel}
                 >
                   Cancel
                 </button>
@@ -178,17 +212,51 @@ define(['react', 'react-bootstrap', 'es6!./ArxivClassList.jsx'], function(
               style={{ paddingTop: '1rem' }}
             >
               {getStatusMessage(
-                this.state.editing
-                  ? this.props.updateNotificationRequest
-                  : this.props.addNotificationRequest
+                editing ? updateNotificationRequest : addNotificationRequest
               )}
-              <span className="text-info">{this.state.message}</span>
+              <span className="text-info">{message}</span>
             </div>
           </div>
         </Form>
       );
     }
   }
+
+  ArxivForm.defaultProps = {
+    addNotification: () => {},
+    addNotificationRequest: PropTypes.shape({
+      status: null,
+      result: null,
+      error: null,
+    }),
+    editingNotification: () => {},
+    onCancel: () => {},
+    onSuccess: () => {},
+    updateNotification: () => {},
+    updateNotificationRequest: PropTypes.shape({
+      status: null,
+      result: null,
+      error: null,
+    }),
+  };
+
+  ArxivForm.propTypes = {
+    addNotification: PropTypes.func,
+    addNotificationRequest: PropTypes.shape({
+      status: PropTypes.string,
+      result: PropTypes.string,
+      error: PropTypes.string,
+    }),
+    editingNotification: PropTypes.func,
+    onCancel: PropTypes.func,
+    onSuccess: PropTypes.func,
+    updateNotification: PropTypes.func,
+    updateNotificationRequest: PropTypes.shape({
+      status: PropTypes.string,
+      result: PropTypes.string,
+      error: PropTypes.string,
+    }),
+  };
 
   return ArxivForm;
 });
