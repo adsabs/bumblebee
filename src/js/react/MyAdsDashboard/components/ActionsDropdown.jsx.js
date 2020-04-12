@@ -1,7 +1,7 @@
 /* eslint-disable no-script-url */
 define(['react', 'react-bootstrap', 'react-prop-types'], function(
   React,
-  { Dropdown, MenuItem },
+  { Dropdown, MenuItem, ButtonGroup, Button },
   PropTypes
 ) {
   const renderRunButtons = (item, onSelect) => {
@@ -60,12 +60,14 @@ define(['react', 'react-bootstrap', 'react-prop-types'], function(
             href="javascript:void(0);"
             onClick={() => onToggleActive(item)}
           >
-            {item.active ? (
-              <i className="fa fa-check-circle-o fa-fw" aria-hidden="true" />
-            ) : (
-              <i className="fa fa-circle-o fa-fw" aria-hidden="true" />
-            )}{' '}
-            {item.active ? 'Disable' : 'Enable'}
+            <ButtonGroup bsSize="xs" block>
+              <Button bsStyle={item.active ? 'success' : 'default'}>
+                ENABLED
+              </Button>
+              <Button bsStyle={item.active ? 'default' : 'danger'}>
+                DISABLED
+              </Button>
+            </ButtonGroup>
           </MenuItem>
           <MenuItem href="javascript:void(0);" onClick={() => onEdit(item)}>
             <i className="fa fa-pencil fa-fw" aria-hidden="true" /> Edit
