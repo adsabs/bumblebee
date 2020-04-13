@@ -344,15 +344,6 @@ define([
       });
 
       this.$('[data-toggle="tooltip"]').tooltip();
-
-      // this is for search examples, sets form value on click
-      this.$('.search-quick-links button').on('click', (e) => {
-        const value = e.currentTarget.innerText.trim();
-
-        if (value) {
-          this.setFormVal(value);
-        }
-      });
     },
 
     events: {
@@ -771,6 +762,8 @@ define([
           $input.select();
           $(document.documentElement).scrollTop(0);
         }
+      } else if (event === 'recommender/update-search-text') {
+        this.view.setFormVal(arg.text);
       }
     },
 

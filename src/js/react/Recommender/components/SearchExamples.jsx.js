@@ -1,8 +1,15 @@
-import PropTypes from 'prop-types';
-define(['react', 'react-prop-types', '../models/index'], function(
+define([
+  'react',
+  'react-prop-types',
+  'react-redux',
+  '../models/index',
+  '../actions',
+], function(
   React,
   PropTypes,
-  { searchExamples }
+  { useDispatch },
+  { searchExamples },
+  { updateSearchBar }
 ) {
   const Dl = ({ children }) => {
     return <dl className="dl-horizontal">{children}</dl>;
@@ -48,8 +55,9 @@ define(['react', 'react-prop-types', '../models/index'], function(
   };
 
   const SearchExamples = () => {
+    const dispatch = useDispatch();
     const onClick = (text) => {
-      console.log('clicked', text);
+      dispatch(updateSearchBar(text));
     };
 
     return (
