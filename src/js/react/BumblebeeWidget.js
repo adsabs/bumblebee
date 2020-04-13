@@ -29,6 +29,20 @@ define([
   };
 
   const BumblebeeWidget = BaseWidget.extend({
+    /**
+     * @override
+     */
+    getBeeHive() {
+      return getBeeHive();
+    },
+
+    /**
+     * @override
+     */
+    hasBeeHive() {
+      return true;
+    },
+
     initialize({ componentId, initialData }) {
       this.view.on({
         sendRequest: _.bind(this.onSendRequest, this),
@@ -64,10 +78,10 @@ define([
       subscribe(ps.USER_ANNOUNCEMENT, this.handleUserAnnouncement.bind(this));
     },
     handleUserAnnouncement(event, data) {
-      const user = getBeeHive().getObject('User');
-      if (event == user.USER_SIGNED_IN) {
-      } else if (event == user.USER_SIGNED_OUT) {
-      }
+      // const user = getBeeHive().getObject('User');
+      // if (event == user.USER_SIGNED_IN) {
+      // } else if (event == user.USER_SIGNED_OUT) {
+      // }
     },
     isLoggedIn(cb) {
       const user = this.getBeeHive().getObject('User');
