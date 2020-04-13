@@ -6,19 +6,23 @@ define(['react', 'react-bootstrap', 'react-prop-types'], function(
 ) {
   const renderRunButtons = (item, onSelect) => {
     let labels = [];
-    if (item.type === 'query' || item.data === null) {
-      labels = ['Test Search'];
-    } else if (item.type === 'template') {
+    if (item.type === 'template') {
       if (item.template === 'arxiv') {
-        labels = [
-          'Keyword Matches - Recent Papers',
-          'Other Recent Papers in Selected Categories',
-        ];
-      } else if (item.template === 'keyword') {
+        if (item.data === null) {
+          labels = ['Other Recent Papers in Selected Categories'];
+        } else {
+          labels = [
+            'Keyword Matches - Recent Papers',
+            'Other Recent Papers in Selected Categories',
+          ];
+        }
+      } else if (item.template === 'keyword' && item.data !== null) {
         labels = ['Recent Papers', 'Most Popular', 'Most Cited'];
       } else {
         labels = ['Test Search'];
       }
+    } else {
+      labels = ['Test Search'];
     }
     return labels.map((l, i) => (
       <MenuItem
