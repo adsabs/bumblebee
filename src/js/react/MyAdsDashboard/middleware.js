@@ -74,7 +74,7 @@ define([
           try {
             trigger('doSearch', action.result[queryKey]);
           } catch (e) {
-            console.error(e);
+            dispatch(goTo(page.DASHBOARD));
           }
         }
 
@@ -89,11 +89,11 @@ define([
         if (action.result && action.result.query) {
           try {
             trigger('doSearch', JSON.parse(action.result.query).query);
-          } catch (event) {
-            console.error(event);
+          } catch (e) {
+            dispatch(goTo(page.DASHBOARD));
           }
         } else {
-          console.error('no query found');
+          dispatch(goTo(page.DASHBOARD));
         }
         setTimeout(() => {
           dispatch(goTo(page.DASHBOARD));
@@ -102,9 +102,9 @@ define([
     }
   );
 
-  const updateNotifications = ({ trigger }, { dispatch, getState }) => (
-    next
-  ) => (action) => {
+  const updateNotifications = (__, { dispatch, getState }) => (next) => (
+    action
+  ) => {
     next(action);
 
     /**

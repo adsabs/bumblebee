@@ -56,6 +56,7 @@ define([
         filterText: null,
         sortCol: null,
         sortDir: null,
+        loadingQuery: false,
       };
       this.onFilter = _.debounce(this.onFilter, 100);
       this.onRunQuery = this.onRunQuery.bind(this);
@@ -142,6 +143,7 @@ define([
     onRunQuery({ id }, queryKey) {
       const { runQuery } = this.props;
       runQuery(id, queryKey);
+      this.setState({ loadingQuery: true });
     }
 
     render() {
@@ -158,6 +160,7 @@ define([
         sortDir,
         searchValue,
         activeItem,
+        loadingQuery,
       } = this.state;
 
       let ids = Object.keys(notifications);
@@ -201,8 +204,11 @@ define([
         updateRequest.status === 'pending' ||
         getRequest.status === 'pending';
 
-      if (ids.length === 0 && getRequest.status === 'pending') {
-        return getRequest.status === 'pending' ? (
+      if (
+        (ids.length === 0 && getRequest.status === 'pending') ||
+        loadingQuery
+      ) {
+        return getRequest.status === 'pending' || loadingQuery ? (
           <div className="row text-center">
             <h3 className="h4">
               <i className="fa fa-spinner fa-spin" aria-hidden="true" />{' '}
