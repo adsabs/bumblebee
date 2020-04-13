@@ -2,28 +2,44 @@ define([
   'react',
   'react-bootstrap',
   'react-prop-types',
+  'react-redux',
+  '../actions',
   'es6!./RecommendedList.jsx',
   'es6!./SearchExamples.jsx',
 ], function(
   React,
   { Nav, NavItem },
   PropTypes,
+  { useDispatch, useSelector },
+  { setTab, emitAnalytics },
   RecommendedList,
   SearchExamples
 ) {
+  const selector = (state) => ({
+    tab: state.tab,
+  });
+
   const App = () => {
-<<<<<<< HEAD
-    const [selected, onSelected] = React.useState(2);
-=======
-    const [selected, onSelected] = React.useState(1);
->>>>>>> initial stuff
+    const dispatch = useDispatch();
+    const { tab } = useSelector(selector);
+    const onSelected = (key) => {
+      dispatch(setTab(key));
+      dispatch(
+        emitAnalytics([
+          'send',
+          'event',
+          'interaction.main-page',
+          key === 1 ? 'recommender' : 'help',
+        ])
+      );
+    };
 
     return (
       <div>
         <Nav
           bsStyle="tabs"
           justified
-          activeKey={selected}
+          activeKey={tab}
           onSelect={(key) => onSelected(key)}
         >
           <NavItem eventKey={1} href="javascript:void(0);">
@@ -33,13 +49,9 @@ define([
             Search examples
           </NavItem>
         </Nav>
-<<<<<<< HEAD
         <div style={{ minHeight: 200, padding: '1rem 0' }}>
-          {selected === 1 ? <RecommendedList /> : <SearchExamples />}
+          {tab === 1 ? <RecommendedList /> : <SearchExamples />}
         </div>
-=======
-        {selected === 1 ? <RecommendedList /> : <SearchExamples />}
->>>>>>> initial stuff
       </div>
     );
   };

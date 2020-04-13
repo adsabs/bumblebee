@@ -1,5 +1,4 @@
 define(['../shared/helpers', './actions'], function(
-<<<<<<< HEAD
   { middleware, apiSuccess, apiFailure, parseScope },
   {
     GET_RECOMMENDATIONS,
@@ -9,33 +8,66 @@ define(['../shared/helpers', './actions'], function(
     setQuery,
     UPDATE_SEARCH_BAR,
     GET_FULL_LIST,
+    EMIT_ANALYTICS,
   }
 ) {
-  const getRecommendations = middleware(({ next, action, dispatch }) => {
-    next(action);
-
-    if (action.type === apiSuccess(GET_RECOMMENDATIONS)) {
-      dispatch(setQuery(action.result.query));
-      dispatch(
-        getDocs({
-          fl: 'bibcode,title,author,[fields author=3],author_count',
-          q: action.result.query,
-        })
-      );
+  const updateTarget = middleware(({ next, action, getState }) => {
+    if (action.type === 'API_REQUEST' && action.scope === GET_RECOMMENDATIONS) {
+      const { oracleTarget } = getState();
+      action = {
+        ...action,
+        options: { ...action.options, target: oracleTarget },
+      };
     }
+    next(action);
+  });
 
-    if (action.type === apiFailure(GET_RECOMMENDATIONS)) {
-      if (action.result && action.result.query) {
-        const { scope } = parseScope(action.type);
-        dispatch({ type: `${scope}_RESET` });
+  const getRecommendations = middleware(
+    ({ next, action, dispatch, getState }) => {
+      next(action);
+
+      if (action.type === GET_RECOMMENDATIONS) {
+        const { queryParams } = getState();
+        const { func, sort, numDocs, cutOffDays, topNReads } = queryParams;
+        dispatch({
+          type: 'API_REQUEST',
+          scope: GET_RECOMMENDATIONS,
+          options: {
+            type: 'POST',
+            data: {
+              function: func,
+              sort,
+              num_docs: numDocs,
+              cutoff_days: cutOffDays,
+              top_n_reads: topNReads,
+            },
+          },
+        });
+      }
+
+      if (action.type === apiSuccess(GET_RECOMMENDATIONS)) {
         dispatch(setQuery(action.result.query));
+        dispatch(
+          getDocs({
+            fl: 'bibcode,title,author,[fields author=3],author_count',
+            q: action.result.query,
+          })
+        );
+      }
+
+      if (action.type === apiFailure(GET_RECOMMENDATIONS)) {
+        if (action.result && action.result.query) {
+          const { scope } = parseScope(action.type);
+          dispatch({ type: `${scope}_RESET` });
+          dispatch(setQuery(action.result.query));
+        }
+      }
+
+      if (action.type === apiSuccess(GET_DOCS)) {
+        dispatch(setDocs(action.result.response.docs));
       }
     }
-
-    if (action.type === apiSuccess(GET_DOCS)) {
-      dispatch(setDocs(action.result.response.docs));
-    }
-  });
+  );
 
   const updateSearchBar = middleware(({ action, next, trigger }) => {
     next(action);
@@ -61,30 +93,19 @@ define(['../shared/helpers', './actions'], function(
     }
   });
 
-  return { getRecommendations, updateSearchBar, getFullList };
-=======
-  { delay, middleware, apiSuccess, parseScope },
-  { GET_RECOMMENDATIONS }
-) {
-  const getRecommendations = middleware(({ next, action }) => {
+  const analytics = middleware(({ next, action, trigger }) => {
     next(action);
 
-    if (action.type === apiSuccess(GET_RECOMMENDATIONS)) {
-      console.log('success', action);
+    if (action.type === EMIT_ANALYTICS) {
+      trigger('analyticsEvent', ...action.payload);
     }
   });
 
-  const requestReset = middleware(({ dispatch, next, action }) => {
-    next(action);
-    if (/_API_REQUEST_(SUCCESS|FAILURE)$/.test(action.type)) {
-      const { scope } = parseScope(action.type);
-
-      delay(() => {
-        dispatch({ type: `${scope}_RESET` });
-      });
-    }
-  });
-
-  return { getRecommendations, requestReset };
->>>>>>> initial stuff
+  return {
+    getRecommendations,
+    updateSearchBar,
+    getFullList,
+    analytics,
+    updateTarget,
+  };
 });

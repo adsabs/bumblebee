@@ -1,37 +1,20 @@
 define([], function() {
   const actions = {
     GET_RECOMMENDATIONS: 'GET_RECOMMENDATIONS',
-<<<<<<< HEAD
     GET_DOCS: 'GET_DOCS',
     SET_DOCS: 'SET_DOCS',
     SET_QUERY: 'SET_QUERY',
     UPDATE_SEARCH_BAR: 'UPDATE_SEARCH_BAR',
     GET_FULL_LIST: 'GET_FULL_LIST',
-=======
->>>>>>> initial stuff
+    EMIT_ANALYTICS: 'EMIT_ANALYTICS',
+    SET_TAB: 'SET_TAB',
+    SET_ORACLE_TARGET: 'SET_ORACLE_TARGET',
+    SET_QUERY_PARAMS: 'SET_QUERY_PARAMS',
   };
 
   const actionCreators = {
-    getRecommendations: ({ func, sort, numDocs, cutOffDays, topNReads }) => ({
-      type: 'API_REQUEST',
-      scope: actions.GET_RECOMMENDATIONS,
-      options: {
-        type: 'POST',
-        target: `_oracle/readhist`,
-<<<<<<< HEAD
-        data: {
-=======
-        body: {
->>>>>>> initial stuff
-          function: func,
-          sort,
-          num_docs: numDocs,
-          cutoff_days: cutOffDays,
-          top_n_reads: topNReads,
-<<<<<<< HEAD
-          reader: '3138c73ffff34a0f'
-        },
-      },
+    getRecommendations: () => ({
+      type: actions.GET_RECOMMENDATIONS,
     }),
     getDocs: (query) => ({
       type: 'API_REQUEST',
@@ -50,6 +33,10 @@ define([], function() {
       type: actions.SET_QUERY,
       payload: query,
     }),
+    setQueryParams: (payload) => ({
+      type: actions.SET_QUERY_PARAMS,
+      payload,
+    }),
     updateSearchBar: (text) => ({
       type: actions.UPDATE_SEARCH_BAR,
       payload: text,
@@ -57,11 +44,18 @@ define([], function() {
     getFullList: () => ({
       type: actions.GET_FULL_LIST,
     }),
-=======
-        },
-      },
+    emitAnalytics: (payload) => ({
+      type: actions.EMIT_ANALYTICS,
+      payload,
     }),
->>>>>>> initial stuff
+    setTab: (tab) => ({
+      type: actions.SET_TAB,
+      payload: tab,
+    }),
+    setOracleTarget: (target) => ({
+      type: actions.SET_ORACLE_TARGET,
+      payload: target,
+    }),
   };
 
   return { ...actions, ...actionCreators };
