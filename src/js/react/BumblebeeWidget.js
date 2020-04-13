@@ -114,8 +114,17 @@ define([
       const request = new ApiRequest({
         target,
         query: new ApiQuery(query),
-        options,
       });
+      request.set('options', {
+        ...options,
+        contentType:
+          target === 'search/query'
+            ? 'application/x-www-form-urlencoded'
+            : options.contentType,
+        data:
+          target === 'search/query' ? request.get('query').url() : options.data,
+      });
+
       publish(ps.EXECUTE_REQUEST, request);
     },
     analyticsEvent(...args) {
