@@ -12,7 +12,11 @@ define([
   SearchExamples
 ) {
   const App = () => {
+<<<<<<< HEAD
     const [selected, onSelected] = React.useState(2);
+=======
+    const [selected, onSelected] = React.useState(1);
+>>>>>>> initial stuff
 
     return (
       <div>
@@ -29,9 +33,13 @@ define([
             Search examples
           </NavItem>
         </Nav>
+<<<<<<< HEAD
         <div style={{ minHeight: 200, padding: '1rem 0' }}>
           {selected === 1 ? <RecommendedList /> : <SearchExamples />}
         </div>
+=======
+        {selected === 1 ? <RecommendedList /> : <SearchExamples />}
+>>>>>>> initial stuff
       </div>
     );
   };

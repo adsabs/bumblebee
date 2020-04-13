@@ -1,11 +1,14 @@
 define([], function() {
   const actions = {
     GET_RECOMMENDATIONS: 'GET_RECOMMENDATIONS',
+<<<<<<< HEAD
     GET_DOCS: 'GET_DOCS',
     SET_DOCS: 'SET_DOCS',
     SET_QUERY: 'SET_QUERY',
     UPDATE_SEARCH_BAR: 'UPDATE_SEARCH_BAR',
     GET_FULL_LIST: 'GET_FULL_LIST',
+=======
+>>>>>>> initial stuff
   };
 
   const actionCreators = {
@@ -15,12 +18,17 @@ define([], function() {
       options: {
         type: 'POST',
         target: `_oracle/readhist`,
+<<<<<<< HEAD
         data: {
+=======
+        body: {
+>>>>>>> initial stuff
           function: func,
           sort,
           num_docs: numDocs,
           cutoff_days: cutOffDays,
           top_n_reads: topNReads,
+<<<<<<< HEAD
           reader: '3138c73ffff34a0f'
         },
       },
@@ -49,6 +57,11 @@ define([], function() {
     getFullList: () => ({
       type: actions.GET_FULL_LIST,
     }),
+=======
+        },
+      },
+    }),
+>>>>>>> initial stuff
   };
 
   return { ...actions, ...actionCreators };

@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 define([
   'react',
   'react-prop-types',
@@ -10,6 +11,13 @@ define([
   { useDispatch },
   { searchExamples },
   { updateSearchBar }
+=======
+import PropTypes from 'prop-types';
+define(['react', 'react-prop-types', '../models/index'], function(
+  React,
+  PropTypes,
+  { searchExamples }
+>>>>>>> initial stuff
 ) {
   const Dl = ({ children }) => {
     return <dl className="dl-horizontal">{children}</dl>;
@@ -55,9 +63,14 @@ define([
   };
 
   const SearchExamples = () => {
+<<<<<<< HEAD
     const dispatch = useDispatch();
     const onClick = (text) => {
       dispatch(updateSearchBar(text));
+=======
+    const onClick = (text) => {
+      console.log('clicked', text);
+>>>>>>> initial stuff
     };
 
     return (

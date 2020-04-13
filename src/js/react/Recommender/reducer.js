@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 define(['redux', './actions'], function(
   { combineReducers },
   { SET_DOCS, SET_QUERY }
@@ -5,6 +6,11 @@ define(['redux', './actions'], function(
   const requestState = {
     GET_RECOMMENDATIONS: { status: null, result: null, error: null },
     GET_DOCS: { status: null, result: null, error: null },
+=======
+define(['redux'], function({ combineReducers }) {
+  const requestState = {
+    GET_RECOMMENDATIONS: { status: null, result: null, error: null },
+>>>>>>> initial stuff
   };
   const requests = (state = requestState, action) => {
     if (/_API_REQUEST_/.test(action.type)) {
@@ -30,6 +36,7 @@ define(['redux', './actions'], function(
     return state;
   };
 
+<<<<<<< HEAD
   const docsState = [];
   const docs = (state = docsState, action) => {
     if (action.type === SET_DOCS && action.payload) {
@@ -54,5 +61,9 @@ define(['redux', './actions'], function(
     requests,
     docs,
     query,
+=======
+  return combineReducers({
+    requests,
+>>>>>>> initial stuff
   });
 });
