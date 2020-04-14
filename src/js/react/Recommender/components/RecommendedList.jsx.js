@@ -14,7 +14,7 @@ define([
   const Paper = ({ title, bibcode, author, totalAuthors }) => {
     return (
       <li style={{ marginTop: '1rem' }}>
-        <a href={`/abs/${bibcode}/abstract`}>{title}</a>
+        <a href={`#/abs/${bibcode}/abstract`}>{title}</a>
         <ul className="list-inline">
           {author.map((entry, i) => (
             <li>{`${entry}${i < 2 ? ';' : ''}`}</li>
