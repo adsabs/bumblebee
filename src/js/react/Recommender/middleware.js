@@ -7,6 +7,7 @@ define(['../shared/helpers', './actions'], function(
     setDocs,
     setQuery,
     UPDATE_SEARCH_BAR,
+    GET_FULL_LIST,
   }
 ) {
   const getRecommendations = middleware(({ next, action, dispatch }) => {
@@ -16,7 +17,7 @@ define(['../shared/helpers', './actions'], function(
       dispatch(setQuery(action.result.query));
       dispatch(
         getDocs({
-          fl: 'bibcode,title,author',
+          fl: 'bibcode,title,author,[fields author=3],author_count',
           q: action.result.query,
         })
       );
@@ -50,5 +51,14 @@ define(['../shared/helpers', './actions'], function(
     }
   });
 
-  return { getRecommendations, updateSearchBar };
+  const getFullList = middleware(({ next, action, trigger, getState }) => {
+    next(action);
+
+    if (action.type === GET_FULL_LIST) {
+      const { query } = getState();
+      trigger('doSearch', { q: query });
+    }
+  });
+
+  return { getRecommendations, updateSearchBar, getFullList };
 });

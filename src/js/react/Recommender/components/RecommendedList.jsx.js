@@ -1,18 +1,25 @@
-define(['react', 'react-prop-types', 'react-redux', '../actions'], function(
+define([
+  'react',
+  'react-prop-types',
+  'react-redux',
+  'react-bootstrap',
+  '../actions',
+], function(
   React,
   PropTypes,
   { useSelector, useDispatch },
-  { getRecommendations }
+  { Button },
+  { getRecommendations, getFullList }
 ) {
-  const Paper = ({ title, bibcode, author }) => {
+  const Paper = ({ title, bibcode, author, totalAuthors }) => {
     return (
       <li style={{ marginTop: '1rem' }}>
         <a href={`/abs/${bibcode}/abstract`}>{title}</a>
         <ul className="list-inline">
-          {author.slice(0, 3).map((entry, i) => (
+          {author.map((entry, i) => (
             <li>{`${entry}${i < 2 ? ';' : ''}`}</li>
           ))}
-          {author.length > 3 && <li>...</li>}
+          {totalAuthors > 3 && <li>...</li>}
         </ul>
       </li>
     );
@@ -21,12 +28,14 @@ define(['react', 'react-prop-types', 'react-redux', '../actions'], function(
     title: '',
     bibcode: '',
     author: [],
+    totalAuthors: 0,
   };
 
   Paper.propTypes = {
     title: PropTypes.string,
     bibcode: PropTypes.string,
     author: PropTypes.arrayOf(PropTypes.string),
+    totalAuthors: PropTypes.number,
   };
 
   const Message = ({ children }) => (
@@ -65,6 +74,10 @@ define(['react', 'react-prop-types', 'react-redux', '../actions'], function(
         })
       );
     }, []);
+    const onGetMore = () => {
+      // TODO: get this working
+      dispatch(getFullList());
+    };
     const { getRecommendationsRequest, getDocsRequest, docs } = useSelector(
       selector
     );
@@ -107,10 +120,20 @@ define(['react', 'react-prop-types', 'react-redux', '../actions'], function(
     return (
       <div>
         <ul className="list-unstyled">
-          {docs.map(({ title, bibcode, author }) => (
-            <Paper title={title} bibcode={bibcode} author={author} />
+          {docs.map(({ title, bibcode, author, totalAuthors }) => (
+            <Paper
+              title={title}
+              bibcode={bibcode}
+              author={author}
+              totalAuthors={totalAuthors}
+            />
           ))}
         </ul>
+        <Message>
+          <Button bsStyle="link" onClick={onGetMore}>
+            See full list
+          </Button>
+        </Message>
       </div>
     );
   };
