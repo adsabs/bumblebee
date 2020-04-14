@@ -36,6 +36,7 @@ define(['redux', './actions'], function(
       return action.payload.map((doc) => ({
         ...doc,
         title: doc.title[0],
+        totalAuthors: doc.author_count,
       }));
     }
     return state;

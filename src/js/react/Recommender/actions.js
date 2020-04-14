@@ -5,6 +5,7 @@ define([], function() {
     SET_DOCS: 'SET_DOCS',
     SET_QUERY: 'SET_QUERY',
     UPDATE_SEARCH_BAR: 'UPDATE_SEARCH_BAR',
+    GET_FULL_LIST: 'GET_FULL_LIST',
   };
 
   const actionCreators = {
@@ -43,6 +44,9 @@ define([], function() {
     updateSearchBar: (text) => ({
       type: actions.UPDATE_SEARCH_BAR,
       payload: text,
+    }),
+    getFullList: () => ({
+      type: actions.GET_FULL_LIST,
     }),
   };
 
