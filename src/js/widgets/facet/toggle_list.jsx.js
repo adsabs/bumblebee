@@ -35,7 +35,7 @@ define(['react', 'd3', 'react-prop-types', 'react-redux'], function(
       if (e.target.checked) {
         // toggle open author hierarchical facets here, so users can see what the hierarchy means
         selectFacet(id);
-        if (config.hierMaxLevels === 2) {
+        if (config.hierMaxLevels === 2 && typeof toggleFacet === 'function') {
           toggleFacet(id, true);
         }
       } else {
@@ -43,7 +43,9 @@ define(['react', 'd3', 'react-prop-types', 'react-redux'], function(
       }
     };
 
-    const label = `facet-label__title_${config.facetField}_${index}`;
+    const label = `facet-label__title_${config.facetField}_${
+      hierarchical ? '' : 'child'
+    }_${index}`;
     var checkbox = (
       <label className="facet-label" htmlFor={`${label}__checkbox`}>
         <input
@@ -156,14 +158,13 @@ define(['react', 'd3', 'react-prop-types', 'react-redux'], function(
         if (checkboxProps.hierarchical) {
           checkboxProps = {
             ...checkboxProps,
-            showMoreFacets,
+            showMoreFacets: showMoreFacets,
             resetVisibleFacets,
-            toggleFacet,
             reduxState: state,
-            currentLevel,
+            currentLevel: currentLevel,
+            toggleFacet: toggleFacet,
           };
         }
-
         return (
           <li key={c.value}>
             {/* eslint-disable-next-line react/jsx-props-no-spreading */}
