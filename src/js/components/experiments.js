@@ -1,11 +1,13 @@
 define(['underscore', 
         'jquery',
         'js/components/generic_module',
-        'js/mixins/dependon'], 
+        'js/mixins/dependon',
+        'analytics'], 
         function(_, 
                  $,
                  GenericModule,
-                 Dependon
+                 Dependon,
+                 analytics
                  ) {
     
     var Experiments = GenericModule.extend({
@@ -25,15 +27,23 @@ define(['underscore',
           },
     
         onAppStarted: function() {
+
+            if (!window.gtag) {
+                window.gtag = function () {dataLayer && dataLayer.push(arguments)}
+                gtag('event', 'optimize.callback', {
+                    callback: (value, name) => console.log(
+                        'Experiment with ID: ' + name + ' is on variant: ' + value)
+                });
+
+            }
+            
             this.toggleOptimize();
-            //var self = this;
-            //setTimeout(function() {self.toggleOptimize(), 1000}); // won't be necessary if I knew what event to listen to...
             
         },
 
         toggleOptimize: function() {
-            if (dataLayer === null) {
-                console.warn('Optimize is not available');
+            if (!dataLayer) {
+                console.warn('Optimize is not available, we are not running any experiment');
                 return;
             }
 
