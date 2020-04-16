@@ -31,8 +31,18 @@ define(['underscore',
             if (!window.gtag) {
                 window.gtag = function () {dataLayer && dataLayer.push(arguments)}
                 gtag('event', 'optimize.callback', {
-                    callback: (value, name) => console.log(
-                        'Experiment with ID: ' + name + ' is on variant: ' + value)
+                    callback: (value, name) => { console.log(
+                        'Experiment with ID: ' + name + ' is on variant: ' + value);
+                        setTimeout(function() {
+                            // temporary workaround
+                            if (value === '2') {
+                                document.getElementById('recommender').getElementsByTagName('a')[0].click()
+                            }
+                            else {
+                                document.getElementById('recommender').getElementsByTagName('a')[1].click()
+                            }
+                        }, 1000);
+                    }
                 });
 
             }

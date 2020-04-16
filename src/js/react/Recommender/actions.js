@@ -21,6 +21,7 @@ define([], function() {
           num_docs: numDocs,
           cutoff_days: cutOffDays,
           top_n_reads: topNReads,
+          reader: '3138c73ffff34a0f'
         },
       },
     }),
