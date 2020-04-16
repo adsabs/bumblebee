@@ -1,4 +1,4 @@
-define(['./searchExamples.js'], function(searchExamples) {
+define(['./searchExamples'], function(searchExamples) {
   return {
     searchExamples,
   };
