@@ -56,7 +56,7 @@ define(['react', 'react-bootstrap', 'react-prop-types'], function(
           <i className="fa fa-cog" aria-hidden="true" /> Actions
         </Dropdown.Toggle>
         <Dropdown.Menu style={{ overflow: 'visible !important' }}>
-          <MenuItem header>Preview on results page</MenuItem>
+          <MenuItem header>View in search results page</MenuItem>
           {renderRunButtons(item, (queryKey) => onRunQuery(item, queryKey))}
           <MenuItem divider />
           <MenuItem header>Actions</MenuItem>
