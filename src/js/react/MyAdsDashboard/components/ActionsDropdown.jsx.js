@@ -19,16 +19,16 @@ define(['react', 'react-bootstrap', 'react-prop-types'], function(
       } else if (item.template === 'keyword' && item.data !== null) {
         labels = ['Recent Papers', 'Most Popular', 'Most Cited'];
       } else {
-        labels = ['Test Search'];
+        labels = ['Search'];
       }
     } else {
-      labels = ['Test Search'];
+      labels = ['Search'];
     }
     return labels.map((l, i) => (
       <MenuItem
         href="javascript:void(0);"
         onSelect={onSelect}
-        aria-label={`Test Search: ${l}`}
+        aria-label={`Search: ${l}`}
         eventKey={i}
       >
         <i className="fa fa-search fa-fw" aria-hidden="true" /> {l}
