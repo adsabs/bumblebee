@@ -184,8 +184,8 @@ define([
                 *
               </span>{' '}
               <span className="text-muted">(must choose at least one)</span>
-              <span className="help-block">
-                All papers from selected categories will be shown
+              <span className="help-block" style={{ fontWeight: 'normal' }}>
+                Notification will include all papers from selected categories
               </span>
             </ControlLabel>
             <ArxivClassList
