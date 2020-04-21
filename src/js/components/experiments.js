@@ -2,12 +2,14 @@ define(['underscore',
         'jquery',
         'js/components/generic_module',
         'js/mixins/dependon',
-        'analytics'], 
+        'analytics',
+        'js/components/pubsub_events'], 
         function(_, 
                  $,
                  GenericModule,
                  Dependon,
-                 analytics
+                 analytics,
+                 PubsubEvents
                  ) {
     
     var Experiments = GenericModule.extend({
@@ -20,35 +22,45 @@ define(['underscore',
             this.setApp(app);
             this.setBeeHive(beehive);
             var pubsub = this.getPubSub();
-            pubsub.subscribe(
-                pubsub.ARIA_ANNOUNCEMENT,
-                _.bind(this.onAppStarted, this)
-            );
-          },
-    
-        onAppStarted: function() {
 
             if (!window.gtag) {
                 window.gtag = function () {dataLayer && dataLayer.push(arguments)}
                 gtag('event', 'optimize.callback', {
                     callback: (value, name) => { console.log(
                         'Experiment with ID: ' + name + ' is on variant: ' + value);
-                        setTimeout(function() {
-                            // temporary workaround
-                            if (value === '2') {
-                                document.getElementById('recommender').getElementsByTagName('a')[0].click()
-                            }
-                            else {
-                                document.getElementById('recommender').getElementsByTagName('a')[1].click()
-                            }
-                        }, 1000);
                     }
                 });
-
             }
-            
+
+            pubsub.subscribe(
+                pubsub.APP_STARTED,
+                _.bind(this.onAppStarted, this)
+            );
+          },
+
+        /** 
+         * 
+         * callback that can be used by external components; they can 
+           listen to BBB and then run their experiment 
+         *
+         **/
+        subscribe: function(event, callback) {
+            var pubsub = this.getPubSub();
+            if (pubsub_events[event]) {
+                pubsub.subsribe(pubsub[pubsub_events[event], callback);
+            }
+        },
+    
+        subscribeOnce: function(event, callback) {
+            var pubsub = this.getPubSub();
+            if (pubsub_events[event]) {
+                pubsub.subsribeOnce(pubsub[pubsub_events[event], callback);
+            }
+        },
+    
+
+        onAppStarted: function() {
             this.toggleOptimize();
-            
         },
 
         toggleOptimize: function() {
