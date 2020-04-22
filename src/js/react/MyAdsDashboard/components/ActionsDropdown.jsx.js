@@ -9,7 +9,7 @@ define(['react', 'react-bootstrap', 'react-prop-types'], function(
     if (item.type === 'template') {
       if (item.template === 'arxiv') {
         if (item.data === null) {
-          labels = ['Other Recent Papers in Selected Categories'];
+          labels = ['Search'];
         } else {
           labels = [
             'Keyword Matches - Recent Papers',
