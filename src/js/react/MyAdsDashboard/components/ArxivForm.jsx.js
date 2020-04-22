@@ -162,7 +162,10 @@ define([
             </FormGroup>
           )}
           <FormGroup>
-            <ControlLabel>Optional keywords</ControlLabel>
+            <ControlLabel>Keywords (optional)</ControlLabel>
+            <HelpBlock>
+              Used to rank papers from selected arXiv categories (below)
+            </HelpBlock>
             <FormControl
               bsSize="large"
               type="text"

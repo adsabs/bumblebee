@@ -1,3 +1,4 @@
+/* eslint-disable max-classes-per-file */
 define([
   'underscore',
   'react',
@@ -6,7 +7,7 @@ define([
 ], function(
   _,
   React,
-  { Checkbox, ListGroup, ListGroupItem, Button },
+  { Checkbox, ListGroup, ListGroupItem },
   ArxivClassesModel
 ) {
   const initialState = {
