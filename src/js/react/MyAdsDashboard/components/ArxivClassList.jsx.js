@@ -225,12 +225,6 @@ define([
               />
             ))}
           </ListGroup>
-          <Checkbox
-            checked={this.state.all}
-            onChange={() => this.onSelectAll()}
-          >
-            Select All
-          </Checkbox>
         </div>
       );
     }
