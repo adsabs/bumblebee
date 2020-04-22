@@ -131,6 +131,7 @@ define(['config/discovery.config', 'module'], function(config, module) {
 
           // accessibility: skip to main content
           $('body').on('click', '#skip-to-main-content', function() {
+            $('#main-content').focus();
             return false;
           });
 
