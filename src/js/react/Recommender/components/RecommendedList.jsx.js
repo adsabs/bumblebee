@@ -81,14 +81,6 @@ define([
     const dispatch = useDispatch();
     const onGetMore = () => {
       dispatch(getFullList());
-      dispatch(
-        emitAnalytics([
-          'send',
-          'event',
-          'interaction',
-          'recommender/get-full-list-clicked',
-        ])
-      );
     };
     const { getRecommendationsRequest, getDocsRequest, docs } = useSelector(
       selector
