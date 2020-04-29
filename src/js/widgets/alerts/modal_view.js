@@ -26,7 +26,7 @@ define([
         $('body').append(() => {
           let out = '';
           if ($('#alert-modal-label').length === 0) {
-            out += '<div id="alert-modal-label">Alert</div>';
+            out += '<div id="alert-modal-label" class="sr-only">Alert</div>';
           }
 
           out +=
