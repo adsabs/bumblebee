@@ -7,7 +7,7 @@ define([
   './middleware',
   './reducer',
   'js/react/shared/helpers',
-  'js/react/shared/middleware/api',
+  'js/react/shared/middleware/index',
 ], function(
   App,
   WithBackboneView,
@@ -22,14 +22,10 @@ define([
   const mapStateToProps = ({}) => ({});
   const {} = actions;
   const actionCreators = {};
+  const middlewares = [middleware, ...sharedMiddleware];
 
   return WithBackboneView(
     connect(mapStateToProps, actionCreators)(App),
-    (context) =>
-      configureStore(
-        context,
-        reducer,
-        withContext(middleware, sharedMiddleware)
-      )
+    (context) => configureStore(context, reducer, withContext(...middlewares))
   );
 });
