@@ -17,6 +17,7 @@ define([
   'hbs!404',
   'hbs!js/apps/discovery/templates/orcid-modal-template',
   'js/mixins/api_access',
+  'react-redux'
 ], function(
   $,
   Backbone,
@@ -30,8 +31,8 @@ define([
   ApiTargets,
   ErrorTemplate,
   OrcidModalTemplate,
-  ApiAccessMixin
-) {
+  ApiAccessMixin,
+  ReactRedux) {
   var NavigatorService = Navigator.extend({
     start: function(app) {
       /**
@@ -1434,13 +1435,19 @@ define([
         return $dd.promise();
       };
 
-      const showDetailsSubPage = function({ id, bibcode, page, prefix }) {
+      const showDetailsSubPage = function({
+        id,
+        bibcode,
+        page,
+        prefix,
+        subView,
+      }) {
         const ps = self.getPubSub();
         ps.publish(
           ps.DISPLAY_DOCUMENTS,
-          new ApiQuery({ q: 'identifier:' + bibcode })
+          new ApiQuery({ q: `identifier:${bibcode}` })
         );
-        page.setActive(id);
+        page.setActive(id, subView);
 
         if (prefix) {
           // we can grab the current title from storage and just add our prefix from there
@@ -1696,6 +1703,30 @@ define([
             });
           });
         return defer.promise();
+      });
+
+      // ---- react components ----
+
+      const createReactPage = async (id) => {
+        // get the page manager and inject a rendered widget
+        const pm = await app._getWidget('ReactPageManager');
+        const widget = await app._getWidget(id);
+        pm.widgets[id] = widget.render();
+        pm.view = pm.createView({ widgets: { [id]: pm.widgets[id] } });
+        await app.getObject('MasterPageManager').show('ReactPageManager', [id]);
+        return widget;
+      };
+
+      this.set('ShowFeedback', async function(id, { subview, bibcode }) {
+        const widget = await createReactPage('ShowFeedback');
+        ReactRedux.batch(() => {
+          widget.dispatch({ type: 'SET_FORM', payload: subview });
+          widget.dispatch({ type: 'SET_BIBCODE', payload: bibcode });
+        })
+        const { form } = widget.getState().main;
+        publishPageChange(`feedback-${form}`);
+        this.title = 'Feedback';
+        this.route = `#feedback/${form}`;
       });
     },
   });

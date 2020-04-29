@@ -2,7 +2,7 @@ define([
   'react',
   'react-bootstrap',
   'js/react/shared/helpers',
-  'react-prop-types',
+  'prop-types',
 ], function(
   React,
   { Form, FormGroup, ControlLabel, FormControl, Checkbox, Radio, Button },

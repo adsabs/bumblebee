@@ -1,6 +1,6 @@
 define([
   'react',
-  'react-prop-types',
+  'prop-types',
   'react-bootstrap',
   'es6!./CollapsePanel.jsx',
   '../containers/SaveQueryForm',

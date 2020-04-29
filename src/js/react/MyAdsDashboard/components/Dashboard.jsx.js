@@ -4,7 +4,7 @@ define([
   'es6!./TemplatePill.jsx',
   'moment',
   'es6!./ActionsDropdown.jsx',
-  'react-prop-types',
+  'prop-types',
 ], function(_, React, TemplatePill, moment, ActionsDropdown, PropTypes) {
   const getFriendlyDateString = (dateStr) => {
     return moment(dateStr).format('lll');

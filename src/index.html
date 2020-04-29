@@ -118,6 +118,11 @@
           setTimeout(__setAppLoadingProgress, 500, 25);
           window.__setAppLoadingProgress(15, 'Downloading Assets');
           window.__PAGE_LOAD_TIMESTAMP = new Date();
+          window.process = {
+            env: {
+              NODE_ENV: 'production'
+            }
+          };
         })();
     </script>
 

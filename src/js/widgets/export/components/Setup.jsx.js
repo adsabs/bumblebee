@@ -1,4 +1,4 @@
-define(['react', 'react-prop-types'], function(React, ReactPropTypes) {
+define(['react', 'prop-types'], function(React, ReactPropTypes) {
   const Setup = ({
     onApply,
     setFormat,

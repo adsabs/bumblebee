@@ -1,4 +1,4 @@
-define(['react', 'react-prop-types'], function(React, ReactPropTypes) {
+define(['react', 'prop-types'], function(React, ReactPropTypes) {
   const Closer = ({ onClick }) => {
     const handleClick = (e) => {
       e.preventDefault();

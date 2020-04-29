@@ -27,4 +27,11 @@ module.exports = {
       'cat test/coverage/reports/lcov/lcov.info | ./node_modules/coveralls/bin/coveralls.js',
   },
   server: 'node server',
+  suit_build: {
+    cwd: './src/shared',
+    cmd: 'sh ./install.sh',
+  },
+  submodule_init: {
+    cmd: 'git submodule update --init',
+  },
 };

@@ -17,6 +17,9 @@ h3 {
 }
 .modal-content {
   margin-top: 30%;
+  .feedback-preview-modal & {
+    margin-top: 0;
+  }
 }
 
 .modal-backdrop {

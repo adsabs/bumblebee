@@ -1,4 +1,4 @@
-define(['react', 'react-prop-types', 'react-bootstrap'], function(
+define(['react', 'prop-types', 'react-bootstrap'], function(
   React,
   PropTypes,
   { Panel }

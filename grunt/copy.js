@@ -9,6 +9,99 @@ module.exports = function(grunt) {
     libs: {
       files: [
         {
+          cwd: 'node_modules/xstate/dist',
+          src: 'xstate.js',
+          dest: 'src/libs/xstate/',
+          expand: true,
+          rename: function(dest, src) {
+            return dest + src.replace('xstate.js', 'index.js');
+          },
+        },
+        {
+          cwd: 'node_modules/recoil/umd',
+          src: 'recoil.min.js',
+          dest: 'src/libs/recoil/',
+          expand: true,
+          rename: function(dest, src) {
+            return dest + src.replace('recoil.min.js', 'index.js');
+          },
+        },
+        {
+          cwd: 'node_modules/@hookform/resolvers/dist',
+          src: 'index.umd.production.min.js',
+          dest: 'src/libs/@hookform/',
+          expand: true,
+          rename: function(dest, src) {
+            return (
+              dest + src.replace('index.umd.production.min.js', 'index.js')
+            );
+          },
+        },
+        {
+          cwd: 'node_modules/regenerator-runtime',
+          src: 'runtime.js',
+          dest: 'src/libs/regenerator-runtime/',
+          expand: true,
+          rename: function(dest, src) {
+            return dest + src.replace('runtime.js', 'index.js');
+          },
+        },
+        {
+          cwd: 'node_modules/react-async/dist-umd',
+          src: 'index.js',
+          dest: 'src/libs/react-async/',
+          expand: true,
+        },
+        {
+          cwd: 'node_modules/react-window/dist',
+          src: 'index-prod.umd.js',
+          dest: 'src/libs/react-window/',
+          expand: true,
+          rename: function(dest, src) {
+            return dest + src.replace('index-prod.umd', 'index');
+          },
+        },
+        {
+          cwd: 'node_modules/react-data-table-component/dist',
+          src: 'react-data-table-component.umd.js',
+          dest: 'src/libs/react-data-table-component/',
+          expand: true,
+          rename: function(dest, src) {
+            return (
+              dest + src.replace('react-data-table-component.umd', 'index')
+            );
+          },
+        },
+        {
+          cwd: 'node_modules/react-is/umd',
+          src: 'react-is.production.min.js',
+          dest: 'src/libs/react-is/',
+          expand: true,
+          rename: function(dest, src) {
+            return dest + src.replace('react-is.production.min', 'index');
+          },
+        },
+        {
+          cwd: 'node_modules/styled-components/dist',
+          src: 'styled-components.min.js',
+          dest: 'src/libs/styled-components/',
+          expand: true,
+          rename: function(dest, src) {
+            return dest + src.replace('styled-components.min', 'index');
+          },
+        },
+        {
+          cwd: 'node_modules/react-hook-form/dist/',
+          src: 'index.umd.production.min.js',
+          dest: 'src/libs/react-hook-form/',
+          expand: true,
+          rename: function(dest, src) {
+            return (
+              dest + src.replace('index.umd.production.min.js', 'index.js')
+            );
+          },
+        },
+        {
           cwd: 'node_modules/hotkeys-js/dist',
           src: 'hotkeys.min.js',
           dest: 'src/libs/hotkeys/',
@@ -155,11 +248,16 @@ module.exports = function(grunt) {
       files: [
         {
           expand: true,
-          src: ['./src/**'],
+          cwd: 'src',
+          src: [
+            './config/**',
+            './js/**',
+            './libs/**',
+            './styles/**',
+            './*.html',
+            './shared/dist/**',
+          ],
           dest: 'dist/',
-          rename: function(dest, src) {
-            return dest + src.replace('/src/', '/');
-          },
         },
       ],
     },

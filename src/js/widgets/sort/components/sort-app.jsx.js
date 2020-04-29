@@ -1,4 +1,4 @@
-define(['react', 'react-prop-types'], function(React, PropTypes) {
+define(['react', 'prop-types'], function(React, PropTypes) {
   const SortApp = ({ setSort, setDirection, app }) => {
     const { options, sort, direction } = app;
 

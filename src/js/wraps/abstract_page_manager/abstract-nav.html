@@ -25,5 +25,17 @@
       </div>
     </a>
     {{/each}}
+    <div class="s-nav-header s-view-nav" id="abstract-nav-label">
+      <h3><i class="icon-list" aria-hidden="true"></i> Feedback</h3>
+    </div>
 
+    {{#each feedback}}
+    <a href="{{#if this.isActive}} #abs/{{../bibcode}}/{{this.path}} {{else}} javascript:void(0); {{/if}}" data-widget-id="{{this.id}}" {{#unless this.isActive}} aria-disabled="true" {{/unless}}>
+      <div class="abstract-nav s-nav {{#if this.isSelected}} s-nav-selected {{/if}} {{#unless this.isActive}} s-nav-inactive {{/unless}}">
+        <span class="content">
+          {{this.title}}
+        </span>
+      </div>
+    </a>
+    {{/each}}
 </nav>

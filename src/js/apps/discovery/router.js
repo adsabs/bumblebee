@@ -62,6 +62,7 @@ define([
       'search/(:query)(/)(:widgetName)': 'search',
       'search(/)(?:query)': 'search',
       'execute-query/(:query)': 'executeQuery',
+      'feedback/(:subview)': 'feedbackPage',
       'abs/*path': 'view',
       /*
        * user endpoints require user to be logged in, either
@@ -93,6 +94,20 @@ define([
 
     paperForm: function() {
       this.routerNavigate('PaperSearchForm');
+    },
+
+    feedbackPage: function(subview, query) {
+      console.log('feedback', subview, arguments);
+
+      const q = new ApiQuery();
+      if (query) {
+        q.load(query);
+      }
+      this.routerNavigate(`ShowFeedback`, {
+        subview,
+        href: `#feedback/${subview}`,
+        bibcode: q.has('bibcode') ? q.get('bibcode')[0] : null,
+      });
     },
 
     search: function(query, widgetName) {

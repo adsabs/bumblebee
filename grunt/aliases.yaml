@@ -60,6 +60,7 @@ assets:
   - 'clean:libs'
   - 'concurrent:install'
   - 'copy:libs'
+  - 'exec:suit_build'
 
 # CSS Processing
 css:
@@ -69,6 +70,7 @@ css:
 # Testing
 # Initial Setup
 setup:
+  - 'exec:submodule_init'
   - 'assets'
   - 'copy:discovery_vars'
   - 'sass'

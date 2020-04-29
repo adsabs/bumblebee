@@ -2,7 +2,7 @@ define([
   'underscore',
   'react',
   'react-redux',
-  'react-prop-types',
+  'prop-types',
   'es6!../actions/index',
   'es6!../components/Closer.jsx',
   'es6!../components/Setup.jsx',

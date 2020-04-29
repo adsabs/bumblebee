@@ -49,9 +49,9 @@ define(['underscore', 'redux', './constants', './actions'], function(
   const library = (state = libraryState, action) => {
     if (action.type === SET_LIBRARY_DATA && action.result) {
       return {
-        id: action.result.id || state.id,
-        name: action.result.name || state.name,
-        owner: action.result.owner || state.owner,
+        id: action.payload.id || state.id,
+        name: action.payload.name || state.name,
+        owner: action.payload.owner || state.owner,
       };
     }
     return state;
