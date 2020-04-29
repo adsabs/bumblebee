@@ -33,7 +33,7 @@ define(['underscore',
             }
 
             pubsub.subscribe(
-                pubsub.APP_STARTED,
+                pubsub.APP_BOOTSTRAPPED,
                 _.bind(this.onAppStarted, this)
             );
           },
@@ -46,15 +46,15 @@ define(['underscore',
          **/
         subscribe: function(event, callback) {
             var pubsub = this.getPubSub();
-            if (pubsub_events[event]) {
-                pubsub.subsribe(pubsub[pubsub_events[event], callback);
+            if (PubsubEvents[event]) {
+                pubsub.subscribe(PubsubEvents[event], callback);
             }
         },
     
         subscribeOnce: function(event, callback) {
             var pubsub = this.getPubSub();
-            if (pubsub_events[event]) {
-                pubsub.subsribeOnce(pubsub[pubsub_events[event], callback);
+            if (PubsubEvents[event]) {
+                pubsub.subscribeOnce(PubsubEvents[event], callback);
             }
         },
     
