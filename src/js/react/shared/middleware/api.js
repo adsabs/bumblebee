@@ -20,9 +20,11 @@ define([], function() {
         if (!response) {
           response = defaultFail.responseJSON;
         }
+        const { error: err, ...result } = response;
         dispatch({
           type: `${action.scope}_API_REQUEST_FAILURE`,
-          error: response.error,
+          error: err,
+          result,
         });
       };
 

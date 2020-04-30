@@ -29,6 +29,20 @@ define([
   };
 
   const BumblebeeWidget = BaseWidget.extend({
+    /**
+     * @override
+     */
+    getBeeHive() {
+      return getBeeHive();
+    },
+
+    /**
+     * @override
+     */
+    hasBeeHive() {
+      return true;
+    },
+
     initialize({ componentId, initialData }) {
       this.view.on({
         sendRequest: _.bind(this.onSendRequest, this),
@@ -53,6 +67,16 @@ define([
         leading: true,
         trailing: false,
       });
+
+      if (this.view._store) {
+        this._store = this.view._store;
+      }
+    },
+    dispatch({ type, ...args }) {
+      this._store.dispatch({ type, ...args });
+    },
+    getState() {
+      return this._store.getState();
     },
     getInitialData(cb) {
       if (typeof cb === 'function') {
@@ -63,12 +87,7 @@ define([
       const ps = getPubSub();
       subscribe(ps.USER_ANNOUNCEMENT, this.handleUserAnnouncement.bind(this));
     },
-    handleUserAnnouncement(event, data) {
-      const user = getBeeHive().getObject('User');
-      if (event == user.USER_SIGNED_IN) {
-      } else if (event == user.USER_SIGNED_OUT) {
-      }
-    },
+    handleUserAnnouncement() {},
     isLoggedIn(cb) {
       const user = this.getBeeHive().getObject('User');
       if (typeof cb === 'function') {
@@ -88,9 +107,11 @@ define([
     },
     doSearch(queryParams) {
       const query = new ApiQuery();
-      _.isString(queryParams)
-        ? query.load(queryParams)
-        : query.set({ ...queryParams });
+      if (_.isString(queryParams)) {
+        query.load(queryParams);
+      } else {
+        query.set({ ...queryParams });
+      }
       this.publishToPubSub('NAVIGATE', 'search-page', {
         q: query,
       });
@@ -100,8 +121,17 @@ define([
       const request = new ApiRequest({
         target,
         query: new ApiQuery(query),
-        options,
       });
+      request.set('options', {
+        ...options,
+        contentType:
+          target === 'search/query'
+            ? 'application/x-www-form-urlencoded'
+            : options.contentType,
+        data:
+          target === 'search/query' ? request.get('query').url() : options.data,
+      });
+
       publish(ps.EXECUTE_REQUEST, request);
     },
     analyticsEvent(...args) {
