@@ -66,13 +66,14 @@ define([
     },
 
     onWidgetSelected(child, ev, attrs) {
-      PageManagerController.prototype.onWidgetSelected.apply(this, arguments);
       if (attrs.idAttribute === 'SearchWidget') {
         const Recommender = new RecommenderWidget();
         const recommenderRoot = $('#recommender', this.view.$el).get(0);
         Recommender.view.setElement(recommenderRoot);
         Recommender.view.render();
+        this.widgets["SearchWidget"].recommender = Recommender; // temporary workaround
       }
+      PageManagerController.prototype.onWidgetSelected.apply(this, arguments);
     },
 
     /**

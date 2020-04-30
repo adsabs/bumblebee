@@ -36,6 +36,7 @@ define(['underscore',
                 pubsub.APP_BOOTSTRAPPED,
                 _.bind(this.onAppStarted, this)
             );
+
           },
 
         /** 

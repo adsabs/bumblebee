@@ -9,7 +9,7 @@ define([
   PropTypes,
   { useDispatch },
   { searchExamples },
-  { updateSearchBar }
+  { updateSearchBar, emitAnalytics }
 ) {
   const Dl = ({ children }) => {
     return <dl className="dl-horizontal">{children}</dl>;
@@ -58,6 +58,13 @@ define([
     const dispatch = useDispatch();
     const onClick = (text) => {
       dispatch(updateSearchBar(text));
+      dispatch(
+        emitAnalytics([
+          'send',
+          'event',
+          'interaction.suggestion-used'
+        ])
+      );
     };
 
     return (
