@@ -1,8 +1,6 @@
 $landing-page-hero-background: desaturate(lighten($brand-info, 20%), 15%);
 
 .s-landing-page-layout {
-  margin-left: -15px;
-  margin-right: -15px;
   padding-left: 15px;
   padding-right: 15px;
 }
@@ -38,7 +36,6 @@ $landing-page-hero-background: desaturate(lighten($brand-info, 20%), 15%);
   justify-content: center;
 
   background-attachment: fixed;
-  @extend .row;
   padding-top: 20px;
   text-align: center;
 }

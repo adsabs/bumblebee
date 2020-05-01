@@ -210,7 +210,7 @@ define([
     },
 
     goToBottom: function() {
-      $('#app-container').animate(
+      $(document.documentElement).animate(
         {
           scrollTop: this.$el.outerHeight(),
         },
@@ -219,7 +219,7 @@ define([
     },
 
     goToTop: function() {
-      $('#app-container').animate(
+      $(document.documentElement).animate(
         {
           scrollTop: 0,
         },

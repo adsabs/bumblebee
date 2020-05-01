@@ -93,8 +93,7 @@ define([
       model.attributes.numAttach += 1;
 
       // scroll to top
-      document.body.scrollTop = document.documentElement.scrollTop = 0;
-      $('#app-container').scrollTop(0);
+      $(document.documentElement).scrollTop(0);
       // and fix the search bar back in its default spot
       $('.s-search-bar-full-width-container').removeClass(
         's-search-bar-motion'
@@ -249,7 +248,9 @@ define([
       // the skip to link becomes unfocusable
       $('a#skip-to-main-content').remove();
       $('div#aria-announcement-container').remove();
-      $('#app-container').before(AriaAnnouncementTemplate({ page: msg }));
+      $('document.documentElement').before(
+        AriaAnnouncementTemplate({ page: msg })
+      );
     },
   });
 
