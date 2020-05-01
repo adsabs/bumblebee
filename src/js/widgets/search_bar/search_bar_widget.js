@@ -769,7 +769,7 @@ define([
         if (!$input.is(':focus')) {
           arg.preventDefault();
           $input.select();
-          $('#app-container').scrollTop(0);
+          $(document.documentElement).scrollTop(0);
         }
       }
     },

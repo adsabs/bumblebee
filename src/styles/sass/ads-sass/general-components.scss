@@ -1,25 +1,24 @@
-
-#app-container{
-  height: 100%;
-  position: relative;
+#app-container {
   will-change: transform;
 }
 
-#body-template-container{
-  height: 100%
-}
-
-.s-master-page-manager{
+#body-template-container {
   height: 100%;
 }
 
+.s-master-page-manager {
+  height: 100%;
+}
 
 .s-title-format {
   margin-bottom: 10px;
   padding: 1px 2%;
   background-color: lighten($gray-lighter, 4%);
 
-  h1, h2, h3, h4 {
+  h1,
+  h2,
+  h3,
+  h4 {
     margin: 6px 0;
     font-size: 28px;
     font-weight: 300;
@@ -27,7 +26,7 @@
 }
 
 .s-edit-indicator {
-  border-bottom:  1px dashed $brand-primary-faded;
+  border-bottom: 1px dashed $brand-primary-faded;
 
   &:before {
     @extend .fa;
@@ -44,21 +43,21 @@
 
 .btn-primary.btn-inverse {
   color: $brand-primary;
-  box-shadow:none;
+  box-shadow: none;
   &:hover {
-    box-shadow:none;
+    box-shadow: none;
     background-color: mix($brand-primary, #fff, 15%);
   }
 }
 .btn-primary-faded.btn-inverse {
   color: $brand-primary-faded;
   background-color: #fff;
-  box-shadow:none;
+  box-shadow: none;
   &:hover {
-    box-shadow:none;
+    box-shadow: none;
     background-color: mix($brand-primary-faded, #fff, 15%);
   }
-  box-shadow : none;
+  box-shadow: none;
 }
 .btn-info.btn-inverse {
   color: $brand-info;
@@ -68,42 +67,42 @@
     box-shadow: none;
     background-color: mix($brand-info, #fff, 15%);
   }
-  box-shadow : none;
+  box-shadow: none;
 }
 .btn-success.btn-inverse {
   color: $brand-success;
   background-color: #fff;
-  box-shadow : none;
+  box-shadow: none;
   &:hover {
-    box-shadow : none;
+    box-shadow: none;
     background-color: mix($brand-success, #fff, 15%);
-   }
-   box-shadow : none;
+  }
+  box-shadow: none;
 }
 .btn-warning.btn-inverse {
   color: $brand-warning;
   background-color: #fff;
-  box-shadow:none;
+  box-shadow: none;
   &:hover {
-    box-shadow:none;
+    box-shadow: none;
     background-color: mix($brand-warning, #fff, 15%);
   }
-  box-shadow : none;
+  box-shadow: none;
 }
 
 .btn-danger.btn-inverse {
   color: $brand-danger;
   background-color: #fff;
-  box-shadow:none;
+  box-shadow: none;
   &:hover {
-    box-shadow:none;
+    box-shadow: none;
     background-color: mix($brand-danger, #fff, 15%);
   }
-  box-shadow : none;
+  box-shadow: none;
 }
 
 .s-tab {
-  display:inline-block;
+  display: inline-block;
   text-align: center;
   min-width: 150px;
   font-size: 18px;
@@ -119,15 +118,15 @@
   a {
     width: 180px;
     display: inline-block;
-    color : $text-color;
+    color: $text-color;
     &:hover {
       text-decoration: none;
     }
-    &:focus{
+    &:focus {
       text-decoration: none;
     }
   }
-  transition : all, .5s;
+  transition: all, 0.5s;
 
   .dropdown-menu {
     li {
@@ -141,28 +140,27 @@
   }
 }
 
-.dropdown-menu > li > a:hover, .dropdown-menu > li > a:focus {
+.dropdown-menu > li > a:hover,
+.dropdown-menu > li > a:focus {
   //no idea why this is necessary
   background-color: transparent;
 }
-
 
 .s-tab .dropdown-menu li {
   color: $text-color;
 }
 
-
-.s-tab.active{
+.s-tab.active {
   border-bottom: 4px solid $brand-primary-faded;
-  color:  $brand-primary-faded;
+  color: $brand-primary-faded;
   a {
-    color:  $brand-primary-faded;
+    color: $brand-primary-faded;
   }
 }
 
 .s-tab.s-disabled {
   color: $gray-light;
-  &:hover{
+  &:hover {
     border-bottom: 4px solid $body-bg;
   }
   cursor: default;
