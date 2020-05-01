@@ -248,9 +248,7 @@ define([
       // the skip to link becomes unfocusable
       $('a#skip-to-main-content').remove();
       $('div#aria-announcement-container').remove();
-      $('document.documentElement').before(
-        AriaAnnouncementTemplate({ page: msg })
-      );
+      $('#app-container').before(AriaAnnouncementTemplate({ page: msg }));
     },
   });
 
