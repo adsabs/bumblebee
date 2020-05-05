@@ -36,7 +36,25 @@ define(['underscore',
                 pubsub.APP_BOOTSTRAPPED,
                 _.bind(this.onAppStarted, this)
             );
-
+            if (false) {
+                pubsub.subscribe(
+                    pubsub.NAVIGATE,
+                    function(id, data) {
+                        if (id === 'SearchWidget') {
+                            bbb.getWidget('SearchWidget').then(function(w) {
+                                window.r = w.recommender;
+                                var state = w.recommender.getState();
+                                // activate recommendations
+                                if (!state.doJustOnce) {
+                                    var actions = require('js/react/Recommender/actions');
+                                    w.recommender.dispatch(actions.setTab(1));
+                                    state.doJustOnce = true;
+                                }
+                            })
+                        }
+                    }
+                )
+            }
           },
 
         /** 
