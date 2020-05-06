@@ -11,6 +11,9 @@ define(['underscore', 'react', 'react-dom', 'react-redux'], function(
         this.props = {
           trigger: (...args) => this.trigger(...args),
         };
+        if (typeof getStore === 'function') {
+          this._store = getStore(this.props);
+        }
       },
 
       render(el) {
@@ -20,12 +23,12 @@ define(['underscore', 'react', 'react-dom', 'react-redux'], function(
           this.setElement(document.createElement('div'));
         }
 
-        if (getStore) {
+        if (this._store) {
           ReactDOM.render(
             React.createElement(
               Provider,
               {
-                store: getStore(this.props),
+                store: this._store,
               },
               React.createElement(component, this.props)
             ),

@@ -533,8 +533,7 @@ define([
       this.collection.reset(this.hiddenCollection.getVisibleModels());
 
       // finally, scroll back to the top
-      document.body.scrollTop = document.documentElement.scrollTop = 0;
-      $('#app-container').scrollTop(0);
+      $(document.documentElement).scrollTop(0);
     },
 
     onAllInternalEvents: function(ev, arg1, arg2) {

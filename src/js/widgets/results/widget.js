@@ -157,7 +157,7 @@ define([
           if ($link) {
             // found it, clear the interval and scroll
             clearInterval(focusInterval);
-            $('#app-container').animate(
+            $(document.documentElement).animate(
               { scrollTop: $link.offset().top },
               'fast'
             );
