@@ -124,7 +124,7 @@ define([
         var defer = $.Deferred();
         app
           .getObject('MasterPageManager')
-          .show('LandingPage', ['SearchWidget'])
+          .show('LandingPage', ['SearchWidget', 'RecommenderWidget'])
           .then(function() {
             return app.getWidget('LandingPage').then(function(widget) {
               if (data && data.origin === 'SearchWidget') {

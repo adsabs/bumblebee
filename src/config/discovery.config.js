@@ -89,7 +89,6 @@ require.config({
         SearchWidget: 'js/widgets/search_bar/search_bar_widget',
         PaperSearchForm: 'js/widgets/paper_search_form/widget',
         Results: 'js/widgets/results/widget',
-        MyAdsFreeform: 'reactify!js/react/BumblebeeWidget?MyAdsFreeform',
         QueryInfo: 'js/widgets/query_info/query_info_widget',
         QueryDebugInfo: 'js/widgets/api_query/widget',
         ExportWidget: 'es6!js/widgets/export/widget.jsx',
@@ -100,7 +99,6 @@ require.config({
         PaperNetwork: 'js/wraps/paper_network',
         ConceptCloud: 'js/widgets/wordcloud/widget',
         BubbleChart: 'js/widgets/bubble_chart/widget',
-        MyAdsDashboard: 'reactify!js/react/BumblebeeWidget?MyAdsDashboard',
         AuthorAffiliationTool:
           'es6!js/widgets/author_affiliation_tool/widget.jsx',
 
@@ -146,6 +144,12 @@ require.config({
         LibraryActionsWidget: 'es6!js/widgets/library_actions/widget.jsx',
         AllLibrariesWidget: 'js/widgets/libraries_all/widget',
         LibraryListWidget: 'js/widgets/library_list/widget',
+
+        // react widgets
+
+        MyAdsFreeform: 'reactify!js/react/BumblebeeWidget?MyAdsFreeform',
+        MyAdsDashboard: 'reactify!js/react/BumblebeeWidget?MyAdsDashboard',
+        RecommenderWidget: 'reactify!js/react/BumblebeeWidget?Recommender',
       },
       plugins: {},
     },

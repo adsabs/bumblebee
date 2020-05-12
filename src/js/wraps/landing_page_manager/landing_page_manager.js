@@ -1,13 +1,11 @@
 define([
   'js/page_managers/toc_controller',
   'js/page_managers/one_column_view',
-  'reactify!js/react/BumblebeeWidget?Recommender',
   'hbs!js/wraps/landing_page_manager/landing-page-layout',
   'hbs!js/wraps/landing_page_manager/landing-page-nav',
 ], function(
   PageManagerController,
   PageManagerView,
-  RecommenderWidget,
   PageManagerTemplate,
   TOCTemplate
 ) {
@@ -66,13 +64,6 @@ define([
     },
 
     onWidgetSelected(child, ev, attrs) {
-      if (attrs.idAttribute === 'SearchWidget') {
-        const Recommender = new RecommenderWidget();
-        const recommenderRoot = $('#recommender', this.view.$el).get(0);
-        Recommender.view.setElement(recommenderRoot);
-        Recommender.view.render();
-        this.widgets["SearchWidget"].recommender = Recommender; // temporary workaround
-      }
       PageManagerController.prototype.onWidgetSelected.apply(this, arguments);
     },
 
