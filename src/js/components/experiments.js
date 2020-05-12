@@ -1,103 +1,95 @@
-define(['underscore', 
-        'jquery',
-        'js/components/generic_module',
-        'js/mixins/dependon',
-        'analytics',
-        'js/components/pubsub_events'], 
-        function(_, 
-                 $,
-                 GenericModule,
-                 Dependon,
-                 analytics,
-                 PubsubEvents
-                 ) {
-    
-    var Experiments = GenericModule.extend({
-        initialize: function() {
-          // store all metadata entries here
-          this.isRunning = false;
-        },
-    
-        activate: function(beehive, app) {
-            this.setApp(app);
-            this.setBeeHive(beehive);
-            var pubsub = this.getPubSub();
+define([
+  'underscore',
+  'jquery',
+  'js/components/generic_module',
+  'js/mixins/dependon',
+  'analytics',
+  'js/components/pubsub_events',
+], function(_, $, GenericModule, Dependon, analytics, PubsubEvents) {
+  var Experiments = GenericModule.extend({
+    initialize: function() {
+      // store all metadata entries here
+      this.isRunning = false;
+    },
 
-            if (!window.gtag) {
-                window.gtag = function () {dataLayer && dataLayer.push(arguments)}
-                gtag('event', 'optimize.callback', {
-                    callback: (value, name) => { console.log(
-                        'Experiment with ID: ' + name + ' is on variant: ' + value);
-                    }
-                });
-            }
+    activate: function(beehive, app) {
+      this.setApp(app);
+      this.setBeeHive(beehive);
+      var pubsub = this.getPubSub();
 
-            pubsub.subscribe(
-                pubsub.APP_BOOTSTRAPPED,
-                _.bind(this.onAppStarted, this)
+      if (!window.gtag) {
+        window.gtag = function() {
+          dataLayer && dataLayer.push(arguments);
+        };
+        gtag('event', 'optimize.callback', {
+          callback: (value, name) => {
+            console.log(
+              'Experiment with ID: ' + name + ' is on variant: ' + value
             );
-            if (false) {
-                pubsub.subscribe(
-                    pubsub.NAVIGATE,
-                    function(id, data) {
-                        if (id === 'SearchWidget') {
-                            bbb.getWidget('SearchWidget').then(function(w) {
-                                window.r = w.recommender;
-                                var state = w.recommender.getState();
-                                // activate recommendations
-                                if (!state.doJustOnce) {
-                                    var actions = require('js/react/Recommender/actions');
-                                    w.recommender.dispatch(actions.setTab(1));
-                                    state.doJustOnce = true;
-                                }
-                            })
-                        }
-                    }
-                )
-            }
           },
+        });
+      }
 
-        /** 
-         * 
-         * callback that can be used by external components; they can 
-           listen to BBB and then run their experiment 
-         *
-         **/
-        subscribe: function(event, callback) {
-            var pubsub = this.getPubSub();
-            if (PubsubEvents[event]) {
-                pubsub.subscribe(PubsubEvents[event], callback);
-            }
-        },
-    
-        subscribeOnce: function(event, callback) {
-            var pubsub = this.getPubSub();
-            if (PubsubEvents[event]) {
-                pubsub.subscribeOnce(PubsubEvents[event], callback);
-            }
-        },
-    
+      pubsub.subscribe(
+        pubsub.APP_BOOTSTRAPPED,
+        _.bind(this.onAppStarted, this)
+      );
+      if (false) {
+        pubsub.subscribe(pubsub.NAVIGATE, function(id, data) {
+          if (id === 'SearchWidget') {
+            bbb.getWidget('RecommenderWidget').then(function(w) {
+              window.r = w;
+              var { tab } = w.getState();
+              // activate recommendations
+              if (!tab !== 1) {
+                w.dispatch({ type: 'SET_TAB', payload: 1 });
+              }
+            });
+          }
+        });
+      }
+    },
 
-        onAppStarted: function() {
-            this.toggleOptimize();
-        },
+    /**
+     *
+     * callback that can be used by external components; they can listen to BBB and then run their experiment
+     *
+     * */
+    subscribe: function(event, callback) {
+      var pubsub = this.getPubSub();
+      if (PubsubEvents[event]) {
+        pubsub.subscribe(PubsubEvents[event], callback);
+      }
+    },
 
-        toggleOptimize: function() {
-            if (!dataLayer) {
-                console.warn('Optimize is not available, we are not running any experiment');
-                return;
-            }
+    subscribeOnce: function(event, callback) {
+      var pubsub = this.getPubSub();
+      if (PubsubEvents[event]) {
+        pubsub.subscribeOnce(PubsubEvents[event], callback);
+      }
+    },
 
-            if (this.isRunning) {
-                dataLayer.push({'event': 'optimize.deactivate'});
-            }
-            else {
-                dataLayer.push({'event': 'optimize.activate'});
-            }
-            this.isRunning = !this.isRunning;
-        }
-    });
-    _.extend(Experiments.prototype, Dependon.BeeHive, Dependon.App);
+    onAppStarted: function() {
+      this.toggleOptimize();
+    },
 
-    return Experiments;
+    toggleOptimize: function() {
+      if (!dataLayer) {
+        console.warn(
+          'Optimize is not available, we are not running any experiment'
+        );
+        return;
+      }
+
+      if (this.isRunning) {
+        dataLayer.push({ event: 'optimize.deactivate' });
+      } else {
+        dataLayer.push({ event: 'optimize.activate' });
+      }
+      this.isRunning = !this.isRunning;
+    },
+  });
+  _.extend(Experiments.prototype, Dependon.BeeHive, Dependon.App);
+
+  return Experiments;
 });
