@@ -69,6 +69,11 @@ define([
         path: 'user/settings/delete',
         category: 'settings',
       },
+      MyAdsDashboard: {
+        title: 'myADS',
+        path: 'user/settings/myads',
+        category: 'notifications',
+      },
     },
   });
   return PageManager;

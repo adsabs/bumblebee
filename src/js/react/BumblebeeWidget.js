@@ -43,7 +43,7 @@ define([
       return true;
     },
 
-    initialize({ componentId, initialData }) {
+    initialize({ componentId }) {
       this.view.on({
         sendRequest: _.bind(this.onSendRequest, this),
         subscribeToPubSub: _.bind(this.subscribeToPubSub, this),
@@ -51,7 +51,6 @@ define([
         doSearch: _.bind(this.doSearch, this),
         getCurrentQuery: _.bind(this.onGetCurrentQuery, this),
         isLoggedIn: _.bind(this.isLoggedIn, this),
-        getInitialData: _.bind(this.getInitialData, this),
         analyticsEvent: _.bind(this.analyticsEvent, this),
       });
 
@@ -60,7 +59,6 @@ define([
           this.view.destroy().render();
         }
       });
-      this.initialData = initialData;
       this.activate();
 
       this.onSendRequest = _.debounce(this.onSendRequest, 1000, {
@@ -73,21 +71,29 @@ define([
       }
     },
     dispatch({ type, ...args }) {
-      this._store.dispatch({ type, ...args });
+      if (this._store && typeof this._store.dispatch === 'function') {
+        this._store.dispatch({ type, ...args });
+      }
     },
     getState() {
       return this._store.getState();
     },
-    getInitialData(cb) {
-      if (typeof cb === 'function') {
-        cb(this.initialData);
-      }
-    },
     activate() {
       const ps = getPubSub();
       subscribe(ps.USER_ANNOUNCEMENT, this.handleUserAnnouncement.bind(this));
+
+      const user = this.getBeeHive().getObject('User');
+      if (user && typeof user.getUserName === 'function') {
+        this.dispatch({
+          type: 'USER_ANNOUNCEMENT/user_signed_in',
+          payload: user.getUserName(),
+        });
+      }
     },
-    handleUserAnnouncement() {},
+    handleUserAnnouncement(event, payload) {
+      const type = `USER_ANNOUNCEMENT/${event}`;
+      this.dispatch({ type, payload });
+    },
     isLoggedIn(cb) {
       const user = this.getBeeHive().getObject('User');
       if (typeof cb === 'function') {

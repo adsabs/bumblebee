@@ -5,7 +5,7 @@
  * and any related limits
  */
 
-define(['underscore', 'backbone'], function(_, Backbone) {
+define([], function() {
   var config = {
     BOOTSTRAP: '/accounts/bootstrap',
     SEARCH: 'search/query',
@@ -21,6 +21,7 @@ define(['underscore', 'backbone'], function(_, Backbone) {
     SERVICE_CITATION_HELPER: 'citation_helper',
     SERVICE_AUTHOR_AFFILIATION_EXPORT: 'authoraff',
     MYADS_STORAGE: 'vault',
+    MYADS_NOTIFICATIONS: 'vault/_notifications',
     AUTHOR_AFFILIATION_SEARCH: 'author-affiliation/search',
     AUTHOR_AFFILIATION_EXPORT: 'author-affiliation/export',
     RESOLVER: 'resolver',
