@@ -40,9 +40,6 @@ define([], function() {
     reset: () => ({
       type: actions.RESET,
     }),
-    checkLoginStatus: () => ({
-      type: actions.CHECK_LOGIN_STATUS,
-    }),
     setLoginStatus: (result) => ({
       type: actions.SET_LOGIN_STATUS,
       result,

@@ -20,11 +20,8 @@ define([
     }
 
     componentDidMount() {
-      const check = () => {
-        requestAnimationFrame(() => this.props.checkLoginStatus());
-        this.loginStatusCheckTimer = setTimeout(check, 1000);
-      };
-      check();
+      const { checkLoginStatus } = this.props;
+      checkLoginStatus();
     }
 
     componentWillUnmount() {
@@ -112,11 +109,15 @@ define([
     saveNewNotification: () => {},
     requests: {},
     generalError: null,
+    checkLoginStatus: () => {},
+    loggedIn: false,
   };
   MyADSFreeform.propTypes = {
     saveNewNotification: PropTypes.func,
+    checkLoginStatus: PropTypes.func,
     requests: PropTypes.object,
     generalError: PropTypes.object,
+    loggedIn: PropTypes.bool,
   };
 
   return MyADSFreeform;

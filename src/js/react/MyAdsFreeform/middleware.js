@@ -96,10 +96,12 @@ define(['underscore', './actions', 'js/react/shared/helpers'], function(
   const loggedInStatus = middleware(({ trigger, dispatch, next, action }) => {
     next(action);
 
-    if (action.type === CHECK_LOGIN_STATUS) {
-      trigger('isLoggedIn', (isLoggedIn) => {
-        dispatch(setLoginStatus(isLoggedIn));
-      });
+    if (
+      action.type === CHECK_LOGIN_STATUS ||
+      action.type === 'USER_ANNOUNCEMENT/user_signed_in' ||
+      action.type === 'USER_ANNOUNCEMENT/user_signed_out'
+    ) {
+      trigger('isLoggedIn', (status) => dispatch(setLoginStatus(status)));
     }
   });
 
