@@ -83,10 +83,12 @@ define([
       subscribe(ps.USER_ANNOUNCEMENT, this.handleUserAnnouncement.bind(this));
 
       const user = this.getBeeHive().getObject('User');
-      this.dispatch({
-        type: 'USER_ANNOUNCEMENT/user_signed_in',
-        payload: user.getUserName(),
-      });
+      if (user && typeof user.getUserName === 'function') {
+        this.dispatch({
+          type: 'USER_ANNOUNCEMENT/user_signed_in',
+          payload: user.getUserName(),
+        });
+      }
     },
     handleUserAnnouncement(event, payload) {
       const type = `USER_ANNOUNCEMENT/${event}`;
