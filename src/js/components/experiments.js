@@ -19,9 +19,11 @@ define([
 
       if (!window.gtag) {
         window.gtag = function() {
-          dataLayer && dataLayer.push(arguments);
+          if (_.isArray(window.dataLayer)) {
+            window.dataLayer.push(arguments);
+          }
         };
-        gtag('event', 'optimize.callback', {
+        window.gtag('event', 'optimize.callback', {
           callback: (value, name) => {
             console.log(
               'Experiment with ID: ' + name + ' is on variant: ' + value
@@ -35,9 +37,9 @@ define([
         _.bind(this.onAppStarted, this)
       );
       if (false) {
-        pubsub.subscribe(pubsub.NAVIGATE, function(id, data) {
+        pubsub.subscribe(pubsub.NAVIGATE, function(id) {
           if (id === 'SearchWidget') {
-            bbb.getWidget('RecommenderWidget').then(function(w) {
+            window.bbb.getWidget('RecommenderWidget').then(function(w) {
               window.r = w;
               var { tab } = w.getState();
               // activate recommendations
@@ -74,7 +76,7 @@ define([
     },
 
     toggleOptimize: function() {
-      if (!dataLayer) {
+      if (!window.dataLayer) {
         console.warn(
           'Optimize is not available, we are not running any experiment'
         );
@@ -82,9 +84,9 @@ define([
       }
 
       if (this.isRunning) {
-        dataLayer.push({ event: 'optimize.deactivate' });
+        window.dataLayer.push({ event: 'optimize.deactivate' });
       } else {
-        dataLayer.push({ event: 'optimize.activate' });
+        window.dataLayer.push({ event: 'optimize.activate' });
       }
       this.isRunning = !this.isRunning;
     },
