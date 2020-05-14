@@ -92,11 +92,11 @@ define([
     }, [docs]);
 
     const onPaperSelect = ({ bibcode }, index) => {
-      dispatch(
+      dispatch( // toto: how to get state?
         emitAnalytics([
           'send',
           'event',
-          'interaction.select-paper',
+          'interaction.recommendation', // need to add here '.' + state.queryParams['function']
           index,
           { bibcode },
         ])

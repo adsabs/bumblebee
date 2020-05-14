@@ -28,18 +28,19 @@ define(['../shared/helpers', './actions'], function(
 
       if (action.type === GET_RECOMMENDATIONS) {
         const { queryParams } = getState();
-        const { func, sort, numDocs, cutOffDays, topNReads } = queryParams;
+        const { func, sort, numDocs, cutOffDays, topNReads, reader } = queryParams;
         dispatch({
           type: 'API_REQUEST',
           scope: GET_RECOMMENDATIONS,
           options: {
             type: 'POST',
             data: {
-              function: func,
+              function: func || queryParams['function'],
               sort,
               num_docs: numDocs,
               cutoff_days: cutOffDays,
               top_n_reads: topNReads,
+              reader: reader
             },
           },
         });
@@ -89,7 +90,7 @@ define(['../shared/helpers', './actions'], function(
 
     if (action.type === GET_FULL_LIST) {
       const { query } = getState();
-      trigger('doSearch', { q: query });
+      trigger('doSearch', { q: query, sort: 'score desc' });
     }
   });
 
