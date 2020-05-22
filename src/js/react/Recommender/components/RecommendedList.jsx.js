@@ -74,6 +74,7 @@ define([
       getRecommendationsRequest: state.requests.GET_RECOMMENDATIONS,
       getDocsRequest: state.requests.GET_DOCS,
       docs: state.docs,
+      queryParams: state.queryParams
     };
   };
 
@@ -82,7 +83,7 @@ define([
     const onGetMore = () => {
       dispatch(getFullList());
     };
-    const { getRecommendationsRequest, getDocsRequest, docs } = useSelector(
+    const { getRecommendationsRequest, getDocsRequest, docs, queryParams } = useSelector(
       selector
     );
     React.useEffect(() => {
@@ -92,13 +93,15 @@ define([
     }, [docs]);
 
     const onPaperSelect = ({ bibcode }, index) => {
-      dispatch( // toto: how to get state?
+      
+      dispatch(
         emitAnalytics([
           'send',
           'event',
-          'interaction.recommendation', // need to add here '.' + state.queryParams['function']
-          index,
-          { bibcode },
+          'interaction.recommendation', // category
+          queryParams['function'], // action
+          bibcode, // label,
+          index // value
         ])
       );
     };
