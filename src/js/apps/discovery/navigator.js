@@ -425,10 +425,13 @@ define([
                   .then(function(w) {
                     w['LibraryListWidget'].setData(data);
                     w['IndividualLibraryWidget'].setSubView(data);
-                    if (pub) publishPageChange('libraries-page');
-
+                    if (pub) {
+                      publishPageChange('libraries-page');
+                    }
                     defer.resolve();
                   });
+
+                app.getWidget('Library');
               });
           });
 

@@ -16,7 +16,7 @@ define([], function() {
       };
 
       const fail = (error = defaultFail) => {
-        const { responseJSON, statusText, status } = error;
+        const { responseJSON, statusText } = error;
         let errorMsg = defaultFail.responseJSON.error;
         if (responseJSON) {
           errorMsg =
@@ -24,11 +24,10 @@ define([], function() {
         } else if (statusText) {
           errorMsg = statusText;
         }
-        const { error: err, ...result } = response;
         dispatch({
           type: `${action.scope}_API_REQUEST_FAILURE`,
-          error: err,
-          result,
+          error: errorMsg,
+          result: responseJSON,
         });
       };
 
