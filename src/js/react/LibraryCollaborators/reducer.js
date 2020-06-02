@@ -1,7 +1,8 @@
-define(['underscore', 'redux', './constants'], function(
+define(['underscore', 'redux', './constants', './actions'], function(
   _,
   { combineReducers },
-  { Permissions }
+  { Permissions },
+  { SET_LIBRARY_DATA }
 ) {
   const getPermissionType = (type) => {
     if (type.includes('admin')) {
@@ -46,7 +47,7 @@ define(['underscore', 'redux', './constants'], function(
     owner: null,
   };
   const library = (state = libraryState, action) => {
-    if (action.type === 'SET_INITIAL_DATA' && action.result) {
+    if (action.type === SET_LIBRARY_DATA && action.result) {
       return {
         id: action.result.id || state.id,
         name: action.result.name || state.name,

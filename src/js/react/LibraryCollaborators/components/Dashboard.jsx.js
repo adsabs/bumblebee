@@ -122,10 +122,6 @@ define([
       }
     }
 
-    componentDidMount() {
-      this.props.getInitialData();
-    }
-
     render() {
       const { permissions, requests } = this.props;
       const { showAddCollaboratorModal } = this.state;
