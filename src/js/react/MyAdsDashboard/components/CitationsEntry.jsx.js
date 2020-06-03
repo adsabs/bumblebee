@@ -55,7 +55,7 @@ define(['underscore', 'react', 'react-bootstrap', 'react-prop-types'], function(
           type === 'ORCiD'
             ? text
                 .replace(/-/g, '')
-                .match(/\d{4}/g)
+                .match(/\d{3}[X\d]/g)
                 .join('-')
             : text;
 
