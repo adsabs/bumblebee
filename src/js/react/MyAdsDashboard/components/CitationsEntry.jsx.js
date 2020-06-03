@@ -105,7 +105,7 @@ define(['underscore', 'react', 'react-bootstrap', 'react-prop-types'], function(
       let valid = true;
       let error = '';
 
-      if (type === 'ORCiD' && !text.match(/^\d{4}-?\d{4}-?\d{4}-?\d{4}$/)) {
+      if (type === 'ORCiD' && !text.match(/^\d{4}-?\d{4}-?\d{4}-?\d{3}[X\d]$/)) {
         // orcid formatting is off
         valid = false;
         error = 'ORCiD must in the format: 9999-9999-9999-9999';
