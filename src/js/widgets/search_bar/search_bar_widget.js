@@ -935,32 +935,29 @@ define([
 
       // make sure not to override an explicit sort if there is one
       if (!query.has('sort')) {
-        var queryVal = query.get('q')[0];
+        const queryVal = query.get('q')[0];
 
         // citations operator should be sorted by pubdate, so it isn't added here
-        var toMatch = [
-          'trending(',
-          'instructive(',
-          'useful(',
-          'references(',
-          'reviews(',
-          'similar(',
+        const fields = [
+          'trending',
+          'instructive',
+          'useful',
+          'references',
+          'reviews',
+          'similar',
         ];
+        const fieldReg = new RegExp(`(${fields.join('|')})(?=\\()`, 'gi');
+        const matches = queryVal.match(fieldReg);
 
-        // if there are multiple, this will just match the first operator
-        var operator = _.find(toMatch, function(e) {
-          if (queryVal.indexOf(e) !== -1) {
-            return e;
+        // we're only concerned with the first match (outermost)
+        let sort = 'date desc';
+        if (matches) {
+          sort = 'score desc';
+          if (matches[0] === 'references') {
+            sort = 'first_author asc';
           }
-        });
-
-        if (operator == 'references(') {
-          query.set('sort', 'first_author asc');
-        } else if (operator) {
-          query.set('sort', 'score desc');
-        } else if (!operator) {
-          query.set('sort', 'date desc');
         }
+        query.set('sort', sort);
       } else if (currentQuery && currentQuery.has('sort')) {
         query.set('sort', currentQuery.get('sort'));
       }
