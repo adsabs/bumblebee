@@ -125,6 +125,13 @@ define([
       requestAnimationFrame(() => this.setState({ filterText }));
     }
 
+    static getDerivedStateFromProps(props, state) {
+      if (props.getRequest.status !== 'pending' && state.loadingQuery) {
+        return { loadingQuery: false };
+      }
+      return null;
+    }
+
     /**
      *
      * @param {string} value
