@@ -222,7 +222,13 @@ require.config({
       '//cdnjs.cloudflare.com/ajax/libs/FileSaver.js/1.3.8/FileSaver.min',
       'libs/file-saver/index',
     ],
-    'google-analytics': ['libs/g', 'data:application/javascript,'],
+    'google-analytics': [
+      // to activate local tunnel (for us to collect all analytics data)
+      // uncomment this; k12 should have ingress-nginx-proxy image deployed
+      // that can proxy requests to /analytics
+      // '/analytics/analytics'
+      'libs/g', 'data:application/javascript,'
+    ],
     hbs: 'libs/require-handlebars-plugin/hbs',
     hotkeys: 'libs/hotkeys/index',
     jquery: 'libs/jquery/jquery',
