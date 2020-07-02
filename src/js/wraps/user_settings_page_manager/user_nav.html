@@ -1,56 +1,53 @@
+
 <nav aria-labelledby="customize-settings-label">
+
   <h2 class="s-nav-top-title" id="customize-settings-label">
     <i class="fa fa-cog" aria-hidden="true"></i> Settings
   </h2>
 
-  <div class="s-nav-header s-view-nav">user preferences</div>
+    <div class="s-nav-header s-view-nav">user preferences</div>
 
-  {{#each preferences}}
-  <a href="#{{this.path}}" data-widget-id="{{this.id}}">
-    <div
-      class="abstract-nav s-nav {{#if this.isSelected}} s-nav-selected {{/if}}"
-    >
-      <span class="s-content">
-        {{this.title}}
-      </span>
-    </div>
-  </a>
-  {{/each}}
+    {{#each preferences}}
+        <a href="#{{this.path}}" data-widget-id="{{this.id}}"  >
+        <div class="abstract-nav s-nav {{#if this.isSelected}} s-nav-selected {{/if}}">
+                <span class="s-content">
+                {{this.title}}
+                </span>
+        </div>
+        </a>
+    {{/each}}
 
-  <div class="s-nav-header s-view-nav">notification settings</div>
+    <div class="s-nav-header s-view-nav">notification settings</div>
 
-  <div class="abstract-nav s-nav">Coming soon</div>
+    {{#each notifications}}
 
-  <!--{{#each notifications}}-->
-  <!--<a href="/abs/{{../bibcode}}/{{this.path}}" {{#unless this.isActive}} aria-disabled="true" {{/unless}} >-->
-  <!--<div class="abstract-nav s-nav {{#if this.isSelected}} s-nav-selected {{/if}} {{#unless this.isActive}} s-nav-inactive {{/unless}}" data-widget-id="{{this.id}}">-->
-  <!--<span class="s-content">-->
-  <!--{{this.title}}-->
-  <!--{{#if this.showCount}}-->
-  <!--<span class="num-items"> {{#if this.numFound}}({{this.numFound}}){{/if}}</span>-->
-  <!--{{/if}}-->
-  <!--</span>-->
-  <!--</div>-->
-  <!--</a>-->
-  <!--{{/each}}-->
+        <a href="#{{this.path}}" data-widget-id="{{this.id}}">
+        <div class="abstract-nav s-nav {{#if this.isSelected}} s-nav-selected {{/if}}">
+                <span class="s-content">
+                {{this.title}}
+                {{#if this.showCount}}
+                <span class="num-items"> {{#if this.numFound}}({{this.numFound}}){{/if}}</span>
+                {{/if}}
+                </span>
+        </div>
+        </a>
 
-  <div class="s-nav-header s-view-nav">account settings</div>
+    {{/each}}
 
-  {{#each settings}}
+    <div class="s-nav-header s-view-nav">account settings</div>
 
-  <a href="#{{this.path}}" data-widget-id="{{this.id}}">
-    <div
-      class="abstract-nav s-nav {{#if this.isSelected}} s-nav-selected {{/if}}"
-    >
-      <span class="s-content">
-        {{this.title}} {{#if this.showCount}}
-        <span class="num-items">
-          {{#if this.numFound}}({{this.numFound}}){{/if}}</span
-        >
-        {{/if}}
-      </span>
-    </div>
-  </a>
+    {{#each settings}}
 
-  {{/each}}
+        <a href="#{{this.path}}" data-widget-id="{{this.id}}">
+        <div class="abstract-nav s-nav {{#if this.isSelected}} s-nav-selected {{/if}}">
+                <span class="s-content">
+                {{this.title}}
+                {{#if this.showCount}}
+                <span class="num-items"> {{#if this.numFound}}({{this.numFound}}){{/if}}</span>
+                {{/if}}
+                </span>
+        </div>
+        </a>
+
+    {{/each}}
 </nav>

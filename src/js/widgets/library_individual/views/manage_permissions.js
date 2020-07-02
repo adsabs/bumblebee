@@ -140,8 +140,10 @@ define([
 
       // just forward any trigger calls
       this.modal.on('all', (...args) => this.trigger(...args));
-      this.libraryCollaboratorsComponent = new LibraryCollaboratorsComponent({
-        initialData: this.model.toJSON(),
+      this.libraryCollaboratorsComponent = new LibraryCollaboratorsComponent();
+      this.libraryCollaboratorsComponent.dispatch({
+        type: 'SET_LIBRARY_DATA',
+        result: this.model.toJSON(),
       });
     },
     events: {

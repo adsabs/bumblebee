@@ -1,70 +1,89 @@
 {{#if loggedIn}}
 <div class="s-library-area">
-    <div class="s-library-add-title library-add-title"  role="button" data-toggle="collapse" data-target="#library-console" aria-expanded="false">
-        <i class="fa fa-book fa-lg" aria-hidden="true"></i> Add paper to a library &nbsp; <i class="fa fa-lg fa-caret-down" aria-hidden="true"></i>
+
+  <div class="panel panel-default">
+    <div class="panel-heading" style="padding:0px;">
+      <div class="panel-title">
+        <button class="library-add-title btn btn-link btn-block" data-toggle="collapse" data-target="#library-console" aria-expanded="false}">
+          <div class="s-library-add-title__title">
+            <span><i class="fa fa-book" aria-hidden="true"></i> Add paper to library</span>
+            <span>
+              {{#if libraryDrawerOpen}}
+                <i class="fa fa-caret-down" aria-hidden="true"></i>
+              {{else}}
+                <i class="fa fa-caret-right" aria-hidden="true"></i>
+              {{/if}}
+            </span>
+          </div>
+        </button>
+      </div>
     </div>
-    <div class="collapse {{#if libraryDrawerOpen }} in {{/if}}" id="library-console" role="button">
+
+    <div class="panel-collapse collapse {{#if libraryDrawerOpen }} in {{/if}}" id="library-console">
+      <div class="panel-body">
 
         <div class="libraries-container">
-            {{#if libraries}}
-            <div style="margin-top: 8px" class="">
-                <label for="library-select">add to an existing library:</label>
-                <select id="library-select" name="library-select" class="form-control input-sm s-library-select" aria-label="select existing library">
-                    {{#each libraries}}
-                    <option value="{{this.id}}" {{#compare id ../selectedLibrary}} selected="true" {{/compare}}>{{this.name}}</option>
-                    {{/each}}
-                </select>
-                <button class="btn btn-sm btn-success submit-add-to-library">submit</button>
-            </div>
-            <div style="margin:10px 0 4px 0">
-                OR
-            </div>
-            {{/if}}
+          {{#if libraries}}
+          <div style="margin-top: 8px" class="">
+              <label for="#library-select">add to an existing library:</label>
+              <select id="library-select" name="library-select" class="form-control input-sm s-library-select" aria-label="select existing library">
+                  {{#each libraries}}
+                  <option value="{{this.id}}" {{#compare id ../selectedLibrary}} selected="true" {{/compare}}>{{this.name}}</option>
+                  {{/each}}
+              </select>
+              <button class="btn btn-sm btn-primary-faded submit-add-to-library">submit</button>
+          </div>
+          <div style="margin:10px 0 4px 0">
+              OR
+          </div>
+          {{/if}}
 
-            <label for="create-new">create a new library </label>
-            <input id="#create-new" class="form-control input-sm new-library-name s-display-inline" type="text" name="new-library-name" placeholder="New Library Name" value="{{newLibraryName}}" style="max-width:188px" aria-label="create new library"/>
-            <button class="btn btn-sm btn-success submit-create-library"></i>submit</button>
+          <label for="#create-new">create a new library </label>
+          <input id="#create-new" class="form-control input-sm new-library-name s-display-inline" type="text" name="new-library-name" placeholder="New Library Name" value="{{newLibraryName}}" style="max-width:188px" aria-label="create new library"/>
+          <button class="btn btn-sm btn-primary-faded submit-create-library"></i>submit</button>
 
-        </div>
+      </div>
 
-        <div style="margin-top:6px" class="feedback s-feedback">
+      <div style="margin-top:6px" class="feedback s-feedback">
 
-        </div>
+      </div>
+      {{#if feedback}}
 
+      {{#if feedback.success}}
+
+      <div class="alert alert-success alert-dismissable" role="alert">
+          <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">×</span></button>
+          {{#if feedback.create}}
+          <a href="#user/libraries/{{feedback.id}}"> Library <b>{{feedback.name}}</b></a> was successfully created and {{feedback.numRecords}} new record was added.
+          {{else}}
+          {{feedback.numRecords}} new record was added to  <a href="#user/libraries/{{feedback.id}}"> library <b>{{feedback.name}}</b></a>.
+          {{#if feedback.numAlreadyInLib}}
+          ({{feedback.numAlreadyInLib}} was already in the library).
+          {{/if}}
+          {{/if}}
+      </div>
+
+      {{else}}
+
+      <div class="alert alert-danger alert-dismissable" role="alert">
+          <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">×</span></button>
+          {{#if feedback.create}}
+          <b>{{feedback.name}}</b> was not created, error occured.
+          <em>{{feedback.error}}</em>
+          {{else}}
+          Record was not added to <b>{{feedback.name}}</b>, error occurred.
+          <em>{{feedback.error}}</em>
+          {{/if}}
+      </div>
+
+      {{/if}}
+
+      {{/if}}
+      </div>
     </div>
+  </div>
 
-    {{#if feedback}}
 
-    {{#if feedback.success}}
-
-    <div class="alert alert-success alert-dismissable" role="alert">
-        <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">×</span></button>
-        {{#if feedback.create}}
-        <a href="#user/libraries/{{feedback.id}}"> Library <b>{{feedback.name}}</b></a> was successfully created and {{feedback.numRecords}} new record was added.
-        {{else}}
-        {{feedback.numRecords}} new record was added to  <a href="#user/libraries/{{feedback.id}}"> library <b>{{feedback.name}}</b></a>.
-        {{#if feedback.numAlreadyInLib}}
-        ({{feedback.numAlreadyInLib}} was already in the library).
-        {{/if}}
-        {{/if}}
-    </div>
-
-    {{else}}
-
-    <div class="alert alert-danger alert-dismissable" role="alert">
-        <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">×</span></button>
-        {{#if feedback.create}}
-        <b>{{feedback.name}}</b> was not created, error occured.
-        <em>{{feedback.error}}</em>
-        {{else}}
-        Record was not added to <b>{{feedback.name}}</b>, error occurred.
-        <em>{{feedback.error}}</em>
-        {{/if}}
-    </div>
-
-    {{/if}}
-
-    {{/if}}
 
     <!--end 'library area' if user is signed in-->
 </div>

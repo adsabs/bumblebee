@@ -223,6 +223,10 @@ define([
       widget.changeDefaultSort(q8);
       expect(q8.get('sort')[0]).to.eql('score desc');
 
+      var q9 = new ApiQuery({ q: 'reviews(references(star))' });
+      widget.changeDefaultSort(q9);
+      expect(q9.get('sort')[0]).to.eql('score desc');
+
       done();
     });
 

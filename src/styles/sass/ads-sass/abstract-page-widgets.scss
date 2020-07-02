@@ -1,10 +1,7 @@
-
-
-$facebook-color : rgb(59,89,153);
-$twitter-color : rgb(64,153,255);
-$mendeley-color : rgb(60,30,33);
+$facebook-color: rgb(59, 89, 153);
+$twitter-color: rgb(64, 153, 255);
+$mendeley-color: rgb(60, 30, 33);
 $sciencewise-color: rgb(179, 27, 27);
-
 
 .facebook-icon {
   @extend .fa;
@@ -22,9 +19,7 @@ $sciencewise-color: rgb(179, 27, 27);
   &:before {
     content: $fa-var-facebook-square;
   }
-
 }
-
 
 .twitter-icon {
   @extend .fa;
@@ -33,11 +28,9 @@ $sciencewise-color: rgb(179, 27, 27);
   &:before {
     content: $fa-var-twitter-square;
   }
-
 }
 
 .sciencewise-icon {
-
   background-color: $sciencewise-color;
   color: white;
   font-size: 10px;
@@ -46,9 +39,8 @@ $sciencewise-color: rgb(179, 27, 27);
   padding: 2px;
 
   &:before {
-    content: "Science WISE"
+    content: 'Science WISE';
   }
-
 }
 
 .s-open-access-image {
@@ -61,7 +53,6 @@ $sciencewise-color: rgb(179, 27, 27);
 }
 
 .s-abstract-title-container {
-
   padding: 1% 2%;
 }
 .s-abstract-title-bibcode {
@@ -82,7 +73,6 @@ $sciencewise-color: rgb(179, 27, 27);
   font-size: 23px;
 }
 
-
 .s-abstract-title-info-row {
   font-size: 16px;
 }
@@ -92,9 +82,7 @@ $sciencewise-color: rgb(179, 27, 27);
   margin-bottom: 0px;
 }
 
-
 .s-abstract-descriptor {
-
   background-color: $body-bg;
 
   h4 {
@@ -104,13 +92,11 @@ $sciencewise-color: rgb(179, 27, 27);
   &:last-of-type {
     @extend .border-default;
   }
-
 }
 
 .s-abstract-metadata {
   padding: 0 6%;
-  font-size : 1.05em;
-
+  font-size: 1.05em;
 }
 
 .s-abstract-title {
@@ -126,11 +112,9 @@ $sciencewise-color: rgb(179, 27, 27);
   border-top: $border-light-default;
 }
 
-
 .s-abstract-content {
   overflow: hidden;
 }
-
 
 .s-abstract-content {
   padding: 1% 0;
@@ -141,22 +125,17 @@ $sciencewise-color: rgb(179, 27, 27);
   }
 }
 
-.s-abstract-page-layout {
-
-  .s-middle-column {
-    padding-bottom: 10%;
-  }
-
-}
-
+// .s-abstract-page-layout {
+//   .s-middle-column {
+//     padding-bottom: 10%;
+//   }
+// }
 
 .s-abstract-metadata {
-
   dt {
-    color : $gray;
+    color: $gray;
   }
 }
-
 
 .s-abstract-text {
   font-size: 1.1em;
@@ -166,8 +145,7 @@ $sciencewise-color: rgb(179, 27, 27);
 
 .s-abstract-description {
   font-weight: 300;
-  font-size : 18px;
-
+  font-size: 18px;
 }
 
 .s-authors-and-aff {
@@ -175,17 +153,16 @@ $sciencewise-color: rgb(179, 27, 27);
 
   ul {
     margin-bottom: 0px;
-    padding-left : 2px;
+    padding-left: 2px;
   }
 
   .list-inline li {
-    padding-left : 2px;
+    padding-left: 2px;
     padding-right: 2px;
   }
 }
 
-
-.s-abstract-dl-horizontal{
+.s-abstract-dl-horizontal {
   dt {
     @media only screen and (min-width: $screen-md-min) {
       display: inline-block;
@@ -201,11 +178,8 @@ $sciencewise-color: rgb(179, 27, 27);
   }
 }
 
-
 .s-recommender-widget {
-
   position: relative;
-
 
   li {
     margin: 0 0 8px 6% !important;
@@ -213,8 +187,7 @@ $sciencewise-color: rgb(179, 27, 27);
   }
 
   .s-author {
-    color: $text-color !important
-
+    color: $text-color !important;
   }
 }
 
@@ -222,27 +195,24 @@ $sciencewise-color: rgb(179, 27, 27);
 
 .grid-cell {
   border: 2px solid $gray-lighter;
-  border-radius : 8px;
-  @include transition(box-shadow, .5s, ease-out);
-  position:relative;
-
+  border-radius: 8px;
+  @include transition(box-shadow, 0.5s, ease-out);
+  position: relative;
 }
 
 .grid-cell img {
-
-    display: block;
-    max-width: 100%;
-    height: auto;
-    margin:auto;
+  display: block;
+  max-width: 100%;
+  height: auto;
+  margin: auto;
 }
 
 .s-graphics-grid {
-
-  .s-grid-title{
+  .s-grid-title {
     padding-left: 4%;
   }
 
-  .s-grid-container{
+  .s-grid-container {
     padding-left: 3%;
   }
 
@@ -250,24 +220,24 @@ $sciencewise-color: rgb(179, 27, 27);
     padding-left: 1%;
   }
 
-  a:hover, a:focus {
+  a:hover,
+  a:focus {
     text-decoration: none;
   }
 
   .grid-cell {
-          display: inline-block;
-          width: 30%;
-          margin-left: 1%;
-          margin-bottom: 20px;
+    display: inline-block;
+    width: 30%;
+    margin-left: 1%;
+    margin-bottom: 20px;
 
-          &:hover {
-            box-shadow : 0px 0px 4px $gray-light;
-          }
-
-    @media(max-width: $screen-sm-max){
-      width: 97%;
+    &:hover {
+      box-shadow: 0px 0px 4px $gray-light;
     }
 
+    @media (max-width: $screen-sm-max) {
+      width: 97%;
+    }
   }
 
   img {
@@ -283,18 +253,15 @@ $sciencewise-color: rgb(179, 27, 27);
     position: relative;
   }
 
-
   figcaption {
     text-align: center;
     margin-bottom: 10px;
     color: $gray;
   }
-
 }
 
 .s-graphics-container {
   cursor: pointer;
-
 
   p {
     text-align: center;
@@ -304,5 +271,17 @@ $sciencewise-color: rgb(179, 27, 27);
     margin: 0 4%;
     padding-top: 18px;
   }
+}
 
+#abstract-content-container {
+  display: flex;
+  flex-direction: row;
+
+  .main-content-container {
+    flex-grow: 1;
+  }
+
+  .s-right-column {
+    flex: 0;
+  }
 }

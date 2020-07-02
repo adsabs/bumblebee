@@ -1,4 +1,5 @@
-html, body {
+html,
+body {
   height: 100%;
 }
 
@@ -22,4 +23,64 @@ html, body {
 
 #footer-container {
   flex-shrink: 0;
+}
+
+#page-with-sidenav-layout {
+  display: flex;
+  flex-direction: column;
+
+  .user-pages__main {
+    min-height: 600px;
+    display: flex;
+    flex-direction: row;
+
+    &-aside {
+      width: 300px;
+      flex: 1 0 300;
+    }
+
+    &-content {
+      width: 100%;
+    }
+
+    @media (max-width: $screen-md) {
+      &-aside {
+        transform: translateX(-100%);
+        transition: all 0.3s ease-out;
+
+        &.show {
+          transform: none;
+        }
+      }
+
+      &-content {
+        transition: all 0.3s ease-out;
+        &.full-width {
+          margin-left: -300px;
+        }
+      }
+    }
+
+    @media (max-width: $screen-sm) {
+      &-aside {
+        width: 100%;
+        transform: translateX(-100%);
+        transition: none;
+        display: none;
+
+        &.show {
+          transform: none;
+        }
+      }
+
+      &-content {
+        display: none;
+        transition: none;
+        &.full-width {
+          display: block;
+          margin-left: 0;
+        }
+      }
+    }
+  }
 }

@@ -29,15 +29,9 @@ define([
     },
   });
 
-  const {
-    getInitialData,
-    getCollaborators,
-    addCollaborator,
-    editCollaborator,
-  } = actions;
+  const { getCollaborators, addCollaborator, editCollaborator } = actions;
 
   const actionCreators = {
-    getInitialData,
     getCollaborators,
     addCollaborator,
     editCollaborator,

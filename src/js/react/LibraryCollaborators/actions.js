@@ -23,8 +23,8 @@ define([], function() {
     EDIT_COLLABORATOR: 'EDIT_COLLABORATOR',
 
     // app state
-    GET_INITIAL_DATA: 'GET_INITIAL_DATA',
     SET_COLLABORATORS: 'SET_COLLABORATORS',
+    SET_LIBRARY_DATA: 'SET_LIBRARY_DATA',
   };
   const actionCreators = {
     getCollaborators: (id) => ({
@@ -58,9 +58,6 @@ define([], function() {
           permission: getPermissionMap(permission && permission.id),
         },
       },
-    }),
-    getInitialData: () => ({
-      type: actions.GET_INITIAL_DATA,
     }),
   };
 

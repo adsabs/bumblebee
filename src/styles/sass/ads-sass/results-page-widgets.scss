@@ -80,35 +80,28 @@
     font-size: 18px;
   }
   .s-library-area {
-    margin-top: 15px;
-    margin-bottom: 20px;
     border: 0 solid transparent;
     background-color: white;
 
     @extend .s-ads-card;
   }
-  #library-console,
-  .s-library-add-title {
+  #library-console {
     padding: 10px;
   }
-  .s-library-add-title {
-    background: $brand-info;
-    transition: background 0.4s;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
-    color: white;
-    font-weight: 300;
-    font-size: 16px;
-    cursor: pointer;
-    i.fa-caret-down {
-      position: relative;
-      top: 4px;
-      left: -8px;
-      float: right;
-      font-size: 1.5em;
+
+  .library-add-title {
+    &:hover,
+    &:focus {
+      background: darken(white, 5%) !important;
     }
-    &:hover {
-      background: darken($brand-info, 5%);
-    }
+    text-decoration: none;
+  }
+
+  .s-library-add-title__title {
+    display: flex;
+    justify-content: space-between;
+    color: #5d5d5d;
+    font-size: 1.25em;
   }
   .s-filter-div {
     font-weight: 300;
@@ -140,4 +133,10 @@
 
 .s-empty-view-msg {
   padding: 0 10% 0 10%;
+}
+
+.results-right-column {
+  div[data-widget] {
+    margin-bottom: 1em;
+  }
 }

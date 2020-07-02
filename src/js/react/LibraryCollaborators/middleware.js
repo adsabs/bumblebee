@@ -5,6 +5,7 @@ define(['underscore', './actions', 'js/react/shared/helpers'], function(
     SET_COLLABORATORS,
     ADD_COLLABORATOR,
     EDIT_COLLABORATOR,
+    SET_LIBRARY_DATA,
     getCollaborators,
   },
   { delay, middleware, apiSuccess, parseScope }
@@ -17,7 +18,8 @@ define(['underscore', './actions', 'js/react/shared/helpers'], function(
     }
     if (
       action.type === apiSuccess(ADD_COLLABORATOR) ||
-      action.type === apiSuccess(EDIT_COLLABORATOR)
+      action.type === apiSuccess(EDIT_COLLABORATOR) ||
+      action.type === SET_LIBRARY_DATA
     ) {
       const library = getState().library;
       if (library.id) {

@@ -1,3 +1,3 @@
-define(['./api', './main'], function(api, main) {
-  return [api, main];
+define(['./api'], function(api) {
+  return [api];
 });
