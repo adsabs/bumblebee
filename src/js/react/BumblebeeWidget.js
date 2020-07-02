@@ -81,6 +81,7 @@ define([
     activate() {
       const ps = getPubSub();
       subscribe(ps.USER_ANNOUNCEMENT, this.handleUserAnnouncement.bind(this));
+      subscribe(ps.NAVIGATE, this.handleNavigation.bind(this));
 
       const user = this.getBeeHive().getObject('User');
       if (user && typeof user.getUserName === 'function') {
@@ -89,6 +90,10 @@ define([
           payload: user.getUserName(),
         });
       }
+    },
+    handleNavigation(event, payload) {
+      const type = `NAVIGATE/${event}`;
+      this.dispatch({ type, payload });
     },
     handleUserAnnouncement(event, payload) {
       const type = `USER_ANNOUNCEMENT/${event}`;

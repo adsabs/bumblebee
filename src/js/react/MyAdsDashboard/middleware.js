@@ -189,6 +189,18 @@ define([
     }
   };
 
+  const updateOnNavigate = middleware(
+    ({ action, next, dispatch, getState }) => {
+      next(action);
+
+      if (action.type === 'NAVIGATE/MyAdsDashboard') {
+        if (getState().requests.GET_NOTIFICATIONS.status !== 'pending') {
+          dispatch(getNotifications());
+        }
+      }
+    }
+  );
+
   return {
     resetAfterRequest,
     updateNotifications,
@@ -196,5 +208,6 @@ define([
     importNotifications,
     reloadNotificationsAfterGoTo,
     runQueries,
+    updateOnNavigate,
   };
 });

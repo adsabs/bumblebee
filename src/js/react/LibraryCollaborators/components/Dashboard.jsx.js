@@ -114,18 +114,6 @@ define([
       });
     }
 
-    componentWillReceiveProps(nextProps) {
-      this.setState(initialState);
-
-      if (this.props.library.id !== nextProps.library.id) {
-        this.props.getCollaborators(nextProps.library.id);
-      }
-    }
-
-    componentDidMount() {
-      this.props.getInitialData();
-    }
-
     render() {
       const { permissions, requests } = this.props;
       const { showAddCollaboratorModal } = this.state;

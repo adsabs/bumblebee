@@ -1,45 +1,44 @@
-
-$sidenav-background : $body-bg;
+$sidenav-background: $body-bg;
 
 .s-nav-button-container {
   border-bottom: 1px solid darken($gray-lighter, 10%);
+  padding-left: 1rem;
   @media only screen and (min-width: $screen-md-min) {
-    display:none;
+    display: none;
   }
 }
 
 .s-toggle-menu {
-  display:block;
+  display: block;
   @media only screen and (min-width: $screen-md-min) {
-    display:none;
+    display: none;
   }
   margin: 10px 10px;
 }
 
 .s-nav-container {
-
   background-color: $sidenav-background;
-  transition : transform, .5s, ease-in-out;
+  // transition : transform, .5s, ease-in-out;
   //sticky to the side
   border-right: 1px solid darken($sidenav-background, 15%);
 
-  @media(min-width: $screen-md-min){
-    padding: 0 0 99999px 0;
-    margin-bottom: -99999px;
-    margin-top: -21px;
-    padding-left: 10px;
-  }
+  // @media(min-width: $screen-md-min){
+  //   padding: 0 0 99999px 0;
+  //   margin-bottom: -99999px;
+  //   margin-top: -21px;
+  //   padding-left: 10px;
+  // }
 
-  @media(max-width: $screen-sm-max){
-    width: 300px;
-    z-index: $z-index-4;
-    transform : translate(-300px);
-    position: absolute;
-    height: 100%;
-    box-shadow : 2px 0 6px darken($gray-lighter, 5%);
-    border-right: 1px solid $gray-lighter;
-    margin-top: -7px;
-  }
+  // @media(max-width: $screen-sm-max){
+  //   width: 300px;
+  //   z-index: $z-index-4;
+  //   transform : translate(-300px);
+  //   position: absolute;
+  //   height: 100%;
+  //   box-shadow : 2px 0 6px darken($gray-lighter, 5%);
+  //   border-right: 1px solid $gray-lighter;
+  //   margin-top: -7px;
+  // }
 
   .s-main-button-container {
     width: 137px;
@@ -47,7 +46,7 @@ $sidenav-background : $body-bg;
   }
 
   a {
-    color :$text-color;
+    color: $text-color;
     &:hover {
       text-decoration: none !important;
     }
@@ -65,30 +64,26 @@ $sidenav-background : $body-bg;
     font-weight: 300;
     color: $brand-primary-faded;
   }
-
 }
 
-.s-nav-container.show {
-  transform : translate(-15px);
-}
-
+// .s-nav-container.show {
+//   transform: translate(-15px);
+// }
 
 .s-nav {
   padding: 8px 0 8px 6%;
-  transition : all, .5s, ease-out;
+  transition: all, 0.5s, ease-out;
   border-left: 5px solid $sidenav-background;
   font-size: 16px;
 
   &:hover {
     background-color: lighten($gray-lighter, 5%);
     border-left: 5px solid $gray-light;
-
   }
 
-  .s-content{
+  .s-content {
     position: relative;
   }
-
 }
 
 .s-nav-selected {
@@ -107,7 +102,7 @@ $sidenav-background : $body-bg;
   color: $brand-primary-faded;
   font-weight: 400;
   &:hover {
-    background-color:lighten($brand-primary, 63%);
+    background-color: lighten($brand-primary, 63%);
     border-left: 5px solid $brand-primary-faded;
   }
   background-color: lighten($brand-primary, 63%);
@@ -124,11 +119,11 @@ $sidenav-background : $body-bg;
 }
 
 //put at the top of the nav. it identifies the page group
-.s-nav-top-title{
+.s-nav-top-title {
   border-bottom: 1px solid $gray-lighter;
   padding: 20px 20%;
   overflow: auto;
-  margin-bottom:20px;
+  margin-bottom: 20px;
 
   h2 {
     font-size: 22px;
@@ -137,7 +132,7 @@ $sidenav-background : $body-bg;
 
 /*header is for sub-section titles*/
 
-.s-nav-header{
+.s-nav-header {
   width: 100%;
   padding: 10px 0 10px 10px;
   @extend .secondary-header;
@@ -147,10 +142,9 @@ $sidenav-background : $body-bg;
   }
 
   i {
-    font-size: .8em;
+    font-size: 0.8em;
     float: left;
     margin-top: 8px;
     margin-right: 3%;
   }
-
 }

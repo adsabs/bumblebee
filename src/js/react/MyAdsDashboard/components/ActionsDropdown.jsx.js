@@ -45,6 +45,13 @@ define(['react', 'react-bootstrap', 'react-prop-types'], function(
     disable,
     dropup,
   }) => {
+    let allowEdit = true;
+
+    // is a general notification, disallow editing
+    if (item.type === 'query') {
+      allowEdit = false;
+    }
+
     return (
       <Dropdown
         disabled={disable}
@@ -73,9 +80,11 @@ define(['react', 'react-bootstrap', 'react-prop-types'], function(
               </Label>
             </div>
           </MenuItem>
-          <MenuItem href="javascript:void(0);" onClick={() => onEdit(item)}>
-            <i className="fa fa-pencil fa-fw" aria-hidden="true" /> Edit
-          </MenuItem>
+          {allowEdit && (
+            <MenuItem href="javascript:void(0);" onClick={() => onEdit(item)}>
+              <i className="fa fa-pencil fa-fw" aria-hidden="true" /> Edit
+            </MenuItem>
+          )}
           <MenuItem href="javascript:void(0);" onClick={() => onDelete(item)}>
             <i className="fa fa-trash fa-fw" aria-hidden="true" /> Delete
           </MenuItem>

@@ -1,3 +1,4 @@
+/* eslint-disable global-require */
 /**
  * Discovery application: main bootstrapping routine
  *
@@ -14,6 +15,7 @@
  */
 
 define(['config/discovery.config', 'module'], function(config, module) {
+  // eslint-disable-next-line import/no-dynamic-require
   require([
     'router',
     'js/components/application',
@@ -120,6 +122,19 @@ define(['config/discovery.config', 'module'], function(config, module) {
           );
           updateExternalLinkBehavior();
 
+          const toggle = ($sidebar, $content, $button) => {
+            $sidebar.toggleClass('show');
+            let text =
+              '<i class="fa fa-close" aria-hidden="true"></i> Close Menu';
+            if ($sidebar.hasClass('show')) {
+              $content.removeClass('full-width');
+            } else {
+              text = '<i class="fa fa-bars" aria-hidden="true"></i> Show Menu';
+              $content.addClass('full-width');
+            }
+            $button.html(text);
+          };
+
           // some global event handlers, not sure if right place
           $('body').on('click', 'button.toggle-menu', function(e) {
             var $button = $(e.target);
@@ -128,11 +143,16 @@ define(['config/discovery.config', 'module'], function(config, module) {
               .eq(1)
               .find('.nav-container');
 
-            $sidebar.toggleClass('show');
-            var text = $sidebar.hasClass('show')
-              ? '  <i class="fa fa-close" aria-hidden="true"></i> Close Menu'
-              : ' <i class="fa fa-bars" aria-hidden="true"></i> Show Menu';
-            $button.html(text);
+            var $content = $button
+              .parents()
+              .eq(1)
+              .find('.user-pages__main-content');
+
+            toggle($sidebar, $content, $button);
+
+            $('a', $sidebar).on('click', () => {
+              toggle($sidebar, $content, $button);
+            });
           });
 
           // accessibility: skip to main content

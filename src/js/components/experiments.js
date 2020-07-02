@@ -112,4 +112,3 @@ define([
   _.extend(Experiments.prototype, Dependon.BeeHive, Dependon.App);
 
   return Experiments;
-});

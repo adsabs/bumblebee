@@ -26,6 +26,15 @@ define(['underscore', 'react', 'react-bootstrap', 'react-prop-types'], function(
         ...initialState,
         ...props.initialState,
       };
+
+      if (props.initialState.entries && props.initialState.entries.length > 0) {
+        // initialize array of entries with some ids
+        this.state.entries = props.initialState.entries.map((e) => ({
+          ...e,
+          id: uniqueId(),
+        }));
+      }
+
       this.inputRef = null;
     }
 
@@ -55,7 +64,7 @@ define(['underscore', 'react', 'react-bootstrap', 'react-prop-types'], function(
           type === 'ORCiD'
             ? text
                 .replace(/-/g, '')
-                .match(/\d{4}/g)
+                .match(/\d{3}[X\d]/g)
                 .join('-')
             : text;
 
@@ -105,7 +114,10 @@ define(['underscore', 'react', 'react-bootstrap', 'react-prop-types'], function(
       let valid = true;
       let error = '';
 
-      if (type === 'ORCiD' && !text.match(/^\d{4}-?\d{4}-?\d{4}-?\d{4}$/)) {
+      if (
+        type === 'ORCiD' &&
+        !text.match(/^\d{4}-?\d{4}-?\d{4}-?\d{3}[X\d]$/)
+      ) {
         // orcid formatting is off
         valid = false;
         error = 'ORCiD must in the format: 9999-9999-9999-9999';
