@@ -37,6 +37,7 @@ require.config({
           Orcid: 'js/modules/orcid/module',
           SecondOrderController: 'js/components/second_order_controller',
           HotkeysController: 'js/components/hotkeys_controller',
+          Experiments: 'js/components/experiments',
         },
         services: {
           Api: 'js/services/api',

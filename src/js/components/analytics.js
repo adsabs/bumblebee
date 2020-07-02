@@ -70,33 +70,34 @@ define(['underscore', 'jquery'], function(_, $) {
     }
   };
 
-  var ga = window[window.GoogleAnalyticsObject];
-  window[window.GoogleAnalyticsObject] = function(...args) {
-    try {
-      const $dd = $.Deferred();
-      ga.q = ga.q || [];
-      ga.q.push(args);
-      ga.apply(ga, [
-        ...args,
-        {
-          hitCallback: () => {
-            $dd.resolve();
-          },
-        },
-      ]);
-      setTimeout(() => $dd.resolve(), 1000);
-      return $dd.promise();
-    } catch (e) {
-      console.info('google analytics event not tracked');
+  var buffer = [];
+  var gaName = window.GoogleAnalyticsObject || 'ga';
+
+  var cleanBuffer = function() {
+    if (window[gaName]) {
+      for (var i=0; i<buffer.length; i++) {
+        window[gaName].apply(this, buffer[i]);
+      }
+      buffer = []
     }
-  };
+  }
 
   var Analytics = function() {
     adsLogger.apply(null, _.rest(arguments, 3));
-    return (
-      window[window.GoogleAnalyticsObject] &&
-      window[window.GoogleAnalyticsObject].apply(this, arguments)
-    );
+    
+    if (window[gaName]) {
+      if (buffer.length > 0)
+        cleanBuffer()
+      window[gaName].apply(this, arguments);
+      return true;
+    }
+    else {
+      console.log('Buffering GA signal', arguments);
+      buffer.push(arguments);
+      setTimeout(cleanBuffer, 1000);
+      return false;
+    }
+    
   };
 
   return Analytics;
