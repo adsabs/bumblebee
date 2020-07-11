@@ -64,7 +64,7 @@ define([], function() {
         // optimize AND we haven't setup any of our api calls
 
         // example that sets the variant 2 of the experiment
-        document.cookie = '_gaexp=GAX1.1.WFD4u8V3QkaI5EcZ969yeQ.18459.2;';        
+        // document.cookie = '_gaexp=GAX1.1.WFD4u8V3QkaI5EcZ969yeQ.18459.2;';        
 
         if (config.googleOptimizeCode) {
           analytics('require', config.googleOptimizeCode);
