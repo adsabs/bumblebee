@@ -42,19 +42,35 @@ define([], function() {
     },
   });
 
-  window.GoogleAnalyticsObject = '__ga__';
-
   require(['config/discovery.vars'], function(config) {
+    
+    // rca: not sure why the ganalytics is loaded here instead of inside analytics.js
+    //      perhaps it is because it is much/little sooner this way?
+
     // make sure that google analytics never blocks app load
     setTimeout(function() {
-      require(['google-analytics', 'analytics'], function() {
-        var qa = window[window.GoogleAnalyticsObject];
-        qa.l = Date.now();
-        qa(
+      require(['google-analytics', 'analytics'], function(_, analytics) {
+        // set ganalytics debugging
+        //window.ga_debug = {trace: true};
+        analytics(
           'create',
           config.googleTrackingCode || '',
           config.googleTrackingOptions
         );
+        
+        // if we ever want to modify what experiment/variant the user 
+        // is going to receive, it has to happen here - by modifying the
+        // _gaexp cookie -- but at this stage we haven't yet downloaded
+        // optimize AND we haven't setup any of our api calls
+
+        // example that sets the variant 2 of the experiment
+        // document.cookie = '_gaexp=GAX1.1.WFD4u8V3QkaI5EcZ969yeQ.18459.2;';        
+
+        if (config.googleOptimizeCode) {
+          analytics('require', config.googleOptimizeCode);
+          if (!config.debugExportBBB)
+          console.warn('AB testing will be loaded, but bbb object is not exposed. Change debugExportBBB if needed.');
+        }
       });
     }, 0);
   });

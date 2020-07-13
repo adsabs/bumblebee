@@ -80,6 +80,8 @@ define([], function() {
      */
      googleTrackingCode: 'UA-XXXXXXXX-X',
      googleTrackingOptions: 'auto',
+     googleOptimizeCode: null,
+     googleOptimizeOptions: null,
 
 
      /**
