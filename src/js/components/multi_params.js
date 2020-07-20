@@ -228,7 +228,13 @@ define(['backbone', 'underscore', 'jquery'], function(Backbone, _, $) {
           vall = hash.join('=');
         }
 
-        value = decodeURIComponent(vall.split('+').join(' '));
+        // replace literal '%' with code and '+' become literal spaces
+        value = decodeURIComponent(
+          vall
+            .replace(/%(?!\d|[ABCDEF]+)/gi, '%25')
+            .split('+')
+            .join(' ')
+        );
         if (attrs[key] !== undefined) {
           attrs[key].push(value);
         } else {
