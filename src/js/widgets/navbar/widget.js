@@ -55,7 +55,7 @@ define([
 
     events: {
       'click .orcid-dropdown ul': 'stopPropagation',
-      'click button.orcid-sign-in': 'orcidSignIn',
+      'click a.orcid-sign-in': 'orcidSignIn',
       'change .orcid-mode': 'changeOrcidMode',
 
       // to avoid stopPropagation as in triggers hash
