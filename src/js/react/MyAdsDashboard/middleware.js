@@ -12,8 +12,6 @@ define([
     SET_NOTIFICATION_QUERY_KEY,
     RUN_QUERY,
     goTo,
-    getQueryFromQID,
-    getNotification,
     getNotifications,
     updateNotification,
     getNotificationQueries,
@@ -55,17 +53,11 @@ define([
       if (action.type === RUN_QUERY) {
         const { id, queryKey } = action.payload;
 
-        const item = getState().notifications[id];
-        if (item && item.type === 'query') {
-          // if general query, then we must get the qid first
-          dispatch(getNotification(id));
-        } else {
-          dispatch({
-            type: SET_NOTIFICATION_QUERY_KEY,
-            payload: queryKey,
-          });
-          dispatch(getNotificationQueries(id));
-        }
+        dispatch({
+          type: SET_NOTIFICATION_QUERY_KEY,
+          payload: queryKey,
+        });
+        dispatch(getNotificationQueries(id));
       }
 
       if (action.type === apiSuccess('GET_NOTIFICATION_QUERIES')) {
@@ -84,21 +76,6 @@ define([
           payload: null,
         });
       }
-
-      if (action.type === apiSuccess('GET_QUERY_FROM_QID')) {
-        if (action.result && action.result.query) {
-          try {
-            trigger('doSearch', JSON.parse(action.result.query).query);
-          } catch (e) {
-            dispatch(goTo(page.DASHBOARD));
-          }
-        } else {
-          dispatch(goTo(page.DASHBOARD));
-        }
-        setTimeout(() => {
-          dispatch(goTo(page.DASHBOARD));
-        }, 1000);
-      }
     }
   );
 
@@ -116,12 +93,6 @@ define([
 
     if (action.type === apiSuccess('GET_NOTIFICATION')) {
       const result = action.result[0];
-
-      // iterrupt here in case it is a general query so we can run it seperately
-      if (result && result.qid) {
-        dispatch(getQueryFromQID(result.qid));
-        return;
-      }
 
       // After requesting a single notification, set it as the active editing one
       dispatch({ type: SET_EDITING_NOTIFICATION, result });
