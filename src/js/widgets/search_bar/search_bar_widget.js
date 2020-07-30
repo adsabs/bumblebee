@@ -350,7 +350,8 @@ define([
         const value = e.currentTarget.innerText.trim();
 
         if (value) {
-          this.setFormVal(value);
+          this.setFormVal(`${this.getFormVal()} ${value}`);
+          this.$input.focus();
         }
       });
     },
