@@ -37,9 +37,16 @@
             {{/if}}
             <label for="query-search-input" clas="sr-only">ADS search</label>
             <input type="text" class="form-control q hasbigquery" name="q" id="query-search-input" autofocus aria-label="Start typing a query here to begin an ADS Search" autocomplete="off" value={{currentQueryVal}}>
-            <i class="icon-clear s-clear-control" aria-hidden="true"></i> {{else}}
+
+
+            <button class="icon-clear s-clear-control"></button>
+
+            {{else}}
             <input type="text" class="form-control q" name="q" autofocus id="query-search-input" aria-label="Start typing a query here to begin an ADS Search" autocomplete="off" value={{currentQueryVal}}>
-            <i class="icon-clear s-clear-control" aria-hidden="true"></i> {{/if}}
+
+            <button class="icon-clear s-clear-control"></button>
+
+            {{/if}}
             <span class="input-group-btn">
                       <button type="submit" class="btn btn-primary search-submit s-search-submit" aria-label="submit">
                           <i class="fa fa-search" aria-hidden="true"></i></button>

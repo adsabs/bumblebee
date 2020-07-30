@@ -27,8 +27,8 @@
             <ul class="nav navbar-nav navbar-right">
 
                 <li class="dropdown">
-                  <button type="button" class="btn btn-primary-faded feedback-button open-feedback-button" data-toggle="dropdown" aria-expanded="false">
-                    Feedback <span class="caret"></span>
+                  <button type="button" class="btn btn-link dropdown-toggle feedback-button" data-toggle="dropdown" aria-expanded="false">
+                    <i class="fa fa-comment feedback-icon" aria-hidden="true"></i> Feedback <span class="caret"></span>
                   </button>
                   <ul class="dropdown-menu" role="menu">
                     <li>
@@ -49,7 +49,7 @@
                     {{#if orcidModeOn}}
 
                 <li class="dropdown orcid-dropdown s-orcid-dropdown">
-                    <button class="btn btn-link" data-toggle="dropdown" aria-expanded="false">
+                    <button class="btn btn-link dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
                         <span class="s-orcid-title">
                          <img src="../../styles/img/orcid-active.svg" alt="orcid symbol"/>
                             ORCID
@@ -91,7 +91,7 @@
                     {{else}}
 
                 <li class="dropdown orcid-dropdown s-orcid-dropdown">
-                    <button class="btn-link" data-toggle="dropdown" aria-expanded="false">
+                    <button class="btn btn-link dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
                         <span class="s-orcid-title"> <img src="../../styles/img/orcid_inactive.png"
                                                           alt="orcid symbol"/> ORCID  <span class="caret"></span></button>
                     <ul class="dropdown-menu" role="menu">
@@ -133,13 +133,13 @@
                 {{else}}
 
                 <li class="dropdown orcid-dropdown s-orcid-dropdown">
-                    <button class="dropdown-toggle btn-link" data-toggle="dropdown" aria-expanded="false">
+                    <button class="btn dropdown-toggle btn-link" data-toggle="dropdown" aria-expanded="false">
                         <span class="s-orcid-title"> <img src="../../styles/img/orcid_inactive.png"
                                                           alt="orcid symbol"/>  ORCID  <span class="caret"></span></button>
                     <ul class="dropdown-menu" role="menu">
-                        <li class="no-hover-style" >
-                            <button class="btn-link orcid-sign-in"> Sign in to ORCID to claim papers in the ADS. </button>
-                        </li>
+                      <li class="no-hover-style">
+                        <a href="javascript:void(0);" class="orcid-sign-in">Sign in to ORCID to claim papers in the ADS.</a>
+                      </li>
                     </ul>
                 </li>
 

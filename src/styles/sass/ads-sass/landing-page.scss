@@ -243,3 +243,7 @@ div[data-field='date'] {
   color: lighten($brand-primary-faded, 5%) !important;
   font-weight: bold;
 }
+
+.search-quick-links button {
+  border-bottom: 1px dotted rgba(0, 0, 0, 0.5);
+}
