@@ -7,11 +7,11 @@ define(['underscore', 'redux', './constants', './actions'], function(
   const getPermissionType = (type) => {
     if (type.includes('admin')) {
       return Permissions.ADMIN;
-    } else if (type.includes('write')) {
-      return Permissions.WRITE;
-    } else {
-      return Permissions.READ;
     }
+    if (type.includes('write')) {
+      return Permissions.WRITE;
+    }
+    return Permissions.READ;
   };
 
   const requestState = {
@@ -31,7 +31,8 @@ define(['underscore', 'redux', './constants', './actions'], function(
           error,
         },
       };
-    } else if (/_RESET$/.test(action.type)) {
+    }
+    if (/_RESET$/.test(action.type)) {
       const scope = action.type.replace('_RESET', '');
       return {
         ...state,
