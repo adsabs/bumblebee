@@ -253,10 +253,21 @@ define([
      */
     onChangeToCollections: function(data) {
       Object.keys(data).forEach((key) => {
-        const $el = $(
-          `div[data-field="database"] input[name=${key}]`,
-          this.$el
-        );
+        const $el = $(`div[data-field=database] input[name=${key}]`, this.$el);
+        if ($el.length > 0) {
+          $el.prop('checked', data[key]);
+        }
+      });
+    },
+
+    /**
+     *
+     * @param {{ refereed: boolean, article: boolean }} data
+     */
+    onChangeToProperty: function(data) {
+      Object.keys(data).forEach((key) => {
+        const $el = $(`div[data-field=property] input[name=${key}]`, this.$el);
+
         if ($el.length > 0) {
           $el.prop('checked', data[key]);
         }
@@ -440,14 +451,122 @@ define([
       });
       ps.subscribe(ps.USER_ANNOUNCEMENT, (ev, data) => {
         if (ev === 'user_info_change' && data.defaultDatabase) {
-          const dbs = this.getDbSelectionFromUserData();
-          this.model.set('collections', dbs || this.model.defaults.collections);
-          this.view.triggerMethod(
-            'changeToCollections',
-            dbs || this.model.defaults.collections
-          );
+          // check first to make sure that collections is set to the default
+          if (
+            JSON.stringify(this.model.get('collections')) ===
+            JSON.stringify(this.model.defaults.collections)
+          ) {
+            const dbs = this.getDbSelectionFromUserData();
+            this.model.set(
+              'collections',
+              dbs || this.model.defaults.collections
+            );
+            this.view.triggerMethod(
+              'changeToCollections',
+              dbs || this.model.defaults.collections
+            );
+          }
         }
       });
+    },
+
+    /**
+     *
+     * This will take in some url params which correspond to entries in the form and apply the changes
+     *
+     * @param {ApiQuery} query
+     */
+    applyQueryParams(query) {
+      // if query passed, unpack and set form entries
+      if (query) {
+        const params = query.toJSON();
+
+        // triggers a change to the "collections" form value
+        const processCollection = (value) => {
+          if (value) {
+            const process = (entry) => {
+              if (entry.match(/^(a|astronomy)$/i)) {
+                return { astronomy: true };
+              }
+
+              if (entry.match(/^(p|physics)$/i)) {
+                return { physics: true };
+              }
+
+              if (entry.match(/^(g|general)$/i)) {
+                return { general: true };
+              }
+            };
+
+            const defaultValue = {
+              astronomy: false,
+              physics: false,
+              general: false,
+            };
+            let newValue = {};
+            if (value.includes(',')) {
+              const entries = value.split(',').splice(0, 3);
+              newValue = entries.reduce(
+                (acc, entry) => ({
+                  ...acc,
+                  ...process(entry),
+                }),
+                defaultValue
+              );
+            } else {
+              newValue = { ...defaultValue, ...process(value) };
+            }
+
+            this.model.set('collections', newValue);
+            this.view.triggerMethod('changeToCollections', newValue);
+          }
+        };
+
+        // triggers a change to the "property" form value
+        const processProperty = (value) => {
+          if (value) {
+            const process = (entry) => {
+              if (entry.match(/^(r|refereed)$/i)) {
+                return { refereed: true };
+              }
+
+              if (entry.match(/^(a|article)$/i)) {
+                return { article: true };
+              }
+            };
+            const defaultValue = {
+              refereed: false,
+              article: false,
+            };
+            let newValue = {};
+            if (value.includes(',')) {
+              const entries = value.split(',').splice(0, 3);
+              newValue = entries.reduce(
+                (acc, entry) => ({
+                  ...acc,
+                  ...process(entry),
+                }),
+                defaultValue
+              );
+            } else {
+              newValue = { ...defaultValue, ...process(value) };
+            }
+
+            this.model.set('property', newValue);
+            this.view.triggerMethod('changeToProperty', newValue);
+          }
+        };
+
+        // we accept 2 params, collection (c) and property(p)
+        const keys = Object.keys(params);
+        keys.forEach((k) => {
+          if (k.match(/^(c|collection)$/i)) {
+            processCollection(params[k][0]);
+          } else if (k.match(/^(p|property)$/i)) {
+            processProperty(params[k][0]);
+          }
+        });
+      }
     },
 
     onNewSearch: function() {
@@ -477,12 +596,18 @@ define([
       // set focus to author field
       this.setFocus('#classic-author');
 
-      const dbs = this.getDbSelectionFromUserData();
-      this.model.set('collections', dbs || this.model.defaults.collections);
-      this.view.triggerMethod(
-        'changeToCollections',
-        dbs || this.model.defaults.collections
-      );
+      // check to make sure collections is set to the default first
+      if (
+        JSON.stringify(this.model.get('collections')) ===
+        JSON.stringify(this.model.defaults.collections)
+      ) {
+        const dbs = this.getDbSelectionFromUserData();
+        this.model.set('collections', dbs || this.model.defaults.collections);
+        this.view.triggerMethod(
+          'changeToCollections',
+          dbs || this.model.defaults.collections
+        );
+      }
     },
 
     getDbSelectionFromUserData: function() {
