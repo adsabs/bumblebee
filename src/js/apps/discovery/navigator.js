@@ -175,15 +175,16 @@ define([
         return defer.promise();
       });
 
-      this.set('ClassicSearchForm', function() {
+      this.set('ClassicSearchForm', function(widgetName, { query }) {
         var defer = $.Deferred();
         var that = this;
         app
           .getObject('MasterPageManager')
-          .show('LandingPage', ['ClassicSearchForm'])
+          .show('LandingPage', [widgetName])
           .then(function() {
             app.getWidget('LandingPage').done(function(widget) {
-              widget.setActive('ClassicSearchForm');
+              widget.setActive(widgetName);
+              widget.widgets[widgetName].applyQueryParams(query);
             });
             that.route = '#classic-form';
             that.title = 'Classic Form';
