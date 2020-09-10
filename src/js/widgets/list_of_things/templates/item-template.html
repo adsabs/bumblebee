@@ -53,7 +53,7 @@
 
                     {{#if links.text}}
 
-                        <a href="{{links.text.[0].url}}" target="_blank" rel="noopener" class="btn-link active-link s-active-link" aria-disabled="false">
+                        <a href="{{links.text.[0].url}}" target="_blank" rel="noreferrer noopener" class="btn-link active-link s-active-link" aria-disabled="false">
                             <i class="s-text-icon" aria-hidden="true"></i>
                             <span class="sr-only">quick access to full text links</span>
                         </a>
@@ -61,7 +61,7 @@
 
                             {{#each links.text}}
                             <li><a {{#if this.openAccess}} class="s-open-access"{{/if}} href="{{this.url}}"
-                                target="_blank" rel="noopener" aria-label="open access link">{{this.name}}</a></li>
+                                target="_blank" rel="noreferrer noopener" aria-label="open access link">{{this.name}}</a></li>
                             {{/each}}
                         </ul>
 
@@ -109,7 +109,7 @@
 
                 {{#if links.data}}
 
-                <a href="{{links.data.[0].url}}" target="_blank" rel="noopener" class="btn-link active-link s-active-link" aria-disabled="false">
+                <a href="{{links.data.[0].url}}" target="_blank" rel="noreferrer noopener" class="btn-link active-link s-active-link" aria-disabled="false">
                     <i class="s-data-icon" aria-hidden="true"></i>
                     <span class="sr-only">quick links to data associated with this article</span>
                 </a>
@@ -117,7 +117,7 @@
                 <ul class="hidden list-unstyled link-details s-link-details" role="menu">
 
                     {{#each links.data}}
-                    <li><a {{#if this.openAccess}} class="s-open-access"{{/if}} href="{{this.url}}" target="_blank" rel="noopener"
+                    <li><a {{#if this.openAccess}} class="s-open-access"{{/if}} href="{{this.url}}" target="_blank" rel="noreferrer noopener"
                         >{{this.name}}</a></li>
                     {{/each}}
                 </ul>

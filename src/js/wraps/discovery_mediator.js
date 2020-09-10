@@ -258,7 +258,7 @@ define([
                 msg:
                   (msg || 'There is something wrong with the query:') +
                   '<b><a href="#">&nbsp;&nbsp;Try looking at the search examples on the home page</a></b> ' +
-                  ' or <b><a href="https://adsabs.github.io/help/search/search-syntax" target="_blank" rel="noopener">reading our help page</a>.</b>',
+                  ' or <b><a href="/help/search/search-syntax" target="_blank" rel="noreferrer noopener">reading our help page</a>.</b>',
                 events: {
                   'click a#query-assistant': 'query-assistant',
                 },

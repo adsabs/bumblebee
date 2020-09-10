@@ -32,7 +32,7 @@ define(['underscore', 'react', 'react-prop-types'], function(
                 <a
                   href={g.url}
                   target="_blank"
-                  rel="noopener"
+                  rel="noreferrer noopener"
                   onClick={() => onClick(g)}
                   title={`${g.description} ${
                     g.open
@@ -89,7 +89,7 @@ define(['underscore', 'react', 'react-prop-types'], function(
           <a
             href={item.url}
             target="_blank"
-            rel="noopener"
+            rel="noreferrer noopener"
             onClick={() => onClick(item)}
             title={item.description}
             className="resources__content__link"
