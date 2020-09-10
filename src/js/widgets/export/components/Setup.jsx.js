@@ -66,8 +66,8 @@ define(['react', 'react-prop-types'], function(React, ReactPropTypes) {
                     <a
                       title="Get Help With ADS Custom Format Syntax"
                       target="_blank"
-                      rel="noopener"
-                      href="https://adsabs.github.io/help/actions/export"
+                      rel="noreferrer noopener"
+                      href="/help/actions/export"
                     >
                       <i
                         className="fa fa-info-circle fa-invert"
@@ -112,8 +112,8 @@ define(['react', 'react-prop-types'], function(React, ReactPropTypes) {
                     <a
                       title="Get Help With ADS Custom Format Syntax"
                       target="_blank"
-                      rel="noopener"
-                      href="https://adsabs.github.io/help/actions/export"
+                      rel="noreferrer noopener"
+                      href="/help/actions/export"
                     >
                       <i
                         className="fa fa-info-circle fa-invert"

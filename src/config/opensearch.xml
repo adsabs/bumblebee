@@ -5,13 +5,13 @@
   <Tags>NASA ADS</Tags>
   <Contact>adshelp@cfa.harvard.edu</Contact>
   <Url type="text/html"
-       template="https://ui.adsabs.harvard.edu/#search/q={searchTerms}"/>
+       template="https://ui.adsabs.harvard.edu/search/q={searchTerms}"/>
   <LongName>NASA ADS Search</LongName>
   <Image height="32" width="32" type="image/vnd.microsoft.icon">https://ui.adsabs.harvard.edu/styles/img/favicon.ico</Image>
   <Query role="example" searchTerms="star" />
   <Developer>ADS Team</Developer>
   <Attribution>
-    Please See Terms of Use: http://adsabs.github.io/help/terms
+    Please See Terms of Use: https://ui.adsabs.harvard.edu/help/terms
   </Attribution>
   <SyndicationRight>private</SyndicationRight>
   <AdultContent>false</AdultContent>

@@ -13,7 +13,7 @@ define(['js/widgets/dropdown-menu/widget'], function(DropdownWidget) {
       section: 'Operations',
       icon: {
         class: 'icon-help',
-        href: '//adsabs.github.io/help/search/second-order',
+        href: '/help/search/second-order',
         description: 'Discover more about second-order operators',
       },
     },

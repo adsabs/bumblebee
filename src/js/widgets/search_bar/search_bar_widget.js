@@ -623,7 +623,7 @@ define([
               tokens +
               '</i></strong></p>' +
               '<p><strong><a href="/">Try looking at the search examples on the home page</a></strong> or ' +
-              '<strong><a href="https://adsabs.github.io/help/search/search-syntax">reading our help page.</a></strong></p>',
+              '<strong><a href="/help/search/search-syntax">reading our help page.</a></strong></p>',
             type: 'info',
             fade: true,
           })
