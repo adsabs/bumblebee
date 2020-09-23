@@ -6,6 +6,23 @@ define(['react', 'react-prop-types', 'es6!./ClipboardBtn.jsx'], function(
   const Export = ({ output, isFetching, progress, onDownloadFile, onCopy }) => (
     <div>
       <div className="row">
+        <div className="col-sm-12 btn-group">
+          <button
+            className="btn btn-default"
+            disabled={isFetching || _.isEmpty(output)}
+            onClick={onDownloadFile}
+          >
+            <i className="fa fa-download fa-fw" aria-hidden="true" />
+            Download to File
+          </button>
+          <ClipboardBtn
+            disabled={isFetching || _.isEmpty(output)}
+            onCopy={onCopy}
+            target=".export-textarea"
+          />
+        </div>
+      </div>
+      <div className="row">
         <div className="form-group">
           <textarea
             className="export-textarea form-control"
@@ -33,23 +50,6 @@ define(['react', 'react-prop-types', 'es6!./ClipboardBtn.jsx'], function(
         </div>
       )}
 
-      <div className="row">
-        <div className="col-sm-12 btn-group">
-          <button
-            className="btn btn-default"
-            disabled={isFetching || _.isEmpty(output)}
-            onClick={onDownloadFile}
-          >
-            <i className="fa fa-download fa-fw" aria-hidden="true" />
-            Download to File
-          </button>
-          <ClipboardBtn
-            disabled={isFetching || _.isEmpty(output)}
-            onCopy={onCopy}
-            target=".export-textarea"
-          />
-        </div>
-      </div>
     </div>
   );
 

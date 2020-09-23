@@ -28,7 +28,6 @@ define([], function() {
     IMPORT_NOTIFICATIONS: 'IMPORT_NOTIFICATIONS',
 
     // searching
-    GET_QUERY_FROM_QID: 'GET_QUERY_FROM_QID',
     RUN_QUERY: 'RUN_QUERY',
   };
 
@@ -118,14 +117,6 @@ define([], function() {
       options: {
         type: 'GET',
         target: `vault/notification_query/${id}`,
-      },
-    }),
-    getQueryFromQID: (qid) => ({
-      type: 'API_REQUEST',
-      scope: 'GET_QUERY_FROM_QID',
-      options: {
-        type: 'GET',
-        target: `vault/query/${qid}`,
       },
     }),
     runQuery: (id, queryKey) => ({

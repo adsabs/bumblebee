@@ -30,35 +30,27 @@ define([
       this.updateMetaTags(data);
     },
     getCachedDoc: function(bibcode) {
-      var fields = this.defaultQueryArguments.fl.split(',');
+      const fields = this.defaultQueryArguments.fl.split(',');
 
       // Attempt to shortcut the request by using stashed docs
-      var docs = this.getBeeHive()
+      const docs = this.getBeeHive()
         .getObject('DocStashController')
         .getDocs();
 
-      var found = docs.filter(function(doc) {
-        return doc.bibcode === bibcode;
-      });
+      const found = docs.find((doc) => doc.bibcode === bibcode);
 
-      if (found.length) {
+      if (found) {
         // Most will have DOIs, but account for other identifier formats
         // These are optional
-        var optionalFields = {
+        const finalDoc = {
           issn: undefined,
           isbn: undefined,
+          ...found,
         };
-        found.unshift(optionalFields);
-        found = _.merge.apply(_, found);
-        var keys = Object.keys(found);
 
-        // check to make sure that the found doc has all of our fields
-        for (var i = 0; i < fields.length; i++) {
-          if (keys.indexOf(fields[i]) === -1) {
-            return null;
-          }
-        }
-        return found;
+        const keys = Object.keys(finalDoc);
+        const hasRequiredKeys = fields.every((f) => keys.includes(f));
+        return hasRequiredKeys ? finalDoc : null;
       }
       return null;
     },
@@ -77,7 +69,8 @@ define([
       var doc = this.getCachedDoc(bibcode);
 
       if (doc) {
-        return this.updateMetaTags(doc);
+        this.updateMetaTags(doc);
+        return;
       }
 
       this.dispatchRequest(apiQuery.clone());
@@ -148,7 +141,7 @@ define([
     },
     defaultQueryArguments: {
       fl:
-        'links_data,[citations],keyword,property,first_author,year,issn,isbn,title,aff,abstract,bibcode,pub,volume,author,issue,pubdate,doi,page,esources,data',
+        'links_data,[citations],keyword,property,first_author,year,issn,isbn,title,aff,abstract,bibcode,pub,pub_raw,volume,author,issue,pubdate,doi,page,esources,data',
       rows: 1,
     },
   });

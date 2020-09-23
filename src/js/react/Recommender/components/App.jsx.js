@@ -43,7 +43,7 @@ define([
           onSelect={(key) => onSelected(key)}
         >
           <NavItem eventKey={1} href="javascript:void(0);">
-            Recommended for you
+            Recommendations
           </NavItem>
           <NavItem eventKey={2} href="javascript:void(0);">
             Search examples

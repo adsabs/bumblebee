@@ -82,6 +82,12 @@ define([], function() {
           ext: 'txt',
         },
         {
+          value: 'ieee',
+          label: 'IEEE',
+          help: 'IEEE format',
+          ext: 'txt',
+        },
+        {
           value: 'icarus',
           label: 'Icarus',
           help: 'LaTeX format for use in Icarus',

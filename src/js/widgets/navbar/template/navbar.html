@@ -15,7 +15,7 @@
             {{else}}
             <div class="s-hourly-warning">
                 <a class="navbar-brand s-navbar-brand" href="#"><i class="icon-danger fa-2x" aria-hidden="true"></i> ADS TEST</a>
-                <span> Nothing you do here will be saved!  <a href="https://ui.adsabs.harvard.edu/">I want the real ADS <i class="fa fa-arrow-right" aria-hidden="true"></i></a>
+                <span> Nothing you do here will be saved!  <a href="/">I want the real ADS <i class="fa fa-arrow-right" aria-hidden="true"></i></a>
                 </span>
             </div>
             {{/unless}}
@@ -27,8 +27,8 @@
             <ul class="nav navbar-nav navbar-right">
 
                 <li class="dropdown">
-                  <button type="button" class="btn btn-primary-faded feedback-button open-feedback-button" data-toggle="dropdown" aria-expanded="false">
-                    Feedback <span class="caret"></span>
+                  <button type="button" class="btn btn-link dropdown-toggle feedback-button" data-toggle="dropdown" aria-expanded="false">
+                    <i class="fa fa-comment feedback-icon" aria-hidden="true"></i> Feedback <span class="caret"></span>
                   </button>
                   <ul class="dropdown-menu" role="menu">
                     <li>
@@ -49,7 +49,7 @@
                     {{#if orcidModeOn}}
 
                 <li class="dropdown orcid-dropdown s-orcid-dropdown">
-                    <button class="btn btn-link" data-toggle="dropdown" aria-expanded="false">
+                    <button class="btn btn-link dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
                         <span class="s-orcid-title">
                          <img src="../../styles/img/orcid-active.svg" alt="orcid symbol"/>
                             ORCID
@@ -74,7 +74,7 @@
                         </li>
                         {{#if orcidURI}}
                         <li>
-                            <a href="https://orcid.org/my-orcid" target="_blank" rel="noopener" >View my ORCID profile on orcid.org </a>
+                            <a href="https://orcid.org/my-orcid" target="_blank" rel="noreferrer noopener" >View my ORCID profile on orcid.org </a>
                         </li>
                         {{/if}}
                         <li>
@@ -91,7 +91,7 @@
                     {{else}}
 
                 <li class="dropdown orcid-dropdown s-orcid-dropdown">
-                    <button class="btn-link" data-toggle="dropdown" aria-expanded="false">
+                    <button class="btn btn-link dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
                         <span class="s-orcid-title"> <img src="../../styles/img/orcid_inactive.png"
                                                           alt="orcid symbol"/> ORCID  <span class="caret"></span></button>
                     <ul class="dropdown-menu" role="menu">
@@ -114,7 +114,7 @@
                         </li>
                         {{#if orcidURI}}
                         <li>
-                            <a href="https://orcid.org/my-orcid" target="_blank" rel="noopener" >View my ORCID profile on orcid.org </a>
+                            <a href="https://orcid.org/my-orcid" target="_blank" rel="noreferrer noopener" >View my ORCID profile on orcid.org </a>
                         </li>
                         {{/if}}
                         <li>
@@ -133,13 +133,13 @@
                 {{else}}
 
                 <li class="dropdown orcid-dropdown s-orcid-dropdown">
-                    <button class="dropdown-toggle btn-link" data-toggle="dropdown" aria-expanded="false">
+                    <button class="btn dropdown-toggle btn-link" data-toggle="dropdown" aria-expanded="false">
                         <span class="s-orcid-title"> <img src="../../styles/img/orcid_inactive.png"
                                                           alt="orcid symbol"/>  ORCID  <span class="caret"></span></button>
                     <ul class="dropdown-menu" role="menu">
-                        <li class="no-hover-style" >
-                            <button class="btn-link orcid-sign-in"> Sign in to ORCID to claim papers in the ADS. </button>
-                        </li>
+                      <li class="no-hover-style">
+                        <a href="javascript:void(0);" class="orcid-sign-in">Sign in to ORCID to claim papers in the ADS.</a>
+                      </li>
                     </ul>
                 </li>
 
@@ -152,11 +152,12 @@
                       <i class="fa fa-question-circle about-page-icon" aria-hidden="true"></i> About <span class="caret"></span>
                     </button>
                     <ul class="dropdown-menu" role="menu">
-                        <li> <a href="//ui.adsabs.harvard.edu/about/" target="_blank" rel="noopener"> <i class="fa fa-question-circle" aria-hidden="true"></i> About ADS </a></li>
-                        <li> <a href="//adsabs.github.io/help/whats_new/" target="_blank" rel="noopener"> <i class="fa fa-bullhorn" aria-hidden="true"></i> What's New </a></li>
-                        <li> <a href="//adsabs.github.io/blog/" target="_blank" rel="noopener"> <i class="fa fa-newspaper-o" aria-hidden="true"></i> ADS Blog </a></li>
-                        <li> <a href="//adsabs.github.io/help/" target="_blank" rel="noopener"> <i class="fa fa-info-circle" aria-hidden="true"></i> ADS Help Pages </a></li>
-                        <li> <a href="//ui.adsabs.harvard.edu/about/careers/" target="_blank" rel="noopener"> <i class="fa fa-group" aria-hidden="true"></i> Careers@ADS </a></li>
+                        <li> <a href="/about/" target="_blank" rel="noreferrer noopener"> <i class="fa fa-question-circle" aria-hidden="true"></i> About ADS </a></li>
+                        <li> <a href="/help/whats_new/" target="_blank" rel="noreferrer noopener"> <i class="fa fa-bullhorn" aria-hidden="true"></i> What's New </a></li>
+                        <li> <a href="/blog/" target="_blank" rel="noreferrer noopener"> <i class="fa fa-newspaper-o" aria-hidden="true"></i> ADS Blog </a></li>
+                        <li> <a href="/help/" target="_blank" rel="noreferrer noopener"> <i class="fa fa-info-circle" aria-hidden="true"></i> ADS Help Pages </a></li>
+						            <li> <a href="/help/legacy/" target="_blank" rel="noreferrer noopener"> <i class="fa fa-archive" aria-hidden="true"></i> ADS Legacy Services </a></li>
+                        <li> <a href="/about/careers/" target="_blank" rel="noreferrer noopener"> <i class="fa fa-group" aria-hidden="true"></i> Careers@ADS </a></li>
                     </ul>
                 </li>
 

@@ -972,7 +972,7 @@ define([
       var message;
       if (messages.length > 0) {
         messages.push(
-          'See our <a style="text-decoration: underline; font-weight: bold" href="http://adsabs.github.io/help/faq/#classic-search-translator">docs</a> for more information'
+          'See our <a style="text-decoration: underline; font-weight: bold" href="/help/faq/#classic-search-translator">docs</a> for more information'
         );
         message = messages.join('<br/>');
         this.getAlerter().alert(

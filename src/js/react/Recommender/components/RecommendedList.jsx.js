@@ -138,7 +138,21 @@ define([
     }
 
     if (docs.length === 0) {
-      return <Message>No recommendations right now, check back later</Message>;
+      // why does this call result in recursive loop?
+      // and why so many layers of abstraction? (hard to debug)
+      /*
+      dispatch(
+        emitAnalytics([
+          'send',
+          'event',
+          'interaction.recommendation', // category
+          'nothing', // action
+          '', // label,
+          0 // value
+        ])
+      );
+      */
+      return <Message>Recommendations are only available to ADS users who read papers.</Message>;
     }
 
     return (

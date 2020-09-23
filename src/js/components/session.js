@@ -114,6 +114,7 @@ define([
             type: 'POST',
             headers: { 'X-CSRFToken': csrfToken },
             contentType: 'application/json',
+            fail: this.logoutSuccess,
             done: this.logoutSuccess,
           },
         });

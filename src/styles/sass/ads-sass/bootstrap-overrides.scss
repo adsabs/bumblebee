@@ -1,5 +1,3 @@
-
-
 /*
 
 For all changes that can't be made by altering the ads-variables file
@@ -8,7 +6,9 @@ including reset-like things
 
 */
 
-h1, h2, h3 {
+h1,
+h2,
+h3 {
   font-weight: 300;
 }
 
@@ -24,23 +24,29 @@ h1, h2, h3 {
   z-index: 3;
 }
 
-.modal-title, .panel-default .panel-heading  {
+.modal-title,
+.panel-default .panel-heading {
   background-color: #fff;
   font-weight: 300;
   font-size: 26px;
 }
 
 .panel-default {
-  box-shadow : 2px 2px 2px $default-box-shadow-color;
+  box-shadow: 2px 2px 2px $default-box-shadow-color;
 }
 
-textarea:focus, input:focus, select:focus, textarea:active, input:active, select:active {
+textarea:focus,
+input:focus,
+select:focus,
+textarea:active,
+input:active,
+select:active {
   outline: 0;
   border: 1px solid $brand-primary-faded;
   box-shadow: none !important;
 }
 
-textarea[disabled]{
+textarea[disabled] {
   background-color: darken($gray-lighter, 5%);
 }
 
@@ -48,13 +54,11 @@ textarea[disabled]{
   outline: none !important;
 }
 
-
 // overriding button link focus
 .btn-link:focus {
-  outline:none;
+  outline: none;
   cursor: pointer;
 }
-
 
 .navbar {
   margin-bottom: 0px !important;
@@ -64,16 +68,15 @@ textarea[disabled]{
   background-color: white;
 }
 
-
 .pagination {
-  display:inline-block;
-  padding-left:0;
+  display: inline-block;
+  padding-left: 0;
   margin: 0;
 }
 
 .btn-primary-faded {
-  background-color : $brand-primary-faded;
-  border :1px solid darken($brand-primary-faded, 5%);
+  background-color: $brand-primary-faded;
+  border: 1px solid darken($brand-primary-faded, 5%);
   color: #fff;
   &:hover {
     color: #fff;
@@ -81,49 +84,58 @@ textarea[disabled]{
   }
 
   &:focus {
-    color : #fff;
+    color: #fff;
   }
 }
 
 .btn {
   border-radius: $border-radius-large;
-  transition : all, .5s;
+  transition: all, 0.5s;
 }
 
-.btn-success, .btn-danger, .btn-info, .btn-warning, .btn-primary, .btn-primary-faded {
-
+.btn-success,
+.btn-danger,
+.btn-info,
+.btn-warning,
+.btn-primary,
+.btn-primary-faded {
   &:hover {
-    box-shadow : 1px 1px 6px $gray;
+    box-shadow: 1px 1px 6px $gray;
   }
 }
 
-.btn-success.btn-sm, .btn-info.btn-sm, .btn-danger.btn-sm, .btn-warning.btn-sm, .btn-primary.btn-sm, .btn-primary-faded.btn-sm {
-
+.btn-success.btn-sm,
+.btn-info.btn-sm,
+.btn-danger.btn-sm,
+.btn-warning.btn-sm,
+.btn-primary.btn-sm,
+.btn-primary-faded.btn-sm {
   &:hover {
-    box-shadow : 1px 1px 4px $gray;
+    box-shadow: 1px 1px 4px $gray;
   }
 }
 
-
-.btn-success.btn-xs, .btn-info.btn-xs, .btn-danger.btn-xs, .btn-warning.btn-xs, .btn-primary.btn-xs, .btn-primary-faded.btn-xs {
-
+.btn-success.btn-xs,
+.btn-info.btn-xs,
+.btn-danger.btn-xs,
+.btn-warning.btn-xs,
+.btn-primary.btn-xs,
+.btn-primary-faded.btn-xs {
   &:hover {
-    box-shadow : 1px 1px 2px $gray;
+    box-shadow: 1px 1px 2px $gray;
   }
 }
-
 
 .btn-default {
   &:hover {
     background-color: #fff;
-    box-shadow : 1px 1px 4px $gray-light;
+    box-shadow: 1px 1px 4px $gray-light;
   }
 
   &:focus {
     background-color: white;
   }
 }
-
 
 .btn-warning:hover {
   background-color: darken($brand-warning, 4%);
@@ -133,11 +145,11 @@ textarea[disabled]{
   @extend .btn-default;
 }
 
-.btn-default-flat:hover{
+.btn-default-flat:hover {
   background-color: white;
 }
 
-.btn-default-flat:focus{
+.btn-default-flat:focus {
   background-color: white;
 }
 
@@ -163,15 +175,14 @@ textarea[disabled]{
   color: $brand-primary-faded;
 }
 
-.nav>.dropdown>.btn-link{
+.nav > .dropdown > .btn-link {
   font-size: 17px;
   font-weight: 300;
 }
 
-
 /*fully disable dropdown links */
 
-.disabled{
+.disabled {
   cursor: not-allowed;
 }
 .disabled {
@@ -182,7 +193,6 @@ p {
   font-size: 16px;
 }
 .dropdown-menu {
-
   li.no-hover-style {
     &:hover {
       background-color: $body-bg;
@@ -196,9 +206,10 @@ p {
       cursor: pointer;
       border-left: 3px solid $gray-light;
     }
-    &>a,.btn-link {
+    & > a,
+    .btn-link {
       padding: 12px;
-      display:block;
+      display: block;
     }
     a {
       color: $text-color;
@@ -216,7 +227,6 @@ p {
   label {
     font-weight: 300;
   }
-
 }
 
 //not sure why this is necessary, bootstrap overrides this somewhere else
@@ -225,11 +235,10 @@ p {
 }
 
 .well {
-
   min-height: 20px;
   padding: 19px;
   margin-bottom: 20px;
-  background-color: #F7F6F6;
+  background-color: #f7f6f6;
   border: 1px solid #e3e3e3;
   border-radius: 0px;
   box-shadow: none;
