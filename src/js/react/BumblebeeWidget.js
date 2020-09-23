@@ -146,7 +146,11 @@ define([
       publish(ps.EXECUTE_REQUEST, request);
     },
     analyticsEvent(...args) {
-      analytics(...args);
+      try {
+        analytics(...args);
+      } catch (e) {
+        // ignore
+      }
     },
   });
 
