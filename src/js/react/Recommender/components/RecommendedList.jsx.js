@@ -74,7 +74,7 @@ define([
       getRecommendationsRequest: state.requests.GET_RECOMMENDATIONS,
       getDocsRequest: state.requests.GET_DOCS,
       docs: state.docs,
-      queryParams: state.queryParams
+      queryParams: state.queryParams,
     };
   };
 
@@ -83,17 +83,36 @@ define([
     const onGetMore = () => {
       dispatch(getFullList());
     };
-    const { getRecommendationsRequest, getDocsRequest, docs, queryParams } = useSelector(
-      selector
-    );
+    const {
+      getRecommendationsRequest,
+      getDocsRequest,
+      docs,
+      queryParams,
+    } = useSelector(selector);
+
     React.useEffect(() => {
       if (docs.length === 0) {
         dispatch(getRecommendations());
       }
     }, [docs]);
 
+    React.useEffect(() => {
+      // if docs request was successful but no docs found, call analytics
+      if (getDocsRequest.status === 'success' && docs.length === 0) {
+        dispatch(
+          emitAnalytics([
+            'send',
+            'event',
+            'interaction.recommendation', // category
+            'nothing', // action
+            '', // label,
+            0, // value
+          ])
+        );
+      }
+    }, [getDocsRequest.status]);
+
     const onPaperSelect = ({ bibcode }, index) => {
-      
       dispatch(
         emitAnalytics([
           'send',
@@ -101,7 +120,7 @@ define([
           'interaction.recommendation', // category
           queryParams['function'], // action
           bibcode, // label,
-          index // value
+          index, // value
         ])
       );
     };
@@ -140,7 +159,7 @@ define([
     if (docs.length === 0) {
       // why does this call result in recursive loop?
       // and why so many layers of abstraction? (hard to debug)
-      /*
+
       dispatch(
         emitAnalytics([
           'send',
@@ -148,11 +167,14 @@ define([
           'interaction.recommendation', // category
           'nothing', // action
           '', // label,
-          0 // value
+          0, // value
         ])
       );
-      */
-      return <Message>Recommendations are only available to ADS users who read papers.</Message>;
+      return (
+        <Message>
+          Recommendations are only available to ADS users who read papers.
+        </Message>
+      );
     }
 
     return (
