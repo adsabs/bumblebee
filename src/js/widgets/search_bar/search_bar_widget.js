@@ -772,6 +772,8 @@ define([
           $input.select();
           $(document.documentElement).scrollTop(0);
         }
+      } else if (event === 'recommender/update-search-text') {
+        this.view.setFormVal(arg.text);
       }
     },
 

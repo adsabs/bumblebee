@@ -65,6 +65,12 @@ define(['config/discovery.config', 'module'], function(config, module) {
         updateProgress(100);
 
         app.onBootstrap(data);
+
+        var dynConf = app.getObject('DynamicConfig');
+        if (dynConf && dynConf.debugExportBBB) {
+          window.bbb = app;
+        }
+
         pubsub.publish(pubsub.getCurrentPubSubKey(), pubsub.APP_BOOTSTRAPPED);
 
         pubsub.publish(pubsub.getCurrentPubSubKey(), pubsub.APP_STARTING);
@@ -155,10 +161,7 @@ define(['config/discovery.config', 'module'], function(config, module) {
             return false;
           });
 
-          var dynConf = app.getObject('DynamicConfig');
-          if (dynConf && dynConf.debugExportBBB) {
-            window.bbb = app;
-          }
+          
 
           // app is loaded, send timing event
 

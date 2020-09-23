@@ -36,6 +36,39 @@ define([
         pubsub.APP_BOOTSTRAPPED,
         _.bind(this.onAppStarted, this)
       );
+
+      if (true) {
+        pubsub.subscribe(pubsub.NAVIGATE, function(id) {
+          if (id === 'SearchWidget') {
+            window.bbb.getWidget('RecommenderWidget').then(function(w) {
+              
+              var user = bbb.getObject('User');
+              var { tab, queryParams } = w.getState();
+            
+              // if user is not logged in, set some 'reader' value
+              if (!user.isLoggedIn()) {
+                  queryParams['reader'] = "X4a26d9cb8" // the most frequent reader; the best would be to have some ADS reader
+                  w.dispatch({type: 'SET_QUERY_PARAMS', payload: queryParams});
+              }
+              else if (queryParams.reader) {
+                  delete queryParams['reader'];
+                  w.dispatch({type: 'SET_QUERY_PARAMS', payload: queryParams});
+              }
+
+              // modify the recommendations by using different algorithm
+              if (true) {
+                  queryParams['function'] = 'trending'
+                  w.dispatch({type: 'SET_QUERY_PARAMS', payload: queryParams});
+              }
+
+              // activate recommendations
+              if (!tab !== 1) {
+                w.dispatch({ type: 'SET_TAB', payload: 1 });
+              }
+            });
+          }
+        });
+      }
     },
 
     /**

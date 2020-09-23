@@ -63,6 +63,10 @@ define([
       }
     },
 
+    onWidgetSelected(child, ev, attrs) {
+      PageManagerController.prototype.onWidgetSelected.apply(this, arguments);
+    },
+
     /**
      * Override the setActive method to inject the default navItem, if we have one
      * @param {string} navItem the navitem name
