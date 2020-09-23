@@ -3,7 +3,7 @@
   "env": {
     "browser": true,
     "amd": true,
-    "es6": false,
+    "es6": true,
     "commonjs": false,
     "jquery": true,
     "mocha": true
