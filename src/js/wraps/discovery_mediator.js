@@ -117,6 +117,7 @@ define([
       var target = apiRequest.get('target');
       errorDetails.target = target;
       errorDetails.query = apiRequest.get('query').toJSON();
+      console.log(xhr, apiRequest, errorDetails);
 
       switch (xhr.status) {
         case 403:
@@ -131,9 +132,11 @@ define([
             new ApiFeedback({
               code: ApiFeedback.CODES.ALERT,
               msg:
-                'We are sorry, you do not have permission to access: ' +
-                target +
-                '. This is likely our fault (misconfiguration) and the ADS team has been notified.',
+                xhr.responseJSON && xhr.responseJSON.error
+                  ? xhr.responseJSON.error
+                  : 'We are sorry, you do not have permission to access: ' +
+                    target +
+                    '. This is likely our fault (misconfiguration) and the ADS team has been notified.',
               modal: true,
             })
           );
