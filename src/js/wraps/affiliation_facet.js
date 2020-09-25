@@ -4,7 +4,7 @@ define(['underscore', 'js/widgets/facet/factory'], function(_, FacetFactory) {
       _.extend(
         {
           facetField: 'aff_facet_hier',
-          facetTitle: 'Affiliations',
+          facetTitle: 'Institutions',
           openByDefault: false,
           logicOptions: {
             single: ['limit to', 'exclude'],
