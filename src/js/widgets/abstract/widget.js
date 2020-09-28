@@ -135,20 +135,19 @@ define([
         doc.pubnote = _.unescape(doc.pubnote);
       }
 
-      if (doc.identifier) {
-        var id = _.find(doc.identifier, function(d) {
-          return d.toLowerCase().startsWith('arxiv');
-        });
-        if (id) {
-          doc.arxiv = {
-            id: id,
-            href: LinkGeneratorMixin.createUrlByType(
-              doc.bibcode,
-              'arxiv',
-              id.split(':')[1]
-            ),
-          };
-        }
+      const ids = Array.isArray(doc.identifier)
+        ? doc.identifier
+        : doc.original_identifier;
+      const id = (ids || []).find((v) => v.match(/^arxiv/i));
+      if (id) {
+        doc.arxiv = {
+          id: id,
+          href: LinkGeneratorMixin.createUrlByType(
+            doc.bibcode,
+            'arxiv',
+            id.split(':')[1]
+          ),
+        };
       }
 
       return doc;
