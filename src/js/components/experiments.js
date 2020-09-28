@@ -45,10 +45,16 @@ define([
               var user = bbb.getObject('User');
               var { tab, queryParams } = w.getState();
             
-              // if user is not logged in, set some 'reader' value
+              // if user is not logged in, bail out
               if (!user.isLoggedIn()) {
-                  queryParams['reader'] = "X4a26d9cb8" // the most frequent reader; the best would be to have some ADS reader
-                  w.dispatch({type: 'SET_QUERY_PARAMS', payload: queryParams});
+                  analytics('send', 'event', 
+                  'interaction.recommendation', // category
+                  'user-not-logged-in', // action
+                  '', // label,
+                  '', // value
+                  )
+                  w.dispatch({ type: 'SET_TAB', payload: 0 });
+                  return;
               }
               else if (queryParams.reader) {
                   delete queryParams['reader'];

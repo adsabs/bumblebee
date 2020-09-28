@@ -104,7 +104,7 @@ define([
             'send',
             'event',
             'interaction.recommendation', // category
-            'nothing', // action
+            'no-useful-recommendations', // action
             '', // label,
             0, // value
           ])
@@ -118,7 +118,7 @@ define([
           'send',
           'event',
           'interaction.recommendation', // category
-          queryParams['function'], // action
+          queryParams.function, // action
           bibcode, // label,
           index, // value
         ])
@@ -157,22 +157,9 @@ define([
     }
 
     if (docs.length === 0) {
-      // why does this call result in recursive loop?
-      // and why so many layers of abstraction? (hard to debug)
-
-      dispatch(
-        emitAnalytics([
-          'send',
-          'event',
-          'interaction.recommendation', // category
-          'nothing', // action
-          '', // label,
-          0, // value
-        ])
-      );
       return (
         <Message>
-          Recommendations are only available to ADS users who read papers.
+          We were unable to generate meaningful recommendations. ADS opts to show you recommendations only if we can base it on your reading history. While having an ADS is not strictly necessary, it is recommended that you create one. And if you already have an ADS account, then be sure to be logged in while using the system.
         </Message>
       );
     }
@@ -191,11 +178,6 @@ define([
             />
           ))}
         </ul>
-        <Message>
-          <Button bsStyle="link" onClick={onGetMore}>
-            See full list
-          </Button>
-        </Message>
       </div>
     );
   };
