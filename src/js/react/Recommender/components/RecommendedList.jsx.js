@@ -69,12 +69,21 @@ define([
     children: PropTypes.element.isRequired,
   };
 
+  var executed = 0;
+  var userName = null;
   const selector = (state) => {
+    // reset if it is a different user
+    if (state.userName !== userName) {
+      executed = 0;
+      userName = state.userName;
+    }
+
     return {
       getRecommendationsRequest: state.requests.GET_RECOMMENDATIONS,
       getDocsRequest: state.requests.GET_DOCS,
       docs: state.docs,
       queryParams: state.queryParams,
+      executed: executed
     };
   };
 
@@ -88,29 +97,34 @@ define([
       getDocsRequest,
       docs,
       queryParams,
+      userName
     } = useSelector(selector);
 
     React.useEffect(() => {
-      if (docs.length === 0) {
+      if ((executed + 12*60*60*1000) < Date.now()) {
+        // the hook gets called too many times even with [docs] in the args to useEffect
+        // (and oracle returns 404 when nothing is found; which is IMHO wrong) but we can't
+        // rely on status.failure for that reason
+        executed = Date.now();
         dispatch(getRecommendations());
       }
-    }, [docs]);
-
-    React.useEffect(() => {
-      // if docs request was successful but no docs found, call analytics
-      if (getDocsRequest.status === 'success' && docs.length === 0) {
-        dispatch(
-          emitAnalytics([
-            'send',
-            'event',
-            'interaction.recommendation', // category
-            'no-useful-recommendations', // action
-            '', // label,
-            0, // value
-          ])
-        );
+      else {
+        if (executed && getDocsRequest && getDocsRequest.status && docs.length === 0) {
+          // we are rendered (send the signal everytime -- even if it was sent already)
+          dispatch(
+            emitAnalytics([
+              'send',
+              'event',
+              'interaction.recommendation', // category
+              'no-useful-recommendations', // action
+              '', // label,
+              0, // value
+            ])
+          );
+        }
       }
-    }, [getDocsRequest.status]);
+    });
+
 
     const onPaperSelect = ({ bibcode }, index) => {
       dispatch(
@@ -159,7 +173,7 @@ define([
     if (docs.length === 0) {
       return (
         <Message>
-          We were unable to generate meaningful recommendations. ADS opts to show you recommendations only if we can base it on your reading history. While having an ADS is not strictly necessary, it is recommended that you create one. And if you already have an ADS account, then be sure to be logged in while using the system.
+          Sorry, we don't have any recommendations for you just yet! ADS provides users recommendations based on their reading history, and we suggest that you create an ADS account to take advantage of this feature.  If you already have an account, then be sure you are logged in while searching and reading papers. In due time we will be able to provide you with suggestions based on your inferred interests.
         </Message>
       );
     }

@@ -9,6 +9,7 @@ define(['../shared/helpers', './actions'], function(
     UPDATE_SEARCH_BAR,
     GET_FULL_LIST,
     EMIT_ANALYTICS,
+    updateUserName
   }
 ) {
   const updateTarget = middleware(({ next, action, getState }) => {
@@ -45,6 +46,7 @@ define(['../shared/helpers', './actions'], function(
           },
         });
       }
+      
 
       if (action.type === apiSuccess(GET_RECOMMENDATIONS)) {
         dispatch(setQuery(action.result.query));
@@ -102,11 +104,20 @@ define(['../shared/helpers', './actions'], function(
     }
   });
 
+  const updateUser = middleware(({ next, action, dispatch, getState }) => {
+    next(action);
+
+    if (action.type.indexOf('USER_ANNOUNCEMENT') > -1) { // break with the pattern; why define 3 consts when I don't need them?
+      dispatch(updateUserName(action.payload));
+    }
+  });
+
   return {
     getRecommendations,
     updateSearchBar,
     getFullList,
     analytics,
     updateTarget,
+    updateUser
   };
 });

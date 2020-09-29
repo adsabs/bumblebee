@@ -10,6 +10,7 @@ define([], function() {
     SET_TAB: 'SET_TAB',
     SET_ORACLE_TARGET: 'SET_ORACLE_TARGET',
     SET_QUERY_PARAMS: 'SET_QUERY_PARAMS',
+    UPDATE_USERNAME: 'UPDATE_USERNAME'
   };
 
   const actionCreators = {
@@ -39,6 +40,10 @@ define([], function() {
     }),
     updateSearchBar: (text) => ({
       type: actions.UPDATE_SEARCH_BAR,
+      payload: text,
+    }),
+    updateUserName: (text) => ({
+      type: actions.UPDATE_USERNAME,
       payload: text,
     }),
     getFullList: () => ({
