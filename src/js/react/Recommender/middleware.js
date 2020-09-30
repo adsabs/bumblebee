@@ -9,7 +9,8 @@ define(['../shared/helpers', './actions'], function(
     UPDATE_SEARCH_BAR,
     GET_FULL_LIST,
     EMIT_ANALYTICS,
-    updateUserName
+    updateUserName,
+    setTab,
   }
 ) {
   const updateTarget = middleware(({ next, action, getState }) => {
@@ -29,24 +30,30 @@ define(['../shared/helpers', './actions'], function(
 
       if (action.type === GET_RECOMMENDATIONS) {
         const { queryParams } = getState();
-        const { func, sort, numDocs, cutOffDays, topNReads, reader } = queryParams;
+        const {
+          func,
+          sort,
+          numDocs,
+          cutOffDays,
+          topNReads,
+          reader,
+        } = queryParams;
         dispatch({
           type: 'API_REQUEST',
           scope: GET_RECOMMENDATIONS,
           options: {
             type: 'POST',
             data: {
-              function: func || queryParams['function'],
+              function: func || queryParams.function,
               sort,
               num_docs: numDocs,
               cutoff_days: cutOffDays,
               top_n_reads: topNReads,
-              reader: reader
+              reader: reader,
             },
           },
         });
       }
-      
 
       if (action.type === apiSuccess(GET_RECOMMENDATIONS)) {
         dispatch(setQuery(action.result.query));
@@ -104,11 +111,16 @@ define(['../shared/helpers', './actions'], function(
     }
   });
 
-  const updateUser = middleware(({ next, action, dispatch, getState }) => {
+  const updateUser = middleware(({ next, action, dispatch }) => {
     next(action);
 
-    if (action.type.indexOf('USER_ANNOUNCEMENT') > -1) { // break with the pattern; why define 3 consts when I don't need them?
-      dispatch(updateUserName(action.payload));
+    if (action.type.indexOf('USER_ANNOUNCEMENT/user_signed') > -1) {
+      // break with the pattern; why define 3 consts when I don't need them?
+      if (action.type.indexOf('user_signed_out') > -1) {
+        // dispatch(setDocs([]));
+        dispatch(setTab(2)); // switch to help {type: 'SET_TAB', payload: 2}
+      }
+      dispatch(updateUserName(action.payload || ''));
     }
   });
 
@@ -118,6 +130,6 @@ define(['../shared/helpers', './actions'], function(
     getFullList,
     analytics,
     updateTarget,
-    updateUser
+    updateUser,
   };
 });

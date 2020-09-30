@@ -1,6 +1,13 @@
 define(['redux', './actions'], function(
   { combineReducers },
-  { SET_DOCS, SET_QUERY, SET_TAB, SET_ORACLE_TARGET, SET_QUERY_PARAMS, UPDATE_USERNAME }
+  {
+    SET_DOCS,
+    SET_QUERY,
+    SET_TAB,
+    SET_ORACLE_TARGET,
+    SET_QUERY_PARAMS,
+    UPDATE_USERNAME,
+  }
 ) {
   const requestState = {
     GET_RECOMMENDATIONS: { status: null, result: null, error: null },
@@ -32,7 +39,7 @@ define(['redux', './actions'], function(
 
   const docsState = [];
   const docs = (state = docsState, action) => {
-    if (action.type === SET_DOCS && action.payload) {
+    if (action.type === SET_DOCS) {
       return action.payload.map((doc) => ({
         ...doc,
         title: doc.title[0],
@@ -85,11 +92,11 @@ define(['redux', './actions'], function(
 
   var userNameState = null;
   const userName = (state = userNameState, action) => {
-    if (action.type === UPDATE_USERNAME && action.payload) {
+    if (action.type === UPDATE_USERNAME) {
       userNameState = action.payload;
     }
-    return userNameState;
-  }
+    return state;
+  };
 
   return combineReducers({
     requests,
@@ -98,6 +105,6 @@ define(['redux', './actions'], function(
     tab,
     oracleTarget,
     queryParams,
-    userName
+    userName,
   });
 });
