@@ -70,9 +70,9 @@ define([
         .value();
       if (trues.length > 1) {
         if (fullSet && keys.length === trues.length) {
-          return '(' + keys.join(' AND ') + ')';
+          return '(' + trues.join(' AND ') + ')';
         }
-        return '(' + keys.join(' OR ') + ')';
+        return '(' + trues.join(' OR ') + ')';
       }
       return trues[0];
     },
