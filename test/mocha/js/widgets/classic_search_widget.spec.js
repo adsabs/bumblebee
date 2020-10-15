@@ -107,8 +107,8 @@ define([
       $Q.abs().val('a b c d +e -f =g +"h" -"i"');
       $Q.bibstem().val('a b c d +e -f =g +"h" -"i"');
       triggerChanges();
-
       setTimeout(function() {
+        
         expect(w.model.get('query')).to.eql({
           "q": [
             "pubdate:[2010-10 TO 9999-12]",
@@ -169,10 +169,10 @@ define([
             ],
             "__fq_database": [
               "AND",
-              "(astronomy OR physics OR general)"
+              "(astronomy OR physics)"
             ],
             "fq_database": [
-              "database: (astronomy OR physics OR general)"
+              "database: (astronomy OR physics)"
             ],
             "__fq_property": [
               "AND",
