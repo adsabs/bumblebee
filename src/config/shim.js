@@ -1,6 +1,7 @@
 (function() {
   // ############ DON'T EDIT THIS LINE
-  var APP_VERSION = '';
+  // prettier-ignore
+  var APP_VERSION="";
   // #################################
 
   /*
