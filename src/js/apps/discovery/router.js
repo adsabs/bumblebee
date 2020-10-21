@@ -28,17 +28,6 @@ define([
     },
 
     execute: function(callback, args) {
-      // only perform actions if history has started
-      if (Backbone.History.started) {
-        var route = Backbone.history.getFragment();
-        route = route === '' ? 'index' : route;
-
-        // Workaround for issue where hitting back button from the index page
-        // goes to an empty `search/` route, so capture that here and go back 2
-        if (route === 'search/' && _.isEmpty(_.reject(args, _.isUndefined))) {
-          return Backbone.history.history.go(-2);
-        }
-      }
 
       if (_.isFunction(callback)) {
         callback.apply(this, args);
@@ -71,7 +60,7 @@ define([
       'paper-form(/)': 'paperForm',
       'index/(:query)': 'index',
       'search/(:query)(/)(:widgetName)': 'search',
-      'search(?:query)': 'search',
+      'search(/)(?:query)': 'search',
       'execute-query/(:query)': 'executeQuery',
       'abs/*path': 'view',
       /*
@@ -137,7 +126,7 @@ define([
           );
         }
       } else {
-        this.getPubSub().publish(this.getPubSub().NAVIGATE, 'index-page');
+        this.getPubSub().publish(this.getPubSub().NAVIGATE, 'index-page', { replace: true });
       }
     },
 
