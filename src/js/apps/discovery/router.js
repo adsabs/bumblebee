@@ -126,7 +126,7 @@ define([
           );
         }
       } else {
-        this.getPubSub().publish(this.getPubSub().NAVIGATE, 'index-page');
+        this.getPubSub().publish(this.getPubSub().NAVIGATE, 'index-page', { replace: true });
       }
     },
 
