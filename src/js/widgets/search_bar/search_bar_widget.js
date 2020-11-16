@@ -344,16 +344,6 @@ define([
       });
 
       this.$('[data-toggle="tooltip"]').tooltip();
-
-      // this is for search examples, sets form value on click
-      this.$('.search-quick-links button').on('click', (e) => {
-        const value = e.currentTarget.innerText.trim();
-
-        if (value) {
-          this.setFormVal(`${this.getFormVal()} ${value}`);
-          this.$input.focus();
-        }
-      });
     },
 
     events: {
@@ -771,6 +761,12 @@ define([
           arg.preventDefault();
           $input.select();
           $(document.documentElement).scrollTop(0);
+        }
+      } else if (event === 'recommender/update-search-text') {
+        const value = arg.text;
+        if (value) {
+          this.view.setFormVal(`${this.view.getFormVal()} ${value}`);
+          this.view.$input.focus();
         }
       }
     },
