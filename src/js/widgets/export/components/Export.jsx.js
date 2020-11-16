@@ -1,4 +1,4 @@
-define(['react', 'react-prop-types', 'es6!./ClipboardBtn.jsx'], function(
+define(['react', 'prop-types', 'es6!./ClipboardBtn.jsx'], function(
   React,
   ReactPropTypes,
   ClipboardBtn

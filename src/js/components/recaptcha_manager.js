@@ -59,7 +59,15 @@ define([
     },
 
     getEl: function(view) {
-      return view.$('.g-recaptcha');
+      let $el;
+      if (typeof view.$ === 'function') {
+        $el = view.$('.g-recaptcha');
+      } else if (view.el) {
+        $el = $('.g-recaptcha', view.el);
+      } else {
+        $el = $('.g-recaptcha');
+      }
+      return $el;
     },
 
     execute: function() {
@@ -76,7 +84,19 @@ define([
     },
 
     enableSubmit: function(view, bool) {
-      view.$('button[type=submit],input[type=submit]').attr('disabled', !bool);
+      let $el;
+      const selector = 'button[type=submit],input[type=submit]';
+      if (typeof view.$ === 'function') {
+        $el = view.$(selector);
+      } else if (view.el) {
+        $el = $(selector, view.el);
+      } else {
+        $el = $(selector);
+      }
+
+      if ($el.length > 0) {
+        $el.attr('disabled', !bool);
+      }
     },
 
     renderError: function(view) {
@@ -85,11 +105,15 @@ define([
       this.enableSubmit(view, false);
     },
 
-    renderRecaptcha: function(view, siteKey, undefined) {
+    googleMsg: () => {
+      return `<small class="recaptcha-msg">This site is protected by reCAPTCHA and the Google
+      <a href="https://policies.google.com/privacy" target="_blank" rel="noreferrer">Privacy Policy</a> and
+      <a href="https://policies.google.com/terms" target="_blank" rel="noreferrer">Terms of Service</a> apply.</small>`;
+    },
+
+    renderRecaptcha: function(view, siteKey) {
       const $el = this.getEl(view);
-      const msg = $('<div class="form-group"></div>').append(
-        '<small class="recaptcha-msg">This site is protected by reCAPTCHA and the Google Privacy Policy and Terms of Service apply.</small>'
-      );
+      const msg = $('<div class="form-group"></div>').append(this.googleMsg());
       $el.closest('form').append(msg);
       grecaptcha.render($el[0], {
         sitekey: siteKey,

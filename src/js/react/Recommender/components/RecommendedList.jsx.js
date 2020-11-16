@@ -1,4 +1,4 @@
-define(['react', 'react-prop-types', 'react-redux', '../actions'], function(
+define(['react', 'prop-types', 'react-redux', '../actions'], function(
   React,
   PropTypes,
   { useSelector, useDispatch },

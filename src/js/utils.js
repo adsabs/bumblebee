@@ -1,4 +1,11 @@
-define(['jquery', 'underscore', 'analytics'], function($, _, analytics) {
+define([
+  'jquery',
+  'underscore',
+  'analytics',
+  'react',
+  'js/components/api_query',
+  'js/components/api_request',
+], function($, _, analytics, React, ApiQuery, ApiRequest) {
   const qs = function(key, str, separator) {
     const k = key.replace(/[*+?^$.[\]{}()|\\/]/g, '\\$&'); // escape RegEx meta chars
     var pattern = '(^|[\\?&])' + k + '=[^&]*';
@@ -155,6 +162,14 @@ define(['jquery', 'underscore', 'analytics'], function($, _, analytics) {
     return value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
   };
 
+  const makeApiQuery = (params) => {
+    return new ApiQuery(params);
+  };
+
+  const makeApiRequest = (params) => {
+    return new ApiRequest(params);
+  };
+
   return {
     qs: qs,
     updateHash: updateHash,
@@ -164,5 +179,7 @@ define(['jquery', 'underscore', 'analytics'], function($, _, analytics) {
     waitForSelector: waitForSelector,
     withPrerenderedContent: withPrerenderedContent,
     escapeRegExp: escapeRegExp,
+    makeApiQuery: makeApiQuery,
+    makeApiRequest: makeApiRequest,
   };
 });

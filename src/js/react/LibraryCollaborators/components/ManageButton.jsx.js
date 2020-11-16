@@ -1,9 +1,9 @@
-define([
-  'react',
-  'react-prop-types',
-  'react-bootstrap',
-  '../constants',
-], function(React, PropTypes, { DropdownButton, MenuItem }, { Permissions }) {
+define(['react', 'prop-types', 'react-bootstrap', '../constants'], function(
+  React,
+  PropTypes,
+  { DropdownButton, MenuItem },
+  { Permissions }
+) {
   const ManageButton = ({ permission, onChange, ...otherProps }) => {
     return (
       <div>

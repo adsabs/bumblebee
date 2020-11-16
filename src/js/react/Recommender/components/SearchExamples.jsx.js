@@ -1,6 +1,6 @@
 define([
   'react',
-  'react-prop-types',
+  'prop-types',
   'react-redux',
   '../models/index',
   '../actions',
@@ -58,13 +58,7 @@ define([
     const dispatch = useDispatch();
     const onClick = (text) => {
       dispatch(updateSearchBar(text));
-      dispatch(
-        emitAnalytics([
-          'send',
-          'event',
-          'interaction.suggestion-used'
-        ])
-      );
+      dispatch(emitAnalytics(['send', 'event', 'interaction.suggestion-used']));
     };
 
     return (

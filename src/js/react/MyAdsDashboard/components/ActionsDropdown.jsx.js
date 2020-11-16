@@ -1,5 +1,5 @@
 /* eslint-disable no-script-url */
-define(['react', 'react-bootstrap', 'react-prop-types'], function(
+define(['react', 'react-bootstrap', 'prop-types'], function(
   React,
   { Dropdown, MenuItem, Label },
   PropTypes

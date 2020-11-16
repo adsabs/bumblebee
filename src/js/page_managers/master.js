@@ -187,7 +187,7 @@ define([
         return defer.promise();
       }
 
-      app._getWidget(pageManagerName).done(function(pageManagerWidget) {
+      app._getWidget(pageManagerName).then(function(pageManagerWidget) {
         // will throw error if not there
         pageManagerModel.set('object', pageManagerWidget);
         if (!pageManagerWidget) {
@@ -196,7 +196,7 @@ define([
 
         if (pageManagerWidget.assemble) {
           // assemble the new page manager (while the old one is still in place)
-          pageManagerWidget.assemble(app).done(function() {
+          pageManagerWidget.assemble(app).then(function() {
             activatePage(pageManagerWidget);
           });
         } else {

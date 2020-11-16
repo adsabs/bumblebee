@@ -41,7 +41,7 @@ define([], function() {
 
     RECOMMENDER: 'recommender',
     GRAPHICS: 'graphics',
-    FEEDBACK: 'feedback/slack',
+    FEEDBACK: 'feedback/userfeedback',
 
     // library import from classic
     LIBRARY_IMPORT_CLASSIC_AUTH: 'harbour/auth/classic',

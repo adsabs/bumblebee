@@ -14,8 +14,12 @@ module.exports = {
     'curl:react',
     'curl:react-bootstrap',
     'curl:react-dom',
-    'curl:react-prop-types',
+    'curl:prop-types',
     'curl:react-redux',
+    'curl:yup',
+    'curl:react-flexview',
+    'curl:deep-object-diff',
+    'curl:xstate-react',
   ],
   hash_require: ['hash_require:js', 'hash_require:css'],
 };

@@ -1,4 +1,4 @@
-define(['react', 'react-prop-types', 'react-redux'], function(
+define(['react', 'prop-types', 'react-redux'], function(
   React,
   PropTypes,
   { useSelector }

@@ -4,7 +4,7 @@ define([
   'react',
   'react-bootstrap',
   '../containers/ClassicLoginForm',
-  'react-prop-types',
+  'prop-types',
 ], function(
   { debounce },
   React,

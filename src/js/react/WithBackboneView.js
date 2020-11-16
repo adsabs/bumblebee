@@ -44,6 +44,10 @@ define(['underscore', 'react', 'react-dom', 'react-redux'], function(
         ReactDOM.unmountComponentAtNode(this.el);
         return this;
       },
+
+      triggerMethod() {
+        // noop
+      },
     });
 
     return view;

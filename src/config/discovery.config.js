@@ -5,12 +5,11 @@ require.config({
   deps: (function() {
     if (typeof window !== 'undefined' && window.skipMain) {
       return ['common.config'];
-    } else {
-      return ['config/common.config', 'js/apps/discovery/main'];
     }
+    return ['config/common.config', 'js/apps/discovery/main'];
   })(),
 
-  //this will be overridden in the compiled file
+  // this will be overridden in the compiled file
   waitSeconds: 30,
 
   // Configuration we want to make available to modules of ths application
@@ -56,6 +55,7 @@ require.config({
           CSRFManager: 'js/components/csrf_manager',
           LibraryController: 'js/components/library_controller',
           DocStashController: 'js/components/doc_stash_controller',
+          Utils: 'utils',
         },
         modules: {
           FacetFactory: 'js/widgets/facet/factory',
@@ -70,6 +70,7 @@ require.config({
         OrcidPage: 'js/wraps/orcid_page_manager/orcid_page_manager',
         OrcidInstructionsPage:
           'js/wraps/orcid-instructions-page-manager/manager',
+        ReactPageManager: 'js/react/PageManager',
 
         LibrariesPage: 'js/wraps/libraries_page_manager/libraries_page_manager',
         HomePage: 'js/wraps/home_page_manager/home_page_manager',
@@ -131,13 +132,14 @@ require.config({
         ShowCoreads: 'js/wraps/coreads',
         ShowSimilar: 'js/wraps/similar',
         MetaTagsWidget: 'js/widgets/meta_tags/widget',
-        //can't camel case because router only capitalizes first letter
+        // can't camel case because router only capitalizes first letter
         ShowToc: 'js/wraps/table_of_contents',
         ShowResources: 'es6!js/widgets/resources/widget.jsx',
         ShowAssociated: 'es6!js/widgets/associated/widget.jsx',
         ShowRecommender: 'js/widgets/recommender/widget',
         ShowMetrics: 'js/wraps/paper_metrics',
         ShowExportcitation: 'js/wraps/paper_export',
+        ShowFeedback: 'reactify!js/react/BumblebeeWidget?FeedbackForms',
         ShowLibraryAdd: 'js/wraps/abstract_page_library_add/widget',
 
         IndividualLibraryWidget: 'js/widgets/library_individual/widget',
@@ -182,7 +184,7 @@ require.config({
     async: 'libs/requirejs-plugins/async',
     babel: 'libs/requirejs-babel-plugin/babel-5.8.34.min',
     backbone: [
-      //'//cdnjs.cloudflare.com/ajax/libs/backbone.js/1.1.2/backbone-min',
+      // '//cdnjs.cloudflare.com/ajax/libs/backbone.js/1.1.2/backbone-min',
       'libs/backbone/backbone',
     ],
     'backbone-validation': [
@@ -231,7 +233,8 @@ require.config({
       // uncomment this; k12 should have ingress-nginx-proxy image deployed
       // that can proxy requests to /analytics
       // '/analytics/analytics'
-      'libs/g', 'data:application/javascript,'
+      'libs/g',
+      'data:application/javascript,',
     ],
     hbs: 'libs/require-handlebars-plugin/hbs',
     hotkeys: 'libs/hotkeys/index',
@@ -258,21 +261,18 @@ require.config({
       '//cdn.jsdelivr.net/npm/persist-js@0.3.1/src/persist.min',
       'libs/persist-js/src/persist',
     ],
-    react: [
-      '//unpkg.com/react@16/umd/react.production.min',
-      'libs/react/index',
-    ],
+    react: ['//unpkg.com/react@16/umd/react.development', 'libs/react/index'],
     'react-bootstrap': [
       '//cdnjs.cloudflare.com/ajax/libs/react-bootstrap/0.32.1/react-bootstrap.min',
       'libs/react-bootstrap/index',
     ],
     'react-dom': [
-      '//unpkg.com/react-dom@16/umd/react-dom.production.min',
+      '//unpkg.com/react-dom@16/umd/react-dom.development',
       'libs/react-dom/index',
     ],
-    'react-prop-types': [
+    'prop-types': [
       '//cdnjs.cloudflare.com/ajax/libs/prop-types/15.7.2/prop-types.min',
-      'libs/react-prop-types/index',
+      'libs/prop-types/index',
     ],
     'react-redux': [
       '//cdnjs.cloudflare.com/ajax/libs/react-redux/7.1.3/react-redux.min',
@@ -302,6 +302,25 @@ require.config({
     chai: 'bower_components/chai/chai',
     sinon: 'https://cdnjs.cloudflare.com/ajax/libs/sinon.js/1.9.0/sinon.min',
     es5shim: 'node_modules/es5-shim/es5-shim.min',
+    suit: 'shared/dist/index.umd.development',
+    yup: 'libs/yup/index',
+    'react-hook-form': [
+      'https://cdn.jsdelivr.net/npm/react-hook-form@6.9.6/dist/index.umd.production.min',
+      'libs/react-hook-form/index',
+    ],
+    'react-flexview': 'libs/react-flexview/index',
+    'styled-components': 'libs/styled-components/index',
+    'react-is': 'libs/react-is/index',
+    'react-data-table-component': 'libs/react-data-table-component/index',
+    'react-window': 'libs/react-window/index',
+    'react-async': 'libs/react-async/index',
+    'deep-object-diff': 'libs/deep-object-diff/index',
+    diff: 'https://cdnjs.cloudflare.com/ajax/libs/jsdiff/4.0.2/diff.min',
+    'regenerator-runtime': 'libs/regenerator-runtime/index',
+    '@hookform/resolvers': 'libs/@hookform/index',
+    recoil: 'libs/recoil/index',
+    xstate: 'libs/xstate/index',
+    '@xstate/react': 'libs/xstate-react/index',
   },
 
   hbs: {

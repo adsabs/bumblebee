@@ -1,8 +1,4 @@
-define(['underscore', 'react', 'react-prop-types'], function(
-  _,
-  React,
-  PropTypes
-) {
+define(['underscore', 'react', 'prop-types'], function(_, React, PropTypes) {
   // No Results View
   const NoResults = () => (
     <h3 className="s-right-col-widget-title">No Sources Found</h3>

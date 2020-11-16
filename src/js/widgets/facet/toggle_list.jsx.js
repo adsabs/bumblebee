@@ -1,4 +1,4 @@
-define(['react', 'd3', 'react-prop-types', 'react-redux'], function(
+define(['react', 'd3', 'prop-types', 'react-redux'], function(
   React,
   d3,
   PropTypes,

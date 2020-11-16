@@ -189,6 +189,27 @@ define([
         alwaysThere: 'true',
         order: 8,
       },
+      ShowFeedback__missingreferences: {
+        title: 'Missing/Incorrect References',
+        path: 'feedback/missingreferences',
+        category: 'feedback',
+        alwaysThere: 'true',
+        order: 9,
+      },
+      ShowFeedback__associatedarticles: {
+        title: 'Associated References',
+        path: 'feedback/associatedarticles',
+        category: 'feedback',
+        alwaysThere: 'true',
+        order: 10,
+      },
+      ShowFeedback__correctabstract: {
+        title: 'Submit/Correct Abstract',
+        path: 'feedback/correctabstract',
+        category: 'feedback',
+        alwaysThere: 'true',
+        order: 11,
+      },
     },
   });
   return PageManager;

@@ -1,7 +1,7 @@
 define([
   'underscore',
   'react',
-  'react-prop-types',
+  'prop-types',
   'react-bootstrap',
   '../constants',
   'js/react/shared/helpers',

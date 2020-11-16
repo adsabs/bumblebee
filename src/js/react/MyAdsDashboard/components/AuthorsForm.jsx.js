@@ -4,7 +4,7 @@ define([
   'react-bootstrap',
   'es6!./CitationsEntry.jsx',
   'js/react/shared/helpers',
-  'react-prop-types',
+  'prop-types',
 ], function(
   _,
   React,

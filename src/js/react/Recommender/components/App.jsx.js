@@ -1,7 +1,7 @@
 define([
   'react',
   'react-bootstrap',
-  'react-prop-types',
+  'prop-types',
   'react-redux',
   '../actions',
   'es6!./RecommendedList.jsx',

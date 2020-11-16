@@ -2,7 +2,7 @@ define([
   'react',
   'react-bootstrap',
   'es6!./ArxivClassList.jsx',
-  'react-prop-types',
+  'prop-types',
 ], function(
   React,
   { Form, FormGroup, ControlLabel, FormControl, HelpBlock },

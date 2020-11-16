@@ -1,7 +1,7 @@
 define([
   'react',
   'react-redux',
-  'react-prop-types',
+  'prop-types',
   'es6!./toggle_list.jsx',
   'es6!./facet-dropdown.jsx',
   './reducers',

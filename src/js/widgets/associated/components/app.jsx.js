@@ -1,8 +1,4 @@
-define(['underscore', 'react', 'react-prop-types'], function(
-  _,
-  React,
-  PropTypes
-) {
+define(['underscore', 'react', 'prop-types'], function(_, React, PropTypes) {
   // component styles
   const styles = {
     title: {

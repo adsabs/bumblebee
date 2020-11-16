@@ -1,4 +1,4 @@
-define(['clipboard', 'react', 'react-prop-types'], function(
+define(['clipboard', 'react', 'prop-types'], function(
   Clipboard,
   React,
   ReactPropTypes

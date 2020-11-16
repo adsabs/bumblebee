@@ -1,4 +1,4 @@
-define(['underscore', 'react', 'react-bootstrap', 'react-prop-types'], function(
+define(['underscore', 'react', 'react-bootstrap', 'prop-types'], function(
   { uniqueId },
   React,
   {
