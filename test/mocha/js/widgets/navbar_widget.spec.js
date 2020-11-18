@@ -12,7 +12,7 @@ define([
       $('#test').empty();
     });
 
-    //orcid accounts
+    // orcid accounts
 
     it('should query initial logged in / logged out orcid states in order to render the correct values', function() {
       var minsub = new (MinSub.extend({
@@ -65,14 +65,14 @@ define([
 
       $('#test').append(n.render().el);
 
-      //orcid signed in, orcid mode on automatically
+      // orcid signed in, orcid mode on automatically
 
       expect($('.orcid-dropdown h4').text()).to.eql(
         ' Signed in to ORCID as  Testy Tester'
       );
       expect($('input.orcid-mode').is(':checked')).to.eql(true);
 
-      //orcid signed in, orcid mode off
+      // orcid signed in, orcid mode off
 
       n.view.model.set('orcidModeOn', false);
 
@@ -132,7 +132,7 @@ define([
       n.getPubSub().publish = sinon.spy();
       $('#test').append(n.render().el);
 
-      //show active view
+      // show active view
       $('#test')
         .find('.orcid-sign-in')
         .click();
@@ -147,7 +147,7 @@ define([
       ]);
     });
 
-    //ADS user accounts
+    // ADS user accounts
 
     it('should query initial user logged in/logged out state and show the correct options', function() {
       /*
@@ -209,7 +209,7 @@ define([
           .replace(/\W+/g, ' ')
       ).to.eql('You are signed in as bumblebee');
 
-      //lack of username indicates user is logged out
+      // lack of username indicates user is logged out
       u.setUser(undefined);
 
       minsub.publish(
@@ -284,7 +284,7 @@ define([
       expect(publishSpy.args[1][1]).to.eql('authentication-page');
       expect(publishSpy.args[1][2].subView).to.eql('register');
 
-      //now show navbar in logged in state
+      // now show navbar in logged in state
       u.setUser('foo');
       minsub.publish(
         minsub.pubsub.USER_ANNOUNCEMENT,
@@ -302,13 +302,13 @@ define([
         'index-page',
       ]);
 
-      //calls session logout method explicitly
+      // calls session logout method explicitly
       expect(s.logout.callCount).to.eql(1);
       expect(orcidSignOutSpy.callCount).to.eql(1);
     });
 
     it('should have a feedback form modal appended to body only 1x, and triggered from navbar', function() {
-      //not sure why i have to call this when we have afterEach
+      // not sure why i have to call this when we have afterEach
       $('#feedback-modal').remove();
 
       var n = new NavBarWidget();
@@ -368,7 +368,9 @@ define([
         '<input type="hidden" name="g-recaptcha-response" value="success"></input>'
       );
       $('form.feedback-form').submit();
-      expect(requestStub.args[0][0].toJSON().target).to.eql('feedback/slack');
+      expect(requestStub.args[0][0].toJSON().target).to.eql(
+        'feedback/userfeedback'
+      );
       expect(requestStub.args[0][0].toJSON().options.dataType).to.eql('json');
 
       expect(requestStub.args[0][0].toJSON().options.method).to.eql('POST');
@@ -379,9 +381,9 @@ define([
       ).to.exist;
       $('#feedback-modal').trigger('hidden.bs.modal');
 
-      //form should be emptied
+      // form should be emptied
       expect($('form.feedback-form textarea').val()).to.eql('');
-      //modal should be closed
+      // modal should be closed
       expect($('#feedback-modal').is(':visible')).to.be.false;
 
       requestStub.restore();
