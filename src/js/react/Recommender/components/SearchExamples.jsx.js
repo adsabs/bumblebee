@@ -25,7 +25,12 @@ define([
       <React.Fragment>
         <dt>{label}</dt>
         <dd>
-          <button type="button" onClick={onClick} className="text-link">
+          <button
+            type="button"
+            onClick={onClick}
+            className="text-link"
+            style={{ border: 'dotted 1px rgba(0,0,0,0.3)', marginRight: '4px' }}
+          >
             {text}
           </button>
           {tooltip && (
@@ -62,8 +67,15 @@ define([
     };
 
     return (
-      <div style={{ paddingTop: '1rem' }}>
-        <div className="col-sm-5 quick-reference">
+      <div
+        style={{
+          paddingTop: '1rem',
+          display: 'flex',
+          justifyContent: 'space-between',
+          flexWrap: 'wrap',
+        }}
+      >
+        <div className="quick-reference">
           <Dl>
             {searchExamples.slice(0, 7).map((entry) => (
               <Entry
@@ -71,11 +83,12 @@ define([
                 text={entry.example}
                 tooltip={entry.tooltip}
                 onClick={() => onClick(entry.example)}
+                key={entry.label}
               />
             ))}
           </Dl>
         </div>
-        <div className="col-sm-7 quick-reference">
+        <div className="quick-reference">
           <Dl>
             {searchExamples.slice(7).map((entry) => (
               <Entry
@@ -83,6 +96,7 @@ define([
                 text={entry.example}
                 tooltip={entry.tooltip}
                 onClick={() => onClick(entry.example)}
+                key={entry.label}
               />
             ))}
           </Dl>
