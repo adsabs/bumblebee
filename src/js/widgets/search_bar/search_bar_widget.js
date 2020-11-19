@@ -859,20 +859,22 @@ define([
 
     dispatchRequest: function(apiQuery) {
       var sort = apiQuery.get('sort');
-      var da = this.defaultQueryArguments;
       if (/citation_count_norm/i.test(sort)) {
-        da = _.extend(da, {
+        this.defaultQueryArguments = _.extend(this.defaultQueryArguments, {
           stats: 'true',
           'stats.field': 'citation_count_norm',
         });
       } else if (/citation_count/i.test(sort)) {
-        da = _.extend(da, {
+        this.defaultQueryArguments = _.extend(this.defaultQueryArguments, {
           stats: 'true',
           'stats.field': 'citation_count',
         });
       } else {
         this.model.unset('citationCount');
         this.model.unset('citationLabel');
+
+        // don't bother sending request
+        return;
       }
       BaseWidget.prototype.dispatchRequest.call(this, apiQuery);
     },
