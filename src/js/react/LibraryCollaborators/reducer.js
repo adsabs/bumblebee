@@ -48,12 +48,11 @@ define(['underscore', 'redux', './constants', './actions'], function(
     owner: null,
   };
   const library = (state = libraryState, action) => {
-    if (action.type === SET_LIBRARY_DATA && action.payload) {
-      return {
-        id: action.payload.id || state.id,
-        name: action.payload.name || state.name,
-        owner: action.payload.owner || state.owner,
-      };
+    if (action.type === SET_LIBRARY_DATA && action.result) {
+      const {
+        result: { id = state.id, name = state.name, owner = state.owner },
+      } = action;
+      return { id, name, owner };
     }
     return state;
   };
