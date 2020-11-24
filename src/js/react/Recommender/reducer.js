@@ -65,7 +65,7 @@ define(['redux', './actions'], function(
     return state;
   };
 
-  const oracleTargetState = '_oracle/readhist';
+  const oracleTargetState = 'oracle/readhist';
   const oracleTarget = (state = oracleTargetState, action) => {
     if (action.type === SET_ORACLE_TARGET && action.payload) {
       return action.payload;
