@@ -28,9 +28,11 @@ define([
     },
 
     execute: function(callback, args) {
+      // the routes assume the query params are the first arg, so make sure it isn't undefined
+      const argsToPass = args.filter((a) => a !== undefined);
 
       if (_.isFunction(callback)) {
-        callback.apply(this, args);
+        callback.apply(this, argsToPass);
       }
     },
 
@@ -141,7 +143,9 @@ define([
           );
         }
       } else {
-        this.getPubSub().publish(this.getPubSub().NAVIGATE, 'index-page', { replace: true });
+        this.getPubSub().publish(this.getPubSub().NAVIGATE, 'index-page', {
+          replace: true,
+        });
       }
     },
 
