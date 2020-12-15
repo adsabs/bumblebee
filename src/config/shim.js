@@ -1,7 +1,7 @@
 (function() {
   // ############ DON'T EDIT THIS LINE
   // prettier-ignore
-  var APP_VERSION="";
+  const APP_VERSION="";
   // #################################
 
   /*
@@ -9,48 +9,56 @@
     Then attempt to load the resource, using require, upon failure we
     load a known resource (discovery.config.js)
   */
-  var paths = {
-    '': 'landing-page',
-    search: 'search-page',
-    abs: 'abstract-page',
+  const PATHS = {
+    LANDING: 'landing-page',
+    SEARCH: 'search-page',
+    ABSTRACT: 'abstract-page',
   };
 
-  var load;
-  var version = APP_VERSION ? 'v=' + APP_VERSION : '';
+  const getDefaultLoader = () => {
+    /* eslint-disable */
+    // @ts-ignore
+    return () => require(['config/discovery.config.js']);
+    /* eslint-enable */
+  };
+
+  const getPathLoader = (path) => {
+    /* eslint-disable */
+    // @ts-ignore
+    return () => require([`config/${path}.config.js`], undefined, getDefaultLoader());
+    /* eslint-enable */
+  };
+
+  let load = getDefaultLoader();
+  const version = APP_VERSION ? 'v=' + APP_VERSION : '';
   try {
-    var loc = window.location;
-    var parts = loc[loc.pathname === '/' ? 'hash' : 'pathname']
-      .replace(/#/g, '')
-      .split('/');
-    var path = parts.reverse().filter(function(p) {
-      return Object.keys(paths).indexOf(p) > -1;
-    });
-    path = path.length && path[0];
-    load = function() {
-      // attempt to get bundle config
-      require([
-        'config/' + paths[path] + '.config.js',
-      ], function() {}, function() {
-        // on failure to load specific bundle; load generic one
-        require(['config/discovery.config.js']);
-      });
-    };
-  } catch (e) {
-    load = function() {
-      // on errors, just fallback to normal config
-      require(['config/discovery.config.js']);
-    };
-  }
+    const loc = window.location;
+    const fullPath = loc[loc.pathname === '/' ? 'hash' : 'pathname'].replace(
+      /#/g,
+      ''
+    );
 
-  (function checkLoad() {
-    if (window.requirejs && typeof load === 'function') {
-      window.requirejs.config({
-        waitSeconds: 30,
-        urlArgs: version,
-      });
-
-      return load();
+    if (fullPath === '') {
+      load = getPathLoader(PATHS.LANDING);
+    } else if (fullPath.startsWith('/search')) {
+      load = getPathLoader(PATHS.SEARCH);
+    } else if (fullPath.startsWith('/abs')) {
+      load = getPathLoader(PATHS.ABSTRACT);
     }
-    setTimeout(checkLoad, 10);
-  })();
+  } catch (e) {
+    load = getDefaultLoader();
+  } finally {
+    (function checkLoad() {
+      // sometimes requirejs isn't ready yet, this will wait for it
+      if (window.requirejs) {
+        window.requirejs.config({
+          waitSeconds: 30,
+          urlArgs: version,
+        });
+
+        return load();
+      }
+      return setTimeout(checkLoad, 10);
+    })();
+  }
 })();
