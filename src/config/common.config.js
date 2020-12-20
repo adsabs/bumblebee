@@ -42,7 +42,11 @@ define([], function() {
     },
   });
 
-  require(['config/discovery.vars', 'regenerator-runtime'], function(config) {
+  require([
+    'config/discovery.vars',
+    'regenerator-runtime',
+    'array-flat-polyfill',
+  ], function(config) {
     // rca: not sure why the ganalytics is loaded here instead of inside analytics.js
     //      perhaps it is because it is much/little sooner this way?
 

@@ -20,6 +20,7 @@ module.exports = {
     'curl:react-flexview',
     'curl:deep-object-diff',
     'curl:xstate-react',
+    'curl:array-flat-polyfill',
   ],
   hash_require: ['hash_require:js', 'hash_require:css'],
 };

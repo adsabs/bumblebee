@@ -109,6 +109,7 @@ release:
     - 'assets'
     - 'clean:release'
     - 'copy:release'
+    - 'string-replace:production'
     - 'check-release-version'
     - 'string-replace:latest_version'
     - 'optimize-build'
