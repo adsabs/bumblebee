@@ -116,3 +116,4 @@ release:
     - 'string-replace:final'
     - 'cssmin'
     - 'htmlmin'
+    - 'imagemin'
