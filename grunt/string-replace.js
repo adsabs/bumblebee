@@ -44,7 +44,7 @@ module.exports = {
       replacements: [
         {
           pattern: /\.development/g,
-          replacement: '.production',
+          replacement: '.production.min',
         },
       ],
     },
