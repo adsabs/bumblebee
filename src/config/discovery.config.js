@@ -263,26 +263,26 @@ require.config({
     ],
     react: ['//unpkg.com/react@16/umd/react.development', 'libs/react/index'],
     'react-bootstrap': [
-      '//cdnjs.cloudflare.com/ajax/libs/react-bootstrap/0.32.1/react-bootstrap.min',
+      // '//cdnjs.cloudflare.com/ajax/libs/react-bootstrap/0.32.1/react-bootstrap.min',
       'libs/react-bootstrap/index',
     ],
     'react-dom': [
-      '//unpkg.com/react-dom@16/umd/react-dom.development',
+      // '//unpkg.com/react-dom@16/umd/react-dom.development',
       'libs/react-dom/index',
     ],
     'prop-types': [
-      '//cdnjs.cloudflare.com/ajax/libs/prop-types/15.7.2/prop-types.min',
+      // '//cdnjs.cloudflare.com/ajax/libs/prop-types/15.7.2/prop-types.min',
       'libs/prop-types/index',
     ],
     'react-redux': [
-      '//cdnjs.cloudflare.com/ajax/libs/react-redux/7.1.3/react-redux.min',
+      // '//cdnjs.cloudflare.com/ajax/libs/react-redux/7.1.3/react-redux.min',
       'libs/react-redux/index',
     ],
     'react-transition-group': 'libs/react-transition-group/index',
     recaptcha: 'js/plugins/recaptcha',
     reactify: 'js/plugins/reactify',
     redux: [
-      '//cdnjs.cloudflare.com/ajax/libs/redux/3.5.2/redux.min',
+      // '//cdnjs.cloudflare.com/ajax/libs/redux/3.5.2/redux.min',
       'libs/redux/index',
     ],
     'redux-thunk': [
@@ -305,7 +305,7 @@ require.config({
     suit: 'shared/dist/index.umd.development',
     yup: 'libs/yup/index',
     'react-hook-form': [
-      'https://cdn.jsdelivr.net/npm/react-hook-form@6.9.6/dist/index.umd.production.min',
+      // 'https://cdn.jsdelivr.net/npm/react-hook-form@6.9.6/dist/index.umd.production.min',
       'libs/react-hook-form/index',
     ],
     'react-flexview': 'libs/react-flexview/index',
@@ -321,6 +321,7 @@ require.config({
     recoil: 'libs/recoil/index',
     xstate: 'libs/xstate/index',
     '@xstate/react': 'libs/xstate-react/index',
+    'array-flat-polyfill': 'libs/polyfills/array-flat-polyfill',
   },
 
   hbs: {

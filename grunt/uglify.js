@@ -15,20 +15,33 @@ module.exports = {
         booleans: true,
         unused: true,
         if_return: true,
-        join_vars: true
+        join_vars: true,
       },
       output: {
-        comments: false
-      }
+        comments: false,
+      },
     },
-    files: [{
-      expand: true,
-      cwd: 'dist',
-      src: [
-        'config/*.js',
-        'js/**/*.js'
-      ],
-      dest: 'dist'
-    }]
-  }
+    files: [
+      {
+        expand: true,
+        cwd: 'dist',
+        src: [
+          'config/*.js',
+          'js/**/*.js',
+          'libs/**/*.js',
+          '!libs/jasmine/**/*',
+          '!libs/enzyme/**/*',
+          '!libs/mathjax/**/*',
+          '!libs/select2/**/*',
+          '!libs/sinon/**/*',
+          '!libs/require-handlebars-plugin/**/*',
+          '!libs/requirejs-babel-plugin/**/*',
+          '!libs/requirejs/**/*',
+          '!libs/requirejs-plugins/**/*',
+          '!libs/es5-shim/**/*',
+        ],
+        dest: 'dist',
+      },
+    ],
+  },
 };

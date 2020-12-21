@@ -57,8 +57,7 @@
         "react-data-table-component": "empty:",
         "react-window": "empty:",
         "react-async": "empty:",
-        "diff": "empty:",
-        "lodash-es": "empty:"
+        "diff": "empty:"
       },
       "stubModules": [
         "es6",
@@ -244,8 +243,7 @@
         "react-data-table-component": "empty:",
         "react-window": "empty:",
         "react-async": "empty:",
-        "diff": "empty:",
-        "lodash-es": "empty:"
+        "diff": "empty:"
       },
       "stubModules": [
         "es6",
@@ -444,8 +442,7 @@
         "react-data-table-component": "empty:",
         "react-window": "empty:",
         "react-async": "empty:",
-        "diff": "empty:",
-        "lodash-es": "empty:"
+        "diff": "empty:"
       },
       "stubModules": [
         "es6",

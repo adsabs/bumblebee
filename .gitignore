@@ -40,7 +40,6 @@ grunt/requirejs.js
 !.eslintrc.json
 !.editorconfig
 
-package-lock.json
 !.nvmrc
 !.prettierrc
 !.gitmodules

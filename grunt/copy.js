@@ -18,6 +18,15 @@ module.exports = function(grunt) {
           },
         },
         {
+          cwd: 'node_modules/react-bootstrap/dist',
+          src: 'react-bootstrap.min.js',
+          dest: 'src/libs/react-bootstrap/',
+          expand: true,
+          rename: function(dest, src) {
+            return dest + src.replace('react-bootstrap.min.js', 'index.js');
+          },
+        },
+        {
           cwd: 'node_modules/recoil/umd',
           src: 'recoil.min.js',
           dest: 'src/libs/recoil/',
