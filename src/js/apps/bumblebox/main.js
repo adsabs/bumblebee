@@ -19,7 +19,6 @@ define(['module'], function(module) {
     'js/components/application',
     'js/apps/bumblebox/bootstrap',
     'dynamic_config',
-    'es5-shim',
     'underscore',
   ], function(Router, Application, AppBootstrap, DynamicConfig, Es5Shim, _) {
     Application.prototype.shim();

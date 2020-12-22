@@ -27,7 +27,6 @@ module.exports = {
           '!requirejs-babel-plugin/**/*',
           '!requirejs/**/*',
           '!requirejs-plugins/**/*',
-          '!es5-shim/**/*',
         ],
         dest: 'dist/libs',
       },

@@ -184,7 +184,7 @@ require.config({
     async: 'libs/requirejs-plugins/async',
     babel: 'libs/requirejs-babel-plugin/babel-5.8.34.min',
     backbone: [
-      // '//cdnjs.cloudflare.com/ajax/libs/backbone.js/1.1.2/backbone-min',
+      '//cdnjs.cloudflare.com/ajax/libs/backbone.js/1.1.2/backbone-min',
       'libs/backbone/backbone',
     ],
     'backbone-validation': [
@@ -203,7 +203,7 @@ require.config({
       '//ajax.aspnetcdn.com/ajax/bootstrap/3.3.5/bootstrap.min',
       'libs/bootstrap/bootstrap',
     ],
-    bowser: '//cdn.jsdelivr.net/npm/bowser@2.4.0/bundled',
+    bowser: '//cdn.jsdelivr.net/npm/bowser@2.11.0/es5.min', // '//cdn.jsdelivr.net/npm/bowser@2.4.0/bundled',
     cache: 'libs/cache/index',
     classnames: [
       '//cdnjs.cloudflare.com/ajax/libs/classnames/2.2.5/index.min',
@@ -219,10 +219,6 @@ require.config({
       'libs/d3-cloud/d3.layout.cloud',
     ],
     enzyme: 'libs/enzyme/index',
-    'es5-shim': [
-      '//cdnjs.cloudflare.com/ajax/libs/es5-shim/4.5.10/es5-shim.min',
-      'libs/es5-shim/es5-shim',
-    ],
     es6: 'libs/requirejs-babel-plugin/es6',
     filesaver: [
       '//cdnjs.cloudflare.com/ajax/libs/FileSaver.js/1.3.8/FileSaver.min',
@@ -238,9 +234,14 @@ require.config({
     ],
     hbs: 'libs/require-handlebars-plugin/hbs',
     hotkeys: 'libs/hotkeys/index',
-    jquery: 'libs/jquery/jquery',
-    'jquery-querybuilder': 'libs/jQuery-QueryBuilder/query-builder',
-    'jquery-ui': 'libs/jqueryui/jquery-ui',
+    jquery: [
+      '//cdnjs.cloudflare.com/ajax/libs/jquery/2.2.4/jquery.min',
+      'libs/jquery/jquery',
+    ],
+    'jquery-ui': [
+      '//cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min',
+      'libs/jqueryui/jquery-ui',
+    ],
     jsonpath: [
       '//cdn.jsdelivr.net/npm/jsonpath@0.2.12/jsonpath.min',
       'libs/jsonpath/jsonpath',
@@ -301,7 +302,6 @@ require.config({
     mocha: 'libs/mocha/mocha',
     chai: 'bower_components/chai/chai',
     sinon: 'https://cdnjs.cloudflare.com/ajax/libs/sinon.js/1.9.0/sinon.min',
-    es5shim: 'node_modules/es5-shim/es5-shim.min',
     suit: 'shared/dist/index.umd.development',
     yup: 'libs/yup/index',
     'react-hook-form': [
