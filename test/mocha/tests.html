@@ -1,18 +1,22 @@
 <html>
-<head>
-  <meta charset="utf-8">
-  <title>Bumblebee Tests</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <link rel="stylesheet" href="../../libs/mocha/mocha.css"/>
-  <link rel="stylesheet" href="../../styles/css/styles.css"/>
-</head>
+  <head>
+    <meta charset="utf-8" />
+    <title>Bumblebee Tests</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="../../libs/mocha/mocha.css" />
+    <link rel="stylesheet" href="../../styles/css/styles.css" />
+  </head>
   <body>
     <div id="mocha"></div>
-      <script>
-        // this forces the require config to not start the bumblebee application
-        window.skipMain = true;
-      </script>
-    <script data-main="../../config/discovery.config.js" src="../../libs/requirejs/require.js"></script>
+    <script>
+      // this forces the require config to not start the bumblebee application
+      window.skipMain = true;
+    </script>
+    <script
+      data-main="../../config/discovery.config.js"
+      src="../../libs/requirejs/require.js"
+    ></script>
+
     <!-- Test Fixtures. -->
     <div id="fixtures" style="display: none; visibility: hidden;"></div>
     <div id="test-area"></div>

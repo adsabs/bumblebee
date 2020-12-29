@@ -1,93 +1,95 @@
 # Grunt Aliases File
 # Use this file to create aliases for grunt commands
 
-default: 'setup'
+default: setup
 
 # Local Server
-server: 'server:dev'
-'server:once': 'server:dev:once'
+server: server:dev
+server:once: server:dev:once
 
-'server:dev':
+server:dev:
   description: 'local persisting server pointing to src/ and development api'
   tasks:
-    - 'env:dev'
-    - 'express:server'
+    - env:dev
+    - express:server
 
-'server:dev:once':
+server:dev:once:
   description: 'local run-once server pointing to /src and development api'
   tasks:
-    - 'env:dev'
-    - 'express:once'
+    - env:dev
+    - express:once
 
-'server:prod':
+server:prod:
   description: 'local persisting server pointing to /src and production api'
   tasks:
-    - 'env:prod'
-    - 'express:server'
+    - env:prod
+    - express:server
 
-'server:prod:once':
+server:prod:once:
   description: 'local run-once server pointing to /src and production api'
   tasks:
-    - 'env:prod'
-    - 'express:once'
+    - env:prod
+    - express:once
 
-'server:release:dev':
+server:release:dev:
   description: 'local persisting server pointing to /dist and development api'
   tasks:
-    - 'env:release-dev'
-    - 'express:server'
+    - env:release-dev
+    - express:server
 
-'server:release:dev:once':
+server:release:dev:once:
   description: 'local run-once server pointing to /dist and development api'
   tasks:
-    - 'env:release-dev'
-    - 'express:once'
+    - env:release-dev
+    - express:once
 
-'server:release:prod':
+server:release:prod:
   description: 'local persisting server pointing to /dist and production api'
   tasks:
-    - 'env:release-prod'
-    - 'express:server'
+    - env:release-prod
+    - express:server
 
-'server:release:prod:once':
+server:release:prod:once:
   description: 'local run-once server pointing to /dist and production api'
   tasks:
-    - 'env:release-prod'
-    - 'express:once'
+    - env:release-prod
+    - express:once
 
 # 3rd Party Assets
 assets:
-  - 'clean:libs'
-  - 'concurrent:install'
-  - 'copy:libs'
-  - 'exec:suit_build'
+  - clean:libs
+  - concurrent:install
+  - copy:libs
+  - exec:suit_build
 
 # CSS Processing
 css:
-  - 'sass'
-  - 'autoprefixer'
+  - sass
+  - autoprefixer
 
 # Testing
 # Initial Setup
 setup:
-  - 'exec:submodule_init'
-  - 'assets'
-  - 'copy:discovery_vars'
-  - 'sass'
+  - exec:submodule_init
+  - assets
+  - copy:discovery_vars
+  - sass
 
 test:prod:
-  - 'clean:coverage'
-  - 'clean:release'
-  - 'copy:release'
-  - 'babel'
-  - 'string-replace:final'
-  - 'exec:nyc-instrument'
-  - 'server:once'
-  - 'puppet:prod'
-  - 'coverage-report:coveralls'
-  - 'exec:coveralls-report'
+  - clean:temp
+  - clean:coverage
+  - clean:release
+  - copy:release
+  - babel
+  - string-replace:final
+  - exec:nyc-instrument
+  - server:once
+  - puppet:prod
+  - coverage-report:coveralls
+  - exec:coveralls-report
 
 test:
+  - clean:temp
   - babel:temp
   - string-replace:temp
   - server:once
@@ -95,6 +97,7 @@ test:
   - clean:temp
 
 test:debug:
+  - clean:temp
   - babel:temp
   - string-replace:temp
   - server:once
@@ -103,17 +106,17 @@ test:debug:
 
 # Release
 release:
-  description: 'Build the assets and prepare for a release'
+  description: Build the assets and prepare for a release
   tasks:
-    - 'env:prod'
-    - 'assets'
-    - 'clean:release'
-    - 'copy:release'
-    - 'string-replace:production'
-    - 'check-release-version'
-    - 'string-replace:latest_version'
-    - 'optimize-build'
-    - 'string-replace:final'
-    - 'cssmin'
-    - 'htmlmin'
-    - 'imagemin'
+    - env:prod
+    - assets
+    - clean:release
+    - copy:release
+    - string-replace:production
+    - check-release-version
+    - string-replace:latest_version
+    - optimize-build
+    - string-replace:final
+    - cssmin
+    - htmlmin
+    - imagemin
