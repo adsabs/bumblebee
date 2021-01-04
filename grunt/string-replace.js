@@ -65,12 +65,17 @@ module.exports = {
   latest_version: {
     files: {
       'dist/config/shim.js': 'dist/config/shim.js',
+      'dist/index.html': 'dist/index.html',
     },
     options: {
       replacements: [
         {
           pattern: 'APP_VERSION=""',
           replacement: 'APP_VERSION="<%= appVersion %>";',
+        },
+        {
+          pattern: '<APP_VERSION>',
+          replacement: '<%= appVersion %>',
         },
       ],
     },

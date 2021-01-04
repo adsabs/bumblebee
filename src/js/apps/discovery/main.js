@@ -22,7 +22,6 @@ define(['config/discovery.config', 'module'], function(config, module) {
     'js/mixins/discovery_bootstrap',
     'js/mixins/api_access',
     'analytics',
-    'es5-shim',
   ], function(Router, Application, DiscoveryBootstrap, ApiAccess, analytics) {
     var updateProgress =
       typeof window.__setAppLoadingProgress === 'function'
@@ -160,8 +159,6 @@ define(['config/discovery.config', 'module'], function(config, module) {
             $('#main-content').focus();
             return false;
           });
-
-          
 
           // app is loaded, send timing event
 

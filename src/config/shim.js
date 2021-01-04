@@ -18,14 +18,22 @@
   const getDefaultLoader = () => {
     /* eslint-disable */
     // @ts-ignore
-    return () => require(['config/discovery.config.js']);
+    return () =>
+      require([
+        'config/main.config.js',
+        'config/discovery.config.js',
+      ], undefined, () => require(['config/discovery.config.js']));
     /* eslint-enable */
   };
 
   const getPathLoader = (path) => {
     /* eslint-disable */
     // @ts-ignore
-    return () => require([`config/${path}.config.js`], undefined, getDefaultLoader());
+    return () =>
+      require([
+        'config/main.config.js',
+        `config/${path}.config.js`,
+      ], undefined, getDefaultLoader());
     /* eslint-enable */
   };
 
