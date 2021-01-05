@@ -74,7 +74,7 @@ module.exports = {
           replacement: 'APP_VERSION="<%= appVersion %>";',
         },
         {
-          pattern: '<APP_VERSION>',
+          pattern: /<APP_VERSION>/g,
           replacement: '<%= appVersion %>',
         },
       ],

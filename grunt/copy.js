@@ -272,8 +272,8 @@ module.exports = function(grunt) {
     },
 
     discovery_vars: {
-      src: 'src/discovery.vars.js.default',
-      dest: 'src/discovery.vars.js',
+      src: 'src/config/discovery.vars.js.default',
+      dest: 'src/config/discovery.vars.js',
       filter: function() {
         // Only copy if over if it does not exist
         var dest = grunt.task.current.data.dest;
