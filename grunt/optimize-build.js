@@ -223,6 +223,7 @@ module.exports = function(grunt) {
           include: [
             ...globFiles([
               'config/**/*.js',
+              '!config/discovery.vars.js',
               '!config/shim.js',
               'js/apps/discovery/**/*.js',
               '!js/apps/discovery/router.js',

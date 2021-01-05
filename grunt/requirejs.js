@@ -413,7 +413,6 @@
       "include": [
         "config/common.config",
         "config/discovery.config",
-        "config/discovery.vars",
         "js/apps/discovery/main",
         "js/apps/discovery/navigator",
         "js/components/alerts",
