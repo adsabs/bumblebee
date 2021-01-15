@@ -103,7 +103,11 @@ define([
 
       const q = new ApiQuery();
       if (query) {
-        q.load(query);
+        try {
+          q.load(query);
+        } catch (e) {
+          // ignore query loading errors
+        }
       }
       this.routerNavigate(`ShowFeedback`, {
         subview,
