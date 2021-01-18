@@ -1,10 +1,15 @@
 .ui-slider-handle {
-  background-image : linear-gradient(to bottom, lighten($brand-primary-faded, 20%) 0%, lighten($brand-primary-faded, 20%) 50%, lighten($brand-primary-faded, 10%) 50%, lighten($brand-primary-faded, 10%) 100% ) !important;
+  background-image: linear-gradient(
+    to bottom,
+    lighten($brand-primary-faded, 20%) 0%,
+    lighten($brand-primary-faded, 20%) 50%,
+    lighten($brand-primary-faded, 10%) 50%,
+    lighten($brand-primary-faded, 10%) 100%
+  ) !important;
 }
 
-
 .ui-slider-range {
-   background : #fff !important;
+  background: #fff !important;
 }
 
 .ui-autocomplete {
@@ -34,7 +39,8 @@
     font-family: $font-family-sans-serif;
     border-radius: 0;
 
-    &.ui-state-hover, &.ui-state-active {
+    &.ui-state-hover,
+    &.ui-state-active {
       color: #ffffff;
       text-decoration: none;
       background-color: #0088cc;
@@ -43,8 +49,21 @@
     }
   }
 
-  .ui-state-hover, .ui-widget-content .ui-state-hover, .ui-widget-header .ui-state-hover, .ui-state-focus, .ui-widget-content .ui-state-focus, .ui-widget-header .ui-state-focus {
+  .ui-state-hover,
+  .ui-widget-content .ui-state-hover,
+  .ui-widget-header .ui-state-hover,
+  .ui-state-focus,
+  .ui-widget-content .ui-state-focus,
+  .ui-widget-header .ui-state-focus {
     border: 1px solid transparent;
     background: lighten($brand-primary-faded, 33%);
+  }
+
+  .search-bar-suggestion {
+    & > .ui-state-active,
+    & > .ui-state-hover {
+      background: #d7dfec;
+      font-weight: bold;
+    }
   }
 }

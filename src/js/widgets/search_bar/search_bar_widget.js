@@ -30,7 +30,7 @@ define([
   ApiTargets,
   ApiFeedback,
   FormatMixin,
-  autocompleteArray,
+  { render: renderAutocomplete, autocompleteSource: autocompleteArray },
   bootstrap,
   jqueryUI,
   Dependon,
@@ -39,39 +39,16 @@ define([
   select2,
   oldMatcher
 ) {
-  $.fn.getCursorPosition = function() {
-    var input = this.get(0);
-    if (!input) return; // No (input) element found
-    if ('selectionStart' in input) {
-      // Standard-compliant browsers
-      return input.selectionStart;
-    }
-    if (document.selection) {
-      // IE
-      input.focus();
-      var sel = document.selection.createRange();
-      var selLen = document.selection.createRange().text.length;
-      sel.moveStart('character', -input.value.length);
-      return sel.text.length - selLen;
-    }
-  };
-
-  // manually highlight a selection of text, or just move the cursor if no end val is given
-  $.fn.selectRange = function(start, end) {
-    if (!end) end = start;
-    return this.each(function() {
-      if (this.setSelectionRange) {
-        this.focus();
-        this.setSelectionRange(start, end);
-      } else if (this.createTextRange) {
-        var range = this.createTextRange();
-        range.collapse(true);
-        range.moveEnd('character', end);
-        range.moveStart('character', start);
-        range.select();
-      }
-    });
-  };
+  var SearchBarModel = Backbone.Model.extend({
+    defaults: function() {
+      return {
+        citationCount: undefined,
+        numFound: undefined,
+        bigquery: false,
+        bigquerySource: undefined,
+      };
+    },
+  });
 
   // get what is currently selected in the window
   function getSelectedText(el) {
@@ -84,36 +61,6 @@ define([
     }
     return text;
   }
-
-  // splits out the part of the text that the autocomplete cares about
-  function findActiveAndInactive(textString) {
-    var split = _.filter(textString.split(/\s+/), function(x) {
-      if (x) return true;
-    });
-
-    var toReturn = {
-      active: split[split.length - 1],
-    };
-
-    if (split.length > 1) {
-      split.pop();
-      toReturn.inactive = split.join(' ');
-    } else {
-      toReturn.inactive = '';
-    }
-    return toReturn;
-  }
-
-  var SearchBarModel = Backbone.Model.extend({
-    defaults: function() {
-      return {
-        citationCount: undefined,
-        numFound: undefined,
-        bigquery: false,
-        bigquerySource: undefined,
-      };
-    },
-  });
 
   var SearchBarView = Marionette.ItemView.extend({
     template: SearchBarTemplate,
@@ -180,160 +127,9 @@ define([
               end code for select
              */
 
-      var $input = this.$('input.q');
+      const $input = this.$('input.q');
       this.$input = $input;
-      var performSearch = true;
-
-      $input.autocomplete({
-        minLength: 1,
-        autoFocus: true,
-        // default delay is 300
-        delay: 0,
-        source: function(request, response) {
-          var toMatch;
-          var matcher;
-          var toReturn;
-
-          // don't look for a match if the keydown event was a backspace
-          if (!performSearch) {
-            $input.autocomplete('close');
-            return;
-          }
-
-          // dont look for a match if cursor is not at the end of search bar
-          if ($input.getCursorPosition() !== $input.val().length) {
-            $input.autocomplete('close');
-            return;
-          }
-
-          toMatch = findActiveAndInactive(request.term).active;
-          if (!toMatch) return;
-          // testing each entry's "match" var in autocomplete array against the toMatch segment
-          // then returning a uniqued array of matches
-          matcher = new RegExp(
-            '^' + $.ui.autocomplete.escapeRegex(toMatch),
-            'i'
-          );
-          toReturn = $.grep(autocompleteArray, function(item) {
-            return matcher.test(item.match);
-          });
-          toReturn = _.uniq(toReturn, false, function(item) {
-            return item.label;
-          });
-          response(toReturn);
-        },
-
-        /* insert a suggestion: requires autofocus:true
-         * to be set if you want to show by default without user
-         * keyboard navigation or mouse hovering
-         * */
-        focus: function(event, ui) {
-          var val = $input.val().replace(/^\s+/, '');
-          var suggest = ui.item.value;
-
-          var exists;
-          var toMatch;
-          var confirmedQuery;
-          var splitQuery;
-
-          var currentlySelected = getSelectedText($input[0]);
-          // might be moving down the autocomplete list
-          if (currentlySelected) {
-            exists = val.slice(0, val.length - currentlySelected.length);
-          } else {
-            exists = val;
-          }
-
-          splitQuery = findActiveAndInactive(exists);
-
-          (toMatch = splitQuery.active), (confirmedQuery = splitQuery.inactive);
-
-          if (confirmedQuery) {
-            // suggestedQ will be inserted if user accepts it
-            $input.data('ui-autocomplete').suggestedQ =
-              confirmedQuery + ' ' + ui.item.value;
-          } else {
-            $input.data('ui-autocomplete').suggestedQ = ui.item.value;
-          }
-
-          // only insert text if the words match from the beginning
-          // not, for instance, if user typed "refereed" and the matching string is "property:refereed"
-          if (suggest.indexOf(toMatch) == 0) {
-            var text;
-            var rest;
-            var all;
-
-            text = confirmedQuery ? confirmedQuery + ' ' + toMatch : toMatch;
-            rest = suggest.slice(toMatch.length);
-            all = text + rest;
-
-            $input.val(all);
-            $input.selectRange(text.length, all.length);
-          } else {
-            $input.val(exists);
-          }
-
-          return false;
-        },
-
-        // re-insert actual text w/ optional addition of autocompleted stuff
-        select: function(event, ui) {
-          $input.val($input.data('ui-autocomplete').suggestedQ);
-          // move cursor before final " or )
-          var final = ui.item.value.split('').reverse()[0];
-          if (final == '"' || final == ')') {
-            $input.selectRange($input.val().length - 1);
-          } else {
-            // just move cursor to the end, e.g. for property: refereed
-            $input.selectRange($input.val().length);
-          }
-
-          analytics(
-            'send',
-            'event',
-            'interaction',
-            'autocomplete-used',
-            ui.item.value
-          );
-          return false;
-        },
-      });
-
-      $input.data('ui-autocomplete')._renderItem = function(ul, item) {
-        if (item.desc) {
-          return $('<li>')
-            .append(
-              '<a>' +
-                item.label +
-                '<span class="s-auto-description">&nbsp;&nbsp;' +
-                item.desc +
-                '</span></a>'
-            )
-            .appendTo(ul);
-        }
-
-        return $('<li>')
-          .append('<a>' + item.label + '</a>')
-          .appendTo(ul);
-      };
-
-      $input.bind({
-        keydown: function(event) {
-          if (event.keyCode == 8) {
-            performSearch = false; // backspace, do not perform the search
-          } else if (event.keyCode == 32) {
-            // space, do not perform the search
-            performSearch = false;
-          } else {
-            performSearch = true; // perform the search
-          }
-        },
-
-        // don't do anything on paste
-        paste: function() {
-          performSearch = false;
-        },
-      });
+      renderAutocomplete($input);
 
       $input.popover({
         placement: 'bottom',
