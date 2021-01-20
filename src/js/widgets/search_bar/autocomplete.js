@@ -1,5 +1,5 @@
-define([], function() {
-  var autoList = [
+define(['jquery', 'analytics'], function($, analytics) {
+  const autocompleteSource = [
     { value: 'author:""', label: 'Author', match: 'author:"' },
 
     { value: 'author:"^"', label: 'First Author', match: 'author:"' },
@@ -230,5 +230,164 @@ define([], function() {
     },
   ];
 
-  return autoList;
+  /**
+   * splits out the part of the text that the autocomplete cares about
+   * @param {string} text
+   */
+  const findActiveAndInactive = (text) => {
+    const parts = text
+      .trim()
+      .split(/\s+/)
+      .filter((part) => !!part);
+
+    return {
+      active: parts.pop(),
+      inactive: parts.length > 0 ? parts.join(' ') : '',
+    };
+  };
+
+  /**
+   * @param {HTMLElement} element
+   */
+  const render = (element) => {
+    if (!element) {
+      return;
+    }
+    const $input = $(element);
+
+    // parse the sources and generate the suggestion list
+    const source = (request, response) => {
+      // stop the search if this flag has been set
+      if ($input.data('preventSearch')) {
+        $input.data('preventSearch', false);
+        $input.autocomplete('close');
+        return;
+      }
+
+      const term = request.term;
+
+      $input.data('originalTerm', term);
+
+      // don't show if the user is just adding spaces on the end
+      if (/\s+$/.test(term)) {
+        $input.autocomplete('close');
+        return;
+      }
+
+      // only consider the right-most term
+      if ($input.getCursorPosition() !== $input.val().length) {
+        $input.autocomplete('close');
+        return;
+      }
+
+      // use only the right-most term
+      const { active } = findActiveAndInactive(term);
+
+      // match on the item regex, and return the label
+      const reg = new RegExp(`^${$.ui.autocomplete.escapeRegex(active)}`, 'i');
+      const suggestions = _.uniq(
+        _.filter(autocompleteSource, (item) => reg.test(item.match)),
+        false,
+        _.property('label')
+      );
+
+      response(suggestions);
+    };
+
+    // render the preview of each selection as they are focused
+    const focus = (event, ui) => {
+      const $autocomplete = $input.data('ui-autocomplete');
+      const { inactive } = findActiveAndInactive($autocomplete.term);
+      const focusedSuggestion = ui.item.value;
+
+      const all = `${
+        inactive.length > 0 ? inactive + ' ' : ''
+      }${focusedSuggestion}`;
+
+      // don't update the input if user is only hovering
+      if (event.originalEvent.originalEvent.type !== 'mouseenter') {
+        $input.val(all);
+      }
+      $input.data('previewSuggestion', all);
+      $input.data('didFocus', true);
+      $input.data('focusedItem', ui.item);
+
+      return false;
+    };
+
+    const select = (event, ui) => {
+      const newVal = $input.data('previewSuggestion');
+      $input.val(newVal);
+
+      // place cursor inside quotes or parens, or if none, just put it at the end
+      $input.selectRange(
+        /[")]$/.test(ui.item.value) ? newVal.length - 1 : newVal.length
+      );
+
+      analytics(
+        'send',
+        'event',
+        'interaction',
+        'autocomplete-used',
+        ui.item.value
+      );
+      return false;
+    };
+
+    $input.autocomplete({
+      minLength: 1,
+      autoFocus: false,
+      delay: 0,
+      source,
+      focus,
+      select,
+    });
+
+    // render the suggestion list with some highlighting
+    $input.data('ui-autocomplete')._renderItem = function(ul, item) {
+      const re = new RegExp('(' + this.term + ')', 'i');
+      const label = item.label.replace(
+        re,
+        '<span class="ui-state-highlight">$1</span>'
+      );
+      if (item.desc) {
+        return $('<li class="search-bar-suggestion">')
+          .append(
+            '<a>' +
+              label +
+              '<span class="s-auto-description">&nbsp;&nbsp;' +
+              item.desc +
+              '</span></a>'
+          )
+          .appendTo(ul);
+      }
+
+      return $('<li class="search-bar-suggestion">')
+        .on('hover', (e) => e.preventDefault())
+        .append('<a>' + label + '</a>')
+        .appendTo(ul);
+    };
+
+    $input.bind({
+      keydown(event) {
+        const { didFocus } = $input.data();
+
+        // prevent search unless user is actually deleting a term
+        if (event.key === 'Backspace' && /\s+$/.test($input.val())) {
+          $input.data('preventSearch', true);
+        }
+
+        // hack to work around default tabbing behavior and still maintain normal behavior within the input box
+        if (event.key === 'Tab' && didFocus) {
+          $input.data('didFocus', false);
+          event.preventDefault();
+        }
+      },
+      paste() {
+        $input.data('preventSearch', true);
+      },
+    });
+  };
+
+  return { render, autocompleteSource };
 });
