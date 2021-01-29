@@ -24,7 +24,7 @@ define(['underscore', 'react', 'prop-types'], function(_, React, PropTypes) {
           <div className="resources__content__title">{key}</div>
           <div className="resources__content__links">
             {_.map(groups, (g, idx) => (
-              <span>
+              <span key={g.type + idx}>
                 <a
                   href={g.url}
                   target="_blank"
