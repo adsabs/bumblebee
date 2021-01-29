@@ -21,8 +21,16 @@ define(['config/discovery.config', 'module'], function(config, module) {
     'js/components/application',
     'js/mixins/discovery_bootstrap',
     'js/mixins/api_access',
+    'js/components/api_feedback',
     'analytics',
-  ], function(Router, Application, DiscoveryBootstrap, ApiAccess, analytics) {
+  ], function(
+    Router,
+    Application,
+    DiscoveryBootstrap,
+    ApiAccess,
+    ApiFeedback,
+    analytics
+  ) {
     var updateProgress =
       typeof window.__setAppLoadingProgress === 'function'
         ? window.__setAppLoadingProgress
@@ -156,9 +164,23 @@ define(['config/discovery.config', 'module'], function(config, module) {
 
           // accessibility: skip to main content
           $('body').on('click', '#skip-to-main-content', function() {
-            $('#main-content').focus();
+            $('#main-content').trigger('focus');
             return false;
           });
+
+          // check for is-proxied class, and if present, send alert
+          if ($('body').hasClass('is-proxied')) {
+            const msg = `You are using a proxied version of ADS, we recommend you switch to the regular non-proxied URL: <a href="https://ui.adsabs.harvard.edu${location.pathname}" rel="noopener noreferrer">https://ui.adsabs.harvard.edu</a>`;
+
+            pubsub.publish(
+              pubsub.getCurrentPubSubKey(),
+              pubsub.ALERT,
+              new ApiFeedback({
+                type: 'danger',
+                msg,
+              })
+            );
+          }
 
           // app is loaded, send timing event
 
