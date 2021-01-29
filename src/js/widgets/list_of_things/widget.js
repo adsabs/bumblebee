@@ -268,7 +268,7 @@ define([
         // make sure the new docs close highlights if they aren't there
         var newDocs = _.map(docs, function(d) {
           return _.extend(d, {
-            showHighlights: !_.isEmpty(d.highlights),
+            showHighlights: typeof d.highlights !== 'undefined',
             showCheckbox: !!self.model.get('showCheckboxes'),
           });
         });

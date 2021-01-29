@@ -144,6 +144,9 @@ define([], function() {
     Handlebars.registerHelper('toJSON', function(object) {
       return JSON.stringify(object);
     });
+    Handlebars.registerHelper('isdefined', function(value) {
+      return typeof value !== 'undefined';
+    });
   });
 
   // set validation callbacks used by authentication and user settings widgets
