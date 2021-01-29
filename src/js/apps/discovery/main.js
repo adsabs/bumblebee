@@ -170,7 +170,15 @@ define(['config/discovery.config', 'module'], function(config, module) {
 
           // check for is-proxied class, and if present, send alert
           if ($('body').hasClass('is-proxied')) {
-            const msg = `You are using a proxied version of ADS, we recommend you switch to the regular non-proxied URL: <a href="https://ui.adsabs.harvard.edu${location.pathname}" rel="noopener noreferrer">https://ui.adsabs.harvard.edu</a>`;
+            const msg = `
+              <p>
+                You are using a proxied version of ADS, we recommend you switch to the regular non-proxied URL: 
+                <a href="https://ui.adsabs.harvard.edu${location.pathname}" rel="noopener noreferrer">https://ui.adsabs.harvard.edu</a></p>
+              <p>
+                Configure authenticated access to publisher content via the Library Link Server in your account  
+                <a href="https://ui.adsabs.harvard.edu/user/settings/librarylink" rel="noopener noreferrer">preferences</a>.
+              </p>
+            `;
 
             pubsub.publish(
               pubsub.getCurrentPubSubKey(),
