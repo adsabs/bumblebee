@@ -99,8 +99,6 @@ define([
     },
 
     feedbackPage: function(subview, query) {
-      console.log('feedback', subview, arguments);
-
       const q = new ApiQuery();
       if (query) {
         try {
