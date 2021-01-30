@@ -46,7 +46,7 @@ body {
     @media (max-width: $screen-md) {
       &-aside {
         transform: translateX(-100%);
-        transition: all 0.3s ease-out;
+        transition: opacity 0.6s ease, transform 0.6s ease;
 
         &.show {
           transform: none;
@@ -54,7 +54,7 @@ body {
       }
 
       &-content {
-        transition: all 0.3s ease-out;
+        transition: opacity 0.6s ease, transform 0.6s ease;
         &.full-width {
           margin-left: -300px;
         }
