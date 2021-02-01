@@ -327,15 +327,13 @@ define([
               finalList = finalList.concat(pair[1]);
             });
 
-            if (finalList.length === 1 && finalList[0].trim() === '') {
-              return {};
-            }
-
             return {
               highlights: finalList,
             };
           })();
         }
+
+        d.highlights = h.highlights;
 
         var maxAuthorNames = self.minAuthorsPerResult;
         var shownAuthors;
@@ -357,10 +355,6 @@ define([
           };
           d.authorFormatted = _.map(shownAuthors, format);
           d.allAuthorFormatted = _.map(d.author, format);
-        }
-
-        if (h.highlights && h.highlights.length > 0) {
-          d.highlights = h.highlights;
         }
 
         d.formattedDate = d.pubdate

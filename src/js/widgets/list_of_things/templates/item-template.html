@@ -267,20 +267,26 @@
 {{/if}}
 
     <div class="row highlight-row">
-        {{#if showHighlights}}
+    {{#if showHighlights}}
+
         <div class="col-xs-10 col-xs-offset-1 s-more-info">
-                {{#if highlights}}
-                    <h4 class="sr-only">Search Highlights</h4>
-                    <ul aria-label="search snippets" class="s-search-snippets">
-                        {{#each highlights}}
-                        <li>{{{this}}}</li>
-                        {{/each}}
-                    </ul>
-                {{else}}
-                  <span class="text-muted"><i class="fa fa-spinner fa-pulse" aria-hidden="true"></i> Loading Highlights...</span>
-                {{/if}}
-        </div>
+        {{#if (isdefined highlights)}}
+            {{#if highlights.length}}
+            <h4 class="sr-only">Search Highlights</h4>
+            <ul aria-label="search snippets" class="s-search-snippets">
+                {{#each highlights}}
+                <li>{{{this}}}</li>
+                {{/each}}
+            </ul>
+
+            {{else}}
+                <span class="text-muted">No highlights</span>
+            {{/if}}
+        {{else}}
+            <span class="text-muted"><i class="fa fa-spinner fa-pulse" aria-hidden="true"></i> Loading Highlights...</span>
         {{/if}}
+        </div>
+    {{/if}}
     </div>
 
     <div class="row abstract-row">
