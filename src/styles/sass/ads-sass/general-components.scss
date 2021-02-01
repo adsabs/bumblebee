@@ -126,7 +126,7 @@
       text-decoration: none;
     }
   }
-  transition: all, 0.5s;
+  transition: opacity 0.6s ease, transform 0.6s ease;
 
   .dropdown-menu {
     li {

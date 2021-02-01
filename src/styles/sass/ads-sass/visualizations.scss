@@ -7,7 +7,6 @@ General
  * SVG CSS
  */
 
-
 svg {
   -webkit-touch-callout: none;
   -webkit-user-select: none;
@@ -17,8 +16,8 @@ svg {
   user-select: none;
   /* Trying to get SVG to act like a greedy block in all browsers */
   display: block;
-  width:100%;
-  height:100%;
+  width: 100%;
+  height: 100%;
 }
 
 svg .title {
@@ -30,24 +29,20 @@ WordCloud
 
 */
 
-
 // for the slider
 .s-wordcloud-tick-container {
-
-  margin-top:-5px;
-  font-size:8px;
+  margin-top: -5px;
+  font-size: 8px;
 }
 
 .s-wordcloud-text {
-
-  fill: #00006B;
+  fill: #00006b;
   font-weight: 400;
   text-anchor: middle;
-  transition : all 1s;
+  transition: opacity 0.6s ease, transform 0.6s ease;
 
   &:hover {
     cursor: pointer;
-
   }
 }
 
@@ -57,15 +52,13 @@ WordCloud
 }
 
 .s-wordcloud-container {
-
   .selected {
     fill: $brand-warning !important;
   }
 }
 
-
 .s-wordcloud-slider-labels {
-  font-size: .8em;
+  font-size: 0.8em;
 }
 
 .s-wordcloud-help-container {
@@ -79,11 +72,9 @@ WordCloud
 }
 
 .s-vis-item-format {
-
   background: $gray-lightest;
   padding: 15px 15px;
   margin-bottom: 20px;
-
 }
 
 .s-vis-select-list {
@@ -97,16 +88,15 @@ WordCloud
 Year, Citation and Reference Graphs
 */
 
-
 .s-view-metrics-button-container {
- @extend .pull-right;
+  @extend .pull-right;
   margin-right: 10px;
 }
 
 .change-scale {
   label {
     display: inline-block;
-    width: 20%
+    width: 20%;
   }
 }
 
@@ -116,26 +106,21 @@ Year, Citation and Reference Graphs
   top: -263px;
   left: -54%;
   font-weight: bold;
-  transform : rotate(270);
-
+  transform: rotate(270);
 }
 
 .x-axis-title {
-
   position: relative;
   font-style: italic;
   top: -38px;
   font-weight: bold;
   left: 41%;
   font-weight: bold;
-
 }
 
 .h-index-x-axis-title {
-
   left: 77px;
   top: -57px;
-
 }
 
 .axis path,
@@ -165,14 +150,14 @@ Year, Citation and Reference Graphs
   fill: none;
   stroke: $gray;
   stroke-width: 1px;
-
 }
 
 .s-chart .refereed {
   fill: $refereed !important;
 }
 
-.s-chart .bar, .s-chart .dot {
+.s-chart .bar,
+.s-chart .dot {
   fill: $nonrefereed !important;
 }
 
@@ -210,10 +195,11 @@ Year, Citation and Reference Graphs
   font-size: 5px;
 }
 
-.axis path, .axis line {
+.axis path,
+.axis line {
   fill: none;
   stroke: #000;
-  stroke-width:.5px;
+  stroke-width: 0.5px;
   shape-rendering: crispEdges;
 }
 
@@ -223,7 +209,8 @@ Year, Citation and Reference Graphs
   font-weight: 300;
 }
 
-.show-slider-data-first, .show-slider-data-second {
+.show-slider-data-first,
+.show-slider-data-second {
   @extend .form-control;
   @extend .input-sm;
   display: inline;
@@ -241,7 +228,7 @@ Year, Citation and Reference Graphs
 }
 
 .logic-container label {
-  display: block
+  display: block;
 }
 
 .s-legend-color {
@@ -251,7 +238,7 @@ Year, Citation and Reference Graphs
 }
 
 .graph-legend {
-  font-size : 14px;
+  font-size: 14px;
 }
 
 .s-legend-color.refereed {
@@ -268,18 +255,16 @@ Year, Citation and Reference Graphs
   }
 }
 
-
 /* Author network css */
 
 //group circle color vars
-$group-circle-default : lighten($brand-info, 20%);
-$group-circle-hover : saturate(darken($group-circle-default, 10%), 20%);
-$group-circle-active : lighten($brand-warning, 10%);
-
+$group-circle-default: lighten($brand-info, 20%);
+$group-circle-hover: saturate(darken($group-circle-default, 10%), 20%);
+$group-circle-active: lighten($brand-warning, 10%);
 
 .s-selected-items-container {
-  position : relative;
-  left : -4%;
+  position: relative;
+  left: -4%;
 }
 
 .s-control-row {
@@ -288,7 +273,7 @@ $group-circle-active : lighten($brand-warning, 10%);
 }
 
 .details-container .line {
-  stroke-opacity: .8
+  stroke-opacity: 0.8;
 }
 
 .details-container text {
@@ -296,7 +281,7 @@ $group-circle-active : lighten($brand-warning, 10%);
 }
 
 .s-detail-top-row {
-  padding : 3%;
+  padding: 3%;
   position: absolute;
   right: 2px;
 }
@@ -306,12 +291,10 @@ $group-circle-active : lighten($brand-warning, 10%);
 }
 
 .s-vis-center-col {
-
   div.one {
     width: 30%;
     display: inline-block;
     vertical-align: top;
-
   }
   div.two {
     width: 50%;
@@ -332,8 +315,8 @@ $group-circle-active : lighten($brand-warning, 10%);
 
 .node-path {
   cursor: pointer;
-  fill-opacity: .8;
-  transition : all, .3s, linear;
+  fill-opacity: 0.8;
+  transition: opacity 0.6s ease, transform 0.6s ease;
 }
 .node-path:hover {
   fill-opacity: 1;
@@ -341,7 +324,7 @@ $group-circle-active : lighten($brand-warning, 10%);
 .selected-node {
   stroke-width: 2.5px;
   stroke: $gray-dark;
-  fill-opacity: .6;
+  fill-opacity: 0.6;
 }
 
 .node-label {
@@ -361,20 +344,20 @@ $group-circle-active : lighten($brand-warning, 10%);
 
 .link {
   stroke: $gray-dark;
-  stroke-opacity: .4;
+  stroke-opacity: 0.4;
   fill: none;
   cursor: pointer;
-  transition: all, .3s, linear;
+  transition: opacity 0.6s ease, transform 0.6s ease;
 }
 
 .author .link:hover {
-    stroke: darken($brand-warning, 10%);
-    stroke-width: 6px;
-  }
+  stroke: darken($brand-warning, 10%);
+  stroke-width: 6px;
+}
 
 .paper {
   .link:hover {
-    stroke-opacity: .9;
+    stroke-opacity: 0.9;
   }
 
   .link-container {
@@ -383,7 +366,7 @@ $group-circle-active : lighten($brand-warning, 10%);
 }
 
 .link-background {
-  fill: hsla(0, 0%, 100%, .8);
+  fill: hsla(0, 0%, 100%, 0.8);
 }
 
 .author {
@@ -401,20 +384,22 @@ $group-circle-active : lighten($brand-warning, 10%);
   fill: darken($brand-warning, 15%);
 }
 
-.s-network-filter-container, .s-network-metadata form {
+.s-network-filter-container,
+.s-network-metadata form {
   @extend .clearfix;
-  display : none;
+  display: none;
 }
 
 //only show on search results page
-.s-results-page-layout .s-network-filter-container , .s-results-page-layout .s-network-metadata form {
-  display : block;
+.s-results-page-layout .s-network-filter-container,
+.s-results-page-layout .s-network-metadata form {
+  display: block;
 }
 
 .s-connector-node {
-    text-anchor: middle;
-    font-size: 25px;
-    cursor: move;
+  text-anchor: middle;
+  font-size: 25px;
+  cursor: move;
 }
 
 .vis-close {
@@ -432,13 +417,13 @@ $group-circle-active : lighten($brand-warning, 10%);
   padding-left: 2%;
   margin-bottom: 11px;
   height: 15px;
-  input[type=checkbox]{
+  input[type='checkbox'] {
     margin: 25px 0;
   }
 }
 
 .s-network-container {
-  .axis  {
+  .axis {
     stroke-width: 2px;
   }
 }
@@ -480,55 +465,53 @@ $group-circle-active : lighten($brand-warning, 10%);
     h5 {
       padding-bottom: 5px;
     }
- }
-
-
-.paper {
-  //this is a messy way to override :(
-  .node-path {
-    fill-opacity:1;
   }
 
-  .s-network-detail-container {
-    border-left: 1px solid $gray-lighter;
-    min-height: 600px;
-    border-radius: none;
-    .instructions {
-      font-size: 24px;
-      margin-top: 150px;
-      text-align: center;
+  .paper {
+    //this is a messy way to override :(
+    .node-path {
+      fill-opacity: 1;
     }
-  }
 
-  .s-network-detail-container {
-    display:inline-block;
-    width: 44% !important;
-    vertical-align: top;
-    button {
-      margin-bottom: 10px;
+    .s-network-detail-container {
+      border-left: 1px solid $gray-lighter;
+      min-height: 600px;
+      border-radius: none;
+      .instructions {
+        font-size: 24px;
+        margin-top: 150px;
+        text-align: center;
+      }
     }
-  }
 
-  .s-network-graph-div {
-    margin-left: 0;
-  }
+    .s-network-detail-container {
+      display: inline-block;
+      width: 44% !important;
+      vertical-align: top;
+      button {
+        margin-bottom: 10px;
+      }
+    }
 
-  .s-group-content{
-    margin-left: 2%;
-    max-height: 700px;
-    overflow: auto;
+    .s-network-graph-div {
+      margin-left: 0;
+    }
 
-    .s-top-papers {
-      max-height: 250px;
+    .s-group-content {
+      margin-left: 2%;
+      max-height: 700px;
       overflow: auto;
+
+      .s-top-papers {
+        max-height: 250px;
+        overflow: auto;
+      }
     }
   }
 }
 
-}
-
-.paper-network-labels{
-  opacity:.8;
+.paper-network-labels {
+  opacity: 0.8;
   cursor: pointer;
 }
 
@@ -538,48 +521,48 @@ $group-circle-active : lighten($brand-warning, 10%);
 }
 
 .s-network-widget .icon-help {
-  font-size : 2em;
+  font-size: 2em;
 }
 
 .s-network-rows {
   width: 67px;
-  display:inline;
+  display: inline;
 }
 
-.s-network-metadata, .s-network-filter-container {
+.s-network-metadata,
+.s-network-filter-container {
   padding: 1%;
   height: 100px;
 }
 
-.author-detail-header{
-  padding : 10px 0;
+.author-detail-header {
+  padding: 10px 0;
 
-  .filter-add, .filter-remove {
+  .filter-add,
+  .filter-remove {
     position: absolute;
     top: 10px;
     right: 0px;
   }
 }
 
-
 /* BUBBLE CHART LESS*/
 
 .paper-circle {
-  fill-opacity:.4;
+  fill-opacity: 0.4;
   fill: $gray-dark;
 }
 
-.paper-circle:hover{
-  fill-opacity: .8;
+.paper-circle:hover {
+  fill-opacity: 0.8;
   cursor: pointer;
 }
 
-.paper-circle.selected{
-  fill-opacity: .9;
+.paper-circle.selected {
+  fill-opacity: 0.9;
 }
 
-.paper-circle.tracked{
-
+.paper-circle.tracked {
   stroke-width: 4px;
   stroke: #000;
   stroke-opacity: 1;
@@ -591,24 +574,23 @@ $group-circle-active : lighten($brand-warning, 10%);
   width: 100%;
   padding-bottom: 50%;
   vertical-align: middle;
-  overflow:auto;
+  overflow: auto;
 }
 
 .s-bubble-chart-svg {
-
   display: inline-block;
   position: absolute;
   top: 0;
   left: 0;
-
 }
 
-.x-axis, .y-axis {
+.x-axis,
+.y-axis {
   fill: none;
   stroke: #000;
   shape-rendering: crispEdges;
   text {
-    stroke :none;
+    stroke: none;
     fill: $gray-darker;
   }
 }
@@ -616,15 +598,15 @@ $group-circle-active : lighten($brand-warning, 10%);
 .d3-tooltip {
   display: none;
   background-color: #fff;
-  box-shadow : 2px 2px 3px $gray-dark;
+  box-shadow: 2px 2px 3px $gray-dark;
   border: 2px solid $gray-light;
   color: $gray-dark;
   font-weight: 300;
   width: 240px;
   min-height: 20px;
   font-size: 13px;
-  border-radius : 8px;
-  position:absolute;
+  border-radius: 8px;
+  position: absolute;
   z-index: 2;
   padding: 1%;
   h5 {
@@ -636,16 +618,16 @@ $group-circle-active : lighten($brand-warning, 10%);
 
 .scale-choice {
   fill: #fff;
-  stroke : #000;
+  stroke: #000;
   stroke-width: 1px;
 }
 
 .scale-choice:hover {
-  cursor:pointer;
+  cursor: pointer;
 }
 
 .scale-choice.selected {
-  fill : $gray;
+  fill: $gray;
 }
 
 .axis-title {
@@ -657,7 +639,7 @@ $group-circle-active : lighten($brand-warning, 10%);
   font-weight: 400;
 }
 .journal-name-key rect {
-  opacity: .6;
+  opacity: 0.6;
 }
 
 .journal-name-key text {
@@ -665,15 +647,14 @@ $group-circle-active : lighten($brand-warning, 10%);
 }
 
 rect.selection {
-  stroke : $gray-dark;
+  stroke: $gray-dark;
   stroke-dasharray: 5px;
   stroke-width: 4px;
-  stroke-opacity : 1;
-  fill: hsla(0,0,0, .2);
+  stroke-opacity: 1;
+  fill: hsla(0, 0, 0, 0.2);
 }
 
 .s-bubble-chart {
-
   padding-left: 2%;
 
   .s-controls {
@@ -699,13 +680,12 @@ rect.selection {
       display: inline-block;
       vertical-align: top;
       min-height: 120px;
-      position:relative;
+      position: relative;
     }
   }
 }
 
-.s-bubble-label-container{
-
+.s-bubble-label-container {
   position: relative;
   padding-top: 10px;
   z-index: $z-index-1;
@@ -718,13 +698,13 @@ rect.selection {
     margin: 0 15px;
     border-radius: 6px;
     border: 4px solid $gray-lighter;
-    display:inline-block;
+    display: inline-block;
     vertical-align: top;
     width: 14%;
     cursor: pointer;
   }
 
-  div:hover{
+  div:hover {
     border: 4px solid lighten($brand-warning, 25%);
   }
 
@@ -733,20 +713,21 @@ rect.selection {
   }
 }
 
-.journal-name-key text, .journal-name-key rect {
-  cursor : pointer;
+.journal-name-key text,
+.journal-name-key rect {
+  cursor: pointer;
 }
 
-text.journal-selected{
-  text-decoration : underline;
+text.journal-selected {
+  text-decoration: underline;
   font-weight: bold;
 }
 
 .s-svg-container {
-    display: inline-block;
-    position: relative;
-    width: 100%;
-    padding-bottom: 100%;
-    vertical-align: middle;
-    overflow: hidden;
+  display: inline-block;
+  position: relative;
+  width: 100%;
+  padding-bottom: 100%;
+  vertical-align: middle;
+  overflow: hidden;
 }

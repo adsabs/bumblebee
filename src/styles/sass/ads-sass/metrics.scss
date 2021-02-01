@@ -24,7 +24,7 @@
 
 .s-metrics-table,
 .s-metrics-graph {
-  @media(min-width: $screen-sm-min) {
+  @media (min-width: $screen-sm-min) {
     display: inline-block;
     vertical-align: top;
     padding: 0 0 0 2%;
@@ -43,7 +43,7 @@
   table {
     width: 100%;
   }
-  @media(min-width: $screen-sm-min) {
+  @media (min-width: $screen-sm-min) {
     width: 33%;
   }
   th {
@@ -68,7 +68,7 @@
 .s-metrics-graph {
   //mostly for print considerations
   max-width: 700px;
-  @media(min-width: $screen-sm-min) {
+  @media (min-width: $screen-sm-min) {
     width: 60%;
   }
 }
@@ -89,8 +89,7 @@
   &:hover {
     border-bottom: 3px solid lighten($brand-primary-faded, 30%);
   }
-  transition: all,
-  .5s;
+  transition: opacity 0.6s ease, transform 0.6s ease;
 }
 
 .s-graph-tab.active {
@@ -135,15 +134,15 @@
     display: inline-block;
   }
   rect {
-    opacity: .85;
-    transition: opacity .2s;
+    opacity: 0.85;
+    transition: opacity 0.2s;
     &:hover {
       opacity: 1;
     }
   }
   .line {
-    stroke-opacity: .85;
-    transition: stroke-opacity .2s;
+    stroke-opacity: 0.85;
+    transition: stroke-opacity 0.2s;
     &:hover {
       stroke-opacity: 1;
     }
@@ -178,7 +177,6 @@
   border-radius: 2px;
 }
 
-
 /* Creates a small triangle extender for the tooltip */
 
 .d3-tip:after {
@@ -188,11 +186,10 @@
   width: 100%;
   line-height: 1;
   color: rgba(0, 0, 0, 0.8);
-  content: "\25BC";
+  content: '\25BC';
   position: absolute;
   text-align: center;
 }
-
 
 /* Style northward tooltips differently */
 
