@@ -76,10 +76,10 @@
  * Do that by checking for the presence of the canonical URL ([ui|dev|qa].adsabs.harvard.edu)
  */
 (function checkIfProxied() {
-  const canonicalUrlPattern = /^(ui|qa|dev)\.adsabs\.harvard\.edu$/;
+  const canonicalUrlPattern = /^(ui|qa|dev|devui)\.adsabs\.harvard\.edu$/;
 
   // if test fails, it is proxied url, set a class on body element
-  if (!canonicalUrlPattern.test(location.hostname)) {
+  if (!canonicalUrlPattern.test(window.location.hostname)) {
     const [bodyEl] = document.getElementsByTagName('body');
     bodyEl.classList.add('is-proxied');
   }
