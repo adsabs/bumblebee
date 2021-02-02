@@ -82,7 +82,6 @@
     "grunt-contrib-jshint": "~0.6.0",
     "grunt-contrib-requirejs": "1.0.0",
     "grunt-contrib-uglify-es": "^3.3.0",
-    "grunt-contrib-watch": "~0.5.3",
     "grunt-curl": "~2.2.0",
     "grunt-env": "~0.4.1",
     "grunt-exec": "~0.4.5",
