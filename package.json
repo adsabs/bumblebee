@@ -117,14 +117,6 @@
   "scripts": {
     "test": "grunt test coverage"
   },
-  "husky": {
-    "hooks": {
-      "pre-commit": "lint-staged"
-    }
-  },
-  "lint-staged": {
-    "src/{js,config}/**/*.js": "eslint --fix"
-  },
   "browserslist": [
     "cover 99% in my stats"
   ]
