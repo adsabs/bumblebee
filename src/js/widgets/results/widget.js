@@ -305,7 +305,11 @@ define([
         d.normCiteSort = normCiteSort;
 
         if (normCiteSort) {
-          d.citationCountNorm = d.citation_count_norm.toFixed(2);
+          try {
+            d.citationCountNorm = d.citation_count_norm.toFixed(2);
+          } catch (e) {
+            d.citationCountNorm = 0;
+          }
         }
         // used by link generator mixin
         d.link_server = link_server;
