@@ -1,0 +1,19 @@
+name: Node.js CI
+
+on: [pull_request]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+    - uses: actions/setup-node@v2
+      with:
+        node-version: '11.14.0'
+        architecture: 'x64'
+    - run: npm install -g grunt-cli
+    - run: npm ci
+    - run: grunt setup
+    - run: grunt test:prod
