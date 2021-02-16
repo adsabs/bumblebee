@@ -17,7 +17,7 @@ define([
   'hbs!404',
   'hbs!js/apps/discovery/templates/orcid-modal-template',
   'js/mixins/api_access',
-  'react-redux'
+  'react-redux',
 ], function(
   $,
   Backbone,
@@ -32,7 +32,8 @@ define([
   ErrorTemplate,
   OrcidModalTemplate,
   ApiAccessMixin,
-  ReactRedux) {
+  ReactRedux
+) {
   var NavigatorService = Navigator.extend({
     start: function(app) {
       /**
@@ -1722,11 +1723,10 @@ define([
         ReactRedux.batch(() => {
           widget.dispatch({ type: 'SET_FORM', payload: subview });
           widget.dispatch({ type: 'SET_BIBCODE', payload: bibcode });
-        })
+        });
         const { form } = widget.getState().main;
         publishPageChange(`feedback-${form}`);
         this.title = 'Feedback';
-        this.route = `#feedback/${form}`;
       });
     },
   });
