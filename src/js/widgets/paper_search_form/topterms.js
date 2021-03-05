@@ -1,6 +1,7 @@
 define([], function() {
   // 1000 top terms
   return [
+    { value: 'LRCA', label: 'Living Reviews in Computational Astrophysics (LRCA)' },
     { value: 'PhRvL', label: 'Physical Review Letters (PhRvL)' },
     { value: 'ApJ', label: 'The Astrophysical Journal (ApJ)' },
     { value: 'ApJL', label: 'The Astrophysical Journal Letters (ApJL)' },
