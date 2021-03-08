@@ -280,3 +280,9 @@ input.cmn-toggle-round:checked + label:after {
 .about-page-icon {
   font-size: 22px;
 }
+
+@media screen and (max-width: $screen-sm) {
+  .nav > li.dropdown {
+    display: flex;
+  }
+}
