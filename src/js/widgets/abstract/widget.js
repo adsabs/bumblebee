@@ -17,6 +17,7 @@ define([
   'mathjax',
   'bootstrap',
   'utils',
+  'analytics',
 ], function(
   Marionette,
   ApiRequest,
@@ -32,7 +33,8 @@ define([
   PapersUtils,
   MathJax,
   Bootstrap,
-  utils
+  utils,
+  analytics
 ) {
   const MAX_AUTHORS = 20;
 
@@ -58,6 +60,7 @@ define([
     },
 
     parse: function(doc, maxAuthors = MAX_AUTHORS) {
+      console.log(doc);
       // add doi link
       if (_.isArray(doc.doi) && _.isPlainObject(LinkGeneratorMixin)) {
         doc.doi = {
@@ -174,6 +177,8 @@ define([
       'click a[data-target="more-authors"]': 'toggleMoreAuthors',
       'click a[target="prev"]': 'onClick',
       'click a[target="next"]': 'onClick',
+      'click a[data-target="DOI"]': 'emitAnalytics',
+      'click a[data-target="arXiv"]': 'emitAnalytics',
     },
 
     toggleMoreAuthors: function() {
@@ -212,6 +217,16 @@ define([
     onClick: function(ev) {
       this.trigger($(ev.target).attr('target'));
       return false;
+    },
+
+    emitAnalytics: function(e) {
+      analytics(
+        'send',
+        'event',
+        'interaction',
+        'abs-full-text-link-followed',
+        e.target.dataset.target
+      );
     },
 
     onRender: function() {
