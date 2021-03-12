@@ -60,7 +60,6 @@ define([
     },
 
     parse: function(doc, maxAuthors = MAX_AUTHORS) {
-      console.log(doc);
       // add doi link
       if (_.isArray(doc.doi) && _.isPlainObject(LinkGeneratorMixin)) {
         doc.doi = {
