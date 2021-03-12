@@ -144,6 +144,10 @@ s-search-bar-motion is applied */
 .s-dynamic-page-body {
   background-color: $darker-background;
   min-height: 500px;
+  @media screen and (max-width: $screen-md-max) {
+    padding-left: 0;
+    padding-right: 0;
+  }
 }
 
 .s-abstract-content {
