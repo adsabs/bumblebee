@@ -73,6 +73,9 @@ module.exports = function(grunt) {
       // start a headless browser session
       const browser = await puppeteer.launch(options.launchOptions);
       const page = await browser.newPage();
+
+      // assume EST
+      await page.emulateTimezone('America/New_York');
       await page.goto('http://localhost:8000/test/mocha/tests.html', {
         waitUntil: 'networkidle0',
       });
