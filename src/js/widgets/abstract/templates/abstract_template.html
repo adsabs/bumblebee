@@ -94,7 +94,7 @@ hideCloseButton=true widgetLoadingSize="big"}} {{else if error}}
   <dt>DOI:</dt>
   <dd>
     <span>
-      <a href="{{doi.href}}" target="_blank" rel="noreferrer noopener">{{doi.doi}}</a>
+      <a data-target="DOI" href="{{doi.href}}" target="_blank" rel="noreferrer noopener">{{doi.doi}}</a>
       <i class="fa fa-external-link" aria-hidden="true"></i>
     </span>
   </dd>
@@ -102,7 +102,7 @@ hideCloseButton=true widgetLoadingSize="big"}} {{else if error}}
   <dt>arXiv:</dt>
   <dd>
     <span>
-      <a href="{{arxiv.href}}" target="_blank" rel="noreferrer noopener">{{arxiv.id}}</a>
+      <a data-target="arXiv" href="{{arxiv.href}}" target="_blank" rel="noreferrer noopener">{{arxiv.id}}</a>
       <i class="fa fa-external-link" aria-hidden="true"></i>
     </span>
   </dd>
