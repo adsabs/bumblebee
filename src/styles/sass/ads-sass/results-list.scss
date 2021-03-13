@@ -63,8 +63,14 @@
   @extend .icon-text;
 }
 
-.s-identifier a {
-  color: $text-color;
+.s-identifier {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  padding-left: 0;
+  padding-right: 0;
+  a {
+    color: $text-color;
+  }
 }
 
 .just-authors {
