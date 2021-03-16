@@ -41,7 +41,7 @@ define(['react', 'prop-types'], function(React, PropTypes) {
         >
           {sort.text} <span className="caret" aria-hidden="true" />
         </button>
-        <ul className="dropdown-menu" role="menu">
+        <ul className="dropdown-menu pull-right" role="menu">
           {options.map((o) => (
             <li key={o.id}>
               <a

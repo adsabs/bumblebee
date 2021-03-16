@@ -274,6 +274,11 @@ li.article-author {
   height: 86px;
   padding-top: 37px;
   padding-left: 2em;
+
+  @media screen and (max-width: $screen-sm) {
+    height: auto;
+    padding: 10px 0 10px 10px;
+  }
 }
 
 // get rid of top padding when the search bar is in scroll mode
