@@ -37,7 +37,7 @@ define([
   var btnType = 'btn-primary-faded';
   var dropdownTitle = 'Export';
   var iconClass = 'icon-export';
-  var rightAlign = true;
+  var rightAlign = false;
   var selectedOption = true;
 
   return function() {

@@ -14,43 +14,41 @@
         {{/unless}}
       </div>
 
-      <div class="col-xs-11">
-        <div class="s-show-details-container">
-          {{#unless loading}} {{#if showHighlights}} {{#compare showHighlights
-          "open"}}
-          <button class="btn  btn-primary  btn-sm show-highlights">
-            Hide highlights
-          </button>
-          {{else}}
-          <button class="btn btn-primary btn-sm btn-inverse show-highlights">
-            Show highlights
-          </button>
-          {{/compare}} {{/if}} {{#compare showAbstract "open"}}
-          <button class="btn show-abstract btn-sm btn-primary">
-            Hide abstracts
-          </button>
-          {{else}}
-          <button class="btn show-abstract btn-sm btn-inverse btn-primary">
-            Show abstracts
-          </button>
-          {{/compare}} {{#if showSidebars}}
-          <button
-            class="btn btn-sm btn-inverse btn-primary toggle-sidebars hidden-xs hidden-sm"
-          >
-            Hide Sidebars
-          </button>
-          {{else}}
-          <button
-            class="btn btn-sm btn-primary toggle-sidebars hidden-xs hidden-sm"
-          >
-            Show Sidebars
-          </button>
-          {{/if}}
-          <button class="btn-sm btn-link pull-right" id="go-to-bottom">
-            Go To Bottom
-          </button>
-          {{/unless}}
-        </div>
+      <div class="col-xs-11 s-show-details-container">
+        {{#unless loading}} {{#if showHighlights}} {{#compare showHighlights
+        "open"}}
+        <button class="btn  btn-primary  btn-sm show-highlights">
+          Hide highlights
+        </button>
+        {{else}}
+        <button class="btn btn-primary btn-sm btn-inverse show-highlights">
+          Show highlights
+        </button>
+        {{/compare}} {{/if}} {{#compare showAbstract "open"}}
+        <button class="btn show-abstract btn-sm btn-primary">
+          Hide abstracts
+        </button>
+        {{else}}
+        <button class="btn show-abstract btn-sm btn-inverse btn-primary">
+          Show abstracts
+        </button>
+        {{/compare}} {{#if showSidebars}}
+        <button
+          class="btn btn-sm btn-inverse btn-primary toggle-sidebars hidden-xs hidden-sm"
+        >
+          Hide Sidebars
+        </button>
+        {{else}}
+        <button
+          class="btn btn-sm btn-primary toggle-sidebars hidden-xs hidden-sm"
+        >
+          Show Sidebars
+        </button>
+        {{/if}}
+        <button class="btn-sm btn-link pull-right" id="go-to-bottom">
+          Go To Bottom
+        </button>
+        {{/unless}}
       </div>
     </div>
   </div>

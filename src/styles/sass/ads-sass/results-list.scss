@@ -63,8 +63,14 @@
   @extend .icon-text;
 }
 
-.s-identifier a {
-  color: $text-color;
+.s-identifier {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  padding-left: 0;
+  padding-right: 0;
+  a {
+    color: $text-color;
+  }
 }
 
 .just-authors {
@@ -82,10 +88,16 @@
   .s-citation-link {
     color: $brand-primary;
   }
+
+  @media screen and (max-width: $screen-sm-max) {
+    margin-left: 0;
+    margin-right: 0;
+  }
 }
 
 .s-show-details-container {
   margin-top: 20px;
+  padding-left: 0;
 }
 
 .s-results-title {
@@ -251,12 +263,22 @@ li.article-author {
   border-bottom: $border-light-default;
   @extend .clearfix;
   padding-bottom: 15px;
+
+  @media screen and (max-width: $screen-md-min) {
+    padding-left: 2%;
+    border-left: 5px solid #fff;
+  }
 }
 
 .s-back-button-container {
   height: 86px;
   padding-top: 37px;
   padding-left: 2em;
+
+  @media screen and (max-width: $screen-sm) {
+    height: auto;
+    padding: 10px 0 10px 10px;
+  }
 }
 
 // get rid of top padding when the search bar is in scroll mode
@@ -346,12 +368,32 @@ li.article-author {
 }
 
 .per-page-container {
-  margin: 23px 0 0 6.3%;
+  margin: 23px 0 0 0;
   padding-left: 0px;
+
+  @media screen and (max-width: $screen-xs) {
+    width: 100%;
+    margin: 10px 0 0 0;
+    padding: 0 0 0 0;
+  }
+}
+
+#per-page-select {
+  width: auto;
 }
 
 .per-page--active {
   font-weight: bold;
   background-color: $brand-primary;
   color: white;
+}
+
+.pagination-container {
+  padding-right: 0;
+  padding-left: 0;
+
+  @media screen and (max-width: $screen-xs) {
+    width: 100%;
+    margin: 0 0 0 0;
+  }
 }
