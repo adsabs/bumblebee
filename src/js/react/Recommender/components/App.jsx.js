@@ -37,8 +37,22 @@ define([
     return (
       <div>
         <Nav
+          className="hidden-xs"
           bsStyle="tabs"
           justified
+          activeKey={tab}
+          onSelect={(key) => onSelected(key)}
+        >
+          <NavItem eventKey={1} href="javascript:void(0);">
+            Recommendations
+          </NavItem>
+          <NavItem eventKey={2} href="javascript:void(0);">
+            Search examples
+          </NavItem>
+        </Nav>
+        <Nav
+          className="hidden-sm hidden-md hidden-lg"
+          bsStyle="tabs"
           activeKey={tab}
           onSelect={(key) => onSelected(key)}
         >
