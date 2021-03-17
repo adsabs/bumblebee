@@ -206,7 +206,10 @@ define([
 
     showLinks: function(e) {
       var $c = $(e.currentTarget);
-      if (!$c.find('.active-link').length) {
+      if (
+        !$c.find('.active-link').length ||
+        this.model.get('isMobileOrTablet')
+      ) {
         return;
       }
 

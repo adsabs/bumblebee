@@ -21,6 +21,7 @@ define([
         visible: false,
         actionsVisible: true,
         showCheckbox: true,
+        isMobileOrTablet: false,
       };
     },
     idAttribute: 'resultsIndex',
@@ -139,6 +140,19 @@ define([
       var lastIdx = null;
       var rIdx;
 
+      const devices = [
+        /Android/i,
+        /webOS/i,
+        /iPhone/i,
+        /iPad/i,
+        /iPod/i,
+        /BlackBerry/i,
+        /Windows Phone/i,
+      ];
+      var isMobileOrTablet = devices.some((d) =>
+        window.navigator.userAgent.match(d)
+      );
+
       this.each(function(model) {
         rIdx = model.attributes.resultsIndex;
 
@@ -158,6 +172,8 @@ define([
         } else {
           model.set('visible', false);
         }
+
+        model.set('isMobileOrTablet', isMobileOrTablet);
       });
 
       if (visible !== end - start + 1) {
