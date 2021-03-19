@@ -29,11 +29,11 @@
   </div>
 </div>
 <hr class="hr" />
-<div class="row">
+<div class="row" style="margin-left: 0; margin-right: 0">
   <table class="libraries-list-container table table-hover table-responsive">
     <thead>
       <tr>
-        <th>
+        <th class="hide-xs">
           <!--page num -->
           <span class="sr-only">no data</span>
         </th>
@@ -77,11 +77,11 @@
             {{/compare}}{{/compare}}
           </button>
         </th>
-        <th>
+        <th class="hide-xs">
           Last Modified
           <button
             title="sort by last modified"
-            class="btn btn-xs {{#compare sort 'date_last_modified'}} s-sort-active {{/compare}} btn-default"
+            class="btn btn-xs {{#compare sort 'date_last_modified'}} s-sort-active {{/compare}} btn-default hide-xs"
             data-sort='{"sort":"date_last_modified","type":"date"}'
           >
             <i class="fa fa-lg fa-sort" aria-hidden="true"></i> {{#compare sort

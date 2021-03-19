@@ -19,6 +19,18 @@
   display: none;
 }
 
+@media screen and (max-width: $screen-xs) {
+  .hide-xs {
+    display: none;
+  }
+}
+
+@media screen and (max-width: $screen-sm) {
+  .hide-sm {
+    display: none;
+  }
+}
+
 //for columns
 .no-right-padding {
   padding-right: 0;
