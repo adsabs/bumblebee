@@ -56,7 +56,9 @@ body {
       &-content {
         transition: opacity 0.6s ease, transform 0.6s ease;
         &.full-width {
-          margin-left: -300px;
+          // margin-left: -300px;
+          display: block;
+          margin-left: 0;
         }
       }
     }
