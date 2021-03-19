@@ -4,13 +4,13 @@
     {{/if}}
     {{#if hasRecords}}
       <div class="row">
-        <div class="col-sm-1" style="padding-left: 12.5px">
+        <div class="col-xs-1 col-sm-1" style="padding-left: 12.5px">
         {{#unless public}}
           <label for="select-all-docs" class="sr-only">Select All Docs</label>
           <input type="checkbox" id="select-all-docs" name="select-all-docs" title="select all docs" {{#if allSelected}} checked {{/if}}>
         {{/unless}}
         </div>
-        <div class="col-sm-6">
+        <div class="col-xs-1 col-sm-6">
           <div class="button-toolbar">
             <button class="btn btn-danger btn-sm hidden" id="bulk-delete">Delete Selected</button>
             <button class="btn btn-default btn-sm hidden" id="bulk-limit">
@@ -18,7 +18,7 @@
             </button>
           </div>
         </div>
-        <div class="col-sm-3 col-sm-offset-2">
+        <div class="col-xs-10 col-sm-3 col-sm-offset-2">
           <div id="sort-container"></div>
         </div>
       </div>
