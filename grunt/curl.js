@@ -73,4 +73,8 @@ module.exports = {
       'https://raw.githubusercontent.com/thostetler/array-flat-polyfill/master/index.js',
     dest: 'src/libs/polyfills/array-flat-polyfill.js',
   },
+  sinon: {
+    src: 'https://cdnjs.cloudflare.com/ajax/libs/sinon.js/1.9.0/sinon.min.js',
+    dest: 'src/libs/sinon/index.js',
+  },
 };
