@@ -198,7 +198,7 @@ input.cmn-toggle-round:checked + label:after {
   li > a {
     padding: 15px 15px 11px 15px;
     border-radius: 0;
-    font-size: 18px;
+    font-size: small;
     background-color: lighten($navbar-inverse-bg, 5%);
     border-bottom: 4px solid lighten($navbar-inverse-bg, 5%);
     color: lighten($navbar-inverse-color, 2%);
@@ -284,5 +284,11 @@ input.cmn-toggle-round:checked + label:after {
 @media screen and (max-width: $screen-sm) {
   .nav > li.dropdown {
     display: flex;
+  }
+}
+
+@media screen and (min-width: $screen-sm-min) {
+  .s-user-pill-nav li > a {
+    font-size: 18px;
   }
 }
