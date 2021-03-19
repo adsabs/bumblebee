@@ -104,6 +104,13 @@ test:debug:
   - puppet:debug
   - clean:temp
 
+generate-manual-testrunner:
+  - clean:temp
+  - babel:temp
+  - string-replace:temp
+  - generate-testrunner
+  - server
+
 # Release
 release:
   description: Build the assets and prepare for a release

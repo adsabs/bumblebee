@@ -43,3 +43,5 @@ grunt/requirejs.js
 !.nvmrc
 !.prettierrc
 !.gitmodules
+
+test/test_manual.html

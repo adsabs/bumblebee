@@ -301,7 +301,7 @@ require.config({
     utils: 'js/utils',
     mocha: 'libs/mocha/mocha',
     chai: 'bower_components/chai/chai',
-    sinon: 'https://cdnjs.cloudflare.com/ajax/libs/sinon.js/1.9.0/sinon.min',
+    sinon: 'libs/sinon/index',
     suit: 'shared/dist/index.umd.development',
     yup: 'libs/yup/index',
     'react-hook-form': [

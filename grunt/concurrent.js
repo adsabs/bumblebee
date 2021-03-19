@@ -21,6 +21,7 @@ module.exports = {
     'curl:deep-object-diff',
     'curl:xstate-react',
     'curl:array-flat-polyfill',
+    'curl:sinon',
   ],
   hash_require: ['hash_require:js', 'hash_require:css'],
 };
