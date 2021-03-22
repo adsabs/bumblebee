@@ -133,7 +133,7 @@
 .library-detail-view,
 .library-widget .main {
   margin: 15px auto;
-  padding: 20px 3.7%;
+  padding: 20px 10px;
   max-width: 1000px;
 
   @extend .s-ads-card;
@@ -170,7 +170,6 @@
 
 .library-list-container {
   position: relative;
-  left: -5.7%;
   margin-top: 12px;
   padding-left: 0;
   list-style: none;
