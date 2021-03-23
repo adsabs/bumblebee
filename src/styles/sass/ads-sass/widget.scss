@@ -70,7 +70,7 @@ $base-loading-text-size: 1em;
     color: #909090;
   }
 }
-div[data-widget="ShowPaperExport"] .close-circle {
+div[data-widget='ShowPaperExport'] .close-circle {
   display: none;
 }
 
@@ -88,7 +88,6 @@ div[data-widget="ShowPaperExport"] .close-circle {
 .custom-format-buttons {
   padding-top: 26px;
 }
-
 
 // Resources Widget
 .resources__container {
@@ -128,6 +127,10 @@ div[data-widget="ShowPaperExport"] .close-circle {
 
   & .resources__content__links {
     font-size: 1em;
+
+    @media screen and (max-width: $screen-xs-max) {
+      font-size: x-large;
+    }
   }
 
   & .resources__content__link:hover {
@@ -142,6 +145,9 @@ div[data-widget="ShowPaperExport"] .close-circle {
 
   & .resources__content__link {
     position: relative;
+    @media screen and (max-width: $screen-xs-max) {
+      margin: 10px;
+    }
   }
 
   & .resources__content__link.unlock::after {

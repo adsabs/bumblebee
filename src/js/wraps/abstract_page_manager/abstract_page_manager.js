@@ -27,6 +27,57 @@ define([
     initialize: function() {
       PageManagerController.prototype.initialize.apply(this, arguments);
       this.abstractTimer = new utils.TimingEvent('abstract-loaded', 'workflow');
+
+      // observe scrolling and apply sticky menu
+      this.observer = new IntersectionObserver(
+        () => {
+          this.adjustStickyElements();
+        },
+        { threshold: 0 }
+      );
+      this.observing = false;
+
+      // observe resizing and apply sticky menu
+      _.bindAll(this, 'adjustStickyElements');
+      $(window).on('resize', _.throttle(this.adjustStickyElements, 200));
+    },
+
+    // Make menu bar and menus sticky
+    adjustStickyElements: function() {
+      // if single column and nav buttons container reached top of viewport, float nav button container and menu
+      if (
+        window.matchMedia('(max-width: 788px)').matches &&
+        $('.s-search-bar-widget').get(0) &&
+        $('.s-search-bar-widget')
+          .get(0)
+          .getBoundingClientRect().bottom <= 0
+      ) {
+        var height = $('#nav-button-container').outerHeight(true);
+        this.stickElements(height);
+        // without this abstract content will disappear with above elements fixed
+        $('.s-abstract-content').attr('style', 'overflow: unset');
+      } else {
+        this.unStickElements();
+        $('.s-abstract-content').attr('style', 'overflow: hidden');
+      }
+    },
+
+    stickElements: function(top) {
+      // button container
+      $('#nav-button-container').addClass('sticky');
+      // menu
+      $('.s-nav-container').attr('style', `position:fixed;top:${top}px;left:0`);
+      // full text sources widget
+      $('#resources-container').attr(
+        'style',
+        `position:fixed;top:${top}px;left:100%`
+      );
+    },
+
+    unStickElements: function() {
+      $('#nav-button-container').removeClass('sticky');
+      $('.s-nav-container').attr('style', '');
+      $('#resources-container').attr('style', '');
     },
 
     createView: function(options) {
@@ -87,6 +138,20 @@ define([
     },
 
     show: function(pageName) {
+      // hide drawers
+      $('#abs-full-txt-toggle').text('Full Text Sources');
+      $('#abs-nav-menu-toggle').html(
+        '<i class="fa fa-bars" aria-hidden="true"></i> Show Menu'
+      );
+      $('.s-nav-container').removeClass('show');
+      $('#resources-container').removeClass('show');
+
+      // Observe search bar
+      if (!this.observing && document.querySelector('.s-search-bar-widget')) {
+        this.observer.observe(document.querySelector('.s-search-bar-widget'));
+        this.observing = true;
+      }
+
       var ret = PageManagerController.prototype.show.apply(this, arguments);
       var href = this.getCurrentQuery().url();
 

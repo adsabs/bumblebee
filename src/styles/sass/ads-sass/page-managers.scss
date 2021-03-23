@@ -237,6 +237,10 @@ Styles for Abstract Page
     margin: 0px 20px 0px 20px;
   }
 
+  @media only screen and (max-width: $screen-xs-max) {
+    font-size: large;
+  }
+
   li {
     margin: 0 0 1% 6%;
   }

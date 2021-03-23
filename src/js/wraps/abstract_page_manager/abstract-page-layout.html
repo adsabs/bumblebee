@@ -6,9 +6,10 @@
             <div class="col-xs-12 col-sm-9 col-md-7 s-search-bar-row" id="search-bar-row" data-widget="SearchWidget"></div>
         </div>
     </div>
-    <div class="nav-button-container s-nav-button-container">
-       <button class="btn btn-primary-faded toggle-menu s-toggle-menu "> <i class="fa fa-bars" aria-hidden="true"></i> Show Menu </button>
-     </div>
+    <div class="nav-button-container s-nav-button-container" id="nav-button-container">
+      <button id="abs-nav-menu-toggle" class="btn btn-primary-faded toggle-menu s-toggle-menu "> <i class="fa fa-bars" aria-hidden="true"></i> Show Menu </button>
+      <button id="abs-full-txt-toggle" class="s-abs-full-txt-toggle-btn btn btn-primary-faded ">Full Text Sources</button>
+    </div>
     <div class="s-dynamic-page-body" id="dynamic-page-body">
         <div class="s-abstract-content">
 
@@ -34,9 +35,8 @@
                     </div>
                 </div>
             </div>
-
+            <div data-widget="ShowResources" class="col-sm-3" id="resources-container"/>
             <div class="s-right-col-container col-sm-3 col-lg-2 s-right-column" id="right-col-container">
-                <div data-widget="ShowResources"/>
                 <div data-widget="ShowLibraryAdd"/>
                 <div data-widget="ShowGraphicsSidebar"/>
                 <div data-widget="ShowAssociated"/>

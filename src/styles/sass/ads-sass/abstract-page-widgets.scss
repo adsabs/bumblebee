@@ -3,6 +3,14 @@ $twitter-color: rgb(64, 153, 255);
 $mendeley-color: rgb(60, 30, 33);
 $sciencewise-color: rgb(179, 27, 27);
 
+.s-abs-full-txt-toggle-btn {
+  display: none;
+  margin: 10px 10px;
+  @media screen and (max-width: $screen-xs-max) {
+    display: unset;
+  }
+}
+
 .facebook-icon {
   @extend .fa;
   @extend .fa-2x;
@@ -114,6 +122,7 @@ $sciencewise-color: rgb(179, 27, 27);
 
 .s-abstract-content {
   overflow: hidden;
+  position: relative;
 }
 
 .s-abstract-content {
@@ -284,4 +293,24 @@ $sciencewise-color: rgb(179, 27, 27);
   .s-right-column {
     flex: 0;
   }
+}
+
+#resources-container {
+  transition: transform 0.5s ease-in-out;
+  padding-left: 0;
+  padding-right: 0;
+
+  @media (max-width: $screen-xs-max) {
+    position: absolute;
+    width: 100%;
+    left: 100%;
+    top: 0;
+    z-index: $z-index-4;
+    border-right: 1px solid $gray-lighter;
+
+    &.show {
+      transform: translate(-100%);
+    }
+  }
+  
 }
