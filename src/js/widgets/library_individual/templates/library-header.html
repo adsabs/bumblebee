@@ -265,6 +265,9 @@
     {{owner}}
   </div>
   <br />
+{{#compare permission "none"}}
+<br/>
+{{else}}
   {{#compare permission "read"}}
   <br />
   <p>
@@ -320,6 +323,7 @@
   </div>
 
   {{/compare}}
+{{/compare}}
 </div>
 
 <!-- tabs -->
