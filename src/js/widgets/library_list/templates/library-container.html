@@ -12,7 +12,9 @@
         </div>
         <div class="col-sm-6">
           <div class="button-toolbar">
+            {{#if editRecords}}
             <button class="btn btn-danger btn-sm hidden" id="bulk-delete">Delete Selected</button>
+            {{/if}}
             <button class="btn btn-default btn-sm hidden" id="bulk-limit">
               <i class="fa fa-archive" aria-hidden="true"></i> Show Selection in Results Page
             </button>
