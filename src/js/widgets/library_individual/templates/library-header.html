@@ -1,7 +1,7 @@
 <!--duplicating some stuff here in the interests of simplicity, maybe that's not ideal?-->
 
 {{#if publicView}} {{#if loggedIn}}
-<div class="pull-right" style="position:relative;z-index:1">
+<div class="pull-right-md" style="position:relative;z-index:1">
   {{#if largeLibrary}}
   <button
     class="btn btn-default bigquery-export"
@@ -156,7 +156,7 @@
 <!-- not public -->
 
 {{#if edit}}
-<div class="pull-right" style="position:relative;z-index:1">
+<div class="pull-right-md" style="position:relative;z-index:1">
   {{#if largeLibrary}}
   <button
     class="btn btn-default bigquery-export"
@@ -281,8 +281,8 @@
     data-target="#library-actions"
     aria-expanded="false"
   >
-    <i class="fa fa-cog" aria-hidden="true"></i> View editing options (You have
-    <b>{{permission}}</b> privileges)
+    <i class="fa fa-cog" aria-hidden="true"></i> View editing options<span class="hide-xs"> (You have
+    <b>{{permission}}</b> privileges)</span>
   </button>
   <div
     class="collapse"

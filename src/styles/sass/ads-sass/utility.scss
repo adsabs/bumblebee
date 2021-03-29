@@ -19,6 +19,18 @@
   display: none;
 }
 
+@media screen and (max-width: $screen-xs) {
+  .hide-xs {
+    display: none;
+  }
+}
+
+@media screen and (max-width: $screen-sm) {
+  .hide-sm {
+    display: none;
+  }
+}
+
 //for columns
 .no-right-padding {
   padding-right: 0;
@@ -205,6 +217,12 @@
 
 .pull-right-sm {
   @media (min-width: $screen-sm-min) {
+    float: right !important;
+  }
+}
+
+.pull-right-md {
+  @media (min-width: $screen-sm-max) {
     float: right !important;
   }
 }
