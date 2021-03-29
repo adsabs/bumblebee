@@ -1,8 +1,9 @@
 define([
   'backbone',
   'underscore',
+  'bowser',
   'js/mixins/add_stable_index_to_collection',
-], function(Backbone, _, WidgetPaginationMixin) {
+], function(Backbone, _, bowser, WidgetPaginationMixin) {
   var ItemModel = Backbone.Model.extend({
     defaults: function() {
       return {
@@ -140,18 +141,8 @@ define([
       var lastIdx = null;
       var rIdx;
 
-      const devices = [
-        /Android/i,
-        /webOS/i,
-        /iPhone/i,
-        /iPad/i,
-        /iPod/i,
-        /BlackBerry/i,
-        /Windows Phone/i,
-      ];
-      var isMobileOrTablet = devices.some((d) =>
-        window.navigator.userAgent.match(d)
-      );
+      var platform = bowser.parse(window.navigator.userAgent).platform.type;
+      var isMobileOrTablet = platform === 'mobile' || platform === 'tablet';
 
       this.each(function(model) {
         rIdx = model.attributes.resultsIndex;
