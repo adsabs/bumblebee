@@ -48,7 +48,7 @@ define([
     template: LibraryHeaderTemplate,
 
     events: {
-      'click .editable-item .toggle-form': 'showForm',
+      'click .editable-item .toggle-form': 'toggleShowForm',
       'click .editable-item .btn-success': 'submitEdit',
       'click .editable-item .btn-default': 'cancelEdit',
       'click li[data-tab]:not(.active)': 'triggerSubviewNavigate',
@@ -94,10 +94,14 @@ define([
       this.$('.bigquery-export .icon-loading').css('display', 'none');
     },
 
-    showForm: function(e) {
+    toggleShowForm: function(e) {
       this.currentEditField = $(e.target).data('field');
       var formSelector = 'form[data-field="' + this.currentEditField + '"]';
-      $(formSelector).removeClass('hidden');
+      if ($(formSelector).hasClass('hidden')) {
+        $(formSelector).removeClass('hidden');
+      } else {
+        $(formSelector).addClass('hidden');
+      }
     },
 
     submitEdit: function(e) {

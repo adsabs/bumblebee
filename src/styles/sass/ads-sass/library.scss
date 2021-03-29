@@ -1,6 +1,6 @@
 .s-sort-active {
   background-color: $brand-primary-faded;
-  box-shadow : 0px 0px 0px #fff;
+  box-shadow: 0px 0px 0px #fff;
   color: #fff;
 
   &:hover {
@@ -11,7 +11,7 @@
 
   &:focus {
     background-color: darken($brand-primary-faded, 5%);
-    box-shadow : 0px 0px 0px #fff;
+    box-shadow: 0px 0px 0px #fff;
     color: #fff;
   }
 }
@@ -25,10 +25,10 @@
 }
 
 .ch-alert {
-  position:absolute;
+  position: absolute;
   margin-left: 300px;
   margin-top: 50px;
-  width:50%;
+  width: 50%;
   text-align: center;
   vertical-align: middle;
 }
@@ -42,12 +42,12 @@
 }
 
 .s-citation-helper-metadata:empty {
-  padding:0;
+  padding: 0;
 }
 
 .citation-helper-item {
   list-style: none;
-  >div{
+  > div {
     margin-bottom: 20px;
     border-bottom: 1px;
   }
@@ -72,7 +72,7 @@
 .s-selectbox-col {
   text-align: right;
   padding-left: 0;
-  }
+}
 //styles specific to metadata/all libraries widget
 .s-all-libraries-widget {
   margin-top: 30px;
@@ -81,7 +81,7 @@
   @extend .s-ads-card;
 
   .s-library-title {
-    position:relative;
+    position: relative;
     top: -3px;
     margin: 0 0 5px 0;
     font-weight: 500;
@@ -96,22 +96,25 @@
   }
 
   tbody tr {
-    cursor:pointer
+    cursor: pointer;
   }
 
   //bootstrap override
-  .table > thead > tr > th, .table > thead > tr > td, .table > tbody > tr > th,
-  .table > tbody > tr > td, .table > tfoot > tr > th, .table > tfoot > tr > td {
+  .table > thead > tr > th,
+  .table > thead > tr > td,
+  .table > tbody > tr > th,
+  .table > tbody > tr > td,
+  .table > tfoot > tr > th,
+  .table > tfoot > tr > td {
     padding: 10px 8px;
     border-top: 1px solid #ddd;
     vertical-align: top;
     line-height: 1.428571429;
-}
+  }
 
-a:hover {
-  text-decoration: none;
-}
-
+  a:hover {
+    text-decoration: none;
+  }
 }
 
 .all-libraries-widget .library-description {
@@ -127,25 +130,26 @@ a:hover {
   border-bottom: 1px solid lighten(#e8e8e8, 3%);
 }
 
-.library-detail-view, .library-widget .main {
+.library-detail-view,
+.library-widget .main {
   margin: 15px auto;
-  padding: 20px 3.7%;
+  padding: 20px 10px;
   max-width: 1000px;
 
   @extend .s-ads-card;
 }
 
 .library-widget .main:empty {
- display: none;
+  display: none;
 }
 
 .library-widget .header {
-  margin: -10px -15px 0 -15px;
+  margin: -10px -15px 0 0;
   padding: 20px 50px 0 5.2%;
   min-height: 300px;
   border-bottom: $border-light-default;
   background-color: $body-bg;
-  box-shadow: 2px 2px 5px #E6E6E6;
+  box-shadow: 2px 2px 5px #e6e6e6;
   font-weight: 300;
   font-size: 16px;
 
@@ -166,7 +170,6 @@ a:hover {
 
 .library-list-container {
   position: relative;
-  left: -5.7%;
   margin-top: 12px;
   padding-left: 0;
   list-style: none;
@@ -176,7 +179,7 @@ a:hover {
 
 .library-item {
   list-style: none;
-  >div{
+  > div {
     margin-bottom: 20px;
   }
   .s-top-row {
@@ -186,20 +189,20 @@ a:hover {
 }
 
 .s-checkbox-col input {
-  display : inline-block !important;
+  display: inline-block !important;
 }
 
 //styles specific to individual library widget
 //consfusing nesting
 .s-library-widget {
-
   .s-library-actions {
     padding: 10px 0%;
   }
 
-  .s-permissions-list-container, .s-public-container {
+  .s-permissions-list-container,
+  .s-public-container {
     padding: 1%;
-    border:  $border-light-default;
+    border: $border-light-default;
   }
 
   .s-editable-buttons {
@@ -208,19 +211,17 @@ a:hover {
     margin-left: 40px;
   }
 
-  button[data-target="#library-actions"] {
+  button[data-target='#library-actions'] {
     margin-top: 20px;
-}
+  }
 
   div#library-actions {
     font-size: $font-size-base;
   }
 
-
- .s-library-nav-tabs {
-  margin: 0;
-  padding-left: 0;
-
+  .s-library-nav-tabs {
+    margin: 0;
+    padding-left: 0;
   }
 
   .s-library-description p {
@@ -228,9 +229,9 @@ a:hover {
     font-size: 18px;
   }
 
-  .s-library-title, .s-library-description {
+  .s-library-title,
+  .s-library-description {
     margin: 10px 0;
-
   }
 
   .s-library-info {
@@ -248,30 +249,25 @@ a:hover {
     }
 
     div.col-sm-3 {
-      padding-left:0;
+      padding-left: 0;
     }
 
     h5 {
       font-weight: 500;
     }
-
   }
 
-
-  .s-details-container{
+  .s-details-container {
     text-align: left;
 
     @extend .clearfix;
-    div:first-of-type{
+    div:first-of-type {
       padding-left: 0;
     }
-
   }
-
 }
 
 .s-libraries-layout {
-
   .s-export {
     padding: 2% !important;
   }
@@ -279,41 +275,38 @@ a:hover {
   .close-widget {
     display: none;
   }
-
 }
 
 .s-public-libraries-layout {
-
   .s-public-lib-descriptor {
     margin-right: -15px;
     margin-left: -15px;
     padding: 1px;
     border-bottom: 2px solid $gray-light;
-    background: #F5F5F5;
+    background: #f5f5f5;
     text-align: center;
 
     h3 {
       font-weight: 300;
-      font-size:28px;
+      font-size: 28px;
     }
   }
 
   .s-library-title h2 {
     font-size: 40px;
   }
-
 }
 
 .editable-item {
   position: relative;
 
   form {
-    position: absolute;
     top: 0;
     display: inline-block;
     background-color: $body-bg;
 
-    input, textarea {
+    input,
+    textarea {
       display: inline;
       width: 280px;
     }
@@ -321,33 +314,36 @@ a:hover {
     button {
       vertical-align: top;
     }
-
   }
 
+  @media screen and (min-width: $screen-sm-min) {
+    form {
+      position: absolute;
+    }
+  }
 }
 
-
-.library-nav  {
+.library-nav {
   margin-top: 80px !important;
 }
-
 
 .library-nav > div:hover {
   background-color: $gray-lightest;
   color: $brand-primary-faded;
 }
-.library-nav button, .library-nav a {
+.library-nav button,
+.library-nav a {
   display: inline-block;
   padding: 10px 0 10px 15px;
   width: 100%;
   height: 100%;
-  color: lighten($text-color, 10%)!important;
+  color: lighten($text-color, 10%) !important;
   text-transform: lowercase;
   font-weight: 500;
   font-variant: small-caps;
   font-size: 18px;
   @media (min-width: $screen-lg-min) {
-  font-size: 20px;
+    font-size: 20px;
   }
 
   i.fa {
@@ -360,7 +356,6 @@ a:hover {
   &:hover {
     text-decoration: none !important;
   }
-
 }
 
 .library-nav button {
