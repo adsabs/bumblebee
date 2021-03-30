@@ -55,12 +55,12 @@ define(['../shared/helpers', './actions'], function(
         });
       }
 
-      if (action.type === apiSuccess(GET_RECOMMENDATIONS)) {
+      if (action.type === apiSuccess(GET_RECOMMENDATIONS) || action.type === apiFailure(GET_RECOMMENDATIONS)) {
         dispatch(setQuery(action.result.query));
         dispatch(
           getDocs({
             fl: 'bibcode,title,author,[fields author=3],author_count',
-            q: action.result.query,
+            q: 'docs(bc9e964255e4f96f1d7d8063850fa873)'
           })
         );
       }
