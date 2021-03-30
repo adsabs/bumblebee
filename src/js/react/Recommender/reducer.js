@@ -57,7 +57,7 @@ define(['redux', './actions'], function(
     return state;
   };
 
-  const tabState = 2;
+  const tabState = 1;
   const tab = (state = tabState, action) => {
     if (action.type === SET_TAB && action.payload) {
       return action.payload;
