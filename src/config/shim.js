@@ -76,7 +76,7 @@
  * Do that by checking for the presence of the canonical URL ([ui|dev|qa].adsabs.harvard.edu)
  */
 (function checkIfProxied() {
-  const canonicalUrlPattern = /^(ui|qa|dev|devui)\.adsabs\.harvard\.edu$/;
+  const canonicalUrlPattern = /^(ui|qa|dev|devui|demo)\.adsabs\.harvard\.edu$/;
 
   // if test fails, it is proxied url, set a class on body element
   if (!canonicalUrlPattern.test(window.location.hostname)) {
@@ -90,7 +90,7 @@
  * changes, and return the correct canonical URL.
  */
 window.getCanonicalUrl = () => {
-  const canonicalUrlPattern = /^https:\/\/(ui|qa|dev|devui)\.adsabs\.harvard\.edu$/;
+  const canonicalUrlPattern = /^https:\/\/(ui|qa|dev|devui|demo)\.adsabs\.harvard\.edu$/;
 
   // URLs that could be rewritten by the proxy server
   const couldChangeUrls = [
@@ -98,6 +98,7 @@ window.getCanonicalUrl = () => {
     { env: 'qa', url: 'https://qa.adsabs.harvard.edu' },
     { env: 'dev', url: 'https://dev.adsabs.harvard.edu' },
     { env: 'devui', url: 'https://devui.adsabs.harvard.edu' },
+    { env: 'demo', url: 'https://demo.adsabs.harvard.edu' },
   ];
 
   const [changedUrl] = couldChangeUrls.filter(
