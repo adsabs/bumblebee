@@ -133,11 +133,11 @@ define([
 
       if (entry.match('7:57pm')) {
         expect(entry).to.eql(
-          '1 Aliens Among Us Are you one of them? 300 owner Jun 11 2015, 7:57pm'
+          '1 Aliens Among Us Aliens Among Us Are you one of them? 300 Me owner Jun 11 2015, 7:57pm'
         );
       } else {
         expect(entry).to.eql(
-          '1 Aliens Among Us Are you one of them? 300 owner Jun 11 2015, 3:57pm'
+          '1 Aliens Among Us Aliens Among Us Are you one of them? 300 Me owner Jun 11 2015, 3:57pm'
         );
       }
     });
