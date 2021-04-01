@@ -60,7 +60,7 @@ define(['../shared/helpers', './actions'], function(
         dispatch(
           getDocs({
             fl: 'bibcode,title,author,[fields author=3],author_count',
-            q: 'bibcode:("2020arXiv200314345G") or  bibcode:("2012arXiv1204.0492A") or  bibcode:("2020arXiv200313696L") or  bibcode:("2012arXiv1203.6708M") or  bibcode:("2020arXiv200313722P") or  bibcode:("2013arXiv1303.7476R") or  bibcode:("2017arXiv170302528A") or  bibcode:("2010arXiv1004.4206G") or  bibcode:("2020arXiv200313879L") or  bibcode:("2019arXiv190312643M")'
+            q: 'bibcode:("2020arXiv200314345G") or  bibcode:("2012arXiv1204.0492A") or  bibcode:("2020arXiv200313696L") or  bibcode:("2012arXiv1203.6708M") or  bibcode:("2020arXiv200313722P") or  bibcode:("2013arXiv1303.7476R") or  bibcode:("2021arXiv210317057S") or  bibcode:("2010arXiv1004.4206G") or  bibcode:("2020arXiv200313879L") or  bibcode:("2021arXiv210316575S")'
           })
         );
       }
