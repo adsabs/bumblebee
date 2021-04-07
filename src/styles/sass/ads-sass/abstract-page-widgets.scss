@@ -134,11 +134,13 @@ $sciencewise-color: rgb(179, 27, 27);
   }
 }
 
-// .s-abstract-page-layout {
-//   .s-middle-column {
-//     padding-bottom: 10%;
-//   }
-// }
+.s-abstract-page-layout {
+  .s-middle-column {
+    @media screen and (max-width: $screen-xs-max) {
+      padding: 0;
+    }
+  }
+}
 
 .s-abstract-metadata {
   dt {
