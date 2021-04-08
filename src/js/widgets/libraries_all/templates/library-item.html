@@ -1,7 +1,7 @@
 <td class="hide-xs">
   {{libNum}}
 </td>
-<td>
+<td class="hide-xs">
   {{#if public}}
   <i
     class="fa fa-lg fa-unlock"
@@ -17,8 +17,47 @@
   {{/if}}
 </td>
 
+<td class="hide-xs">
+  {{#compare permission 'owner'}} 
+    {{#compare num_users 1 operator=">"}} 
+      <i class="fa fa-users" aria-hidden="true" title="This library has collaborators"></i>
+    {{else}}
+      <i class="fa fa-user" aria-hidden="true" title="This library has no collaborators"></i>
+    {{/compare}}
+  {{else}}
+    <i class="fa fa-users" aria-hidden="true" title="This library has collaborators"></i>
+  {{/compare}}
+</td>
+
 <td>
-  <a href="#user/libraries/{{id}}"><h3 class="s-library-title">{{name}}</h3></a>
+  <div class="hide-xs">
+    <span class="s-library-title">{{name}}</span>
+  </div>
+  <div class="hide-all-but-xs">
+    <span class="s-library-title">{{name}}</span><br/>
+    {{#if public}}
+      <i
+        class="fa fa-lg fa-unlock"
+        aria-hidden="true"
+        title="this library is public"
+      ></i>
+      {{else}}
+      <i
+        class="fa fa-lg fa-lock text-light"
+        aria-hidden="true"
+        title="this library is private"
+      ></i>
+    {{/if}} 
+    {{#compare permission 'owner'}} 
+      {{#compare num_users 1 operator=">"}} 
+        <i class="fa fa-users" aria-hidden="true" title="This library has collaborators"></i>
+      {{else}}
+        <i class="fa fa-user" aria-hidden="true" title="This library has no collaborators"></i>
+      {{/compare}} 
+    {{else}}
+      <i class="fa fa-users" aria-hidden="true" title="This library has collaborators"></i>
+    {{/compare}}
+  </div>
   {{#if description}}
   <p class="library-description">{{description}}</p>
   {{/if}}
@@ -26,6 +65,8 @@
 
 <td>{{num_documents}}</td>
 
+<td>{{#compare permission 'owner'}}Me{{else}}{{owner}}{{/compare}}</td>
+
 <td>{{permission}}</td>
 
-<td class="hide-xs">{{date_last_modified}}</td>
+<td class="hide-xxs">{{date_last_modified}}</td>

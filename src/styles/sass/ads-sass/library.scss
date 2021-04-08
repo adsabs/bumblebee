@@ -86,6 +86,12 @@
     margin: 0 0 5px 0;
     font-weight: 500;
     font-size: 18px;
+    word-wrap: break-word;
+
+    @media screen and (max-width: $screen-sm) {
+      font-size: 1em;
+      max-width: 70px;
+    }
   }
 
   .libraries-list-container th {
@@ -93,6 +99,10 @@
     font-variant: small-caps;
     text-transform: lowercase;
     font-size: 18px;
+
+    @media screen and (max-width: $screen-sm) {
+      font-size: 1em;
+    }
   }
 
   tbody tr {
@@ -110,6 +120,10 @@
     border-top: 1px solid #ddd;
     vertical-align: top;
     line-height: 1.428571429;
+
+    @media screen and (max-width: $screen-sm) {
+      padding: 5px;
+    }
   }
 
   a:hover {
@@ -120,10 +134,29 @@
 .all-libraries-widget .library-description {
   margin: 0;
   max-width: 370px;
+  word-wrap: break-word;
+
+  @media screen and (max-width: $screen-sm) {
+    max-width: 70px;
+  }
 }
 
-.all-libraries-widget .fa-unlock {
+.fa-unlock {
   color: $brand-success;
+  padding: 4px 2px;
+}
+
+.fa-lock {
+  padding: 4px 2px;
+}
+
+.fa-users {
+  color: $brand-info;
+  padding: 4px 2px;
+}
+
+.fa-user {
+  padding: 4px 2px;
 }
 
 .all-libraries-widget tbody tr {
@@ -133,7 +166,7 @@
 .library-detail-view,
 .library-widget .main {
   margin: 15px auto;
-  padding: 20px 10px;
+  padding: 20px 3.7%;
   max-width: 1000px;
 
   @extend .s-ads-card;
@@ -227,6 +260,9 @@
   .s-library-description p {
     display: inline;
     font-size: 18px;
+    @media screen and (max-width: $screen-sm) {
+      font-size: 1em;
+    }
   }
 
   .s-library-title,

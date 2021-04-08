@@ -155,6 +155,7 @@
 {{/if}} {{else}}
 <!-- not public -->
 
+<!-- In private view -->
 <div class="pull-right-md" style="position:relative;z-index:1">
   {{#if largeLibrary}}
   <button
@@ -183,6 +184,32 @@
   </button>
   {{/if}}
 </div>
+
+<div>
+{{#if public}}
+  <i
+    class="fa fa-lg fa-unlock"
+    aria-hidden="true"
+    title="this library is public"
+  ></i>
+{{else}}
+  <i
+    class="fa fa-lg fa-lock text-light"
+    aria-hidden="true"
+    title="this library is private"
+  ></i>
+{{/if}} 
+{{#compare permission 'owner'}} 
+  {{#compare num_users 1 operator=">"}} 
+    <i class="fa fa-users" aria-hidden="true" title="This library has collaborators"></i>
+  {{else}}
+    <i class="fa fa-user" aria-hidden="true" title="This library has no collaborators"></i>
+  {{/compare}} 
+{{else}}
+    <i class="fa fa-users" aria-hidden="true" title="This library has collaborators"></i>
+{{/compare}}
+</div>
+
 {{#if edit}}
 <div class="editable-item">
   <h2>
@@ -284,7 +311,7 @@
     data-target="#library-actions"
     aria-expanded="false"
   >
-    <i class="fa fa-cog" aria-hidden="true"></i> View editing options<span class="hide-xs"> (You have
+    <i class="fa fa-cog" aria-hidden="true"></i> View editing options<span class="hide-xxs"> (You have
     <b>{{permission}}</b> privileges)</span>
   </button>
   <div

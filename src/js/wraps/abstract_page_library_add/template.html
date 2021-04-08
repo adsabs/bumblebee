@@ -28,7 +28,7 @@
               <label for="#library-select">add to an existing library:</label>
               <select id="library-select" name="library-select" class="form-control input-sm s-library-select" aria-label="select existing library">
                   {{#each libraries}}
-                  <option value="{{this.id}}" {{#compare id ../selectedLibrary}} selected="true" {{/compare}}>{{this.name}}</option>
+                  <option value="{{this.id}}" {{#compare id ../selectedLibrary}} selected="true" {{/compare}}>{{this.name}}{{#compare permission "owner" operator="!=="}} ({{this.owner}}){{/compare}}</option>
                   {{/each}}
               </select>
               <button class="btn btn-sm btn-primary-faded submit-add-to-library">submit</button>

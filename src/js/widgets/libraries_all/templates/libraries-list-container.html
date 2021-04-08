@@ -37,8 +37,12 @@
           <!--page num -->
           <span class="sr-only">no data</span>
         </th>
-        <th>
+        <th class="hide-xs">
           <!--public/private status-->
+          <span class="sr-only">no data</span>
+        </th>
+        <th class="hide-xs">
+          <!-- has collaborators -->
           <span class="sr-only">no data</span>
         </th>
         <th>
@@ -66,6 +70,18 @@
           </button>
         </th>
         <th>
+          Owner
+          <button
+            title="sort by owner"
+            class="btn btn-xs {{#compare sort 'owner'}} s-sort-active {{/compare}} btn-default"
+            data-sort='{"sort":"owner","type":"string"}'
+          >
+            <i class="fa fa-lg fa-sort" aria-hidden="true"></i> {{#compare sort
+            'owner'}} {{#compare order "asc"}} asc {{else}} desc
+            {{/compare}}{{/compare}}
+          </button>
+        </th>
+        <th>
           Permission
           <button
             title="sort by permission status (admin --> read only)"
@@ -77,11 +93,11 @@
             {{/compare}}{{/compare}}
           </button>
         </th>
-        <th class="hide-xs">
+        <th class="hide-xxs">
           Last Modified
           <button
             title="sort by last modified"
-            class="btn btn-xs {{#compare sort 'date_last_modified'}} s-sort-active {{/compare}} btn-default hide-xs"
+            class="btn btn-xs {{#compare sort 'date_last_modified'}} s-sort-active {{/compare}} btn-default hide-xxs"
             data-sort='{"sort":"date_last_modified","type":"date"}'
           >
             <i class="fa fa-lg fa-sort" aria-hidden="true"></i> {{#compare sort

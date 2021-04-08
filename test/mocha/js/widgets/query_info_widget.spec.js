@@ -121,7 +121,7 @@ define([
         expect($("#test #all-vs-selected")[0].options[1].value).to.eql("all");
 
         expect($("#test #library-select")[0].options[1].value).to.eql("1");
-        expect($("#test #library-select")[0].options[1].textContent).to.eql("Stars? Stars!!!");
+        expect($("#test #library-select")[0].options[1].textContent).to.eql("Stars? Stars!!! ()");
 
 
         $("#test .submit-add-to-library").click();

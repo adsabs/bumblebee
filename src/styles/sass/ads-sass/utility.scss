@@ -20,13 +20,25 @@
 }
 
 @media screen and (max-width: $screen-xs) {
-  .hide-xs {
+  .hide-xxs {
     display: none;
   }
 }
 
 @media screen and (max-width: $screen-sm) {
-  .hide-sm {
+  .hide-xs {
+    display: none;
+  }
+}
+
+@media screen and (min-width: $screen-xs) {
+  .hide-all-but-xxs {
+    display: none;
+  }
+}
+
+@media screen and (min-width: $screen-sm) {
+  .hide-all-but-xs {
     display: none;
   }
 }
