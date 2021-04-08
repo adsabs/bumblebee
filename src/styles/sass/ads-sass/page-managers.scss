@@ -266,6 +266,10 @@ Styles for Abstract Page
   @media (min-width: $screen-md-min) {
     float: left;
   }
+
+  @media screen and (max-width: $screen-xs-max) {
+    padding: 0;
+  }
 }
 
 .s-right-column {
