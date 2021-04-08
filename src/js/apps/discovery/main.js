@@ -162,6 +162,15 @@ define(['config/discovery.config', 'module'], function(config, module) {
             });
           });
 
+          $('body').on('click', '#abs-full-txt-toggle', function() {
+            $('#resources-container').toggleClass('show');
+            if ($('#resources-container').hasClass('show')) {
+              $('#abs-full-txt-toggle').text('Hide Sources');
+            } else {
+              $('#abs-full-txt-toggle').text('Full Text Sources');
+            }
+          });
+
           // accessibility: skip to main content
           $('body').on('click', '#skip-to-main-content', function() {
             $('#main-content').trigger('focus');

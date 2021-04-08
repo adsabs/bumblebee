@@ -3,9 +3,21 @@ $sidenav-background: $body-bg;
 .s-nav-button-container {
   border-bottom: 1px solid darken($gray-lighter, 10%);
   padding-left: 1rem;
+  padding-right: 1rem;
+  display: flex;
+  justify-content: space-between;
+
   @media only screen and (min-width: $screen-md-min) {
     display: none;
   }
+}
+
+#nav-button-container.sticky {
+  width: 100%;
+  position: fixed;
+  top: 0;
+  z-index: 20;
+  background-color: white;
 }
 
 .s-toggle-menu {
