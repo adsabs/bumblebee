@@ -73,7 +73,10 @@ define([
               data,
               (acc, d) => {
                 if (/^(owner|admin|write)$/i.test(d.permission)) {
-                  acc.push(_.pick(d, ['id', 'name']));
+                  const lib = _.pick(d, ['id', 'name']);
+                  if (d.permission !== 'owner')
+                    lib.name = `${lib.name}  (${d.owner})`;
+                  acc.push(lib);
                 }
                 return acc;
               },
