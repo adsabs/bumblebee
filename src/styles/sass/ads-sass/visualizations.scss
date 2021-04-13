@@ -416,7 +416,6 @@ $group-circle-active: lighten($brand-warning, 10%);
 .s-network-control-panel {
   padding-left: 2%;
   margin-bottom: 11px;
-  height: 15px;
   input[type='checkbox'] {
     margin: 25px 0;
   }
@@ -444,7 +443,6 @@ $group-circle-active: lighten($brand-warning, 10%);
     margin: 1% 1% 0 0;
     padding: 1%;
     width: 86%;
-    height: 57px;
     scroll: auto;
     background-color: white;
     border: 1px solid $gray-lighter;
@@ -532,7 +530,6 @@ $group-circle-active: lighten($brand-warning, 10%);
 .s-network-metadata,
 .s-network-filter-container {
   padding: 1%;
-  height: 100px;
 }
 
 .author-detail-header {
@@ -656,11 +653,12 @@ rect.selection {
 
 .s-bubble-chart {
   padding-left: 2%;
+  padding-right: 2%;
 
   .s-controls {
     font-size: 14px;
     background-color: $gray-lighter;
-    width: 90%;
+    width: 100%;
 
     h6 {
       margin-top: 0;
@@ -681,6 +679,17 @@ rect.selection {
       vertical-align: top;
       min-height: 120px;
       position: relative;
+    }
+  }
+}
+
+@media screen and (max-width: $screen-sm) {
+  .s-bubble-chart .s-controls {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    div {
+      width: 100%;
     }
   }
 }
