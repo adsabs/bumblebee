@@ -68,8 +68,7 @@ define([
       'change #library-select': 'recordLibrarySelection',
       'keyup .new-library-name': 'recordNewLibraryName',
       'click .library-add-title': 'toggleLibraryDrawer',
-      'click .submit-add-to-library': 'libraryAdd',
-      'click .submit-create-library': 'libraryCreate',
+      'click .submit-add-to-library': 'libraryAddOrCreate',
     },
 
     recordLibrarySelection: function(e) {
@@ -84,42 +83,60 @@ define([
       this.model.set('selectedVsAll', $(e.currentTarget).val());
     },
 
-    libraryAdd: function() {
-      // show loading view
-      this.$('.submit-add-to-library').html(
-        '<i class="fa fa-spinner fa-pulse" aria-hidden="true"></i>'
-      );
-
+    libraryAddOrCreate: function() {
       var data = {};
 
-      // we have the selected library in the model but only if there was a select event, so query DOM
-      data.libraryID = this.$('#library-select').val();
+      const selected = this.$('#library-select').val();
+      const createNew = this.model.get('newLibraryName');
 
-      if (this.model.get('selected')) {
-        data.recordsToAdd = this.$('#all-vs-selected').val();
-      } else {
-        data.recordsToAdd = 'all';
-      }
-      this.trigger('library-add', data);
-    },
-
-    libraryCreate: function() {
-      // show loading view
-      this.$('.submit-create-library').html(
-        '<i class="fa fa-spinner fa-pulse" aria-hidden="true"></i>'
-      );
-
-      var data = {};
-
-      if (this.model.get('selected')) {
-        data.recordsToAdd = this.$('#all-vs-selected').val();
-      } else {
-        data.recordsToAdd = 'all';
+      // if selected existing library
+      if (selected !== '0' && !createNew) {
+        data.libraryID = this.$('#library-select').val();
+        if (this.model.get('selected')) {
+          data.recordsToAdd = this.$('#all-vs-selected').val();
+        } else {
+          data.recordsToAdd = 'all';
+        }
+        // show loading view
+        this.$('.submit-add-to-library').html(
+          '<i class="fa fa-spinner fa-pulse" aria-hidden="true"></i>'
+        );
+        this.trigger('library-add', data);
       }
 
-      data.name = this.model.get('newLibraryName') || '';
-      data.name = data.name.trim();
-      this.trigger('library-create', data);
+      // else if creating new library
+      else if (selected === '0' && createNew) {
+        data.name = this.model.get('newLibraryName');
+        if (this.model.get('selected')) {
+          data.recordsToAdd = this.$('#all-vs-selected').val();
+        } else {
+          data.recordsToAdd = 'all';
+        }
+
+        data.name = this.model.get('newLibraryName') || '';
+        data.name = data.name.trim();
+        // show loading view
+        this.$('.submit-add-to-library').html(
+          '<i class="fa fa-spinner fa-pulse" aria-hidden="true"></i>'
+        );
+        this.trigger('library-create', data);
+      }
+
+      // both selected, invalid
+      else if (selected !== '0' && createNew) {
+        this.model.set('feedback', {
+          success: false,
+          error: 'Either select from an existing or create a new one',
+        });
+      }
+
+      // none selected, invalid
+      else {
+        this.model.set('feedback', {
+          success: false,
+          error: 'Select from an existing library or create a new one',
+        });
+      }
     },
 
     toggleLibraryDrawer: function() {
@@ -269,6 +286,7 @@ define([
         .done(function(response, status) {
           var numAlreadyInLib =
             response.numBibcodesRequested - parseInt(response.number_added);
+          that.model.set('selectedLibrary', undefined);
           that.model.set('feedback', {
             success: true,
             name: name,

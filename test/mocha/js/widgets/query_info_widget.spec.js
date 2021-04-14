@@ -65,7 +65,7 @@ define([
 
 
 
-    it("should allow authenticated user to input selected/all papers into a pre-existing library", function(done){
+    it.only("should allow authenticated user to input selected/all papers into a pre-existing library", function(done){
 
       var w = new QueryInfo();
 
@@ -120,13 +120,13 @@ define([
         expect($("#test #all-vs-selected")[0].options[0].value).to.eql("selected");
         expect($("#test #all-vs-selected")[0].options[1].value).to.eql("all");
 
-        expect($("#test #library-select")[0].options[1].value).to.eql("1");
-        expect($("#test #library-select")[0].options[1].textContent).to.eql("Stars? Stars!!! ()");
+        expect($("#test #library-select")[0].options[1].value).to.eql("2");
+        expect($("#test #library-select")[0].options[1].textContent).to.eql("I See the Moon ()");
 
 
         $("#test .submit-add-to-library").click();
 
-        expect(fakeLibraryController.addBibcodesToLib.args[0][0]).to.eql({library: "2", bibcodes: "selected"});
+        expect(fakeLibraryController.addBibcodesToLib.args[0][0]).to.eql({ library: '2', bibcodes: 'selected' });
 
         $("#test input[name=new-library-name]").val("fakeName");
         $("#test input[name=new-library-name]").trigger("keyup");
