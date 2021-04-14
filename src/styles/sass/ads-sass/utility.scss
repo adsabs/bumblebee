@@ -86,6 +86,11 @@
     box-shadow: 0px 0px 6px gray;
     opacity: 1;
   }
+
+
+  @media screen and (max-width: $screen-sm) {
+    font-size: 2em;
+  }
 }
 
 .s-disabled {
