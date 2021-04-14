@@ -31,7 +31,7 @@ define([
 
       //should render nothing since there is no subview indicated in the view model
       expect(normalizeSpace($('#test').html())).to.eql(
-        '<div class="s-authentication-container row s-form-widget"><div class="form-container s-form-container col-sm-10 col-sm-offset-1 col-md-8 col-md-offset-2 col-lg-6 col-lg-offset-3"> </div></div>'
+        '<div class="s-authentication-container row s-form-widget"><div class="form-container s-form-container col-sm-10 col-sm-offset-1 col-md-8 col-md-offset-2 col-lg-6 col-lg-offset-3" style="padding-right: 0;"></div> </div>'
       );
 
       a.setSubView('login');
@@ -78,7 +78,7 @@ define([
 
       a.setSubView('login');
 
-      $('.show-register').click();
+      $('.show-register').trigger('click');
 
       expect(publishStub.args[0]).to.eql([
         '[Router]-Navigate-With-Trigger',
@@ -90,7 +90,7 @@ define([
 
       a.setSubView('reset-password-1');
 
-      $('.show-login').click();
+      $('.show-login').trigger('click');
 
       expect(publishStub.args[1]).to.eql([
         '[Router]-Navigate-With-Trigger',
@@ -102,7 +102,7 @@ define([
 
       a.setSubView('register');
 
-      $('.show-login').click();
+      $('.show-login').trigger('click');
 
       expect(publishStub.args[2]).to.eql([
         '[Router]-Navigate-With-Trigger',
@@ -114,7 +114,7 @@ define([
 
       a.setSubView('login');
 
-      $('.show-reset-password-1').click();
+      $('.show-reset-password-1').trigger('click');
 
       expect(publishStub.args[3]).to.eql([
         '[Router]-Navigate-With-Trigger',
