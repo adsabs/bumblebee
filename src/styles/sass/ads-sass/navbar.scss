@@ -27,6 +27,22 @@
   }
 }
 
+  @media screen and (max-width: $screen-sm) {
+    .navbar-nav {
+      position: relative;
+
+      .dropdown {
+        position:unset;
+      }
+
+      .open .dropdown-menu {
+        position: absolute;
+        top: 0;
+        left: 150px;
+      }
+    }
+  } 
+
 //to vertically align
 .navbar-nav .dropdown-toggle,
 .navbar-nav .dropdown {
