@@ -19,7 +19,7 @@
   </div>
   <div class="row s-results-control-row" id="results-control-row"></div>
   <div class="row">
-    <div class="col-xs-12 s-dynamic-page-body" id="dynamic-page-body">
+    <div class="col-xs-12 s-dynamic-page-body" id="dynamic-page-body" style="overflow: hidden">
       <div class="max-width-wrapper">
         <div>
           <div
@@ -65,7 +65,8 @@
               <div data-widget="CitationHelper" />
             </div>
           </div>
-
+          
+          <div data-widget="QueryInfo" class="col-sm-3" id="query-info-container"/>
           <div
             class="hidden-xs col-sm-3 col-md-3 results-right-column s-right-column s-results-column"
             id="results-right-column"
@@ -75,7 +76,6 @@
               search filters)
             </h2>
 
-            <div data-widget="QueryInfo" />
             <div data-widget="MyAdsFreeform" />
             <div data-widget="OrcidSelector" />
             <div data-widget="GraphTabs" />
