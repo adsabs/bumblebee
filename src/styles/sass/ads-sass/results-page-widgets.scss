@@ -165,3 +165,17 @@
   }
   
 }
+
+#search-results-actions {
+  border-bottom: 1px solid darken($gray-lighter, 10%);
+  padding: 5px 0 15px 0;
+
+  &.sticky {
+    width: 100%;
+    padding-right: 15px;
+    position: fixed;
+    top: 0;
+    z-index: 20;
+    background-color: white;
+  }
+}

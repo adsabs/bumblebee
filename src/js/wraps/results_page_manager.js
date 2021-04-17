@@ -25,6 +25,19 @@ define([
         'workflow'
       );
       this._referrer = null;
+
+      // observe scrolling and apply sticky menu
+      this.observer = new IntersectionObserver(
+        () => {
+          this.adjustStickyElements();
+        },
+        { threshold: 0 }
+      );
+      this.observing = false;
+
+      // observe resizing and apply sticky menu
+      _.bindAll(this, 'adjustStickyElements');
+      $(window).on('resize', _.throttle(this.adjustStickyElements, 200));
     },
 
     persistentWidgets: [
@@ -61,6 +74,41 @@ define([
       this.init();
     },
 
+    // Make menu bar and menus sticky
+    adjustStickyElements: function() {
+      // if single column and actions buttons container reached top of viewport
+      if (
+        window.matchMedia('(max-width: 788px)').matches &&
+        $('#search-results-sort').get(0) &&
+        $('#search-results-sort')
+          .get(0)
+          .getBoundingClientRect().bottom <= 0
+      ) {
+        var height = $('#search-results-actions').outerHeight(true);
+        this.stickElements(height);
+        // without this abstract content will disappear with above elements fixed
+        // $('.s-abstract-content').attr('style', 'overflow: unset');
+      } else {
+        this.unStickElements();
+        // $('.s-abstract-content').attr('style', 'overflow: hidden');
+      }
+    },
+
+    stickElements: function(top) {
+      // button container
+      $('#search-results-actions').addClass('sticky');
+      // add to library widget
+      $('#query-info-container').attr(
+        'style',
+        `position:fixed;top:${top}px;right:0`
+      );
+    },
+
+    unStickElements: function() {
+      $('#search-results-actions').removeClass('sticky');
+      $('#query-info-container').attr('style', '');
+    },
+
     onStartSearch: function() {
       this.resultsTimer.start();
       this.fullResultsTimer.start();
@@ -75,6 +123,14 @@ define([
     },
 
     show: function() {
+      // hide drawers
+      // $('#abs-full-txt-toggle').text('Full Text Sources');
+      // $('#abs-nav-menu-toggle').html(
+      //   '<i class="fa fa-bars" aria-hidden="true"></i> Show Menu'
+      // );
+      // $('.s-nav-container').removeClass('show');
+      // $('#resources-container').removeClass('show');
+
       var ret = PageManagerController.prototype.show.apply(this, arguments);
       var self = this;
       var button =
@@ -91,6 +147,17 @@ define([
         self._referrer = null;
         return false;
       });
+
+      // Observe the item above sticky menu disappears
+      if (!this.observing && ret.$el.find('#search-results-sort')[0]) {
+        this.observer.observe(ret.$el.find('#search-results-sort')[0]);
+        this.observing = true;
+      }
+
+      // close any drawers
+      ret.$el.find('#results-actions-toggle')[0].innerHTML = 'Actions';
+      ret.$el.find('#query-info-container')[0].classList.remove('show');
+
       return ret;
     },
 
