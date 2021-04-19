@@ -178,7 +178,9 @@ define(['config/discovery.config', 'module'], function(config, module) {
                 '<i class="fa fa-times" alt="close actions"></i> Actions'
               );
             } else {
-              $('#results-actions-toggle').text('Actions');
+              $('#results-actions-toggle').html(
+                '<i class="fa fa-book" alt="open actions"></i> Actions'
+              );
             }
           });
 

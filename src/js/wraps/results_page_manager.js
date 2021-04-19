@@ -155,7 +155,8 @@ define([
       }
 
       // close any drawers
-      ret.$el.find('#results-actions-toggle')[0].innerHTML = 'Actions';
+      ret.$el.find('#results-actions-toggle')[0].innerHTML =
+        '<i class="fa fa-book" alt="open actions"></i> Actions';
       ret.$el.find('#query-info-container')[0].classList.remove('show');
 
       return ret;
