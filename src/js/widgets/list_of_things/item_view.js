@@ -65,7 +65,7 @@ define([
       'mouseenter .letter-icon': 'showLinks',
       'mouseleave .letter-icon': 'hideLinks',
       'focusout .letter-icon': 'hideLinks',
-      'click .letter-icon a': 'emitAnalyticsEvent',
+      'click .letter-icon': 'toggleShowLinksWithClick',
       'click .show-all-authors': 'showAllAuthors',
       'click .show-less-authors': 'showLessAuthors',
       // only relevant to results view for the moment
@@ -204,12 +204,25 @@ define([
       }
     },
 
+    toggleShowLinksWithClick: function(e) {
+      // only allows open drop down with click using mobile
+      // in desktop, mouse over will show dropdown
+      if (this.model.get('isMobileOrTablet')) {
+        if (
+          $(e.currentTarget)
+            .find('ul')
+            .hasClass('hidden')
+        ) {
+          this.showLinks(e);
+        } else {
+          this.hideLinks(e);
+        }
+      }
+    },
+
     showLinks: function(e) {
       var $c = $(e.currentTarget);
-      if (
-        !$c.find('.active-link').length ||
-        this.model.get('isMobileOrTablet')
-      ) {
+      if (!$c.find('.active-link').length) {
         return;
       }
 
