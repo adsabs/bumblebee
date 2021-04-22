@@ -86,11 +86,8 @@ define([
       ) {
         var height = $('#search-results-actions').outerHeight(true);
         this.stickElements(height);
-        // without this abstract content will disappear with above elements fixed
-        // $('.s-abstract-content').attr('style', 'overflow: unset');
       } else {
         this.unStickElements();
-        // $('.s-abstract-content').attr('style', 'overflow: hidden');
       }
     },
 
@@ -123,13 +120,6 @@ define([
     },
 
     show: function() {
-      // hide drawers
-      // $('#abs-full-txt-toggle').text('Full Text Sources');
-      // $('#abs-nav-menu-toggle').html(
-      //   '<i class="fa fa-bars" aria-hidden="true"></i> Show Menu'
-      // );
-      // $('.s-nav-container').removeClass('show');
-      // $('#resources-container').removeClass('show');
 
       var ret = PageManagerController.prototype.show.apply(this, arguments);
       var self = this;
