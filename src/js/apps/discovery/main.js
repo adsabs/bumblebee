@@ -171,6 +171,19 @@ define(['config/discovery.config', 'module'], function(config, module) {
             }
           });
 
+          $('body').on('click', '#results-actions-toggle', function() {
+            $('#query-info-container').toggleClass('show');
+            if ($('#query-info-container').hasClass('show')) {
+              $('#results-actions-toggle').html(
+                '<i class="fa fa-times" title="close actions" aria-hidden="true"></i> Actions'
+              );
+            } else {
+              $('#results-actions-toggle').html(
+                '<i class="fa fa-book" title="open actions" aria-hidden="true"></i> Actions'
+              );
+            }
+          });
+
           // accessibility: skip to main content
           $('body').on('click', '#skip-to-main-content', function() {
             $('#main-content').trigger('focus');

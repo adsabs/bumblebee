@@ -9,17 +9,18 @@
 .s-results-control-row {
   padding-bottom: 1%;
   background-color: $darker-background;
-  div[data-widget='ExportDropdown'] {
-    margin-right: 4%;
-  }
   .s-sort-widget {
     position: relative;
     left: -3%;
   }
   .s-results-action-buttons {
     padding: 10px 0;
-    > .btn {
+    .btn {
       font-size: 16px;
+      margin:2px;
+      @media screen and (max-width: $screen-xs) {
+        font-size: 0.8em;
+      }
     }
     &:last-child {
       margin-right: 1em;
@@ -138,5 +139,43 @@
 .results-right-column {
   div[data-widget] {
     margin-bottom: 1em;
+  }
+}
+
+#results-actions-toggle {
+  @media screen and (min-width: $screen-sm) {
+    display: none;
+  }
+}
+
+#query-info-container {
+  transition: transform 0.5s ease-in-out;
+
+  @media (max-width: $screen-xs-max) {
+    position: absolute;
+    width: 100%;
+    left: 100%;
+    top: 0;
+    z-index: $z-index-4;
+    border-right: 1px solid $gray-lighter;
+
+    &.show {
+      transform: translate(-100%);
+    }
+  }
+  
+}
+
+#search-results-actions {
+  border-bottom: 1px solid darken($gray-lighter, 10%);
+  padding: 5px 0 15px 0;
+
+  &.sticky {
+    width: 100%;
+    padding-right: 15px;
+    position: fixed;
+    top: 0;
+    z-index: 20;
+    background-color: white;
   }
 }
