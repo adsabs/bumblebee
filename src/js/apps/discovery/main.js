@@ -175,11 +175,11 @@ define(['config/discovery.config', 'module'], function(config, module) {
             $('#query-info-container').toggleClass('show');
             if ($('#query-info-container').hasClass('show')) {
               $('#results-actions-toggle').html(
-                '<i class="fa fa-times" alt="close actions"></i> Actions'
+                '<i class="fa fa-times" title="close actions" aria-hidden="true"></i> Actions'
               );
             } else {
               $('#results-actions-toggle').html(
-                '<i class="fa fa-book" alt="open actions"></i> Actions'
+                '<i class="fa fa-book" title="open actions" aria-hidden="true"></i> Actions'
               );
             }
           });
