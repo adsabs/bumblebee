@@ -115,6 +115,14 @@ button#clear-link-server {
   }
 }
 
+#export-settings-container {
+  label.btn.active {
+    color: $btn-success-color;
+    background-color: $btn-success-bg;
+    border-color: $btn-success-border;
+  }
+}
+
 .link-server-univ-icon {
   border: solid 1px rgba(0,0,0, 0.2);
   border-radius: 5px;
