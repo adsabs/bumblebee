@@ -50,27 +50,30 @@
             <div style="margin-top: 8px" class="">
                 <label for="library-select">to an <span class="s-text-bold">existing library:</span></label>
                 <select id="library-select" name="library-select" class="form-control input-sm s-library-select" aria-label="select existing library">
+                    <option value="0" {{#compare selectedLibrary undefined}} selected="true" {{/compare}}>Select a library...</option>
                     {{#each libraries}}
                     <option value="{{this.id}}" {{#compare id ../selectedLibrary}} selected="true" {{/compare}}>{{this.name}}{{#compare permission "owner" operator="!=="}} ({{this.owner}}){{/compare}}</option>
                     {{/each}}
                 </select>
-                <button class="btn btn-sm btn-primary-faded submit-add-to-library">submit</button>
             </div>
             <div style="margin:10px 0 4px 0">
                 OR
             </div>
             {{/if}}
+            
+            <div>
+              <label for="create-new">create a new library </label>
+              <input id="create-new"
+                class="form-control input-sm new-library-name s-display-inline"
+                type="text"
+                name="new-library-name"
+                placeholder="New Library Name"
+                value="{{newLibraryName}}"
+                style="max-width:166px;margin-bottom:10px;"
+                aria-label="enter new library name"/>
+            </div>  
 
-            <label for="create-new">create a new library </label>
-            <input id="create-new"
-              class="form-control input-sm new-library-name s-display-inline"
-              type="text"
-              name="new-library-name"
-              placeholder="New Library Name"
-              value="{{newLibraryName}}"
-              style="max-width:166px;margin-bottom:10px;"
-              aria-label="enter new library name"/>
-            <button class="btn btn-sm btn-primary-faded submit-create-library"></i>submit</button>
+            <button class="btn btn-md btn-primary-faded submit-add-to-library"></i>Add</button>
 
         </div>
 
@@ -107,7 +110,9 @@
                   <b>{{feedback.name}}</b> was not created, error occured.
                   <em>{{feedback.error}}</em>
                   {{else}}
+                  {{#if feedback.name}}
                   Records were not added to <b>{{feedback.name}}</b>, error occurred.
+                  {{/if}}
                   <em>{{feedback.error}}</em>
                   {{/if}}
               </div>
