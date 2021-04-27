@@ -230,7 +230,7 @@ define([
         this.routerNavigate('UserSettings', {
           subView: subView,
         });
-      } else if (_.contains(['librarylink', 'orcid', 'application'], subView)) {
+      } else if (_.contains(['librarylink', 'orcid', 'application', 'export'], subView)) {
         // show preferences if no subview provided
         this.routerNavigate('UserPreferences', {
           subView: subView,

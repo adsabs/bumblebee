@@ -1,0 +1,399 @@
+<div class="panel-heading">Export Settings</div>
+
+<div class="panel-body" id="export-settings-container">
+  <div class="row">
+    <div class="col-md-12">
+      <form id="export-settings-form" class="form-horizontal">
+
+        <!-- Default Export Format -->
+        <div class="form-group">
+          <label for="exportFormat">
+            Default Export Format
+            <button href="#collapseExportFormat" data-toggle="collapse" class="btn-link" aria-expanded="false"
+              aria-controls="collapseExportFormat" aria-label="default export format">
+              <i class="fa fa-question-circle" aria-hidden="true"></i>
+            </button>
+          </label>
+          <p>
+            <div class="collapse" id="collapseExportFormat">
+              <div class="card card-body">
+                <p>
+                  Select the default export format you would like to use when opening the Export tool.
+                  <br> (
+                  <strong>default: {{exportFormatDefault}}</strong>)
+                </p>
+              </div>
+            </div>
+          </p>
+          <select class="form-control" id="exportFormat" aria-describedby="collapseExportFormat">
+            {{#each exportFormatOptions}}
+            <option value="{{this}}" {{#compare this ../exportFormatSelected}} selected="selected" {{/compare}}>{{this}}
+            </option>
+            {{/each}}
+          </select>
+        </div>
+
+        <!-- Custom Formats -->
+        <div class="form-group">
+          <label for="addCustomFormat">
+            Custom Formats
+            <button href="#collapseAddCustomFormat" data-toggle="collapse" class="btn-link" aria-expanded="false"
+              aria-controls="collapseAddCustomFormat" aria-label="custom formats">
+              <i class="fa fa-question-circle" aria-hidden="true"></i>
+            </button>
+          </label>
+          <p>
+            <div class="collapse" id="collapseAddCustomFormat">
+              <div class="card card-body">
+                <p>
+                  Edit your saved custom formats
+                </p>
+                <p>
+                  Check out our <a href="/help/actions/export" rel="noreferrer noopener" target="_blank">docs</a> for more information.
+                </p>
+              </div>
+            </div>
+          </p>
+          <p>
+            You currently have {{addCustomFormatOptions.length}} format(s) defined.
+          </p>
+          <div id="addCustomFormat">
+            <ul class="list-group col-xs-12">
+              {{#each addCustomFormatOptions}}
+              <li class="list-group-item clearfix" data-id="{{id}}">
+                <div class="col-xs-1">
+                  <i class="fa fa-unsorted" aria-hidden="true"></i>
+                </div>
+
+                {{#if editing}}
+                <div class="col-xs-3">
+                  <input type="text" class="form-control custom-format-edit" id="custom-format-name-{{id}}" placeholder="My New Format" value="{{name}}" data-id="{{id}}">
+                </div>
+                <div class="col-xs-6">
+                  <input type="text" class="form-control custom-format-edit" placeholder="%l (%Y), %j, %V, %p.\n" id="custom-format-code-{{id}}" value="{{code}}" data-id="{{id}}">
+                </div>
+                <span class="col-xs-2 text-right">
+                  <button data-id="{{id}}" class="btn-link addCustomFormatConfirmEdit"
+                    title="confirm edit">
+                    <i class="fa fa-check text-success" aria-hidden="true"></i>
+                  </button>
+                  <button data-id="{{id}}" class="btn-link addCustomFormatCancelEdit"
+                    title="cancel edit">
+                    <i class="fa fa-times text-danger" aria-hidden="true"></i>
+                  </button>
+                </span> {{else}}
+                <div class="col-xs-3">
+                  <p id="custom-format-name-{{id}}">
+                    <strong>{{name}}</strong>
+                  </p>
+                </div>
+                <div class="col-xs-6">
+                  <p id="custom-format-code-{{id}}">
+                    <code>{{code}}</code>
+                  </p>
+                </div>
+                <span class="col-xs-2 text-right">
+                  <button data-id="{{id}}" class="btn-link addCustomFormatEdit"
+                    title="edit custom format">
+                    <i class="fa fa-pencil text-primary" aria-hidden="true"></i>
+                  </button>
+                  <button data-id="{{id}}" class="btn-link addCustomFormatDelete"
+                    title="delete custom format">
+                    <i class="fa fa-times text-danger" aria-hidden="true"></i>
+                  </button>
+                </span> {{/if}}
+              </li>
+              {{else}}
+              <div class="well">
+                Nothing here... Add a new format below
+                <br> (its also possible we didn't properly load your custom formats, please try refreshing this page)
+              </div>
+              {{/each}}
+            </ul>
+          </div>
+          <p>
+            <button class="btn btn-primary" id="addCustomFormatAdd">Add</button> &nbsp;
+            <span id="new-format-msg" class="text-muted" style="display: none">
+              New format added!
+            </span>
+          </p>
+        </div>
+
+        <!-- Set BibTeX key format  -->
+        <div class="form-group">
+          <label for="bibtexKeyFormat">
+            BibTeX Default Export Key Format
+            <button href="#collapsebibtexKeyFormat" data-toggle="collapse" class="btn-link" aria-expanded="false"
+              aria-controls="collapsebibtexKeyFormat" aria-label="bibtex default export key format">
+              <i class="fa fa-question-circle" aria-hidden="true"></i>
+            </button>
+          </label>
+          <p>
+            <div class="collapse" id="collapsebibtexKeyFormat">
+              <div class="card card-body">
+                <p>
+                  Select the default key format when exporting in BibTeX (<a href="/help/actions/export" rel="noreferrer noopener" target="_blank">Learn More <i
+                      class="fa fa-external-link" aria-hidden="true"></i></a>)
+                  <table class="table">
+                    <caption>
+                      Key format codes and descriptions
+                    </caption>
+                    <thead>
+                      <tr>
+                        <th>Code</th>
+                        <th>Description</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr>
+                        <td><code>%R</code></td>
+                        <td>Bibcode</td>
+                      </tr>
+                      <tr>
+                        <td><code>%nH</code></td>
+                        <td>Author, where <code>n</code> can be any number</td>
+                      </tr>
+                      <tr>
+                        <td><code>%q</code></td>
+                        <td>Publication</td>
+                      </tr>
+                      <tr>
+                        <td><code>%Y</code></td>
+                        <td>Year</td>
+                      </tr>
+                    </tbody>
+                  </table>
+                  <p>* Any other text will be passed as raw strings</p>
+                  (<strong>default: None</strong>)
+                </p>
+              </div>
+            </div>
+          </p>
+          <input type="text" id="bibtexKeyFormat" value="{{bibtexKeyFormatSelected}}" data-no-convert="true" aria-describedby="collapsebibtexKeyFormat" placeholder="%1H:%Y:%q" class="form-control" title="bibtex key format" maxlength="30">
+        </div>
+
+        <!-- Default TeX Journal Name Handling -->
+        <div class="form-group">
+          <label for="bibtexJournalFormat">
+            TeX Journal Name Handling
+            <button href="#collapseBibtexJournalFormat" data-toggle="collapse" class="btn-link" aria-expanded="false"
+              aria-controls="collapseBibtexJournalFormat" aria-label="results list side bars">
+              <i class="fa fa-question-circle" aria-hidden="true"></i>
+            </button>
+          </label>
+          <p>
+            <div class="collapse" id="collapseBibtexJournalFormat">
+              <div class="card card-body">
+                <p>
+                  This setting is used to define how journal names are rendered in the output of the following TeX-based formats: BibTeX, BibTeX ABS, and AASTeX. If journal macros are used (default), the following file contains the proper journal definitions compatible with most Astronomy Journals: <a href="http://adsabs.harvard.edu/abs_doc/aas_macros.html">http://adsabs.harvard.edu/abs_doc/aas_macros.html</a>
+                  <br> (
+                  <strong>default: {{bibtexJournalFormatDefault}}</strong>)
+                </p>
+              </div>
+            </div>
+          </p>
+          <select class="form-control" id="bibtexJournalFormat" aria-describedby="collapseBibtexJournalFormat">
+            {{#each bibtexJournalFormatOptions}}
+            <option value="{{this}}" {{#compare this ../bibtexJournalFormatSelected}} selected="selected" {{/compare}}>{{this}}
+            </option>
+            {{/each}}
+          </select>
+        </div>
+
+        <div class="row">
+          <div class="col-sm-5">
+            <!-- Set BibTeX key max authors  -->
+            <div class="form-group">
+              <label for="bibtexMaxAuthors">
+                BibTeX Default Export Max Authors
+                <a href="#collapsebibtexMaxAuthors" data-toggle="collapse" class="btn-link" aria-expanded="false"
+                  aria-controls="collapsebibtexMaxAuthors" aria-label="bibtex default export max authors">
+                  <i class="fa fa-question-circle" aria-hidden="true"></i>
+                </a>
+              </label>
+              <p>
+                <div class="collapse" id="collapsebibtexMaxAuthors">
+                  <div class="card card-body">
+                    <p>
+                      Select the default max number of authors shown when exporting in BibTeX
+                      <br> (
+                      <strong>default: {{bibtexMaxAuthorsDefault}}</strong>)
+                    </p>
+                  </div>
+                </div>
+              </p>
+              <select class="form-control" id="bibtexMaxAuthors" aria-describedby="collapsebibtexMaxAuthors">
+                {{#each bibtexMaxAuthorsOptions}}
+                <option value="{{this}}" {{#compare this ../bibtexMaxAuthorsSelected}} selected="selected" {{/compare}}>
+                  {{this}}</option>
+                {{/each}}
+              </select>
+            </div>
+          </div>
+          <div class="col-sm-5 col-sm-offset-2">
+            <!-- Set BibTeX author cutoff  -->
+            <div class="form-group">
+              <label for="bibtexAuthorCutoff">
+                BibTeX Default Author Cutoff
+                <button href="#collapsebibtexAuthorCutoff" data-toggle="collapse" class="btn-link" aria-expanded="false"
+                  aria-controls="collapsebibtexAuthorCutoff" aria-label="bibtex default author cutoff">
+                  <i class="fa fa-question-circle" aria-hidden="true"></i>
+                </button>
+              </label>
+              <p>
+                <div class="collapse" id="collapsebibtexAuthorCutoff">
+                  <div class="card card-body">
+                    <p>
+                        <p>
+                          If the number of authors in the list is larger than the cutoff,
+                          the list will be truncated to the max number allowed, otherwise all will be shown.
+                        </p>
+                      <br> (
+                      <strong>default: {{bibtexAuthorCutoffDefault}}</strong>)
+                    </p>
+                  </div>
+                </div>
+              </p>
+              <select class="form-control" id="bibtexAuthorCutoff" aria-describedby="collapsebibtexAuthorCutoff">
+                {{#each bibtexAuthorCutoffOptions}}
+                <option value="{{this}}" {{#compare this ../bibtexAuthorCutoffSelected}} selected="selected" {{/compare}}>
+                  {{this}}</option>
+                {{/each}}
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <!-- Set BibTeX ABS key format  -->
+        <div class="form-group">
+          <label for="bibtexABSKeyFormat">
+            BibTeX ABS Default Export Key Format
+            <button href="#collapsebibtexABSKeyFormat" data-toggle="collapse" class="btn-link" aria-expanded="false"
+              aria-controls="collapsebibtexABSKeyFormat" aria-label="bibtex abs default export key format">
+              <i class="fa fa-question-circle" aria-hidden="true"></i>
+            </button>
+          </label>
+          <p>
+            <div class="collapse" id="collapsebibtexABSKeyFormat">
+              <div class="card card-body">
+                <p>
+                  Select the default key format when exporting in BibTeX ABS (<a href="/help/actions/export" rel="noreferrer noopener" target="_blank">Learn More <i
+                      class="fa fa-external-link" aria-hidden="true"></i></a>)
+                  <table class="table">
+                    <caption>
+                      Key format codes and descriptions
+                    </caption>
+                    <thead>
+                      <tr>
+                        <th>Code</th>
+                        <th>Description</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr>
+                        <td><code>%R</code></td>
+                        <td>Bibcode</td>
+                      </tr>
+                      <tr>
+                        <td><code>%nH</code></td>
+                        <td>Author, where <code>n</code> can be any number</td>
+                      </tr>
+                      <tr>
+                        <td><code>%q</code></td>
+                        <td>Publication</td>
+                      </tr>
+                      <tr>
+                        <td><code>%Y</code></td>
+                        <td>Year</td>
+                      </tr>
+                    </tbody>
+                  </table>
+                  <p>* Any other text will be passed as raw strings</p>
+                  (<strong>default: None</strong>)
+                </p>
+              </div>
+            </div>
+          </p>
+          <input type="text" id="bibtexABSKeyFormat" value="{{bibtexABSKeyFormatSelected}}" data-no-convert="true" aria-describedby="collapsebibtexABSKeyFormat" placeholder="%1H:%Y:%q" class="form-control" title="bibtex ABS key format" maxlength="30">
+        </div>
+
+        <div class="row">
+          <div class="col-sm-5">
+            <!-- Set BibTeX ABS key max authors -->
+            <div class="form-group">
+              <label for="bibtexABSMaxAuthors">
+                BibTeX ABS Default Export Max Authors
+                <button href="#collapsebibtexABSMaxAuthors" data-toggle="collapse" class="btn-link" aria-expanded="false"
+                  aria-controls="collapsebibtexABSMaxAuthors" aria-label="bibtex abs default export max authors">
+                  <i class="fa fa-question-circle" aria-hidden="true"></i>
+                </button>
+              </label>
+                <p>
+                  <div class="collapse" id="collapsebibtexABSMaxAuthors">
+                    <div class="card card-body">
+                      <p>
+                        Select the default max number of authors shown when exporting in BibTeX ABS
+                        <br> (
+                        <strong>default: {{bibtexABSMaxAuthorsDefault}}</strong>)
+                      </p>
+                    </div>
+                  </div>
+                </p>
+                <select class="form-control" id="bibtexABSMaxAuthors" aria-describedby="collapsebibtexABSMaxAuthors">
+                {{#each bibtexABSMaxAuthorsOptions}}
+                <option value="{{this}}" {{#compare this ../bibtexABSMaxAuthorsSelected}} selected="selected" {{/compare}}>
+                  {{this}}</option>
+                {{/each}}
+              </select>
+            </div>
+          </div>
+          <div class="col-sm-5 col-sm-offset-2">
+            <!-- Set BibTeX ABS author cutoff  -->
+            <div class="form-group">
+              <label for="bibtexABSAuthorCutoff">
+                BibTeX ABS Default Author Cutoff
+                <button href="#collapsebibtexABSAuthorCutoff" data-toggle="collapse" class="btn-link" aria-expanded="false"
+                  aria-controls="collapsebibtexABSAuthorCutoff" aria-label="bibtex abs default author cutoff">
+                  <i class="fa fa-question-circle" aria-hidden="true"></i>
+                </button>
+              </label>
+              <p>
+                <div class="collapse" id="collapsebibtexABSAuthorCutoff">
+                  <div class="card card-body">
+                    <p>
+                        <p>
+                          If the number of authors in the list is larger than the cutoff,
+                          the list will be truncated to the max number allowed, otherwise all will be shown.
+                        </p>
+                      <br> (
+                      <strong>default: {{bibtexABSAuthorCutoffDefault}}</strong>)
+                    </p>
+                  </div>
+                </div>
+              </p>
+              <select class="form-control" id="bibtexABSAuthorCutoff" aria-describedby="collapsebibtexABSAuthorCutoff">
+                {{#each bibtexABSAuthorCutoffOptions}}
+                <option value="{{this}}" {{#compare this ../bibtexABSAuthorCutoffSelected}} selected="selected" {{/compare}}>
+                  {{this}}</option>
+                {{/each}}
+              </select>
+            </div>
+          </div>
+        </div>
+      </form>
+
+      <div class="col-md-6 col-md-offset-3 text-center" id="app-settings-msg">
+        {{#if loading}}
+        <i class="text-muted fa fa-refresh fa-spin fa-3x" aria-hidden="true"></i> {{/if}} {{#if updateSucceeded}}
+        <div class="alert alert-success fade in h4" role="alert">
+          <i class="fa fa-check fa-2x" aria-hidden="true"></i> Settings updated successfully
+        </div>
+        {{/if}} {{#if updateFailed}}
+        <div class="alert alert-danger fade in h4" role="alert">
+          <i class="fa fa-times fa-3x" aria-hidden="true"></i> Settings not updated, please try again.
+        </div>
+        {{/if}}
+      </div>
+    </div>
+  </div>
+</div>

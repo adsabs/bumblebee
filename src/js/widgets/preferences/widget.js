@@ -5,6 +5,7 @@ define([
   './views/openurl',
   './views/orcid',
   './views/application',
+  './views/export',
   'js/components/api_feedback',
   'hbs!js/widgets/preferences/templates/orcid-form-submit-modal',
 ], function(
@@ -14,6 +15,7 @@ define([
   OpenURLView,
   OrcidView,
   ApplicationView,
+  ExportView,
   ApiFeedback,
   OrcidModalTemplate
 ) {
@@ -109,6 +111,7 @@ define([
       orcid: OrcidView,
       librarylink: OpenURLView,
       application: ApplicationView,
+      export: ExportView,
     },
 
     setSubView: function(subView) {
@@ -217,7 +220,14 @@ define([
             );
           });
       } else if (event === 'change:applicationSettings') {
-        var subView = this.view.content.currentView;
+        const subView = this.view.content.currentView;
+        this.getBeeHive()
+          .getObject('User')
+          .setUserData(arg1)
+          .done(_.bind(subView.onSuccess, subView))
+          .fail(_.bind(subView.onError, subView));
+      } else if (event === 'change:exportSettings') {
+        const subView = this.view.content.currentView;
         this.getBeeHive()
           .getObject('User')
           .setUserData(arg1)

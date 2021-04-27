@@ -49,6 +49,11 @@ define([
         path: 'user/settings/application',
         category: 'preferences',
       },
+      UserPreferences__export: {
+        title: 'Export',
+        path: 'user/settings/export',
+        category: 'preferences',
+      },
       UserSettings__email: {
         title: 'Change Email',
         path: 'user/settings/email',

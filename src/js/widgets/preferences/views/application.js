@@ -13,10 +13,6 @@ define([
       initialOptions: ['Auto', 'Open new tab', 'Open in current tab'],
       initialValue: 'Auto',
     },
-    exportFormat: {
-      initialOptions: _.map(config.export.formats, 'label'),
-      initialValue: 'BibTeX',
-    },
     homePage: {
       initialOptions: ['Modern Form', 'Classic Form', 'Paper Form'],
       initialValue: 'Modern Form',
@@ -41,62 +37,14 @@ define([
       initialValue: 'Show',
       initialOptions: ['Show', 'Hide'],
     },
-    addCustomFormatOptions: [],
-    bibtexMaxAuthors: {
-      initialValue: 10,
-      initialOptions: [
-        ..._.range(1, 10, 1),
-        ..._.range(10, 110, 10, true),
-        'all',
-      ],
-    },
-    bibtexKeyFormat: {
-      initialValue: '',
-    },
-    bibtexJournalFormat: {
-      initialValue: 'Use AASTeX macros',
-      initialOptions: [
-        'Use AASTeX macros',
-        'Use Journal Abbreviations',
-        'Use Full Journal Name',
-      ],
-    },
-    bibtexABSMaxAuthors: {
-      initialValue: 10,
-      initialOptions: [
-        ..._.range(1, 10, 1),
-        ..._.range(10, 110, 10, true),
-        'all',
-      ],
-    },
-    bibtexABSKeyFormat: {
-      initialValue: '',
-    },
-    bibtexAuthorCutoff: {
-      initialValue: 200,
-      initialOptions: [..._.range(1, 11, 1), ..._.range(100, 600, 100)],
-    },
-    bibtexABSAuthorCutoff: {
-      initialValue: 200,
-      initialOptions: [..._.range(1, 11, 1), ..._.range(100, 600, 100)],
-    },
   };
 
   const watchedProps = [
     'numAuthorsSelected',
     'externalLinksSelected',
     'databaseSelected',
-    'exportFormatSelected',
     'homePageSelected',
     'hideSideBarsSelected',
-    'addCustomFormatOptions',
-    'bibtexMaxAuthorsSelected',
-    'bibtexKeyFormatSelected',
-    'bibtexJournalFormatSelected',
-    'bibtexABSMaxAuthorsSelected',
-    'bibtexABSKeyFormatSelected',
-    'bibtexAuthorCutoffSelected',
-    'bibtexABSAuthorCutoffSelected',
   ];
 
   var ApplicationView = Marionette.ItemView.extend({
@@ -112,35 +60,9 @@ define([
         this.model.get('homePage') || DEFAULTS.homePage.initialValue;
       var database =
         this.model.get('defaultDatabase') || DEFAULTS.database.initialValue;
-      var exportFormat =
-        this.model.get('defaultExportFormat') ||
-        DEFAULTS.exportFormat.initialValue;
       var hideSidebars =
         this.model.get('defaultHideSidebars') ||
         DEFAULTS.hideSidebars.initialValue;
-      var addCustomFormatOptions =
-        this.model.get('customFormats') || DEFAULTS.addCustomFormatOptions;
-      var bibtexKeyFormat =
-        this.model.get('bibtexKeyFormat') ||
-        DEFAULTS.bibtexKeyFormat.initialValue;
-      var bibtexJournalFormat =
-        this.model.get('bibtexJournalFormat') ||
-        DEFAULTS.bibtexJournalFormat.initialValue;
-      var bibtexMaxAuthors =
-        this.model.get('bibtexMaxAuthors') ||
-        DEFAULTS.bibtexMaxAuthors.initialValue;
-      var bibtexABSKeyFormat =
-        this.model.get('bibtexABSKeyFormat') ||
-        DEFAULTS.bibtexABSKeyFormat.initialValue;
-      var bibtexABSMaxAuthors =
-        this.model.get('bibtexABSMaxAuthors') ||
-        DEFAULTS.bibtexABSMaxAuthors.initialValue;
-      var bibtexAuthorCutoff =
-        this.model.get('bibtexAuthorCutoff') ||
-        DEFAULTS.bibtexAuthorCutoff.initialValue;
-      var bibtexABSAuthorCutoff =
-        this.model.get('bibtexABSAuthorCutoff') ||
-        DEFAULTS.bibtexABSAuthorCutoff.initialValue;
 
       // must clone the props that will get mutated
       this.model.set({
@@ -151,45 +73,12 @@ define([
         externalLinksDefault: DEFAULTS.externalLinks.initialValue,
         externalLinksSelected: _.clone(externalLinks),
         databaseSelected: _.cloneDeep(database),
-        exportFormatOptions: DEFAULTS.exportFormat.initialOptions,
-        exportFormatDefault: DEFAULTS.exportFormat.initialValue,
-        exportFormatSelected: _.clone(exportFormat),
         homePageOptions: DEFAULTS.homePage.initialOptions,
         homePageDefault: DEFAULTS.homePage.initialValue,
         homePageSelected: _.clone(homePage),
         hideSideBarsDefault: DEFAULTS.hideSidebars.initialValue,
         hideSideBarsOptions: DEFAULTS.hideSidebars.initialOptions,
         hideSideBarsSelected: _.clone(hideSidebars),
-        addCustomFormatOptions: _.clone(addCustomFormatOptions),
-        bibtexKeyFormatDefault: DEFAULTS.bibtexKeyFormat.initialValue,
-        bibtexKeyFormatSelected: _.clone(bibtexKeyFormat),
-        bibtexJournalFormatDefault: DEFAULTS.bibtexJournalFormat.initialValue,
-        bibtexJournalFormatOptions: DEFAULTS.bibtexJournalFormat.initialOptions,
-        bibtexJournalFormatSelected: _.clone(bibtexJournalFormat),
-        bibtexMaxAuthorsDefault: DEFAULTS.bibtexMaxAuthors.initialValue,
-        bibtexMaxAuthorsOptions: DEFAULTS.bibtexMaxAuthors.initialOptions,
-        bibtexMaxAuthorsSelected: this._convertToNumber(
-          _.clone(bibtexMaxAuthors)
-        ),
-        bibtexABSKeyFormatDefault: DEFAULTS.bibtexABSKeyFormat.initialValue,
-        bibtexABSKeyFormatSelected: _.clone(bibtexABSKeyFormat),
-        bibtexABSMaxAuthorsDefault: DEFAULTS.bibtexABSMaxAuthors.initialValue,
-        bibtexABSMaxAuthorsOptions: DEFAULTS.bibtexABSMaxAuthors.initialOptions,
-        bibtexABSMaxAuthorsSelected: this._convertToNumber(
-          _.clone(bibtexABSMaxAuthors)
-        ),
-        bibtexAuthorCutoffDefault: DEFAULTS.bibtexAuthorCutoff.initialValue,
-        bibtexAuthorCutoffOptions: DEFAULTS.bibtexAuthorCutoff.initialOptions,
-        bibtexAuthorCutoffSelected: this._convertToNumber(
-          _.clone(bibtexAuthorCutoff)
-        ),
-        bibtexABSAuthorCutoffDefault:
-          DEFAULTS.bibtexABSAuthorCutoff.initialValue,
-        bibtexABSAuthorCutoffOptions:
-          DEFAULTS.bibtexABSAuthorCutoff.initialOptions,
-        bibtexABSAuthorCutoffSelected: this._convertToNumber(
-          _.clone(bibtexABSAuthorCutoff)
-        ),
       });
       this.model.trigger('change');
 
@@ -201,22 +90,7 @@ define([
     className: 'panel panel-default s-form-container',
 
     events: {
-      'click #appSettingsSubmit': 'onSubmit',
-      'click #appSettingsCancel': 'onCancel',
-      'click #appSettingsReset': 'onResetToDefaults',
       'click .database-select': 'onDatabaseSelect',
-      'click #addCustomFormatAdd': 'onAddCustomFormat',
-
-      // Custom format editor events
-      'click .addCustomFormatEdit': 'onEditCustomFormat',
-      'click .addCustomFormatConfirmEdit': 'onConfirmEditCustomFormat',
-      'click .addCustomFormatCancelEdit': 'onCancelEditCustomFormat',
-
-      // custom format deleting events
-      'click .addCustomFormatDelete': 'onDeleteCustomFormat',
-
-      'change #bibtexKeyFormat': 'onChangeBibtexKeyFormat',
-      'change #bibtexABSKeyFormat': 'onChangeBibtexABSKeyFormat',
       'change select': 'syncModel',
     },
 
@@ -288,33 +162,8 @@ define([
         ),
         externalLinkAction: this.model.get('externalLinksSelected'),
         defaultDatabase: this.model.get('databaseSelected'),
-        defaultExportFormat: this.model.get('exportFormatSelected'),
         defaultHideSidebars: this.model.get('hideSideBarsSelected'),
-        customFormats: _.map(this.model.get('addCustomFormatOptions'), function(
-          i
-        ) {
-          return _.pick(i, ['id', 'name', 'code']);
-        }),
-        bibtexMaxAuthors: this._convertToString(
-          this.model.get('bibtexMaxAuthorsSelected') === 'all'
-            ? 0
-            : this.model.get('bibtexMaxAuthorsSelected')
-        ),
-        bibtexKeyFormat: this.model.get('bibtexKeyFormatSelected'),
-        bibtexJournalFormat: this.model.get('bibtexJournalFormatSelected'),
-        bibtexABSMaxAuthors: this._convertToString(
-          this.model.get('bibtexABSMaxAuthorsSelected') === 'all'
-            ? 0
-            : this.model.get('bibtexABSMaxAuthorsSelected')
-        ),
-        bibtexABSKeyFormat: this.model.get('bibtexABSKeyFormatSelected'),
         homePage: this.model.get('homePageSelected'),
-        bibtexAuthorCutoff: this._convertToString(
-          this.model.get('bibtexAuthorCutoffSelected')
-        ),
-        bibtexABSAuthorCutoff: this._convertToString(
-          this.model.get('bibtexABSAuthorCutoffSelected')
-        ),
       });
       return false;
     },
@@ -324,14 +173,6 @@ define([
       return false;
     },
 
-    onChangeBibtexKeyFormat: function() {
-      this.onSubmit();
-    },
-
-    onChangeBibtexABSKeyFormat: function() {
-      this.onSubmit();
-    },
-
     onResetToDefaults: function() {
       // clear the model
       this.model.set(
@@ -339,7 +180,6 @@ define([
           minAuthorsPerResult: undefined,
           externalLinkAction: undefined,
           defaultDatabase: undefined,
-          defaultExportFormat: undefined,
           defaultHideSidebars: undefined,
         },
         {
@@ -382,126 +222,6 @@ define([
       $('#app-settings-msg').fadeOut(500, function() {
         $(this).empty();
       });
-    },
-
-    onAddCustomFormat: function(e) {
-      var items = _.clone(this.model.get('addCustomFormatOptions'));
-      var applyEditById = _.bind(this.applyEditById, this);
-      items = _.map(items, function(i, idx) {
-        return i.editing ? applyEditById(i.id, true)[idx] : i;
-      });
-
-      var id = _.uniqueId('format-');
-      items.unshift({
-        id: id,
-        name: '',
-        code: '',
-        editing: true,
-      });
-      this.model.set('addCustomFormatOptions', items);
-      var $name = $('#custom-format-name-' + id);
-      $name.focus().select();
-      var $msg = this.$('#new-format-msg');
-      $msg.fadeIn('slow', function() {
-        $msg.fadeOut('slow');
-      });
-      return false;
-    },
-
-    updateCustomFormatEntry: function(_id, data, silent) {
-      var items = _.clone(this.model.get('addCustomFormatOptions'));
-      var id = _id + '';
-      var idx = _.findIndex(items, {
-        id: id,
-      });
-      if (_.isPlainObject(data)) {
-        items[idx] = _.assign({}, items[idx], data);
-      }
-      if (!silent) {
-        this.model.set('addCustomFormatOptions', items);
-        this.model.trigger('change', {
-          addCustomFormatOptions: items,
-        });
-      }
-      return items;
-    },
-
-    onEditCustomFormat: function(e) {
-      // do not allow editing multiple items at once
-      if (this.isEditing()) {
-        return false;
-      }
-
-      var id = this.$(e.currentTarget).data('id');
-
-      // update the page
-      this.updateCustomFormatEntry(id, {
-        editing: true,
-      });
-
-      // apply some listeners
-      var $name = $('#custom-format-name-' + id);
-      $name.focus().select();
-      return false;
-    },
-
-    applyEditById: function(id, silent) {
-      var name = this.$('#custom-format-name-' + id).val();
-      var code = this.$('#custom-format-code-' + id).val();
-
-      // don't apply the edit if either input is empty
-      if (name === '' || code === '') {
-        return;
-      }
-
-      this._forceUpdate = true;
-      return this.updateCustomFormatEntry(
-        id,
-        {
-          editing: false,
-          name: name,
-          code: code,
-        },
-        silent
-      );
-    },
-
-    onConfirmEditCustomFormat: function(e) {
-      var id = this.$(e.currentTarget).data('id');
-      this.applyEditById(id);
-      return false;
-    },
-
-    onCancelEditCustomFormat: function(e) {
-      var id = this.$(e.currentTarget).data('id');
-      this.updateCustomFormatEntry(id, {
-        editing: false,
-      });
-      return false;
-    },
-
-    onDeleteCustomFormat: function(e) {
-      // do not allow deletion if editing
-      if (this.isEditing()) {
-        return false;
-      }
-
-      if (!confirm('Are you sure?')) {
-        return false;
-      }
-
-      var model = this.model;
-      var id = this.$(e.currentTarget).data('id') + '';
-      var items = _.clone(model.get('addCustomFormatOptions'));
-      var newList = _.reject(items, {
-        id: id,
-      });
-      this.$(e.currentTarget)
-        .closest('li')
-        .fadeOut(400, function() {
-          model.set('addCustomFormatOptions', newList);
-        });
-      return false;
     },
 
     onSortChange: function(e, ui) {

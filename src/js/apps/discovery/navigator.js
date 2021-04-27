@@ -283,7 +283,7 @@ define([
         settingsPreferencesView(
           'UserPreferences',
           'application',
-          'Application Settings'
+          'Search Settings'
         )
       );
 
