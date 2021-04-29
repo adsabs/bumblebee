@@ -43,20 +43,23 @@ hideCloseButton=true widgetLoadingSize="big"}} {{else if error}}
       <a href="#search/q=author:{{this.[5]}}&sort=date%20desc,%20bibcode%20desc">
         {{this.[0]}}
       </a>
-      <span class="orcid-author">
+      <span>
         {{#compare this.[2] '-' operator="!=="}}
-          <a href="#search/q=orcid:{{this.[2]}}&sort=date%20desc,%20bibcode%20desc">
-            <img src="../../styles/img/orcid-active.svg" alt="search by orcid">
+          <a class="orcid-author" href="#search/q=orcid:{{this.[2]}}&sort=date%20desc,%20bibcode%20desc">
+            <img class="inactive" src="../../styles/img/orcid-inactive.svg" alt="search by orcid">
+            <img class="active hidden" src="../../styles/img/orcid-active.svg" alt="search by orcid">
           </a>
         {{else}}
           {{#compare this.[3] '-' operator="!=="}}
-            <a href="#search/q=orcid:{{this.[3]}}&sort=date%20desc,%20bibcode%20desc">
-              <img src="../../styles/img/orcid-active.svg" alt="search by orcid">
+            <a class="orcid-author" href="#search/q=orcid:{{this.[3]}}&sort=date%20desc,%20bibcode%20desc">
+              <img class="inactive" src="../../styles/img/orcid-inactive.svg" alt="search by orcid">
+              <img class="active hidden" src="../../styles/img/orcid-active.svg" alt="search by orcid">
             </a>
           {{else}}
             {{#compare this.[4] '-' operator="!=="}}
-              <a href="#search/q=orcid:{{this.[4]}}&sort=date%20desc,%20bibcode%20desc">
-                <img src="../../styles/img/orcid-active.svg" alt="search by orcid">
+              <a class="orcid-author" href="#search/q=orcid:{{this.[4]}}&sort=date%20desc,%20bibcode%20desc">
+                <img class="inactive" src="../../styles/img/orcid-inactive.svg" alt="search by orcid">
+                <img class="active hidden" src="../../styles/img/orcid-active.svg" alt="search by orcid">
               </a>
             {{/compare}}
           {{/compare}}
@@ -67,20 +70,23 @@ hideCloseButton=true widgetLoadingSize="big"}} {{else if error}}
     {{else}}
     <li class="author">
       <a href="#search/q=author:{{this.[5]}}&sort=date%20desc,%20bibcode%20desc">{{this.[0]}}</a>
-      <span class="orcid-author">
+      <span>
         {{#compare this.[2] '-' operator="!=="}}
-          <a href="#search/q=orcid:{{this.[2]}}&sort=date%20desc,%20bibcode%20desc">
-            <img src="../../styles/img/orcid-active.svg" alt="search by orcid">
+          <a class="orcid-author" href="#search/q=orcid:{{this.[2]}}&sort=date%20desc,%20bibcode%20desc">
+            <img class="inactive" src="../../styles/img/orcid-inactive.svg" alt="search by orcid">
+            <img class="active hidden" src="../../styles/img/orcid-active.svg" alt="search by orcid">
           </a>
         {{else}}
           {{#compare this.[3] '-' operator="!=="}}
-            <a href="#search/q=orcid:{{this.[3]}}&sort=date%20desc,%20bibcode%20desc">
-              <img src="../../styles/img/orcid-active.svg" alt="search by orcid">
+            <a class="orcid-author" href="#search/q=orcid:{{this.[3]}}&sort=date%20desc,%20bibcode%20desc">
+              <img class="inactive" src="../../styles/img/orcid-inactive.svg" alt="search by orcid">
+              <img class="active hidden" src="../../styles/img/orcid-active.svg" alt="search by orcid">
             </a>
           {{else}}
             {{#compare this.[4] '-' operator="!=="}}
-              <a href="#search/q=orcid:{{this.[4]}}&sort=date%20desc,%20bibcode%20desc">
-                <img src="../../styles/img/orcid-active.svg" alt="search by orcid">
+              <a class="orcid-author" href="#search/q=orcid:{{this.[4]}}&sort=date%20desc,%20bibcode%20desc">
+                <img class="inactive" src="../../styles/img/orcid-inactive.svg" alt="search by orcid">
+                <img class="active hidden" src="../../styles/img/orcid-active.svg" alt="search by orcid"> 
               </a>
             {{/compare}}
           {{/compare}}
@@ -95,20 +101,23 @@ hideCloseButton=true widgetLoadingSize="big"}} {{else if error}}
     {{/if}} {{#each authorAffExtra}} {{#if @last}}
     <li class="author extra hide">
       <a href="#search/q=author:{{this.[5]}}&sort=date%20desc,%20bibcode%20desc">{{this.[0]}}</a>
-      <span class="orcid-author">
+      <span>
         {{#compare this.[2] '-' operator="!=="}}
-          <a href="#search/q=orcid:{{this.[2]}}&sort=date%20desc,%20bibcode%20desc">
-            <img src="../../styles/img/orcid-active.svg" alt="search by orcid">
+          <a class="orcid-author" href="#search/q=orcid:{{this.[2]}}&sort=date%20desc,%20bibcode%20desc">
+            <img class="inactive" src="../../styles/img/orcid-inactive.svg" alt="search by orcid">
+            <img class="active hidden" src="../../styles/img/orcid-active.svg" alt="search by orcid">
           </a>
         {{else}}
           {{#compare this.[3] '-' operator="!=="}}
-            <a href="#search/q=orcid:{{this.[3]}}&sort=date%20desc,%20bibcode%20desc">
-              <img src="../../styles/img/orcid-active.svg" alt="search by orcid">
+            <a class="orcid-author" href="#search/q=orcid:{{this.[3]}}&sort=date%20desc,%20bibcode%20desc">
+              <img class="inactive" src="../../styles/img/orcid-inactive.svg" alt="search by orcid">
+              <img class="active hidden" src="../../styles/img/orcid-active.svg" alt="search by orcid">
             </a>
           {{else}}
             {{#compare this.[4] '-' operator="!=="}}
-              <a href="#search/q=orcid:{{this.[4]}}&sort=date%20desc,%20bibcode%20desc">
-                <img src="../../styles/img/orcid-active.svg" alt="search by orcid">
+              <a class="orcid-author" href="#search/q=orcid:{{this.[4]}}&sort=date%20desc,%20bibcode%20desc">
+                <img class="inactive" src="../../styles/img/orcid-inactive.svg" alt="search by orcid">
+                <img class="active hidden" src="../../styles/img/orcid-active.svg" alt="search by orcid">
               </a>
             {{/compare}}
           {{/compare}}
@@ -119,20 +128,23 @@ hideCloseButton=true widgetLoadingSize="big"}} {{else if error}}
     {{else}}
     <li class="author extra hide">
       <a href="#search/q=author:{{this.[5]}}&sort=date%20desc,%20bibcode%20desc">{{this.[0]}}</a>
-      <span class="orcid-author">
+      <span>
         {{#compare this.[2] '-' operator="!=="}}
-          <a href="#search/q=orcid:{{this.[2]}}&sort=date%20desc,%20bibcode%20desc">
-            <img src="../../styles/img/orcid-active.svg" alt="search by orcid">
+          <a class="orcid-author" href="#search/q=orcid:{{this.[2]}}&sort=date%20desc,%20bibcode%20desc">
+            <img class="inactive" src="../../styles/img/orcid-inactive.svg" alt="search by orcid">
+            <img class="active hidden" src="../../styles/img/orcid-active.svg" alt="search by orcid">
           </a>
         {{else}}
           {{#compare this.[3] '-' operator="!=="}}
-            <a href="#search/q=orcid:{{this.[3]}}&sort=date%20desc,%20bibcode%20desc">
-              <img src="../../styles/img/orcid-active.svg" alt="search by orcid">
+            <a class="orcid-author" href="#search/q=orcid:{{this.[3]}}&sort=date%20desc,%20bibcode%20desc">
+              <img class="inactive" src="../../styles/img/orcid-inactive.svg" alt="search by orcid">
+              <img class="active hidden" src="../../styles/img/orcid-active.svg" alt="search by orcid">
             </a>
           {{else}}
             {{#compare this.[4] '-' operator="!=="}}
-              <a href="#search/q=orcid:{{this.[4]}}&sort=date%20desc,%20bibcode%20desc">
-                <img src="../../styles/img/orcid-active.svg" alt="search by orcid">
+              <a class="orcid-author" href="#search/q=orcid:{{this.[4]}}&sort=date%20desc,%20bibcode%20desc">
+                <img class="inactive" src="../../styles/img/orcid-inactive.svg" alt="search by orcid">
+                <img class="active hidden" src="../../styles/img/orcid-active.svg" alt="search by orcid">
               </a>
             {{/compare}}
           {{/compare}}

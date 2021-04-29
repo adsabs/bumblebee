@@ -192,6 +192,26 @@ define([
       'click a[target="next"]': 'onClick',
       'click a[data-target="DOI"]': 'emitAnalytics',
       'click a[data-target="arXiv"]': 'emitAnalytics',
+      'mouseenter .orcid-author': 'highlightOrcidAuthor',
+      'mouseleave .orcid-author': 'unhighlightOrcidAuthor',
+    },
+
+    highlightOrcidAuthor: function(e) {
+      const $target = $(e.currentTarget);
+      const $active = $target.find('.active');
+      if ($active.hasClass('hidden')) {
+        $active.removeClass('hidden');
+        $target.find('.inactive').addClass('hidden');
+      }
+    },
+
+    unhighlightOrcidAuthor: function(e) {
+      const $target = $(e.currentTarget);
+      const $inactive = $target.find('.inactive');
+      if ($inactive.hasClass('hidden')) {
+        $inactive.removeClass('hidden');
+        $target.find('.active').addClass('hidden');
+      }
     },
 
     toggleMoreAuthors: function() {
