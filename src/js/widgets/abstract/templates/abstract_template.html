@@ -38,7 +38,7 @@ hideCloseButton=true widgetLoadingSize="big"}} {{else if error}}
 
 <div id="authors-and-aff" class="s-authors-and-aff">
   <ul class="list-inline">
-    {{#each authorAff}} {{#if @last}}
+    {{#each authorAff}}
     <li class="author">
       <a href="#search/q=author:{{this.[5]}}&sort=date%20desc,%20bibcode%20desc">
         {{this.[0]}}
@@ -65,42 +65,21 @@ hideCloseButton=true widgetLoadingSize="big"}} {{else if error}}
           {{/compare}}
         {{/compare}}
       </span>    
-      <span class="affiliation hide"> (<i>{{this.[1]}}</i>)</span>
+      <span class="affiliation hide"> (<i>{{this.[1]}}</i>)</span>{{#if @last}}{{else}};{{/if}}
     </li>
-    {{else}}
-    <li class="author">
-      <a href="#search/q=author:{{this.[5]}}&sort=date%20desc,%20bibcode%20desc">{{this.[0]}}</a>
-      <span>
-        {{#compare this.[2] '-' operator="!=="}}
-          <a class="orcid-author" href="#search/q=orcid:{{this.[2]}}&sort=date%20desc,%20bibcode%20desc">
-            <img class="inactive" src="../../styles/img/orcid-inactive.svg" alt="search by orcid">
-            <img class="active hidden" src="../../styles/img/orcid-active.svg" alt="search by orcid">
-          </a>
-        {{else}}
-          {{#compare this.[3] '-' operator="!=="}}
-            <a class="orcid-author" href="#search/q=orcid:{{this.[3]}}&sort=date%20desc,%20bibcode%20desc">
-              <img class="inactive" src="../../styles/img/orcid-inactive.svg" alt="search by orcid">
-              <img class="active hidden" src="../../styles/img/orcid-active.svg" alt="search by orcid">
-            </a>
-          {{else}}
-            {{#compare this.[4] '-' operator="!=="}}
-              <a class="orcid-author" href="#search/q=orcid:{{this.[4]}}&sort=date%20desc,%20bibcode%20desc">
-                <img class="inactive" src="../../styles/img/orcid-inactive.svg" alt="search by orcid">
-                <img class="active hidden" src="../../styles/img/orcid-active.svg" alt="search by orcid"> 
-              </a>
-            {{/compare}}
-          {{/compare}}
-        {{/compare}}
-      </span> 
-      <span class="affiliation hide"> (<i>{{this.[1]}}</i>)</span>;
-    </li>
-    {{/if}} {{/each}} {{#if hasMoreAuthors}}
+    {{/each}} 
+    
+    {{#if hasMoreAuthors}}
     <li class="author extra-dots">
       ; <a data-target="more-authors" title="Show all authors">...</a>
     </li>
-    {{/if}} {{#each authorAffExtra}} {{#if @last}}
+    {{/if}} 
+    
+    {{#each authorAffExtra}}
     <li class="author extra hide">
-      <a href="#search/q=author:{{this.[5]}}&sort=date%20desc,%20bibcode%20desc">{{this.[0]}}</a>
+      <a href="#search/q=author:{{this.[5]}}&sort=date%20desc,%20bibcode%20desc">
+        {{this.[0]}}
+      </a>
       <span>
         {{#compare this.[2] '-' operator="!=="}}
           <a class="orcid-author" href="#search/q=orcid:{{this.[2]}}&sort=date%20desc,%20bibcode%20desc">
@@ -123,36 +102,10 @@ hideCloseButton=true widgetLoadingSize="big"}} {{else if error}}
           {{/compare}}
         {{/compare}}
       </span> 
-      <span class="affiliation hide"> (<i>{{this.[1]}}</i>)</span>
+      <span class="affiliation hide"> (<i>{{this.[1]}}</i>)</span>{{#if @last}}{{else}};{{/if}}
     </li>
-    {{else}}
-    <li class="author extra hide">
-      <a href="#search/q=author:{{this.[5]}}&sort=date%20desc,%20bibcode%20desc">{{this.[0]}}</a>
-      <span>
-        {{#compare this.[2] '-' operator="!=="}}
-          <a class="orcid-author" href="#search/q=orcid:{{this.[2]}}&sort=date%20desc,%20bibcode%20desc">
-            <img class="inactive" src="../../styles/img/orcid-inactive.svg" alt="search by orcid">
-            <img class="active hidden" src="../../styles/img/orcid-active.svg" alt="search by orcid">
-          </a>
-        {{else}}
-          {{#compare this.[3] '-' operator="!=="}}
-            <a class="orcid-author" href="#search/q=orcid:{{this.[3]}}&sort=date%20desc,%20bibcode%20desc">
-              <img class="inactive" src="../../styles/img/orcid-inactive.svg" alt="search by orcid">
-              <img class="active hidden" src="../../styles/img/orcid-active.svg" alt="search by orcid">
-            </a>
-          {{else}}
-            {{#compare this.[4] '-' operator="!=="}}
-              <a class="orcid-author" href="#search/q=orcid:{{this.[4]}}&sort=date%20desc,%20bibcode%20desc">
-                <img class="inactive" src="../../styles/img/orcid-inactive.svg" alt="search by orcid">
-                <img class="active hidden" src="../../styles/img/orcid-active.svg" alt="search by orcid">
-              </a>
-            {{/compare}}
-          {{/compare}}
-        {{/compare}}
-      </span> 
-      <span class="affiliation hide"> (<i>{{this.[1]}}</i>)</span>;
-    </li>
-    {{/if}} {{/each}}
+    {{/each}}
+    
   </ul>
 </div>
 {{/if}}
