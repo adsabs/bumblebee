@@ -30,10 +30,10 @@
                 {{#if links}}
                 <div class="letter-icon s-letter-icon">
 
-                    <button class="btn-link {{#if links.text}} active-link s-active-link {{/if}}"
+                    <a class="btn-link {{#if links.text}} active-link s-active-link {{/if}}"
                             style="padding: 0" aria-disabled="{{#if links.text}} false {{else}} true {{/if}}">
                         <i class="s-text-icon" aria-label="quick access to full text links"></i>
-                    </button>
+                    </a>
                     {{#if links.text}}
                     <ul class="hidden list-unstyled link-details s-link-details" role="menu">
 
@@ -46,10 +46,10 @@
                 </div>
                 <div class="letter-icon s-letter-icon">
 
-                    <button class="btn-link {{#if links.list}} active-link s-active-link {{/if}}"
+                    <a class="btn-link {{#if links.list}} active-link s-active-link {{/if}}"
                             style="padding: 0" aria-disabled="{{#if links.list}} false {{else}} true{{/if}}">
                         <i class="s-list-icon" aria-label="quick links to lists of references, citations and more"></i>
-                    </button>
+                    </a>
 
                     {{#if links.list}}
                     <ul class="hidden list-unstyled list-unstyled link-details s-link-details" role="menu">
@@ -62,10 +62,10 @@
                 </div>
                 <div class="letter-icon s-letter-icon">
 
-                    <button class="btn-link  {{#if links.data}} active-link s-active-link {{/if}}"
+                    <a class="btn-link  {{#if links.data}} active-link s-active-link {{/if}}"
                             style="padding: 0" aria-disabled="{{#if links.data}} false {{else}} true  {{/if}}">
                         <i class="s-data-icon" aria-label="quick links to data associated with this article"></i>
-                    </button>
+                    </a>
 
                     {{#if links.data}}
                     <ul class="hidden list-unstyled link-details s-link-details" role="menu">
