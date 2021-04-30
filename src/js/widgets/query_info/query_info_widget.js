@@ -286,7 +286,7 @@ define([
         .done(function(response, status) {
           var numAlreadyInLib =
             response.numBibcodesRequested - parseInt(response.number_added);
-          that.model.set('selectedLibrary', undefined);
+          that.model.unset('selectedLibrary');
           that.model.set('feedback', {
             success: true,
             name: name,
