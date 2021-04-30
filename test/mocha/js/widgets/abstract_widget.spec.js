@@ -30,6 +30,9 @@ define(['backbone', 'marionette', 'jquery', 'js/widgets/abstract/widget',
                 "pubdate": "1981-00-00",
                 "title": ["Planetary Ephemerides <A href=\"test-url\">TEST</A>"],
                 "aff": ["Heidelberg, Universität, Heidelberg, Germany", "California Institute of Technology, Jet Propulsion Laboratory, Pasadena, CA"],
+                "orcid_pub": ["1234", "-"],
+                "orcid_user": ["4321", "5678"],
+                "orcid_other": ["-", "8765"],
                 "citation_count" : 5,
                 "[citations]" : { num_citations : 3, num_references: 34 },
                 read_count: 30,
@@ -122,10 +125,10 @@ define(['backbone', 'marionette', 'jquery', 'js/widgets/abstract/widget',
         expect(aw._docs['foo'].pubdate).to.equal("1981-00-00");
         expect(aw._docs['foo'].formattedDate).to.equal("1981");
         expect(aw._docs['foo'].pub).to.equal("IAU Colloq. 56: Reference Coordinate Systems for Earth Dynamics");
-        expect(aw._docs['foo'].authorAff[0]).to.eql(["Lieske, J. H.","Heidelberg, Universität, Heidelberg, Germany","%22Lieske%2C+J.+H.%22"]);
+        expect(aw._docs['foo'].authorAff[0]).to.eql(["Lieske, J. H.","Heidelberg, Universität, Heidelberg, Germany","1234","4321","-","%22Lieske%2C+J.+H.%22"]);
         expect(aw._docs['foo'].authorAff[1]).to.eql([
           "Standish, E. M.",
-          "California Institute of Technology, Jet Propulsion Laboratory, Pasadena, CA",
+          "California Institute of Technology, Jet Propulsion Laboratory, Pasadena, CA","-","5678","8765",
           "%22Standish%2C+E.+M.%22"
         ]);
         expect(aw._docs['foo'].authorAffExtra).to.eql(undefined);
@@ -142,8 +145,22 @@ define(['backbone', 'marionette', 'jquery', 'js/widgets/abstract/widget',
         expect(spy.callCount).to.eql(2);
         expect(aw._docs['foo'].hasAffiliation).to.eql(2);
         expect(aw._docs['foo'].hasMoreAuthors).to.eql(1);
-        expect(aw._docs['foo'].authorAff[0]).to.eql(["Lieske, J. H.","Heidelberg, Universität, Heidelberg, Germany","%22Lieske%2C+J.+H.%22"]);
-        expect(aw._docs['foo'].authorAffExtra[0]).to.eql(["Standish, E. M.","California Institute of Technology, Jet Propulsion Laboratory, Pasadena, CA","%22Standish%2C+E.+M.%22"]);
+        expect(aw._docs['foo'].authorAff[0]).to.eql([
+          'Lieske, J. H.',
+          'Heidelberg, Universität, Heidelberg, Germany',
+          '1234',
+          '4321',
+          '-',
+          '%22Lieske%2C+J.+H.%22',
+        ]);
+        expect(aw._docs['foo'].authorAffExtra[0]).to.eql([
+          'Standish, E. M.',
+          'California Institute of Technology, Jet Propulsion Laboratory, Pasadena, CA',
+          '-',
+          '5678',
+          '8765',
+          '%22Standish%2C+E.+M.%22',
+        ]);
 
       });
 
