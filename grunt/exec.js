@@ -24,7 +24,7 @@ module.exports = {
   },
   'coveralls-report': {
     cmd:
-      'cat test/coverage/reports/lcov/lcov.info | ./node_modules/coveralls/bin/coveralls.js',
+      'cat test/coverage/reports/lcov/lcov.info | ./node_modules/coveralls/bin/coveralls.js || true',
   },
   server: 'node server',
   suit_build: {
