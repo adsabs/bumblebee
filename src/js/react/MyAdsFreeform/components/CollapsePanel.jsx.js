@@ -35,32 +35,18 @@ define(['react', 'prop-types', 'react-bootstrap'], function(
       const caretDir = this.state.open ? 'down' : 'right';
       return (
         <Panel expanded={this.state.open} onToggle={this.toggle}>
-          <Panel.Heading style={{ backgroundColor: 'white', padding: '0' }}>
+          <Panel.Heading style={{ padding: '0' }}>
             <Panel.Title>
               <button
-                className="btn btn-link btn-block"
+                className="create-notification-title btn btn-link btn-block"
                 onMouseEnter={this.toggleHover}
                 onMouseLeave={this.toggleHover}
                 onFocus={this.onChangeFocus(true)}
                 onBlur={this.onChangeFocus(false)}
-                style={{
-                  color: '#5D5D5D',
-                  fontSize: '1.1em',
-                  backgroundColor:
-                    this.state.hovered || this.state.focused
-                      ? '#f2f2f2'
-                      : 'white',
-                  textDecoration: 'none',
-                }}
                 aria-expanded={this.state.open}
                 onClick={this.toggle}
               >
-                <div
-                  style={{
-                    display: 'flex',
-                    justifyContent: 'space-between',
-                  }}
-                >
+                <div className="s-create-notification-title__title">
                   <span>
                     <i className="fa fa-bell" aria-hidden="true" /> Create email
                     notification

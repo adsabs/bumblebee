@@ -132,6 +132,22 @@
   }
 }
 
+
+.s-create-notification-title__title {
+  display: flex;
+  justify-content: space-between;
+  color: #5d5d5d;
+  font-size: 1.25em;
+}
+  
+.create-notification-title {
+  &:hover,
+  &:focus {
+    background: darken(white, 5%) !important;
+    text-decoration: none;
+  }
+}
+
 .s-empty-view-msg {
   padding: 0 10% 0 10%;
 }

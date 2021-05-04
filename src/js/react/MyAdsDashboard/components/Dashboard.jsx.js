@@ -364,7 +364,10 @@ define([
 
                 return (
                   <tr
-                    className={activeItem === id ? 'info' : ''}
+                    className={
+                      (activeItem === id ? 'info ' : '') +
+                      (item.active ? '' : 'inactive')
+                    }
                     style={{
                       backgroundColor: item.active
                         ? 'inherit'
