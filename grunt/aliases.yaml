@@ -86,7 +86,6 @@ test:prod:
   - server:once
   - puppet:prod
   - coverage-report:coveralls
-  - exec:coveralls-report
 
 test:
   - clean:temp

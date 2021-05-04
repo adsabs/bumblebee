@@ -22,10 +22,6 @@ module.exports = {
   'nyc-instrument': {
     cmd: 'node_modules/.bin/nyc instrument dist/js/ test/coverage/instrument',
   },
-  'coveralls-report': {
-    cmd:
-      'cat test/coverage/reports/lcov/lcov.info | ./node_modules/coveralls/bin/coveralls.js || true',
-  },
   server: 'node server',
   suit_build: {
     cwd: './src/shared',
