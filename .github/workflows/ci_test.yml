@@ -6,8 +6,6 @@ jobs:
   build:
 
     runs-on: ubuntu-latest
-    env:
-      COVERALLS_REPO_TOKEN: ${{ secrets.COVERALLS_REPO_TOKEN }}
 
     steps:
     - uses: actions/checkout@v2
@@ -19,3 +17,10 @@ jobs:
     - run: npm ci
     - run: grunt setup
     - run: grunt test:prod
+
+    - name: Coveralls
+      uses: coverallsapp/github-action@master
+      with:
+        github-token: ${{ secrets.GITHUB_TOKEN }}
+        path-to-lcov: "test/coverage/reports/lcov/lcov.info"
+
