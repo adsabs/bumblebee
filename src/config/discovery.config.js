@@ -322,6 +322,7 @@ require.config({
     xstate: 'libs/xstate/index',
     '@xstate/react': 'libs/xstate-react/index',
     'array-flat-polyfill': 'libs/polyfills/array-flat-polyfill',
+    polyfill: 'libs/polyfill/index',
   },
 
   hbs: {
