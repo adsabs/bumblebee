@@ -77,4 +77,8 @@ module.exports = {
     src: 'https://cdnjs.cloudflare.com/ajax/libs/sinon.js/1.9.0/sinon.min.js',
     dest: 'src/libs/sinon/index.js',
   },
+  polyfill: {
+    src: 'https://polyfill.io/v3/polyfill.min.js?features=IntersectionObserver',
+    dest: 'src/libs/polyfill/index.js',
+  },
 };

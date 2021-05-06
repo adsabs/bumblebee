@@ -22,6 +22,7 @@ module.exports = {
     'curl:xstate-react',
     'curl:array-flat-polyfill',
     'curl:sinon',
+    'curl:polyfill',
   ],
   hash_require: ['hash_require:js', 'hash_require:css'],
 };
