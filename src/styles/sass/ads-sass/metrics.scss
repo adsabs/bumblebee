@@ -20,6 +20,9 @@
 .s-metrics-title {
   @extend .s-title-format;
   margin: 6px 0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 }
 
 .s-metrics-table,

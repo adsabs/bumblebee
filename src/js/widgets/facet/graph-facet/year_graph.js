@@ -28,6 +28,10 @@ define([
         });
     },
 
+    events: {
+      'click .download-csv': 'downloadCSV',
+    },
+
     buildGraph: function() {
       var that = this;
       var data;
@@ -434,6 +438,16 @@ define([
         'Limit results to papers from <br/> <input type="text" class="show-slider-data-first" aria-label="limit papers start year"></input> to' +
           ' <input type="text" class="show-slider-data-second" aria-label="limit papers end year"></input> <button class="apply btn btn-sm btn-primary-faded">Apply</button>'
       );
+    },
+
+    convertGraphDataToCSV: function() {
+      let data = 'data:text/csv;charset=utf-8,\n';
+      data += 'Year, Article Count, Ref Count';
+      this.model.get('graphData').forEach((obj) => {
+        data += `\n${obj.x},${obj.y},${obj.refCount}`;
+      });
+
+      return data;
     },
 
     triggerGraphChange: function(update) {

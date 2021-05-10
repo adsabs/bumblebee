@@ -19,6 +19,7 @@ define([
       graphViewOptions: {
         yAxisTitle: 'article count',
         xAxisTitle: 'years',
+        name: 'Years',
       },
 
       processResponse: function(apiResponse) {
@@ -121,6 +122,7 @@ define([
         yAxisTitle: 'citations',
         xAxisTitle: 'number of records',
         pastTenseTitle: 'cited',
+        name: 'Citations',
       },
       processResponse: function(apiResponse) {
         this.setCurrentQuery(apiResponse.getApiQuery());
@@ -208,6 +210,7 @@ define([
         yAxisTitle: 'recent reads',
         xAxisTitle: 'number of records',
         pastTenseTitle: 'read',
+        name: 'Reads',
       },
       processResponse: function(apiResponse) {
         this.setCurrentQuery(apiResponse.getApiQuery());
