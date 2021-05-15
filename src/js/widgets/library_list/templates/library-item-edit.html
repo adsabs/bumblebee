@@ -5,7 +5,9 @@
         <div class="col-xs-1 col-sm-1 s-checkbox-col s-top-row-col">
           <span class="hidden-xs">{{indexToShow}}</span>
           {{#if showCheckbox}}
-            <input type="checkbox" value={{identifier}} name="identifier" aria-label="select item {{indexToShow}}" {{#if chosen}} checked {{/if}}>
+            <label class="custom-checkbox">
+                <input type="checkbox" value={{identifier}} name="identifier" aria-label="select item {{indexToShow}}" {{#if chosen}} checked {{/if}}>
+            </label>
           {{/if}}
         </div>
         <div class="col-xs-4 col-sm-4 s-top-row-col identifier s-identifier">

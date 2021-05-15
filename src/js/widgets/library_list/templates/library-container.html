@@ -6,8 +6,12 @@
       <div class="row" style="margin-left: 0">
         <div class="col-xs-1 col-sm-1" style="padding-left: 12.5px; text-align: right;">
         {{#unless public}}
-          <label for="select-all-docs" class="sr-only">Select All Docs</label>
-          <input type="checkbox" id="select-all-docs" name="select-all-docs" title="select all docs" {{#if allSelected}} checked {{/if}}>
+        <div class="select-all-docs">
+          <label class="custom-checkbox">
+            <input type="checkbox" id="select-all-docs-cb" name="select-all-docs-cb" title="select all docs" {{#if allSelected}} checked {{/if}}>
+          </label>
+          <label for="select-all-docs-cb" class="sr-only custom-checkbox">Select All Docs</label>
+        </div>
         {{/unless}}
         </div>
         <div class="col-xs-11 col-sm-6">

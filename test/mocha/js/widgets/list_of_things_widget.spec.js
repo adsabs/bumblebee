@@ -184,13 +184,13 @@ define([
       $('#test').append($w);
 
       // there should be no items (yet)
-      expect($w.find('label').length).to.equal(0);
+      expect($w.find('label:not([class])').length).to.equal(0);
 
       view.collection.showMore(5);
-      expect($w.find('label').length).to.equal(5);
+      expect($w.find('label:not([class])').length).to.equal(5);
 
       view.collection.showRange(3, 5);
-      expect($w.find('label').length).to.equal(3);
+      expect($w.find('label:not([class])').length).to.equal(3);
 
       view.collection.showRange(0, 20);
 
@@ -211,7 +211,7 @@ define([
       $w = $(view.render().el);
       $('#test').append($w);
 
-      expect($w.find('label').length).to.equal(10);
+      expect($w.find('label:not([class])').length).to.equal(10);
 
       expect(
         $w
