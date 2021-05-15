@@ -12,7 +12,9 @@ define([
     return (
       <div className="row">
         <div className="col-xs-2">
-          <label className={selected ? '' : 'auth-aff-label'}>
+          <label
+            className={(selected ? '' : 'auth-aff-label') + 'custom-checkbox'}
+          >
             <input
               checked={selected}
               type="checkbox"

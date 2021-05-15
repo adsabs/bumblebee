@@ -57,7 +57,7 @@ define([
       };
 
       _.extend(this.view.events, {
-        'click input#select-all-docs': 'toggleAll',
+        'click input#select-all-docs-cb': 'toggleAll',
       });
 
       this.view.resultsWidget = true;
@@ -425,7 +425,7 @@ define([
       });
       if (this.collection.where({ chosen: true }).length == 0) {
         // make sure the "selectAll" button is unchecked
-        var $chk = this.view.$('input#select-all-docs');
+        var $chk = this.view.$('input#select-all-docs-cb');
         if ($chk.length > 0) {
           $chk[0].checked = false;
         }

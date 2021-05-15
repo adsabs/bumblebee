@@ -47,7 +47,7 @@ define(['react', 'd3', 'prop-types', 'react-redux'], function(
       hierarchical ? '' : 'child'
     }_${index}`;
     var checkbox = (
-      <label className="facet-label" htmlFor={`${label}__checkbox`}>
+      <label className="facet-label custom-checkbox" htmlFor={`${label}__checkbox`}>
         <input
           type="checkbox"
           id={`${label}__checkbox`}

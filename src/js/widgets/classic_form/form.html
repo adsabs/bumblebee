@@ -10,13 +10,13 @@
   </div>
 
   <div data-field="database">
-    <b>Limit query to: </b>&nbsp;<label>
+    <b>Limit query to: </b>&nbsp;<label class="custom-checkbox">
       <input type="checkbox" checked="true" name="astronomy" />
       Astronomy </label
     >&nbsp;&nbsp;
-    <label> <input type="checkbox" name="physics" /> Physics </label
+    <label class="custom-checkbox"> <input type="checkbox" name="physics" /> Physics </label
     >&nbsp;&nbsp;
-    <label> <input type="checkbox" name="general" /> General </label>
+    <label class="custom-checkbox"> <input type="checkbox" name="general" /> General </label>
   </div>
   <div class="clearfix">
     <div class="col-sm-6" data-field="author" data-textInput="true">
@@ -161,17 +161,19 @@
     </div>
   </div>
   <div data-field="property">
-    <label>
+    <label class="custom-checkbox">
       <input type="checkbox" name="refereed" />&nbsp;Refereed only&nbsp;
     </label>
     &nbsp;&nbsp;&nbsp;
-    <label>
+    <label class="custom-checkbox">
       <input type="checkbox" name="article" />&nbsp;Articles only&nbsp;
     </label>
   </div>
   <div data-field="bibstem" data-textInput="true">
     <div class="logic-group">
-      <input type="checkbox" class="hidden" value="OR" checked="true" />
+      <label class="custom-checkbox">
+        <input type="checkbox" class="hidden" value="OR" checked="true" />
+      </label>
     </div>
     <label for="classic-bibstem">Publication(s)</label>
     <p class="help-block small">Press Return Key To Add Publication</p>

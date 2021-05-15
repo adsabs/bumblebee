@@ -5,7 +5,7 @@ define(['react'], function(React) {
   const AffiliationRow = ({ years, name, selected, onChange }) => (
     <div>
       <div className="col-xs-8">
-        <label className={selected ? '' : 'auth-aff-label'}>
+        <label className={(selected ? '' : 'auth-aff-label ') + 'custom-checkbox'}>
           <input type="checkbox" checked={selected} onChange={onChange} />{' '}
           {name === '-' ? '(None)' : name}
         </label>

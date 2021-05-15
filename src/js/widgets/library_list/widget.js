@@ -99,7 +99,7 @@ define([
       'change #per-page-select': 'changePerPage',
       'click #bulk-delete': 'bulkDelete',
       'click #bulk-limit': 'bulkLimit',
-      'click #select-all-docs': 'toggleAll',
+      'click #select-all-docs-cb': 'toggleAll',
     },
 
     modelEvents: {

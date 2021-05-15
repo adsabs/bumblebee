@@ -3,14 +3,18 @@
     <div class="s-results-border-bottom">
       <div class="col-xs-1 s-checkbox-col">
         {{#unless loading}}
-        <label for="select-all-docs" class="sr-only">
-          select all on this page
-        </label>
-        <input
-          title="select all on this page"
-          type="checkbox"
-          id="select-all-docs"
-        />
+        <div class="select-all-docs">
+          <label class="custom-checkbox">
+            <input
+              title="select all on this page"
+              type="checkbox"
+              id="select-all-docs-cb"
+            />
+          </label>
+          <label for="select-all-docs-cb" class="sr-only">
+            select all on this page
+          </label>
+        </div>
         {{/unless}}
       </div>
 
