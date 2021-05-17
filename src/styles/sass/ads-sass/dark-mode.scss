@@ -1136,6 +1136,15 @@
     color: $darkmode-text;
   }
 
+  .results-list .s-identifier, .library-list-container .s-identifier {
+    a,
+    a:hover,
+    a:active,
+    a:visited {
+      color: $darkmode-text-dim;
+    }
+  }
+
   // Add to library widget
   .s-query-info-widget .s-library-area {
     background: $darkmode-background;
