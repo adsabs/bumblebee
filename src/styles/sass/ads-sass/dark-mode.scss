@@ -34,7 +34,7 @@
   }
   */
 
-.custom-checkbox {
+  .custom-checkbox {
     cursor: pointer;
     position: relative;
     padding: 2px;
@@ -71,7 +71,7 @@
         top: 0.2rem;
       }
     }
-}
+  }
 
   a,
   a:hover,
@@ -1326,7 +1326,7 @@
     border-color: $darkmode-input-border;
     color: $darkmode-text;
     border-radius: 5px;
-    z-index:10;
+    z-index: 10;
   }
 
   .facet__dropdown__title {
@@ -1430,6 +1430,15 @@
   .y-axis text,
   .s-graph-view .graph-label {
     fill: $darkmode-text !important;
+  }
+
+  .ui-slider {
+    .ui-slider-range {
+      background-color: $darkmode-input-bg !important;
+    }
+    &.ui-widget-content {
+      background: $darkmode-input-bg !important;
+    }
   }
 
   .s-graph-view .legend rect {
