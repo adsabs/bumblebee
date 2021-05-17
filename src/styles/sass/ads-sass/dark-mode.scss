@@ -73,6 +73,39 @@
     }
   }
 
+  .custom-radio > input[type='radio'] {
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    -o-appearance: none;
+    appearance: none;
+    content: '';
+    display: inline-block;
+    position: relative;
+    top: 0.2em;
+    width: 14px;
+    height: 14px;
+    border-radius: 15px;
+    border: 2px solid $darkmode-input-border;
+    background-color: $darkmode-input-bg;
+
+    &:focus {
+      outline: none;
+    }
+  }
+
+  .custom-radio > input[type='radio']:checked::before {
+    border-radius: 8px;
+    width: 8px;
+    height: 8px;
+    position: absolute;
+    left: 1px;
+    top: 1px;
+    content: '';
+    display: block;
+    background: $darkmode-text;
+    border: 1px solid $darkmode-text;
+  }
+
   a,
   a:hover,
   a:focus,
