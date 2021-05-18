@@ -74,6 +74,7 @@ define([
       doc.aff = doc.aff.map(_.unescape);
 
       const numAuthors = doc.author.length;
+      const defaultList = _.range(numAuthors).map(() => '-');
       if (doc.aff.length) {
         doc.hasAffiliation = _.without(doc.aff, '-').length;
 
@@ -81,18 +82,18 @@ define([
         doc.authorAff = _.zip(
           doc.author,
           doc.aff,
-          doc.orcid_pub ? doc.orcid_pub : _.range(numAuthors).map(() => '-'),
-          doc.orcid_user ? doc.orcid_user : _.range(numAuthors).map(() => '-'),
-          doc.orcid_other ? doc.orcid_other : _.range(numAuthors).map(() => '-')
+          doc.orcid_pub ? doc.orcid_pub : defaultList,
+          doc.orcid_user ? doc.orcid_user : defaultList,
+          doc.orcid_other ? doc.orcid_other : defaultList
         );
       } else if (doc.author) {
         doc.hasAffiliation = false;
         doc.authorAff = _.zip(
           doc.author,
           _.range(doc.author.length),
-          doc.orcid_pub ? doc.orcid_pub : _.range(numAuthors).map(() => '-'),
-          doc.orcid_user ? doc.orcid_user : _.range(numAuthors).map(() => '-'),
-          doc.orcid_other ? doc.orcid_other : _.range(numAuthors).map(() => '-')
+          doc.orcid_pub ? doc.orcid_pub : defaultList,
+          doc.orcid_user ? doc.orcid_user : defaultList,
+          doc.orcid_other ? doc.orcid_other : defaultList
         );
       }
 
