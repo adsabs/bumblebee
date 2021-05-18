@@ -312,23 +312,23 @@
   .table > thead > tr > td,
   .table > tbody > tr > td,
   .table > tfoot > tr > td {
-    border-top: 1px solid #464545;
+    border-top: 1px solid $darkmode-input-border;
   }
 
   .table > thead > tr > th {
-    border-bottom: 2px solid #464545;
+    border-bottom: 2px solid $darkmode-input-border;
   }
 
   .table > tbody + tbody {
-    border-top: 2px solid #464545;
+    border-top: 2px solid $darkmode-input-border;
   }
 
   .table .table {
-    background-color: #222222;
+    background-color: $darkmode-input-bg;
   }
 
   .table-bordered {
-    border: 1px solid #464545;
+    border: 1px solid $darkmode-input-border;
   }
 
   .table-bordered > thead > tr > th,
@@ -337,11 +337,11 @@
   .table-bordered > thead > tr > td,
   .table-bordered > tbody > tr > td,
   .table-bordered > tfoot > tr > td {
-    border: 1px solid #464545;
+    border: 1px solid $darkmode-input-border;
   }
 
   .table-striped > tbody > tr:nth-of-type(odd) {
-    background-color: #3d3d3d;
+    background-color: $darkmode-background-secondary;
   }
 
   .table-hover > tbody > tr:hover {
@@ -360,7 +360,7 @@
   .table > thead > tr.active > th,
   .table > tbody > tr.active > th,
   .table > tfoot > tr.active > th {
-    background-color: #464545;
+    background-color: $darkmode-background;
   }
 
   .table-hover > tbody > tr > td.active:hover,
@@ -368,7 +368,7 @@
   .table-hover > tbody > tr.active:hover > td,
   .table-hover > tbody > tr:hover > .active,
   .table-hover > tbody > tr.active:hover > th {
-    background-color: #393838;
+    background-color: $darkmode-background;
   }
 
   .table > thead > tr > td.success,
@@ -391,7 +391,7 @@
   .table-hover > tbody > tr.success:hover > td,
   .table-hover > tbody > tr:hover > .success,
   .table-hover > tbody > tr.success:hover > th {
-    background-color: #00a379;
+    background-color: $darkmode-success;
   }
 
   .table > thead > tr > td.info,
@@ -414,7 +414,7 @@
   .table-hover > tbody > tr.info:hover > td,
   .table-hover > tbody > tr:hover > .info,
   .table-hover > tbody > tr.info:hover > th {
-    background-color: #258cd1;
+    background-color: $darkmode-info;
   }
 
   .table > thead > tr > td.warning,
@@ -437,7 +437,7 @@
   .table-hover > tbody > tr.warning:hover > td,
   .table-hover > tbody > tr:hover > .warning,
   .table-hover > tbody > tr.warning:hover > th {
-    background-color: #e08e0b;
+    background-color: $darkmode-warning;
   }
 
   .table > thead > tr > td.danger,
