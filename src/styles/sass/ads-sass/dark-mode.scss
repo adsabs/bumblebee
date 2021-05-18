@@ -998,6 +998,29 @@
     border-color: $darkmode-border;
   }
 
+  .ui-menu .ui-menu-item a {
+    background-color: $darkmode-input-bg;
+    color: $darkmode-text;
+
+    &:hover {
+      background-color: $darkmode-text-dimmer;
+      border-color: $darkmode-border;
+    }
+
+    .ui-state-highlight {
+      background-color: $darkmode-text;
+      color: $darkmode-background-tertiary;
+    }
+  }
+
+  .ui-widget-content.ui-autocomplete {
+    background-color: $darkmode-border;
+    border-color: $darkmode-border;
+    background: none;
+  }
+
+  
+
   button.text-link {
     border: 2px solid $darkmode-container-border;
   }
