@@ -126,3 +126,4 @@ release:
     - cssmin
     - htmlmin
     - imagemin
+    - uglify
