@@ -73,13 +73,28 @@ define([
       // remove html-encoding from affiliations
       doc.aff = doc.aff.map(_.unescape);
 
+      const numAuthors = doc.author.length;
+      const defaultList = _.range(numAuthors).map(() => '-');
       if (doc.aff.length) {
         doc.hasAffiliation = _.without(doc.aff, '-').length;
+
         // joining author and aff
-        doc.authorAff = _.zip(doc.author, doc.aff);
+        doc.authorAff = _.zip(
+          doc.author,
+          doc.aff,
+          doc.orcid_pub ? doc.orcid_pub : defaultList,
+          doc.orcid_user ? doc.orcid_user : defaultList,
+          doc.orcid_other ? doc.orcid_other : defaultList
+        );
       } else if (doc.author) {
         doc.hasAffiliation = false;
-        doc.authorAff = _.zip(doc.author, _.range(doc.author.length));
+        doc.authorAff = _.zip(
+          doc.author,
+          _.range(doc.author.length),
+          doc.orcid_pub ? doc.orcid_pub : defaultList,
+          doc.orcid_user ? doc.orcid_user : defaultList,
+          doc.orcid_other ? doc.orcid_other : defaultList
+        );
       }
 
       if (doc.page && doc.page.length) {
@@ -90,7 +105,7 @@ define([
       // now add urls
       if (doc.authorAff) {
         _.each(doc.authorAff, function(el, index) {
-          doc.authorAff[index][2] = encodeURIComponent(
+          doc.authorAff[index][5] = encodeURIComponent(
             '"' + el[0] + '"'
           ).replace(/%20/g, '+');
         });
@@ -178,6 +193,26 @@ define([
       'click a[target="next"]': 'onClick',
       'click a[data-target="DOI"]': 'emitAnalytics',
       'click a[data-target="arXiv"]': 'emitAnalytics',
+      'mouseenter .orcid-author': 'highlightOrcidAuthor',
+      'mouseleave .orcid-author': 'unhighlightOrcidAuthor',
+    },
+
+    highlightOrcidAuthor: function(e) {
+      const $target = $(e.currentTarget);
+      const $active = $target.find('.active');
+      if ($active.hasClass('hidden')) {
+        $active.removeClass('hidden');
+        $target.find('.inactive').addClass('hidden');
+      }
+    },
+
+    unhighlightOrcidAuthor: function(e) {
+      const $target = $(e.currentTarget);
+      const $inactive = $target.find('.inactive');
+      if ($inactive.hasClass('hidden')) {
+        $inactive.removeClass('hidden');
+        $target.find('.active').addClass('hidden');
+      }
     },
 
     toggleMoreAuthors: function() {
@@ -296,7 +331,7 @@ define([
 
     defaultQueryArguments: {
       fl:
-        'identifier,[citations],abstract,author,bibcode,citation_count,comment,doi,id,keyword,page,property,pub,pub_raw,pubdate,pubnote,read_count,title,volume',
+        'identifier,[citations],abstract,author,orcid_pub,orcid_user,orcid_other,bibcode,citation_count,comment,doi,id,keyword,page,property,pub,pub_raw,pubdate,pubnote,read_count,title,volume',
       rows: 1,
     },
 
@@ -450,9 +485,15 @@ define([
         const ps = this.getPubSub();
         const query = this.getCurrentQuery().clone();
         query.unlock();
-        const { bibcode, author } = this.model.toJSON();
+        const {
+          bibcode,
+          author,
+          orcid_pub,
+          orcid_user,
+          orcid_other,
+        } = this.model.toJSON();
         query.set('q', `identifier:${bibcode}`);
-        query.set('fl', ['aff']);
+        query.set('fl', ['aff', 'orcid_pub', 'orcid_user', 'orcid_other']);
         query.set('rows', 1);
         ps.publish(
           ps.EXECUTE_REQUEST,
@@ -472,6 +513,9 @@ define([
                 ) {
                   const newEntries = this.model.parse({
                     author: author,
+                    orcid_pub: orcid_pub,
+                    orcid_user: orcid_user,
+                    orcid_other: orcid_other,
                     aff: resp.response.docs[0].aff,
                   });
                   this._docs[bibcode] = {

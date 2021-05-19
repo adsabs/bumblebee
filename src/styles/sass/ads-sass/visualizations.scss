@@ -375,6 +375,15 @@ $group-circle-active: lighten($brand-warning, 10%);
   }
 }
 
+.orcid-author img {
+  height: 20px;
+  width: auto;
+}
+
+.orcid-author:hover {
+  text-decoration: none;
+}
+
 .selected-link {
   stroke: darken($brand-warning, 10%);
   stroke-width: 2px;
