@@ -216,13 +216,16 @@ define([
               ? 'normalizedGraphData'
               : 'graphData';
             var data = that.model.get(dataType);
-            return data
-              .map(function(obj) {
-                var title = obj.key;
-                var val = _.findWhere(obj.values, { x: d.x }).y;
-                return '<b>' + title + '</b>:&nbsp;' + val.toFixed(2);
-              })
-              .join('<br/>');
+
+            let sum = 0;
+            const res = data.map(function(obj) {
+              var title = obj.key;
+              var val = _.findWhere(obj.values, { x: d.x }).y;
+              sum += val;
+              return '<b>' + title + '</b>:&nbsp;' + val.toFixed(2);
+            });
+            res.push(`<b>Total</b>:&nbsp;${sum.toFixed(2)}`);
+            return res.join('<br/>');
           });
       }
 
