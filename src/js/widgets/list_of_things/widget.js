@@ -266,13 +266,10 @@ define([
 
       if (docs && docs.length) {
         // make sure the new docs close highlights if they aren't there
+        const dummyElement = $('<textarea/>');
         var newDocs = _.map(docs, function(d) {
           if (d.highlights) {
-            d.highlights = d.highlights.map((h) =>
-              $('<textarea/>')
-                .html(h)
-                .text()
-            );
+            d.highlights = d.highlights.map((h) => dummyElement.html(h).text()); // get the decoded html text
           }
           return _.extend(d, {
             showHighlights: typeof d.highlights !== 'undefined',
