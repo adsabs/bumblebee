@@ -25,12 +25,7 @@ define([
       <React.Fragment>
         <dt>{label}</dt>
         <dd>
-          <button
-            type="button"
-            onClick={onClick}
-            className="text-link"
-            style={{ border: 'dotted 1px rgba(0,0,0,0.3)', marginRight: '4px' }}
-          >
+          <button type="button" onClick={onClick} className="text-link">
             {text}
           </button>
           {tooltip && (

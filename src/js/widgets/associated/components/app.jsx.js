@@ -1,11 +1,6 @@
 define(['underscore', 'react', 'prop-types'], function(_, React, PropTypes) {
   // component styles
   const styles = {
-    title: {
-      fontSize: '1.1em',
-      color: '#335baf',
-      textTransform: 'uppercase',
-    },
     list: {
       listStyleType: 'none',
       marginLeft: '-10px',
@@ -22,7 +17,7 @@ define(['underscore', 'react', 'prop-types'], function(_, React, PropTypes) {
 
   // create the title element
   const Title = ({ children }) => (
-    <div style={styles.title}>
+    <div className="associated__header__title">
       <i className="fa fa-folder-open" style={styles.icon} aria-hidden="true" />
       {children}
     </div>

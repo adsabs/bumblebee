@@ -271,8 +271,10 @@
 
 button.text-link {
   background: none;
-  border: none;
   text-align: left;
+  border: 1px dotted rgba(0, 0, 0, 0.3); 
+  border-radius: 2px;;
+  margin-right: 4px;
 }
 
 .s-text-bold {

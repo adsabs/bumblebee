@@ -74,6 +74,10 @@
   > button {
     height: $navbar-height;
   }
+
+  .no-hover-style {
+    padding: 15px;
+  }
 }
 
 .s-orcid-label-container {
@@ -102,7 +106,6 @@
 }
 
 .s-orcid-dropdown .dropdown-menu {
-  padding: 16px;
   width: 350px;
 
   .divider {

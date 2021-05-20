@@ -69,16 +69,18 @@
     <div class="form-group">
         <h4> 3. Permission for ADS to Record and Publish Claims</h4>
 
-        <div class="checkbox">
-            <label class="emphasis-text">
-                <input type="checkbox"
-                       {{#if userSubmitted.authorizedUser}} checked {{/if}}
-                {{#compare userSubmitted.authorizedUser undefined}} checked  {{/compare}}
-                class="authorized-ads-user">
+        <!-- <div class="checkbox"> -->
+            <div class="emphasis-text">
+                <label class="custom-checkbox">
+                    <input type="checkbox"
+                        {{#if userSubmitted.authorizedUser}} checked {{/if}}
+                    {{#compare userSubmitted.authorizedUser undefined}} checked  {{/compare}}
+                    class="authorized-ads-user" />
+                </label>
                 I allow the ADS to record my claims and to make them available publically for auditing and indexing.
                 <br>This makes me an "ADS Verified User" and allows ADS to validate my name(s) against author lists in papers.
-            </label>
-        </div>
+            </div>
+        <!-- </div> -->
 
     </div>
 
