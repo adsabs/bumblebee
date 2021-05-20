@@ -1,5 +1,5 @@
-(function() {
-  const darkSwitch = document.getElementById('darkSwitch');
+define([], function() {
+  let darkSwitch;
 
   const turnOnDarkMode = (save) => {
     document.body.setAttribute('data-theme', 'dark');
@@ -15,7 +15,14 @@
     if (save) localStorage.setItem('darkSwitch', 'off');
   };
 
+  const toggle = () =>
+    darkSwitch.classList.contains('darkModeOn')
+      ? turnOffDarkMode(true)
+      : turnOnDarkMode(true);
+
   const init = () => {
+    darkSwitch = document.getElementById('darkSwitch');
+
     // 1. check app setting
     if (
       localStorage.getItem('darkSwitch') !== null &&
@@ -29,19 +36,10 @@
     } else {
       turnOffDarkMode(false);
     }
+    darkSwitch.addEventListener('click', function() {
+      toggle();
+    });
   };
 
-  const toggle = () =>
-    darkSwitch.classList.contains('darkModeOn')
-      ? turnOffDarkMode(true)
-      : turnOnDarkMode(true);
-
-  window.addEventListener('load', function() {
-    if (darkSwitch) {
-      init();
-      darkSwitch.addEventListener('click', function() {
-        toggle();
-      });
-    }
-  });
-})();
+  init();
+});

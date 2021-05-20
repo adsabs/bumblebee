@@ -47,6 +47,7 @@ define([], function() {
     'regenerator-runtime',
     'array-flat-polyfill',
     'polyfill',
+    'darkMode',
   ], function(config) {
     // rca: not sure why the ganalytics is loaded here instead of inside analytics.js
     //      perhaps it is because it is much/little sooner this way?

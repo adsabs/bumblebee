@@ -323,6 +323,7 @@ require.config({
     '@xstate/react': 'libs/xstate-react/index',
     'array-flat-polyfill': 'libs/polyfills/array-flat-polyfill',
     polyfill: 'libs/polyfill/index',
+    darkMode: 'js/dark-mode-switch',
   },
 
   hbs: {
