@@ -125,12 +125,11 @@ define([
       $leftCol = this.$('#results-left-column');
       $rightCol = this.$('#results-right-column');
       $middleCol = this.$('#results-middle-column');
-      $action = this.$('#results-actions-toggle');
 
       _.each(
         [
           ['left', leftState, $leftCol],
-          ['right', rightState, $rightCol, $action],
+          ['right', rightState, $rightCol],
         ],
         function(x) {
           if (x[1] == 'open') {
@@ -139,14 +138,8 @@ define([
             setTimeout(function() {
               $col.children().show(0);
             }, 200);
-            if (x[3]) {
-              x[3].removeClass('hidden');
-            }
           } else {
             x[2].addClass('hidden');
-            if (x[3]) {
-              x[3].addClass('hidden');
-            }
           }
         }
       );

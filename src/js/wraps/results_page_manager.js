@@ -69,6 +69,7 @@ define([
 
       const ps = this.getPubSub();
       ps.subscribe(ps.START_SEARCH, _.bind(this.onStartSearch, this));
+      ps.subscribe(ps.USER_ANNOUNCEMENT, _.bind(this.onUserUpdate, this));
 
       // calls the sideBarManager mixin init handler
       this.init();
@@ -111,6 +112,15 @@ define([
       this.fullResultsTimer.start();
     },
 
+    onUserUpdate: function(event) {
+      const user = this.getBeeHive().getObject('User');
+      if (event === user.USER_SIGNED_OUT) {
+        $('#results-actions-toggle').addClass('disabled');
+        $('#query-info-container').removeClass('show');
+        $('#results-actions-toggle').html('<i class="fa fa-book" alt="open actions"></i> Actions');
+      }
+    },
+
     createView: function(options) {
       options = options || {};
       options.template = options.template || PageManagerTemplate;
@@ -120,7 +130,9 @@ define([
     },
 
     show: function() {
-
+      const isLoggedIn = this.getBeeHive()
+        .getObject('User')
+        .isLoggedIn();
       var ret = PageManagerController.prototype.show.apply(this, arguments);
       var self = this;
       var button =
@@ -145,8 +157,13 @@ define([
       }
 
       // close any drawers
-      ret.$el.find('#results-actions-toggle')[0].innerHTML =
-        '<i class="fa fa-book" alt="open actions"></i> Actions';
+      const actionBtn = ret.$el.find('#results-actions-toggle')[0];
+      actionBtn.innerHTML = '<i class="fa fa-book" alt="open actions"></i> Actions';
+      if (!isLoggedIn) {
+        actionBtn.classList.add('disabled');
+      } else {
+        actionBtn.classList.remove('disabled');
+      }
       ret.$el.find('#query-info-container')[0].classList.remove('show');
 
       return ret;
