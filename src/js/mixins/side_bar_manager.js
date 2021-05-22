@@ -23,7 +23,9 @@ define(['backbone', 'js/components/api_feedback'], function(
           .getObject('User')
           .getUserData();
         if (!ud) return false;
-        return /show/i.test(ud.defaultHideSidebars);
+        return !ud.defaultHideSidebars
+          ? false
+          : /show/i.test(ud.defaultHideSidebars);
       } catch (e) {
         return false;
       }
@@ -66,8 +68,12 @@ define(['backbone', 'js/components/api_feedback'], function(
      */
     _onUserAnnouncement: function(ev, changed) {
       // only update if the changed key was defaultHideSidebars
-      if (_.contains('defaultHideSidebars', _.keys(changed))) {
-        this.setSidebarState(this._getUpdateFromUserData());
+      if (_.contains(_.keys(changed), 'defaultHideSidebars')) {
+        this.setSidebarState(
+          !changed.defaultHideSidebars
+            ? true
+            : /show/i.test(changed.defaultHideSidebars)
+        );
       }
     },
 
