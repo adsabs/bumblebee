@@ -100,6 +100,7 @@ define([
       'click #bulk-delete': 'bulkDelete',
       'click #bulk-limit': 'bulkLimit',
       'click #select-all-docs-cb': 'toggleAll',
+      'click #backToTopBtn': 'goToTop',
     },
 
     modelEvents: {
@@ -111,6 +112,15 @@ define([
       var newSort = sort.id + ' ' + dir;
       this.model.set('sort', newSort);
       this.trigger('changeSort');
+    },
+
+    goToTop: function() {
+      $(document.documentElement).animate(
+        {
+          scrollTop: 0,
+        },
+        'fast'
+      );
     },
 
     childViewOptions: function() {
