@@ -158,7 +158,7 @@ define([
 
       // close any drawers
       const actionBtn = ret.$el.find('#results-actions-toggle')[0];
-      actionBtn.innerHTML = '<i class="fa fa-book" alt="open actions"></i> Actions';
+      actionBtn.innerHTML = '<i class="fa fa-book" alt="open actions" aria-hidden="true"></i> Actions';
       if (!isLoggedIn) {
         actionBtn.classList.add('disabled');
       } else {
