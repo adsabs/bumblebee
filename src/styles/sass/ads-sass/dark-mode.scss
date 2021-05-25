@@ -1002,9 +1002,10 @@
     background-color: $darkmode-input-bg;
     color: $darkmode-text;
 
-    &:hover {
-      background-color: $darkmode-text-dimmer;
+    &:hover, &:focus, &:active, &.ui-state-active {
+      background-color: $darkmode-text-dimmer !important;
       border-color: $darkmode-border;
+      outline: none;
     }
 
     .ui-state-highlight {
