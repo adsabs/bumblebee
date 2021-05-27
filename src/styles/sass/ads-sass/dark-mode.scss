@@ -1002,7 +1002,10 @@
     background-color: $darkmode-input-bg;
     color: $darkmode-text;
 
-    &:hover, &:focus, &:active, &.ui-state-active {
+    &:hover,
+    &:focus,
+    &:active,
+    &.ui-state-active {
       background-color: $darkmode-text-dimmer !important;
       border-color: $darkmode-border;
       outline: none;
@@ -1019,8 +1022,6 @@
     border-color: $darkmode-border;
     background: none;
   }
-
-  
 
   button.text-link {
     border: 2px solid $darkmode-container-border;
@@ -1155,6 +1156,62 @@
     border-color: $darkmode-container-border;
   }
 
+  .rdt_Table,
+  .rdt_TableRow,
+  .rdt_TableCol,
+  .rdt_TableCol_Sortable,
+  .rdt_TableHeader,
+  .rdt_TableFooter,
+  .rdt_TableHead,
+  .rdt_TableHeadRow,
+  .rdt_TableBody,
+  .rdt_ExpanderRow, .rdt_Pagination {
+    background-color: $darkmode-background-secondary !important;
+    color: $darkmode-text !important;
+    border-color: $darkmode-border;
+    border-bottom-color: $darkmode-border !important;
+
+    .btn-default {
+      border-color: $darkmode-input-border;
+    }
+
+    select {
+      border: 1px solid $darkmode-input-border;
+      &:focus {
+        border: 1px solid $darkmode-link;
+      }
+    }
+
+    button:disabled {
+      fill: $darkmode-text-dimmer;
+    }
+
+    button {
+      fill: $darkmode-text;
+      color: $darkmode-text;
+    }
+  }
+
+  .rdt_TableCell {
+    background: transparent;
+  }
+
+  .rdt_TableRow:hover {
+    background-color: $darkmode-input-bg !important;
+    border-color: $darkmode-input-border !important;
+    color: $darkmode-text !important;
+    outline: none !important;
+  }
+
+  .rdt_TableHeader div {
+    background-color: $darkmode-input-bg;
+    color: $darkmode-text;
+  }
+
+  .rdt_TableCol_Sortable:hover {
+    color: $darkmode-text !important;
+  }
+
   .s-main-content-container {
     background: transparent;
     border-color: $darkmode-border;
@@ -1164,7 +1221,8 @@
     color: $darkmode-text;
   }
 
-  .results-list .s-identifier, .library-list-container .s-identifier {
+  .results-list .s-identifier,
+  .library-list-container .s-identifier {
     a,
     a:hover,
     a:active,
