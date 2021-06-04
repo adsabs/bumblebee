@@ -635,7 +635,7 @@ define([
 
     download: function() {
       const data = this.model.get('downloadableData');
-      let output = 'data:text/csv;charset=utf-8,\n';
+      let output = 'data:text/csv;charset=utf-8,';
       output += `Word, Idf, Record Count, Total Occurrences\n`;
       Object.entries(data).forEach(([word, info]) => {
         output += `${word}, ${info.idf}, ${info.record_count}, ${info.total_occurrences}\n`;

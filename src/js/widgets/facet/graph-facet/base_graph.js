@@ -62,21 +62,16 @@ define([
 
     addDownloadButton: function() {
       this.$('.graph-download').html(
-        `<button class="download-csv btn btn-sm btn-primary-faded">Download CSV</button>`
+        `<i class="fa fa-download fa-lg download s-download" alt="download data" title="download data" style="right: 20px; top: 20px;"></i>`
       );
-      // an invisible file link
-      const link = document.createElement('a');
-      link.setAttribute('id', `download-link-${this.name}`);
-      link.setAttribute('download', `${this.name}.csv`);
-      link.style.visibility = 'hidden';
-      document.body.append(link);
     },
 
-    downloadCSV: function() {
+    download: function() {
       const data = this.convertGraphDataToCSV();
       const encodedUri = encodeURI(data);
-      const link = document.getElementById(`download-link-${this.name}`);
+      const link = document.getElementById(`download-link`);
       link.setAttribute('href', encodedUri);
+      link.setAttribute('download', `${this.name}.csv`);
       link.click();
     },
 

@@ -29,7 +29,7 @@ define([
     },
 
     events: {
-      'click .download-csv': 'downloadCSV',
+      'click .download': 'download',
     },
 
     buildGraph: function() {
@@ -441,7 +441,7 @@ define([
     },
 
     convertGraphDataToCSV: function() {
-      let data = 'data:text/csv;charset=utf-8,\n';
+      let data = 'data:text/csv;charset=utf-8,';
       data += 'Year, Article Count, Ref Count';
       this.model.get('graphData').forEach((obj) => {
         data += `\n${obj.x},${obj.y},${obj.refCount}`;

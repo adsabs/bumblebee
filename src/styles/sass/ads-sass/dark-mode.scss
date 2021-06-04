@@ -975,6 +975,13 @@
     border-radius: 5px;
   }
 
+  .s-download {
+    color: $darkmode-text;
+    &:hover {
+      color: $darkmode-link;
+    }
+  }
+
   /* search page */
   .s-landing-page-layout
     .search-bar-rows-container.s-search-bar-rows-container {
@@ -1169,7 +1176,8 @@
   .rdt_TableHead,
   .rdt_TableHeadRow,
   .rdt_TableBody,
-  .rdt_ExpanderRow, .rdt_Pagination {
+  .rdt_ExpanderRow,
+  .rdt_Pagination {
     background-color: $darkmode-background-secondary !important;
     color: $darkmode-text !important;
     border-color: $darkmode-border;

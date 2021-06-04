@@ -205,7 +205,7 @@ define([
       },
       'click .download': function() {
         const data = this.model.get('modifiedSolrData');
-        let output = 'data:text/csv;charset=utf-8,\n';
+        let output = 'data:text/csv;charset=utf-8,';
         const keys = Object.keys(data[0]);
         output += keys.join(',') + '\n';
         data.forEach((row) => {

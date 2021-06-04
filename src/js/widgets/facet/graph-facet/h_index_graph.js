@@ -19,7 +19,7 @@ define([
     events: {
       'click .apply': 'submitFacet',
       'blur input[type=text]': 'triggerGraphChange',
-      'click .download-csv': 'downloadCSV',
+      'click .download': 'download',
       // only relevant for reads and citation
       'change input[name*=scale]': 'toggleScale',
     },
@@ -442,8 +442,10 @@ define([
     },
 
     convertGraphDataToCSV: function() {
-      let data = 'data:text/csv;charset=utf-8,\n';
-      data += `Total,${this.model.get('statsCount')}\n`;
+      let data = 'data:text/csv;charset=utf-8,';
+      data += `Total, ${Number(
+        this.model.get('statsCount').replace(/,/g, '')
+      )}\n`;
       data += `Article No., ${this.name}, Refereed`;
       this.model.get('graphData').forEach((obj) => {
         data += `\n${obj.x},${obj.y},${obj.refereed}`;

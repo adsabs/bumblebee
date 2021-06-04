@@ -806,10 +806,10 @@ define([
     events: {
       'click .close-widget': 'signalCloseWidget',
       'click .show-all': 'signalShowAll',
-      'click #papers .metrics-download': 'signaleDownloadPapers',
-      'click #citations .metrics-download': 'signaleDownloadCitations',
-      'click #reads .metrics-download': 'signaleDownloadReads',
-      'click #indices .metrics-download': 'signaleDownloadIndices',
+      'click #papers .download': 'signaleDownloadPapers',
+      'click #citations .download': 'signaleDownloadCitations',
+      'click #reads .download': 'signaleDownloadReads',
+      'click .download-indices': 'signaleDownloadIndices',
     },
 
     signaleDownloadPapers: function() {
@@ -843,9 +843,9 @@ define([
     },
 
     showDownloadButtons: function(childViews) {
-      this.$('.metrics-download').removeClass('hidden');
+      this.$('.download').removeClass('hidden');
       if (!childViews.indicesGraphView.model.get('showingSimple')) {
-        this.$('.metrics-download-indices').removeClass('hidden');
+        this.$('.download-indices').removeClass('hidden');
       }
     },
 
@@ -963,7 +963,7 @@ define([
     },
 
     prepareDownloadData: function(data, recordTotal = true) {
-      let output = 'data:text/csv;charset=utf-8,\n';
+      let output = 'data:text/csv;charset=utf-8,';
       const dim = data.length;
       const len = data[0].values.length;
 
@@ -988,7 +988,7 @@ define([
 
     download: function(data, filename) {
       const encodedUri = encodeURI(data);
-      const link = document.getElementById('metrics-download-link');
+      const link = document.getElementById('download-link');
       link.setAttribute('download', filename);
       link.setAttribute('href', encodedUri);
       link.click();
@@ -1566,7 +1566,7 @@ define([
 
         this.childViews.indicesTableView.render();
         this.childViews.indicesGraphView.render();
-        this.view.$('.metrics-download-indices').removeClass('hidden');
+        this.view.$('.download-indices').removeClass('hidden');
       }
 
       onResponse = onResponse.bind(this);

@@ -25,6 +25,10 @@
   align-items: center;
 }
 
+.s-metrics-section {
+  position: relative;
+}
+
 .s-metrics-table,
 .s-metrics-graph {
   @media (min-width: $screen-sm-min) {
