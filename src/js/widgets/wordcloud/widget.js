@@ -107,6 +107,7 @@ define([
 
     events: {
       'click .close-widget': 'signalCloseWidget',
+      'click .download': 'signalDownload',
     },
 
     initialize: function(options) {
@@ -128,6 +129,10 @@ define([
 
     signalCloseWidget: function() {
       this.trigger('close-widget');
+    },
+
+    signalDownload: function() {
+      this.trigger('download');
     },
 
     toggleHighlight: function(word) {
@@ -445,6 +450,7 @@ define([
 
       this.set('renderVals', renderVals);
       this.set('processedWordList', wordList);
+      this.set('downloadableData', dict);
     },
   });
 
@@ -461,6 +467,7 @@ define([
       this.on('all', this.onAllInternalEvents);
       this.listenTo(this.listView, 'all', this.onAllInternalEvents);
       this.listenTo(this.view, 'close-widget', _.bind(this.closeWidget, this));
+      this.listenTo(this.view, 'download', _.bind(this.download, this));
       this.widgetName = 'wordcloud';
       this.queryUpdater = new ApiQueryUpdater(this.widgetName);
     },
@@ -624,6 +631,21 @@ define([
 
     closeWidget: function() {
       this.getPubSub().publish(this.getPubSub().NAVIGATE, 'results-page');
+    },
+
+    download: function() {
+      const data = this.model.get('downloadableData');
+      let output = 'data:text/csv;charset=utf-8,\n';
+      output += `Word, Idf, Record Count, Total Occurrences\n`;
+      Object.entries(data).forEach(([word, info]) => {
+        output += `${word}, ${info.idf}, ${info.record_count}, ${info.total_occurrences}\n`;
+      });
+
+      const encodedUri = encodeURI(output);
+      const link = document.getElementById('download-link');
+      link.setAttribute('download', 'wordcloud.csv');
+      link.setAttribute('href', encodedUri);
+      link.click();
     },
 
     _updateFq: function(q, value) {
