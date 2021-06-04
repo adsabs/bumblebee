@@ -23,6 +23,12 @@
   {{/if}}
 </div>
 
+{{#unless loading}}
+<div>
+  <i class="fa fa-download download" alt="download data" title="download data" style="cursor: pointer;"></i>
+</div>
+{{/unless}}
+
 <div class="controls s-controls">
   <div>
     <h6>What is the Paper Graph?</h6>
@@ -47,4 +53,7 @@
       Submit <i class="icon-go" aria-hidden="true"></i>
     </button>
   </div>
+
+  <a id="download-link" class="hidden"></a> 
+
 </div>

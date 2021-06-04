@@ -203,7 +203,24 @@ define([
       'click .submit': function() {
         this.trigger('filterBibs', this.model.get('selectedBibs'));
       },
+      'click .download': function() {
+        const data = this.model.get('modifiedSolrData');
+        let output = 'data:text/csv;charset=utf-8,\n';
+        const keys = Object.keys(data[0]);
+        output += keys.join(',') + '\n';
+        data.forEach((row) => {
+          keys.forEach((key) => {
+            output += `"${row[key]}",`;
+          });
+          output = output.slice(0, -1) + '\n';
+        });
 
+        const encodedUri = encodeURI(output);
+        const link = document.getElementById('download-link');
+        link.setAttribute('download', 'results.csv');
+        link.setAttribute('href', encodedUri);
+        link.click();
+      },
       'click .close': function() {
         this.trigger('close-widget');
       },
