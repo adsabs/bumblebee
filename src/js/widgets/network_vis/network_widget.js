@@ -796,6 +796,20 @@ define([
       'change input[name=show-link]': function(e) {
         this.model.set('linkLayer', e.target.checked);
       },
+      'click .download': function() {
+        const data = this.model.get('graphData').bibcode_dict;
+        let output = 'data:text/csv;charset=utf-8,';
+        output += 'bibcode,title,authors,citation_count,read_count\n';
+        Object.entries(data).forEach(([bibcode, value]) => {
+          output += `${bibcode},"${value.title.replace(/"/g,'\'')}","${value.authors.join(',')}",${value.citation_count},${value.read_count}\n`;
+        });
+
+        const encodedUri = encodeURI(output);
+        const link = document.getElementById('download-link');
+        link.setAttribute('download', 'papers-network.csv');
+        link.setAttribute('href', encodedUri);
+        link.click();
+      },
     },
 
     modelEvents: {
