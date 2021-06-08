@@ -210,7 +210,10 @@ define([
         output += keys.join(',') + '\n';
         data.forEach((row) => {
           keys.forEach((key) => {
-            output += `"${row[key]}",`;
+            output +=
+              key === 'title'
+                ? `"${row[key].replace(/"/g, "'")}",`
+                : `"${row[key]}",`;
           });
           output = output.slice(0, -1) + '\n';
         });
