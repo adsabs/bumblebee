@@ -1,4 +1,4 @@
-define([], function() {
+define(['analytics'], function(analytics) {
   let darkSwitch;
 
   const turnOnDarkMode = (save) => {
@@ -15,10 +15,25 @@ define([], function() {
     if (save) localStorage.setItem('darkSwitch', 'off');
   };
 
-  const toggle = () =>
-    darkSwitch.classList.contains('darkModeOn')
-      ? turnOffDarkMode(true)
-      : turnOnDarkMode(true);
+  const emitAnalytics = (action, label) => {
+    analytics(
+      'send',
+      'event',
+      'uitheme', // category
+      action,
+      label
+    );
+  };
+
+  const toggle = () => {
+    if (darkSwitch.classList.contains('darkModeOn')) {
+      turnOffDarkMode(true);
+      emitAnalytics('appSetting', 'light');
+    } else {
+      turnOnDarkMode(true);
+      emitAnalytics('appSetting', 'dark');
+    }
+  };
 
   const init = () => {
     darkSwitch = document.getElementById('darkSwitch');
