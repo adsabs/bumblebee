@@ -1,9 +1,11 @@
 <div class="pull-right s-view-metrics-button-container"></div>
 {{#if statsCount}}
+  <div style="width:80%">
     {{statsDescription}} : <b>{{statsCount}}</b>
-    <hr/>
+  </div>
+  <hr/>
 {{/if}}
-<div class="graph-legend"></div>
+<div class="graph-legend" {{#unless statsCount}} style="width:80%" {{/unless}}></div>
 {{#unless graphData}}
   {{#if error}}
     <div class="text-center">

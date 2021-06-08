@@ -169,11 +169,20 @@
 
 .s-download {
   color: #4073dd;
-  cursor: pointer; 
-  position: absolute; 
-  right: 20px; 
-  bottom: 20px;
+  cursor: pointer;
   &:hover {
     color: #2458c6;
   }
 }
+
+.s-download-lr {
+  position: absolute; 
+  right: 20px; 
+  bottom: 20px;
+} 
+
+.s-download-ur {
+  position: absolute; 
+  right: 20px; 
+  top: 20px;
+} 
