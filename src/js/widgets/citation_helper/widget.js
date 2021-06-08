@@ -32,6 +32,7 @@ define([
       libraryID: null,
       permission: null,
       libname: null,
+      selectedBibs: new Set(),
     },
   });
 
@@ -41,6 +42,7 @@ define([
     events: {
       'click .close-widget': 'signalCloseWidget',
       'click .submit-add-to-library': 'libraryAdd',
+      'click .citation-helper-item input[type=checkbox]': 'selectionChanged',
     },
 
     modelEvents: {
@@ -69,6 +71,16 @@ define([
 
     signalCloseWidget: function() {
       this.trigger('close-widget');
+    },
+
+    selectionChanged: function(e) {
+      const selected = this.model.get('selectedBibs');
+      if (e.currentTarget.checked) {
+        selected.add(e.currentTarget.value);
+      } else {
+        selected.delete(e.currentTarget.value);
+      }
+      this.render();
     },
   });
 
@@ -129,6 +141,7 @@ define([
             numRecords: response.number_added,
             numAlreadyInLib: numAlreadyInLib,
           });
+          that.model.set('selectedBibs', new Set());
         })
         .fail(function(response) {
           that.model.set('feedback', {
@@ -219,7 +232,10 @@ define([
     },
 
     reset: function() {
-      this.model.clear({ silent: true }).set('items', [], { silent: true });
+      this.model
+        .clear({ silent: true })
+        .set('items', [], { silent: true })
+        .set('selectedBibs', new Set(), { silent: true });
     },
 
     closeWidget: function() {
@@ -242,6 +258,7 @@ define([
         libraryID: data.libid,
         permission: data.permission,
         libname: data.libname,
+        selectedBibs: new Set(),
       });
 
       this.getPubSub().publish(this.getPubSub().EXECUTE_REQUEST, request);
