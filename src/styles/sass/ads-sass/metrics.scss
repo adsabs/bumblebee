@@ -73,6 +73,7 @@
 }
 
 .s-metrics-graph {
+  position: relative;
   //mostly for print considerations
   max-width: 700px;
   @media (min-width: $screen-sm-min) {

@@ -1284,6 +1284,7 @@ define([
       }
       // some table rows need to be hidden
       this.view.$('.hidden-abstract-page').hide();
+      this.view.$('.download').removeClass('hidden');
     },
 
     createGraphViewsForOnePaper: function(response) {
