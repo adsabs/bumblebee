@@ -37,13 +37,15 @@
 
 
 
-<div class="s-wordcloud-container col-sm-10" id="wordcloud-container">
+<div class="s-wordcloud-container col-xs-12 col-sm-9" id="wordcloud-container">
     {{#if loading}}
       {{> js/wraps/widget/loading/template widgetLoadingSize="medium" hideCloseButton=true}}
     {{else}}
-    <svg id="wordcloud-svg" viewBox="0 0 1000 600" class="s-wordcloud-svg">
-    </svg>
-    <i class="fa fa-download fa-2x download s-download s-download-lr" alt="download data" title="download data"></i>
+    <div style="position:relative">
+        <svg id="wordcloud-svg" viewBox="0 0 1000 600" class="s-wordcloud-svg">
+        </svg>
+        <i class="fa fa-download fa-2x download s-download s-download-lr" alt="download data" title="download data"></i>
+    </div>
     {{/if}}
 </div>
 <a id="download-link" class="hidden"></a> 

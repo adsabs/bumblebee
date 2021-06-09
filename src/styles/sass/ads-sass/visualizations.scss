@@ -517,6 +517,10 @@ $group-circle-active: lighten($brand-warning, 10%);
   }
 }
 
+.s-network-graph-div {
+  position: relative;
+}
+
 .paper-network-labels {
   opacity: 0.8;
   cursor: pointer;
