@@ -797,16 +797,19 @@ define([
         this.model.set('linkLayer', e.target.checked);
       },
       'click .download': function() {
-        const data = this.model.get('graphData').bibcode_dict;
+        const root = this.model.get('graphData').root;
         let output = 'data:text/csv;charset=utf-8,';
-        output += 'bibcode,title,authors,citation_count,read_count\n';
-        Object.entries(data).forEach(([bibcode, value]) => {
-          output += `${bibcode},"${value.title.replace(/"/g,'\'')}","${value.authors.join(',')}",${value.citation_count},${value.read_count}\n`;
+        output += 'group, author, papers, citation count, download count\n';
+        root.children.forEach((group) => {
+          const groupName = group.name;
+          group.children.forEach((author) => {
+            output += `${groupName},"${author.name}","${author.papers.join(',')}",${author.citation_count},${author.read_count}\n`;
+          });
         });
 
         const encodedUri = encodeURI(output);
         const link = document.getElementById('download-link');
-        link.setAttribute('download', 'papers-network.csv');
+        link.setAttribute('download', 'author-network.csv');
         link.setAttribute('href', encodedUri);
         link.click();
       },
