@@ -64,9 +64,7 @@ define([
             this.dispatchRequest(data.bibcode);
           }, this);
 
-          this.model.has('title')
-            ? doDispatch()
-            : this.model.once('change:title', doDispatch);
+          doDispatch();
         }
       });
 
