@@ -149,6 +149,18 @@ define([], function() {
     Handlebars.registerHelper('isdefined', function(value) {
       return typeof value !== 'undefined';
     });
+    Handlebars.registerHelper('ifInSet', function(s, value, options) {
+      if (s.has(value)) {
+        return options.fn(this);
+      }
+      return options.inverse(this);
+    });
+    Handlebars.registerHelper('ifSetEmpty', function(s, options) {
+      if (s.size === 0) {
+        return options.fn(this);
+      }
+      return options.inverse(this);
+    });
   });
 
   // set validation callbacks used by authentication and user settings widgets

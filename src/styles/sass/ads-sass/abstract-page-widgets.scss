@@ -300,10 +300,15 @@ $sciencewise-color: rgb(179, 27, 27);
 #resources-container {
   transition: transform 0.5s ease-in-out;
   padding-left: 0;
-  padding-right: 0;
+  padding-right: 15px;
+
+  @media (max-width: $screen-md) {
+    padding-right: 0;
+  }
 
   @media (max-width: $screen-xs-max) {
     position: absolute;
+    padding-right: 0;
     width: 100%;
     left: 100%;
     top: 0;
