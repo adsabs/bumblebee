@@ -223,6 +223,33 @@ define(['config/discovery.config', 'module'], function(config, module) {
               timingVar: 'Loaded',
               timingValue: time,
             });
+
+            // send to analytics the theme user is using
+            const darkSwitch = localStorage.getItem('darkSwitch');
+            let action = 'systemSetting';
+            let label = 'light';
+            if (darkSwitch !== null) {
+              if (darkSwitch === 'on') {
+                action = 'appSetting';
+                label = 'dark';
+              } else {
+                action = 'appSetting';
+                label = 'light';
+              }
+            } else if (
+              window.matchMedia('(prefers-color-scheme: dark)').matches
+            ) {
+              action = 'systemSetting';
+              label = 'dark';
+            }
+            analytics(
+              'send',
+              'event',
+              'uitheme', // category
+              action,
+              label
+            );
+
             if (debug) {
               console.log('Application Started: ' + time + 'ms');
             }
