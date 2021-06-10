@@ -1064,7 +1064,7 @@ define([
       });
       this.listenTo(this.view, 'filterBibs', this.onFilterBibs);
       this.listenTo(this.view, 'close-widget', () => {
-        this.resetModel();
+        this.resetModel(true);
         this.broadcastClose();
       });
       this.widgetName = 'bubble_chart';
@@ -1088,8 +1088,8 @@ define([
       }
     },
 
-    resetModel() {
-      this.model.reset(false);
+    resetModel(silent = false) {
+      this.model.reset(silent);
     },
 
     // for now, called to show vis for library
