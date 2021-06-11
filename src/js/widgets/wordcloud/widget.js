@@ -313,6 +313,8 @@ define([
         .attr('transform', function(d) {
           return 'translate(' + [d.x, d.y] + ')';
         });
+
+      this.$('.download').removeClass('hidden');
     },
   });
 

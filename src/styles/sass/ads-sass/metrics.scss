@@ -23,6 +23,7 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
+  padding: 15px;
 }
 
 .s-metrics-section {
@@ -110,7 +111,7 @@
 }
 
 .s-metrics-metadata {
-  padding: 3%;
+  padding: 15px;
   input {
     width: 60px;
   }

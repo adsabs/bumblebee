@@ -15,1793 +15,1785 @@
   z-index: 100;
 }
 
-[data-theme='dark'] {
-  /* if using background
-  background-image: url(../img/dark-bg.png);
-  background-size: cover;
-  background-attachment: fixed;
-  */
-  background-color: $darkmode-background !important;
-  color: $darkmode-text;
+@media screen {
+  [data-theme='dark'] {
+    background-color: $darkmode-background !important;
+    color: $darkmode-text;
 
-  .darkmode-toggle {
-    background: #fff;
-  }
+    .darkmode-toggle {
+      background: #fff;
+    }
 
-  /* if using background
-  .s-starry-background-wrapper {
-    background-image: none;
-  }
-  */
+    .custom-checkbox {
+      cursor: pointer;
+      position: relative;
+      padding: 2px;
 
-  .custom-checkbox {
-    cursor: pointer;
-    position: relative;
-    padding: 2px;
+      > input {
+        height: 15px;
+        width: 15px;
+        -webkit-appearance: none;
+        -moz-appearance: none;
+        -o-appearance: none;
+        appearance: none;
+        border: 1px solid $darkmode-input-border;
+        border-radius: 2px;
+        outline: none;
+        background-color: $darkmode-input-bg;
+        cursor: pointer;
+        margin-top: 0;
 
-    > input {
-      height: 15px;
-      width: 15px;
+        &:checked {
+          background-color: $darkmode-link;
+          border-color: $darkmode-link;
+        }
+
+        &:checked::before {
+          width: 15px;
+          height: 15px;
+          // padding: 2px;
+          content: '\2713';
+          display: block;
+          text-align: center;
+          color: black;
+          position: absolute;
+          left: 0.2rem;
+          top: 0.2rem;
+        }
+      }
+    }
+
+    .custom-radio > input[type='radio'] {
       -webkit-appearance: none;
       -moz-appearance: none;
       -o-appearance: none;
       appearance: none;
-      border: 1px solid $darkmode-input-border;
-      border-radius: 2px;
-      outline: none;
+      content: '';
+      display: inline-block;
+      position: relative;
+      top: 0.2em;
+      width: 14px;
+      height: 14px;
+      border-radius: 15px;
+      border: 2px solid $darkmode-input-border;
       background-color: $darkmode-input-bg;
-      cursor: pointer;
-      margin-top: 0;
 
-      &:checked {
-        background-color: $darkmode-link;
-        border-color: $darkmode-link;
-      }
-
-      &:checked::before {
-        width: 15px;
-        height: 15px;
-        // padding: 2px;
-        content: '\2713';
-        display: block;
-        text-align: center;
-        color: black;
-        position: absolute;
-        left: 0.2rem;
-        top: 0.2rem;
+      &:focus {
+        outline: none;
       }
     }
-  }
 
-  .custom-radio > input[type='radio'] {
-    -webkit-appearance: none;
-    -moz-appearance: none;
-    -o-appearance: none;
-    appearance: none;
-    content: '';
-    display: inline-block;
-    position: relative;
-    top: 0.2em;
-    width: 14px;
-    height: 14px;
-    border-radius: 15px;
-    border: 2px solid $darkmode-input-border;
-    background-color: $darkmode-input-bg;
-
-    &:focus {
-      outline: none;
+    .custom-radio.radio-inline > input[type='radio'] {
+      margin-right: 5px;
     }
-  }
 
-  .custom-radio.radio-inline > input[type='radio'] {
-    margin-right: 5px;
-  }
+    .custom-radio > input[type='radio']:checked::before {
+      border-radius: 8px;
+      width: 8px;
+      height: 8px;
+      position: absolute;
+      left: 1px;
+      top: 1px;
+      content: '';
+      display: block;
+      background: $darkmode-text;
+      border: 1px solid $darkmode-text;
+    }
 
-  .custom-radio > input[type='radio']:checked::before {
-    border-radius: 8px;
-    width: 8px;
-    height: 8px;
-    position: absolute;
-    left: 1px;
-    top: 1px;
-    content: '';
-    display: block;
-    background: $darkmode-text;
-    border: 1px solid $darkmode-text;
-  }
+    input:-webkit-autofill,
+    input:-webkit-autofill:hover,
+    input:-webkit-autofill:focus,
+    textarea:-webkit-autofill,
+    textarea:-webkit-autofill:hover,
+    textarea:-webkit-autofill:focus,
+    select:-webkit-autofill,
+    select:-webkit-autofill:hover,
+    select:-webkit-autofill:focus {
+      border: 1px solid $darkmode-input-border;
+      -webkit-text-fill-color: $darkmode-text;
+      -webkit-box-shadow: 0 0 0px 1000px $darkmode-input-bg inset;
+      transition: background-color 5000s ease-in-out 0s;
+    }
 
-  input:-webkit-autofill,
-  input:-webkit-autofill:hover,
-  input:-webkit-autofill:focus,
-  textarea:-webkit-autofill,
-  textarea:-webkit-autofill:hover,
-  textarea:-webkit-autofill:focus,
-  select:-webkit-autofill,
-  select:-webkit-autofill:hover,
-  select:-webkit-autofill:focus {
-    border: 1px solid $darkmode-input-border;
-    -webkit-text-fill-color: $darkmode-text;
-    -webkit-box-shadow: 0 0 0px 1000px $darkmode-input-bg inset;
-    transition: background-color 5000s ease-in-out 0s;
-  }
+    a,
+    a:hover,
+    a:focus,
+    a:active {
+      color: $darkmode-link;
+    }
 
-  a,
-  a:hover,
-  a:focus,
-  a:active {
-    color: $darkmode-link;
-  }
-
-  .alert {
-    color: #fff;
-    a {
+    .alert {
       color: #fff;
-      font-weight: bold;
-      text-decoration: underline;
+      a {
+        color: #fff;
+        font-weight: bold;
+        text-decoration: underline;
+      }
     }
-  }
 
-  .ch-alert {
-    color: #fff;
-  }
+    .ch-alert {
+      color: #fff;
+    }
 
-  .alert-success {
-    background-color: $darkmode-success;
-  }
+    .alert-success {
+      background-color: $darkmode-success;
+    }
 
-  .alert-danger {
-    background-color: $darkmode-danger;
-  }
+    .alert-danger {
+      background-color: $darkmode-danger;
+    }
 
-  .alert-info {
-    background-color: $darkmode-info;
-  }
+    .alert-info {
+      background-color: $darkmode-info;
+    }
 
-  .alert-primary {
-    background-color: $darkmode-primary;
-  }
+    .alert-primary {
+      background-color: $darkmode-primary;
+    }
 
-  .alert-secondary {
-    background-color: $darkmode-secondary;
-  }
+    .alert-secondary {
+      background-color: $darkmode-secondary;
+    }
 
-  .alert-light {
-    background-color: $darkmode-light;
-  }
+    .alert-light {
+      background-color: $darkmode-light;
+    }
 
-  .alert-warning {
-    background-color: $darkmode-warning;
-  }
+    .alert-warning {
+      background-color: $darkmode-warning;
+    }
 
-  code {
-    background-color: $darkmode-input-bg;
-    color: $darkmode-text;
-  }
-
-  .bg-light {
-    background-color: #333 !important;
-  }
-
-  .bg-white {
-    background-color: #000 !important;
-  }
-
-  .bg-black {
-    background-color: $darkmode-text !important;
-  }
-
-  .jumbotron {
-    background-color: $darkmode-container !important;
-  }
-
-  .footer {
-    background-color: $darkmode-container !important;
-  }
-
-  .modal-content {
-    background-color: $darkmode-container !important;
-    border: 1px solid $darkmode-container-border !important;
-  }
-
-  .modal-header {
-    border-bottom: 1px solid $darkmode-container-border !important;
-    .modal-title,
-    .close {
-      background-color: $darkmode-container !important;
+    code {
+      background-color: $darkmode-input-bg;
       color: $darkmode-text;
     }
-  }
 
-  .modal-footer {
-    border-top: 1px solid $darkmode-container-border !important;
-  }
-
-  .panel {
-    background-color: $darkmode-container;
-    border-radius: 5px;
-  }
-
-  .panel-body {
-    background-color: $darkmode-container !important;
-  }
-
-  .panel-heading {
-    border-bottom: 1px solid transparent;
-  }
-
-  .panel-heading > .dropdown .dropdown-toggle {
-    color: inherit;
-  }
-
-  .panel-footer {
-    background-color: #464545;
-    border-top: 1px solid #464545;
-  }
-
-  .panel-default {
-    border-color: #464545;
-    box-shadow: none;
-  }
-
-  .panel-default > .panel-heading {
-    color: #ffffff;
-    background-color: $darkmode-container;
-    border-color: #464545;
-  }
-
-  .panel-default > .panel-heading + .panel-collapse > .panel-body {
-    border-top-color: #464545;
-  }
-
-  .panel-default > .panel-heading .badge {
-    color: $darkmode-container;
-    background-color: #ffffff;
-  }
-
-  .panel-default > .panel-footer + .panel-collapse > .panel-body {
-    border-bottom-color: #464545;
-  }
-
-  .well {
-    background-color: $darkmode-container;
-    border: 1px solid $darkmode-container-border;
-    border-radius: 5px;
-  }
-
-  .well blockquote {
-    border-color: #ddd;
-    border-color: rgba(0, 0, 0, 0.15);
-  }
-
-  .form-control[disabled],
-  [disabled].export-start-val,
-  [disabled].export-end-val,
-  [disabled].show-slider-data-first,
-  [disabled].show-slider-data-second,
-  fieldset[disabled] .form-control,
-  fieldset[disabled] .export-start-val,
-  fieldset[disabled] .export-end-val,
-  fieldset[disabled] .show-slider-data-first,
-  fieldset[disabled] .show-slider-data-second {
-    background-color: $darkmode-background;
-    border-color: $darkmode-background-tertiary;
-    color: $darkmode-text-dimmer;
-  }
-
-  .form-control[readonly],
-  [readonly].export-start-val,
-  [readonly].export-end-val,
-  [readonly].show-slider-data-first,
-  [readonly].show-slider-data-second {
-    background-color: $darkmode-background;
-    border-color: $darkmode-background-tertiary;
-    color: $darkmode-text-dim;
-  }
-
-  .editable-item form {
-    background-color: $darkmode-background;
-  }
-
-  table {
-    background-color: transparent;
-    color: $darkmode-text;
-  }
-
-  caption {
-    color: #999999;
-  }
-  .table > thead > tr > th,
-  .table > tbody > tr > th,
-  .table > tfoot > tr > th,
-  .table > thead > tr > td,
-  .table > tbody > tr > td,
-  .table > tfoot > tr > td {
-    border-top: 1px solid $darkmode-input-border;
-  }
-
-  .table > thead > tr > th {
-    border-bottom: 2px solid $darkmode-input-border;
-  }
-
-  .table > tbody + tbody {
-    border-top: 2px solid $darkmode-input-border;
-  }
-
-  .table .table {
-    background-color: $darkmode-input-bg;
-  }
-
-  .table-bordered {
-    border: 1px solid $darkmode-input-border;
-  }
-
-  .table-bordered > thead > tr > th,
-  .table-bordered > tbody > tr > th,
-  .table-bordered > tfoot > tr > th,
-  .table-bordered > thead > tr > td,
-  .table-bordered > tbody > tr > td,
-  .table-bordered > tfoot > tr > td {
-    border: 1px solid $darkmode-input-border;
-  }
-
-  .table-striped > tbody > tr:nth-of-type(odd) {
-    background-color: $darkmode-background-secondary;
-  }
-
-  .table-hover > tbody > tr:hover {
-    background-color: $darkmode-input-bg;
-  }
-
-  .table > thead > tr > td.active,
-  .table > tbody > tr > td.active,
-  .table > tfoot > tr > td.active,
-  .table > thead > tr > th.active,
-  .table > tbody > tr > th.active,
-  .table > tfoot > tr > th.active,
-  .table > thead > tr.active > td,
-  .table > tbody > tr.active > td,
-  .table > tfoot > tr.active > td,
-  .table > thead > tr.active > th,
-  .table > tbody > tr.active > th,
-  .table > tfoot > tr.active > th {
-    background-color: $darkmode-background;
-  }
-
-  .table-hover > tbody > tr > td.active:hover,
-  .table-hover > tbody > tr > th.active:hover,
-  .table-hover > tbody > tr.active:hover > td,
-  .table-hover > tbody > tr:hover > .active,
-  .table-hover > tbody > tr.active:hover > th {
-    background-color: $darkmode-background;
-  }
-
-  .table > thead > tr > td.success,
-  .table > tbody > tr > td.success,
-  .table > tfoot > tr > td.success,
-  .table > thead > tr > th.success,
-  .table > tbody > tr > th.success,
-  .table > tfoot > tr > th.success,
-  .table > thead > tr.success > td,
-  .table > tbody > tr.success > td,
-  .table > tfoot > tr.success > td,
-  .table > thead > tr.success > th,
-  .table > tbody > tr.success > th,
-  .table > tfoot > tr.success > th {
-    background-color: $darkmode-success;
-  }
-
-  .table-hover > tbody > tr > td.success:hover,
-  .table-hover > tbody > tr > th.success:hover,
-  .table-hover > tbody > tr.success:hover > td,
-  .table-hover > tbody > tr:hover > .success,
-  .table-hover > tbody > tr.success:hover > th {
-    background-color: $darkmode-success;
-  }
-
-  .table > thead > tr > td.info,
-  .table > tbody > tr > td.info,
-  .table > tfoot > tr > td.info,
-  .table > thead > tr > th.info,
-  .table > tbody > tr > th.info,
-  .table > tfoot > tr > th.info,
-  .table > thead > tr.info > td,
-  .table > tbody > tr.info > td,
-  .table > tfoot > tr.info > td,
-  .table > thead > tr.info > th,
-  .table > tbody > tr.info > th,
-  .table > tfoot > tr.info > th {
-    background-color: $darkmode-info;
-  }
-
-  .table-hover > tbody > tr > td.info:hover,
-  .table-hover > tbody > tr > th.info:hover,
-  .table-hover > tbody > tr.info:hover > td,
-  .table-hover > tbody > tr:hover > .info,
-  .table-hover > tbody > tr.info:hover > th {
-    background-color: $darkmode-info;
-  }
-
-  .table > thead > tr > td.warning,
-  .table > tbody > tr > td.warning,
-  .table > tfoot > tr > td.warning,
-  .table > thead > tr > th.warning,
-  .table > tbody > tr > th.warning,
-  .table > tfoot > tr > th.warning,
-  .table > thead > tr.warning > td,
-  .table > tbody > tr.warning > td,
-  .table > tfoot > tr.warning > td,
-  .table > thead > tr.warning > th,
-  .table > tbody > tr.warning > th,
-  .table > tfoot > tr.warning > th {
-    background-color: $darkmode-warning;
-  }
-
-  .table-hover > tbody > tr > td.warning:hover,
-  .table-hover > tbody > tr > th.warning:hover,
-  .table-hover > tbody > tr.warning:hover > td,
-  .table-hover > tbody > tr:hover > .warning,
-  .table-hover > tbody > tr.warning:hover > th {
-    background-color: $darkmode-warning;
-  }
-
-  .table > thead > tr > td.danger,
-  .table > tbody > tr > td.danger,
-  .table > tfoot > tr > td.danger,
-  .table > thead > tr > th.danger,
-  .table > tbody > tr > th.danger,
-  .table > tfoot > tr > th.danger,
-  .table > thead > tr.danger > td,
-  .table > tbody > tr.danger > td,
-  .table > tfoot > tr.danger > td,
-  .table > thead > tr.danger > th,
-  .table > tbody > tr.danger > th,
-  .table > tfoot > tr.danger > th {
-    background-color: $darkmode-danger;
-  }
-
-  .table-hover > tbody > tr > td.danger:hover,
-  .table-hover > tbody > tr > th.danger:hover,
-  .table-hover > tbody > tr.danger:hover > td,
-  .table-hover > tbody > tr:hover > .danger,
-  .table-hover > tbody > tr.danger:hover > th {
-    background-color: $darkmode-danger;
-  }
-  .btn:hover,
-  .btn:focus,
-  .btn.focus {
-    background-color: $darkmode-btn-hightlight-bg;
-    border-color: $darkmode-btn-hightlight-bg;
-    color: $darkmode-btn-default-text;
-    text-decoration: none;
-  }
-
-  .btn:active,
-  .btn.active {
-    background-image: none;
-    outline: 0;
-    box-shadow: inset 0 3px 5px rgba(0, 0, 0, 0.125);
-  }
-
-  .btn.disabled,
-  .btn[disabled],
-  fieldset[disabled] .btn {
-    cursor: not-allowed;
-    filter: alpha(opacity=65);
-    opacity: 0.65;
-    box-shadow: none;
-  }
-
-  a.btn.disabled,
-  fieldset[disabled] a.btn {
-    pointer-events: none;
-  }
-
-  .btn-default {
-    color: $darkmode-btn-default-text;
-    background-color: $darkmode-default;
-    border-color: $darkmode-default;
-  }
-
-  .btn-default:focus,
-  .btn-default.focus {
-    color: $darkmode-btn-default-text;
-    background-color: $darkmode-default-lighten;
-    border-color: $darkmode-default-lighten;
-    box-shadow: none;
-  }
-
-  .btn-default:hover {
-    color: $darkmode-btn-default-text;
-    background-color: $darkmode-default-lighten;
-    border-color: $darkmode-default-lighten;
-    box-shadow: none;
-  }
-
-  .btn-default:active,
-  .btn-default.active,
-  .open > .dropdown-toggle.btn-default {
-    color: $darkmode-btn-default-text;
-    background-color: $darkmode-default-lighten;
-    border-color: $darkmode-default-lighten;
-    box-shadow: none;
-  }
-
-  .btn-default:active:hover,
-  .btn-default.active:hover,
-  .open > .dropdown-toggle.btn-default:hover,
-  .btn-default:active:focus,
-  .btn-default.active:focus,
-  .open > .dropdown-toggle.btn-default:focus,
-  .btn-default:active.focus,
-  .btn-default.active.focus,
-  .open > .dropdown-toggle.btn-default.focus {
-    color: $darkmode-btn-default-text;
-    background-color: $darkmode-default-lighten;
-    border-color: $darkmode-default-lighten;
-    box-shadow: none;
-  }
-
-  .btn-default.disabled:hover,
-  .btn-default[disabled]:hover,
-  fieldset[disabled] .btn-default:hover,
-  .btn-default.disabled:focus,
-  .btn-default[disabled]:focus,
-  fieldset[disabled] .btn-default:focus,
-  .btn-default.disabled.focus,
-  .btn-default[disabled].focus,
-  fieldset[disabled] .btn-default.focus {
-    background-color: $darkmode-default-darken;
-    border-color: $darkmode-default-darken;
-    box-shadow: none;
-  }
-
-  .btn-default .badge {
-    color: $darkmode-default;
-    background-color: $darkmode-btn-default-text;
-  }
-
-  .btn-primary,
-  .btn-primary-faded,
-  .input-group-addon {
-    color: $darkmode-btn-default-text;
-    background-color: $darkmode-primary;
-    border-color: $darkmode-primary;
-  }
-
-  .btn-primary:focus,
-  .btn-primary.focus,
-  .btn-primary-faded:focus,
-  .btn-primary-faded.focus {
-    color: $darkmode-btn-default-text;
-    background-color: $darkmode-primary-lighten;
-    border-color: $darkmode-primary-lighten;
-  }
-
-  .btn-primary:hover,
-  .btn-primary-faded:hover {
-    color: $darkmode-btn-default-text;
-    background-color: $darkmode-primary-lighten;
-    border-color: $darkmode-primary-lighten;
-  }
-
-  .btn-primary:active,
-  .btn-primary.active,
-  .btn-primary-faded:active,
-  .btn-primary-faded.active,
-  .open > .dropdown-toggle.btn-primary {
-    color: $darkmode-btn-default-text;
-    background-color: $darkmode-primary-lighten;
-    border-color: $darkmode-primary-lighten;
-    background-image: none;
-  }
-
-  .btn-primary:active:hover,
-  .btn-primary.active:hover,
-  .open > .dropdown-toggle.btn-primary:hover,
-  .btn-primary:active:focus,
-  .btn-primary.active:focus,
-  .open > .dropdown-toggle.btn-primary:focus,
-  .btn-primary:active.focus,
-  .btn-primary.active.focus,
-  .open > .dropdown-toggle.btn-primary.focus {
-    color: $darkmode-btn-default-text;
-    background-color: d$darkmode-primary-lighten;
-    border-color: $darkmode-primary-lighten;
-  }
-
-  .btn-primary.disabled:hover,
-  .btn-primary[disabled]:hover,
-  fieldset[disabled] .btn-primary:hover,
-  .btn-primary.disabled:focus,
-  .btn-primary[disabled]:focus,
-  fieldset[disabled] .btn-primary:focus,
-  .btn-primary.disabled.focus,
-  .btn-primary[disabled].focus,
-  fieldset[disabled] .btn-primary.focus {
-    color: $darkmode-text-dimmer;
-    background-color: $darkmode-primary-darken;
-    border-color: $darkmode-primary-darken;
-  }
-
-  .btn-primary .badge {
-    color: $darkmode-primary;
-    background-color: $darkmode-btn-default-text;
-  }
-
-  .btn-success {
-    color: $darkmode-btn-default-text;
-    background-color: $darkmode-success;
-    border-color: $darkmode-success;
-  }
-
-  .btn-success:focus,
-  .btn-success.focus {
-    color: $darkmode-btn-default-text;
-    background-color: $darkmode-success-lighten;
-    border-color: $darkmode-success-lighten;
-  }
-
-  .btn-success:hover {
-    color: $darkmode-btn-default-text;
-    background-color: $darkmode-success-lighten;
-    border-color: $darkmode-success-lighten;
-  }
-
-  .btn-success:active,
-  .btn-success.active,
-  .open > .dropdown-toggle.btn-success {
-    color: $darkmode-btn-default-text;
-    background-color: $darkmode-success-lighten;
-    background-image: none;
-    border-color: $darkmode-success-lighten;
-  }
-
-  .btn-success:active:hover,
-  .btn-success.active:hover,
-  .open > .dropdown-toggle.btn-success:hover,
-  .btn-success:active:focus,
-  .btn-success.active:focus,
-  .open > .dropdown-toggle.btn-success:focus,
-  .btn-success:active.focus,
-  .btn-success.active.focus,
-  .open > .dropdown-toggle.btn-success.focus {
-    color: $darkmode-btn-default-text;
-    background-color: $darkmode-success-lighten;
-    border-color: $darkmode-success-lighten;
-  }
-
-  .btn-success.disabled:hover,
-  .btn-success[disabled]:hover,
-  fieldset[disabled] .btn-success:hover,
-  .btn-success.disabled:focus,
-  .btn-success[disabled]:focus,
-  fieldset[disabled] .btn-success:focus,
-  .btn-success.disabled.focus,
-  .btn-success[disabled].focus,
-  fieldset[disabled] .btn-success.focus {
-    background-color: $darkmode-success-darken;
-    border-color: $darkmode-success-darken;
-  }
-
-  .btn-success .badge {
-    color: $darkmode-success;
-    background-color: $darkmode-btn-default-text;
-  }
-
-  .btn-info {
-    color: $darkmode-btn-default-text;
-    background-color: $darkmode-info;
-    border-color: $darkmode-info;
-  }
-
-  .btn-info:focus,
-  .btn-info.focus {
-    color: $darkmode-btn-default-text;
-    background-color: $darkmode-info-lighten;
-    border-color: $darkmode-info-lighten;
-  }
-
-  .btn-info:hover {
-    color: $darkmode-btn-default-text;
-    background-color: $darkmode-info-lighten;
-    border-color: $darkmode-info-lighten;
-  }
-
-  .btn-info:active,
-  .btn-info.active,
-  .open > .dropdown-toggle.btn-info {
-    color: $darkmode-btn-default-text;
-    background-color: $darkmode-info-lighten;
-    background-image: none;
-    border-color: $darkmode-info-lighten;
-  }
-
-  .btn-info:active:hover,
-  .btn-info.active:hover,
-  .open > .dropdown-toggle.btn-info:hover,
-  .btn-info:active:focus,
-  .btn-info.active:focus,
-  .open > .dropdown-toggle.btn-info:focus,
-  .btn-info:active.focus,
-  .btn-info.active.focus,
-  .open > .dropdown-toggle.btn-info.focus {
-    color: $darkmode-btn-default-text;
-    background-color: $darkmode-info-lighten;
-    border-color: $darkmode-info-lighten;
-  }
-
-  .btn-info.disabled:hover,
-  .btn-info[disabled]:hover,
-  fieldset[disabled] .btn-info:hover,
-  .btn-info.disabled:focus,
-  .btn-info[disabled]:focus,
-  fieldset[disabled] .btn-info:focus,
-  .btn-info.disabled.focus,
-  .btn-info[disabled].focus,
-  fieldset[disabled] .btn-info.focus {
-    background-color: $darkmode-info-darken;
-    border-color: $darkmode-info-darken;
-  }
-
-  .btn-info .badge {
-    color: $darkmode-info;
-    background-color: $darkmode-btn-default-text;
-  }
-
-  .btn-warning {
-    color: $darkmode-btn-default-text;
-    background-color: $darkmode-warning;
-    border-color: $darkmode-warning;
-  }
-
-  .btn-warning:focus,
-  .btn-warning.focus {
-    color: $darkmode-btn-default-text;
-    background-color: $darkmode-warning-lighten;
-    border-color: $darkmode-warning-lighten;
-  }
-
-  .btn-warning:hover {
-    color: $darkmode-btn-default-text;
-    background-color: $darkmode-warning-lighten;
-    border-color: $darkmode-warning-lighten;
-  }
-
-  .btn-warning:active,
-  .btn-warning.active,
-  .open > .dropdown-toggle.btn-warning {
-    color: $darkmode-btn-default-text;
-    background-color: $darkmode-warning-lighten;
-    background-image: none;
-    border-color: $darkmode-warning-lighten;
-  }
-
-  .btn-warning:active:hover,
-  .btn-warning.active:hover,
-  .open > .dropdown-toggle.btn-warning:hover,
-  .btn-warning:active:focus,
-  .btn-warning.active:focus,
-  .open > .dropdown-toggle.btn-warning:focus,
-  .btn-warning:active.focus,
-  .btn-warning.active.focus,
-  .open > .dropdown-toggle.btn-warning.focus {
-    color: $darkmode-btn-default-text;
-    background-color: $darkmode-warning-lighten;
-    border-color: $darkmode-warning-lighten;
-  }
-
-  .btn-warning.disabled:hover,
-  .btn-warning[disabled]:hover,
-  fieldset[disabled] .btn-warning:hover,
-  .btn-warning.disabled:focus,
-  .btn-warning[disabled]:focus,
-  fieldset[disabled] .btn-warning:focus,
-  .btn-warning.disabled.focus,
-  .btn-warning[disabled].focus,
-  fieldset[disabled] .btn-warning.focus {
-    background-color: $darkmode-warning-darken;
-    border-color: $darkmode-warning-darken;
-  }
-
-  .btn-warning .badge {
-    color: $darkmode-warning;
-    background-color: $darkmode-btn-default-text;
-  }
-
-  .btn-danger {
-    color: $darkmode-btn-default-text;
-    background-color: $darkmode-danger;
-    border-color: $darkmode-danger;
-  }
-
-  .btn-danger:focus,
-  .btn-danger.focus {
-    color: $darkmode-btn-default-text;
-    background-color: $darkmode-danger-lighten;
-    border-color: $darkmode-danger-lighten;
-  }
-
-  .btn-danger:hover {
-    color: $darkmode-btn-default-text;
-    background-color: $darkmode-danger-lighten;
-    border-color: $darkmode-danger-lighten;
-  }
-
-  .btn-danger:active,
-  .btn-danger.active,
-  .open > .dropdown-toggle.btn-danger {
-    color: $darkmode-btn-default-text;
-    background-color: $darkmode-danger-lighten;
-    background-image: none;
-    border-color: $darkmode-danger-lighten;
-  }
-
-  .btn-danger:active:hover,
-  .btn-danger.active:hover,
-  .open > .dropdown-toggle.btn-danger:hover,
-  .btn-danger:active:focus,
-  .btn-danger.active:focus,
-  .open > .dropdown-toggle.btn-danger:focus,
-  .btn-danger:active.focus,
-  .btn-danger.active.focus,
-  .open > .dropdown-toggle.btn-danger.focus {
-    color: $darkmode-btn-default-text;
-    background-color: $darkmode-danger-lighten;
-    border-color: $darkmode-danger-lighten;
-  }
-
-  .btn-link {
-    font-weight: 400;
-  }
-
-  .btn-link,
-  .btn-link:active,
-  .btn-link.active,
-  .btn-link[disabled],
-  fieldset[disabled] .btn-link {
-    color: $darkmode-link;
-    background-color: transparent;
-    box-shadow: none;
-  }
-
-  .btn-link,
-  .btn-link:hover,
-  .btn-link:focus,
-  .btn-link:active {
-    border-color: transparent;
-  }
-
-  .btn-link:hover,
-  .btn-link:focus {
-    color: $darkmode-link;
-    text-decoration: underline;
-    background-color: transparent;
-  }
-
-  .btn-link[disabled]:hover,
-  fieldset[disabled] .btn-link:hover,
-  .btn-link[disabled]:focus,
-  fieldset[disabled] .btn-link:focus {
-    color: #999999;
-    text-decoration: none;
-  }
-
-  .nav-tabs {
-    border-color: $darkmode-border;
-  }
-
-  .nav-tabs > li > a {
-    background-color: $darkmode-background;
-    border-color: $darkmode-border;
-    color: $darkmode-text-dim;
-    border-radius: 2px;
-    border: none;
-    border-bottom: 1px solid $darkmode-border;
-  }
-
-  .nav-tabs > li.active > a,
-  .nav-tabs > li.active > a:focus,
-  .nav-tabs > li.active > a:hover {
-    background-color: $darkmode-background;
-    color: $darkmode-selected-text;
-    border-bottom: none;
-    border-left: 1px solid $darkmode-border;
-    border-top: 1px solid $darkmode-border;
-    border-right: 1px solid $darkmode-border;
-    border-radius: 2px;
-  }
-
-  h1,
-  h2,
-  h3,
-  h4,
-  h5,
-  h6,
-  .h1,
-  .h2,
-  .h3,
-  .h4,
-  .h5,
-  .h6 {
-    color: $darkmode-text;
-  }
-
-  .default-box-shadow,
-  .s-ads-card,
-  .s-tabs-widget .tab-content,
-  .facet__dropdown,
-  .ui-autocomplete,
-  .s-all-libraries-widget,
-  .library-detail-view,
-  .library-widget .main,
-  .s-main-content-container,
-  .s-inner-div-background > div,
-  .s-results-page-layout .s-left-col-container,
-  .s-right-col-widget-container,
-  .s-link-details,
-  .s-query-info-widget .s-library-area,
-  .s-form-widget .panel-default {
-    box-shadow: none;
-    border-color: $darkmode-border;
-    border-radius: 5px;
-  }
-
-  hr {
-    border-color: $darkmode-border;
-  }
-
-  input {
-    background-color: $darkmode-input-bg;
-    color: $darkmode-text;
-    border-color: $darkmode-input-border;
-    border-radius: 5px;
-
-    &:focus {
-      border-color: $darkmode-input-border-focus;
+    .bg-light {
+      background-color: #333 !important;
     }
-  }
 
-  textarea {
-    background-color: $darkmode-input-bg;
-    border-color: $darkmode-input-border;
-    color: $darkmode-text;
-    border-radius: 5px;
-  }
-
-  select {
-    background-color: $darkmode-input-bg;
-    color: $darkmode-text;
-    border-color: $darkmode-input-border;
-    border-radius: 5px;
-  }
-
-  .s-download {
-    color: $darkmode-text;
-    &:hover {
-      color: $darkmode-link;
+    .bg-white {
+      background-color: #000 !important;
     }
-  }
 
-  /* search page */
-  .s-landing-page-layout
-    .search-bar-rows-container.s-search-bar-rows-container {
-    background: transparent;
-  }
+    .bg-black {
+      background-color: $darkmode-text !important;
+    }
 
-  .s-dynamic-page-body,
-  .s-results-control-row-container {
-    background: transparent;
-    border-bottom-color: $darkmode-border;
-    box-shadow: none;
-  }
+    .jumbotron {
+      background-color: $darkmode-container !important;
+    }
 
-  #search-results-actions {
-    border-bottom: none;
-    background: transparent;
-    &.sticky {
+    .footer {
+      background-color: $darkmode-container !important;
+    }
+
+    .modal-content {
+      background-color: $darkmode-container !important;
+      border: 1px solid $darkmode-container-border !important;
+    }
+
+    .modal-header {
+      border-bottom: 1px solid $darkmode-container-border !important;
+      .modal-title,
+      .close {
+        background-color: $darkmode-container !important;
+        color: $darkmode-text;
+      }
+    }
+
+    .modal-footer {
+      border-top: 1px solid $darkmode-container-border !important;
+    }
+
+    .panel {
+      background-color: $darkmode-container;
+      border-radius: 5px;
+    }
+
+    .panel-body {
+      background-color: $darkmode-container !important;
+    }
+
+    .panel-heading {
+      border-bottom: 1px solid transparent;
+    }
+
+    .panel-heading > .dropdown .dropdown-toggle {
+      color: inherit;
+    }
+
+    .panel-footer {
+      background-color: #464545;
+      border-top: 1px solid #464545;
+    }
+
+    .panel-default {
+      border-color: #464545;
+      box-shadow: none;
+    }
+
+    .panel-default > .panel-heading {
+      color: #ffffff;
+      background-color: $darkmode-container;
+      border-color: #464545;
+    }
+
+    .panel-default > .panel-heading + .panel-collapse > .panel-body {
+      border-top-color: #464545;
+    }
+
+    .panel-default > .panel-heading .badge {
+      color: $darkmode-container;
+      background-color: #ffffff;
+    }
+
+    .panel-default > .panel-footer + .panel-collapse > .panel-body {
+      border-bottom-color: #464545;
+    }
+
+    .well {
+      background-color: $darkmode-container;
+      border: 1px solid $darkmode-container-border;
+      border-radius: 5px;
+    }
+
+    .well blockquote {
+      border-color: #ddd;
+      border-color: rgba(0, 0, 0, 0.15);
+    }
+
+    .form-control[disabled],
+    [disabled].export-start-val,
+    [disabled].export-end-val,
+    [disabled].show-slider-data-first,
+    [disabled].show-slider-data-second,
+    fieldset[disabled] .form-control,
+    fieldset[disabled] .export-start-val,
+    fieldset[disabled] .export-end-val,
+    fieldset[disabled] .show-slider-data-first,
+    fieldset[disabled] .show-slider-data-second {
       background-color: $darkmode-background;
+      border-color: $darkmode-background-tertiary;
+      color: $darkmode-text-dimmer;
+    }
+
+    .form-control[readonly],
+    [readonly].export-start-val,
+    [readonly].export-end-val,
+    [readonly].show-slider-data-first,
+    [readonly].show-slider-data-second {
+      background-color: $darkmode-background;
+      border-color: $darkmode-background-tertiary;
+      color: $darkmode-text-dim;
+    }
+
+    .editable-item form {
+      background-color: $darkmode-background;
+    }
+
+    table {
+      background-color: transparent;
+      color: $darkmode-text;
+    }
+
+    caption {
+      color: #999999;
+    }
+    .table > thead > tr > th,
+    .table > tbody > tr > th,
+    .table > tfoot > tr > th,
+    .table > thead > tr > td,
+    .table > tbody > tr > td,
+    .table > tfoot > tr > td {
+      border-top: 1px solid $darkmode-input-border;
+    }
+
+    .table > thead > tr > th {
+      border-bottom: 2px solid $darkmode-input-border;
+    }
+
+    .table > tbody + tbody {
+      border-top: 2px solid $darkmode-input-border;
+    }
+
+    .table .table {
+      background-color: $darkmode-input-bg;
+    }
+
+    .table-bordered {
+      border: 1px solid $darkmode-input-border;
+    }
+
+    .table-bordered > thead > tr > th,
+    .table-bordered > tbody > tr > th,
+    .table-bordered > tfoot > tr > th,
+    .table-bordered > thead > tr > td,
+    .table-bordered > tbody > tr > td,
+    .table-bordered > tfoot > tr > td {
+      border: 1px solid $darkmode-input-border;
+    }
+
+    .table-striped > tbody > tr:nth-of-type(odd) {
+      background-color: $darkmode-background-secondary;
+    }
+
+    .table-hover > tbody > tr:hover {
+      background-color: $darkmode-input-bg;
+    }
+
+    .table > thead > tr > td.active,
+    .table > tbody > tr > td.active,
+    .table > tfoot > tr > td.active,
+    .table > thead > tr > th.active,
+    .table > tbody > tr > th.active,
+    .table > tfoot > tr > th.active,
+    .table > thead > tr.active > td,
+    .table > tbody > tr.active > td,
+    .table > tfoot > tr.active > td,
+    .table > thead > tr.active > th,
+    .table > tbody > tr.active > th,
+    .table > tfoot > tr.active > th {
+      background-color: $darkmode-background;
+    }
+
+    .table-hover > tbody > tr > td.active:hover,
+    .table-hover > tbody > tr > th.active:hover,
+    .table-hover > tbody > tr.active:hover > td,
+    .table-hover > tbody > tr:hover > .active,
+    .table-hover > tbody > tr.active:hover > th {
+      background-color: $darkmode-background;
+    }
+
+    .table > thead > tr > td.success,
+    .table > tbody > tr > td.success,
+    .table > tfoot > tr > td.success,
+    .table > thead > tr > th.success,
+    .table > tbody > tr > th.success,
+    .table > tfoot > tr > th.success,
+    .table > thead > tr.success > td,
+    .table > tbody > tr.success > td,
+    .table > tfoot > tr.success > td,
+    .table > thead > tr.success > th,
+    .table > tbody > tr.success > th,
+    .table > tfoot > tr.success > th {
+      background-color: $darkmode-success;
+    }
+
+    .table-hover > tbody > tr > td.success:hover,
+    .table-hover > tbody > tr > th.success:hover,
+    .table-hover > tbody > tr.success:hover > td,
+    .table-hover > tbody > tr:hover > .success,
+    .table-hover > tbody > tr.success:hover > th {
+      background-color: $darkmode-success;
+    }
+
+    .table > thead > tr > td.info,
+    .table > tbody > tr > td.info,
+    .table > tfoot > tr > td.info,
+    .table > thead > tr > th.info,
+    .table > tbody > tr > th.info,
+    .table > tfoot > tr > th.info,
+    .table > thead > tr.info > td,
+    .table > tbody > tr.info > td,
+    .table > tfoot > tr.info > td,
+    .table > thead > tr.info > th,
+    .table > tbody > tr.info > th,
+    .table > tfoot > tr.info > th {
+      background-color: $darkmode-info;
+    }
+
+    .table-hover > tbody > tr > td.info:hover,
+    .table-hover > tbody > tr > th.info:hover,
+    .table-hover > tbody > tr.info:hover > td,
+    .table-hover > tbody > tr:hover > .info,
+    .table-hover > tbody > tr.info:hover > th {
+      background-color: $darkmode-info;
+    }
+
+    .table > thead > tr > td.warning,
+    .table > tbody > tr > td.warning,
+    .table > tfoot > tr > td.warning,
+    .table > thead > tr > th.warning,
+    .table > tbody > tr > th.warning,
+    .table > tfoot > tr > th.warning,
+    .table > thead > tr.warning > td,
+    .table > tbody > tr.warning > td,
+    .table > tfoot > tr.warning > td,
+    .table > thead > tr.warning > th,
+    .table > tbody > tr.warning > th,
+    .table > tfoot > tr.warning > th {
+      background-color: $darkmode-warning;
+    }
+
+    .table-hover > tbody > tr > td.warning:hover,
+    .table-hover > tbody > tr > th.warning:hover,
+    .table-hover > tbody > tr.warning:hover > td,
+    .table-hover > tbody > tr:hover > .warning,
+    .table-hover > tbody > tr.warning:hover > th {
+      background-color: $darkmode-warning;
+    }
+
+    .table > thead > tr > td.danger,
+    .table > tbody > tr > td.danger,
+    .table > tfoot > tr > td.danger,
+    .table > thead > tr > th.danger,
+    .table > tbody > tr > th.danger,
+    .table > tfoot > tr > th.danger,
+    .table > thead > tr.danger > td,
+    .table > tbody > tr.danger > td,
+    .table > tfoot > tr.danger > td,
+    .table > thead > tr.danger > th,
+    .table > tbody > tr.danger > th,
+    .table > tfoot > tr.danger > th {
+      background-color: $darkmode-danger;
+    }
+
+    .table-hover > tbody > tr > td.danger:hover,
+    .table-hover > tbody > tr > th.danger:hover,
+    .table-hover > tbody > tr.danger:hover > td,
+    .table-hover > tbody > tr:hover > .danger,
+    .table-hover > tbody > tr.danger:hover > th {
+      background-color: $darkmode-danger;
+    }
+    .btn:hover,
+    .btn:focus,
+    .btn.focus {
+      background-color: $darkmode-btn-hightlight-bg;
+      border-color: $darkmode-btn-hightlight-bg;
+      color: $darkmode-btn-default-text;
+      text-decoration: none;
+    }
+
+    .btn:active,
+    .btn.active {
+      background-image: none;
+      outline: 0;
+      box-shadow: inset 0 3px 5px rgba(0, 0, 0, 0.125);
+    }
+
+    .btn.disabled,
+    .btn[disabled],
+    fieldset[disabled] .btn {
+      cursor: not-allowed;
+      filter: alpha(opacity=65);
+      opacity: 0.65;
+      box-shadow: none;
+    }
+
+    a.btn.disabled,
+    fieldset[disabled] a.btn {
+      pointer-events: none;
+    }
+
+    .btn-default {
+      color: $darkmode-btn-default-text;
+      background-color: $darkmode-default;
+      border-color: $darkmode-default;
+    }
+
+    .btn-default:focus,
+    .btn-default.focus {
+      color: $darkmode-btn-default-text;
+      background-color: $darkmode-default-lighten;
+      border-color: $darkmode-default-lighten;
+      box-shadow: none;
+    }
+
+    .btn-default:hover {
+      color: $darkmode-btn-default-text;
+      background-color: $darkmode-default-lighten;
+      border-color: $darkmode-default-lighten;
+      box-shadow: none;
+    }
+
+    .btn-default:active,
+    .btn-default.active,
+    .open > .dropdown-toggle.btn-default {
+      color: $darkmode-btn-default-text;
+      background-color: $darkmode-default-lighten;
+      border-color: $darkmode-default-lighten;
+      box-shadow: none;
+    }
+
+    .btn-default:active:hover,
+    .btn-default.active:hover,
+    .open > .dropdown-toggle.btn-default:hover,
+    .btn-default:active:focus,
+    .btn-default.active:focus,
+    .open > .dropdown-toggle.btn-default:focus,
+    .btn-default:active.focus,
+    .btn-default.active.focus,
+    .open > .dropdown-toggle.btn-default.focus {
+      color: $darkmode-btn-default-text;
+      background-color: $darkmode-default-lighten;
+      border-color: $darkmode-default-lighten;
+      box-shadow: none;
+    }
+
+    .btn-default.disabled:hover,
+    .btn-default[disabled]:hover,
+    fieldset[disabled] .btn-default:hover,
+    .btn-default.disabled:focus,
+    .btn-default[disabled]:focus,
+    fieldset[disabled] .btn-default:focus,
+    .btn-default.disabled.focus,
+    .btn-default[disabled].focus,
+    fieldset[disabled] .btn-default.focus {
+      background-color: $darkmode-default-darken;
+      border-color: $darkmode-default-darken;
+      box-shadow: none;
+    }
+
+    .btn-default .badge {
+      color: $darkmode-default;
+      background-color: $darkmode-btn-default-text;
+    }
+
+    .btn-primary,
+    .btn-primary-faded,
+    .input-group-addon {
+      color: $darkmode-btn-default-text;
+      background-color: $darkmode-primary;
+      border-color: $darkmode-primary;
+    }
+
+    .btn-primary:focus,
+    .btn-primary.focus,
+    .btn-primary-faded:focus,
+    .btn-primary-faded.focus {
+      color: $darkmode-btn-default-text;
+      background-color: $darkmode-primary-lighten;
+      border-color: $darkmode-primary-lighten;
+    }
+
+    .btn-primary:hover,
+    .btn-primary-faded:hover {
+      color: $darkmode-btn-default-text;
+      background-color: $darkmode-primary-lighten;
+      border-color: $darkmode-primary-lighten;
+    }
+
+    .btn-primary:active,
+    .btn-primary.active,
+    .btn-primary-faded:active,
+    .btn-primary-faded.active,
+    .open > .dropdown-toggle.btn-primary {
+      color: $darkmode-btn-default-text;
+      background-color: $darkmode-primary-lighten;
+      border-color: $darkmode-primary-lighten;
+      background-image: none;
+    }
+
+    .btn-primary:active:hover,
+    .btn-primary.active:hover,
+    .open > .dropdown-toggle.btn-primary:hover,
+    .btn-primary:active:focus,
+    .btn-primary.active:focus,
+    .open > .dropdown-toggle.btn-primary:focus,
+    .btn-primary:active.focus,
+    .btn-primary.active.focus,
+    .open > .dropdown-toggle.btn-primary.focus {
+      color: $darkmode-btn-default-text;
+      background-color: d$darkmode-primary-lighten;
+      border-color: $darkmode-primary-lighten;
+    }
+
+    .btn-primary.disabled:hover,
+    .btn-primary[disabled]:hover,
+    fieldset[disabled] .btn-primary:hover,
+    .btn-primary.disabled:focus,
+    .btn-primary[disabled]:focus,
+    fieldset[disabled] .btn-primary:focus,
+    .btn-primary.disabled.focus,
+    .btn-primary[disabled].focus,
+    fieldset[disabled] .btn-primary.focus {
+      color: $darkmode-text-dimmer;
+      background-color: $darkmode-primary-darken;
+      border-color: $darkmode-primary-darken;
+    }
+
+    .btn-primary .badge {
+      color: $darkmode-primary;
+      background-color: $darkmode-btn-default-text;
+    }
+
+    .btn-success {
+      color: $darkmode-btn-default-text;
+      background-color: $darkmode-success;
+      border-color: $darkmode-success;
+    }
+
+    .btn-success:focus,
+    .btn-success.focus {
+      color: $darkmode-btn-default-text;
+      background-color: $darkmode-success-lighten;
+      border-color: $darkmode-success-lighten;
+    }
+
+    .btn-success:hover {
+      color: $darkmode-btn-default-text;
+      background-color: $darkmode-success-lighten;
+      border-color: $darkmode-success-lighten;
+    }
+
+    .btn-success:active,
+    .btn-success.active,
+    .open > .dropdown-toggle.btn-success {
+      color: $darkmode-btn-default-text;
+      background-color: $darkmode-success-lighten;
+      background-image: none;
+      border-color: $darkmode-success-lighten;
+    }
+
+    .btn-success:active:hover,
+    .btn-success.active:hover,
+    .open > .dropdown-toggle.btn-success:hover,
+    .btn-success:active:focus,
+    .btn-success.active:focus,
+    .open > .dropdown-toggle.btn-success:focus,
+    .btn-success:active.focus,
+    .btn-success.active.focus,
+    .open > .dropdown-toggle.btn-success.focus {
+      color: $darkmode-btn-default-text;
+      background-color: $darkmode-success-lighten;
+      border-color: $darkmode-success-lighten;
+    }
+
+    .btn-success.disabled:hover,
+    .btn-success[disabled]:hover,
+    fieldset[disabled] .btn-success:hover,
+    .btn-success.disabled:focus,
+    .btn-success[disabled]:focus,
+    fieldset[disabled] .btn-success:focus,
+    .btn-success.disabled.focus,
+    .btn-success[disabled].focus,
+    fieldset[disabled] .btn-success.focus {
+      background-color: $darkmode-success-darken;
+      border-color: $darkmode-success-darken;
+    }
+
+    .btn-success .badge {
+      color: $darkmode-success;
+      background-color: $darkmode-btn-default-text;
+    }
+
+    .btn-info {
+      color: $darkmode-btn-default-text;
+      background-color: $darkmode-info;
+      border-color: $darkmode-info;
+    }
+
+    .btn-info:focus,
+    .btn-info.focus {
+      color: $darkmode-btn-default-text;
+      background-color: $darkmode-info-lighten;
+      border-color: $darkmode-info-lighten;
+    }
+
+    .btn-info:hover {
+      color: $darkmode-btn-default-text;
+      background-color: $darkmode-info-lighten;
+      border-color: $darkmode-info-lighten;
+    }
+
+    .btn-info:active,
+    .btn-info.active,
+    .open > .dropdown-toggle.btn-info {
+      color: $darkmode-btn-default-text;
+      background-color: $darkmode-info-lighten;
+      background-image: none;
+      border-color: $darkmode-info-lighten;
+    }
+
+    .btn-info:active:hover,
+    .btn-info.active:hover,
+    .open > .dropdown-toggle.btn-info:hover,
+    .btn-info:active:focus,
+    .btn-info.active:focus,
+    .open > .dropdown-toggle.btn-info:focus,
+    .btn-info:active.focus,
+    .btn-info.active.focus,
+    .open > .dropdown-toggle.btn-info.focus {
+      color: $darkmode-btn-default-text;
+      background-color: $darkmode-info-lighten;
+      border-color: $darkmode-info-lighten;
+    }
+
+    .btn-info.disabled:hover,
+    .btn-info[disabled]:hover,
+    fieldset[disabled] .btn-info:hover,
+    .btn-info.disabled:focus,
+    .btn-info[disabled]:focus,
+    fieldset[disabled] .btn-info:focus,
+    .btn-info.disabled.focus,
+    .btn-info[disabled].focus,
+    fieldset[disabled] .btn-info.focus {
+      background-color: $darkmode-info-darken;
+      border-color: $darkmode-info-darken;
+    }
+
+    .btn-info .badge {
+      color: $darkmode-info;
+      background-color: $darkmode-btn-default-text;
+    }
+
+    .btn-warning {
+      color: $darkmode-btn-default-text;
+      background-color: $darkmode-warning;
+      border-color: $darkmode-warning;
+    }
+
+    .btn-warning:focus,
+    .btn-warning.focus {
+      color: $darkmode-btn-default-text;
+      background-color: $darkmode-warning-lighten;
+      border-color: $darkmode-warning-lighten;
+    }
+
+    .btn-warning:hover {
+      color: $darkmode-btn-default-text;
+      background-color: $darkmode-warning-lighten;
+      border-color: $darkmode-warning-lighten;
+    }
+
+    .btn-warning:active,
+    .btn-warning.active,
+    .open > .dropdown-toggle.btn-warning {
+      color: $darkmode-btn-default-text;
+      background-color: $darkmode-warning-lighten;
+      background-image: none;
+      border-color: $darkmode-warning-lighten;
+    }
+
+    .btn-warning:active:hover,
+    .btn-warning.active:hover,
+    .open > .dropdown-toggle.btn-warning:hover,
+    .btn-warning:active:focus,
+    .btn-warning.active:focus,
+    .open > .dropdown-toggle.btn-warning:focus,
+    .btn-warning:active.focus,
+    .btn-warning.active.focus,
+    .open > .dropdown-toggle.btn-warning.focus {
+      color: $darkmode-btn-default-text;
+      background-color: $darkmode-warning-lighten;
+      border-color: $darkmode-warning-lighten;
+    }
+
+    .btn-warning.disabled:hover,
+    .btn-warning[disabled]:hover,
+    fieldset[disabled] .btn-warning:hover,
+    .btn-warning.disabled:focus,
+    .btn-warning[disabled]:focus,
+    fieldset[disabled] .btn-warning:focus,
+    .btn-warning.disabled.focus,
+    .btn-warning[disabled].focus,
+    fieldset[disabled] .btn-warning.focus {
+      background-color: $darkmode-warning-darken;
+      border-color: $darkmode-warning-darken;
+    }
+
+    .btn-warning .badge {
+      color: $darkmode-warning;
+      background-color: $darkmode-btn-default-text;
+    }
+
+    .btn-danger {
+      color: $darkmode-btn-default-text;
+      background-color: $darkmode-danger;
+      border-color: $darkmode-danger;
+    }
+
+    .btn-danger:focus,
+    .btn-danger.focus {
+      color: $darkmode-btn-default-text;
+      background-color: $darkmode-danger-lighten;
+      border-color: $darkmode-danger-lighten;
+    }
+
+    .btn-danger:hover {
+      color: $darkmode-btn-default-text;
+      background-color: $darkmode-danger-lighten;
+      border-color: $darkmode-danger-lighten;
+    }
+
+    .btn-danger:active,
+    .btn-danger.active,
+    .open > .dropdown-toggle.btn-danger {
+      color: $darkmode-btn-default-text;
+      background-color: $darkmode-danger-lighten;
+      background-image: none;
+      border-color: $darkmode-danger-lighten;
+    }
+
+    .btn-danger:active:hover,
+    .btn-danger.active:hover,
+    .open > .dropdown-toggle.btn-danger:hover,
+    .btn-danger:active:focus,
+    .btn-danger.active:focus,
+    .open > .dropdown-toggle.btn-danger:focus,
+    .btn-danger:active.focus,
+    .btn-danger.active.focus,
+    .open > .dropdown-toggle.btn-danger.focus {
+      color: $darkmode-btn-default-text;
+      background-color: $darkmode-danger-lighten;
+      border-color: $darkmode-danger-lighten;
+    }
+
+    .btn-link {
+      font-weight: 400;
+    }
+
+    .btn-link,
+    .btn-link:active,
+    .btn-link.active,
+    .btn-link[disabled],
+    fieldset[disabled] .btn-link {
+      color: $darkmode-link;
+      background-color: transparent;
+      box-shadow: none;
+    }
+
+    .btn-link,
+    .btn-link:hover,
+    .btn-link:focus,
+    .btn-link:active {
+      border-color: transparent;
+    }
+
+    .btn-link:hover,
+    .btn-link:focus {
+      color: $darkmode-link;
+      text-decoration: underline;
+      background-color: transparent;
+    }
+
+    .btn-link[disabled]:hover,
+    fieldset[disabled] .btn-link:hover,
+    .btn-link[disabled]:focus,
+    fieldset[disabled] .btn-link:focus {
+      color: #999999;
+      text-decoration: none;
+    }
+
+    .nav-tabs {
+      border-color: $darkmode-border;
+    }
+
+    .nav-tabs > li > a {
+      background-color: $darkmode-background;
+      border-color: $darkmode-border;
+      color: $darkmode-text-dim;
+      border-radius: 2px;
+      border: none;
       border-bottom: 1px solid $darkmode-border;
     }
-  }
 
-  .border-default-light,
-  .s-stable-search-bar-height {
-    border-color: $darkmode-border;
-  }
+    .nav-tabs > li.active > a,
+    .nav-tabs > li.active > a:focus,
+    .nav-tabs > li.active > a:hover {
+      background-color: $darkmode-background;
+      color: $darkmode-selected-text;
+      border-bottom: none;
+      border-left: 1px solid $darkmode-border;
+      border-top: 1px solid $darkmode-border;
+      border-right: 1px solid $darkmode-border;
+      border-radius: 2px;
+    }
 
-  .ui-menu .ui-menu-item a {
-    background-color: $darkmode-input-bg;
-    color: $darkmode-text;
+    h1,
+    h2,
+    h3,
+    h4,
+    h5,
+    h6,
+    .h1,
+    .h2,
+    .h3,
+    .h4,
+    .h5,
+    .h6 {
+      color: $darkmode-text;
+    }
 
-    &:hover,
-    &:focus,
-    &:active,
-    &.ui-state-active {
-      background-color: $darkmode-text-dimmer !important;
+    .default-box-shadow,
+    .s-ads-card,
+    .s-tabs-widget .tab-content,
+    .facet__dropdown,
+    .ui-autocomplete,
+    .s-all-libraries-widget,
+    .library-detail-view,
+    .library-widget .main,
+    .s-main-content-container,
+    .s-inner-div-background > div,
+    .s-results-page-layout .s-left-col-container,
+    .s-right-col-widget-container,
+    .s-link-details,
+    .s-query-info-widget .s-library-area,
+    .s-form-widget .panel-default {
+      box-shadow: none;
       border-color: $darkmode-border;
-      outline: none;
+      border-radius: 5px;
     }
 
-    .ui-state-highlight {
-      background-color: $darkmode-text;
-      color: $darkmode-background-tertiary;
+    hr {
+      border-color: $darkmode-border;
     }
-  }
 
-  .ui-widget-content.ui-autocomplete {
-    background-color: $darkmode-border;
-    border-color: $darkmode-border;
-    background: none;
-  }
+    input {
+      background-color: $darkmode-input-bg;
+      color: $darkmode-text;
+      border-color: $darkmode-input-border;
+      border-radius: 5px;
 
-  button.text-link {
-    border: 2px solid $darkmode-container-border;
-  }
-
-  .classic-form label {
-    color: $darkmode-text;
-  }
-
-  legend {
-    color: $darkmode-text;
-  }
-
-  .landing-faq .col-sm-4:hover {
-    background-color: $darkmode-container;
-  }
-
-  .s-landing-tabs .landing-tab:not(.active) a {
-    color: $darkmode-text-dim !important;
-  }
-
-  .s-landing-tabs .landing-tab.active {
-    background-color: $darkmode-background;
-    border-left: 2px solid $darkmode-border;
-    border-top: 2px solid $darkmode-border;
-    border-right: 2px solid $darkmode-border;
-    border-bottom-left-radius: 0;
-    border-bottom-right-radius: 0;
-    a {
-      color: $darkmode-selected-text !important;
+      &:focus {
+        border-color: $darkmode-input-border-focus;
+      }
     }
-  }
 
-  .select2-dropdown {
-    background-color: $darkmode-input-bg;
-    border-color: $darkmode-input-border;
-  }
+    textarea {
+      background-color: $darkmode-input-bg;
+      border-color: $darkmode-input-border;
+      color: $darkmode-text;
+      border-radius: 5px;
+    }
 
-  .select2-selection {
-    background-color: $darkmode-input-bg;
-    color: $darkmode-text;
-    border-color: $darkmode-input-border;
-  }
+    select {
+      background-color: $darkmode-input-bg;
+      color: $darkmode-text;
+      border-color: $darkmode-input-border;
+      border-radius: 5px;
+    }
 
-  .select2-container--default {
-    .select2-selection--single .select2-selection__placeholder {
+    .s-download {
+      color: $darkmode-text;
+      &:hover {
+        color: $darkmode-link;
+      }
+    }
+
+    /* search page */
+    .s-landing-page-layout
+      .search-bar-rows-container.s-search-bar-rows-container {
+      background: transparent;
+    }
+
+    .s-dynamic-page-body,
+    .s-results-control-row-container {
+      background: transparent;
+      border-bottom-color: $darkmode-border;
+      box-shadow: none;
+    }
+
+    #search-results-actions {
+      border-bottom: none;
+      background: transparent;
+      &.sticky {
+        background-color: $darkmode-background;
+        border-bottom: 1px solid $darkmode-border;
+      }
+    }
+
+    .border-default-light,
+    .s-stable-search-bar-height {
+      border-color: $darkmode-border;
+    }
+
+    .ui-menu .ui-menu-item a {
+      background-color: $darkmode-input-bg;
+      color: $darkmode-text;
+
+      &:hover,
+      &:focus,
+      &:active,
+      &.ui-state-active {
+        background-color: $darkmode-text-dimmer !important;
+        border-color: $darkmode-border;
+        outline: none;
+      }
+
+      .ui-state-highlight {
+        background-color: $darkmode-text;
+        color: $darkmode-background-tertiary;
+      }
+    }
+
+    .ui-widget-content.ui-autocomplete {
+      background-color: $darkmode-border;
+      border-color: $darkmode-border;
+      background: none;
+    }
+
+    button.text-link {
+      border: 2px solid $darkmode-container-border;
+    }
+
+    .classic-form label {
+      color: $darkmode-text;
+    }
+
+    legend {
+      color: $darkmode-text;
+    }
+
+    .landing-faq .col-sm-4:hover {
+      background-color: $darkmode-container;
+    }
+
+    .s-landing-tabs .landing-tab:not(.active) a {
+      color: $darkmode-text-dim !important;
+    }
+
+    .s-landing-tabs .landing-tab.active {
+      background-color: $darkmode-background;
+      border-left: 2px solid $darkmode-border;
+      border-top: 2px solid $darkmode-border;
+      border-right: 2px solid $darkmode-border;
+      border-bottom-left-radius: 0;
+      border-bottom-right-radius: 0;
+      a {
+        color: $darkmode-selected-text !important;
+      }
+    }
+
+    .select2-dropdown {
+      background-color: $darkmode-input-bg;
+      border-color: $darkmode-input-border;
+    }
+
+    .select2-selection {
+      background-color: $darkmode-input-bg;
+      color: $darkmode-text;
+      border-color: $darkmode-input-border;
+    }
+
+    .select2-container--default {
+      .select2-selection--single .select2-selection__placeholder {
+        color: $darkmode-link;
+      }
+
+      .select2-results__option--highlighted[aria-selected] {
+        color: $darkmode-dropdown-highlight-text;
+        background-color: $darkmode-dropdown-highlight-bg;
+      }
+
+      .select2-search--dropdown .select2-search__field {
+        background-color: $darkmode-input-bg;
+        border-color: $darkmode-input-border;
+        border-radius: 2px;
+      }
+    }
+
+    .navbar-nav .btn-link {
+      color: #c4c4c4;
+    }
+
+    .s-text-bold,
+    strong {
+      color: $darkmode-text-strong;
+    }
+
+    .dropdown-menu {
+      background-color: $darkmode-dropdown-bg;
+
+      li.no-hover-style {
+        color: $darkmode-dropdown-text;
+        &:hover {
+          background-color: $darkmode-dropdown-bg !important;
+        }
+
+        h1,
+        h2,
+        h3,
+        h4,
+        h5,
+        h6 {
+          color: $darkmode-dropdown-text;
+          &:hover {
+            background-color: $darkmode-dropdown-bg !important;
+          }
+        }
+
+        a,
+        a:hover {
+          color: $darkmode-dropdown-text;
+          background-color: $darkmode-dropdown-bg !important;
+        }
+      }
+
+      li:not(.divider):not(.no-hover-style) {
+        color: $darkmode-dropdown-text;
+        background-color: $darkmode-dropdown-bg;
+        &:hover {
+          color: $darkmode-dropdown-text;
+          background-color: $darkmode-dropdown-highlight-bg;
+        }
+        a {
+          color: $darkmode-dropdown-text;
+          background-color: $darkmode-dropdown-bg;
+        }
+        a:hover {
+          color: $darkmode-dropdown-text;
+          background-color: $darkmode-dropdown-highlight-bg;
+        }
+      }
+    }
+
+    .landing-faq {
+      border-color: $darkmode-border;
+
+      a {
+        color: $darkmode-link !important;
+      }
+    }
+
+    .s-darker-background {
+      background: transparent;
+    }
+
+    #feedback-select-group a {
+      background: transparent;
+      color: $darkmode-text;
+      border-color: $darkmode-container-border;
+    }
+
+    .rdt_Table,
+    .rdt_TableRow,
+    .rdt_TableCol,
+    .rdt_TableCol_Sortable,
+    .rdt_TableHeader,
+    .rdt_TableFooter,
+    .rdt_TableHead,
+    .rdt_TableHeadRow,
+    .rdt_TableBody,
+    .rdt_ExpanderRow,
+    .rdt_Pagination {
+      background-color: $darkmode-background-secondary !important;
+      color: $darkmode-text !important;
+      border-color: $darkmode-border;
+      border-bottom-color: $darkmode-border !important;
+
+      .btn-default {
+        border-color: $darkmode-input-border;
+      }
+
+      select {
+        border: 1px solid $darkmode-input-border;
+        &:focus {
+          border: 1px solid $darkmode-link;
+        }
+      }
+
+      button:disabled {
+        fill: $darkmode-text-dimmer;
+      }
+
+      button {
+        fill: $darkmode-text;
+        color: $darkmode-text;
+      }
+    }
+
+    .rdt_TableCell {
+      background: transparent;
+    }
+
+    .rdt_TableRow:hover {
+      background-color: $darkmode-input-bg !important;
+      border-color: $darkmode-input-border !important;
+      color: $darkmode-text !important;
+      outline: none !important;
+    }
+
+    .rdt_TableHeader div {
+      background-color: $darkmode-input-bg;
+      color: $darkmode-text;
+    }
+
+    .rdt_TableCol_Sortable:hover {
+      color: $darkmode-text !important;
+    }
+
+    .s-main-content-container {
+      background: transparent;
+      border-color: $darkmode-border;
+    }
+
+    .orcid-info__intro .header h1 {
+      color: $darkmode-text;
+    }
+
+    .results-list .s-identifier,
+    .library-list-container .s-identifier {
+      a,
+      a:hover,
+      a:active,
+      a:visited {
+        color: $darkmode-text-dim;
+      }
+    }
+
+    // Add to library widget
+    .s-query-info-widget .s-library-area {
+      background: $darkmode-background;
+
+      .panel-default {
+        background: transparent;
+
+        .panel-heading .panel-title {
+          background-color: $darkmode-input-bg;
+        }
+
+        .panel-body {
+          background: transparent !important;
+        }
+      }
+    }
+
+    // notification widget
+    [data-widget='MyAdsFreeform'] {
+      background: transparent;
+
+      .panel-default {
+        background: transparent;
+
+        .panel-heading .panel-title {
+          background-color: $darkmode-input-bg;
+        }
+
+        .panel-body {
+          background: transparent !important;
+        }
+      }
+    }
+
+    /* my libraries */
+
+    .s-user-pill-nav {
+      background-color: $darkmode-background-tertiary;
+    }
+
+    .s-user-pill-nav > li.active > a {
+      color: $darkmode-link;
+      border-color: $darkmode-link;
+    }
+
+    #page-with-sidenav-layout .user-pages__main-content {
+      background-color: $darkmode-background;
+    }
+
+    .s-nav-container {
+      background-color: $darkmode-background-secondary;
+      border: 1px solid $darkmode-border;
+      box-shadow: none;
+      @media screen and (max-width: $screen-md) {
+        background-color: $darkmode-background;
+      }
+
+      .s-nav-top-title {
+        color: $darkmode-link;
+        border-color: $darkmode-border;
+      }
+    }
+
+    .library-nav button,
+    .library-nav a {
+      color: $darkmode-text !important;
+      &:hover {
+        background-color: $darkmode-background-tertiary !important;
+      }
+
+      i.fa {
+        color: $darkmode-link;
+      }
+
+      &.btn {
+        border: none;
+        border-radius: 0;
+      }
+    }
+
+    .s-all-libraries-widget {
+      background: $darkmode-background-secondary;
+      border-color: $darkmode-border;
+    }
+
+    .table-responsive {
+      @media screen and (max-width: $screen-sm) {
+        border-color: $darkmode-border;
+      }
+    }
+
+    .library-description {
+      color: $darkmode-text-dim;
+    }
+
+    .library-widget .header {
+      background: $darkmode-background-secondary;
+      box-shadow: none;
+      border-color: $darkmode-border;
+    }
+
+    .s-library-widget .s-library-info {
+      border-color: $darkmode-border;
+    }
+
+    .library-detail-view {
+      background: transparent;
+    }
+
+    .s-tab,
+    .s-tab a {
+      color: $darkmode-text;
+      &.active {
+        color: $darkmode-link;
+      }
+    }
+
+    .results-list,
+    .library-list-container {
+      color: $darkmode-text-dim;
+      a {
+        color: $darkmode-text;
+      }
+      a:hover {
+        color: $darkmode-link;
+      }
+    }
+
+    a,
+    a:visited {
+      .s-results-title {
+        color: $darkmode-text;
+      }
+    }
+
+    a:hover .s-results-title {
+      color: $darkmode-link;
+      text-decoration: none;
+    }
+
+    .s-results-authors {
+      color: $darkmode-text-dim;
+    }
+
+    .s-letter-icon .s-active-link i {
+      color: white;
+    }
+
+    .s-letter-icon i {
+      color: $darkmode-text-dim;
+    }
+
+    .s-icon-draw-attention {
       color: $darkmode-link;
     }
 
-    .select2-results__option--highlighted[aria-selected] {
-      color: $darkmode-dropdown-highlight-text;
-      background-color: $darkmode-dropdown-highlight-bg;
-    }
-
-    .select2-search--dropdown .select2-search__field {
+    .s-link-details {
       background-color: $darkmode-input-bg;
       border-color: $darkmode-input-border;
-      border-radius: 2px;
-    }
-  }
-
-  .navbar-nav .btn-link {
-    color: #c4c4c4;
-  }
-
-  .s-text-bold,
-  strong {
-    color: $darkmode-text-strong;
-  }
-
-  .dropdown-menu {
-    background-color: $darkmode-dropdown-bg;
-
-    li.no-hover-style {
-      color: $darkmode-dropdown-text;
-      &:hover {
-        background-color: $darkmode-dropdown-bg !important;
+      a,
+      a:visited {
+        color: $darkmode-text;
       }
+      a:hover,
+      a:active {
+        color: $darkmode-link;
+      }
+    }
 
+    .s-main {
+      background: transparent;
+    }
+
+    .pager li > a,
+    .pager li > span {
+      background-color: $darkmode-container;
+      color: $darkmode-text;
+    }
+
+    .pager .disabled > a,
+    .pager .disabled > a:hover,
+    .pager .disabled > a:focus,
+    .pager .disabled > span {
+      background-color: $darkmode-container;
+      color: $darkmode-text-dim;
+    }
+
+    .all-libraries-widget tbody tr {
+      border-color: $darkmode-border;
+    }
+
+    /* results */
+
+    button.filter-operand-remove:hover {
+      background-color: $darkmode-btn-hightlight-bg;
+      border-color: $darkmode-btn-hightlight-bg;
+    }
+
+    .s-results-control-row {
+      background: transparent;
+    }
+
+    .s-more-info h4 a {
+      color: $darkmode-link;
+    }
+
+    .s-left-col-container {
+      background: transparent;
+      border-color: $darkmode-border;
+    }
+
+    .s-results-page-layout .s-results-border-bottom {
+      border-color: $darkmode-border;
+      @media screen and (max-width: $screen-md) {
+        border-left-color: $darkmode-background;
+      }
+    }
+
+    .facet-label {
+      color: $darkmode-text;
+      &:hover {
+        color: $darkmode-link;
+      }
+    }
+    .facet__list-container {
+      background: transparent;
+    }
+
+    .facet__list-container--child {
+      border-color: $darkmode-border;
+      border-radius: 5px;
+    }
+
+    .facet__dropdown {
+      background-color: $darkmode-input-bg;
+      border-color: $darkmode-input-border;
+      color: $darkmode-text;
+      border-radius: 5px;
+      z-index: 10;
+    }
+
+    .facet__dropdown__title {
+      color: $darkmode-text;
+    }
+
+    .facet-label input:checked + span {
+      color: $darkmode-link;
+    }
+
+    .s-results-list li > div {
+      border-left-color: $darkmode-background;
+
+      &.chosen {
+        border-left-color: #54a05c;
+      }
+    }
+
+    .s-right-col-widget-container {
+      background: transparent;
+      border-color: $darkmode-border;
+      @media screen and (max-width: $screen-sm) {
+        background-color: $darkmode-background;
+      }
+    }
+
+    .panel-default .panel-heading .panel-title {
+      background: transparent;
+      border-color: $darkmode-border;
+
+      &:hover,
+      &:focus {
+        background-color: $darkmode-background;
+        color: $darkmode-text;
+      }
+    }
+
+    .s-library-add-title__title {
+      color: $darkmode-text;
+    }
+
+    .library-add-title {
+      &:hover,
+      &:focus {
+        background-color: $darkmode-background !important;
+        color: $darkmode-text;
+        text-decoration: none;
+      }
+    }
+
+    .s-create-notification-title__title {
+      color: $darkmode-text;
+    }
+
+    .create-notification-title {
+      &:hover,
+      &:focus {
+        background-color: $darkmode-background !important;
+        color: $darkmode-text;
+        text-decoration: none;
+      }
+    }
+
+    .s-tab.active {
+      border-color: $darkmode-link;
+      color: $darkmode-link;
+    }
+
+    .s-tabs-widget .nav-tabs > li.active > a {
       h1,
       h2,
       h3,
       h4,
       h5,
       h6 {
-        color: $darkmode-dropdown-text;
-        &:hover {
-          background-color: $darkmode-dropdown-bg !important;
-        }
-      }
-
-      a,
-      a:hover {
-        color: $darkmode-dropdown-text;
-        background-color: $darkmode-dropdown-bg !important;
+        color: $darkmode-text;
       }
     }
 
-    li:not(.divider):not(.no-hover-style) {
-      color: $darkmode-dropdown-text;
-      background-color: $darkmode-dropdown-bg;
-      &:hover {
-        color: $darkmode-dropdown-text;
-        background-color: $darkmode-dropdown-highlight-bg;
-      }
-      a {
-        color: $darkmode-dropdown-text;
-        background-color: $darkmode-dropdown-bg;
-      }
-      a:hover {
-        color: $darkmode-dropdown-text;
-        background-color: $darkmode-dropdown-highlight-bg;
-      }
-    }
-  }
-
-  .landing-faq {
-    border-color: $darkmode-border;
-
-    a {
-      color: $darkmode-link !important;
-    }
-  }
-
-  .s-darker-background {
-    background: transparent;
-  }
-
-  #feedback-select-group a {
-    background: transparent;
-    color: $darkmode-text;
-    border-color: $darkmode-container-border;
-  }
-
-  .rdt_Table,
-  .rdt_TableRow,
-  .rdt_TableCol,
-  .rdt_TableCol_Sortable,
-  .rdt_TableHeader,
-  .rdt_TableFooter,
-  .rdt_TableHead,
-  .rdt_TableHeadRow,
-  .rdt_TableBody,
-  .rdt_ExpanderRow,
-  .rdt_Pagination {
-    background-color: $darkmode-background-secondary !important;
-    color: $darkmode-text !important;
-    border-color: $darkmode-border;
-    border-bottom-color: $darkmode-border !important;
-
-    .btn-default {
-      border-color: $darkmode-input-border;
+    .s-pagination-controls {
+      border-color: $darkmode-border;
     }
 
-    select {
-      border: 1px solid $darkmode-input-border;
-      &:focus {
-        border: 1px solid $darkmode-link;
-      }
+    // graphs
+
+    .s-tabs-widget .tab-content {
+      background: transparent;
+      border: 1px solid $darkmode-border;
+      border-top-right-radius: 5px;
+      border-bottom-left-radius: 5px;
+      border-bottom-right-radius: 5px;
     }
 
-    button:disabled {
-      fill: $darkmode-text-dimmer;
-    }
-
-    button {
-      fill: $darkmode-text;
+    #year-graph,
+    .graph-facet {
+      background-color: $darkmode-background;
       color: $darkmode-text;
     }
-  }
 
-  .rdt_TableCell {
-    background: transparent;
-  }
-
-  .rdt_TableRow:hover {
-    background-color: $darkmode-input-bg !important;
-    border-color: $darkmode-input-border !important;
-    color: $darkmode-text !important;
-    outline: none !important;
-  }
-
-  .rdt_TableHeader div {
-    background-color: $darkmode-input-bg;
-    color: $darkmode-text;
-  }
-
-  .rdt_TableCol_Sortable:hover {
-    color: $darkmode-text !important;
-  }
-
-  .s-main-content-container {
-    background: transparent;
-    border-color: $darkmode-border;
-  }
-
-  .orcid-info__intro .header h1 {
-    color: $darkmode-text;
-  }
-
-  .results-list .s-identifier,
-  .library-list-container .s-identifier {
-    a,
-    a:hover,
-    a:active,
-    a:visited {
-      color: $darkmode-text-dim;
+    .x-axis text,
+    .y-axis text,
+    .s-graph-view .graph-label {
+      fill: $darkmode-text !important;
     }
-  }
 
-  // Add to library widget
-  .s-query-info-widget .s-library-area {
-    background: $darkmode-background;
+    .ui-slider {
+      .ui-slider-range {
+        background-color: $darkmode-input-bg !important;
+      }
+      &.ui-widget-content {
+        background: $darkmode-input-bg !important;
+      }
+    }
 
-    .panel-default {
+    .s-graph-view .legend rect {
+      fill: black;
+      stroke: $darkmode-border;
+    }
+
+    .s-control-row {
+      border-color: $darkmode-border;
+    }
+
+    .s-metrics-title,
+    .s-network-title {
+      background-color: $darkmode-input-bg;
+      color: $darkmode-text-strong;
+    }
+
+    .s-metrics-svg-container {
       background: transparent;
+    }
 
-      .panel-heading .panel-title {
-        background-color: $darkmode-input-bg;
+    text {
+      fill: white;
+    }
+
+    .axis text {
+      fill: $darkmode-text;
+    }
+
+    path.link {
+      stroke: white;
+    }
+
+    .x-axis,
+    .y-axis {
+      stroke: white;
+    }
+
+    .axis path,
+    .axis line {
+      stroke: $darkmode-text;
+    }
+
+    .d3-tip {
+      background-color: $darkmode-input-bg;
+      border-color: $darkmode-input-border;
+      color: $darkmode-text;
+    }
+
+    .popover[role='tooltip'] {
+      background-color: $darkmode-input-bg;
+      border-color: $darkmode-input-border;
+      color: $darkmode-text;
+
+      &.right > .arrow:after {
+        border-right-color: $darkmode-input-bg;
       }
 
-      .panel-body {
-        background: transparent !important;
+      .popover-title {
+        background-color: $darkmode-input-bg;
+        border-color: $darkmode-input-border;
+        color: $darkmode-text-strong;
+      }
+
+      .popover-content {
+        background-color: $darkmode-input-bg;
+        border-color: $darkmode-input-border;
+        color: $darkmode-text;
       }
     }
-  }
 
-  // notification widget
-  [data-widget='MyAdsFreeform'] {
-    background: transparent;
-
-    .panel-default {
-      background: transparent;
-
-      .panel-heading .panel-title {
-        background-color: $darkmode-input-bg;
-      }
-
-      .panel-body {
-        background: transparent !important;
-      }
-    }
-  }
-
-  /* my libraries */
-
-  .s-user-pill-nav {
-    background-color: $darkmode-background-tertiary;
-  }
-
-  .s-user-pill-nav > li.active > a {
-    color: $darkmode-link;
-    border-color: $darkmode-link;
-  }
-
-  #page-with-sidenav-layout .user-pages__main-content {
-    background-color: $darkmode-background;
-  }
-
-  .s-nav-container {
-    background-color: $darkmode-background-secondary;
-    border: 1px solid $darkmode-border;
-    box-shadow: none;
-    @media screen and (max-width: $screen-md) {
+    .s-network-chart {
       background-color: $darkmode-background;
     }
 
-    .s-nav-top-title {
-      color: $darkmode-link;
-      border-color: $darkmode-border;
-    }
-  }
+    .node-label {
+      fill: $darkmode-text;
 
-  .library-nav button,
-  .library-nav a {
-    color: $darkmode-text !important;
-    &:hover {
+      &:hover {
+        fill: $darkmode-link;
+      }
+    }
+
+    .selected-label {
+      fill: $darkmode-link;
+    }
+
+    [data-widget='AuthorNetwork'] .link-background {
+      fill: rgba(0, 0, 0, 0.5);
+    }
+
+    [data-widget='PaperNetwork'] .link-background {
+      fill: $darkmode-background;
+    }
+
+    .network-g .node-containers:first-of-type > path {
+      fill: none !important;
+    }
+
+    .network-g circle[fill='#fff'] {
+      fill: $darkmode-background !important;
+    }
+
+    .s-vis-item-format {
+      background: $darkmode-background;
+    }
+
+    .time-series-container {
+      color: $darkmode-background;
+    }
+
+    .s-network-widget .s-filter-names-container {
+      background-color: $darkmode-input-bg;
+      border-color: $darkmode-input-border;
+    }
+
+    .s-bubble-chart {
+      background-color: $darkmode-background;
+    }
+
+    .s-controls {
+      background-color: $darkmode-background;
+    }
+
+    .s-network-control-panel input[type='checkbox'] {
+      margin: 0;
+    }
+
+    /* abstract */
+
+    .s-nav {
+      color: $darkmode-text;
+      border-color: transparent;
+
+      &.s-nav-inactive {
+        color: $darkmode-text-disabled;
+      }
+
+      &:hover {
+        background-color: $darkmode-background-tertiary;
+      }
+    }
+
+    .s-nav-selected {
+      border-color: #999;
+      background-color: $darkmode-background-tertiary;
+      color: $darkmode-text-strong;
+    }
+
+    .resources__container {
+      background: transparent;
+    }
+
+    #nav-button-container {
+      border-bottom: none;
+    }
+
+    #nav-button-container.sticky {
+      background-color: $darkmode-background !important;
+      border-bottom: 1px solid $darkmode-border;
+    }
+
+    .resources__header__row {
+      color: $darkmode-text;
+    }
+
+    a.resources__content__link {
+      color: $darkmode-text-strong;
+      &:hover {
+        color: $darkmode-link;
+      }
+    }
+
+    .associated__header__title {
+      color: $darkmode-text;
+    }
+
+    .s-abstract-metadata dt {
+      color: $darkmode-text;
+    }
+
+    /* settings */
+    .list-group-item {
+      background-color: $darkmode-background-secondary;
+      border-color: $darkmode-input-border;
+      color: $darkmode-text;
+
+      p {
+        color: $darkmode-text-dim;
+      }
+
+      &:hover,
+      &:focus {
+        background-color: $darkmode-background-tertiary;
+        color: $darkmode-text-strong;
+      }
+    }
+
+    tr.inactive {
       background-color: $darkmode-background-tertiary !important;
     }
 
-    i.fa {
-      color: $darkmode-link;
-    }
-
-    &.btn {
-      border: none;
-      border-radius: 0;
-    }
-  }
-
-  .s-all-libraries-widget {
-    background: $darkmode-background-secondary;
-    border-color: $darkmode-border;
-  }
-
-  .table-responsive {
-    @media screen and (max-width: $screen-sm) {
+    .library-import-form form {
       border-color: $darkmode-border;
-    }
-  }
-
-  .library-description {
-    color: $darkmode-text-dim;
-  }
-
-  .library-widget .header {
-    background: $darkmode-background-secondary;
-    box-shadow: none;
-    border-color: $darkmode-border;
-  }
-
-  .s-library-widget .s-library-info {
-    border-color: $darkmode-border;
-  }
-
-  .library-detail-view {
-    background: transparent;
-  }
-
-  .s-tab,
-  .s-tab a {
-    color: $darkmode-text;
-    &.active {
-      color: $darkmode-link;
-    }
-  }
-
-  .results-list,
-  .library-list-container {
-    color: $darkmode-text-dim;
-    a {
-      color: $darkmode-text;
-    }
-    a:hover {
-      color: $darkmode-link;
-    }
-  }
-
-  a,
-  a:visited {
-    .s-results-title {
-      color: $darkmode-text;
-    }
-  }
-
-  a:hover .s-results-title {
-    color: $darkmode-link;
-    text-decoration: none;
-  }
-
-  .s-results-authors {
-    color: $darkmode-text-dim;
-  }
-
-  .s-letter-icon .s-active-link i {
-    color: white;
-  }
-
-  .s-letter-icon i {
-    color: $darkmode-text-dim;
-  }
-
-  .s-icon-draw-attention {
-    color: $darkmode-link;
-  }
-
-  .s-link-details {
-    background-color: $darkmode-input-bg;
-    border-color: $darkmode-input-border;
-    a,
-    a:visited {
-      color: $darkmode-text;
-    }
-    a:hover,
-    a:active {
-      color: $darkmode-link;
-    }
-  }
-
-  .s-main {
-    background: transparent;
-  }
-
-  .pager li > a,
-  .pager li > span {
-    background-color: $darkmode-container;
-    color: $darkmode-text;
-  }
-
-  .pager .disabled > a,
-  .pager .disabled > a:hover,
-  .pager .disabled > a:focus,
-  .pager .disabled > span {
-    background-color: $darkmode-container;
-    color: $darkmode-text-dim;
-  }
-
-  .all-libraries-widget tbody tr {
-    border-color: $darkmode-border;
-  }
-
-  /* results */
-
-  button.filter-operand-remove:hover {
-    background-color: $darkmode-btn-hightlight-bg;
-    border-color: $darkmode-btn-hightlight-bg;
-  }
-
-  .s-results-control-row {
-    background: transparent;
-  }
-
-  .s-more-info h4 a {
-    color: $darkmode-link;
-  }
-
-  .s-left-col-container {
-    background: transparent;
-    border-color: $darkmode-border;
-  }
-
-  .s-results-page-layout .s-results-border-bottom {
-    border-color: $darkmode-border;
-    @media screen and (max-width: $screen-md) {
-      border-left-color: $darkmode-background;
-    }
-  }
-
-  .facet-label {
-    color: $darkmode-text;
-    &:hover {
-      color: $darkmode-link;
-    }
-  }
-  .facet__list-container {
-    background: transparent;
-  }
-
-  .facet__list-container--child {
-    border-color: $darkmode-border;
-    border-radius: 5px;
-  }
-
-  .facet__dropdown {
-    background-color: $darkmode-input-bg;
-    border-color: $darkmode-input-border;
-    color: $darkmode-text;
-    border-radius: 5px;
-    z-index: 10;
-  }
-
-  .facet__dropdown__title {
-    color: $darkmode-text;
-  }
-
-  .facet-label input:checked + span {
-    color: $darkmode-link;
-  }
-
-  .s-results-list li > div {
-    border-left-color: $darkmode-background;
-
-    &.chosen {
-      border-left-color: #54a05c;
-    }
-  }
-
-  .s-right-col-widget-container {
-    background: transparent;
-    border-color: $darkmode-border;
-    @media screen and (max-width: $screen-sm) {
-      background-color: $darkmode-background;
-    }
-  }
-
-  .panel-default .panel-heading .panel-title {
-    background: transparent;
-    border-color: $darkmode-border;
-
-    &:hover,
-    &:focus {
-      background-color: $darkmode-background;
-      color: $darkmode-text;
-    }
-  }
-
-  .s-library-add-title__title {
-    color: $darkmode-text;
-  }
-
-  .library-add-title {
-    &:hover,
-    &:focus {
-      background-color: $darkmode-background !important;
-      color: $darkmode-text;
-      text-decoration: none;
-    }
-  }
-
-  .s-create-notification-title__title {
-    color: $darkmode-text;
-  }
-
-  .create-notification-title {
-    &:hover,
-    &:focus {
-      background-color: $darkmode-background !important;
-      color: $darkmode-text;
-      text-decoration: none;
-    }
-  }
-
-  .s-tab.active {
-    border-color: $darkmode-link;
-    color: $darkmode-link;
-  }
-
-  .s-tabs-widget .nav-tabs > li.active > a {
-    h1,
-    h2,
-    h3,
-    h4,
-    h5,
-    h6 {
-      color: $darkmode-text;
-    }
-  }
-
-  .s-pagination-controls {
-    border-color: $darkmode-border;
-  }
-
-  // graphs
-
-  .s-tabs-widget .tab-content {
-    background: transparent;
-    border: 1px solid $darkmode-border;
-    border-top-right-radius: 5px;
-    border-bottom-left-radius: 5px;
-    border-bottom-right-radius: 5px;
-  }
-
-  #year-graph,
-  .graph-facet {
-    background-color: $darkmode-background;
-    color: $darkmode-text;
-  }
-
-  .x-axis text,
-  .y-axis text,
-  .s-graph-view .graph-label {
-    fill: $darkmode-text !important;
-  }
-
-  .ui-slider {
-    .ui-slider-range {
-      background-color: $darkmode-input-bg !important;
-    }
-    &.ui-widget-content {
-      background: $darkmode-input-bg !important;
-    }
-  }
-
-  .s-graph-view .legend rect {
-    fill: black;
-    stroke: $darkmode-border;
-  }
-
-  .s-control-row {
-    border-color: $darkmode-border;
-  }
-
-  .s-metrics-title {
-    background-color: $darkmode-input-bg;
-    color: $darkmode-text-strong;
-  }
-
-  .s-metrics-svg-container {
-    background: transparent;
-  }
-
-  text {
-    fill: white;
-  }
-
-  .axis text {
-    fill: $darkmode-text;
-  }
-
-  path.link {
-    stroke: white;
-  }
-
-  .x-axis,
-  .y-axis {
-    stroke: white;
-  }
-
-  .axis path,
-  .axis line {
-    stroke: $darkmode-text;
-  }
-
-  .d3-tip {
-    background-color: $darkmode-input-bg;
-    border-color: $darkmode-input-border;
-    color: $darkmode-text;
-  }
-
-  .popover[role='tooltip'] {
-    background-color: $darkmode-input-bg;
-    border-color: $darkmode-input-border;
-    color: $darkmode-text;
-
-    &.right > .arrow:after {
-      border-right-color: $darkmode-input-bg;
+      border-radius: 5px;
     }
 
-    .popover-title {
-      background-color: $darkmode-input-bg;
-      border-color: $darkmode-input-border;
-      color: $darkmode-text-strong;
+    /* footer */
+    .__footer_links a {
+      color: white;
     }
-
-    .popover-content {
-      background-color: $darkmode-input-bg;
-      border-color: $darkmode-input-border;
-      color: $darkmode-text;
-    }
-  }
-
-  .s-network-chart {
-    background-color: $darkmode-background;
-  }
-
-  .node-label {
-    fill: $darkmode-text;
-
-    &:hover {
-      fill: $darkmode-link;
-    }
-  }
-
-  .selected-label {
-    fill: $darkmode-link;
-  }
-
-  [data-widget='AuthorNetwork'] .link-background {
-    fill: rgba(0, 0, 0, 0.5);
-  }
-
-  [data-widget='PaperNetwork'] .link-background {
-    fill: $darkmode-background;
-  }
-
-  .network-g .node-containers:first-of-type > path {
-    fill: none !important;
-  }
-
-  .network-g circle[fill='#fff'] {
-    fill: $darkmode-background !important;
-  }
-
-  .s-vis-item-format {
-    background: $darkmode-background;
-  }
-
-  .time-series-container {
-    color: $darkmode-background;
-  }
-
-  .s-network-widget .s-filter-names-container {
-    background-color: $darkmode-input-bg;
-    border-color: $darkmode-input-border;
-  }
-
-  .s-bubble-chart {
-    background-color: $darkmode-background;
-  }
-
-  .s-controls {
-    background-color: $darkmode-background;
-  }
-
-  .s-network-control-panel input[type='checkbox'] {
-    margin: 0;
-  }
-
-  /* abstract */
-
-  .s-nav {
-    color: $darkmode-text;
-    border-color: transparent;
-
-    &.s-nav-inactive {
-      color: $darkmode-text-disabled;
-    }
-
-    &:hover {
-      background-color: $darkmode-background-tertiary;
-    }
-  }
-
-  .s-nav-selected {
-    border-color: #999;
-    background-color: $darkmode-background-tertiary;
-    color: $darkmode-text-strong;
-  }
-
-  .resources__container {
-    background: transparent;
-  }
-
-  #nav-button-container {
-    border-bottom: none;
-  }
-
-  #nav-button-container.sticky {
-    background-color: $darkmode-background !important;
-    border-bottom: 1px solid $darkmode-border;
-  }
-
-  .resources__header__row {
-    color: $darkmode-text;
-  }
-
-  a.resources__content__link {
-    color: $darkmode-text-strong;
-    &:hover {
-      color: $darkmode-link;
-    }
-  }
-
-  .associated__header__title {
-    color: $darkmode-text;
-  }
-
-  .s-abstract-metadata dt {
-    color: $darkmode-text;
-  }
-
-  /* settings */
-  .list-group-item {
-    background-color: $darkmode-background-secondary;
-    border-color: $darkmode-input-border;
-    color: $darkmode-text;
-
-    p {
-      color: $darkmode-text-dim;
-    }
-
-    &:hover,
-    &:focus {
-      background-color: $darkmode-background-tertiary;
-      color: $darkmode-text-strong;
-    }
-  }
-
-  tr.inactive {
-    background-color: $darkmode-background-tertiary !important;
-  }
-
-  .library-import-form form {
-    border-color: $darkmode-border;
-    border-radius: 5px;
-  }
-
-  /* footer */
-  .__footer_links a {
-    color: white;
   }
 }

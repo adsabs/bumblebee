@@ -4,26 +4,22 @@
   </div>
   <div class="print-visible" style="text-align:center">{{url}}</div>
 
-  <span class="s-large-close close-widget">x</span>
+  <div class="col-xs-12 s-explore-close-container">
+    <div class="s-large-close close-widget close">x</div>
+    {{#if loading}}
 
-  {{#if loading}}
+      <div class="s-metrics-metadata">
+        <i class="icon-loading" aria-hidden="true" /> Loading metrics...
+      </div>
 
-  <div class="s-metrics-metadata">
-    <i class="icon-loading" aria-hidden="true" /> Loading metrics...
+      {{else}}
+
+      <div class="metrics-metadata s-metrics-metadata">
+        <p>Currently showing metrics for <b>{{numFound}}</b> records.</p>
+      </div>
+
+    {{/if}}
   </div>
-
-  {{else}}
-
-  <div class="metrics-metadata s-metrics-metadata">
-    <p>
-      This metrics report is optimized for printing: just find the print command
-      in your browser's toolbar.
-    </p>
-
-    <p>Currently showing metrics for <b>{{numFound}}</b> records.</p>
-  </div>
-
-  {{/if}}
 
   <!--used by widget when it is on the abstract page-->
   {{#if title}}

@@ -62,11 +62,9 @@
 }
 
 .s-large-close {
-  margin-top: 10px;
-  margin-right: 10px;
   background-color: $body-bg;
   font-weight: bold;
-  font-size: 4em;
+  font-size: 2em;
   display: inline-block;
   color: $text-color;
   width: 1.2em;
@@ -76,21 +74,21 @@
   border-radius: 50px;
   line-height: 1;
   z-index: $z-index-2;
-  float: right;
   cursor: pointer;
   position: relative;
+  float: right;
   opacity: 0.8;
+  margin: 15px 0 15px 0;
 
   &:hover {
     border: 1px solid $gray;
     box-shadow: 0px 0px 6px gray;
     opacity: 1;
   }
+}
 
+.s-explore-close-container {
 
-  @media screen and (max-width: $screen-sm) {
-    font-size: 2em;
-  }
 }
 
 .s-disabled {

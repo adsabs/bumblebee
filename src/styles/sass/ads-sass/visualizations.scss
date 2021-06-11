@@ -67,7 +67,6 @@ WordCloud
 }
 
 .s-wordcloud-widget {
-  margin-top: 30px;
   font-weight: 300;
 }
 
@@ -405,6 +404,15 @@ $group-circle-active: lighten($brand-warning, 10%);
   display: block;
 }
 
+.s-network-title {
+  @extend .s-title-format;
+  margin: 6px 0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 15px;
+}
+
 .s-connector-node {
   text-anchor: middle;
   font-size: 25px;
@@ -665,8 +673,6 @@ rect.selection {
 }
 
 .s-bubble-chart {
-  padding-left: 2%;
-  padding-right: 2%;
 
   .s-controls {
     font-size: 14px;

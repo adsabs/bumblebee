@@ -572,6 +572,7 @@ define([
     onRender: function() {
       if (!_.isEmpty(this.model.get('modifiedSolrData'))) {
         this.renderGraph();
+        this.$('.download').removeClass('hidden');
       } else {
         this.model.set('loading', true);
       }

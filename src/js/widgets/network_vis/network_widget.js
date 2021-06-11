@@ -416,6 +416,7 @@ define([
       'click button.limit': 'addItem',
       'click .submit-rows': 'changeRows',
       'click .close': 'triggerClose',
+      'click .download': 'triggerDownload',
       'click .filter-remove': function(e) {
         if (Marionette.getOption(this, 'networkType') == 'paper') {
           var name = this.graphModel.get('selectedEntity').__data__.data
@@ -464,10 +465,18 @@ define([
       },
     },
 
+    modelEvents: {
+      change: 'render',
+    },
+
     triggerClose: function() {
       this.$('.network-filter-container').empty();
       this.$('.network-container').html(loadingTemplate);
       this.trigger('close');
+    },
+
+    triggerDownload: function() {
+      this.trigger('download');
     },
 
     // user has requested author network for current author
@@ -498,6 +507,7 @@ define([
     },
 
     onRender: function() {
+      this.$('.title').html(this.model.get('title'));
       // append sub views
       var graphViewToUse;
 
@@ -576,7 +586,7 @@ define([
 
       // set the home tab as default
       this.$(".nav-tabs a[href='#home']").tab('show');
-
+      this.$('.download').removeClass('hidden');
       this.renderMetadata();
     },
 
@@ -744,8 +754,8 @@ define([
   });
 
   var ContainerModel = UserChangeMixin.Model.extend({
-    initialize: function(options) {
-      var options = options || {};
+    initialize: function(opts) {
+      var options = opts || {};
       this.on('newMetadata', function() {
         this.updateCurrent();
         this.updateMax();
@@ -771,7 +781,7 @@ define([
         loading: true,
       };
 
-      _.extend(defaults, ApiTargets._limits[options.widgetName]);
+      _.extend(defaults, ApiTargets._limits[options.widgetName], options.title);
 
       this.defaults = function() {
         return defaults;
@@ -795,23 +805,6 @@ define([
       },
       'change input[name=show-link]': function(e) {
         this.model.set('linkLayer', e.target.checked);
-      },
-      'click .download': function() {
-        const root = this.model.get('graphData').root;
-        let output = 'data:text/csv;charset=utf-8,';
-        output += 'group, author, papers, citation count, download count\n';
-        root.children.forEach((group) => {
-          const groupName = group.name;
-          group.children.forEach((author) => {
-            output += `${groupName},"${author.name}","${author.papers.join(',')}",${author.citation_count},${author.read_count}\n`;
-          });
-        });
-
-        const encodedUri = encodeURI(output);
-        const link = document.getElementById('download-link');
-        link.setAttribute('download', 'author-network.csv');
-        link.setAttribute('href', encodedUri);
-        link.click();
       },
     },
 
@@ -1392,6 +1385,7 @@ define([
 
       this.model = new ContainerModel({
         widgetName: options.widgetName || 'AuthorNetwork',
+        title: options.networkType.charAt(0).toUpperCase() + options.networkType.slice(1) + ' Network',
       });
       this.listenTo(this.model, 'change:userVal', this.requestDifferentRows);
 
@@ -1414,9 +1408,28 @@ define([
       );
       this.listenTo(this.view, 'filter:initiated', this.broadcastFilteredQuery);
       this.listenTo(this.view, 'close', this.broadcastClose);
+      this.listenTo(this.view, 'download', this.download);
 
       this.widgetName = 'visualization_' + options.networkType;
       this.queryUpdater = new ApiQueryUpdater(this.widgetName);
+    },
+
+    download: function() {
+      const root = this.model.get('graphData').root;
+      let output = 'data:text/csv;charset=utf-8,';
+      output += 'group, author, papers, citation count, download count\n';
+      root.children.forEach((group) => {
+        const groupName = group.name;
+        group.children.forEach((author) => {
+          output += `${groupName},"${author.name}","${author.papers.join(',')}",${author.citation_count},${author.read_count}\n`;
+        });
+      });
+
+      const encodedUri = encodeURI(output);
+      const link = document.getElementById('download-link');
+      link.setAttribute('download', 'author-network.csv');
+      link.setAttribute('href', encodedUri);
+      link.click();
     },
 
     generateApiRequest: function(query) {
