@@ -24,16 +24,17 @@ define([], function() {
     darkSwitch = document.getElementById('darkSwitch');
 
     // 1. check app setting
-    if (
-      localStorage.getItem('darkSwitch') !== null &&
-      localStorage.getItem('darkSwitch') === 'on'
-    ) {
-      turnOnDarkMode(false);
-    }
-    // 2. check system setting
-    else if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+    if (localStorage.getItem('darkSwitch') !== null) {
+      if (localStorage.getItem('darkSwitch') === 'on') {
+        turnOnDarkMode(false);
+      } else {
+        turnOffDarkMode(false);
+      }
+    } else if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+      // 2. check system setting
       turnOnDarkMode(false);
     } else {
+      // 3. default to light
       turnOffDarkMode(false);
     }
     darkSwitch.addEventListener('click', function() {
