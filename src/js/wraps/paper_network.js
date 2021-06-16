@@ -83,24 +83,6 @@ define([
         // re-render detail sub view
         this.showSelectedEntity();
       },
-      'click .download': function() {
-        const data = this.model.get('graphData').summaryGraph.nodes;
-        let output = 'data:text/csv;charset=utf-8,';
-        output += 'id,label,paper_count,top_references,citations,reads\n';
-        data.forEach((row) => {
-          output += `"${row.id}","${Object.keys(row.node_label).join(',')}","${
-            row.paper_count
-          }","${Object.keys(row.top_common_references).join(',')}","${
-            row.total_citations
-          }","${row.total_reads}"\n`;
-        });
-
-        const encodedUri = encodeURI(output);
-        const link = document.getElementById('download-link');
-        link.setAttribute('download', 'papers-network.csv');
-        link.setAttribute('href', encodedUri);
-        link.click();
-      },
     },
 
     modelEvents: {

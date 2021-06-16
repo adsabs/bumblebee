@@ -1415,19 +1415,36 @@ define([
     },
 
     download: function() {
-      const root = this.model.get('graphData').root;
       let output = 'data:text/csv;charset=utf-8,';
-      output += 'group, author, papers, citation count, download count\n';
-      root.children.forEach((group) => {
-        const groupName = group.name;
-        group.children.forEach((author) => {
-          output += `${groupName},"${author.name}","${author.papers.join(',')}",${author.citation_count},${author.read_count}\n`;
+      let filename = 'author-network.csv';
+
+      if (this.model.get('widgetName') === 'AuthorNetwork') {
+        const root = this.model.get('graphData').root;
+        output += 'group, author, papers, citation count, download count\n';
+        root.children.forEach((group) => {
+          const groupName = group.name;
+          group.children.forEach((author) => {
+            output += `${groupName},"${author.name}","${author.papers.join(',')}",${author.citation_count},${author.read_count}\n`;
+          });
         });
-      });
+      } else if (this.model.get('widgetName') === 'PaperNetwork') {
+        filename = 'papers-network.csv';
+        const data = this.model.get('graphData').summaryGraph.nodes;
+        output += 'group,label,paper_count,top_references,citations,download count\n';
+        data.forEach((row) => {
+          output += `"${row.id}","${Object.keys(row.node_label).join(
+            ','
+          )}","${row.paper_count}","${Object.keys(
+            row.top_common_references
+          ).join(',')}","${row.total_citations}","${
+            row.total_reads
+          }"\n`;
+        });
+      }
 
       const encodedUri = encodeURI(output);
       const link = document.getElementById('download-link');
-      link.setAttribute('download', 'author-network.csv');
+      link.setAttribute('download', filename);
       link.setAttribute('href', encodedUri);
       link.click();
     },
