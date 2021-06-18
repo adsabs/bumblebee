@@ -24,21 +24,40 @@ define(['underscore', 'react', 'prop-types'], function(_, React, PropTypes) {
   );
 
   // create the links element
-  const Links = ({ items, onClick }) => (
-    <ul style={styles.list}>
-      {items.map((i) => (
-        <li key={i.id} style={styles.link}>
-          {i.circular ? (
-            i.name
-          ) : (
-            <a href={i.url} onClick={(e) => onClick(i)}>
-              {i.name}
+  const Links = ({ items, onClick }) => {
+    const getLink = (item) => {
+      if (item.external) {
+        return (
+          <React.Fragment>
+            <a
+              href={item.url}
+              target="_blank"
+              rel="noreferrer noopener"
+              onClick={() => onClick(item)}
+            >
+              {item.name}{' '}
             </a>
-          )}
-        </li>
-      ))}
-    </ul>
-  );
+            <i className="fa fa-external-link" aria-hidden="true" />
+          </React.Fragment>
+        );
+      }
+      return (
+        <a href={item.url} onClick={() => onClick(item)}>
+          {item.name}
+        </a>
+      );
+    };
+
+    return (
+      <ul style={styles.list}>
+        {items.map((i) => (
+          <li key={i.id} style={styles.link}>
+            {i.circular ? i.name : getLink(i)}
+          </li>
+        ))}
+      </ul>
+    );
+  };
 
   // container for wrapping children
   const Container = ({ children }) => (

@@ -15,6 +15,7 @@ define(['underscore', 'es6!../modules/api', 'es6!../modules/ui'], function(
   const parseItems = (items, bibcode) => {
     const parseUrl = (url) => {
       try {
+        if (url.indexOf('http') >= 0) return decodeURIComponent(url);
         // decode and rip the "/#abs..." part off the url and any leading slash
         return decodeURIComponent(url.slice(url.indexOf(':') + 1)).replace(
           /^\//,
@@ -30,7 +31,8 @@ define(['underscore', 'es6!../modules/api', 'es6!../modules/ui'], function(
       return {
         rawUrl: i.url,
         url: url,
-        circular: url.indexOf(bibcode) > -1,
+        circular: url.indexOf(bibcode, url.indexOf(':')) > -1,
+        external: url.indexOf('http') > -1,
         name: i.title,
         id: _.uniqueId(),
       };
