@@ -1430,9 +1430,15 @@ define([
       } else if (this.model.get('widgetName') === 'PaperNetwork') {
         filename = 'papers-network.csv';
         const data = this.model.get('graphData').summaryGraph.nodes;
+        data.sort((e1, e2) => {
+          if (e1.node_name === e2.node_name) {
+            return 0;
+          }
+          return e1.node_name < e2.node_name? -1 : 1;
+        });
         output += 'group,label,paper_count,top_references,citations,download count\n';
         data.forEach((row) => {
-          output += `"${row.id}","${Object.keys(row.node_label).join(
+          output += `"${row.node_name}","${Object.keys(row.node_label).join(
             ','
           )}","${row.paper_count}","${Object.keys(
             row.top_common_references
