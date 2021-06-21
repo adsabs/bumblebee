@@ -62,7 +62,10 @@ define([
 
     addDownloadButton: function() {
       this.$('.graph-download').html(
-        `<i class="fa fa-download fa-lg download s-download s-download-ur" alt="download data" title="download data"></i>`
+        `<button class="btn btn-link download s-download s-download-ur">
+          <i class="fa fa-download fa-lg" aria-hidden="true" title="download data in csv"></i>
+          <span class="sr-only">download data in csv</span>
+        </button>`
       );
     },
 
