@@ -140,6 +140,7 @@ define([
       });
 
       this.$('[data-toggle="tooltip"]').tooltip();
+      this.$('[data-toggle-tt="tooltip"]').tooltip({items:"select,option",position:{ my: "left top", at: "right top"}});
     },
 
     events: {
