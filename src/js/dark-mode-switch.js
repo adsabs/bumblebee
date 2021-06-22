@@ -22,6 +22,7 @@ define([], function() {
 
   const init = () => {
     darkSwitch = document.getElementById('darkSwitch');
+    darkSwitch.classList.remove('hidden');
 
     // 1. check app setting
     if (localStorage.getItem('darkSwitch') !== null) {
