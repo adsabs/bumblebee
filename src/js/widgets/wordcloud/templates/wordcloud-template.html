@@ -1,5 +1,15 @@
-<span class="s-large-close close-widget" style="position: absolute; right: 0">x</span>
-
+<div>
+<div class="col-xs-12 s-explore-close-container">
+    <div class="s-large-close close-widget close">x</div>
+</div>
+<header class="s-network-title">
+    <h3>Word Cloud</h3>
+    <button class="btn btn-link download s-download hidden">
+        <i class="fa fa-download fa-2x" aria-hidden="true" title="download data in csv"></i>
+        <span class="sr-only">download data in csv</span>
+    </button>
+</header>
+</div>
 
 <div class="col-xs-11 col-sm-2" id="wordcloud-controlpanel">
 
@@ -37,12 +47,15 @@
 
 
 
-<div class="s-wordcloud-container col-sm-10" id="wordcloud-container">
+<div class="s-wordcloud-container col-xs-12 col-sm-9" id="wordcloud-container">
     {{#if loading}}
       {{> js/wraps/widget/loading/template widgetLoadingSize="medium" hideCloseButton=true}}
     {{else}}
-    <svg id="wordcloud-svg" viewBox="0 0 1000 600" class="s-wordcloud-svg">
-    </svg>
+    <div style="position:relative">
+        <svg id="wordcloud-svg" viewBox="0 0 1000 600" class="s-wordcloud-svg">
+        </svg>
+    </div>
     {{/if}}
 </div>
+<a id="download-link" class="hidden"></a> 
 </div>

@@ -166,3 +166,17 @@
   font-weight: 300 !important;
   font-size: 1.2em !important;
 }
+
+.s-download {
+  color: #4073dd;
+  cursor: pointer;
+  &:hover {
+    color: #2458c6;
+  }
+}
+
+.s-download-ur {
+  position: absolute; 
+  right: 15px; 
+  top: 15px;
+} 

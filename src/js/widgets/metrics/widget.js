@@ -806,6 +806,26 @@ define([
     events: {
       'click .close-widget': 'signalCloseWidget',
       'click .show-all': 'signalShowAll',
+      'click #papers .download': 'signaleDownloadPapers',
+      'click #citations .download': 'signaleDownloadCitations',
+      'click #reads .download': 'signaleDownloadReads',
+      'click .download-indices': 'signaleDownloadIndices',
+    },
+
+    signaleDownloadPapers: function() {
+      this.trigger('download-papers');
+    },
+
+    signaleDownloadCitations: function() {
+      this.trigger('download-citations');
+    },
+
+    signaleDownloadReads: function() {
+      this.trigger('download-reads');
+    },
+
+    signaleDownloadIndices: function() {
+      this.trigger('download-indices');
     },
 
     signalCloseWidget: function() {
@@ -820,6 +840,13 @@ define([
           this.$('.show-all').html()
       );
       this.trigger('show-all');
+    },
+
+    showDownloadButtons: function(childViews) {
+      this.$('.download').removeClass('hidden');
+      if (!childViews.indicesGraphView.model.get('showingSimple')) {
+        this.$('.download-indices').removeClass('hidden');
+      }
     },
 
     modelEvents: {
@@ -842,6 +869,10 @@ define([
     viewEvents: {
       'close-widget': 'closeWidget',
       'show-all': 'showAll',
+      'download-papers': 'downloadPapers',
+      'download-citations': 'downloadCitations',
+      'download-reads': 'downloadReads',
+      'download-indices': 'downloadIndices',
     },
 
     initialize: function(options) {
@@ -900,6 +931,67 @@ define([
           type: 'danger',
         })
       );
+    },
+
+    downloadPapers: function() {
+      const data = this.prepareDownloadData(
+        this.childViews.papersGraphView.model.get('graphData')
+      );
+      this.download(data, 'metrics-papers.csv');
+    },
+
+    downloadCitations: function() {
+      const data = this.prepareDownloadData(
+        this.childViews.citationsGraphView.model.get('graphData')
+      );
+      this.download(data, 'metrics-citations.csv');
+    },
+
+    downloadReads: function() {
+      const data = this.prepareDownloadData(
+        this.childViews.readsGraphView.model.get('graphData')
+      );
+      this.download(data, 'metrics-reads.csv');
+    },
+
+    downloadIndices: function() {
+      const data = this.prepareDownloadData(
+        this.childViews.indicesGraphView.model.get('graphData'),
+        false
+      );
+      this.download(data, 'metrics-indices.csv');
+    },
+
+    prepareDownloadData: function(data, recordTotal = true) {
+      let output = 'data:text/csv;charset=utf-8,';
+      const dim = data.length;
+      const len = data[0].values.length;
+
+      // headers
+      output += 'Year';
+      data.forEach((d) => {
+        output += `, ${d.key}`;
+      });
+      output += recordTotal ? ', Total\n' : '\n';
+
+      for (let i = 0; i < len; i++) {
+        output += `${data[0].values[i].x}`; // year
+        let total = 0;
+        for (let j = 0; j < dim; j++) {
+          output += `, ${data[j].values[i].y}`; // value
+          total += data[j].values[i].y;
+        }
+        output += recordTotal ? `, ${total}\n` : '\n';
+      }
+      return output;
+    },
+
+    download: function(data, filename) {
+      const encodedUri = encodeURI(data);
+      const link = document.getElementById('download-link');
+      link.setAttribute('download', filename);
+      link.setAttribute('href', encodedUri);
+      link.click();
     },
 
     closeWidget: function() {
@@ -1160,6 +1252,7 @@ define([
         this.view[name + 'Table'].show(this.childViews[name + 'TableView']);
         this.view[name + 'Graph'].show(this.childViews[name + 'GraphView']);
       }, this);
+      this.view.showDownloadButtons(this.childViews);
     },
 
     /*
@@ -1191,6 +1284,7 @@ define([
       }
       // some table rows need to be hidden
       this.view.$('.hidden-abstract-page').hide();
+      this.view.$('.download').removeClass('hidden');
     },
 
     createGraphViewsForOnePaper: function(response) {
@@ -1473,6 +1567,7 @@ define([
 
         this.childViews.indicesTableView.render();
         this.childViews.indicesGraphView.render();
+        this.view.$('.download-indices').removeClass('hidden');
       }
 
       onResponse = onResponse.bind(this);

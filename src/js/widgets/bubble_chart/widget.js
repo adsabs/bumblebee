@@ -203,7 +203,27 @@ define([
       'click .submit': function() {
         this.trigger('filterBibs', this.model.get('selectedBibs'));
       },
+      'click .download': function() {
+        const data = this.model.get('modifiedSolrData');
+        let output = 'data:text/csv;charset=utf-8,';
+        const keys = Object.keys(data[0]);
+        output += keys.join(',') + '\n';
+        data.forEach((row) => {
+          keys.forEach((key) => {
+            output +=
+              key === 'title'
+                ? `"${row[key].replace(/"/g, "'")}",`
+                : `"${row[key]}",`;
+          });
+          output = output.slice(0, -1) + '\n';
+        });
 
+        const encodedUri = encodeURI(output);
+        const link = document.getElementById('download-link');
+        link.setAttribute('download', 'results.csv');
+        link.setAttribute('href', encodedUri);
+        link.click();
+      },
       'click .close': function() {
         this.trigger('close-widget');
       },
@@ -552,6 +572,7 @@ define([
     onRender: function() {
       if (!_.isEmpty(this.model.get('modifiedSolrData'))) {
         this.renderGraph();
+        this.$('.download').removeClass('hidden');
       } else {
         this.model.set('loading', true);
       }

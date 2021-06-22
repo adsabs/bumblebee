@@ -20,6 +20,14 @@
 .s-metrics-title {
   @extend .s-title-format;
   margin: 6px 0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 15px;
+}
+
+.s-metrics-section {
+  position: relative;
 }
 
 .s-metrics-table,
@@ -66,6 +74,7 @@
 }
 
 .s-metrics-graph {
+  position: relative;
   //mostly for print considerations
   max-width: 700px;
   @media (min-width: $screen-sm-min) {
@@ -102,7 +111,7 @@
 }
 
 .s-metrics-metadata {
-  padding: 3%;
+  padding: 15px;
   input {
     width: 60px;
   }

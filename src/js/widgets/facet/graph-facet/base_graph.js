@@ -9,6 +9,7 @@ define([
     className: 'graph-facet',
 
     initialize: function(options) {
+      this.name = options.name;
       this.yAxisTitle = options.yAxisTitle;
       this.xAxisTitle = options.xAxisTitle;
       this.graphTitle = options.graphTitle;
@@ -59,6 +60,24 @@ define([
       }, 2000);
     },
 
+    addDownloadButton: function() {
+      this.$('.graph-download').html(
+        `<button class="btn btn-link download s-download s-download-ur">
+          <i class="fa fa-download fa-lg" aria-hidden="true" title="download data in csv"></i>
+          <span class="sr-only">download data in csv</span>
+        </button>`
+      );
+    },
+
+    download: function() {
+      const data = this.convertGraphDataToCSV();
+      const encodedUri = encodeURI(data);
+      const link = document.getElementById(`download-link`);
+      link.setAttribute('href', encodedUri);
+      link.setAttribute('download', `${this.name}.csv`);
+      link.click();
+    },
+
     onRender: function() {
       var self = this;
       if (!this.model.get('graphData')) return;
@@ -70,6 +89,7 @@ define([
       this.buildGraph();
       this.addSliderWindows();
       this.buildSlider();
+      this.addDownloadButton();
       if (this.addToOnRender) this.addToOnRender();
 
       var graphUpdate = _.debounce(_.bind(this.triggerGraphChange, this), 100);

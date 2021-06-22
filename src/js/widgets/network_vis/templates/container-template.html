@@ -1,14 +1,21 @@
 <div class="container-fluid">
 <div class="row s-control-row">
-        <div class="col-xs-11 col-sm-5">
-            <div class="network-metadata s-network-metadata"></div>
-        </div>
-        <div class="col-xs-11 col-sm-6">
-            <div class="network-filter-container s-network-filter-container"></div>
-        </div>
-        <div style="position: absolute; right: 0;">
-            <div class="s-large-close close-widget close">x</div>
-         </div>
+    <div class="col-xs-12 s-explore-close-container">
+        <div class="s-large-close close-widget close">x</div>
+    </div>
+    <header class="s-network-title">
+        <h3 class="title"></h3>
+        <button class="btn btn-link download s-download hidden">
+            <i class="fa fa-download fa-2x" aria-hidden="true" title="download data in csv"></i>
+            <span class="sr-only">download data in csv</span>
+        </button>
+    </header>
+    <div class="col-xs-12 col-sm-6">
+        <div class="network-metadata s-network-metadata"></div>
+    </div>
+    <div class="col-xs-12 col-sm-6">
+        <div class="network-filter-container s-network-filter-container"></div>
+    </div>
 </div>
      <div class="network-container s-network-container row">
          <div class="col-md-7 graph-container">
