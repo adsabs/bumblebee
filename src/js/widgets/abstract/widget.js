@@ -68,7 +68,8 @@ define([
         };
       }
       // "aff" is the name of the affiliations array that comes from solr
-      doc.aff = doc.aff || [];
+      doc.aff = Array.isArray(doc.aff) ? doc.aff : [];
+      doc.author = Array.isArray(doc.author) ? doc.author : [];
 
       // remove html-encoding from affiliations
       doc.aff = doc.aff.map(_.unescape);
