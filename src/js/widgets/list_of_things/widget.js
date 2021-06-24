@@ -596,54 +596,44 @@ define([
       } else if (ev == 'childview:toggleSelect') {
         pubsub.publish(pubsub.PAPER_SELECTION, arg2.data.identifier);
       } else if (ev === 'toggle-highlights') {
-        var perPage = this.model.get('perPage');
-        if (this.hiddenCollection.length < perPage) {
-          perPage = this.hiddenCollection.length;
-        }
-        var pageStart = this.model.get('start');
+        this.loadHighlights();
+      }
+    },
 
-        // how many requests to make, based on size of set
-        var divisor = perPage > 300 ? 5 : perPage <= 50 ? 1 : 2;
+    /**
+     * create and run the highlights fetch request
+     * @param {Object} options
+     * @param {number} options.start
+     * @param {number} options.rows
+     */
+    fetchHighlights({ start, rows }) {
+      const q = this.model.get('currentQuery').clone();
+      q.set({
+        hl: 'true',
+        'hl.fl': 'title,abstract,body,ack,*',
+        'hl.maxAnalyzedChars': '150000',
+        'hl.requireFieldMatch': 'true',
+        'hl.usePhraseHighlighter': 'true',
+        start: start,
+        rows: rows,
+      });
+      const req = this.composeRequest(q);
+      this.executeRequest(req);
+    },
+    loadHighlights() {
+      const {
+        currentEndIndex,
+        currentStartIndex: start,
+      } = this.hiddenCollection;
 
-        // request runner
-        var runRequest = _.bind(function(start, rows) {
-          var q = this.model.get('currentQuery').clone();
-          q.set({
-            hl: 'true',
-            'hl.fl': 'title,abstract,body,ack,*',
-            'hl.maxAnalyzedChars': '150000',
-            'hl.requireFieldMatch': 'true',
-            'hl.usePhraseHighlighter': 'true',
-            start: pageStart + start,
-            rows: rows,
-          });
-          var req = this.composeRequest(q);
+      const totalToGet = currentEndIndex - start + 1;
 
-          // allows widgets to override if necessary
-          this.executeRequest(req);
-        }, this);
-
-        var chunkRequests = _.debounce(
-          _.bind(function() {
-            // batch requests, spacing them out by 300ms
-            var withHighlights = this.hiddenCollection.filter(function(m) {
-              return m.get('highlights');
-            });
-
-            var start = withHighlights.length;
-            var batchSize = Math.ceil((perPage - start) / divisor);
-            for (var i = start, j = 1; i < perPage; i += batchSize, j++) {
-              if (i === start) {
-                runRequest(i, batchSize);
-              } else {
-                setTimeout(runRequest, 500 * j, i, batchSize);
-              }
-            }
-          }, this),
-          3000
-        );
-
-        chunkRequests();
+      // for larger sets, always grab the first 25 as a separate request
+      if (totalToGet > 25) {
+        this.fetchHighlights({ start, rows: 25 });
+        this.fetchHighlights({ start: start + 25, rows: totalToGet - 25 });
+      } else {
+        this.fetchHighlights({ start, rows: totalToGet });
       }
     },
 
