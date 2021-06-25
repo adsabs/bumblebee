@@ -11,6 +11,7 @@ define([
   'js/components/api_feedback',
   'js/mixins/formatter',
   './autocomplete',
+  './quick-field-desc',
   'bootstrap', // if bootstrap is missing, jQuery events get propagated
   'jquery-ui',
   'js/mixins/dependon',
@@ -31,6 +32,7 @@ define([
   ApiFeedback,
   FormatMixin,
   { render: renderAutocomplete, autocompleteSource: autocompleteArray },
+  quickFieldDesc,
   bootstrap,
   jqueryUI,
   Dependon,
@@ -84,18 +86,18 @@ define([
 
     onRender: function() {
       var that = this;
+      const $container = this.$('#option-dropdown-container');
       /*
               select
              */
-      this.$('#option-dropdown-container').append(OptionDropdownTemplate);
+      $container.append(OptionDropdownTemplate);
 
       function matchStart(term, text) {
-        if (text.toUpperCase().indexOf(term.toUpperCase()) == 0) {
+        if (text.toUpperCase().indexOf(term.toUpperCase()) === 0) {
           return true;
         }
         return false;
       }
-
       var $select = this.$('.quick-add-dropdown');
 
       $select
@@ -123,9 +125,69 @@ define([
         .val(null)
         .trigger('change');
 
+      const $select2Instance = $select.data('select2');
+
+      const closeAllPopovers = () => {
+        $(
+          '.select2-results__option[role=treeitem]',
+          $select2Instance.$results
+        ).each((i, result) => {
+          const $result = $(result);
+          if (typeof $result.data('bs.popover') !== 'undefined') {
+            $result.popover('hide');
+          }
+        });
+      };
+
+      // hide popovers one open and close, focusing will re-open them after this
+      $select2Instance.on('closing', closeAllPopovers);
+      $select2Instance.on('open', closeAllPopovers);
+
+      // on close, move focus to search bar.  If we change page layout, may have to change this
+      $select2Instance.on('close', () => {
+        document.getElementById('query-search-input').focus();
+      });
+
+      let firstrun = true;
+      $select2Instance.on('results:focus', ({ data: { id }, element }) => {
+        // for some reason, this renders twice -- so we're skipping the initial run
+        if (firstrun) {
+          firstrun = false;
+          return;
+        }
+        const $el = $(element);
+
+        // hide any opened popovers
+        closeAllPopovers();
+
+        // check if popover has already been applied
+        if (typeof $el.data('bs.popover') === 'undefined') {
+          // grab the title/body from our list
+          const data = quickFieldDesc[id];
+          if (typeof data !== 'object') {
+            // if not found, do nothing
+            return;
+          }
+
+          // create the popover
+          $el.popover({
+            title: data.title,
+            content: data.content,
+            html: true,
+            placement: 'right',
+            trigger: 'manual',
+            container: 'body',
+            animation: false,
+          });
+        }
+
+        // finally show the popover
+        $el.popover('show');
+      });
+
       /*
-              end code for select
-             */
+      end code for select
+      */
 
       const $input = this.$('input.q');
       this.$input = $input;
@@ -140,7 +202,6 @@ define([
       });
 
       this.$('[data-toggle="tooltip"]').tooltip();
-      this.$('[data-toggle-tt="tooltip"]').tooltip({items:"select,option",position:{ my: "left top", at: "right top"}});
     },
 
     events: {
