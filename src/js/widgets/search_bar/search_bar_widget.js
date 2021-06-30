@@ -128,15 +128,7 @@ define([
       const $select2Instance = $select.data('select2');
 
       const closeAllPopovers = () => {
-        $(
-          '.select2-results__option[role=treeitem]',
-          $select2Instance.$results
-        ).each((i, result) => {
-          const $result = $(result);
-          if (typeof $result.data('bs.popover') !== 'undefined') {
-            $result.popover('hide');
-          }
-        });
+        $('.select2-dropdown').popover('destroy');
       };
 
       // hide popovers one open and close, focusing will re-open them after this
@@ -148,41 +140,33 @@ define([
         document.getElementById('query-search-input').focus();
       });
 
-      let firstrun = true;
-      $select2Instance.on('results:focus', ({ data: { id }, element }) => {
-        // for some reason, this renders twice -- so we're skipping the initial run
-        if (firstrun) {
-          firstrun = false;
-          return;
-        }
-        const $el = $(element);
-
+      $select2Instance.on('results:focus', ({ data: { id } }) => {
         // hide any opened popovers
         closeAllPopovers();
 
-        // check if popover has already been applied
-        if (typeof $el.data('bs.popover') === 'undefined') {
-          // grab the title/body from our list
-          const data = quickFieldDesc[id];
-          if (typeof data !== 'object') {
-            // if not found, do nothing
-            return;
-          }
+        // grab the title/body from our list
+        const data = quickFieldDesc[id];
+        if (typeof data !== 'object') {
+          // if not found, do nothing
+          return;
+        }
 
-          // create the popover
-          $el.popover({
+        // create the popover
+        $('.select2-dropdown')
+          .popover({
             title: data.title,
             content: data.content,
             html: true,
-            placement: 'right',
+            placement: 'top right',
             trigger: 'manual',
             container: 'body',
             animation: false,
-          });
-        }
+          })
+          .data('bs.popover')
+          .tip()
+          .attr('class', 'search-term-popover popover right in');
 
-        // finally show the popover
-        $el.popover('show');
+        $('.select2-dropdown').popover('show');
       });
 
       /*

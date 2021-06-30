@@ -257,6 +257,15 @@ input.hasbigquery {
   width: 25%;
 }
 
+.search-term-popover {
+  position: absolute;
+  top: 0;
+
+  .arrow {
+    display: none;
+  }
+}
+
 .select2-container--default
   .select2-selection--single
   .select2-selection__placeholder {
