@@ -152,10 +152,12 @@ define([
         }
 
         // create the popover
+        const syntax = data.syntax.map(s => `<code>${s}</code>`).join(', ');
+        const example = data.example.map(e => `<code>${e}</code>`).join(', ');
         $('.select2-dropdown')
           .popover({
-            title: data.title,
-            content: data.content,
+            title: `<strong>${data.title}</strong>`,
+            content: `${data.description}<br/><br/>Syntax: <br/>${syntax}<br/><br/>Example: </br>${example}`,
             html: true,
             placement: 'top right',
             trigger: 'manual',
