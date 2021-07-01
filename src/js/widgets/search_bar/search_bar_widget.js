@@ -1,6 +1,7 @@
 define([
   'underscore',
   'marionette',
+  'bowser',
   'js/components/api_query',
   'js/widgets/base/base_widget',
   'hbs!js/widgets/search_bar/templates/search_bar_template',
@@ -22,6 +23,7 @@ define([
 ], function(
   _,
   Marionette,
+  bowser,
   ApiQuery,
   BaseWidget,
   SearchBarTemplate,
@@ -131,45 +133,47 @@ define([
         $('.select2-dropdown').popover('destroy');
       };
 
-      // hide popovers one open and close, focusing will re-open them after this
-      $select2Instance.on('closing', closeAllPopovers);
-      $select2Instance.on('open', closeAllPopovers);
-
       // on close, move focus to search bar.  If we change page layout, may have to change this
       $select2Instance.on('close', () => {
         document.getElementById('query-search-input').focus();
       });
 
-      $select2Instance.on('results:focus', ({ data: { id } }) => {
-        // hide any opened popovers
-        closeAllPopovers();
+      const platform = bowser.parse(window.navigator.userAgent).platform.type;
+      if (platform !== 'mobile' && platform !== 'tablet') {
+        // hide popovers one open and close, focusing will re-open them after this
+        $select2Instance.on('closing', closeAllPopovers);
+        $select2Instance.on('open', closeAllPopovers);
 
-        // grab the title/body from our list
-        const data = quickFieldDesc[id];
-        if (typeof data !== 'object') {
-          // if not found, do nothing
-          return;
-        }
+        $select2Instance.on('results:focus', ({ data: { id } }) => {
+          // hide any opened popovers
+          closeAllPopovers();
+          // grab the title/body from our list
+          const data = quickFieldDesc[id];
+          if (typeof data !== 'object') {
+            // if not found, do nothing
+            return;
+          }
+          // create the popover
+          const syntax = data.syntax.map((s) => `<code>${s}</code>`).join(', ');
+          const example = data.example.map((e) => `<code>${e}</code>`).join(', ');
+          $('.select2-dropdown')
+            .popover({
+              title: `<strong>${data.title}</strong>`,
+              content: `${data.description}<br/><br/>Syntax: <br/>${syntax}<br/><br/>Example: </br>${example}`,
+              html: true,
+              placement: 'top right',
+              trigger: 'manual',
+              container: 'body',
+              animation: false,
+            })
+            .data('bs.popover')
+            .tip()
+            .attr('class', 'search-term-popover popover right in');
 
-        // create the popover
-        const syntax = data.syntax.map(s => `<code>${s}</code>`).join(', ');
-        const example = data.example.map(e => `<code>${e}</code>`).join(', ');
-        $('.select2-dropdown')
-          .popover({
-            title: `<strong>${data.title}</strong>`,
-            content: `${data.description}<br/><br/>Syntax: <br/>${syntax}<br/><br/>Example: </br>${example}`,
-            html: true,
-            placement: 'top right',
-            trigger: 'manual',
-            container: 'body',
-            animation: false,
-          })
-          .data('bs.popover')
-          .tip()
-          .attr('class', 'search-term-popover popover right in');
+          $('.select2-dropdown').popover('show');
+        });
+      }
 
-        $('.select2-dropdown').popover('show');
-      });
 
       /*
       end code for select

@@ -260,6 +260,7 @@ input.hasbigquery {
 .search-term-popover {
   position: absolute;
   top: 0;
+  word-wrap: break-word;
 
   .arrow {
     display: none;
