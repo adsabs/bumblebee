@@ -1061,6 +1061,10 @@
       border-color: $darkmode-input-border;
     }
 
+    .popover-content code {
+      background-color: $darkmode-background !important;
+    }
+
     .select2-selection {
       background-color: $darkmode-input-bg;
       color: $darkmode-text;

@@ -1,6 +1,7 @@
 define([
   'underscore',
   'marionette',
+  'bowser',
   'js/components/api_query',
   'js/widgets/base/base_widget',
   'hbs!js/widgets/search_bar/templates/search_bar_template',
@@ -11,6 +12,7 @@ define([
   'js/components/api_feedback',
   'js/mixins/formatter',
   './autocomplete',
+  './quick-field-desc',
   'bootstrap', // if bootstrap is missing, jQuery events get propagated
   'jquery-ui',
   'js/mixins/dependon',
@@ -21,6 +23,7 @@ define([
 ], function(
   _,
   Marionette,
+  bowser,
   ApiQuery,
   BaseWidget,
   SearchBarTemplate,
@@ -31,6 +34,7 @@ define([
   ApiFeedback,
   FormatMixin,
   { render: renderAutocomplete, autocompleteSource: autocompleteArray },
+  quickFieldDesc,
   bootstrap,
   jqueryUI,
   Dependon,
@@ -84,18 +88,18 @@ define([
 
     onRender: function() {
       var that = this;
+      const $container = this.$('#option-dropdown-container');
       /*
               select
              */
-      this.$('#option-dropdown-container').append(OptionDropdownTemplate);
+      $container.append(OptionDropdownTemplate);
 
       function matchStart(term, text) {
-        if (text.toUpperCase().indexOf(term.toUpperCase()) == 0) {
+        if (text.toUpperCase().indexOf(term.toUpperCase()) === 0) {
           return true;
         }
         return false;
       }
-
       var $select = this.$('.quick-add-dropdown');
 
       $select
@@ -123,9 +127,57 @@ define([
         .val(null)
         .trigger('change');
 
+      const $select2Instance = $select.data('select2');
+
+      const closeAllPopovers = () => {
+        $('.select2-dropdown').popover('destroy');
+      };
+
+      // on close, move focus to search bar.  If we change page layout, may have to change this
+      $select2Instance.on('close', () => {
+        document.getElementById('query-search-input').focus();
+      });
+
+      const platform = bowser.parse(window.navigator.userAgent).platform.type;
+      if (platform !== 'mobile' && platform !== 'tablet') {
+        // hide popovers one open and close, focusing will re-open them after this
+        $select2Instance.on('closing', closeAllPopovers);
+        $select2Instance.on('open', closeAllPopovers);
+
+        $select2Instance.on('results:focus', ({ data: { id } }) => {
+          // hide any opened popovers
+          closeAllPopovers();
+          // grab the title/body from our list
+          const data = quickFieldDesc[id];
+          if (typeof data !== 'object') {
+            // if not found, do nothing
+            return;
+          }
+          // create the popover
+          const syntax = data.syntax.map((s) => `<code>${s}</code>`).join(', ');
+          const example = data.example.map((e) => `<code>${e}</code>`).join(', ');
+          $('.select2-dropdown')
+            .popover({
+              title: `<strong>${data.title}</strong>`,
+              content: `${data.description}<br/><br/>Syntax: <br/>${syntax}<br/><br/>Example: </br>${example}`,
+              html: true,
+              placement: 'top right',
+              trigger: 'manual',
+              container: 'body',
+              animation: false,
+            })
+            .data('bs.popover')
+            .tip()
+            .attr('class', 'search-term-popover popover right in');
+
+          $('.select2-dropdown').popover('show');
+        });
+      }
+
+
       /*
-              end code for select
-             */
+      end code for select
+      */
 
       const $input = this.$('input.q');
       this.$input = $input;
