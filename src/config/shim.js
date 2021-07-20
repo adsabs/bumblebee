@@ -60,7 +60,7 @@
       // sometimes requirejs isn't ready yet, this will wait for it
       if (window.requirejs) {
         window.requirejs.config({
-          waitSeconds: 30,
+          waitSeconds: 7,
           urlArgs: version,
         });
 

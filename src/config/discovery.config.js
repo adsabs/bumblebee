@@ -10,7 +10,7 @@ require.config({
   })(),
 
   // this will be overridden in the compiled file
-  waitSeconds: 30,
+  waitSeconds: 7,
 
   // Configuration we want to make available to modules of ths application
   // see: http://requirejs.org/docs/api.html#config-moduleconfig
