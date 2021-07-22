@@ -1,7 +1,10 @@
 define([], function() {
   // 1000 top terms
   return [
-    { value: 'LRCA', label: 'Living Reviews in Computational Astrophysics (LRCA)' },
+    {
+      value: 'LRCA',
+      label: 'Living Reviews in Computational Astrophysics (LRCA)',
+    },
     { value: 'PhRvL', label: 'Physical Review Letters (PhRvL)' },
     { value: 'ApJ', label: 'The Astrophysical Journal (ApJ)' },
     { value: 'ApJL', label: 'The Astrophysical Journal Letters (ApJL)' },
@@ -1189,8 +1192,8 @@ define([], function() {
     { value: 'REDS', label: 'Radiation Effects and Defects in Solids (REDS)' },
     { value: 'JGSoc', label: 'Journal of the Geological Society (JGSoc)' },
     {
-      value: 'PASAu',
-      label: 'Proceedings of the Astronomical Society of Australia (PASAu)',
+      value: 'PASA',
+      label: 'Publications of the Astronomical Society of Australia (PASA)',
     },
     {
       value: 'IJSTQ',
