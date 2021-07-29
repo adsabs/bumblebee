@@ -30,6 +30,7 @@ define([
 
     events: {
       'click .download': 'download',
+      'click .apply': 'submitFacet',
     },
 
     buildGraph: function() {
