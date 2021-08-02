@@ -193,7 +193,7 @@ input.cmn-toggle-round + label:after {
   transition: margin 0.4s;
 }
 input.cmn-toggle-round:checked + label:before {
-  background-color: $brand-success;
+  background-color: #A6CE39;
 }
 input.cmn-toggle-round:checked + label:after {
   margin-left: 30px;

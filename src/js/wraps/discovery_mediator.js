@@ -603,7 +603,7 @@ define([
                 new ApiFeedback({
                   code: ApiFeedback.CODES.WARNING,
                   msg:
-                    '<p>You will be redirected to ORCID.</p> <p>Please sign in with your ORCID credentials and click on the "authorize" button.</p><button class="btn btn-success" id="okOrcid">Take me to ORCID</button>',
+                    '<p>You will be redirected to ORCID.</p> <p>Please sign in with your ORCID credentials and click on the "authorize" button.</p><button class="btn btn-primary" id="okOrcid">Take me to ORCID</button>',
                   modal: true,
                   events: {
                     'click button#okOrcid': 'OK',
