@@ -153,7 +153,7 @@ define({
   },
   property: {
     title: 'property',
-    description: 'Limit search to article with specific attributes. Possible values include: ARTICLE, REFEREED, NOT_REFEREED, INPROCEEDINGS, OPENACCESS, NONARTICLE, EPRINT, BOOK, PROCEEDINGS, CATALOG, SOFTWARE',
+    description: 'An array of miscellaneous flags associated with the record. Possible values include: refereed, notrefereed, article, nonarticle, ads_openaccess, eprint_openaccess, pub_openaccess, openaccess, ocrabstract',
     syntax: ['property:type'],
     example: ['property:openaccess'],
   },
