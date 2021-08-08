@@ -115,7 +115,10 @@ define([
         'event',
         'interaction',
         'full-text-link-followed',
-        text
+        text,
+        {
+          transport: 'beacon',
+        }
       );
     },
     onApiFeedback: function(feedback) {
