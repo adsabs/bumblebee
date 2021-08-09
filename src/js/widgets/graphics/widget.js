@@ -7,6 +7,7 @@ define([
   'hbs!js/widgets/graphics/templates/grid',
   'hbs!js/widgets/graphics/templates/sidebar',
   'js/components/api_targets',
+  'analytics',
 ], function(
   Marionette,
   BaseWidget,
@@ -15,7 +16,8 @@ define([
   ApiQuery,
   gridTemplate,
   sidebarTemplate,
-  ApiTargets
+  ApiTargets,
+  analytics
 ) {
   var GraphicsModel = Backbone.Model.extend({
     defaults: function() {
@@ -32,8 +34,25 @@ define([
 
     className: 's-graphics-grid',
 
+    events: {
+      'click .graphics-external-link': 'fireAnalyticsEvent',
+    },
+
     modelEvents: {
       change: 'render',
+    },
+
+    fireAnalyticsEvent(ev) {
+      analytics(
+        'send',
+        'event',
+        'interaction',
+        'graphics-link-followed',
+        ev.currentTarget.href,
+        {
+          transport: 'beacon',
+        }
+      );
     },
   });
 
