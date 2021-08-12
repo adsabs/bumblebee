@@ -81,4 +81,12 @@ module.exports = {
     src: 'https://polyfill.io/v3/polyfill.min.js?features=IntersectionObserver',
     dest: 'src/libs/polyfill/index.js',
   },
+  select2_js: {
+    src: 'https://cdn.jsdelivr.net/npm/select2@4.0.3/dist/js/select2.min.js',
+    dest: 'src/libs/select2/index.js',
+  },
+  select2_css: {
+    src: 'https://cdn.jsdelivr.net/npm/select2@4.0.3/dist/css/select2.min.css',
+    dest: 'src/libs/select2/index.css',
+  },
 };
