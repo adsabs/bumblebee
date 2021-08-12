@@ -137,71 +137,67 @@ module.exports = function(grunt) {
             return dest + src.replace('FileSaver', 'index');
           },
         },
+        // {
+        //   src: 'bower_components/lodash/dist/*',
+        //   dest: 'src/libs/lodash/',
+        //   expand: true,
+        //   flatten: true,
+        // },
+        // {
+        //   src: 'bower_components/marionette/lib/*',
+        //   dest: 'src/libs/marionette/',
+        //   expand: true,
+        //   flatten: true,
+        // },
+
+        // {
+        //   src: [
+        //     'bower_components/bootstrap/dist/css/*',
+        //     'bower_components/bootstrap/dist/fonts/*',
+        //     'bower_components/bootstrap/dist/js/*',
+        //   ],
+        //   dest: 'src/libs/bootstrap/',
+        //   expand: true,
+        //   flatten: true,
+        // },
+        // {
+        //   src: ['bower_components/d3/*.js'],
+        //   dest: 'src/libs/d3/',
+        //   expand: true,
+        //   flatten: true,
+        // },
+        // {
+        //   src: ['bower_components/requirejs-plugins/src/*.js'],
+        //   dest: 'src/libs/requirejs-plugins/',
+        //   expand: true,
+        //   flatten: true,
+        // },
+
+        // fontawesome
         {
-          src: 'bower_components/lodash/dist/*',
-          dest: 'src/libs/lodash/',
+          cwd: 'node_modules/font-awesome',
+          src: ['scss/*', 'fonts/*'],
+          dest: 'src/libs/fontawesome/',
           expand: true,
-          flatten: true,
-        },
-        {
-          src: 'bower_components/marionette/lib/*',
-          dest: 'src/libs/marionette/',
-          expand: true,
-          flatten: true,
-        },
-        {
-          src: 'bower_components/backbone.babysitter/lib/*',
-          dest: 'src/libs/backbone.babysitter/',
-          expand: true,
-          flatten: true,
-        },
-        {
-          src: [
-            'bower_components/bootstrap/dist/css/*',
-            'bower_components/bootstrap/dist/fonts/*',
-            'bower_components/bootstrap/dist/js/*',
-          ],
-          dest: 'src/libs/bootstrap/',
-          expand: true,
-          flatten: true,
-        },
-        {
-          src: ['bower_components/d3/*.js'],
-          dest: 'src/libs/d3/',
-          expand: true,
-          flatten: true,
-        },
-        {
-          src: ['bower_components/requirejs-plugins/src/*.js'],
-          dest: 'src/libs/requirejs-plugins/',
-          expand: true,
-          flatten: true,
+          flatten: false,
         },
 
+        // bootstrap sass (scss and js)
         {
-          src: ['bower_components/fontawesome/scss/*'],
-          dest: 'src/libs/fontawesome/scss/',
+          cwd: 'node_modules/bootstrap-sass/assets',
+          src: ['stylesheets/**/*', 'javascripts/bootstrap.min.js'],
           expand: true,
-          flatten: true,
+          dest: 'src/libs/bootstrap/',
+          rename: function(dest, src) {
+            return dest + src.replace('javascripts/bootstrap.min', 'index');
+          },
         },
-        {
-          src: ['bower_components/fontawesome/fonts/*'],
-          dest: 'src/libs/fontawesome/fonts',
-          expand: true,
-          flatten: true,
-        },
-        {
-          cwd: 'bower_components/bootstrap-sass/assets/stylesheets/',
-          src: '**',
-          expand: true,
-          dest: 'src/libs/bootstrap-sass',
-        },
-        {
-          src: ['bower_components/requirejs-babel/*.js'],
-          dest: 'src/libs/requirejs-babel-plugin/',
-          expand: true,
-          flatten: true,
-        },
+        // {
+        //   src: ['bower_components/requirejs-babel/*.js'],
+        //   dest: 'src/libs/requirejs-babel-plugin/',
+        //   expand: true,
+        //   flatten: true,
+        // },
         {
           cwd: 'node_modules/redux/dist',
           src: 'redux.min.js',

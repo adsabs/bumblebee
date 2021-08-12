@@ -201,7 +201,7 @@ require.config({
     ],
     bootstrap: [
       '//ajax.aspnetcdn.com/ajax/bootstrap/3.3.5/bootstrap.min',
-      'libs/bootstrap/bootstrap',
+      'libs/bootstrap/index',
     ],
     bowser: '//cdn.jsdelivr.net/npm/bowser@2.11.0/es5.min', // '//cdn.jsdelivr.net/npm/bowser@2.4.0/bundled',
     cache: 'libs/cache/index',
