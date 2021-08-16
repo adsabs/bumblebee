@@ -1,3 +1,176 @@
+window.requirejsPaths = {
+  // bumblebee components (here we'll lists simple names), paths are relative
+  // to the config (the module that bootstraps our application; look at the html)
+  // as a convention, all modules should be loaded using 'symbolic' names
+
+  // **********************
+  // *** internal paths ***
+  // **********************
+  router: 'js/apps/discovery/router',
+  analytics: 'js/components/analytics',
+  utils: 'js/utils',
+  darkMode: 'js/dark-mode-switch',
+  recaptcha: 'js/plugins/recaptcha',
+  reactify: 'js/plugins/reactify',
+  es6: 'js/plugins/es6',
+  suit: 'shared/dist/index.umd.development',
+  // **********************
+
+  // *************************************
+  // *** development-only dependencies ***
+  // *************************************
+  babel: 'libs/babel',
+  async: 'libs/requirejs-plugins/async',
+  hbs: 'libs/requirejs-plugins/hbs',
+  sprintf: 'libs/sprintf',
+  sinon: 'libs/sinon',
+  enzyme: 'libs/enzyme',
+  mocha: 'libs/mocha',
+  chai: 'libs/chai',
+  // *************************************
+
+  // *******************************
+  // *** production dependencies ***
+  // *******************************
+  underscore: [
+    'https://unpkg.com/lodash@2.4.2/dist/lodash.compat.min',
+    'libs/lodash',
+  ],
+  backbone: ['https://unpkg.com/backbone@1.1.2/backbone-min', 'libs/backbone'],
+  'backbone-validation': [
+    'https://unpkg.com/backbone-validation@0.11.3/dist/backbone-validation-amd-min',
+    'libs/backbone-validation',
+  ],
+  'backbone.stickit': [
+    'https://unpkg.com/backbone.stickit@0.9.2/backbone.stickit',
+    'libs/backbone.stickit',
+  ],
+  'backbone.wreqr': [
+    'https://unpkg.com/backbone.wreqr@1.4.0/lib/backbone.wreqr.min',
+    'libs/backbone.wreqr',
+  ],
+  bootstrap: [
+    'https://unpkg.com/bootstrap@3.3.7/dist/js/bootstrap.min',
+    'libs/bootstrap/bootstrap',
+  ],
+  bowser: ['https://unpkg.com/bowser@2.11.0/es5', 'libs/bowser'],
+  clipboard: [
+    'https://unpkg.com/clipboard@1.7.1/dist/clipboard.min',
+    'libs/clipboard',
+  ],
+  d3: ['https://unpkg.com/d3@3.5.17/d3.min', 'libs/d3'],
+  'd3-cloud': [
+    'https://unpkg.com/d3-cloud@1.2.5/build/d3.layout.cloud',
+    'libs/d3-cloud',
+  ],
+  filesaver: [
+    'https://unpkg.com/file-saver@1.3.8/FileSaver.min',
+    'libs/file-saver',
+  ],
+  hotkeys: [
+    'https://unpkg.com/hotkeys-js@3.8.7/dist/hotkeys.min',
+    'libs/hotkeys',
+  ],
+  jquery: ['https://unpkg.com/jquery@2.2.4/dist/jquery.min', 'libs/jquery'],
+  'jquery-ui': [
+    'https://code.jquery.com/ui/1.12.1/jquery-ui.min',
+    'libs/jquery-ui',
+  ],
+  jsonpath: ['https://unpkg.com/jsonpath@0.2.12/jsonpath.min', 'libs/jsonpath'],
+  marionette: [
+    'https://unpkg.com/backbone.marionette@2.4.5/lib/backbone.marionette.min',
+    'libs/backbone.marionette',
+  ],
+  mathjax: [
+    'https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.4/MathJax.js?config=TeX-AMS_HTML&amp;delayStartupUntil=configured',
+    'libs/mathjax/mathjax',
+  ],
+  moment: ['https://unpkg.com/moment@2.22.2/min/moment.min', 'libs/moment'],
+  'persist-js': [
+    'https://unpkg.com/persist-js@0.3.1/persist-min',
+    'libs/persist-js',
+  ],
+  react: ['https://unpkg.com/react@16/umd/react.development', 'libs/react'],
+  'react-bootstrap': [
+    'https://unpkg.com/react-bootstrap@1.6.1/dist/react-bootstrap.min',
+    'libs/react-bootstrap',
+  ],
+  'react-dom': [
+    'https://unpkg.com/react-dom@17.0.2/umd/react-dom.production.min',
+    'libs/react-dom',
+  ],
+  'prop-types': [
+    'https://unpkg.com/prop-types@15.6/prop-types.min',
+    'libs/prop-types',
+  ],
+  'react-redux': [
+    'https://unpkg.com/react-redux@7.2.4/dist/react-redux.min',
+    'libs/react-redux',
+  ],
+  'react-transition-group': [
+    'https://unpkg.com/react-transition-group@2.4.0/dist/react-transition-group.min',
+    'libs/react-transition-group',
+  ],
+  redux: ['https://unpkg.com/redux@4.0.5/dist/redux.min', 'libs/redux'],
+  'redux-thunk': [
+    'https://unpkg.com/redux-thunk@2.3.0/dist/redux-thunk.min',
+    'libs/redux-thunk',
+  ],
+  select2: [
+    'https://unpkg.com/select2@4.0.3/dist/js/select2.min',
+    'libs/select2/select2',
+  ],
+  'react-hook-form': [
+    'https://unpkg.com/react-hook-form@6.11.0/dist/index.umd.production.min',
+    'libs/react-hook-form',
+  ],
+  'react-is': [
+    'https://unpkg.com/react-is@17.0.2/umd/react-is.production.min',
+    'libs/react-is',
+  ],
+  'react-data-table-component': [
+    'https://unpkg.com/react-data-table-component@6.11.7/dist/react-data-table-component.umd',
+    'libs/react-data-table-component',
+  ],
+  'react-window': [
+    'https://unpkg.com/react-window@1.8.6/dist/index-prod.umd',
+    'libs/react-window',
+  ],
+  'react-async': [
+    'https://unpkg.com/react-async@10.0.1/dist-umd/index',
+    'libs/react-async',
+  ],
+  'regenerator-runtime': [
+    'https://unpkg.com/regenerator-runtime@0.13.9/runtime',
+    'libs/regenerator-runtime',
+  ],
+  diff: ['https://unpkg.com/diff@4.0.2/dist/diff.min', 'libs/diff'],
+  'styled-components': [
+    'https://unpkg.com/styled-components@5.1.0/dist/styled-components.min',
+    'libs/styled-components',
+  ],
+  '@hookform/resolvers': [
+    'https://unpkg.com/@hookform/resolvers@0.1.0/dist/index.umd.production.min',
+    'libs/hookform',
+  ],
+  'google-analytics': [
+    // to activate local tunnel (for us to collect all analytics data)
+    // uncomment this; k12 should have ingress-nginx-proxy image deployed
+    // that can proxy requests to /analytics
+    // '/analytics/analytics'
+    'libs/g',
+    'data:application/javascript,',
+  ],
+
+  // require special handling, fetched via `grunt curl` task
+  yup: 'libs/yup',
+  cache: 'libs/cache',
+  polyfill: 'libs/polyfill',
+  'react-flexview': 'libs/react-flexview',
+  'array-flat-polyfill': 'libs/array-flat-polyfill',
+  // *******************************
+};
+
 // Main config file for the Discovery application
 require.config({
   // Initialize the application with the main application file or if we run
@@ -165,170 +338,31 @@ require.config({
     },
   },
 
-  paths: {
-    // bumblebee components (here we'll lists simple names), paths are relative
-    // to the config (the module that bootstraps our application; look at the html)
-    // as a convention, all modules should be loaded using 'symbolic' names
-    router: 'js/apps/discovery/router',
-    analytics: 'js/components/analytics',
+  paths: Object.keys(window.requirejsPaths).reduce((obj, k) => {
+    const v = window.requirejsPaths[k];
 
-    // Opt for Lo-Dash Underscore compatibility build over Underscore.
-    underscore: [
-      '//cdnjs.cloudflare.com/ajax/libs/lodash.js/2.4.2/lodash.min',
-      'libs/lodash/lodash.compat',
-    ],
+    // simple check to remove cdns during development
+    if (
+      Array.isArray(v) &&
+      k !== 'google-analytics' &&
+      ['localhost', '127.0.0.0', ''].includes(window.location.hostname)
+    ) {
+      return {
+        ...obj,
+        [k]: v[1],
+      };
+    }
 
-    // 3rd party dependencies
-    // I can't for the life of my figure out how to swap non-minified libs in dev
-    // to minified libs in the r.js optimize task
-    async: 'libs/requirejs-plugins/async',
-    babel: 'libs/requirejs-babel-plugin/babel-5.8.34.min',
-    backbone: [
-      '//cdnjs.cloudflare.com/ajax/libs/backbone.js/1.1.2/backbone-min',
-      'libs/backbone/backbone',
-    ],
-    'backbone-validation': [
-      '//cdnjs.cloudflare.com/ajax/libs/backbone.validation/0.11.3/backbone-validation-amd-min',
-      'libs/backbone-validation/backbone-validation',
-    ],
-    'backbone.stickit': [
-      '//cdnjs.cloudflare.com/ajax/libs/backbone.stickit/0.8.0/backbone.stickit.min',
-      'libs/backbone.stickit/backbone.stickit',
-    ],
-    'backbone.wreqr': [
-      '//cdnjs.cloudflare.com/ajax/libs/backbone.wreqr/1.0.0/backbone.wreqr.min',
-      'libs/backbone.wreqr/lib/backbone.wreqr',
-    ],
-    bootstrap: [
-      '//ajax.aspnetcdn.com/ajax/bootstrap/3.3.5/bootstrap.min',
-      'libs/bootstrap/index',
-    ],
-    bowser: '//cdn.jsdelivr.net/npm/bowser@2.11.0/es5.min', // '//cdn.jsdelivr.net/npm/bowser@2.4.0/bundled',
-    cache: 'libs/cache/index',
-    classnames: [
-      '//cdnjs.cloudflare.com/ajax/libs/classnames/2.2.5/index.min',
-      '../bower_components/classnames/index',
-    ],
-    clipboard: [
-      '//cdnjs.cloudflare.com/ajax/libs/clipboard.js/1.7.1/clipboard.min',
-      'libs/clipboard/clipboard',
-    ],
-    d3: ['//cdnjs.cloudflare.com/ajax/libs/d3/3.4.6/d3.min', 'libs/d3/d3.min'],
-    'd3-cloud': [
-      '//cdnjs.cloudflare.com/ajax/libs/d3-cloud/1.2.5/d3.layout.cloud.min',
-      'libs/d3-cloud/d3.layout.cloud',
-    ],
-    enzyme: 'libs/enzyme/index',
-    es6: 'libs/requirejs-babel-plugin/es6',
-    filesaver: [
-      '//cdnjs.cloudflare.com/ajax/libs/FileSaver.js/1.3.8/FileSaver.min',
-      'libs/file-saver/index',
-    ],
-    'google-analytics': [
-      // to activate local tunnel (for us to collect all analytics data)
-      // uncomment this; k12 should have ingress-nginx-proxy image deployed
-      // that can proxy requests to /analytics
-      // '/analytics/analytics'
-      'libs/g',
-      'data:application/javascript,',
-    ],
-    hbs: 'libs/require-handlebars-plugin/hbs',
-    hotkeys: 'libs/hotkeys/index',
-    jquery: [
-      '//cdnjs.cloudflare.com/ajax/libs/jquery/2.2.4/jquery.min',
-      'libs/jquery/jquery',
-    ],
-    'jquery-ui': [
-      '//cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min',
-      'libs/jqueryui/jquery-ui',
-    ],
-    jsonpath: [
-      '//cdn.jsdelivr.net/npm/jsonpath@0.2.12/jsonpath.min',
-      'libs/jsonpath/jsonpath',
-    ],
-    marionette: [
-      '//cdnjs.cloudflare.com/ajax/libs/backbone.marionette/2.4.5/backbone.marionette.min',
-      'libs/marionette/backbone.marionette',
-    ],
-    mathjax: [
-      '//cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS_HTML&amp;delayStartupUntil=configured',
-      'libs/mathjax/index',
-    ],
-    moment: [
-      '//cdnjs.cloudflare.com/ajax/libs/moment.js/2.22.2/moment.min',
-      'libs/momentjs/moment',
-    ],
-    'persist-js': [
-      '//cdn.jsdelivr.net/npm/persist-js@0.3.1/src/persist.min',
-      'libs/persist-js/src/persist',
-    ],
-    react: ['//unpkg.com/react@16/umd/react.development', 'libs/react/index'],
-    'react-bootstrap': [
-      // '//cdnjs.cloudflare.com/ajax/libs/react-bootstrap/0.32.1/react-bootstrap.min',
-      'libs/react-bootstrap/index',
-    ],
-    'react-dom': [
-      // '//unpkg.com/react-dom@16/umd/react-dom.development',
-      'libs/react-dom/index',
-    ],
-    'prop-types': [
-      // '//cdnjs.cloudflare.com/ajax/libs/prop-types/15.7.2/prop-types.min',
-      'libs/prop-types/index',
-    ],
-    'react-redux': [
-      // '//cdnjs.cloudflare.com/ajax/libs/react-redux/7.1.3/react-redux.min',
-      'libs/react-redux/index',
-    ],
-    'react-transition-group': 'libs/react-transition-group/index',
-    recaptcha: 'js/plugins/recaptcha',
-    reactify: 'js/plugins/reactify',
-    redux: [
-      // '//cdnjs.cloudflare.com/ajax/libs/redux/3.5.2/redux.min',
-      'libs/redux/index',
-    ],
-    'redux-thunk': [
-      '//cdnjs.cloudflare.com/ajax/libs/redux-thunk/2.1.0/redux-thunk.min',
-      'libs/redux-thunk/index',
-    ],
-    select2: [
-      '//cdnjs.cloudflare.com/ajax/libs/select2/4.0.3/js/select2.min',
-      'libs/select2/select2',
-    ],
-    sprintf: [
-      '//cdnjs.cloudflare.com/ajax/libs/sprintf/1.0.2/sprintf.min',
-      'libs/sprintf/sprintf',
-    ],
-    utils: 'js/utils',
-    mocha: 'libs/mocha/mocha',
-    chai: 'bower_components/chai/chai',
-    sinon: 'libs/sinon/index',
-    suit: 'shared/dist/index.umd.development',
-    yup: 'libs/yup/index',
-    'react-hook-form': [
-      // 'https://cdn.jsdelivr.net/npm/react-hook-form@6.9.6/dist/index.umd.production.min',
-      'libs/react-hook-form/index',
-    ],
-    'react-flexview': 'libs/react-flexview/index',
-    'styled-components': 'libs/styled-components/index',
-    'react-is': 'libs/react-is/index',
-    'react-data-table-component': 'libs/react-data-table-component/index',
-    'react-window': 'libs/react-window/index',
-    'react-async': 'libs/react-async/index',
-    'deep-object-diff': 'libs/deep-object-diff/index',
-    diff: 'https://cdnjs.cloudflare.com/ajax/libs/jsdiff/4.0.2/diff.min',
-    'regenerator-runtime': 'libs/regenerator-runtime/index',
-    '@hookform/resolvers': 'libs/@hookform/index',
-    recoil: 'libs/recoil/index',
-    xstate: 'libs/xstate/index',
-    '@xstate/react': 'libs/xstate-react/index',
-    'array-flat-polyfill': 'libs/polyfills/array-flat-polyfill',
-    polyfill: 'libs/polyfill/index',
-    darkMode: 'js/dark-mode-switch',
-  },
+    return { ...obj, [k]: v };
+  }, {}),
 
   hbs: {
     templateExtension: 'html',
     helpers: false,
+  },
+
+  babel: {
+    presets: ['env', 'react'],
   },
 
   shim: {
@@ -393,5 +427,88 @@ require.config({
     'persist-js': {
       exports: 'Persist',
     },
+  },
+  onNodeCreated: function(node, config, module) {
+    // SRIs for the CDNs used in the paths above
+    const sri = {
+      underscore:
+        'sha384-qDQQphxk4GGOzXrYWcGvL65XEe3wWt0lpN1IWIttQvQvewLpET6XzmQiKr3kew5R',
+      backbone:
+        'sha384-VxD8tH2DiVJvByaMC34LoFrsCoF3qBeDvlSoyzjXU9t1SJVuOVwcGui/gigIavIN',
+      'backbone-validation':
+        'sha384-fpdyr8ISauDi3YRemFSS/fadDnGzGiz2QdiRavwVGgPr2dd8f9VEaubnO5XhWZGr',
+      'backbone.stickit':
+        'sha384-LnepiBNV2LUVxUIF/sLNzcLmusDbfFnOVijtZFrhooeopW0037kRRfZD/xIZWXoC',
+      'backbone.wreqr':
+        'sha384-IzfqdomcRie+VgR5xKLxPJABpi9TADoX+rb7/w2Ao1up49TbjdBZXaIpoagGW20t',
+      bootstrap:
+        'sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa',
+      bowser:
+        'sha384-Z0KxlcdLj4l74yAkZm1zrXtmCVWpuBPQ2MbDARb3dgtIwzTfG95hDk53DYVunmKL',
+      clipboard:
+        'sha384-cV+rhyOuRHc9Ub/91rihWcGmMmCXDeksTtCihMupQHSsi8GIIRDG0ThDc3HGQFJ3',
+      d3:
+        'sha384-N8EP0Yml0jN7e0DcXlZ6rt+iqKU9Ck6f1ZQ+j2puxatnBq4k9E8Q6vqBcY34LNbn',
+      'd3-cloud':
+        'sha384-6RmikqUV3J90YjNQ6j3aGUYxrYRgPnpfL+iGR7riVJSMgSaUxq12B9bYc7xgk29E',
+      filesaver:
+        'sha384-VgWGwiEJnh9P379lbU8DxPcfRuFkfLl0uPuL9tolOHtm2tx8Qy8d/KtvovfM0Udh',
+      hotkeys:
+        'sha384-a9EmIZ/DK+uZtwt6PYXWQnJ5HVwJ9a8klNTM9UizXmEdYbVAfuhoERwcC9MDTrLU',
+      jquery:
+        'sha384-rY/jv8mMhqDabXSo+UCggqKtdmBfd3qC2/KvyTDNQ6PcUJXaxK1tMepoQda4g5vB',
+      jsonpath:
+        'sha384-87Cywb3gQWq5tkmzcpOPCT5fkfEMexH1yQUBGx0xrr/BvXqwulIHsB8JSg06h6mV',
+      marionette:
+        'sha384-Vhqh90N6FKyphb9enak5e49Ty9xD2dHphudmx93Y1ZgxShTXxiNsUliAbMsyOsQ0',
+      moment:
+        'sha384-sIzeKWIAHvT0Vm8QbfLCqZwBG0WMCkWVAOYd/330YSNeeQ1Y57N3T9lQz5Ry/EHH',
+      'persist-js':
+        'sha384-IQ8LQBnxRLItFm2zBR7ehQAjX2c5kAvrnmQUDQCDhl5whNOy/Qrt4OkNPBPZqrgE',
+      react:
+        'sha384-ZHBAhj6mPF2wke1Ie6UN+ozxCHBXIuRrcszqkblgAqCrZtYGI3zZYn4SsU+ozss4',
+      'react-bootstrap':
+        'sha384-FQClBnztGYR0yMbovgwZV1LaLZSEZhAFjY3N9cbQsGOVekxg22ssNgRblfAdYXE5',
+      'react-dom':
+        'sha384-vj2XpC1SOa8PHrb0YlBqKN7CQzJYO72jz4CkDQ+ePL1pwOV4+dn05rPrbLGUuvCv',
+      'prop-types':
+        'sha384-9Fq52URRAaPlKGhu0AzshypUBBQa7Q8Rz1ze2svcZNUHGb/PlxTygZmtyYeqEHOK',
+      'react-redux':
+        'sha384-ZcmZKz11wjrgTJINgsPUjE81MDefPp3T3yXjqwmOfWs3mOrXiNJp8tuDDGIL4SBh',
+      'react-transition-group':
+        'sha384-WabrKyNVsCPcBkbcgLk2GI5B9r3bcu7AS+xIjuNWXpiEG2YFbGYKxIMH30PZ8ppV',
+      redux:
+        'sha384-9HbrkMEA4yvYaxArVwUh+buL6aVxBnmvot0vCxX8eUFaa1U/iT5eb51kaT7X4q+j',
+      'redux-thunk':
+        'sha384-clksQEsrkq4U3jNhSd+pCTsDFvPnSxN2xr0WUy2LOXFxC8KvqinvNJJ3656K5Tkf',
+      select2:
+        'sha384-222hzbb8Z8ZKe6pzP18nTSltQM3PdcAwxWKzGOKOIF+Y3bROr5n9zdQ8yTRHgQkQ',
+      'react-hook-form':
+        'sha384-o00KobsI/OBvRsqSR+XM/cniIcEZDOEDS+fEtCVrU4fdh90ysgmIQZZ3TXBGEw/H',
+      'react-is':
+        'sha384-SrjF4gb2WbeLH6ACmw6dLWBMHqfhwqgZe9F/N1TPzAyFjFESpC/3OGcG6fGVFmk7',
+      'react-data-table-component':
+        'sha384-VyrMwF3/DjWtRddANOUdwGMV7031w/5cVZqzVwvGUbbulGSJsybNgmS2D8QBUOK5',
+      'react-window':
+        'sha384-Z5ne52XzIcFV98V/UeunHiOluolr3PBTKThF1pmLrbAMod3centtxqggBRdbxyyE',
+      'react-async':
+        'sha384-pe0YbZ0dk7ipNViDks2le1j8l9T6jhcuzbc9MLfv8TwNe8BwdwE0/h0BcKL07khI',
+      'regenerator-runtime':
+        'sha384-jMSVkO5iDhd7A6dfEXFuT++7Gvv/f6T8bq3ZRHA9KE/kpyE/GL8B7NLfGSONzAym',
+      mathjax:
+        'sha512-xAWI9i8WMRLdgksuhaMCYMTw9D+MEc2cYVBApWwGRJ0cdcywTjMovOfJnlGt9LlEQj6QzyMzpIZLMYujetPcQg==',
+      'jquery-ui': 'sha256-VazP97ZCwtekAsvgPBSUwPFKdrwD3unUfSGVYrahUqU=',
+      'styled-components':
+        'sha384-BJn7wepCcL8YGN8QnwJVmNKvnmPJD2zhlTLhZu5bNAJPs8OcbR38EctHcBG9KkF5',
+      '@hookform/resolvers':
+        'sha384-S8X/bKV7Zk250Ypfl+DfV8dUbSy1ZxD1pumo0pibFWGpFmGyAZ8+Zj3cz2EGup6g',
+      diff:
+        'sha384-dt7nA4/ksfhWiEl0OCs7aTXG5NkDyqzERlkfaGZ2kwmEn58sz6Yo9d+mF8XgA+H/',
+    };
+
+    if (sri[module]) {
+      node.setAttribute('integrity', sri[module]);
+      node.setAttribute('crossorigin', 'anonymous');
+    }
   },
 });

@@ -58,8 +58,9 @@ server:release:prod:once:
 # 3rd Party Assets
 assets:
   - clean:libs
-  - concurrent:install
+  - concurrent:fetch_deps
   - copy:libs
+  - string-replace:mathjax
   - exec:suit_build
 
 # CSS Processing

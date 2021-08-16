@@ -16,6 +16,7 @@ define([
      * and/or files that should be available to the app instance
      */
     bootstrap: function(conf) {
+      debugger;
       conf = conf || {};
       var defer = $.Deferred();
 
@@ -86,6 +87,7 @@ define([
      * @returns {*}
      */
     onBootstrap: function(app_config, dynamic_config) {
+      debugger;
       // this is little bit of a (necessary) hack, we'll
       // update the configuration of the requirejs's
       var rConfig = null;
