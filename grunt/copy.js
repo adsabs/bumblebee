@@ -14,12 +14,6 @@ module.exports = function(grunt) {
           dest: 'src/libs/require.js',
         },
 
-        // xstate
-        {
-          src: 'node_modules/xstate/dist/xstate.js',
-          dest: 'src/libs/xstate.js',
-        },
-
         // react-bootstrap
         {
           src: 'node_modules/react-bootstrap/dist/react-bootstrap.min.js',
