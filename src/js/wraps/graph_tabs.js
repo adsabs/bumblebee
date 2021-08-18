@@ -13,7 +13,7 @@ define([
         'facet.pivot': 'property,year',
         facet: 'true',
         'facet.minCount': '1',
-        'facet.limit': '-1',
+        'facet.limit': '2000',
       },
 
       graphViewOptions: {
@@ -36,8 +36,9 @@ define([
           return noData();
         }
 
-        const facetData =
-          apiResponse.get('facet_counts.facet_pivot.property,year') || [];
+        const facetData = apiResponse.get(
+          'facet_counts.facet_pivot.property,year'
+        );
 
         const yearMap = new Map();
         // grab only the 2 property types we want (refereed and non-refereed)
@@ -56,9 +57,10 @@ define([
           }
         });
 
+        // get the year range (min and max) so we can fill in gaps
         const years = Array.from(yearMap.keys());
-        const min = years[0];
-        const max = years[years.length - 1];
+        const min = Math.min(...years);
+        const max = Math.max(...years);
 
         // fill in all the years between min and max that don't have values
         const finalData = Array.from(
@@ -91,9 +93,7 @@ define([
       graphView: HIndexGraph,
       facetField: 'citation_count',
       defaultQueryArguments: {
-        'facet.pivot': 'property,citation_count',
-        facet: 'true',
-        'facet.limit': '-1',
+        'json.facet': `{"citation_count":{"type":"terms","field":"citation_count","sort":{"index":"desc"},"limit":2000}}`,
         stats: 'true',
         'stats.field': 'citation_count',
       },
@@ -106,65 +106,46 @@ define([
       processResponse: function(apiResponse) {
         this.setCurrentQuery(apiResponse.getApiQuery());
 
-        var data = apiResponse.get(
-          'facet_counts.facet_pivot.property,citation_count'
-        );
-
-        if (apiResponse.get('response.numFound') < 2) {
+        const noData = () => {
           this.model.set({ graphData: [] });
-          return;
+          // update widget state
+          this.updateState(this.STATES.IDLE);
+        };
+
+        // check if we have enough data
+        if (apiResponse.get('response.numFound') <= 1) {
+          return noData();
         }
 
-        var refData = _.findWhere(data, { value: 'refereed' });
-        if (refData) {
-          refData = refData.pivot;
-        }
+        const counts = apiResponse.get('facets.citation_count.buckets');
 
-        var nonRefData = _.findWhere(data, { value: 'notrefereed' });
+        let finalData = [];
+        const MAX_RECORDS = 2000;
+        let numRecords = 0;
+        for (
+          let i = 0;
+          // break out early when we hit MAX_RECORDS
+          i < counts.length && numRecords < MAX_RECORDS;
+          i += 1
+        ) {
+          const { val, count } = counts[i];
+          numRecords += count;
+          const record = { x: i, y: val };
 
-        if (nonRefData) {
-          nonRefData = nonRefData.pivot;
-        }
-
-        var finalData = [];
-
-        _.each(refData, function(d) {
-          var val = d.value;
-          var count = d.count;
-          _.each(_.range(count), function() {
-            finalData.push({ refereed: true, x: undefined, y: val });
-          });
-        });
-
-        _.each(nonRefData, function(d) {
-          var val = d.value;
-          var count = d.count;
-          _.each(_.range(count), function() {
-            finalData.push({ refereed: false, x: undefined, y: val });
-          });
-        });
-
-        if (finalData.length < 2) {
-          this.model.set({ graphData: [] });
-          return;
-        }
-
-        finalData = finalData.sort(function(a, b) {
-          return b.y - a.y;
-        });
-
-        // a cut off of 2000
-        finalData = _.first(finalData, 2000);
-        finalData = _.map(finalData, function(d, i) {
-          d.x = i + 1;
-          return d;
-        });
-
-        var statsCount;
-        if (apiResponse.toJSON().stats) {
-          statsCount = FormatMixin.formatNum(
-            apiResponse.get('stats.stats_fields.citation_count.sum')
+          // create duplicate entries to pad out the array
+          finalData = finalData.concat(
+            Array.from({ length: count }, () => record)
           );
+        }
+
+        const statsCount = apiResponse.toJSON().stats
+          ? FormatMixin.formatNum(
+              apiResponse.get('stats.stats_fields.citation_count.sum')
+            )
+          : 0;
+
+        if (finalData.length <= 1) {
+          return noData();
         }
 
         this.model.set({
@@ -179,9 +160,7 @@ define([
       graphView: HIndexGraph,
       facetField: 'read_count',
       defaultQueryArguments: {
-        'facet.pivot': 'property,read_count',
-        facet: 'true',
-        'facet.limit': '-1',
+        'json.facet': `{"read_count":{"type":"terms","field":"read_count","sort":{"index":"desc"},"limit":2000}}`,
         stats: 'true',
         'stats.field': 'read_count',
       },
@@ -194,67 +173,46 @@ define([
       processResponse: function(apiResponse) {
         this.setCurrentQuery(apiResponse.getApiQuery());
 
-        var data = apiResponse.get(
-          'facet_counts.facet_pivot.property,read_count'
-        );
-
-        if (apiResponse.get('response.numFound') < 2) {
+        const noData = () => {
           this.model.set({ graphData: [] });
-          return;
+          // update widget state
+          this.updateState(this.STATES.IDLE);
+        };
+
+        // check if we have enough data
+        if (apiResponse.get('response.numFound') <= 1) {
+          return noData();
         }
 
-        var refData = _.findWhere(data, { value: 'refereed' });
+        const counts = apiResponse.get('facets.read_count.buckets');
 
-        if (refData) {
-          refData = refData.pivot;
-        }
+        let finalData = [];
+        const MAX_RECORDS = 2000;
+        let numRecords = 0;
+        for (
+          let i = 0;
+          // break out early when we hit MAX_RECORDS
+          i < counts.length && numRecords < MAX_RECORDS;
+          i += 1
+        ) {
+          const { val, count } = counts[i];
+          numRecords += count;
+          const record = { x: i, y: val };
 
-        var nonRefData = _.findWhere(data, { value: 'notrefereed' });
-
-        if (nonRefData) {
-          nonRefData = nonRefData.pivot;
-        }
-
-        var finalData = [];
-
-        _.each(refData, function(d) {
-          var val = d.value;
-          var count = d.count;
-          _.each(_.range(count), function() {
-            finalData.push({ refereed: true, x: undefined, y: val });
-          });
-        });
-
-        _.each(nonRefData, function(d) {
-          var val = d.value;
-          var count = d.count;
-          _.each(_.range(count), function() {
-            finalData.push({ refereed: false, x: undefined, y: val });
-          });
-        });
-
-        if (finalData.length < 2) {
-          this.model.set({ graphData: [] });
-          return;
-        }
-
-        finalData = finalData.sort(function(a, b) {
-          return b.y - a.y;
-        });
-
-        // a cut off of 2000
-        finalData = _.first(finalData, 2000);
-
-        finalData = _.map(finalData, function(d, i) {
-          d.x = i + 1;
-          return d;
-        });
-
-        var statsCount;
-        if (apiResponse.toJSON().stats) {
-          var statsCount = FormatMixin.formatNum(
-            apiResponse.get('stats.stats_fields.read_count.sum')
+          // create duplicate entries to pad out the array
+          finalData = finalData.concat(
+            Array.from({ length: count }, () => record)
           );
+        }
+
+        const statsCount = apiResponse.toJSON().stats
+          ? FormatMixin.formatNum(
+              apiResponse.get('stats.stats_fields.read_count.sum')
+            )
+          : 0;
+
+        if (finalData.length <= 1) {
+          return noData();
         }
 
         this.model.set({
