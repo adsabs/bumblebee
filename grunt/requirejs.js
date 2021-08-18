@@ -56,7 +56,11 @@
         "react-data-table-component": "empty:",
         "react-window": "empty:",
         "react-async": "empty:",
-        "diff": "empty:"
+        "diff": "empty:",
+        "hotkeys": "empty:",
+        "react-transition-group": "empty:",
+        "regenerator-runtime": "empty:",
+        "@hookform/resolvers": "empty:"
       },
       "stubModules": [
         "es6",
@@ -75,6 +79,7 @@
         "js/widgets/paper_search_form/topterms",
         "js/widgets/paper_search_form/widget",
         "js/widgets/search_bar/autocomplete",
+        "js/widgets/search_bar/quick-field-desc",
         "js/widgets/search_bar/search_bar_widget",
         "js/widgets/facet/actions",
         "js/widgets/facet/create_store",
@@ -154,7 +159,11 @@
         "react-data-table-component": "empty:",
         "react-window": "empty:",
         "react-async": "empty:",
-        "diff": "empty:"
+        "diff": "empty:",
+        "hotkeys": "empty:",
+        "react-transition-group": "empty:",
+        "regenerator-runtime": "empty:",
+        "@hookform/resolvers": "empty:"
       },
       "stubModules": [
         "es6",
@@ -186,6 +195,7 @@
         "js/widgets/list_of_things/paginated_view",
         "js/widgets/list_of_things/widget",
         "js/widgets/search_bar/autocomplete",
+        "js/widgets/search_bar/quick-field-desc",
         "js/widgets/search_bar/search_bar_widget",
         "js/widgets/facet/actions",
         "js/widgets/facet/create_store",
@@ -279,7 +289,11 @@
         "react-data-table-component": "empty:",
         "react-window": "empty:",
         "react-async": "empty:",
-        "diff": "empty:"
+        "diff": "empty:",
+        "hotkeys": "empty:",
+        "react-transition-group": "empty:",
+        "regenerator-runtime": "empty:",
+        "@hookform/resolvers": "empty:"
       },
       "stubModules": [
         "es6",
@@ -311,6 +325,7 @@
         "js/widgets/list_of_things/paginated_view",
         "js/widgets/list_of_things/widget",
         "js/widgets/search_bar/autocomplete",
+        "js/widgets/search_bar/quick-field-desc",
         "js/widgets/search_bar/search_bar_widget",
         "js/widgets/facet/actions",
         "js/widgets/facet/create_store",
@@ -402,7 +417,11 @@
         "react-data-table-component": "empty:",
         "react-window": "empty:",
         "react-async": "empty:",
-        "diff": "empty:"
+        "diff": "empty:",
+        "hotkeys": "empty:",
+        "react-transition-group": "empty:",
+        "regenerator-runtime": "empty:",
+        "@hookform/resolvers": "empty:"
       },
       "stubModules": [
         "es6",
@@ -508,7 +527,10 @@
         "hbs/json2",
         "hbs/underscore",
         "array-flat-polyfill",
-        "regenerator-runtime"
+        "regenerator-runtime",
+        "hotkeys",
+        "react-transition-group",
+        "@hookform/resolvers"
       ]
     }
   }

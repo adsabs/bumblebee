@@ -1,176 +1,3 @@
-window.requirejsPaths = {
-  // bumblebee components (here we'll lists simple names), paths are relative
-  // to the config (the module that bootstraps our application; look at the html)
-  // as a convention, all modules should be loaded using 'symbolic' names
-
-  // **********************
-  // *** internal paths ***
-  // **********************
-  router: 'js/apps/discovery/router',
-  analytics: 'js/components/analytics',
-  utils: 'js/utils',
-  darkMode: 'js/dark-mode-switch',
-  recaptcha: 'js/plugins/recaptcha',
-  reactify: 'js/plugins/reactify',
-  es6: 'js/plugins/es6',
-  suit: 'shared/dist/index.umd.development',
-  // **********************
-
-  // *************************************
-  // *** development-only dependencies ***
-  // *************************************
-  babel: 'libs/babel',
-  async: 'libs/requirejs-plugins/async',
-  hbs: 'libs/requirejs-plugins/hbs',
-  sprintf: 'libs/sprintf',
-  sinon: 'libs/sinon',
-  enzyme: 'libs/enzyme',
-  mocha: 'libs/mocha',
-  chai: 'libs/chai',
-  // *************************************
-
-  // *******************************
-  // *** production dependencies ***
-  // *******************************
-  underscore: [
-    'https://unpkg.com/lodash@2.4.2/dist/lodash.compat.min',
-    'libs/lodash',
-  ],
-  backbone: ['https://unpkg.com/backbone@1.1.2/backbone-min', 'libs/backbone'],
-  'backbone-validation': [
-    'https://unpkg.com/backbone-validation@0.11.3/dist/backbone-validation-amd-min',
-    'libs/backbone-validation',
-  ],
-  'backbone.stickit': [
-    'https://unpkg.com/backbone.stickit@0.9.2/backbone.stickit',
-    'libs/backbone.stickit',
-  ],
-  'backbone.wreqr': [
-    'https://unpkg.com/backbone.wreqr@1.4.0/lib/backbone.wreqr.min',
-    'libs/backbone.wreqr',
-  ],
-  bootstrap: [
-    'https://unpkg.com/bootstrap@3.3.7/dist/js/bootstrap.min',
-    'libs/bootstrap/bootstrap',
-  ],
-  bowser: ['https://unpkg.com/bowser@2.11.0/es5', 'libs/bowser'],
-  clipboard: [
-    'https://unpkg.com/clipboard@1.7.1/dist/clipboard.min',
-    'libs/clipboard',
-  ],
-  d3: ['https://unpkg.com/d3@3.5.17/d3.min', 'libs/d3'],
-  'd3-cloud': [
-    'https://unpkg.com/d3-cloud@1.2.5/build/d3.layout.cloud',
-    'libs/d3-cloud',
-  ],
-  filesaver: [
-    'https://unpkg.com/file-saver@1.3.8/FileSaver.min',
-    'libs/file-saver',
-  ],
-  hotkeys: [
-    'https://unpkg.com/hotkeys-js@3.8.7/dist/hotkeys.min',
-    'libs/hotkeys',
-  ],
-  jquery: ['https://unpkg.com/jquery@2.2.4/dist/jquery.min', 'libs/jquery'],
-  'jquery-ui': [
-    'https://code.jquery.com/ui/1.12.1/jquery-ui.min',
-    'libs/jquery-ui',
-  ],
-  jsonpath: ['https://unpkg.com/jsonpath@0.2.12/jsonpath.min', 'libs/jsonpath'],
-  marionette: [
-    'https://unpkg.com/backbone.marionette@2.4.5/lib/backbone.marionette.min',
-    'libs/backbone.marionette',
-  ],
-  mathjax: [
-    'https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.4/MathJax.js?config=TeX-AMS_HTML&amp;delayStartupUntil=configured',
-    'libs/mathjax/mathjax',
-  ],
-  moment: ['https://unpkg.com/moment@2.22.2/min/moment.min', 'libs/moment'],
-  'persist-js': [
-    'https://unpkg.com/persist-js@0.3.1/persist-min',
-    'libs/persist-js',
-  ],
-  react: ['https://unpkg.com/react@16/umd/react.development', 'libs/react'],
-  'react-bootstrap': [
-    'https://unpkg.com/react-bootstrap@1.6.1/dist/react-bootstrap.min',
-    'libs/react-bootstrap',
-  ],
-  'react-dom': [
-    'https://unpkg.com/react-dom@17.0.2/umd/react-dom.production.min',
-    'libs/react-dom',
-  ],
-  'prop-types': [
-    'https://unpkg.com/prop-types@15.6/prop-types.min',
-    'libs/prop-types',
-  ],
-  'react-redux': [
-    'https://unpkg.com/react-redux@7.2.4/dist/react-redux.min',
-    'libs/react-redux',
-  ],
-  'react-transition-group': [
-    'https://unpkg.com/react-transition-group@2.4.0/dist/react-transition-group.min',
-    'libs/react-transition-group',
-  ],
-  redux: ['https://unpkg.com/redux@4.0.5/dist/redux.min', 'libs/redux'],
-  'redux-thunk': [
-    'https://unpkg.com/redux-thunk@2.3.0/dist/redux-thunk.min',
-    'libs/redux-thunk',
-  ],
-  select2: [
-    'https://unpkg.com/select2@4.0.3/dist/js/select2.min',
-    'libs/select2/select2',
-  ],
-  'react-hook-form': [
-    'https://unpkg.com/react-hook-form@6.11.0/dist/index.umd.production.min',
-    'libs/react-hook-form',
-  ],
-  'react-is': [
-    'https://unpkg.com/react-is@17.0.2/umd/react-is.production.min',
-    'libs/react-is',
-  ],
-  'react-data-table-component': [
-    'https://unpkg.com/react-data-table-component@6.11.7/dist/react-data-table-component.umd',
-    'libs/react-data-table-component',
-  ],
-  'react-window': [
-    'https://unpkg.com/react-window@1.8.6/dist/index-prod.umd',
-    'libs/react-window',
-  ],
-  'react-async': [
-    'https://unpkg.com/react-async@10.0.1/dist-umd/index',
-    'libs/react-async',
-  ],
-  'regenerator-runtime': [
-    'https://unpkg.com/regenerator-runtime@0.13.9/runtime',
-    'libs/regenerator-runtime',
-  ],
-  diff: ['https://unpkg.com/diff@4.0.2/dist/diff.min', 'libs/diff'],
-  'styled-components': [
-    'https://unpkg.com/styled-components@5.1.0/dist/styled-components.min',
-    'libs/styled-components',
-  ],
-  '@hookform/resolvers': [
-    'https://unpkg.com/@hookform/resolvers@0.1.0/dist/index.umd.production.min',
-    'libs/hookform',
-  ],
-  'google-analytics': [
-    // to activate local tunnel (for us to collect all analytics data)
-    // uncomment this; k12 should have ingress-nginx-proxy image deployed
-    // that can proxy requests to /analytics
-    // '/analytics/analytics'
-    'libs/g',
-    'data:application/javascript,',
-  ],
-
-  // require special handling, fetched via `grunt curl` task
-  yup: 'libs/yup',
-  cache: 'libs/cache',
-  polyfill: 'libs/polyfill',
-  'react-flexview': 'libs/react-flexview',
-  'array-flat-polyfill': 'libs/array-flat-polyfill',
-  // *******************************
-};
-
 // Main config file for the Discovery application
 require.config({
   // Initialize the application with the main application file or if we run
@@ -338,23 +165,184 @@ require.config({
     },
   },
 
-  paths: Object.keys(window.requirejsPaths).reduce((obj, k) => {
-    const v = window.requirejsPaths[k];
+  paths: {
+    // bumblebee components (here we'll lists simple names), paths are relative
+    // to the config (the module that bootstraps our application; look at the html)
+    // as a convention, all modules should be loaded using 'symbolic' names
 
-    // simple check to remove cdns during development
-    if (
-      Array.isArray(v) &&
-      k !== 'google-analytics' &&
-      ['localhost', '127.0.0.0', ''].includes(window.location.hostname)
-    ) {
-      return {
-        ...obj,
-        [k]: v[1],
-      };
-    }
+    // **********************
+    // *** internal paths ***
+    // **********************
+    router: 'js/apps/discovery/router',
+    analytics: 'js/components/analytics',
+    utils: 'js/utils',
+    darkMode: 'js/dark-mode-switch',
+    recaptcha: 'js/plugins/recaptcha',
+    reactify: 'js/plugins/reactify',
+    es6: 'js/plugins/es6',
+    suit: 'shared/dist/index.umd.development',
+    // **********************
 
-    return { ...obj, [k]: v };
-  }, {}),
+    // *************************************
+    // *** development-only dependencies ***
+    // *************************************
+    babel: 'libs/babel',
+    async: 'libs/requirejs-plugins/async',
+    hbs: 'libs/requirejs-plugins/hbs',
+    sprintf: 'libs/sprintf',
+    sinon: 'libs/sinon',
+    enzyme: 'libs/enzyme',
+    mocha: 'libs/mocha',
+    chai: 'libs/chai',
+    // *************************************
+
+    // *******************************
+    // *** production dependencies ***
+    // *******************************
+    underscore: [
+      'https://unpkg.com/lodash@2.4.2/dist/lodash.compat.min',
+      'libs/lodash',
+    ],
+    backbone: [
+      'https://unpkg.com/backbone@1.1.2/backbone-min',
+      'libs/backbone',
+    ],
+    'backbone-validation': [
+      'https://unpkg.com/backbone-validation@0.11.3/dist/backbone-validation-amd-min',
+      'libs/backbone-validation',
+    ],
+    'backbone.stickit': [
+      'https://unpkg.com/backbone.stickit@0.9.2/backbone.stickit',
+      'libs/backbone.stickit',
+    ],
+    'backbone.wreqr': [
+      'https://unpkg.com/backbone.wreqr@1.4.0/lib/backbone.wreqr.min',
+      'libs/backbone.wreqr',
+    ],
+    bootstrap: [
+      'https://unpkg.com/bootstrap@3.3.7/dist/js/bootstrap.min',
+      'libs/bootstrap/bootstrap',
+    ],
+    bowser: ['https://unpkg.com/bowser@2.11.0/es5', 'libs/bowser'],
+    clipboard: [
+      'https://unpkg.com/clipboard@1.7.1/dist/clipboard.min',
+      'libs/clipboard',
+    ],
+    d3: ['https://unpkg.com/d3@3.5.17/d3.min', 'libs/d3'],
+    'd3-cloud': [
+      'https://unpkg.com/d3-cloud@1.2.5/build/d3.layout.cloud',
+      'libs/d3-cloud',
+    ],
+    filesaver: [
+      'https://unpkg.com/file-saver@1.3.8/FileSaver.min',
+      'libs/file-saver',
+    ],
+    hotkeys: [
+      'https://unpkg.com/hotkeys-js@3.8.7/dist/hotkeys.min',
+      'libs/hotkeys',
+    ],
+    jquery: ['https://unpkg.com/jquery@2.2.4/dist/jquery.min', 'libs/jquery'],
+    'jquery-ui': [
+      'https://code.jquery.com/ui/1.12.1/jquery-ui.min',
+      'libs/jquery-ui',
+    ],
+    jsonpath: [
+      'https://unpkg.com/jsonpath@0.2.12/jsonpath.min',
+      'libs/jsonpath',
+    ],
+    marionette: [
+      'https://unpkg.com/backbone.marionette@2.4.5/lib/backbone.marionette.min',
+      'libs/backbone.marionette',
+    ],
+    mathjax: [
+      'https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.4/MathJax.js?config=TeX-AMS_HTML&amp;delayStartupUntil=configured',
+      'libs/mathjax/mathjax',
+    ],
+    moment: ['https://unpkg.com/moment@2.22.2/min/moment.min', 'libs/moment'],
+    'persist-js': [
+      'https://unpkg.com/persist-js@0.3.1/persist-min',
+      'libs/persist-js',
+    ],
+    react: ['https://unpkg.com/react@16/umd/react.development', 'libs/react'],
+    'react-bootstrap': [
+      'https://unpkg.com/react-bootstrap@1.6.1/dist/react-bootstrap.min',
+      'libs/react-bootstrap',
+    ],
+    'react-dom': [
+      'https://unpkg.com/react-dom@17.0.2/umd/react-dom.production.min',
+      'libs/react-dom',
+    ],
+    'prop-types': [
+      'https://unpkg.com/prop-types@15.6/prop-types.min',
+      'libs/prop-types',
+    ],
+    'react-redux': [
+      'https://unpkg.com/react-redux@7.2.4/dist/react-redux.min',
+      'libs/react-redux',
+    ],
+    'react-transition-group': [
+      'https://unpkg.com/react-transition-group@2.4.0/dist/react-transition-group.min',
+      'libs/react-transition-group',
+    ],
+    redux: ['https://unpkg.com/redux@4.0.5/dist/redux.min', 'libs/redux'],
+    'redux-thunk': [
+      'https://unpkg.com/redux-thunk@2.3.0/dist/redux-thunk.min',
+      'libs/redux-thunk',
+    ],
+    select2: [
+      'https://unpkg.com/select2@4.0.3/dist/js/select2.min',
+      'libs/select2/select2',
+    ],
+    'react-hook-form': [
+      'https://unpkg.com/react-hook-form@6.11.0/dist/index.umd.production.min',
+      'libs/react-hook-form',
+    ],
+    'react-is': [
+      'https://unpkg.com/react-is@17.0.2/umd/react-is.production.min',
+      'libs/react-is',
+    ],
+    'react-data-table-component': [
+      'https://unpkg.com/react-data-table-component@6.11.7/dist/react-data-table-component.umd',
+      'libs/react-data-table-component',
+    ],
+    'react-window': [
+      'https://unpkg.com/react-window@1.8.6/dist/index-prod.umd',
+      'libs/react-window',
+    ],
+    'react-async': [
+      'https://unpkg.com/react-async@10.0.1/dist-umd/index',
+      'libs/react-async',
+    ],
+    'regenerator-runtime': [
+      'https://unpkg.com/regenerator-runtime@0.13.9/runtime',
+      'libs/regenerator-runtime',
+    ],
+    diff: ['https://unpkg.com/diff@4.0.2/dist/diff.min', 'libs/diff'],
+    'styled-components': [
+      'https://unpkg.com/styled-components@5.1.0/dist/styled-components.min',
+      'libs/styled-components',
+    ],
+    '@hookform/resolvers': [
+      'https://unpkg.com/@hookform/resolvers@0.1.0/dist/index.umd.production.min',
+      'libs/hookform',
+    ],
+    'google-analytics': [
+      // to activate local tunnel (for us to collect all analytics data)
+      // uncomment this; k12 should have ingress-nginx-proxy image deployed
+      // that can proxy requests to /analytics
+      // '/analytics/analytics'
+      'libs/g',
+      'data:application/javascript,',
+    ],
+
+    // require special handling, fetched via `grunt curl` task
+    yup: 'libs/yup',
+    cache: 'libs/cache',
+    polyfill: 'libs/polyfill',
+    'react-flexview': 'libs/react-flexview',
+    'array-flat-polyfill': 'libs/array-flat-polyfill',
+    // *******************************
+  },
 
   hbs: {
     templateExtension: 'html',

@@ -45,6 +45,10 @@ module.exports = function(grunt) {
     'react-window': 'empty:',
     'react-async': 'empty:',
     diff: 'empty:',
+    hotkeys: 'empty:',
+    'react-transition-group': 'empty:',
+    'regenerator-runtime': 'empty:',
+    '@hookform/resolvers': 'empty:',
   };
 
   var baseConfig = {
@@ -252,6 +256,9 @@ module.exports = function(grunt) {
             'hbs/underscore',
             'array-flat-polyfill',
             'regenerator-runtime',
+            'hotkeys',
+            'react-transition-group',
+            '@hookform/resolvers',
           ],
         });
 
