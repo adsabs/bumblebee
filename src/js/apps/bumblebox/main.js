@@ -21,7 +21,6 @@ define(['module'], function(module) {
     'dynamic_config',
     'underscore',
   ], function(Router, Application, AppBootstrap, DynamicConfig, Es5Shim, _) {
-    debugger;
     Application.prototype.shim();
 
     // load the urls of dynamic config from the script element
@@ -102,7 +101,5 @@ define(['module'], function(module) {
           err
         );
       });
-  }, function() {
-    console.log(arguments);
   });
 });

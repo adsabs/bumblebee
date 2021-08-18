@@ -8,6 +8,7 @@ module.exports = function(grunt) {
   return {
     libs: {
       files: [
+        // requirejs
         {
           src: 'node_modules/requirejs/require.js',
           dest: 'src/libs/require.js',
@@ -23,12 +24,6 @@ module.exports = function(grunt) {
         {
           src: 'node_modules/react-bootstrap/dist/react-bootstrap.min.js',
           dest: 'src/libs/react-bootstrap.js',
-        },
-
-        // recoil
-        {
-          src: 'node_modules/recoil/umd/recoil.min.js',
-          dest: 'src/libs/recoil.js',
         },
 
         // @hookform/resolvers

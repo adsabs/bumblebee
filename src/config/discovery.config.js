@@ -265,7 +265,7 @@ require.config({
     ],
     react: ['https://unpkg.com/react@16/umd/react.development', 'libs/react'],
     'react-bootstrap': [
-      'https://unpkg.com/react-bootstrap@1.6.1/dist/react-bootstrap.min',
+      'https://unpkg.com/react-bootstrap@0.33.0/dist/react-bootstrap.min',
       'libs/react-bootstrap',
     ],
     'react-dom': [
