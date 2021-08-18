@@ -32,7 +32,6 @@ module.exports = function(grunt) {
     requirejs: 'empty:',
     reselect: 'empty:',
     select2: 'empty:',
-    sinon: 'empty:',
     sprintf: 'empty:',
     underscore: 'empty:',
     'discovery.vars': 'empty:',

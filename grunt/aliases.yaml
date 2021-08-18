@@ -7,54 +7,6 @@ default: setup
 server: server:dev
 server:once: server:dev:once
 
-server:dev:
-  description: 'local persisting server pointing to src/ and development api'
-  tasks:
-    - env:dev
-    - express:server
-
-server:dev:once:
-  description: 'local run-once server pointing to /src and development api'
-  tasks:
-    - env:dev
-    - express:once
-
-server:prod:
-  description: 'local persisting server pointing to /src and production api'
-  tasks:
-    - env:prod
-    - express:server
-
-server:prod:once:
-  description: 'local run-once server pointing to /src and production api'
-  tasks:
-    - env:prod
-    - express:once
-
-server:release:dev:
-  description: 'local persisting server pointing to /dist and development api'
-  tasks:
-    - env:release-dev
-    - express:server
-
-server:release:dev:once:
-  description: 'local run-once server pointing to /dist and development api'
-  tasks:
-    - env:release-dev
-    - express:once
-
-server:release:prod:
-  description: 'local persisting server pointing to /dist and production api'
-  tasks:
-    - env:release-prod
-    - express:server
-
-server:release:prod:once:
-  description: 'local run-once server pointing to /dist and production api'
-  tasks:
-    - env:release-prod
-    - express:once
-
 # 3rd Party Assets
 assets:
   - clean:libs
@@ -62,6 +14,7 @@ assets:
   - copy:libs
   - string-replace:mathjax
   - exec:suit_build
+  - css
 
 # CSS Processing
 css:
@@ -74,7 +27,6 @@ setup:
   - exec:submodule_init
   - assets
   - copy:discovery_vars
-  - sass
 
 test:prod:
   - clean:temp

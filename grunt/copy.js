@@ -306,6 +306,26 @@ module.exports = function(grunt) {
           src: 'node_modules/react-redux/dist/react-redux.min.js',
           dest: 'src/libs/react-redux.js',
         },
+
+        // mocha
+        {
+          cwd: 'node_modules/mocha',
+          src: ['mocha.js', 'mocha.css'],
+          dest: 'src/libs/mocha/',
+          expand: true,
+        },
+
+        // sinon
+        {
+          src: 'node_modules/sinon/pkg/sinon.js',
+          dest: 'src/libs/sinon.js',
+        },
+
+        // chai
+        {
+          src: 'node_modules/chai/chai.js',
+          dest: 'src/libs/chai.js',
+        },
       ],
     },
 

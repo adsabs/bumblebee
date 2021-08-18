@@ -75,8 +75,8 @@ module.exports = function(grunt) {
           paths: {
             'common.config': '../config/common.config',
             mocha: 'libs/mocha/mocha',
-            chai: 'libs/chai/chai',
-            sinon: 'libs/sinon/index',
+            chai: 'libs/chai',
+            sinon: 'libs/sinon',
           },
         }, ['mocha', 'chai', 'sinon'], function(mocha, chai) {
           // expose chai globals

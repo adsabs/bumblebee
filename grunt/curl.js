@@ -21,11 +21,6 @@ module.exports = {
       'https://raw.githubusercontent.com/thostetler/enzyme/7c39296c83ed3a8fc09907c9d013aee8d91bde5e/enzyme.2.7.1.js',
     dest: 'src/libs/enzyme.js',
   },
-  // 'react-transition-group': {
-  //   src:
-  //     'https://raw.githubusercontent.com/thostetler/react-transition-group/master/react-transition-group.min.js',
-  //   dest: 'src/libs/react-transition-group/index.js',
-  // },
   yup: {
     src:
       'https://raw.githubusercontent.com/thostetler/yup/master/build/index.umd.js',
@@ -44,18 +39,6 @@ module.exports = {
   polyfill: {
     src: 'https://polyfill.io/v3/polyfill.min.js?features=IntersectionObserver',
     dest: 'src/libs/polyfill.js',
-  },
-  mocha: {
-    src: 'https://cdnjs.cloudflare.com/ajax/libs/mocha/2.1.0/mocha.min.js',
-    dest: 'src/libs/mocha.js',
-  },
-  chai: {
-    src: 'https://cdnjs.cloudflare.com/ajax/libs/chai/1.8.0/chai.min.js',
-    dest: 'src/libs/chai.js',
-  },
-  sinon: {
-    src: 'https://cdnjs.cloudflare.com/ajax/libs/sinon.js/1.9.0/sinon.min.js',
-    dest: 'src/libs/sinon.js',
   },
   jqueryui: {
     src: 'https://code.jquery.com/ui/1.12.1/jquery-ui.min.js',

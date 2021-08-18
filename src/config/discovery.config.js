@@ -192,7 +192,7 @@ require.config({
     sprintf: 'libs/sprintf',
     sinon: 'libs/sinon',
     enzyme: 'libs/enzyme',
-    mocha: 'libs/mocha',
+    mocha: 'libs/mocha/mocha',
     chai: 'libs/chai',
     // *************************************
 
@@ -369,6 +369,7 @@ require.config({
     },
     backbone: {
       deps: ['jquery', 'underscore'],
+      exports: 'Backbone',
     },
 
     marionette: {
@@ -382,6 +383,10 @@ require.config({
 
     mocha: {
       exports: 'mocha',
+    },
+
+    sinon: {
+      exports: 'sinon',
     },
 
     filesaver: {

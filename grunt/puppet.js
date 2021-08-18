@@ -150,13 +150,19 @@ module.exports = function(grunt) {
         // gather everything, load up tests and run mocha
         const result = await page.evaluate(
           (specs, config) => {
-            return new Promise((resolve) => {
+            return new Promise((resolve, reject) => {
               // using the coverage mappings generated earlier, configure requirejs
               // to point to those instead
               require(config, specs, () => {
-                const runner = mocha.run();
-                new Mocha.reporters.Spec(runner);
-                runner.on('end', () => resolve(runner.stats.failures === 0));
+                try {
+                  const runner = mocha.run();
+                  new Mocha.reporters.Spec(runner);
+                  runner.on('end', () => resolve(runner.stats.failures === 0));
+                } catch (e) {
+                  reject(e);
+                }
+              }, (err) => {
+                reject(err);
               });
             });
           },
