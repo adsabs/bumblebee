@@ -4,8 +4,8 @@
 default: setup
 
 # Local Server
-server: server:dev
-server:once: server:dev:once
+server: express:server
+server:once: express:once
 
 # 3rd Party Assets
 assets:

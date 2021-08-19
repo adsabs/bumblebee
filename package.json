@@ -3,13 +3,19 @@
   "version": "1.0.0",
   "description": "Modern interface for http://ui.adslabs.org",
   "homepage": "https://github.com/adsabs/bumblebee",
+  "bugs": {
+    "url": "https://github.com/adsabs/bumblebee/issues"
+  },
   "repository": {
     "type": "git",
     "url": "git://github.com/adsabs/bumblebee.git"
   },
-  "bugs": {
-    "url": "https://github.com/adsabs/bumblebee/issues"
+  "scripts": {
+    "test": "grunt test coverage"
   },
+  "browserslist": [
+    "cover 99% in my stats"
+  ],
   "dependencies": {
     "@hookform/resolvers": "^0.1.0",
     "array-flat-polyfill": "^1.0.1",
@@ -28,6 +34,7 @@
     "font-awesome": "^4.7.0",
     "hotkeys-js": "^3.7.3",
     "jquery": "^2.2.4",
+    "jsonpath": "^0.2.12",
     "lodash": "^2.4.2",
     "mathjax": "^2.7.4",
     "moment": "^2.22.2",
@@ -43,22 +50,18 @@
     "react-is": "^16.13.1",
     "react-redux": "^7.2.0",
     "react-transition-group": "^2.4.0",
-    "redux": "^3.7.2",
     "react-window": "^1.8.5",
+    "redux": "^3.7.2",
+    "redux-thunk": "^2.3.0",
     "regenerator-runtime": "^0.13.9",
     "requirejs": "^2.1.8",
-    "redux-thunk": "^2.3.0",
     "select2": "^4.0.3",
-    "jsonpath": "^0.2.12",
     "sprintf-js": "^1.1.2",
     "styled-components": "^5.1.0"
   },
   "devDependencies": {
-    "require-handlebars-plugin": "^2.0.0-beta.0",
-    "lint-staged": "^10.0.7",
     "@babel/core": "^7.2.2",
     "@babel/preset-env": "^7.4.3",
-    "node-sass": "^4.13.0",
     "@babel/preset-react": "^7.14.5",
     "@babel/standalone": "^7.15.3",
     "async": "^2.5.0",
@@ -81,36 +84,31 @@
     "grunt": "~0.4.5",
     "grunt-autoprefixer": "~0.2.20130806",
     "grunt-babel": "^8.0.0",
-    "grunt-bbb-requirejs": "0.1.0-alpha.8",
-    "grunt-build-control": "^0.7.1",
     "grunt-concurrent": "^0.5.0",
     "grunt-contrib-clean": "~0.5.0",
-    "grunt-contrib-connect": "~0.6.0",
     "grunt-contrib-copy": "^1.0.0",
     "grunt-contrib-cssmin": "^0.8.0",
     "grunt-contrib-htmlmin": "^3.0.0",
     "grunt-contrib-imagemin": "^3.1.0",
-    "grunt-contrib-jshint": "~0.6.0",
     "grunt-contrib-requirejs": "1.0.0",
     "grunt-contrib-uglify-es": "^3.3.0",
     "grunt-curl": "~2.5.1",
     "grunt-env": "~0.4.1",
     "grunt-exec": "~0.4.5",
-    "grunt-express-server": "~0.4.13",
-    "grunt-hash-required": "^0.1.5",
-    "grunt-include-bootstrap": "~0.1.1",
-    "grunt-processhtml": "~0.2.0",
-    "grunt-purifycss": "^0.1.1",
+    "grunt-express-server": "^0.5.4",
     "grunt-sass": "^1.0.0",
-    "grunt-saucelabs": "~8.6.1",
     "grunt-string-replace": "^1.2.0",
     "http-proxy-middleware": "^0.18.0",
     "husky": "^4.2.1",
     "istanbul": "^0.4.5",
+    "lint-staged": "^10.0.7",
     "load-grunt-config": "^0.19.2",
     "mocha": "^2.1.0",
+    "node-sass": "^4.13.0",
+    "nyc": "^11.9.0",
     "prettier": "^1.19.1",
     "puppeteer": "^8.0.0",
+    "require-handlebars-plugin": "^2.0.0-beta.0",
     "requirejs-async": "^0.1.2",
     "requirejs-babel": "^0.0.9",
     "sinon": "^1.9.0",
@@ -119,10 +117,7 @@
   "peerDependencies": {
     "grunt": "~0.4.5"
   },
-  "scripts": {
-    "test": "grunt test coverage"
-  },
-  "browserslist": [
-    "cover 99% in my stats"
-  ]
+  "volta": {
+    "node": "11.15.0"
+  }
 }

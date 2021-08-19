@@ -1,4 +1,3 @@
-'use strict';
 /**
  * Options for the `exec` grunt task
  *
@@ -20,7 +19,10 @@ module.exports = {
     cmd: 'git describe --tags --abbrev=0 > .tag',
   },
   'nyc-instrument': {
-    cmd: 'npx -y nyc instrument dist/js/ test/coverage/instrument',
+    cmd: 'node_modules/.bin/nyc instrument dist/js test/coverage/instrument',
+    options: {
+      timeout: 10000,
+    },
   },
   server: 'node server',
   suit_build: {
