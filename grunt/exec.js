@@ -20,7 +20,7 @@ module.exports = {
     cmd: 'git describe --tags --abbrev=0 > .tag',
   },
   'nyc-instrument': {
-    cmd: 'node_modules/.bin/nyc instrument dist/js/ test/coverage/instrument',
+    cmd: 'npx -y nyc instrument dist/js/ test/coverage/instrument',
   },
   server: 'node server',
   suit_build: {
