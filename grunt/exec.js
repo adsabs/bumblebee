@@ -32,4 +32,8 @@ module.exports = {
   submodule_init: {
     cmd: 'git submodule update --init',
   },
+  sass: {
+    cmd:
+      './node_modules/.bin/sass --no-source-map src/styles/sass/manifest.scss src/styles/css/styles.css',
+  },
 };

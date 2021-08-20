@@ -54,7 +54,7 @@
     "redux": "^3.7.2",
     "redux-thunk": "^2.3.0",
     "regenerator-runtime": "^0.13.9",
-    "requirejs": "^2.1.8",
+    "requirejs": "^2.3.6",
     "select2": "^4.0.3",
     "sprintf-js": "^1.1.2",
     "styled-components": "^5.1.0"
@@ -96,7 +96,6 @@
     "grunt-env": "~0.4.1",
     "grunt-exec": "~0.4.5",
     "grunt-express-server": "^0.5.4",
-    "grunt-sass": "^1.0.0",
     "grunt-string-replace": "^1.2.0",
     "http-proxy-middleware": "^0.18.0",
     "husky": "^4.2.1",
@@ -104,13 +103,13 @@
     "lint-staged": "^10.0.7",
     "load-grunt-config": "^0.19.2",
     "mocha": "^2.1.0",
-    "node-sass": "^4.13.0",
     "nyc": "^11.9.0",
     "prettier": "^1.19.1",
     "puppeteer": "^8.0.0",
     "require-handlebars-plugin": "^2.0.0-beta.0",
     "requirejs-async": "^0.1.2",
     "requirejs-babel": "^0.0.9",
+    "sass": "^1.38.0",
     "sinon": "^1.9.0",
     "time-grunt": "^1.4.0"
   },
@@ -118,6 +117,6 @@
     "grunt": "~0.4.5"
   },
   "volta": {
-    "node": "11.15.0"
+    "node": "11.14.0"
   }
 }

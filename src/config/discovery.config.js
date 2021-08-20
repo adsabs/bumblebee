@@ -421,7 +421,7 @@ require.config({
       exports: 'Persist',
     },
   },
-  onNodeCreated: function(node, config, module) {
+  onNodeCreated: function(node, config, module, path) {
     // SRIs for the CDNs used in the paths above
     const sri = {
       underscore:
@@ -461,7 +461,7 @@ require.config({
       react:
         'sha384-ZHBAhj6mPF2wke1Ie6UN+ozxCHBXIuRrcszqkblgAqCrZtYGI3zZYn4SsU+ozss4',
       'react-bootstrap':
-        'sha384-FQClBnztGYR0yMbovgwZV1LaLZSEZhAFjY3N9cbQsGOVekxg22ssNgRblfAdYXE5',
+        'sha384-9Cmt0BSVYuRFR8JkyWNFQ7b58m8/zLVP3u9etA7xRzOTmv9v6dk0exj5ZVr/US/7',
       'react-dom':
         'sha384-vj2XpC1SOa8PHrb0YlBqKN7CQzJYO72jz4CkDQ+ePL1pwOV4+dn05rPrbLGUuvCv',
       'prop-types':
@@ -499,7 +499,7 @@ require.config({
         'sha384-dt7nA4/ksfhWiEl0OCs7aTXG5NkDyqzERlkfaGZ2kwmEn58sz6Yo9d+mF8XgA+H/',
     };
 
-    if (sri[module]) {
+    if (sri[module] && /^https?/.exec(path)) {
       node.setAttribute('integrity', sri[module]);
       node.setAttribute('crossorigin', 'anonymous');
     }

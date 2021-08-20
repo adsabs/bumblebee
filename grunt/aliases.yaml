@@ -18,7 +18,7 @@ assets:
 
 # CSS Processing
 css:
-  - sass
+  - exec:sass
   - autoprefixer
 
 # Testing
