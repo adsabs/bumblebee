@@ -22,88 +22,67 @@ define([
         name: 'Years',
       },
 
-      processResponse: function(apiResponse) {
+      processResponse(apiResponse) {
         this.setCurrentQuery(apiResponse.getApiQuery());
 
-        var data = apiResponse.get('facet_counts.facet_pivot.property,year');
-
-        if (apiResponse.get('response.numFound') < 2) {
+        const noData = () => {
           this.model.set({ graphData: [] });
+          // update widget state
           this.updateState(this.STATES.IDLE);
-          return;
+        };
+
+        // check if we have enough data
+        if (apiResponse.get('response.numFound') <= 1) {
+          return noData();
         }
 
-        var refData = _.findWhere(data, { value: 'refereed' });
+        const facetData =
+          apiResponse.get('facet_counts.facet_pivot.property,year') || [];
 
-        if (refData) {
-          refData = refData.pivot;
-        }
-
-        var nonRefData = _.findWhere(data, { value: 'notrefereed' });
-
-        if (nonRefData) {
-          nonRefData = nonRefData.pivot;
-        }
-
-        var maxVal;
-        var minVal;
-
-        _.each(refData, function(d) {
-          var val = parseInt(d.value);
-          if (maxVal === undefined) {
-            maxVal = val;
-          } else if (val > maxVal) {
-            maxVal = val;
-          }
-          if (minVal === undefined) {
-            minVal = val;
-          } else if (parseInt(d.value) < minVal) {
-            minVal = parseInt(d.value);
+        const yearMap = new Map();
+        // grab only the 2 property types we want (refereed and non-refereed)
+        facetData.forEach(({ value, pivot }) => {
+          if (['refereed', 'notrefereed'].includes(value)) {
+            // loop through each pivot and add the years to our map
+            pivot.forEach(({ value: yearString, count = 0 }) => {
+              const year = parseInt(yearString, 10);
+              yearMap.set(year, {
+                year,
+                refereed: 0,
+                notrefereed: 0,
+                [value]: count,
+              });
+            });
           }
         });
 
-        _.each(nonRefData, function(d) {
-          var val = parseInt(d.value);
-          if (maxVal === undefined) {
-            maxVal = val;
-          } else if (val > maxVal) {
-            maxVal = val;
+        const years = Array.from(yearMap.keys());
+        const min = years[0];
+        const max = years[years.length - 1];
+
+        // fill in all the years between min and max that don't have values
+        const finalData = Array.from(
+          { length: max - min + 1 },
+          (_v, i) => min + i
+        ).map((year) => {
+          // if the year exists, then grab it, otherwise fill with an empty (x,y)
+          if (yearMap.has(year)) {
+            const { refereed, notrefereed } = yearMap.get(year);
+            return {
+              x: year,
+              y: refereed + notrefereed,
+              refCount: refereed,
+            };
           }
-          if (minVal === undefined) {
-            minVal = val;
-          } else if (parseInt(d.value) < minVal) {
-            minVal = parseInt(d.value);
-          }
+          return { x: year, y: 0, refCount: 0 };
         });
 
-        var yearRange = _.range(minVal, maxVal + 1);
-
-        var finalData = [];
-
-        _.each(yearRange, function(year) {
-          var stringYear = year + '';
-          var refCount = _.filter(refData, function(d) {
-            return d.value === stringYear;
-          })[0];
-          refCount = refCount ? refCount.count : 0;
-          var nonRefCount = _.filter(nonRefData, function(d) {
-            return d.value === stringYear;
-          })[0];
-          nonRefCount = nonRefCount ? nonRefCount.count : 0;
-
-          finalData.push({
-            x: year,
-            y: refCount + nonRefCount,
-            refCount: refCount,
-          });
-        });
-
-        if (finalData.length < 2) {
-          this.model.set({ graphData: [] });
-          this.updateState(this.STATES.IDLE);
-          return;
+        if (finalData.length <= 1) {
+          return noData();
         }
         this.model.set({ graphData: finalData });
+
+        // update widget state
         this.updateState(this.STATES.IDLE);
       },
     });
