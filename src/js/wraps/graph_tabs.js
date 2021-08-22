@@ -4,7 +4,15 @@ define([
   'js/widgets/facet/graph-facet/year_graph',
   'js/widgets/facet/graph-facet/h_index_graph',
   'js/mixins/formatter',
-], function(TabsWidget, FacetFactory, YearGraphView, HIndexGraph, FormatMixin) {
+  'analytics',
+], function(
+  TabsWidget,
+  FacetFactory,
+  YearGraphView,
+  HIndexGraph,
+  FormatMixin,
+  analytics
+) {
   return function() {
     var yearGraphWidget = FacetFactory.makeGraphFacet({
       graphView: YearGraphView,
@@ -235,8 +243,30 @@ define([
           title: 'Citations',
           widget: citationGraphWidget,
           id: 'citations-facet',
+          onActive: () => {
+            analytics(
+              'send',
+              'event',
+              'interaction',
+              'graph-tab-active',
+              'Citations'
+            );
+          },
         },
-        { title: 'Reads', widget: readsGraphWidget, id: 'reads-facet' },
+        {
+          title: 'Reads',
+          widget: readsGraphWidget,
+          id: 'reads-facet',
+          onActive: () => {
+            analytics(
+              'send',
+              'event',
+              'interaction',
+              'graph-tab-active',
+              'Reads'
+            );
+          },
+        },
       ],
     });
     // for tests
