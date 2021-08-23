@@ -127,24 +127,8 @@ define([
 
         const counts = apiResponse.get('facets.citation_count.buckets');
 
-        let finalData = [];
-        const MAX_RECORDS = 2000;
-        let numRecords = 0;
-        for (
-          let i = 0;
-          // break out early when we hit MAX_RECORDS
-          i < counts.length && numRecords < MAX_RECORDS;
-          i += 1
-        ) {
-          const { val, count } = counts[i];
-          numRecords += count;
-          const record = { x: i, y: val };
-
-          // create duplicate entries to pad out the array
-          finalData = finalData.concat(
-            Array.from({ length: count }, () => record)
-          );
-        }
+        // map counts into coordinates for graph
+        const finalData = counts.map(({ val: y }, x) => ({ x, y }));
 
         const statsCount = apiResponse.toJSON().stats
           ? FormatMixin.formatNum(
@@ -194,24 +178,8 @@ define([
 
         const counts = apiResponse.get('facets.read_count.buckets');
 
-        let finalData = [];
-        const MAX_RECORDS = 2000;
-        let numRecords = 0;
-        for (
-          let i = 0;
-          // break out early when we hit MAX_RECORDS
-          i < counts.length && numRecords < MAX_RECORDS;
-          i += 1
-        ) {
-          const { val, count } = counts[i];
-          numRecords += count;
-          const record = { x: i, y: val };
-
-          // create duplicate entries to pad out the array
-          finalData = finalData.concat(
-            Array.from({ length: count }, () => record)
-          );
-        }
+        // map counts into coordinates for graph
+        const finalData = counts.map(({ val: y }, x) => ({ x, y }));
 
         const statsCount = apiResponse.toJSON().stats
           ? FormatMixin.formatNum(
