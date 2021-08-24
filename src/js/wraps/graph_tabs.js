@@ -128,7 +128,12 @@ define([
         const counts = apiResponse.get('facets.citation_count.buckets');
 
         // map counts into coordinates for graph
-        const finalData = counts.map(({ val: y }, x) => ({ x, y }));
+        const finalData = [];
+        var xCounter = 0;
+        counts.forEach(function(item, index) {
+          xCounter = xCounter + item.count;
+          finalData.push({y: item.val, x: xCounter});
+        })
 
         const statsCount = apiResponse.toJSON().stats
           ? FormatMixin.formatNum(
@@ -179,7 +184,12 @@ define([
         const counts = apiResponse.get('facets.read_count.buckets');
 
         // map counts into coordinates for graph
-        const finalData = counts.map(({ val: y }, x) => ({ x, y }));
+        const finalData = [];
+        var xCounter = 0;
+        counts.forEach(function(item, index) {
+          xCounter = xCounter + item.count;
+          finalData.push({y: item.val, x: xCounter});
+        })
 
         const statsCount = apiResponse.toJSON().stats
           ? FormatMixin.formatNum(
