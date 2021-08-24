@@ -127,10 +127,18 @@ define([
 
     onActive: function(tab) {
       tab.widget.trigger('active');
+
+      if (typeof tab.onActive === 'function') {
+        tab.onActive();
+      }
     },
 
     onHidden: function(tab) {
       tab.widget.trigger('hidden');
+
+      if (typeof tab.onHidden === 'function') {
+        tab.onHidden();
+      }
     },
   });
 

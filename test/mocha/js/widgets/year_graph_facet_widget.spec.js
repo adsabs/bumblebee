@@ -1,228 +1,350 @@
-define(["js/widgets/facet/factory",
-     'js/components/api_response',
-    'js/wraps/graph_tabs'
-],
-  function(FacetFactory, ApiResponse, GraphTabs){
-
-
-    var testJSON = {
-      "responseHeader": {
-        "status": 0,
-        "QTime": 58,
-        "params": {
-          "facet": "true",
-          "fl": "id",
-          "facet.mincount": "1",
-          "q": "author:\"^accomazzi,a\"",
-          "wt": "json",
-          "facet.pivot": "property,year"
-        }
+define([
+  'js/widgets/facet/factory',
+  'js/components/api_response',
+  'js/wraps/graph_tabs',
+], function(FacetFactory, ApiResponse, GraphTabs) {
+  const testJSON = {
+    responseHeader: {
+      status: 0,
+      QTime: 5,
+      params: {
+        'facet.limit': '2000',
+        q: 'author:"^accomazzi, a"',
+        'facet.pivot': 'property,year',
+        fl: 'id',
+        'facet.minCount': '1',
+        start: '0',
+        sort: 'date desc,bibcode desc',
+        rows: '10',
+        facet: 'true',
+        wt: 'json',
+        p_: '0',
       },
-      "response": {
-        "numFound": 34,
-        "start": 0,
-        "docs": [
+    },
+    response: {
+      numFound: 48,
+      start: 0,
+      docs: [
+        { id: '20302549' },
+        { id: '18677923' },
+        { id: '17584600' },
+        { id: '15583916' },
+        { id: '17796736' },
+        { id: '15198148' },
+        { id: '14998905' },
+        { id: '13986258' },
+        { id: '13985717' },
+        { id: '15278338' },
+      ],
+    },
+    facet_counts: {
+      facet_queries: {},
+      facet_fields: {},
+      facet_ranges: {},
+      facet_intervals: {},
+      facet_heatmaps: {},
+      facet_pivot: {
+        'property,year': [
           {
-            "id": "4582438"
+            field: 'property',
+            value: 'notrefereed',
+            count: 43,
+            pivot: [
+              { field: 'year', value: '2015', count: 5 },
+              { field: 'year', value: '2011', count: 4 },
+              { field: 'year', value: '2018', count: 4 },
+              { field: 'year', value: '2007', count: 3 },
+              { field: 'year', value: '2019', count: 3 },
+              { field: 'year', value: '1992', count: 2 },
+              { field: 'year', value: '2009', count: 2 },
+              { field: 'year', value: '2012', count: 2 },
+              { field: 'year', value: '2014', count: 2 },
+              { field: 'year', value: '1988', count: 1 },
+              { field: 'year', value: '1989', count: 1 },
+              { field: 'year', value: '1994', count: 1 },
+              { field: 'year', value: '1995', count: 1 },
+              { field: 'year', value: '1996', count: 1 },
+              { field: 'year', value: '1997', count: 1 },
+              { field: 'year', value: '1998', count: 1 },
+              { field: 'year', value: '1999', count: 1 },
+              { field: 'year', value: '2003', count: 1 },
+              { field: 'year', value: '2004', count: 1 },
+              { field: 'year', value: '2006', count: 1 },
+              { field: 'year', value: '2010', count: 1 },
+              { field: 'year', value: '2013', count: 1 },
+              { field: 'year', value: '2017', count: 1 },
+              { field: 'year', value: '2020', count: 1 },
+              { field: 'year', value: '2021', count: 1 },
+            ],
           },
           {
-            "id": "4545442"
+            field: 'property',
+            value: 'esource',
+            count: 34,
+            pivot: [
+              { field: 'year', value: '1995', count: 3 },
+              { field: 'year', value: '2011', count: 3 },
+              { field: 'year', value: '1992', count: 2 },
+              { field: 'year', value: '2007', count: 2 },
+              { field: 'year', value: '2012', count: 2 },
+              { field: 'year', value: '2015', count: 2 },
+              { field: 'year', value: '2018', count: 2 },
+              { field: 'year', value: '2019', count: 2 },
+              { field: 'year', value: '1989', count: 1 },
+              { field: 'year', value: '1996', count: 1 },
+              { field: 'year', value: '1997', count: 1 },
+              { field: 'year', value: '1998', count: 1 },
+              { field: 'year', value: '1999', count: 1 },
+              { field: 'year', value: '2000', count: 1 },
+              { field: 'year', value: '2003', count: 1 },
+              { field: 'year', value: '2004', count: 1 },
+              { field: 'year', value: '2006', count: 1 },
+              { field: 'year', value: '2009', count: 1 },
+              { field: 'year', value: '2010', count: 1 },
+              { field: 'year', value: '2013', count: 1 },
+              { field: 'year', value: '2014', count: 1 },
+              { field: 'year', value: '2017', count: 1 },
+              { field: 'year', value: '2020', count: 1 },
+              { field: 'year', value: '2021', count: 1 },
+            ],
           },
           {
-            "id": "4545606"
+            field: 'property',
+            value: 'article',
+            count: 30,
+            pivot: [
+              { field: 'year', value: '1995', count: 3 },
+              { field: 'year', value: '1989', count: 2 },
+              { field: 'year', value: '1992', count: 2 },
+              { field: 'year', value: '2007', count: 2 },
+              { field: 'year', value: '2011', count: 2 },
+              { field: 'year', value: '2012', count: 2 },
+              { field: 'year', value: '2015', count: 2 },
+              { field: 'year', value: '1988', count: 1 },
+              { field: 'year', value: '1996', count: 1 },
+              { field: 'year', value: '1997', count: 1 },
+              { field: 'year', value: '1998', count: 1 },
+              { field: 'year', value: '1999', count: 1 },
+              { field: 'year', value: '2000', count: 1 },
+              { field: 'year', value: '2003', count: 1 },
+              { field: 'year', value: '2004', count: 1 },
+              { field: 'year', value: '2006', count: 1 },
+              { field: 'year', value: '2009', count: 1 },
+              { field: 'year', value: '2010', count: 1 },
+              { field: 'year', value: '2013', count: 1 },
+              { field: 'year', value: '2014', count: 1 },
+              { field: 'year', value: '2017', count: 1 },
+              { field: 'year', value: '2018', count: 1 },
+            ],
           },
           {
-            "id": "9067423"
+            field: 'property',
+            value: 'toc',
+            count: 25,
+            pivot: [
+              { field: 'year', value: '1989', count: 2 },
+              { field: 'year', value: '1992', count: 2 },
+              { field: 'year', value: '2007', count: 2 },
+              { field: 'year', value: '2012', count: 2 },
+              { field: 'year', value: '2014', count: 2 },
+              { field: 'year', value: '1995', count: 1 },
+              { field: 'year', value: '1996', count: 1 },
+              { field: 'year', value: '1997', count: 1 },
+              { field: 'year', value: '1998', count: 1 },
+              { field: 'year', value: '1999', count: 1 },
+              { field: 'year', value: '2003', count: 1 },
+              { field: 'year', value: '2004', count: 1 },
+              { field: 'year', value: '2006', count: 1 },
+              { field: 'year', value: '2009', count: 1 },
+              { field: 'year', value: '2010', count: 1 },
+              { field: 'year', value: '2011', count: 1 },
+              { field: 'year', value: '2013', count: 1 },
+              { field: 'year', value: '2015', count: 1 },
+              { field: 'year', value: '2017', count: 1 },
+              { field: 'year', value: '2019', count: 1 },
+            ],
           },
           {
-            "id": "8285512"
+            field: 'property',
+            value: 'openaccess',
+            count: 23,
+            pivot: [
+              { field: 'year', value: '2007', count: 2 },
+              { field: 'year', value: '2011', count: 2 },
+              { field: 'year', value: '2012', count: 2 },
+              { field: 'year', value: '2015', count: 2 },
+              { field: 'year', value: '1995', count: 1 },
+              { field: 'year', value: '1996', count: 1 },
+              { field: 'year', value: '1997', count: 1 },
+              { field: 'year', value: '1998', count: 1 },
+              { field: 'year', value: '1999', count: 1 },
+              { field: 'year', value: '2000', count: 1 },
+              { field: 'year', value: '2003', count: 1 },
+              { field: 'year', value: '2004', count: 1 },
+              { field: 'year', value: '2006', count: 1 },
+              { field: 'year', value: '2009', count: 1 },
+              { field: 'year', value: '2010', count: 1 },
+              { field: 'year', value: '2013', count: 1 },
+              { field: 'year', value: '2014', count: 1 },
+              { field: 'year', value: '2017', count: 1 },
+              { field: 'year', value: '2018', count: 1 },
+            ],
           },
           {
-            "id": "8700936"
+            field: 'property',
+            value: 'nonarticle',
+            count: 18,
+            pivot: [
+              { field: 'year', value: '2015', count: 3 },
+              { field: 'year', value: '2018', count: 3 },
+              { field: 'year', value: '2019', count: 3 },
+              { field: 'year', value: '2011', count: 2 },
+              { field: 'year', value: '1994', count: 1 },
+              { field: 'year', value: '2007', count: 1 },
+              { field: 'year', value: '2009', count: 1 },
+              { field: 'year', value: '2013', count: 1 },
+              { field: 'year', value: '2014', count: 1 },
+              { field: 'year', value: '2020', count: 1 },
+              { field: 'year', value: '2021', count: 1 },
+            ],
           },
           {
-            "id": "3843891"
+            field: 'property',
+            value: 'pubopenaccess',
+            count: 18,
+            pivot: [
+              { field: 'year', value: '2007', count: 2 },
+              { field: 'year', value: '2015', count: 2 },
+              { field: 'year', value: '1995', count: 1 },
+              { field: 'year', value: '1996', count: 1 },
+              { field: 'year', value: '1997', count: 1 },
+              { field: 'year', value: '1998', count: 1 },
+              { field: 'year', value: '2000', count: 1 },
+              { field: 'year', value: '2004', count: 1 },
+              { field: 'year', value: '2006', count: 1 },
+              { field: 'year', value: '2009', count: 1 },
+              { field: 'year', value: '2010', count: 1 },
+              { field: 'year', value: '2011', count: 1 },
+              { field: 'year', value: '2012', count: 1 },
+              { field: 'year', value: '2014', count: 1 },
+              { field: 'year', value: '2017', count: 1 },
+              { field: 'year', value: '2018', count: 1 },
+            ],
           },
           {
-            "id": "3404318"
+            field: 'property',
+            value: 'adsopenaccess',
+            count: 16,
+            pivot: [
+              { field: 'year', value: '2007', count: 2 },
+              { field: 'year', value: '1995', count: 1 },
+              { field: 'year', value: '1996', count: 1 },
+              { field: 'year', value: '1997', count: 1 },
+              { field: 'year', value: '1998', count: 1 },
+              { field: 'year', value: '1999', count: 1 },
+              { field: 'year', value: '2003', count: 1 },
+              { field: 'year', value: '2004', count: 1 },
+              { field: 'year', value: '2006', count: 1 },
+              { field: 'year', value: '2010', count: 1 },
+              { field: 'year', value: '2011', count: 1 },
+              { field: 'year', value: '2012', count: 1 },
+              { field: 'year', value: '2014', count: 1 },
+              { field: 'year', value: '2015', count: 1 },
+              { field: 'year', value: '2017', count: 1 },
+            ],
           },
           {
-            "id": "3340879"
+            field: 'property',
+            value: 'eprintopenaccess',
+            count: 15,
+            pivot: [
+              { field: 'year', value: '2007', count: 2 },
+              { field: 'year', value: '2011', count: 2 },
+              { field: 'year', value: '2012', count: 2 },
+              { field: 'year', value: '2000', count: 1 },
+              { field: 'year', value: '2006', count: 1 },
+              { field: 'year', value: '2009', count: 1 },
+              { field: 'year', value: '2010', count: 1 },
+              { field: 'year', value: '2013', count: 1 },
+              { field: 'year', value: '2014', count: 1 },
+              { field: 'year', value: '2015', count: 1 },
+              { field: 'year', value: '2017', count: 1 },
+              { field: 'year', value: '2018', count: 1 },
+            ],
           },
           {
-            "id": "3513629"
-          }
-        ]
+            field: 'property',
+            value: 'refereed',
+            count: 5,
+            pivot: [
+              { field: 'year', value: '1995', count: 2 },
+              { field: 'year', value: '1989', count: 1 },
+              { field: 'year', value: '2000', count: 1 },
+              { field: 'year', value: '2013', count: 1 },
+            ],
+          },
+          {
+            field: 'property',
+            value: 'inspire',
+            count: 1,
+            pivot: [{ field: 'year', value: '2000', count: 1 }],
+          },
+        ],
       },
-      "facet_counts": {
-        "facet_queries": {},
-        "facet_fields": {},
-        "facet_dates": {},
-        "facet_ranges": {},
-        "facet_pivot": {
-          "property,year": [
-            {
-              "field": "property",
-              "value": "notrefereed",
-              "count": 29,
-              "pivot": [
-                {
-                  "field": "year",
-                  "value": "2011",
-                  "count": 4
-                },
-                {
-                  "field": "year",
-                  "value": "2007",
-                  "count": 3
-                },
-                {
-                  "field": "year",
-                  "value": "2014",
-                  "count": 3
-                },
-                {
-                  "field": "year",
-                  "value": "1992",
-                  "count": 2
-                },
-                {
-                  "field": "year",
-                  "value": "2009",
-                  "count": 2
-                },
-                {
-                  "field": "year",
-                  "value": "2012",
-                  "count": 2
-                },
-                {
-                  "field": "year",
-                  "value": "1988",
-                  "count": 1
-                },
-                {
-                  "field": "year",
-                  "value": "1989",
-                  "count": 1
-                },
-                {
-                  "field": "year",
-                  "value": "1994",
-                  "count": 1
-                },
-                {
-                  "field": "year",
-                  "value": "1995",
-                  "count": 1
-                },
-                {
-                  "field": "year",
-                  "value": "1996",
-                  "count": 1
-                },
-                {
-                  "field": "year",
-                  "value": "1997",
-                  "count": 1
-                },
-                {
-                  "field": "year",
-                  "value": "1998",
-                  "count": 1
-                },
-                {
-                  "field": "year",
-                  "value": "1999",
-                  "count": 1
-                },
-                {
-                  "field": "year",
-                  "value": "2003",
-                  "count": 1
-                },
-                {
-                  "field": "year",
-                  "value": "2004",
-                  "count": 1
-                },
-                {
-                  "field": "year",
-                  "value": "2006",
-                  "count": 1
-                },
-                {
-                  "field": "year",
-                  "value": "2010",
-                  "count": 1
-                },
-                {
-                  "field": "year",
-                  "value": "2013",
-                  "count": 1
-                }
-              ]
-            },
+    },
+  };
 
-            {
-              "field": "property",
-              "value": "refereed",
-              "count": 5,
-              "pivot": [
-                {
-                  "field": "year",
-                  "value": "1995",
-                  "count": 2
-                },
-                {
-                  "field": "year",
-                  "value": "1989",
-                  "count": 1
-                },
-                {
-                  "field": "year",
-                  "value": "2000",
-                  "count": 1
-                },
-                {
-                  "field": "year",
-                  "value": "2013",
-                  "count": 1
-                }
-              ]
-            }
+  describe('Graph for Publications Per Year', function() {
+    var widget;
 
-          ]
-        }
-      }
-      };
+    beforeEach(function() {
+      widget = GraphTabs().yearGraphWidget;
+      widget.processResponse(new ApiResponse(testJSON));
+    });
 
+    it('should process refereed and refereed data into a single array, filling in missing years (with y values of 0), to be used by d3', function() {
+      var graphData = widget.model.attributes.graphData;
 
+      const expectedResults = [
+        { x: 1988, y: 1, refCount: 0 },
+        { x: 1989, y: 1, refCount: 1 },
+        { x: 1990, y: 0, refCount: 0 },
+        { x: 1991, y: 0, refCount: 0 },
+        { x: 1992, y: 2, refCount: 0 },
+        { x: 1993, y: 0, refCount: 0 },
+        { x: 1994, y: 1, refCount: 0 },
+        { x: 1995, y: 2, refCount: 2 },
+        { x: 1996, y: 1, refCount: 0 },
+        { x: 1997, y: 1, refCount: 0 },
+        { x: 1998, y: 1, refCount: 0 },
+        { x: 1999, y: 1, refCount: 0 },
+        { x: 2000, y: 1, refCount: 1 },
+        { x: 2001, y: 0, refCount: 0 },
+        { x: 2002, y: 0, refCount: 0 },
+        { x: 2003, y: 1, refCount: 0 },
+        { x: 2004, y: 1, refCount: 0 },
+        { x: 2005, y: 0, refCount: 0 },
+        { x: 2006, y: 1, refCount: 0 },
+        { x: 2007, y: 3, refCount: 0 },
+        { x: 2008, y: 0, refCount: 0 },
+        { x: 2009, y: 2, refCount: 0 },
+        { x: 2010, y: 1, refCount: 0 },
+        { x: 2011, y: 4, refCount: 0 },
+        { x: 2012, y: 2, refCount: 0 },
+        { x: 2013, y: 1, refCount: 1 },
+        { x: 2014, y: 2, refCount: 0 },
+        { x: 2015, y: 5, refCount: 0 },
+        { x: 2016, y: 0, refCount: 0 },
+        { x: 2017, y: 1, refCount: 0 },
+        { x: 2018, y: 4, refCount: 0 },
+        { x: 2019, y: 3, refCount: 0 },
+        { x: 2020, y: 1, refCount: 0 },
+        { x: 2021, y: 1, refCount: 0 },
+      ];
 
-    describe("Graph for Publications Per Year", function(){
-
-      var widget;
-
-      beforeEach(function(){
-        widget = GraphTabs().yearGraphWidget;
-        widget.processResponse(new ApiResponse(testJSON));
+      _.each(expectedResults, function(d, i) {
+        expect(d).to.eql(graphData[i]);
       });
-
-
-      it("should process refereed and refereed data into a single array, filling in missing years (with y values of 0), to be used by d3", function(){
-
-        var graphData = widget.model.attributes.graphData;
-
-        var expectedResults  = [{"x":1988,"y":1,"refCount":0},{"x":1989,"y":2,"refCount":1},{"x":1990,"y":0,"refCount":0},{"x":1991,"y":0,"refCount":0},{"x":1992,"y":2,"refCount":0},{"x":1993,"y":0,"refCount":0},{"x":1994,"y":1,"refCount":0},{"x":1995,"y":3,"refCount":2},{"x":1996,"y":1,"refCount":0},{"x":1997,"y":1,"refCount":0},{"x":1998,"y":1,"refCount":0},{"x":1999,"y":1,"refCount":0},{"x":2000,"y":1,"refCount":1},{"x":2001,"y":0,"refCount":0},{"x":2002,"y":0,"refCount":0},{"x":2003,"y":1,"refCount":0},{"x":2004,"y":1,"refCount":0},{"x":2005,"y":0,"refCount":0},{"x":2006,"y":1,"refCount":0},{"x":2007,"y":3,"refCount":0},{"x":2008,"y":0,"refCount":0},{"x":2009,"y":2,"refCount":0},{"x":2010,"y":1,"refCount":0},{"x":2011,"y":4,"refCount":0},{"x":2012,"y":2,"refCount":0},{"x":2013,"y":2,"refCount":1},{"x":2014,"y":3,"refCount":0}];
-
-          _.each(expectedResults, function(d,i){
-            expect(d).to.eql(graphData[i])
-          });
-
-      });
-
-
-    })
-
-
+    });
+  });
 });
