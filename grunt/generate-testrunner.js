@@ -65,7 +65,7 @@ module.exports = function(grunt) {
         window.skipMain = true;
       </script>
       <script
-        src="../libs/requirejs/require.js"
+        src="../libs/require.js"
       ></script>
   
       <script>
