@@ -39,6 +39,16 @@ module.exports = {
       },
     ],
   },
+  instrument: {
+    files: [
+      {
+        expand: true,
+        cwd: 'dist/js',
+        src: '**/*.js',
+        dest: 'test/coverage/instrument',
+      },
+    ],
+  },
   temp: {
     files: [
       {

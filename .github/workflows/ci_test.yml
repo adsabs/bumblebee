@@ -14,8 +14,8 @@ jobs:
           architecture: 'x64'
       - run: npm install -g grunt-cli
       - run: npm ci
-      - run: grunt setup
-      - run: grunt test:prod
+      - run: grunt --stack setup
+      - run: grunt --stack test:prod
 
       - name: Coveralls
         uses: coverallsapp/github-action@master

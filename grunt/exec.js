@@ -19,10 +19,9 @@ module.exports = {
     cmd: 'git describe --tags --abbrev=0 > .tag',
   },
   'nyc-instrument': {
-    cmd: 'node_modules/.bin/nyc instrument dist/js test/coverage/instrument',
-    options: {
-      timeout: 10000,
-    },
+    cwd: 'dist/js',
+    cmd:
+      '../../node_modules/.bin/nyc instrument . ../../test/coverage/instrument',
   },
   server: 'node server',
   suit_build: {
