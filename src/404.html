@@ -1,51 +1,73 @@
-<!doctype html>
+<!DOCTYPE html>
 <html>
-<head>
-  <link rel="preload" href="./styles/css/styles.css" as="style">
-  <link rel="stylesheet" href="./styles/css/styles.css">
-  <script src="//cdnjs.cloudflare.com/ajax/libs/require.js/2.3.5/require.min.js"></script>
-  <script>
-    !window.requirejs && document.write('<script src="./libs/requirejs/require.js">\x3C/script>');
-  </script>
-  <script>
-    require.config({
-      paths: {
-        'underscore': '//cdnjs.cloudflare.com/ajax/libs/lodash.js/2.4.2/lodash.min',
-        'google-analytics': [
-          'libs/g',
-          'data:application/javascript,'
-        ],
-        'analytics': 'js/components/analytics',
-        'jquery': '//cdnjs.cloudflare.com/ajax/libs/jquery/2.0.3/jquery.min'
-      },
-      shim: {
-        'google-analytics': {
-          exports: '__ga__'
-        }
-      },
-      callback: function () {
-        window.GoogleAnalyticsObject = '__ga__';
+  <head>
+    <link rel="preload" href="./styles/css/styles.css" as="style" />
+    <link rel="stylesheet" href="./styles/css/styles.css" />
+    <script src="//cdnjs.cloudflare.com/ajax/libs/require.js/2.3.5/require.min.js"></script>
+    <script>
+      !window.requirejs &&
+        document.write(
+          '<script src="./libs/requirejs/require.js">\x3C/script>'
+        );
+    </script>
+    <script>
+      require.config({
+        paths: {
+          underscore: [
+            'https://unpkg.com/lodash@2.4.2/dist/lodash.compat.min',
+            'libs/lodash',
+          ],
+          'google-analytics': ['libs/g', 'data:application/javascript,'],
+          analytics: 'js/components/analytics',
+          jquery: [
+            'https://unpkg.com/jquery@2.2.4/dist/jquery.min',
+            'libs/jquery',
+          ],
+        },
+        shim: {
+          'google-analytics': {
+            exports: '__ga__',
+          },
+        },
+        callback: function() {
+          window.GoogleAnalyticsObject = '__ga__';
 
-        require(['config/discovery.vars'], function(config) {
-          setTimeout(function () {
-            require(['google-analytics', 'analytics'], function () {
-              var qa = window[window.GoogleAnalyticsObject];
-              qa.l = Date.now();
-              qa('create', config.googleTrackingCode || '', config.googleTrackingOptions);
-            });
-          }, 0);
-        });
-      }
-    });
-    require(['analytics'], function (analytics) {
-      analytics('send', 'pageview');
-      analytics('send', 'event', 'error', 'automatic_redirection', '404.html');
-    });
-  </script>
-</head>
-<body>
-  <div>
-    <p> Bumblebee failed to load. Please try again.</p>
-  </div>
-</body>
+          require(['config/discovery.vars'], function(config) {
+            setTimeout(function() {
+              require(['google-analytics', 'analytics'], function() {
+                var qa = window[window.GoogleAnalyticsObject];
+                qa.l = Date.now();
+                qa(
+                  'create',
+                  config.googleTrackingCode || '',
+                  config.googleTrackingOptions
+                );
+              });
+            }, 0);
+          });
+        },
+      });
+      require(['analytics'], function(analytics) {
+        analytics('send', 'pageview');
+        analytics(
+          'send',
+          'event',
+          'error',
+          'automatic_redirection',
+          '404.html'
+        );
+      });
+    </script>
+  </head>
+  <body>
+    <div
+      style="display: flex; flex-direction: column; min-height: screen; min-width: screen; justify-content: center; align-items: center;"
+    >
+      <h1>Bumblebee failed to load. Please try again.</h1>
+
+      <h2>
+        <a href="javascript:history.back()">Go Back</a>
+      </h2>
+    </div>
+  </body>
 </html>

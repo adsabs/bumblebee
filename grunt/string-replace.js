@@ -80,4 +80,17 @@ module.exports = {
       ],
     },
   },
+  mathjax: {
+    files: {
+      'src/libs/mathjax/': 'src/libs/mathjax/**/*.js',
+    },
+    options: {
+      replacements: [
+        {
+          pattern: /\[MathJax\]/g,
+          replacement: 'libs/mathjax',
+        },
+      ],
+    },
+  },
 };

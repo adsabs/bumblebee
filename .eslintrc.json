@@ -51,6 +51,7 @@
     "quote-props": "off",
     "react/jsx-filename-extension": "off",
     "no-script-url": "off",
-    "jsx-a11y/anchor-is-valid": "off"
+    "jsx-a11y/anchor-is-valid": "off",
+    "import/no-extraneous-dependencies": "off"
   }
 }

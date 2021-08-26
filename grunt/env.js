@@ -11,21 +11,24 @@ module.exports = {
   dev: {
     NODE_ENV: 'development',
     SERVER_ENV: 'dev',
-    TARGET: 'dev'
+    TARGET: 'dev',
   },
   prod: {
     NODE_ENV: 'production',
     SERVER_ENV: 'dev',
-    TARGET: 'prod'
+    TARGET: 'prod',
+  },
+  test: {
+    NODE_ENV: 'test',
   },
   'release-prod': {
     NODE_ENV: 'production',
     SERVER_ENV: 'release',
-    TARGET: 'prod'
+    TARGET: 'prod',
   },
   'release-dev': {
     NODE_ENV: 'development',
     SERVER_ENV: 'release',
-    TARGET: 'dev'
-  }
+    TARGET: 'dev',
+  },
 };

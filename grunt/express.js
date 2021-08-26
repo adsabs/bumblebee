@@ -1,4 +1,3 @@
-'use strict';
 /**
  * Options for the `express` grunt task
  *
@@ -7,16 +6,16 @@
 module.exports = {
   options: {
     output: 'Listening on port.*',
-    script: './server.js'
+    script: './server.js',
   },
   once: {
     options: {
-      background: true
-    }
+      background: true,
+    },
   },
   server: {
     options: {
-      background: false
-    }
-  }
+      background: false,
+    },
+  },
 };
