@@ -303,17 +303,17 @@ define([
     });
 
     it('should process refereed and refereed data into a single array, filling in missing years (with y values of 0), to be used by d3', function() {
-      var graphData = widget.model.attributes.graphData;
+      const graphData = widget.model.attributes.graphData;
 
       const expectedResults = [
         { x: 1988, y: 1, refCount: 0 },
-        { x: 1989, y: 1, refCount: 1 },
+        { x: 1989, y: 2, refCount: 1 },
         { x: 1990, y: 0, refCount: 0 },
         { x: 1991, y: 0, refCount: 0 },
         { x: 1992, y: 2, refCount: 0 },
         { x: 1993, y: 0, refCount: 0 },
         { x: 1994, y: 1, refCount: 0 },
-        { x: 1995, y: 2, refCount: 2 },
+        { x: 1995, y: 3, refCount: 2 },
         { x: 1996, y: 1, refCount: 0 },
         { x: 1997, y: 1, refCount: 0 },
         { x: 1998, y: 1, refCount: 0 },
@@ -331,7 +331,7 @@ define([
         { x: 2010, y: 1, refCount: 0 },
         { x: 2011, y: 4, refCount: 0 },
         { x: 2012, y: 2, refCount: 0 },
-        { x: 2013, y: 1, refCount: 1 },
+        { x: 2013, y: 2, refCount: 1 },
         { x: 2014, y: 2, refCount: 0 },
         { x: 2015, y: 5, refCount: 0 },
         { x: 2016, y: 0, refCount: 0 },
