@@ -1,4 +1,3 @@
-'use strict';
 /**
  * Options for the `curl` grunt task
  *

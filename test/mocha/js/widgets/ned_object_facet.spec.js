@@ -1,4 +1,3 @@
-'use strict';
 define([
   'module',
   'underscore',

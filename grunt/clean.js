@@ -1,4 +1,3 @@
-'use strict';
 /**
  * Options for the `clean` grunt task
  *
@@ -6,9 +5,7 @@
  */
 module.exports = {
   release: {
-    src: [
-      'dist/',
-    ]
+    src: ['dist/'],
   },
   deploy: {
     src: [
@@ -25,17 +22,15 @@ module.exports = {
       '!dist/libs',
       '!dist/libs/requirejs',
       '!dist/libs/requirejs/require.js',
-    ]
+    ],
   },
   libs: {
-    src: [
-      'src/libs'
-    ]
+    src: ['src/libs'],
   },
   coverage: {
-    src: ['test/coverage']
+    src: ['test/coverage'],
   },
   temp: {
-    src: ['_tmp']
-  }
+    src: ['_tmp'],
+  },
 };
