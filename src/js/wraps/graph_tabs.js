@@ -130,16 +130,21 @@ define([
 
         // map counts into coordinates for graph
         const finalData = [];
-        var xCounter = 0;
-        counts.some(function(item, index) {
-          xCounter = xCounter + item.count;
+        let xCounter = 0;
+        counts.some((item) => {
+          xCounter += item.count;
           // one dot per paper (this way we'll only plot the top ranked X - fraction of results)
-          while(xCounter > finalData.length && finalData.length < maxDataPoints) {
-            finalData.push({y: item.val, x: finalData.length + 1});
+          while (
+            xCounter > finalData.length &&
+            finalData.length < maxDataPoints
+          ) {
+            finalData.push({ y: item.val, x: finalData.length + 1 });
           }
-          if (finalData.length > maxDataPoints)
+          if (finalData.length > maxDataPoints) {
             return true;
-        })
+          }
+          return false;
+        });
 
         const statsCount = apiResponse.toJSON().stats
           ? FormatMixin.formatNum(
@@ -154,7 +159,7 @@ define([
         this.model.set({
           graphData: finalData,
           statsCount: statsCount,
-          statsDescription: finalData.length + ' top ranked citations of',
+          statsDescription: `${finalData.length} top ranked citations of`,
         });
       },
     });
@@ -192,16 +197,21 @@ define([
 
         // map counts into coordinates for graph
         const finalData = [];
-        var xCounter = 0;
-        counts.some(function(item, index) {
-          xCounter = xCounter + item.count;
+        let xCounter = 0;
+        counts.some((item) => {
+          xCounter += item.count;
           // one dot per paper (this way we'll only plot the top ranked X - fraction of results)
-          while(xCounter > finalData.length && finalData.length < maxDataPoints) {
-            finalData.push({y: item.val, x: finalData.length + 1});
+          while (
+            xCounter > finalData.length &&
+            finalData.length < maxDataPoints
+          ) {
+            finalData.push({ y: item.val, x: finalData.length + 1 });
           }
-          if (finalData.length > maxDataPoints)
+          if (finalData.length > maxDataPoints) {
             return true;
-        })
+          }
+          return false;
+        });
 
         const statsCount = apiResponse.toJSON().stats
           ? FormatMixin.formatNum(
@@ -216,7 +226,7 @@ define([
         this.model.set({
           graphData: finalData,
           statsCount: statsCount,
-          statsDescription: finalData.length + ' top ranked reads of',
+          statsDescription: `${finalData.length} top ranked reads of`,
         });
       },
     });
