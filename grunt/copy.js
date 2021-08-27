@@ -8,218 +8,186 @@ module.exports = function(grunt) {
   return {
     libs: {
       files: [
+        // requirejs
         {
-          cwd: 'node_modules/xstate/dist',
-          src: 'xstate.js',
-          dest: 'src/libs/xstate/',
-          expand: true,
-          rename: function(dest, src) {
-            return dest + src.replace('xstate.js', 'index.js');
-          },
-        },
-        {
-          cwd: 'node_modules/react-bootstrap/dist',
-          src: 'react-bootstrap.min.js',
-          dest: 'src/libs/react-bootstrap/',
-          expand: true,
-          rename: function(dest, src) {
-            return dest + src.replace('react-bootstrap.min.js', 'index.js');
-          },
-        },
-        {
-          cwd: 'node_modules/recoil/umd',
-          src: 'recoil.min.js',
-          dest: 'src/libs/recoil/',
-          expand: true,
-          rename: function(dest, src) {
-            return dest + src.replace('recoil.min.js', 'index.js');
-          },
-        },
-        {
-          cwd: 'node_modules/@hookform/resolvers/dist',
-          src: 'index.umd.production.min.js',
-          dest: 'src/libs/@hookform/',
-          expand: true,
-          rename: function(dest, src) {
-            return (
-              dest + src.replace('index.umd.production.min.js', 'index.js')
-            );
-          },
-        },
-        {
-          cwd: 'node_modules/regenerator-runtime',
-          src: 'runtime.js',
-          dest: 'src/libs/regenerator-runtime/',
-          expand: true,
-          rename: function(dest, src) {
-            return dest + src.replace('runtime.js', 'index.js');
-          },
-        },
-        {
-          cwd: 'node_modules/react-async/dist-umd',
-          src: 'index.js',
-          dest: 'src/libs/react-async/',
-          expand: true,
-        },
-        {
-          cwd: 'node_modules/react-window/dist',
-          src: 'index-prod.umd.js',
-          dest: 'src/libs/react-window/',
-          expand: true,
-          rename: function(dest, src) {
-            return dest + src.replace('index-prod.umd', 'index');
-          },
-        },
-        {
-          cwd: 'node_modules/react-data-table-component/dist',
-          src: 'react-data-table-component.umd.js',
-          dest: 'src/libs/react-data-table-component/',
-          expand: true,
-          rename: function(dest, src) {
-            return (
-              dest + src.replace('react-data-table-component.umd', 'index')
-            );
-          },
-        },
-        {
-          cwd: 'node_modules/react-is/umd',
-          src: 'react-is.production.min.js',
-          dest: 'src/libs/react-is/',
-          expand: true,
-          rename: function(dest, src) {
-            return dest + src.replace('react-is.production.min', 'index');
-          },
-        },
-        {
-          cwd: 'node_modules/styled-components/dist',
-          src: 'styled-components.min.js',
-          dest: 'src/libs/styled-components/',
-          expand: true,
-          rename: function(dest, src) {
-            return dest + src.replace('styled-components.min', 'index');
-          },
-        },
-        {
-          cwd: 'node_modules/react-hook-form/dist/',
-          src: 'index.umd.production.min.js',
-          dest: 'src/libs/react-hook-form/',
-          expand: true,
-          rename: function(dest, src) {
-            return (
-              dest + src.replace('index.umd.production.min.js', 'index.js')
-            );
-          },
-        },
-        {
-          cwd: 'node_modules/hotkeys-js/dist',
-          src: 'hotkeys.min.js',
-          dest: 'src/libs/hotkeys/',
-          expand: true,
-          rename: function(dest, src) {
-            return dest + src.replace('hotkeys.min', 'index');
-          },
-        },
-        {
-          cwd: 'node_modules/file-saver/dist',
-          src: 'FileSaver.js',
-          dest: 'src/libs/file-saver/',
-          expand: true,
-          rename: function(dest, src) {
-            return dest + src.replace('FileSaver', 'index');
-          },
-        },
-        {
-          cwd: 'node_modules/file-saver',
-          src: 'FileSaver.js',
-          dest: 'src/libs/file-saver/',
-          expand: true,
-          rename: function(dest, src) {
-            return dest + src.replace('FileSaver', 'index');
-          },
-        },
-        {
-          src: 'bower_components/lodash/dist/*',
-          dest: 'src/libs/lodash/',
-          expand: true,
-          flatten: true,
-        },
-        {
-          src: 'bower_components/marionette/lib/*',
-          dest: 'src/libs/marionette/',
-          expand: true,
-          flatten: true,
-        },
-        {
-          src: 'bower_components/backbone.babysitter/lib/*',
-          dest: 'src/libs/backbone.babysitter/',
-          expand: true,
-          flatten: true,
-        },
-        {
-          src: [
-            'bower_components/bootstrap/dist/css/*',
-            'bower_components/bootstrap/dist/fonts/*',
-            'bower_components/bootstrap/dist/js/*',
-          ],
-          dest: 'src/libs/bootstrap/',
-          expand: true,
-          flatten: true,
-        },
-        {
-          src: ['bower_components/d3/*.js'],
-          dest: 'src/libs/d3/',
-          expand: true,
-          flatten: true,
-        },
-        {
-          src: ['bower_components/requirejs-plugins/src/*.js'],
-          dest: 'src/libs/requirejs-plugins/',
-          expand: true,
-          flatten: true,
+          src: 'node_modules/requirejs/require.js',
+          dest: 'src/libs/require.js',
         },
 
+        // react-bootstrap
         {
-          src: ['bower_components/fontawesome/scss/*'],
-          dest: 'src/libs/fontawesome/scss/',
-          expand: true,
-          flatten: true,
+          src: 'node_modules/react-bootstrap/dist/react-bootstrap.min.js',
+          dest: 'src/libs/react-bootstrap.js',
         },
+
+        // @hookform/resolvers
         {
-          src: ['bower_components/fontawesome/fonts/*'],
-          dest: 'src/libs/fontawesome/fonts',
-          expand: true,
-          flatten: true,
+          src:
+            'node_modules/@hookform/resolvers/dist/index.umd.production.min.js',
+          dest: 'src/libs/hookform.js',
         },
+
+        // regenerator-runtime
         {
-          cwd: 'bower_components/bootstrap-sass/assets/stylesheets/',
-          src: '**',
-          expand: true,
-          dest: 'src/libs/bootstrap-sass',
+          src: 'node_modules/regenerator-runtime/runtime.js',
+          dest: 'src/libs/regenerator-runtime.js',
         },
+
+        // react-async
         {
-          src: ['bower_components/requirejs-babel/*.js'],
-          dest: 'src/libs/requirejs-babel-plugin/',
-          expand: true,
-          flatten: true,
+          src: 'node_modules/react-async/dist-umd/index.js',
+          dest: 'src/libs/react-async.js',
         },
+
+        // react-window
         {
-          cwd: 'node_modules/redux/dist',
-          src: 'redux.min.js',
-          dest: 'src/libs/redux/',
+          src: 'node_modules/react-window/dist/index-prod.umd.js',
+          dest: 'src/libs/react-window.js',
+        },
+
+        // react-transition-group
+        {
+          src:
+            'node_modules/react-transition-group/dist/react-transition-group.min.js',
+          dest: 'src/libs/react-transition-group.js',
+        },
+
+        // react-data-table
+        {
+          src:
+            'node_modules/react-data-table-component/dist/react-data-table-component.umd.js',
+          dest: 'src/libs/react-data-table-component.js',
+        },
+
+        // react-is
+        {
+          src: 'node_modules/react-is/umd/react-is.production.min.js',
+          dest: 'src/libs/react-is.js',
+        },
+
+        // styled-components
+        {
+          src: 'node_modules/styled-components/dist/styled-components.min.js',
+          dest: 'src/libs/styled-components.js',
+        },
+
+        // react-hook-form
+        {
+          src: 'node_modules/react-hook-form/dist/index.umd.production.min.js',
+          dest: 'src/libs/react-hook-form.js',
+        },
+
+        // moment
+        {
+          src: 'node_modules/moment/min/moment.min.js',
+          dest: 'src/libs/moment.js',
+        },
+
+        // backbone
+        {
+          src: 'node_modules/backbone/backbone-min.js',
+          dest: 'src/libs/backbone.js',
+        },
+
+        // backbone-validation
+        {
+          src:
+            'node_modules/backbone-validation/dist/backbone-validation-amd-min.js',
+          dest: 'src/libs/backbone-validation.js',
+        },
+
+        // backbone.stickit
+        {
+          src: 'node_modules/backbone.stickit/backbone.stickit.js',
+          dest: 'src/libs/backbone.stickit.js',
+        },
+
+        // backbone.wreqr
+        {
+          src: 'node_modules/backbone.wreqr/lib/backbone.wreqr.min.js',
+          dest: 'src/libs/backbone.wreqr.js',
+        },
+
+        // backbone.marionette
+        {
+          src:
+            'node_modules/backbone.marionette/lib/backbone.marionette.min.js',
+          dest: 'src/libs/backbone.marionette.js',
+        },
+
+        // hotkeys-js
+        {
+          src: 'node_modules/hotkeys-js/dist/hotkeys.min.js',
+          dest: 'src/libs/hotkeys.js',
+        },
+
+        // file-saver
+        {
+          src: 'node_modules/file-saver/FileSaver.min.js',
+          dest: 'src/libs/file-saver.js',
+        },
+
+        // prop-types
+        {
+          src: 'node_modules/prop-types/prop-types.min.js',
+          dest: 'src/libs/prop-types.js',
+        },
+
+        // d3
+        {
+          src: 'node_modules/d3/d3.min.js',
+          dest: 'src/libs/d3.js',
+        },
+        // d3-cloud
+        {
+          src: 'node_modules/d3-cloud/build/d3.layout.cloud.js',
+          dest: 'src/libs/d3-cloud.js',
+        },
+
+        // fontawesome
+        {
+          cwd: 'node_modules/font-awesome',
+          src: ['scss/*', 'fonts/*'],
+          dest: 'src/libs/fontawesome/',
           expand: true,
+        },
+
+        // clipboard
+        {
+          src: 'node_modules/clipboard/dist/clipboard.min.js',
+          dest: 'src/libs/clipboard.js',
+        },
+
+        // bootstrap sass (scss and js)
+        {
+          cwd: 'node_modules/bootstrap-sass/assets',
+          src: ['stylesheets/**/*', 'javascripts/bootstrap.min.js'],
+          expand: true,
+          dest: 'src/libs/bootstrap/',
           rename: function(dest, src) {
-            return dest + src.replace('redux.min', 'index');
+            return dest + src.replace('javascripts/bootstrap.min', 'bootstrap');
           },
         },
+
+        // redux
         {
-          cwd: 'node_modules/redux-thunk/dist',
-          src: 'redux-thunk.min.js',
-          dest: 'src/libs/redux-thunk/',
-          expand: true,
-          rename: function(dest, src) {
-            return dest + src.replace('redux-thunk.min', 'index');
-          },
+          src: 'node_modules/redux/dist/redux.min.js',
+          dest: 'src/libs/redux.js',
         },
+
+        // redux-thunk
+        {
+          src: 'node_modules/redux-thunk/dist/redux-thunk.min.js',
+          dest: 'src/libs/redux-thunk.js',
+        },
+
+        // jquery
+        {
+          src: 'node_modules/jquery/dist/jquery.min.js',
+          dest: 'src/libs/jquery.js',
+        },
+
+        // mathjax
         {
           cwd: 'node_modules/mathjax/',
           src: [
@@ -232,23 +200,125 @@ module.exports = function(grunt) {
           dest: 'src/libs/mathjax/',
           expand: true,
           rename: function(dest, src) {
-            return dest + src.replace('MathJax.js', 'index.js');
+            return dest + src.replace('MathJax.js', 'mathjax.js');
           },
         },
+
+        // persist-js
         {
-          src: [
-            'bower_components/select2/**/*.js',
-            'bower_components/select2/**/*.css',
-          ],
-          dest: 'src/libs/select2/',
-          expand: true,
-          flatten: true,
+          src: 'node_modules/persist-js/persist-min.js',
+          dest: 'src/libs/persist-js.js',
         },
+
+        // bowser
         {
-          cwd: 'node_modules/jsonpath',
-          src: 'jsonpath*.js',
-          dest: 'src/libs/jsonpath',
+          src: 'node_modules/bowser/es5.js',
+          dest: 'src/libs/bowser.js',
+        },
+
+        // jsonpath
+        {
+          src: 'node_modules/jsonpath/jsonpath.min.js',
+          dest: 'src/libs/jsonpath.js',
+        },
+
+        // lodash
+        {
+          src: 'node_modules/lodash/dist/lodash.compat.min.js',
+          dest: 'src/libs/lodash.js',
+        },
+
+        // select2
+        {
+          cwd: 'node_modules/select2/dist/',
+          src: ['**/select2.min.{js,css}'],
           expand: true,
+          dest: 'src/libs/select2/',
+          rename: function(dest, src) {
+            return dest + src.replace(/(css|js)\/select2.min/g, 'select2');
+          },
+        },
+
+        // select2 matcher
+        {
+          src: 'node_modules/select2/src/js/select2/compat/matcher.js',
+          dest: 'src/libs/select2/matcher.js',
+        },
+
+        // babel (standalone)
+        {
+          src: 'node_modules/@babel/standalone/babel.min.js',
+          dest: 'src/libs/babel.js',
+        },
+
+        // requirejs-hbs
+        {
+          cwd: 'node_modules/require-handlebars-plugin',
+          src: ['hbs.js', 'hbs/**/*'],
+          dest: 'src/libs/requirejs-plugins/',
+          expand: true,
+        },
+
+        // requirejs-es6
+        {
+          src: 'node_modules/requirejs-babel-plugin/es6.js',
+          dest: 'src/libs/requirejs-plugins/es6.js',
+        },
+
+        // requirejs-async
+        {
+          src: 'node_modules/requirejs-async/async.js',
+          dest: 'src/libs/requirejs-plugins/async.js',
+        },
+
+        // sprintf-js
+        {
+          src: 'node_modules/sprintf-js/dist/sprintf.min.js',
+          dest: 'src/libs/sprintf.js',
+        },
+
+        // diff
+        {
+          src: 'node_modules/diff/dist/diff.min.js',
+          dest: 'src/libs/diff.js',
+        },
+
+        // react
+        {
+          src: 'node_modules/react/umd/react.production.min.js',
+          dest: 'src/libs/react.js',
+        },
+
+        // react-dom
+        {
+          src: 'node_modules/react-dom/umd/react-dom.production.min.js',
+          dest: 'src/libs/react-dom.js',
+        },
+
+        // react-redux
+        {
+          src: 'node_modules/react-redux/dist/react-redux.min.js',
+          dest: 'src/libs/react-redux.js',
+        },
+
+        // mocha
+        {
+          cwd: 'node_modules/mocha',
+          src: ['mocha.js', 'mocha.css'],
+          dest: 'src/libs/mocha/',
+          expand: true,
+        },
+
+        // sinon
+        {
+          src: 'node_modules/sinon/pkg/sinon.js',
+          dest: 'src/libs/sinon.js',
+        },
+
+        // chai
+        {
+          src: 'node_modules/chai/chai.js',
+          dest: 'src/libs/chai.js',
         },
       ],
     },

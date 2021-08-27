@@ -45,3 +45,4 @@ grunt/requirejs.js
 !.gitmodules
 
 test/test_manual.html
+grunt/requirejs.js

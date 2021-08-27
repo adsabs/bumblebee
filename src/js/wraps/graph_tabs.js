@@ -56,9 +56,9 @@ define([
             pivot.forEach(({ value: yearString, count = 0 }) => {
               const year = parseInt(yearString, 10);
               yearMap.set(year, {
-                year,
                 refereed: 0,
                 notrefereed: 0,
+                ...yearMap.get(year),
                 [value]: count,
               });
             });

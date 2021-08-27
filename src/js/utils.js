@@ -7,7 +7,8 @@ define([
   'js/components/api_request',
 ], function($, _, analytics, React, ApiQuery, ApiRequest) {
   const qs = function(key, str, separator) {
-    const k = key.replace(/[*+?^$.[\]{}()|\\/]/g, '\\$&'); // escape RegEx meta chars
+    // eslint-disable-next-line no-useless-escape
+    const k = key.replace(/[*+?^$.[\]{}()|\\\/]/g, '\\$&'); // escape RegEx meta chars
     var pattern = '(^|[\\?&])' + k + '=[^&]*';
     var match = (str || window.location.hash).match(new RegExp(pattern, 'g'));
     if (!match) {
@@ -31,7 +32,8 @@ define([
   };
 
   const updateHash = function(key, value, hash) {
-    const k = key.replace(/[*+?^$.[\]{}()|\\/]/g, '\\$&');
+    // eslint-disable-next-line no-useless-escape
+    const k = key.replace(/[*+?^$.[\]{}()|\\\/]/g, '\\$&');
     const h = _.isString(hash) ? hash : window.location.hash;
     const match = h.match(new RegExp('&?' + k + '=([^&]+)(&|$)'));
     if (match) {
