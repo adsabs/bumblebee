@@ -126,9 +126,25 @@ define([
         }
 
         const counts = apiResponse.get('facets.citation_count.buckets');
+        const maxDataPoints = 2000;
 
         // map counts into coordinates for graph
-        const finalData = counts.map(({ val: y }, x) => ({ x, y }));
+        const finalData = [];
+        let xCounter = 0;
+        counts.some((item) => {
+          xCounter += item.count;
+          // one dot per paper (this way we'll only plot the top ranked X - fraction of results)
+          while (
+            xCounter > finalData.length &&
+            finalData.length < maxDataPoints
+          ) {
+            finalData.push({ y: item.val, x: finalData.length + 1 });
+          }
+          if (finalData.length > maxDataPoints) {
+            return true;
+          }
+          return false;
+        });
 
         const statsCount = apiResponse.toJSON().stats
           ? FormatMixin.formatNum(
@@ -143,7 +159,7 @@ define([
         this.model.set({
           graphData: finalData,
           statsCount: statsCount,
-          statsDescription: 'total number of citations',
+          statsDescription: `${finalData.length} top ranked citations of`,
         });
       },
     });
@@ -177,9 +193,25 @@ define([
         }
 
         const counts = apiResponse.get('facets.read_count.buckets');
+        const maxDataPoints = 2000;
 
         // map counts into coordinates for graph
-        const finalData = counts.map(({ val: y }, x) => ({ x, y }));
+        const finalData = [];
+        let xCounter = 0;
+        counts.some((item) => {
+          xCounter += item.count;
+          // one dot per paper (this way we'll only plot the top ranked X - fraction of results)
+          while (
+            xCounter > finalData.length &&
+            finalData.length < maxDataPoints
+          ) {
+            finalData.push({ y: item.val, x: finalData.length + 1 });
+          }
+          if (finalData.length > maxDataPoints) {
+            return true;
+          }
+          return false;
+        });
 
         const statsCount = apiResponse.toJSON().stats
           ? FormatMixin.formatNum(
@@ -194,7 +226,7 @@ define([
         this.model.set({
           graphData: finalData,
           statsCount: statsCount,
-          statsDescription: 'total recent (90 day) reads',
+          statsDescription: `${finalData.length} top ranked reads of`,
         });
       },
     });
