@@ -126,13 +126,19 @@ define([
         }
 
         const counts = apiResponse.get('facets.citation_count.buckets');
+        const maxDataPoints = 2000;
 
         // map counts into coordinates for graph
         const finalData = [];
         var xCounter = 0;
-        counts.forEach(function(item, index) {
+        counts.some(function(item, index) {
           xCounter = xCounter + item.count;
-          finalData.push({y: item.val, x: xCounter});
+          // one dot per paper (this way we'll only plot the top ranked X - fraction of results)
+          while(xCounter > finalData.length && finalData.length < maxDataPoints) {
+            finalData.push({y: item.val, x: finalData.length + 1});
+          }
+          if (finalData.length > maxDataPoints)
+            return true;
         })
 
         const statsCount = apiResponse.toJSON().stats
@@ -148,7 +154,7 @@ define([
         this.model.set({
           graphData: finalData,
           statsCount: statsCount,
-          statsDescription: 'total number of citations',
+          statsDescription: finalData.length + ' top ranked citations of',
         });
       },
     });
@@ -182,13 +188,19 @@ define([
         }
 
         const counts = apiResponse.get('facets.read_count.buckets');
+        const maxDataPoints = 2000;
 
         // map counts into coordinates for graph
         const finalData = [];
         var xCounter = 0;
-        counts.forEach(function(item, index) {
+        counts.some(function(item, index) {
           xCounter = xCounter + item.count;
-          finalData.push({y: item.val, x: xCounter});
+          // one dot per paper (this way we'll only plot the top ranked X - fraction of results)
+          while(xCounter > finalData.length && finalData.length < maxDataPoints) {
+            finalData.push({y: item.val, x: finalData.length + 1});
+          }
+          if (finalData.length > maxDataPoints)
+            return true;
         })
 
         const statsCount = apiResponse.toJSON().stats
@@ -204,7 +216,7 @@ define([
         this.model.set({
           graphData: finalData,
           statsCount: statsCount,
-          statsDescription: 'total recent (90 day) reads',
+          statsDescription: finalData.length + ' top ranked reads of',
         });
       },
     });
