@@ -359,7 +359,22 @@ define([
         _.each(implNames, function(name, idx, implList) {
           ret[name] = modules[idx];
         });
-        defer.resolve(sectionName, ret);
+        try {
+          defer.resolve(sectionName, ret);
+        } catch (e) {
+          /**
+           * CATCH ALL
+           *
+           * This will capture run-away errors from any loaded module.
+           * For now, just dump them into the 404 page (if its loaded)
+           */
+          const pubsub = self.getService('PubSub').getHardenedInstance();
+          pubsub.publish(pubsub.NAVIGATE, '404', {
+            message: `Page Not Found or Internal Error
+              <p>Error: <code>${e.message}</code></p>
+            `,
+          });
+        }
         if (self.debug) {
           console.log(
             'Loaded: type=' + sectionName + ' state=' + defer.state(),

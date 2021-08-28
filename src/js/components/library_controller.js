@@ -295,7 +295,7 @@ define([
           // just navigate to a 404 page
           that.getPubSub().publish(that.getPubSub().NAVIGATE, '404', {
             xhr,
-            message: `Cannot find library ID: <strong>${id}</strong>, contact our team at adshelp@cfa.harvard.edu for help`,
+            message: `Cannot find library ID: <strong>${id}</strong>`,
           });
         });
 
