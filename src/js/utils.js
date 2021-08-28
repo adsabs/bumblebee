@@ -175,10 +175,13 @@ define([
   const extractErrorMessageFromAjax = (maybeXHR, defaultMessage) => {
     if (
       typeof maybeXHR !== 'undefined' &&
-      typeof maybeXHR.responseJSON !== 'undefined' &&
-      typeof maybeXHR.responseJSON.error === 'string'
+      typeof maybeXHR.responseJSON !== 'undefined'
     ) {
-      return maybeXHR.responseJSON.error;
+      if (typeof maybeXHR.responseJSON.error === 'string') {
+        return maybeXHR.responseJSON.error;
+      } else if (typeof maybeXHR.responseJSON.message === 'string') {
+        return maybeXHR.responseJSON.message;
+      }
     }
     return defaultMessage;
   };

@@ -158,6 +158,7 @@ define([
   var LogInModel;
 
   LogInModel = FormModel.extend({
+    skipReset: ['username'],
     validation: {
       username: {
         required: true,
@@ -203,6 +204,7 @@ define([
   var ResetPassword1Model;
 
   ResetPassword1Model = FormModel.extend({
+    skipReset: ['email'],
     validation: {
       email: {
         required: true,

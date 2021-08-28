@@ -12,6 +12,7 @@ define([
   'js/components/user',
   'js/components/api_feedback',
   'js/mixins/api_access',
+  'utils',
 ], function(
   Backbone,
   ApiRequest,
@@ -22,7 +23,8 @@ define([
   ApiQuery,
   User,
   ApiFeedback,
-  ApiAccess
+  ApiAccess,
+  utils
 ) {
   var SessionModel = Backbone.Model.extend({
     defaults: function() {
@@ -216,15 +218,8 @@ define([
 
     loginFail: function(xhr, status, errorThrown) {
       var pubsub = this.getPubSub();
-      var error;
-      if (xhr.responseJSON && xhr.responseJSON.error) {
-        error = xhr.responseJSON.error;
-      } else if (xhr.responseJSON && xhr.responseJSON.message) {
-        error = xhr.responseJSON.message;
-      } else {
-        error = 'error unknown';
-      }
-      var message = 'Log in was unsuccessful (' + error + ')';
+      const error = utils.extractErrorMessageFromAjax(xhr, 'error unknown');
+      const message = `Login was unsuccessful (${error})`;
       pubsub.publish(
         pubsub.ALERT,
         new ApiFeedback({
@@ -256,11 +251,8 @@ define([
 
     registerFail: function(xhr, status, errorThrown) {
       var pubsub = this.getPubSub();
-      var error =
-        xhr.responseJSON && xhr.responseJSON.error
-          ? xhr.responseJSON.error
-          : 'error unknown';
-      var message = 'Registration was unsuccessful (' + error + ')';
+      const error = utils.extractErrorMessageFromAjax(xhr, 'error unknown');
+      const message = `Registration was unsuccessful (${error})`;
       pubsub.publish(
         pubsub.ALERT,
         new ApiFeedback({
@@ -280,11 +272,8 @@ define([
 
     resetPassword1Fail: function(xhr, status, errorThrown) {
       var pubsub = this.getPubSub();
-      var error =
-        xhr.responseJSON && xhr.responseJSON.error
-          ? xhr.responseJSON.error
-          : 'error unknown';
-      var message = 'password reset step 1 was unsuccessful (' + error + ')';
+      const error = utils.extractErrorMessageFromAjax(xhr, 'error unknown');
+      const message = `password reset step 1 was unsuccessful (${error})`;
       pubsub.publish(
         pubsub.ALERT,
         new ApiFeedback({
@@ -326,14 +315,8 @@ define([
       });
 
       promise.fail(function(xhr) {
-        var error =
-          xhr.responseJSON && xhr.responseJSON.error
-            ? xhr.responseJSON.error
-            : 'error unknown';
-        var message =
-          'Your password was not successfully reset. Please try to follow the link from the email you received again.\n\n(' +
-          error +
-          ')';
+        const error = utils.extractErrorMessageFromAjax(xhr, 'error unknown');
+        const message = `Your password was not successfully reset. Please try to follow the link from the email you received again.\n\n(${error})`;
         pubsub.publish(
           pubsub.USER_ANNOUNCEMENT,
           'reset_password_2_fail',
@@ -353,11 +336,8 @@ define([
 
     resetPassword2Fail: function(xhr, status, errorThrown) {
       var pubsub = this.getPubSub();
-      var error =
-        xhr.responseJSON && xhr.responseJSON.error
-          ? xhr.responseJSON.error
-          : 'error unknown';
-      var message = 'password reset step 2 was unsuccessful (' + error + ')';
+      const error = utils.extractErrorMessageFromAjax(xhr, 'error unknown');
+      const message = `password reset step 2 was unsuccessful (${error})`;
       pubsub.publish(
         pubsub.ALERT,
         new ApiFeedback({
