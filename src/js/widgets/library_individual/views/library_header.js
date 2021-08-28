@@ -8,6 +8,8 @@ define([
     initialize: function(vals, options) {
       options = options || {};
       this.on('change:permission', this.checkEditPermission);
+
+      console.log(this);
     },
 
     defaults: function() {
@@ -149,7 +151,7 @@ define([
       } else {
         tabToShow = subView;
       }
-
+      this.model.set('active', tabToShow);
       this.trigger('navigate', tabToShow, additional);
     },
 
