@@ -172,6 +172,17 @@ define([
     return new ApiRequest(params);
   };
 
+  const extractErrorMessageFromAjax = (maybeXHR, defaultMessage) => {
+    if (
+      typeof maybeXHR !== 'undefined' &&
+      typeof maybeXHR.responseJSON !== 'undefined' &&
+      typeof maybeXHR.responseJSON.error === 'string'
+    ) {
+      return maybeXHR.responseJSON.error;
+    }
+    return defaultMessage;
+  };
+
   return {
     qs: qs,
     updateHash: updateHash,
@@ -183,5 +194,6 @@ define([
     escapeRegExp: escapeRegExp,
     makeApiQuery: makeApiQuery,
     makeApiRequest: makeApiRequest,
+    extractErrorMessageFromAjax,
   };
 });

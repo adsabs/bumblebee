@@ -7,6 +7,7 @@ define([
   'js/components/api_feedback',
   'js/components/api_query',
   'js/mixins/dependon',
+  'utils',
 ], function(
   Backbone,
   GenericModule,
@@ -15,7 +16,8 @@ define([
   ApiRequest,
   ApiFeedback,
   ApiQuery,
-  Dependon
+  Dependon,
+  utils
 ) {
   var LibraryModel = Backbone.Model.extend({
     defaults: function() {
@@ -287,9 +289,14 @@ define([
           // set into collection
           that.collection.add(data.metadata, { merge: true });
         })
-        .fail(function() {
+        .fail(function(xhr) {
+          deferred.reject(xhr);
+
           // just navigate to a 404 page
-          that.getPubSub().publish(that.getPubSub().NAVIGATE, '404');
+          that.getPubSub().publish(that.getPubSub().NAVIGATE, '404', {
+            xhr,
+            message: `Cannot find library ID: <strong>${id}</strong>, contact our team at adshelp@cfa.harvard.edu for help`,
+          });
         });
 
       return deferred.promise();
