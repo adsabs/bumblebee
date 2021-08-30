@@ -1,4 +1,3 @@
-'use strict';
 /**
  * Options for the `htmlmin` grunt task
  *
@@ -7,14 +6,16 @@
 module.exports = {
   options: {
     removeComments: true,
-    collapseWhitespace: true
+    collapseWhitespace: true,
   },
-  'release': {
-    files: [{
-      expand: true,
-      cwd: 'dist',
-      src: ['*.html'],
-      dest: 'dist'
-    }]
-  }
+  release: {
+    files: [
+      {
+        expand: true,
+        cwd: 'dist',
+        src: ['*.html'],
+        dest: 'dist',
+      },
+    ],
+  },
 };

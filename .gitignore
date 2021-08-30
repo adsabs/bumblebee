@@ -33,7 +33,6 @@ src/styles/css
 .vagrant
 
 src/config/discovery.vars.js
-grunt/requirejs.js
 .*
 !.babelrc
 !.travis.yml
@@ -45,4 +44,3 @@ grunt/requirejs.js
 !.gitmodules
 
 test/test_manual.html
-grunt/requirejs.js

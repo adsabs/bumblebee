@@ -1,4 +1,3 @@
-'use strict';
 /**
  * Options for the `concurrent` grunt task
  *

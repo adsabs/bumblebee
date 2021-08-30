@@ -1,4 +1,3 @@
-'use strict';
 /**
  * Options for the `autoprefixer` grunt task
  *
@@ -6,8 +5,8 @@
  */
 module.exports = {
   dist: {
-    files:{
-      'src/styles/css/styles.css' : 'src/styles/css/styles.css'
-    }
-  }
+    files: {
+      'src/styles/css/styles.css': 'src/styles/css/styles.css',
+    },
+  },
 };

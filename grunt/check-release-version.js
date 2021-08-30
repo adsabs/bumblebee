@@ -1,4 +1,3 @@
-'use strict';
 /**
  * Options for the `check-release-version` grunt task
  *

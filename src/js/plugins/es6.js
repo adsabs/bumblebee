@@ -7,8 +7,6 @@
  */
 
 define(['babel', 'module'], function(babel, _module) {
-  'use strict';
-
   var fetchText,
     buildMap = {};
   if (typeof window !== 'undefined' && window.navigator && window.document) {

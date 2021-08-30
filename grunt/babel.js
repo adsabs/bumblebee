@@ -1,4 +1,3 @@
-'use strict';
 /**
  * Options for the `babel` grunt task
  *
