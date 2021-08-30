@@ -12,10 +12,8 @@ jobs:
         with:
           node-version: '16.7.0'
           architecture: 'x64'
-      - run: npm install -g grunt-cli
       - run: npm ci
-      - run: grunt --stack setup
-      - run: grunt --stack test:prod
+      - run: npm run test:prod
 
       - name: Coveralls
         uses: coverallsapp/github-action@master
