@@ -11,7 +11,9 @@
     "url": "git://github.com/adsabs/bumblebee.git"
   },
   "scripts": {
-    "test": "grunt test coverage"
+    "release": "grunt release",
+    "test:prod": "grunt --stack test:prod",
+    "postinstall": "grunt setup"
   },
   "browserslist": [
     "cover 99% in my stats"
