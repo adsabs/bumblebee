@@ -8,8 +8,6 @@ define([
     initialize: function(vals, options) {
       options = options || {};
       this.on('change:permission', this.checkEditPermission);
-
-      console.log(this);
     },
 
     defaults: function() {

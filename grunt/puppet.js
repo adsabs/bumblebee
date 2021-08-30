@@ -80,9 +80,14 @@ module.exports = function(grunt) {
         waitUntil: 'networkidle0',
       });
       await page.on('console', async (msg) => {
-        const args = await Promise.all(
-          msg.args().map(async (a) => await a.jsonValue())
-        );
+        let args = [];
+        try {
+          args = await Promise.all(
+            msg.args().map(async (a) => await a.jsonValue())
+          );
+        } catch (e) {
+          args = [];
+        }
         typeof console[msg.type()] === 'undefined'
           ? console.log.apply(console, args)
           : console[msg.type()].apply(console, args);
