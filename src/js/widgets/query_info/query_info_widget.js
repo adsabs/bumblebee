@@ -90,7 +90,7 @@ define([
       const createNew = this.model.get('newLibraryName');
 
       // if selected existing library
-      if (selected !== '0' && !createNew) {
+      if (selected && selected !== '0' && !createNew) {
         data.libraryID = this.$('#library-select').val();
         if (this.model.get('selected')) {
           data.recordsToAdd = this.$('#all-vs-selected').val();
@@ -105,7 +105,7 @@ define([
       }
 
       // else if creating new library
-      else if (selected === '0' && createNew) {
+      else if ((!selected || selected === '0') && createNew) {
         data.name = this.model.get('newLibraryName');
         if (this.model.get('selected')) {
           data.recordsToAdd = this.$('#all-vs-selected').val();
@@ -123,7 +123,7 @@ define([
       }
 
       // both selected, invalid
-      else if (selected !== '0' && createNew) {
+      else if (selected && selected !== '0' && createNew) {
         this.model.set('feedback', {
           success: false,
           error: 'Either select from an existing or create a new one',
