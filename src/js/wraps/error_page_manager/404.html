@@ -1,8 +1,33 @@
+<div
+  aria-live="assertive"
+  style="display: flex; align-items: center; flex-direction: column; margin-top: 2em"
+  class="alert alert-warning"
+>
+  <p class="lead" style="margin-bottom: 1rem">
+    {{{ error.message }}}
+  </p>
+  {{#if error.error }}
+  <p>
+    Server responded with:
+    <code>{{ error.error }}</code>
+  </p>
+  {{/if}}
+  <p>
+    Please contact our team at
+    <a href="mailto=adshelp@cfa.harvard.edu">adshelp@cfa.harvard.edu</a> for
+    help!
+  </p>
+  <p>
+    <a href="/">Click here to reload Bumblebee</a> or use your browser's back
+    button to go to a previous page.
+  </p>
+</div>
 
-<div >
-    <img src="/styles/img/404.jpg"
-         class="img-responsive"
-         style="margin:auto;"
-         alt="incredibly cute 404 error image made by Jason Bitterman"/>
-   <p style="text-align: center"><a href="/">Click here to reload Bumblebee</a> or use your browser's back button to go to a previous page.</p>
+<div>
+  <img
+    src="/styles/img/404.jpg"
+    class="img-responsive"
+    style="margin:auto;"
+    alt="incredibly cute 404 error image made by Jason Bitterman"
+  />
 </div>

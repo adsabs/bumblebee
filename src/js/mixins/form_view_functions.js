@@ -73,10 +73,11 @@ define(['underscore'], function(_) {
     // right now, useful only for user setting models that combine user-entered info and info from the server
     reset: function() {
       var valKeys = _.keys(this.validation);
+      const skipReset = Array.isArray(this.skipReset) ? this.skipReset : [];
       _.each(
         this.attributes,
-        function(v, k) {
-          if (_.contains(valKeys, k)) {
+        function(_v, k) {
+          if (_.contains(valKeys, k) && !_.contains(skipReset, k)) {
             this.unset(k, { silent: true });
           }
         },

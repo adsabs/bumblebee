@@ -163,18 +163,23 @@ define([
         return defer.promise();
       });
 
-      this.set('404', function() {
-        var defer = $.Deferred();
-        var that = this;
-        app
-          .getObject('MasterPageManager')
-          .show('ErrorPage')
-          .then(function() {
-            that.route = '404';
-            that.replace = true;
-            defer.resolve();
-          });
-        return defer.promise();
+      this.set('404', async function(_widget, errorProps = {}) {
+        // display error page
+        void (await app.getObject('MasterPageManager')).show('ErrorPage');
+
+        // send any error props to the page to get displayed
+        void (await app.getWidget('ErrorPage')).setMessage(errorProps);
+
+        /**
+         * only replace if this 404 page was truly an internal re-route,
+         * and not due to a broken link or some other routing issue
+         */
+        if (Object.keys(errorProps).length > 0) {
+          this.replace = true;
+        }
+
+        // set url route
+        this.route = '404';
       });
 
       this.set('ClassicSearchForm', function(widgetName, { query }) {
