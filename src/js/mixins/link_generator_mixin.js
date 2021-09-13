@@ -13,7 +13,18 @@ define(['underscore', 'js/mixins/openurl_generator'], function(
     'arXiv PDF',
   ];
 
-  // set of link types and descriptions
+  /**
+   * @typedef {Object} LinkType
+   * @property {string} name - Full name
+   * @property {string} shortName - shorter name for display
+   * @property {string} description - longer description
+   * @property {('PDF' | 'SCAN' | 'HTML')} type - Resource type
+   */
+
+  /**
+   * set of link types and descriptions
+   * @type {Object.<string, LinkType>}
+   */
   const LINK_TYPES = {
     AcA: {
       shortName: 'AcA',
@@ -82,6 +93,10 @@ define(['underscore', 'js/mixins/openurl_generator'], function(
     Chandra: {
       shortName: 'Chandra',
       description: 'Chandra X-Ray Observatory',
+    },
+    Dataverse: {
+      shortname: 'Dataverse',
+      description: 'Dataverse Project',
     },
     Dryad: {
       shortName: 'Dryad',
