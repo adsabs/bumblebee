@@ -269,7 +269,7 @@ require.config({
       'libs/react-bootstrap',
     ],
     'react-dom': [
-      'https://unpkg.com/react-dom@17.0.2/umd/react-dom.production.min',
+      'https://unpkg.com/react-dom@17.0.2/umd/react-dom.development',
       'libs/react-dom',
     ],
     'prop-types': [
@@ -459,11 +459,11 @@ require.config({
       'persist-js':
         'sha384-IQ8LQBnxRLItFm2zBR7ehQAjX2c5kAvrnmQUDQCDhl5whNOy/Qrt4OkNPBPZqrgE',
       react:
-        'sha384-ZHBAhj6mPF2wke1Ie6UN+ozxCHBXIuRrcszqkblgAqCrZtYGI3zZYn4SsU+ozss4',
+        'sha384-7Er69WnAl0+tY5MWEvnQzWHeDFjgHSnlQfDDeWUvv8qlRXtzaF/pNo18Q2aoZNiO',
       'react-bootstrap':
         'sha384-9Cmt0BSVYuRFR8JkyWNFQ7b58m8/zLVP3u9etA7xRzOTmv9v6dk0exj5ZVr/US/7',
       'react-dom':
-        'sha384-vj2XpC1SOa8PHrb0YlBqKN7CQzJYO72jz4CkDQ+ePL1pwOV4+dn05rPrbLGUuvCv',
+        'sha384-E9IgxDsnjKgh0777N3lXen7NwXeTsOpLLJhI01SW7idG046SRqJpsW2rJwsOYk0L',
       'prop-types':
         'sha384-9Fq52URRAaPlKGhu0AzshypUBBQa7Q8Rz1ze2svcZNUHGb/PlxTygZmtyYeqEHOK',
       'react-redux':
