@@ -1,10 +1,11 @@
 /* eslint-disable no-script-url */
-define(['react', 'react-bootstrap', 'prop-types'], function(
-  React,
-  { Dropdown, MenuItem, Label },
-  PropTypes
-) {
-  const renderRunButtons = (item, onSelect) => {
+define([
+  'react',
+  'react-bootstrap',
+  'react-aria-menubutton',
+  'prop-types',
+], function(React, { Label }, { Button, Wrapper, Menu, MenuItem }, PropTypes) {
+  const renderRunButtons = (item) => {
     let labels = [];
     if (item.type === 'template') {
       if (item.template === 'arxiv') {
@@ -24,14 +25,14 @@ define(['react', 'react-bootstrap', 'prop-types'], function(
     } else {
       labels = ['Search'];
     }
-    return labels.map((l, i) => (
+    return labels.map((label, i) => (
       <MenuItem
-        href="javascript:void(0);"
-        onSelect={onSelect}
-        aria-label={`Search: ${l}`}
-        eventKey={i}
+        key={label}
+        text={label}
+        value={{ type: 'runquery', queryKey: i }}
+        className="menuitem"
       >
-        <i className="fa fa-search fa-fw" aria-hidden="true" /> {l}
+        <i className="fa fa-search fa-fw" aria-hidden="true" /> {label}
       </MenuItem>
     ));
   };
@@ -45,51 +46,89 @@ define(['react', 'react-bootstrap', 'prop-types'], function(
     disable,
     dropup,
   }) => {
-    let allowEdit = true;
-
     // is a general notification, disallow editing
-    if (item.type === 'query') {
-      allowEdit = false;
-    }
+    const allowEdit = item.type !== 'query';
+
+    const handleSelection = ({ type, queryKey }) => {
+      switch (type) {
+        case 'toggleactive':
+          return onToggleActive(item);
+        case 'edit':
+          return onEdit(item);
+        case 'delete':
+          return onDelete(item);
+        case 'runquery':
+          return onRunQuery(item, queryKey);
+        default:
+      }
+    };
 
     return (
-      <Dropdown
-        disabled={disable}
-        dropup={dropup}
-        pullRight
-        id={`actions-dropdown-${item.id}`}
+      <Wrapper
+        onSelection={handleSelection}
+        className="react-aria-menubutton__wrapper"
       >
-        <Dropdown.Toggle>
-          <i className="fa fa-cog" aria-hidden="true" /> Actions
-        </Dropdown.Toggle>
-        <Dropdown.Menu style={{ overflow: 'visible !important' }}>
-          <MenuItem header>View in search results page</MenuItem>
-          {renderRunButtons(item, (queryKey) => onRunQuery(item, queryKey))}
-          <MenuItem divider />
-          <MenuItem header>Actions</MenuItem>
-          <MenuItem
-            href="javascript:void(0);"
-            onClick={() => onToggleActive(item)}
-          >
-            <div className="label-group">
-              <Label bsStyle={item.active ? 'success' : 'default'}>
-                ENABLED
-              </Label>
-              <Label bsStyle={item.active ? 'default' : 'danger'}>
-                DISABLED
-              </Label>
-            </div>
-          </MenuItem>
-          {allowEdit && (
-            <MenuItem href="javascript:void(0);" onClick={() => onEdit(item)}>
-              <i className="fa fa-pencil fa-fw" aria-hidden="true" /> Edit
+        <Button
+          className={`btn btn-default ${disable ? 'disabled' : ''}`}
+          disabled={disable}
+        >
+          <i className="fa fa-cog" aria-hidden="true" /> Actions{' '}
+          <i className="fa fa-caret-down" aria-hidden="true" />
+        </Button>
+        <Menu>
+          <ul className="react-aria-menubutton__menu">
+            <span
+              key="query-header"
+              aria-hidden="true"
+              className="menuitem__label"
+            >
+              View in search results page
+            </span>
+            {renderRunButtons(item)}
+            <hr key="divider" />
+            <span
+              key="actions-header"
+              aria-hidden="true"
+              className="menuitem__label"
+            >
+              Actions
+            </span>
+            <MenuItem
+              key="toggler"
+              text="toggle"
+              className="menuitem"
+              value={{ type: 'toggleactive' }}
+            >
+              <div className="label-group">
+                <Label bsStyle={item.active ? 'success' : 'default'}>
+                  ENABLED
+                </Label>
+                <Label bsStyle={item.active ? 'default' : 'danger'}>
+                  DISABLED
+                </Label>
+              </div>
             </MenuItem>
-          )}
-          <MenuItem href="javascript:void(0);" onClick={() => onDelete(item)}>
-            <i className="fa fa-trash fa-fw" aria-hidden="true" /> Delete
-          </MenuItem>
-        </Dropdown.Menu>
-      </Dropdown>
+            {allowEdit && (
+              <MenuItem
+                key="edit"
+                text="edit"
+                className="menuitem"
+                value={{ type: 'edit' }}
+              >
+                <i className="fa fa-pencil fa-fw" aria-hidden="true" /> Edit
+              </MenuItem>
+            )}
+            <MenuItem
+              key="delete"
+              text="delete"
+              className="menuitem"
+              value={{ type: 'delete' }}
+            >
+              <i className="fa fa-trash fa-fw" aria-hidden="true" /> Delete
+            </MenuItem>
+          </ul>
+        </Menu>
+      </Wrapper>
     );
   };
 

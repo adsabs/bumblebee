@@ -32,8 +32,8 @@ define([
   SortableHeader.defaultProps = {
     active: false,
     children: null,
-    direction: PropTypes.string,
-    onClick: PropTypes.func,
+    direction: '',
+    onClick: () => {},
   };
 
   SortableHeader.propTypes = {
@@ -364,6 +364,7 @@ define([
 
                 return (
                   <tr
+                    key={id}
                     className={
                       (activeItem === id ? 'info ' : '') +
                       (item.active ? '' : 'inactive')
