@@ -195,6 +195,15 @@ input.hasbigquery {
     max-width: 800px;
   }
 
+  .search-examples {
+    padding-top: 1rem;
+    display: flex;
+    justify-content: space-between;
+    @media screen and (max-width: $screen-sm) {
+      display: unset;
+    }
+  }
+
   .quick-reference {
     display: block;
     font-size: 17px;

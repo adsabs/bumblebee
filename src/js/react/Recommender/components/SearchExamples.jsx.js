@@ -54,7 +54,7 @@ define([
     tooltip: PropTypes.string,
   };
 
-  const SearchExamples = () => {
+  const SearchExamples = React.memo(() => {
     const dispatch = useDispatch();
     const onClick = (text) => {
       dispatch(updateSearchBar(text));
@@ -66,14 +66,7 @@ define([
     };
 
     return (
-      <div
-        style={{
-          paddingTop: '1rem',
-          display: 'flex',
-          justifyContent: 'space-between',
-          flexWrap: 'wrap',
-        }}
-      >
+      <div className="search-examples">
         <div className="quick-reference">
           <Dl>
             {searchExamples.slice(0, 7).map((entry) => {
@@ -110,7 +103,7 @@ define([
         </div>
       </div>
     );
-  };
+  });
 
   return SearchExamples;
 });
