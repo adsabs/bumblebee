@@ -88,7 +88,6 @@
 }
 
 .s-explore-close-container {
-
 }
 
 .s-disabled {
@@ -99,7 +98,6 @@
   min-height: 100%;
   height: 100%;
   background-color: $darker-background;
-  overflow-y: hidden;
 }
 
 //get rid of this later
@@ -270,8 +268,8 @@
 button.text-link {
   background: none;
   text-align: left;
-  border: 1px dotted rgba(0, 0, 0, 0.3); 
-  border-radius: 2px;;
+  border: 1px dotted rgba(0, 0, 0, 0.3);
+  border-radius: 2px;
   margin-right: 4px;
 }
 
