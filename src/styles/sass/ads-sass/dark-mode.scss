@@ -1799,5 +1799,27 @@
     .__footer_links a {
       color: white;
     }
+
+    /* .react-aria-menubutton */
+    .react-aria-menubutton {
+      &__menu {
+        background-color: $darkmode-background-tertiary;
+        color: $darkmode-text;
+        border-color: $darkmode-input-border;
+
+        > span.menuitem__label {
+          color: $darkmode-text;
+        }
+
+        > .menuitem {
+          color: $darkmode-text;
+
+          &:hover {
+            background-color: $darkmode-background;
+            color: white;
+          }
+        }
+      }
+    }
   }
 }
