@@ -196,3 +196,64 @@ div[data-widget='ShowPaperExport'] .close-circle {
   color: #335baf;
   text-transform: uppercase;
 }
+
+.react-aria-menubutton {
+  &__wrapper {
+    position: relative;
+  }
+
+  &__menu {
+    position: absolute;
+    top: 100%;
+    right: 0;
+    z-index: 1000;
+    float: right;
+    min-width: 160px;
+    padding: 5px 0;
+    margin: 2px 0 0;
+    font-size: 14px;
+    text-align: left;
+    list-style: none;
+    background-color: #fff;
+    background-clip: padding-box;
+    border: 1px solid #ccc;
+    border: 1px solid rgba(0, 0, 0, 0.15);
+    border-radius: 4px;
+    -webkit-box-shadow: 0 6px 12px rgb(0 0 0 / 18%);
+    box-shadow: 0 6px 12px rgb(0 0 0 / 18%);
+
+    > .menuitem {
+      display: block;
+      padding: 10px 20px;
+      clear: both;
+      font-weight: 400;
+      line-height: 1.42857143;
+      color: #333;
+      white-space: nowrap;
+      cursor: pointer;
+      &:hover {
+        color: #262626;
+        text-decoration: none;
+        background-color: #f5f5f5;
+      }
+    }
+
+    > span.menuitem__label {
+      display: block;
+      padding: 3px 20px;
+      margin-left: 12px;
+      clear: both;
+      font-weight: 100;
+      line-height: 1.42857143;
+      color: #777;
+      cursor: default;
+      white-space: nowrap;
+    }
+
+    > hr {
+      @extend hr;
+      margin-top: 10px;
+      margin-bottom: 10px;
+    }
+  }
+}

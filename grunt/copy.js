@@ -19,6 +19,12 @@ module.exports = function(grunt) {
           dest: 'src/libs/react-bootstrap.js',
         },
 
+        // react-aria-menubutton
+        {
+          src: 'node_modules/react-aria-menubutton/umd/ReactAriaMenuButton.js',
+          dest: 'src/libs/react-aria-menubutton.js',
+        },
+
         // @hookform/resolvers
         {
           src:

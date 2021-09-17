@@ -293,6 +293,10 @@ require.config({
       'https://unpkg.com/select2@4.0.3/dist/js/select2.min',
       'libs/select2/select2',
     ],
+    'react-aria-menubutton': [
+      'https://unpkg.com/react-aria-menubutton@7.0.3/umd/ReactAriaMenuButton',
+      'libs/react-aria-menubutton',
+    ],
     'react-hook-form': [
       'https://unpkg.com/react-hook-form@6.11.0/dist/index.umd.production.min',
       'libs/react-hook-form',
@@ -476,6 +480,8 @@ require.config({
         'sha384-clksQEsrkq4U3jNhSd+pCTsDFvPnSxN2xr0WUy2LOXFxC8KvqinvNJJ3656K5Tkf',
       select2:
         'sha384-222hzbb8Z8ZKe6pzP18nTSltQM3PdcAwxWKzGOKOIF+Y3bROr5n9zdQ8yTRHgQkQ',
+      'react-aria-menubutton':
+        'sha384-sAiCfhNvllSt31QXulF/DbYmp8k6C5WIdSygBF7QC7wK5h8mnwxrN1fsEV0K8H+Z',
       'react-hook-form':
         'sha384-o00KobsI/OBvRsqSR+XM/cniIcEZDOEDS+fEtCVrU4fdh90ysgmIQZZ3TXBGEw/H',
       'react-is':
