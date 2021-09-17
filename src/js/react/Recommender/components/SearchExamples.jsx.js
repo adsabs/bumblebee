@@ -61,6 +61,10 @@ define([
       dispatch(emitAnalytics(['send', 'event', 'interaction.suggestion-used']));
     };
 
+    const generateRandom = (max) => {
+      return Math.floor(Math.random() * max);
+    };
+
     return (
       <div
         style={{
@@ -72,28 +76,36 @@ define([
       >
         <div className="quick-reference">
           <Dl>
-            {searchExamples.slice(0, 7).map((entry) => (
-              <Entry
-                label={entry.label}
-                text={entry.example}
-                tooltip={entry.tooltip}
-                onClick={() => onClick(entry.example)}
-                key={entry.label}
-              />
-            ))}
+            {searchExamples.slice(0, 7).map((entry) => {
+              const index = generateRandom(entry.examples.length - 1);
+              const example = entry.syntax.replace('%', entry.examples[index]);
+              return (
+                <Entry
+                  label={entry.label}
+                  text={example}
+                  tooltip={entry.tooltip}
+                  onClick={() => onClick(example)}
+                  key={entry.label}
+                />
+              );
+            })}
           </Dl>
         </div>
         <div className="quick-reference">
           <Dl>
-            {searchExamples.slice(7).map((entry) => (
-              <Entry
-                label={entry.label}
-                text={entry.example}
-                tooltip={entry.tooltip}
-                onClick={() => onClick(entry.example)}
-                key={entry.label}
-              />
-            ))}
+            {searchExamples.slice(7).map((entry) => {
+              const index = generateRandom(entry.examples.length - 1);
+              const example = entry.syntax.replace('%', entry.examples[index]);
+              return (
+                <Entry
+                  label={entry.label}
+                  text={example}
+                  tooltip={entry.tooltip}
+                  onClick={() => onClick(example)}
+                  key={entry.label}
+                />
+              );
+            })}
           </Dl>
         </div>
       </div>
