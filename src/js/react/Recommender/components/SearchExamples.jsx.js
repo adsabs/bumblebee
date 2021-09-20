@@ -24,7 +24,7 @@ define([
       // eslint-disable-next-line react/jsx-fragments
       <React.Fragment>
         <dt>{label}</dt>
-        <dd>
+        <dd style={{ display: 'flex' }}>
           <button type="button" onClick={onClick} className="text-link">
             {text}
           </button>

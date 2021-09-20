@@ -14,7 +14,7 @@ define([], function() {
     'Dawson, Rebekah',
     'Demorest, Paul',
     'Suyu, Sherry H.',
-    'KamionkowskiMarc',
+    'Kamionkowski, Marc',
     'Seljak, Uroš',
     'Zaldarriaga, Matias',
     'Kaspi, Victoria M.',

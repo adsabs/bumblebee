@@ -222,6 +222,7 @@ input.hasbigquery {
     }
 
     @media screen and (min-width: $screen-sm-min) {
+      width: 50%;
       .col-sm-6:first-of-type {
         width: 46%;
       }
