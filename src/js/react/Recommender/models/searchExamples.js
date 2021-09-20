@@ -50,7 +50,7 @@ define([], function() {
     {
       label: 'full text',
       syntax: 'full:"%"',
-      examples: ['gravity waves'],
+      examples: ['super Earth'],
     },
     {
       label: 'publication',
@@ -61,41 +61,41 @@ define([], function() {
     },
     {
       label: 'citations',
-      syntax: 'citations(author:"%")',
-      examples: authors,
+      syntax: 'citations(%)',
+      examples: ['abstract:JWST'],
       tooltip: 'finds all papers that cite a given set of papers',
-    },
-    {
-      label: 'references',
-      syntax: 'references(author:"%")',
-      examples: authors,
-      tooltip: 'finds all papers referenced by a given set of papers',
-    },
-    {
-      label: 'reviews',
-      syntax: 'reviews("%")',
-      examples: ['gamma-ray bursts'],
-      tooltip:
-        'finds articles citing the most relevant papers on the topic being researched',
     },
     {
       label: 'refereed',
       syntax: 'property:%',
       examples: ['refereed'],
-      tooltip: 'limit to non-refereed papers by searching property:notrefereed',
+      tooltip: 'limit to refereed papers',
     },
     {
       label: 'astronomy',
-      syntax: 'database:%',
+      syntax: 'collection:%',
       examples: ['astronomy'],
-      tooltip: 'limit to physics papers by searching collection:physics',
+      tooltip: 'limit search to collection',
     },
     {
-      label: 'OR',
-      syntax: 'abs:(planet OR star)',
-      examples: [],
-      tooltip:
-        'default logic is AND, e.g. abs:(planet star) would be interpreted as abs:(planet AND star)',
+      label: 'exact search',
+      syntax: '=%',
+      examples: ['body:"intracluster medium"'],
+    },
+    {
+      label: 'institution',
+      syntax: 'inst:%',
+      examples: ['CfA'],
+    },
+    {
+      label: 'author count',
+      syntax: 'author_count:%',
+      examples: ['[1 TO 10]'],
+    },
+    {
+      label: 'doctype',
+      syntax: 'doctype:%',
+      examples: ['software'],
     },
   ];
 
