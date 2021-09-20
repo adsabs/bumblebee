@@ -93,7 +93,7 @@ define([], function() {
       examples: ['[1 TO 10]'],
     },
     {
-      label: 'doctype',
+      label: 'record type',
       syntax: 'doctype:%',
       examples: ['software'],
     },
