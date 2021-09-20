@@ -48,6 +48,7 @@ module.exports = function(grunt) {
     'react-transition-group': 'empty:',
     'regenerator-runtime': 'empty:',
     '@hookform/resolvers': 'empty:',
+    'react-aria-menubutton': 'empty:',
   };
 
   var baseConfig = {

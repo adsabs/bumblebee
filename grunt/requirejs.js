@@ -59,7 +59,8 @@
         "hotkeys": "empty:",
         "react-transition-group": "empty:",
         "regenerator-runtime": "empty:",
-        "@hookform/resolvers": "empty:"
+        "@hookform/resolvers": "empty:",
+        "react-aria-menubutton": "empty:"
       },
       "stubModules": [
         "es6",
@@ -161,7 +162,8 @@
         "hotkeys": "empty:",
         "react-transition-group": "empty:",
         "regenerator-runtime": "empty:",
-        "@hookform/resolvers": "empty:"
+        "@hookform/resolvers": "empty:",
+        "react-aria-menubutton": "empty:"
       },
       "stubModules": [
         "es6",
@@ -290,7 +292,8 @@
         "hotkeys": "empty:",
         "react-transition-group": "empty:",
         "regenerator-runtime": "empty:",
-        "@hookform/resolvers": "empty:"
+        "@hookform/resolvers": "empty:",
+        "react-aria-menubutton": "empty:"
       },
       "stubModules": [
         "es6",
@@ -417,7 +420,8 @@
         "hotkeys": "empty:",
         "react-transition-group": "empty:",
         "regenerator-runtime": "empty:",
-        "@hookform/resolvers": "empty:"
+        "@hookform/resolvers": "empty:",
+        "react-aria-menubutton": "empty:"
       },
       "stubModules": [
         "es6",
