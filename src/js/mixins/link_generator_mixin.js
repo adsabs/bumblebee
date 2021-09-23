@@ -26,6 +26,11 @@ define(['underscore', 'js/mixins/openurl_generator'], function(
    * @type {Object.<string, LinkType>}
    */
   const LINK_TYPES = {
+    '4TU.ResearchData': {
+      shortName: '4TU.ResearchData',
+      description:
+        'International data repository for science, engineering and design',
+    },
     AcA: {
       shortName: 'AcA',
       description: 'Acta Astronomica Data Files',
@@ -42,17 +47,38 @@ define(['underscore', 'js/mixins/openurl_generator'], function(
       shortName: 'ADS',
       type: 'SCAN',
     },
+    AHED: {
+      shortName: 'AHED',
+      description: 'Astrobiology Habitable Environments Database',
+    },
     ALMA: {
       shortName: 'ALMA',
       description: 'Atacama Large Millimeter/submillimeter Array',
+    },
+    ArcticData: {
+      shortName: 'ArcticData',
+      description: 'Arctic Data Center',
     },
     ARI: {
       shortName: 'ARI',
       description: 'Astronomisches Rechen-Institut',
     },
+    ARTEMIS: {
+      shortName: 'ARTEMIS',
+      description:
+        'Acceleration Reconnection Turbulence & Electrodynamics of Moon Interaction with the Sun',
+    },
+    AstroGeo: {
+      shortName: 'AstroGeo',
+      description: 'USGS Astrogeology Science Center',
+    },
     Astroverse: {
       shortName: 'Astroverse',
       description: 'CfA Dataverse',
+    },
+    ASU: {
+      shortName: 'ASU',
+      description: 'Arizona State University',
     },
     ATNF: {
       shortName: 'ATNF',
@@ -74,6 +100,10 @@ define(['underscore', 'js/mixins/openurl_generator'], function(
       description: 'Link to PDF page provided by author',
       type: 'PDF',
     },
+    BAS: {
+      shortName: 'BAS',
+      description: 'British Antarctic Survey',
+    },
     BAVJ: {
       shortName: 'BAVJ',
       description: 'Data of the German Association for Variable Stars',
@@ -86,6 +116,10 @@ define(['underscore', 'js/mixins/openurl_generator'], function(
       shortName: 'CADC',
       description: 'Canadian Astronomy Data Center',
     },
+    Caltech: {
+      shortName: 'Caltech',
+      description: 'California Institute of Technology',
+    },
     CDS: {
       shortName: 'CDS',
       description: 'Strasbourg Astronomical Data Center',
@@ -94,13 +128,41 @@ define(['underscore', 'js/mixins/openurl_generator'], function(
       shortName: 'Chandra',
       description: 'Chandra X-Ray Observatory',
     },
+    ClimateDataStore: {
+      shortName: 'ClimateDataStore',
+      description: 'Climate Data Store',
+    },
+    CMDN: {
+      shortName: 'CMDN',
+      description: 'China Meteorological Data Service Centre',
+    },
+    CXO: {
+      shortName: 'CXO',
+      description: 'Chandra Data Archive',
+    },
+    DARTS: {
+      shortName: 'DARTS',
+      description: 'Data ARchives and Transmission System',
+    },
     Dataverse: {
-      shortname: 'Dataverse',
+      shortName: 'Dataverse',
       description: 'Dataverse Project',
     },
     Dryad: {
       shortName: 'Dryad',
       description: 'International Repository of Research Data',
+    },
+    EARTHCHEM: {
+      shortName: 'EARTHCHEM',
+      description: 'Open-access repository for geochemical datasets',
+    },
+    ECMWF: {
+      shortName: 'ECMWF',
+      description: 'European Centre for Medium-Range Weather Forecasts',
+    },
+    EMFISIS: {
+      shortName: 'EMFISIS',
+      description: 'An instrument suite on the Van Allen Probes',
     },
     EPRINT_HTML: {
       name: 'arXiv Article',
@@ -114,26 +176,55 @@ define(['underscore', 'js/mixins/openurl_generator'], function(
       description: 'ArXiv eprint',
       type: 'PDF',
     },
+    ERGSC: {
+      shortName: 'ERGSC',
+      description: 'ERG Science Center',
+    },
     ESA: {
       shortName: 'ESA',
       description: 'ESAC Science Data Center',
+    },
+    ESGF: {
+      shortName: 'ESGF',
+      description: 'Earth System Grid Federation',
     },
     ESO: {
       shortName: 'ESO',
       description: 'European Southern Observatory',
     },
+    ETHZ: {
+      shortName: 'ETHZ',
+      description: 'ETH Zurich Research Collection',
+    },
+    FDSN: {
+      shortName: 'FDSN',
+      description: 'International Federation of Digital Seismograph Networks',
+    },
     Figshare: {
       shortName: 'Figshare',
+      description: 'Online Open Access Repository',
+    },
+    figshare: {
+      shortName: 'figshare',
       description: 'Online Open Access Repository',
     },
     GCPD: {
       shortName: 'GCPD',
       description: 'The General Catalogue of Photometric Data',
     },
+    Gemini: {
+      shortName: 'Gemini',
+      description: 'Gemini Observatory Archive',
+    },
     Github: {
       shortName: 'Github',
       description:
         'Web-based version-control and collaboration platform for software developers.',
+    },
+    GRAS: {
+      shortName: 'GRAS',
+      description:
+        'Lunar and Planet Exploration Program Ground Application System',
     },
     GTC: {
       shortName: 'GTC',
@@ -142,7 +233,7 @@ define(['underscore', 'js/mixins/openurl_generator'], function(
     HEASARC: {
       shortName: 'HEASARC',
       description:
-        "NASA's High Energy Astrophysics Science Archive Research Center",
+        'NASA High Energy Astrophysics Science Archive Research Center',
     },
     Herschel: {
       shortName: 'Herschel',
@@ -156,6 +247,10 @@ define(['underscore', 'js/mixins/openurl_generator'], function(
       shortName: 'INES',
       description: 'IUE Newly Extracted Spectra',
     },
+    IRIS: {
+      shortName: 'IRIS',
+      description: 'Incorporated Research Institutions for Seismology',
+    },
     IRSA: {
       shortName: 'IRSA',
       description: 'NASA/IPAC Infrared Science Archive',
@@ -163,6 +258,10 @@ define(['underscore', 'js/mixins/openurl_generator'], function(
     ISO: {
       shortName: 'ISO',
       description: 'Infrared Space Observatory',
+    },
+    JOSS: {
+      shortName: 'JOSS',
+      description: 'Journal of Open Source Software',
     },
     JWST: {
       shortName: 'JWST',
@@ -172,9 +271,42 @@ define(['underscore', 'js/mixins/openurl_generator'], function(
       shortName: 'KOA',
       description: 'Keck Observatory Archive',
     },
+    LAADS: {
+      shortName: 'LAADS',
+      description:
+        'Level-1 and Atmosphere Archive & Distribution System Distributed Active Archive Center',
+    },
+    label: {
+      shortName: 'label',
+      description: 'name',
+    },
+    LASP: {
+      shortName: 'LASP',
+      description: 'Laboratory for Atmospheric and Space Physics',
+    },
+    LPL: {
+      shortName: 'LPL',
+      description: 'Lunar and Planetary Laboratory',
+    },
     MAST: {
       shortName: 'MAST',
       description: 'Mikulski Archive for Space Telescopes',
+    },
+    MetOffice: {
+      shortName: 'MetOffice',
+      description: 'Met Office',
+    },
+    MIT: {
+      shortName: 'MIT',
+      description: 'Massachusetts Institute of Technology',
+    },
+    NASA: {
+      shortName: 'NASA',
+      description: 'NASA Data Portal',
+    },
+    NCAR: {
+      shortName: 'NCAR',
+      description: 'National Center for Atmospheric Research',
     },
     NED: {
       shortName: 'NED',
@@ -184,12 +316,25 @@ define(['underscore', 'js/mixins/openurl_generator'], function(
       shortName: 'NExScI',
       description: 'NASA Exoplanet Archive',
     },
+    NOAA: {
+      shortName: 'NOAA',
+      description: 'National Oceanic and Atmospheric Administration',
+    },
     NOAO: {
       shortName: 'NOAO',
       description: 'National Optical Astronomy Observatory',
     },
+    OSF: {
+      shortName: 'OSF',
+      description: 'Open Science Foundation',
+    },
     PANGAEA: {
       shortName: 'PANGAEA',
+      description:
+        'Digital Data Library and a Data Publisher for Earth System Science',
+    },
+    pangaea: {
+      shortName: 'pangaea',
       description:
         'Digital Data Library and a Data Publisher for Earth System Science',
     },
@@ -205,6 +350,14 @@ define(['underscore', 'js/mixins/openurl_generator'], function(
     PDS: {
       shortName: 'PDS',
       description: 'The NASA Planetary Data System',
+    },
+    PDSS: {
+      shortName: 'PDSS',
+      description: 'The NASA Planetary Data System',
+    },
+    PIK: {
+      shortName: 'PIK',
+      description: 'Potsdam Institute for Climate Impact Research',
     },
     protocols: {
       shortName: 'protocols',
@@ -223,6 +376,10 @@ define(['underscore', 'js/mixins/openurl_generator'], function(
       description: 'Publisher PDF',
       type: 'PDF',
     },
+    ScienceBase: {
+      shortName: 'ScienceBase',
+      description: 'ScienceBase',
+    },
     SIMBAD: {
       shortName: 'SIMBAD',
       description: 'SIMBAD Database at the CDS',
@@ -231,9 +388,22 @@ define(['underscore', 'js/mixins/openurl_generator'], function(
       shortName: 'Spitzer',
       description: 'Spitzer Space Telescope',
     },
+    TDR: {
+      shortName: 'TDR',
+      description: 'Texas Data Respository',
+    },
+    THEMIS: {
+      shortName: 'THEMIS',
+      description:
+        'Time History of Events and Macroscopic Interactions During Substorms',
+    },
     TNS: {
       shortName: 'TNS',
       description: 'Transient Name Server',
+    },
+    UNAVCO: {
+      shortName: 'UNAVCO',
+      description: 'UNAVCO',
     },
     Vizier: {
       shortName: 'VizieR',
@@ -247,6 +417,10 @@ define(['underscore', 'js/mixins/openurl_generator'], function(
       shortName: 'Zenodo',
       description: 'Zenodo Archive',
     },
+  };
+
+  const enc = function(str) {
+    return encodeURIComponent(str);
   };
 
   /**
@@ -284,7 +458,7 @@ define(['underscore', 'js/mixins/openurl_generator'], function(
     const property = data.property;
 
     // check the esources property
-    _.forEach(data.esources, function(el, ids, sources) {
+    _.forEach(data.esources, function(el) {
       const parts = el.split('_');
       const linkInfo = LINK_TYPES[el];
       const linkServer = data.link_server;
@@ -523,10 +697,6 @@ define(['underscore', 'js/mixins/openurl_generator'], function(
       return GATEWAY_BASE_URL + bibcode + '/' + type + ':' + id;
     }
     return '';
-  };
-
-  const enc = function(str) {
-    return encodeURIComponent(str);
   };
 
   return {
