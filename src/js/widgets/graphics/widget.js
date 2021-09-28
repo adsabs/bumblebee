@@ -98,115 +98,150 @@ define([
       pubsub.subscribe(pubsub.DELIVERING_RESPONSE, this.processResponse);
     },
 
-    onDisplayDocuments: function(apiQuery) {
-      var self = this;
-
+    onDisplayDocuments(apiQuery) {
       const bibcode = this.parseIdentifierFromQuery(apiQuery);
 
-      if (bibcode === 'null') {
+      if (bibcode === null) {
         return;
       }
 
-      this.loadBibcodeData(bibcode).done(function() {
-        self.trigger('page-manager-event', 'widget-ready', {
-          isActive: true,
-          widget: self,
-        });
+      if (this._bibcode === bibcode) {
+        // if we are already loaded, just return here
+        return;
+      }
+      this._bibcode = bibcode;
+
+      // load graphics
+      this.loadBibcodeData();
+
+      if (!Marionette.getOption(this, 'sidebar')) {
+        // if we aren't on the sidebar, then attempt to first grab the doc from stash
+        // otherwise load it from solr
+        const doc = this.getDocFromStash();
+        doc !== null ? this.setTitle(doc.title) : this.loadTitle(apiQuery);
+      }
+    },
+
+    setTitle(title) {
+      this.model.set('title', Array.isArray(title) ? title[0] : title);
+    },
+
+    getDocFromStash() {
+      if (!this.getBeeHive().hasObject('DocStashController')) {
+        return null;
+      }
+      const docs = this.getBeeHive()
+        .getObject('DocStashController')
+        .getDocs();
+      if (docs.length > 0) {
+        const doc = docs.find((d) => d.bibcode === this._bibcode);
+        if (typeof doc !== 'undefined') {
+          return doc;
+        }
+      }
+      return null;
+    },
+
+    loadTitle(apiQuery) {
+      const query = apiQuery.clone();
+      query.unlock();
+      query.set({
+        q: `identifier:${this._bibcode}`,
+        fl: 'title',
       });
-      this.getResponseDeferred().fail(function() {
-        self.trigger('page-manager-event', 'widget-ready', {
-          // this will set us to inActive and navigate to ShowAbstract
-          shouldReset: bibcode !== this._bibcode,
-          isActive: false,
-          widget: self,
-        });
-        this._bibcode = bibcode;
+      const ps = this.getPubSub();
+      const request = new ApiRequest({
+        target: ApiTargets.SEARCH,
+        query,
+        options: {
+          fail: (e) => this.onError(e),
+        },
       });
+      ps.publish(ps.EXECUTE_REQUEST, request);
+    },
+
+    onReceivedResponse() {
+      // we have a response, set the widget as active
+      this.trigger('page-manager-event', 'widget-ready', {
+        isActive: true,
+        widget: this,
+      });
+    },
+
+    onError(e) {
+      console.log(e);
+      this.trigger('page-manager-event', 'widget-ready', {
+        // this will set us to inActive and navigate to ShowAbstract
+        shouldReset: true,
+        isActive: false,
+        widget: this,
+      });
+      this.model.clear();
+    },
+
+    processResponse(response) {
+      try {
+        const {
+          // these are coming from /graphics
+          figures = [],
+          header,
+          Error: error,
+
+          // this will only be available if we did the title search
+          response: { docs: [{ title = '' }] = [{}] } = {},
+        } = response.toJSON();
+
+        // check for an error property (this should be taken care of before processResponse)
+        if (typeof error === 'string') {
+          return this.onError(new Error(error));
+        }
+
+        // set the sidenav widget as "active"
+        this.onReceivedResponse();
+
+        this.setTitle(title);
+
+        // process the response from /graphics
+        const graphics = figures.reduce(
+          (acc, { figure_label: label, images, figure_type: type }) => ({
+            ...acc,
+            [label]: {
+              ...images[0],
+              interactive: type === 'interactive',
+            },
+          }),
+          {}
+        );
+
+        // only set values if we had data
+        if (figures.length > 0) {
+          this.model.set({
+            graphics,
+            linkSentence: header,
+          });
+        }
+      } catch (e) {
+        this.onError(e);
+      }
     },
 
     // load data, return a promise
-    loadBibcodeData: function(bibcode) {
-      if (bibcode === this._bibcode) {
-        this.deferredObject = $.Deferred();
-        this.deferredObject.resolve(this.model);
-        return this.deferredObject.promise();
-      }
-
-      this._bibcode = bibcode;
-      this.deferredObject = $.Deferred();
-      var request = new ApiRequest({
-        target: ApiTargets.GRAPHICS + '/' + this._bibcode,
+    loadBibcodeData() {
+      const ps = this.getPubSub();
+      const request = new ApiRequest({
+        target: `${ApiTargets.GRAPHICS}/${this._bibcode}`,
         query: new ApiQuery(),
-      });
-      this.getPubSub().publish(this.getPubSub().DELIVERING_REQUEST, request);
-
-      // now ask for the title if it's the main widget
-      if (!Marionette.getOption(this, 'sidebar')) {
-        var query = this.getCurrentQuery().clone();
-        query.unlock();
-        query.set('q', 'bibcode:' + bibcode);
-        query.set('fl', 'title');
-
-        var request = new ApiRequest({
-          target: ApiTargets.SEARCH,
-          query: query,
-        });
-        this.getPubSub().publish(this.getPubSub().DELIVERING_REQUEST, request);
-      }
-      return this.deferredObject.promise();
-    },
-
-    getResponseDeferred: function() {
-      if (!this._deferred || this._deferred.state() === 'resolved') {
-        this._deferred = $.Deferred();
-      }
-      return this._deferred;
-    },
-
-    // if there is no data, there will be no response
-    processResponse: function(response) {
-      if (!(response instanceof ApiResponse)) {
-        var responseDef = this.getResponseDeferred();
-        // it's from the graphics service
-
-        // was there data for the bibcode? if not, reject the deferred
-        // response.get("Error") throws an uncaught error, not very convenient
-        if (response.toJSON().Error) {
-          // so we don't show old data if the new data hasn't returned
-          this.model.clear();
-          var error = response.get('Error');
-          return responseDef.reject(error);
-        }
-
-        var graphics = {};
-        _.each(
-          response.get('figures'),
-          function(dict) {
-            graphics[dict.figure_label] = dict.images[0];
-
-            // check for interactive graphics
-            if (dict.figure_type === 'interactive') {
-              graphics[dict.figure_label].interactive = true;
+        options: {
+          done: (response) => {
+            if (typeof response.Error === 'string') {
+              this.onError(new Error('no results'));
             }
+            this.processResponse({ toJSON: () => response });
           },
-          this
-        );
-
-        this.model.set({
-          graphics: graphics,
-          linkSentence: response.get('header'),
-        });
-      } else {
-        var title = response.get("response.docs[0]['title']", false, '');
-        title = title && title.length ? title[0] : '';
-        this.model.set('title', title);
-      }
-
-      // resolving the promises generated by "loadBibcodeData"
-      if (this.model.get('title') && this.model.get('graphics')) {
-        this.deferredObject && this.deferredObject.resolve();
-        responseDef && responseDef.resolve();
-      }
+          fail: (e) => this.onError(e),
+        },
+      });
+      ps.publish(ps.DELIVERING_REQUEST, request);
     },
 
     viewEvents: {
