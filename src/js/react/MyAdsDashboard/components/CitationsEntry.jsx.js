@@ -2,6 +2,7 @@ define(['underscore', 'react', 'react-bootstrap', 'prop-types'], function(
   { uniqueId },
   React,
   {
+    Form,
     FormControl,
     Button,
     FormGroup,
@@ -165,14 +166,7 @@ define(['underscore', 'react', 'react-bootstrap', 'prop-types'], function(
               ))}
             </tbody>
           </table>
-          <form
-            onSubmit={(e) => {
-              e.preventDefault();
-              e.stopPropagation();
-              this.addEntry();
-            }}
-            style={{ borderTop: 'solid 1px gray', padding: '1em 0' }}
-          >
+          <div style={{ borderTop: 'solid 1px gray', padding: '1em 0' }}>
             <div className="col-xs-10">
               <FormGroup validationState={valid ? null : 'error'}>
                 <InputGroup>
@@ -205,11 +199,15 @@ define(['underscore', 'react', 'react-bootstrap', 'prop-types'], function(
               </FormGroup>
             </div>
             <div className="col-xs-2">
-              <Button type="submit" aria-labelledby="action-heading">
+              <Button
+                type="button"
+                onClick={() => this.addEntry()}
+                aria-labelledby="action-heading"
+              >
                 Add
               </Button>
             </div>
-          </form>
+          </div>
         </div>
       );
     }
