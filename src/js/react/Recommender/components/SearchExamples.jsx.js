@@ -24,7 +24,7 @@ define([
       // eslint-disable-next-line react/jsx-fragments
       <React.Fragment>
         <dt>{label}</dt>
-        <dd>
+        <dd style={{ display: 'flex' }}>
           <button type="button" onClick={onClick} className="text-link">
             {text}
           </button>
@@ -54,51 +54,56 @@ define([
     tooltip: PropTypes.string,
   };
 
-  const SearchExamples = () => {
+  const SearchExamples = React.memo(() => {
     const dispatch = useDispatch();
     const onClick = (text) => {
       dispatch(updateSearchBar(text));
       dispatch(emitAnalytics(['send', 'event', 'interaction.suggestion-used']));
     };
 
+    const generateRandom = (max) => {
+      return Math.floor(Math.random() * max);
+    };
+
     return (
-      <div
-        style={{
-          paddingTop: '1rem',
-          display: 'flex',
-          justifyContent: 'space-between',
-          flexWrap: 'wrap',
-        }}
-      >
+      <div className="search-examples">
         <div className="quick-reference">
           <Dl>
-            {searchExamples.slice(0, 7).map((entry) => (
-              <Entry
-                label={entry.label}
-                text={entry.example}
-                tooltip={entry.tooltip}
-                onClick={() => onClick(entry.example)}
-                key={entry.label}
-              />
-            ))}
+            {searchExamples.slice(0, 7).map((entry) => {
+              const index = generateRandom(entry.examples.length - 1);
+              const example = entry.syntax.replace('%', entry.examples[index]);
+              return (
+                <Entry
+                  label={entry.label}
+                  text={example}
+                  tooltip={entry.tooltip}
+                  onClick={() => onClick(example)}
+                  key={entry.label}
+                />
+              );
+            })}
           </Dl>
         </div>
         <div className="quick-reference">
           <Dl>
-            {searchExamples.slice(7).map((entry) => (
-              <Entry
-                label={entry.label}
-                text={entry.example}
-                tooltip={entry.tooltip}
-                onClick={() => onClick(entry.example)}
-                key={entry.label}
-              />
-            ))}
+            {searchExamples.slice(7).map((entry) => {
+              const index = generateRandom(entry.examples.length - 1);
+              const example = entry.syntax.replace('%', entry.examples[index]);
+              return (
+                <Entry
+                  label={entry.label}
+                  text={example}
+                  tooltip={entry.tooltip}
+                  onClick={() => onClick(example)}
+                  key={entry.label}
+                />
+              );
+            })}
           </Dl>
         </div>
       </div>
     );
-  };
+  });
 
   return SearchExamples;
 });
