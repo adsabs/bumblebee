@@ -41,6 +41,7 @@ define(['underscore', 'react', 'prop-types'], function(_, React, PropTypes) {
                     g.open ? 'unlock' : ''
                   }`}
                 >
+                  <span className="sr-only">{g.description}</span>
                   {g.type === 'PDF' && (
                     <i className="fa fa-file-pdf-o" aria-hidden="true" />
                   )}
