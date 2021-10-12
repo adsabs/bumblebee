@@ -128,7 +128,7 @@ define([
       const $submittedContainer = $('form.submitted', $el).closest('.row');
       $('.error-container', $submittedContainer).html(`
       <div class="alert alert-danger" id="error-message">
-        <i class="fa fa-exclamation-triangle" aria-hidden="true"></i>  <strong>${msg}</strong>
+        <i class="fa fa-exclamation-triangle" aria-hidden="true"></i>  <strong>Error: ${msg}</strong>
       </div>
     `);
       this.setFormDisabled(false);
