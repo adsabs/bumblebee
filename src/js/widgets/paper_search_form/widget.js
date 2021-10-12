@@ -126,11 +126,11 @@ define([
       // show an error message, and then remove it next time the user focuses on an input
       const $el = $(this.el);
       const $submittedContainer = $('form.submitted', $el).closest('.row');
-      $(`
-        <div class="alert alert-danger" id="error-message">
-          <i class="fa fa-exclamation-triangle" aria-hidden="true"></i>  <strong>${msg}</strong>
-        </div>
-      `).insertAfter($submittedContainer);
+      $('.error-container', $submittedContainer).html(`
+      <div class="alert alert-danger" id="error-message">
+        <i class="fa fa-exclamation-triangle" aria-hidden="true"></i>  <strong>Error: ${msg}</strong>
+      </div>
+    `);
       this.setFormDisabled(false);
       $('input, textarea, button', $el).one('focus', () => {
         $('#error-message', $el).remove();

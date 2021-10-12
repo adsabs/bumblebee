@@ -61,7 +61,13 @@
   </div>
 </div>
 <div class="row">
-  <div class="s-num-found">
+  <div class="s-num-found" role="status" aria-atomic="true" aria-labelledby="num-found-title">
+    <div class="sr-only" id="num-found-title">
+      Your search returned {{numFound}} results
+      {{#if citationCount}}
+      with {{citationCount}} total {{citationLabel}}
+      {{/if}}
+    </div>
     <span class="s-light-font description">Your search returned</span>
       <span class="num-found-container" style="font-weight: bold;">{{numFound}}</span>
       <span class="s-light-font"> results </span>
