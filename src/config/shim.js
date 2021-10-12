@@ -19,10 +19,11 @@
     /* eslint-disable */
     // @ts-ignore
     return () =>
-      require([
-        'config/main.config.js',
-        'config/discovery.config.js',
-      ], undefined, () => require(['config/discovery.config.js']));
+      require(['config/main.config'], function() {
+        require(['config/discovery.config']);
+      }, function() {
+        require(['config/discovery.config']);
+      });
     /* eslint-enable */
   };
 
@@ -30,10 +31,11 @@
     /* eslint-disable */
     // @ts-ignore
     return () =>
-      require([
-        'config/main.config.js',
-        `config/${path}.config.js`,
-      ], undefined, getDefaultLoader());
+      require(['config/main.config'], function() {
+        require([`config/${path}.config`]);
+      }, function() {
+        require(['config/discovery.config']);
+      });
     /* eslint-enable */
   };
 
