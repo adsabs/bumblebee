@@ -218,7 +218,7 @@ define([
 
     toggleMoreAuthors: function() {
       this.$('.author.extra').toggleClass('hide');
-      this.$('.author.extra-dots').toggleClass('hide');
+      this.$('.author .extra-dots').toggleClass('hide');
       if (this.$('.author.extra').hasClass('hide')) {
         this.$('#toggle-more-authors').text('Show all authors');
       } else {
