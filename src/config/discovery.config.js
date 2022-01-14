@@ -204,7 +204,7 @@ require.config({
       'libs/lodash',
     ],
     backbone: [
-      'https://unpkg.com/backbone@1.1.2/backbone-min',
+      'https://cdn.jsdelivr.net/npm/backbone@1.1.2/backbone-min',
       'libs/backbone',
     ],
     'backbone-validation': [
@@ -451,8 +451,7 @@ require.config({
     const sri = {
       underscore:
         'sha384-qDQQphxk4GGOzXrYWcGvL65XEe3wWt0lpN1IWIttQvQvewLpET6XzmQiKr3kew5R',
-      backbone:
-        'sha384-VxD8tH2DiVJvByaMC34LoFrsCoF3qBeDvlSoyzjXU9t1SJVuOVwcGui/gigIavIN',
+      backbone: 'sha256-ddKDRLG4O1+xU/xZOb3BC0BKdU2T9498HIqLgd43aCU=',
       'backbone-validation':
         'sha384-fpdyr8ISauDi3YRemFSS/fadDnGzGiz2QdiRavwVGgPr2dd8f9VEaubnO5XhWZGr',
       'backbone.stickit':
