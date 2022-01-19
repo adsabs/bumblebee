@@ -19,6 +19,18 @@ define([], function() {
     'Zaldarriaga, Matias',
     'Kaspi, Victoria M.',
     'Kouveliotou, Chryssa',
+    'Eisenhauer, Frank',
+    'Helmi, Amina',
+    'Strugarek, Antoine',
+    'Inserra, Cosimo',
+    'Szulágyi, Judit',
+    'Rees, Martin J.',
+    'Encrenaz, Therese',
+    'Quick, Lynnae',
+    'Turtle, Elizabeth',
+    'Showalter, Mark',
+    'Howard, Russell',
+    'Kleint, Lucia',
   ];
 
   const searchExamples = [

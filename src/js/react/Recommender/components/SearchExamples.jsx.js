@@ -70,7 +70,7 @@ define([
         <div className="quick-reference">
           <Dl>
             {searchExamples.slice(0, 7).map((entry) => {
-              const index = generateRandom(entry.examples.length - 1);
+              const index = generateRandom(entry.examples.length);
               const example = entry.syntax.replace('%', entry.examples[index]);
               return (
                 <Entry
@@ -87,7 +87,7 @@ define([
         <div className="quick-reference">
           <Dl>
             {searchExamples.slice(7).map((entry) => {
-              const index = generateRandom(entry.examples.length - 1);
+              const index = generateRandom(entry.examples.length);
               const example = entry.syntax.replace('%', entry.examples[index]);
               return (
                 <Entry
