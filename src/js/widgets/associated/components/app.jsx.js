@@ -3,11 +3,12 @@ define(['underscore', 'react', 'prop-types'], function(_, React, PropTypes) {
   const styles = {
     list: {
       listStyleType: 'none',
-      marginLeft: '-10px',
-      padding: '0',
+      marginLeft: '7px',
     },
     link: {
       fontSize: '1em',
+      borderLeft: 'solid 3px grey',
+      paddingLeft: '5px',
     },
     icon: {
       fontSize: '1.4em',
@@ -28,7 +29,7 @@ define(['underscore', 'react', 'prop-types'], function(_, React, PropTypes) {
     const getLink = (item) => {
       if (item.external) {
         return (
-          <React.Fragment>
+          <>
             <a
               href={item.url}
               target="_blank"
@@ -38,7 +39,7 @@ define(['underscore', 'react', 'prop-types'], function(_, React, PropTypes) {
               {item.name}{' '}
             </a>
             <i className="fa fa-external-link" aria-hidden="true" />
-          </React.Fragment>
+          </>
         );
       }
       return (
@@ -49,29 +50,19 @@ define(['underscore', 'react', 'prop-types'], function(_, React, PropTypes) {
     };
 
     return (
-      <ul style={styles.list}>
+      <div style={styles.list} id="associated_works">
         {items.map((i) => (
-          <li key={i.id} style={styles.link}>
+          <div
+            key={i.id}
+            style={styles.link}
+            className="resources__content__link associated_work"
+          >
             {i.circular ? i.name : getLink(i)}
-          </li>
+          </div>
         ))}
-      </ul>
+      </div>
     );
   };
-
-  // container for wrapping children
-  const Container = ({ children }) => (
-    <div className="s-right-col-widget-container" style={{ padding: 10 }}>
-      {children}
-    </div>
-  );
-
-  // simple button
-  const ShowAllBtn = ({ onClick }) => (
-    <button className="btn btn-default btn-xs" onClick={(e) => onClick(e)}>
-      Show All
-    </button>
-  );
 
   // Associated Articles Widget
   class App extends React.Component {
@@ -79,17 +70,10 @@ define(['underscore', 'react', 'prop-types'], function(_, React, PropTypes) {
       super(props);
       this.state = {
         showAllBtn: false,
+        showAll: false,
         items: [],
       };
-    }
-
-    // remove the button and update the items to show everything
-    onShowAll(e) {
-      e.preventDefault();
-      this.setState({
-        showAllBtn: false,
-        items: this.props.items,
-      });
+      this.onToggleShowAll = this.onToggleShowAll.bind(this);
     }
 
     // check items length, and slice them smaller if necessary
@@ -98,23 +82,42 @@ define(['underscore', 'react', 'prop-types'], function(_, React, PropTypes) {
         this.setState({
           items: props.items.slice(0, 4),
           showAllBtn: true,
+          showAll: false,
         });
       } else {
         this.setState({ items: props.items });
       }
     }
 
+    onToggleShowAll(e) {
+      e.preventDefault();
+      this.setState((prevState) => ({
+        showAll: !prevState.showAll,
+        items: prevState.showAll
+          ? this.props.items.slice(0, 4)
+          : this.props.items,
+      }));
+    }
+
     render() {
       const { loading, handleLinkClick, hasError } = this.props;
-      const { items, showAllBtn } = this.state;
+      const { items, showAllBtn, showAll } = this.state;
 
       if (items.length > 0) {
         return (
-          <Container>
-            <Title>Associated Works ({this.props.items.length})</Title>
+          <div className="resources__container">
+            <Title>Related Materials ({this.props.items.length})</Title>
             <Links items={items} onClick={handleLinkClick} />
-            {showAllBtn && <ShowAllBtn onClick={(e) => this.onShowAll(e)} />}
-          </Container>
+            {showAllBtn && (
+              <input
+                type="button"
+                id="associated_works_btn"
+                className="btn btn-default btn-xs"
+                onClick={this.onToggleShowAll}
+                value={showAll ? 'Show Less' : 'Show All'}
+              />
+            )}
+          </div>
         );
       }
       return null;

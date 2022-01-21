@@ -93,6 +93,8 @@ div[data-widget='ShowPaperExport'] .close-circle {
 .resources__container {
   background-color: white;
   position: relative;
+  padding-top: 2px;
+  padding-bottom: 2px;
 }
 
 .resources__content__title {
@@ -112,6 +114,10 @@ div[data-widget='ShowPaperExport'] .close-circle {
   margin-left: -10px;
   padding-left: 10px;
   padding-right: 8px;
+}
+
+.resources__content__link {
+  line-height: 1.75em;
 }
 
 .resources__full__list {
