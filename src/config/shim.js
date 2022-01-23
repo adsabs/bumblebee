@@ -62,7 +62,7 @@
       // sometimes requirejs isn't ready yet, this will wait for it
       if (window.requirejs) {
         window.requirejs.config({
-          waitSeconds: 7,
+          waitSeconds: 0,
           urlArgs: version,
         });
 
@@ -79,6 +79,11 @@
  */
 (function checkIfProxied() {
   const canonicalUrlPattern = /^(ui|qa|dev|devui|demo)\.adsabs\.harvard\.edu$/;
+
+  // ignore for localhost (development)
+  if (/^localhost$/.exec(window.location.hostname)) {
+    return;
+  }
 
   // if test fails, it is proxied url, set a class on body element
   if (!canonicalUrlPattern.test(window.location.hostname)) {

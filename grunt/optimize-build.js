@@ -52,7 +52,7 @@ module.exports = function(grunt) {
   };
 
   var baseConfig = {
-    waitSeconds: 0,
+    waitSeconds: 7,
     logLevel: 1,
     baseUrl: 'dist',
     optimize: 'none',
