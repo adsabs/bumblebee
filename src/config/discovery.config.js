@@ -176,7 +176,6 @@ require.config({
     router: 'js/apps/discovery/router',
     analytics: 'js/components/analytics',
     utils: 'js/utils',
-    darkMode: 'js/dark-mode-switch',
     recaptcha: 'js/plugins/recaptcha',
     reactify: 'js/plugins/reactify',
     es6: 'js/plugins/es6',
