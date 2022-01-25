@@ -81,3 +81,14 @@ release:
     - htmlmin
     - imagemin
     - uglify
+
+release:quick:
+  tasks:
+    - env:prod
+    - clean:release
+    - copy:release
+    - string-replace:production
+    - check-release-version
+    - string-replace:latest_version
+    - optimize-build
+    - string-replace:final

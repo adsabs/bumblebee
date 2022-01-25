@@ -140,7 +140,17 @@
           loadingContainer.setAttribute('style', '');
         }, 3000);
 
+        /**
+         *
+         */
         window.__setAppLoadingProgress = function(val, msg) {
+          if (typeof val === 'function') {
+            const newVal = val(progressValue);
+            if (typeof newVal === 'number') {
+              return window.__setAppLoadingProgress(newVal, msg);
+            }
+          }
+
           if (val < progressValue) return;
           try {
             progressBar.setAttribute('aria-valuenow', val);

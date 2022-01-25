@@ -48,6 +48,13 @@ define([
   'js/components/beehive',
   'js/mixins/api_access',
 ], function(_, $, Backbone, module, BeeHive, ApiAccess) {
+  const DEFAULT_MODULE_TIMEOUT = 60 * 1000; // 60 seconds
+
+  const updateProgress =
+    typeof window.__setAppLoadingProgress === 'function'
+      ? window.__setAppLoadingProgress
+      : function() {};
+
   var Application = function(options) {
     options || (options = {});
     this.aid = _.uniqueId('application');
@@ -132,7 +139,9 @@ define([
         ) {
           if (core[name]) {
             promise = self._loadModules(name, core[name]);
-            if (promise) promises.push(promise);
+            if (promise) {
+              promises.push(promise);
+            }
           }
         });
       }
@@ -178,6 +187,14 @@ define([
       // hack, so that $.when() always returns []
       promises.length === 1 && promises.push(promise);
 
+      // add a handler for updating the app loading bar
+      let count = 0;
+      promises.map((p) =>
+        p.then(() => {
+          self.logModuleLoaded((count += 1), promises.length);
+        })
+      );
+
       var bigPromise = $.Deferred();
       $.when
         .apply($, promises)
@@ -187,6 +204,7 @@ define([
               if (self.debug) {
                 console.log('application: registering ' + promisedValues[0]);
               }
+
               self._registerLoadedModules.apply(self, promisedValues);
             }
           });
@@ -239,7 +257,7 @@ define([
 
       // console.log('registering', section, modules);
 
-      if (section == 'controllers') {
+      if (section === 'controllers') {
         hasKey = _.bind(this.hasController, this);
         removeKey = _.bind(function(key) {
           this.__controllers.remove(key);
@@ -247,15 +265,15 @@ define([
         addKey = _.bind(function(key, module) {
           this.__controllers.add(key, module);
         }, this);
-      } else if (section == 'services') {
+      } else if (section === 'services') {
         hasKey = _.bind(beehive.hasService, beehive);
         removeKey = _.bind(beehive.removeService, beehive);
         addKey = _.bind(beehive.addService, beehive);
-      } else if (section == 'objects') {
+      } else if (section === 'objects') {
         hasKey = _.bind(beehive.hasObject, beehive);
         removeKey = _.bind(beehive.removeObject, beehive);
         addKey = _.bind(beehive.addObject, beehive);
-      } else if (section == 'modules') {
+      } else if (section === 'modules') {
         createInstance = function(key, module) {
           return module;
         };
@@ -266,7 +284,7 @@ define([
         addKey = _.bind(function(key, module) {
           this.__modules.add(key, module);
         }, this);
-      } else if (section == 'widgets') {
+      } else if (section === 'widgets') {
         hasKey = _.bind(this.hasWidget, this);
         removeKey = _.bind(function(key) {
           this.__widgets.remove(key);
@@ -277,7 +295,7 @@ define([
         createInstance = function(key, module) {
           return module;
         };
-      } else if (section == 'plugins') {
+      } else if (section === 'plugins') {
         hasKey = _.bind(this.hasPlugin, this);
         removeKey = _.bind(function(key) {
           this.__plugins.remove(key);
@@ -408,11 +426,18 @@ define([
 
     _setTimeout: function(deferred) {
       setTimeout(function() {
-        if (deferred.state() != 'resolved') {
+        if (deferred.state() !== 'resolved') {
           deferred.reject('Timeout, application is loading too long');
         }
-      }, this.timeout || 30000);
+      }, this.timeout || DEFAULT_MODULE_TIMEOUT);
       return deferred;
+    },
+
+    logModuleLoaded: function(idx, total) {
+      updateProgress(
+        (val) => val + 50 / total,
+        `Loading Modules ${idx} of ${total}`
+      );
     },
 
     destroy: function() {
@@ -731,8 +756,8 @@ define([
       var symbolicName = cat + ':' + name;
 
       if (
-        (cat == 'plugin' && !this.hasPlugin(name)) ||
-        (cat == 'widget' && !this.hasWidget(name))
+        (cat === 'plugin' && !this.hasPlugin(name)) ||
+        (cat === 'widget' && !this.hasWidget(name))
       ) {
         throw new Error(
           'We cannot give you ' +
@@ -745,7 +770,7 @@ define([
         return this._getBarbarian(symbolicName);
 
       var constructor =
-        cat == 'plugin' ? this.__plugins.get(name) : this.__widgets.get(name);
+        cat === 'plugin' ? this.__plugins.get(name) : this.__widgets.get(name);
       var instance = new constructor();
       var hardenedBee = this.getBeeHive().getHardenedInstance();
       var children;
@@ -782,16 +807,16 @@ define([
       var self = this;
       var loader;
       var placeholder;
-      if (cat == 'plugin') {
+      if (cat === 'plugin') {
         placeholder = self.__plugins;
-      } else if (cat == 'widget') {
+      } else if (cat === 'widget') {
         placeholder = self.__widgets;
       } else {
         throw new Error(cat + ' cannot be lazy loaded, sorry');
       }
       var thing = placeholder.get(name);
 
-      if (thing == null) {
+      if (thing === null) {
         defer.reject(name + ' does not exist');
       } else if (thing && thing.lazyLoad) {
         // load it
@@ -952,7 +977,7 @@ define([
       _.each(
         this.__barbarianRegistry,
         function(value, key) {
-          if (value == symbolicName) delete this.__barbarianRegistry[key];
+          if (value === symbolicName) delete this.__barbarianRegistry[key];
         },
         this
       );
@@ -1025,7 +1050,7 @@ define([
         var out = [];
         if (w.length > 1) {
           out = _.pairs(widget);
-        } else if (w.length == 1) {
+        } else if (w.length === 1) {
           out = [[w[0], widget]];
         }
         defer.resolve(out);

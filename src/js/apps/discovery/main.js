@@ -31,12 +31,10 @@ define(['config/discovery.config', 'module'], function(config, module) {
     ApiFeedback,
     analytics
   ) {
-    var updateProgress =
+    const updateProgress =
       typeof window.__setAppLoadingProgress === 'function'
         ? window.__setAppLoadingProgress
         : function() {};
-
-    var timeStart = Date.now();
 
     Application.prototype.shim();
 
@@ -46,17 +44,18 @@ define(['config/discovery.config', 'module'], function(config, module) {
     // app object will load everything
     var app = new (Application.extend(DiscoveryBootstrap))({
       debug: debug,
-      timeout: 300000, // 5 minutes
+
+      // This is a general timeout which is only used per-module (plugins, controllers, etc.)
+      timeout: 60 * 1000, // 60 * 1000, // 60 seconds
     });
 
     // load the objects/widgets/modules (using discovery.config.js)
     var appPromise = app.loadModules(module.config());
 
-    updateProgress(20, 'Starting Application');
+    updateProgress(30, 'Loading Modules');
 
     var startApp = function() {
-      updateProgress(50, 'Modules Loaded');
-      var timeLoaded = Date.now();
+      updateProgress(80, 'App Loaded');
 
       // this will activate all loaded modules
       app.activate();
