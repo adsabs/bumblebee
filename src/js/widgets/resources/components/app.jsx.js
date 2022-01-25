@@ -108,24 +108,28 @@ define(['underscore', 'react', 'prop-types'], function(_, React, PropTypes) {
 
   // Main View
   const App = (props) => (
-    <div className="s-right-col-widget-container" style={{ padding: 10 }}>
+    <div>
       {props.loading && <Loading />}
       {props.noResults && !props.loading && <NoResults />}
       {!props.loading && !props.hasError && (
-        <div className="resources__container">
-          {!_.isEmpty(props.fullTextSources) && (
-            <FullTextLinkList
-              items={props.fullTextSources}
-              onClick={props.onLinkClick}
-            />
-          )}
-          {!_.isEmpty(props.dataProducts) && (
-            <DataProductLinkList
-              items={props.dataProducts}
-              onClick={props.onLinkClick}
-            />
-          )}
-        </div>
+        <>
+          <div className="resources__container">
+            {!_.isEmpty(props.fullTextSources) && (
+              <FullTextLinkList
+                items={props.fullTextSources}
+                onClick={props.onLinkClick}
+              />
+            )}
+          </div>
+          <div className="resources__container">
+            {!_.isEmpty(props.dataProducts) && (
+              <DataProductLinkList
+                items={props.dataProducts}
+                onClick={props.onLinkClick}
+              />
+            )}
+          </div>
+        </>
       )}
     </div>
   );

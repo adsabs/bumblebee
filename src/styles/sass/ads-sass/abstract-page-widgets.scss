@@ -297,10 +297,18 @@ $sciencewise-color: rgb(179, 27, 27);
   }
 }
 
+.resources-container {
+  padding: 10px;
+  padding-top: 0;
+
+  @media (max-width: $screen-xs-max) {
+    padding: 0;
+  }
+}
+
 #resources-container {
   transition: transform 0.5s ease-in-out;
   padding-left: 0;
-  padding-right: 15px;
 
   @media (max-width: $screen-md) {
     padding-right: 0;
@@ -313,11 +321,9 @@ $sciencewise-color: rgb(179, 27, 27);
     left: 100%;
     top: 0;
     z-index: $z-index-4;
-    border-right: 1px solid $gray-lighter;
 
     &.show {
       transform: translate(-100%);
     }
   }
-  
 }

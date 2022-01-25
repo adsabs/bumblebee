@@ -153,6 +153,10 @@ s-search-bar-motion is applied */
 .s-abstract-content {
   #right-col-container {
     padding-left: 0;
+
+    @media screen and (min-width: $screen-xs-max) {
+      float: right;
+    }
   }
 }
 
@@ -240,6 +244,7 @@ Styles for Abstract Page
     margin: 0 0 1% 6%;
   }
 }
+
 .s-right-col-widget-title {
   margin-top: 2px;
   @extend .secondary-header;
