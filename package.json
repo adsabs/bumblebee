@@ -54,7 +54,7 @@
     "react-redux": "^7.2.0",
     "react-transition-group": "^2.4.0",
     "react-window": "^1.8.5",
-    "redux": "^3.7.2",
+    "redux": "^4.0.5",
     "redux-thunk": "^2.3.0",
     "regenerator-runtime": "^0.13.9",
     "requirejs": "^2.3.6",
