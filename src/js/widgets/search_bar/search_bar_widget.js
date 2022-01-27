@@ -134,14 +134,16 @@ define([
       };
 
       // on close, move focus to search bar.  If we change page layout, may have to change this
-      $select2Instance.on('close', () => {
+      // delayed to handle user click on a link in the description before closing
+      $select2Instance.on('close', async () => {
         document.getElementById('query-search-input').focus();
+        await new Promise((resolve) => setTimeout(resolve, 10));
+        document.getElementsByClassName('search-term-popover')[0].remove();
       });
 
       const platform = bowser.parse(window.navigator.userAgent).platform.type;
       if (platform !== 'mobile' && platform !== 'tablet') {
         // hide popovers one open and close, focusing will re-open them after this
-        $select2Instance.on('closing', closeAllPopovers);
         $select2Instance.on('open', closeAllPopovers);
 
         $select2Instance.on('results:focus', ({ data: { id } }) => {
@@ -155,7 +157,9 @@ define([
           }
           // create the popover
           const syntax = data.syntax.map((s) => `<code>${s}</code>`).join(', ');
-          const example = data.example.map((e) => `<code>${e}</code>`).join(', ');
+          const example = data.example
+            .map((e) => `<code>${e}</code>`)
+            .join(', ');
           $('.select2-dropdown')
             .popover({
               title: `<strong>${data.title}</strong>`,
@@ -173,7 +177,6 @@ define([
           $('.select2-dropdown').popover('show');
         });
       }
-
 
       /*
       end code for select

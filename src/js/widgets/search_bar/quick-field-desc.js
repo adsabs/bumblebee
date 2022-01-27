@@ -21,13 +21,15 @@ define({
   },
   ack: {
     title: 'acknowledgements',
-    description: 'Search for a word or phrase in the acknowledgements extracted from fulltexts.',
+    description:
+      'Search for a word or phrase in the acknowledgements extracted from fulltexts.',
     syntax: ['ack:"phrase"'],
     example: ['ack:"ADS"'],
   },
   aff: {
     title: 'affiliation',
-    description: 'Search for word or phrase in the raw, provided affiliation field',
+    description:
+      'Search for word or phrase in the raw, provided affiliation field',
     syntax: ['aff:"phrase"'],
     example: ['aff:"harvard"'],
   },
@@ -39,19 +41,22 @@ define({
   },
   author_count: {
     title: 'author count',
-    description: 'Find records that have a specific number of authors, or a range of author counts',
+    description:
+      'Find records that have a specific number of authors, or a range of author counts',
     syntax: ['author_count:count', 'author_count:[min_count TO max_count]'],
     example: ['author_count:40', 'author_count:[10 TO 100]'],
   },
   author: {
     title: 'author',
-    description: 'Author name may include just lastname and initial, or stricter author search (recommended)',
+    description:
+      'Author name may include just lastname and initial, or stricter author search (recommended)',
     syntax: ['author:"Last, F"', 'author:"Last, First […]"'],
     example: ['author:"huchra, john p"', 'author:"huchra, john p"'],
   },
   bibcode: {
     title: 'bibcode',
-    description: 'Find a specific record using the ADS bibcode (ADS identifier of a paper)',
+    description:
+      'Find a specific record using the ADS bibcode (ADS identifier of a paper)',
     syntax: ['bibcode:adsbib'],
     example: ['bibcode:2003AJ….125..525J'],
   },
@@ -63,7 +68,8 @@ define({
   },
   bibstem: {
     title: 'bib abbrev',
-    description: 'Find records that contain a specific bibstem in their bibcode',
+    description:
+      'Find records that contain a specific bibstem in their bibcode',
     syntax: ['bibstem:adsbibstem'],
     example: ['bibstem:ApJ'],
   },
@@ -87,7 +93,8 @@ define({
   },
   citation_count: {
     title: 'citation count',
-    description: 'Find records that have a specific number of citations, or a range of citation counts',
+    description:
+      'Find records that have a specific number of citations, or a range of citation counts',
     syntax: ['citation_count:count', 'citation_count:[min_count TO max_count]'],
     example: ['citation_count:40', 'citation_count:[10 TO 100]'],
   },
@@ -105,7 +112,8 @@ define({
   },
   entdate: {
     title: 'entdate',
-    description: 'Creation date of ADS record in user-friendly format (YYYY-MM-DD)',
+    description:
+      'Creation date of ADS record in user-friendly format (YYYY-MM-DD)',
     syntax: ['entdate:YYYY-MM-DD'],
     example: ['entdate:2019-05-20'],
   },
@@ -117,15 +125,24 @@ define({
   },
   full: {
     title: 'fulltext',
-    description: 'Search for word or phrase in fulltext, acknowledgements, abstract, title and keywords',
+    description:
+      'Search for word or phrase in fulltext, acknowledgements, abstract, title and keywords',
     syntax: ['full:"phrase"'],
     example: ['full:"gravitational waves"'],
   },
   identifier: {
     title: 'identifier',
-    description: 'Find a paper using any of its identifiers, arXiv, bibcode, doi, etc.',
+    description:
+      'Find a paper using any of its identifiers, arXiv, bibcode, doi, etc.',
     syntax: ['identifier:bibcode'],
     example: ['identifier:2003AJ….125..525J'],
+  },
+  inst: {
+    title: 'institution',
+    description:
+      'Search by author\'s canonical affiliation. Click <a href="https://github.com/adsabs/CanonicalAffiliations/blob/master/parent_child.tsv" ref="noopener noreferrer" target="_blank">here</a> for a full list',
+    syntax: ['inst:id'],
+    example: ['inst:CfA'],
   },
   keyword: {
     title: 'keyword',
@@ -135,13 +152,15 @@ define({
   },
   object: {
     title: 'object',
-    description: 'Search for papers tagged with a specific astronomical object or at or near a set of coordinates',
+    description:
+      'Search for papers tagged with a specific astronomical object or at or near a set of coordinates',
     syntax: ['object:"object"'],
     example: ['object:Andromeda'],
   },
   orcid: {
     title: 'orcid',
-    description: 'Search for papers that are associated with a specific ORCiD iD',
+    description:
+      'Search for papers that are associated with a specific ORCiD iD',
     syntax: ['orcid:id'],
     example: ['orcid:0000-0000-0000-0000'],
   },
@@ -153,7 +172,8 @@ define({
   },
   property: {
     title: 'property',
-    description: 'An array of miscellaneous flags associated with the record. Possible values include: refereed, notrefereed, article, nonarticle, ads_openaccess, eprint_openaccess, pub_openaccess, openaccess, ocrabstract',
+    description:
+      'An array of miscellaneous flags associated with the record. Possible values include: refereed, notrefereed, article, nonarticle, ads_openaccess, eprint_openaccess, pub_openaccess, openaccess, ocrabstract',
     syntax: ['property:type'],
     example: ['property:openaccess'],
   },
@@ -189,13 +209,15 @@ define({
   },
   citations: {
     title: 'citations()',
-    description: 'Returns list of citations from given papers; use [citations] to get the field contents',
+    description:
+      'Returns list of citations from given papers; use [citations] to get the field contents',
     syntax: ['citations(query)'],
     example: ['citations(author:"huchra, john")'],
   },
   pos: {
     title: 'pos()',
-    description: 'Search for an item within a field by specifying the position in the field. The example for this operator is pos(fieldedquery,position,[endposition]). If no endposition is given, then it is assumed to be endposition = position, otherwise this performs a query within the range [position, endposition].',
+    description:
+      'Search for an item within a field by specifying the position in the field. The example for this operator is pos(fieldedquery,position,[endposition]). If no endposition is given, then it is assumed to be endposition = position, otherwise this performs a query within the range [position, endposition].',
     syntax: ['pos(fieldedquery,position,[endposition])'],
     example: ['pos(author:"Oort, J",2)'],
   },
@@ -207,13 +229,15 @@ define({
   },
   reviews: {
     title: 'reviews()',
-    description: 'Returns the list of documents citing the most relevant papers on the topic being researched; these are papers containing the most extensive reviews of the field.',
+    description:
+      'Returns the list of documents citing the most relevant papers on the topic being researched; these are papers containing the most extensive reviews of the field.',
     syntax: ['reviews(query)'],
     example: ['reviews("weak lensing")'],
   },
   similar: {
     title: 'similar()',
-    description: 'Return similar documents, based on the similarity of the abstract text',
+    description:
+      'Return similar documents, based on the similarity of the abstract text',
     syntax: ['similar(query)'],
     example: ['similar(bibcode:2000A&AS..143...41K)'],
   },
@@ -225,13 +249,15 @@ define({
   },
   trending: {
     title: 'trending()',
-    description: 'Returns the list of documents most read by users who read recent papers on the topic being researched; these are papers currently being read by people interested in this field.',
+    description:
+      'Returns the list of documents most read by users who read recent papers on the topic being researched; these are papers currently being read by people interested in this field.',
     syntax: ['trending(query)'],
     example: ['trending(exoplanets)'],
   },
   useful: {
     title: 'useful()',
-    description: 'Returns the list of documents frequently cited by the most relevant papers on the topic being researched; these are studies which discuss methods and techniques useful to conduct research in this field.',
+    description:
+      'Returns the list of documents frequently cited by the most relevant papers on the topic being researched; these are studies which discuss methods and techniques useful to conduct research in this field.',
     syntax: ['useful(query)'],
     example: ['useful("galaxy surveys")'],
   },
