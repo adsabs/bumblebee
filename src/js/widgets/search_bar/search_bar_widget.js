@@ -135,10 +135,11 @@ define([
 
       // on close, move focus to search bar.  If we change page layout, may have to change this
       // delayed to handle user click on a link in the description before closing
-      $select2Instance.on('close', async () => {
+      $select2Instance.on('close', () => {
         document.getElementById('query-search-input').focus();
-        await new Promise((resolve) => setTimeout(resolve, 10));
-        document.getElementsByClassName('search-term-popover')[0].remove();
+        setTimeout(() => {
+          document.getElementsByClassName('search-term-popover')[0].remove();
+        }, 10);
       });
 
       const platform = bowser.parse(window.navigator.userAgent).platform.type;
