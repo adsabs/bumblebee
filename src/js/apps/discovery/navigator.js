@@ -438,8 +438,6 @@ define([
                     }
                     defer.resolve();
                   });
-
-                app.getWidget('Library');
               });
           });
 

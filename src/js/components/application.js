@@ -816,7 +816,7 @@ define([
       }
       var thing = placeholder.get(name);
 
-      if (thing === null) {
+      if (typeof thing === 'undefined' || thing === null) {
         defer.reject(name + ' does not exist');
       } else if (thing && thing.lazyLoad) {
         // load it
