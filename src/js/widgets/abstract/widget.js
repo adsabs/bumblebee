@@ -5,6 +5,7 @@ define([
   'marionette',
   'js/components/api_request',
   'js/components/api_targets',
+  'clipboard',
   'backbone',
   'jquery',
   'underscore',
@@ -22,6 +23,7 @@ define([
   Marionette,
   ApiRequest,
   ApiTargets,
+  Clipboard,
   Backbone,
   $,
   _,
@@ -264,6 +266,17 @@ define([
       );
     },
 
+    copyBibcode() {
+      if (!this.bibcodeClipboard) {
+        this.bibcodeClipboard = new Clipboard('#abs-bibcode-copy');
+        this.bibcodeClipboard.on('success', () => {
+          $('#abs-bibcode-copy-msg')
+            .show()
+            .fadeOut(1000);
+        });
+      }
+    },
+
     onRender: function() {
       this.$('.icon-help').popover({
         trigger: 'hover',
@@ -284,6 +297,7 @@ define([
           this.$('.s-abstract-text', this.el).get(0),
         ]);
       }
+      this.copyBibcode();
     },
   });
 
