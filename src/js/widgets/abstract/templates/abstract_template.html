@@ -64,20 +64,20 @@ hideCloseButton=true widgetLoadingSize="big"}} {{else if error}}
             {{/compare}}
           {{/compare}}
         {{/compare}}
-      </span>    
+      </span>
       <span class="affiliation hide"> (<i>{{this.[1]}}</i>)</span>{{#if @last}}{{else}};{{/if}}
     </li>
-    {{/each}} 
-    
+    {{/each}}
+
     {{#if hasMoreAuthors}}
     <li class="author">
-      ; 
+      ;
       <span class="extra-dots">
         <a data-target="more-authors" title="Show all authors">...</a>
       </span>
     </li>
-    {{/if}} 
-    
+    {{/if}}
+
     {{#each authorAffExtra}}
     <li class="author extra hide">
       <a href="#search/q=author:{{this.[5]}}&sort=date%20desc,%20bibcode%20desc">
@@ -104,11 +104,11 @@ hideCloseButton=true widgetLoadingSize="big"}} {{else if error}}
             {{/compare}}
           {{/compare}}
         {{/compare}}
-      </span> 
+      </span>
       <span class="affiliation hide"> (<i>{{this.[1]}}</i>)</span>{{#if @last}}{{else}};{{/if}}
     </li>
     {{/each}}
-    
+
   </ul>
 </div>
 {{/if}}
@@ -129,7 +129,16 @@ hideCloseButton=true widgetLoadingSize="big"}} {{else if error}}
   <dd>
     <div id="article-publication">{{{pub_raw}}}</div>
   </dd>
-  {{/if}} {{#if formattedDate}}
+  {{/if}}
+  {{#if book_author}}
+  <dt>
+    Book Author{{#compare book_author.length 1 operator='>'}}(s){{/compare}}:
+  </dt>
+  <dd>
+    {{#each book_author}}<a href="{{href}}">{{name}}</a>{{delim}}{{/each}}
+  </dd>
+  {{/if}}
+  {{#if formattedDate}}
   <dt>Pub Date:</dt>
   <dd>{{formattedDate}}</dd>
   {{/if}} {{#if doi}}
@@ -152,11 +161,11 @@ hideCloseButton=true widgetLoadingSize="big"}} {{else if error}}
 
   <dt>Bibcode:</dt>
   <dd>
-    <button 
-    class="btn btn-link copy-btn" 
-    style="padding: 0px" 
-    id="abs-bibcode-copy" 
-    data-clipboard-text="{{bibcode}}" 
+    <button
+    class="btn btn-link copy-btn"
+    style="padding: 0px"
+    id="abs-bibcode-copy"
+    data-clipboard-text="{{bibcode}}"
     aria-label="copy bibcode">
       {{ bibcode }}
       <i
