@@ -327,3 +327,19 @@ $sciencewise-color: rgb(179, 27, 27);
     }
   }
 }
+
+.copy-btn {
+  text-decoration: none !important;
+
+  &:any-link {
+    text-decoration: none !important;
+  }
+
+  &:hover::after {
+    font-family: 'FontAwesome';
+    content: '\f0ea';
+    text-decoration: inherit;
+    color: black;
+    margin-left: 3px;
+  }
+}

@@ -152,17 +152,22 @@ hideCloseButton=true widgetLoadingSize="big"}} {{else if error}}
 
   <dt>Bibcode:</dt>
   <dd>
-    <a href="#abs/{{bibcode}}/abstract">
+    <button 
+    class="btn btn-link copy-btn" 
+    style="padding: 0px" 
+    id="abs-bibcode-copy" 
+    data-clipboard-text="{{bibcode}}" 
+    aria-label="copy bibcode">
       {{ bibcode }}
-    </a>
-    <i
-      class="icon-help"
-      aria-hidden="true"
-      data-toggle="popover"
-      data-container="body"
-      aria-hidden="true"
-      data-content="The bibcode is assigned by the ADS as a unique identifier for the paper."
-    ></i>
+      <i
+        class="icon-help"
+        aria-hidden="true"
+        data-toggle="popover"
+        data-container="body"
+        data-content="The bibcode is assigned by the ADS as a unique identifier for the paper."
+      ></i>
+    </button>
+    <span id="abs-bibcode-copy-msg" class="text-info" style="display: none;">Copied!</span>
   </dd>
 
   {{#if keyword}}
