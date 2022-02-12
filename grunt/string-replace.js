@@ -6,18 +6,13 @@
  * @module grunt/string-replace
  */
 module.exports = {
-  dist: {
-    files: [
-      {
-        src: 'dist/index.html',
-        dest: 'dist/index.html',
-      },
-    ],
+  favicon: {
+    files: { 'dist/': 'dist/*.html' },
     options: {
       replacements: [
         {
-          pattern: 'data-main="./config/discovery.config"',
-          replacement: 'data-main="./bumblebee_app.js"',
+          pattern: /\.\/styles\/favicon/g,
+          replacement: '',
         },
       ],
     },

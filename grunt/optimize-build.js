@@ -334,8 +334,6 @@ requirejs.config(${JSON.stringify(contents)});
       grunt.registerTask('generateConfigs', function() {
         const cfg = getDiscoveryConfig();
 
-        console.log(fullConfig);
-
         // generate the rest of the bundles
         _.forEach(fullConfig, function({ name, include }, moduleName) {
           const _cfg = _.extend({}, cfg, {
