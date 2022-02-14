@@ -72,6 +72,7 @@ release:
     - env:prod
     - clean:release
     - copy:release
+    - string-replace:favicon
     - string-replace:production
     - check-release-version
     - string-replace:latest_version
@@ -87,6 +88,7 @@ release:quick:
     - env:prod
     - clean:release
     - copy:release
+    - string-replace:favicon
     - string-replace:production
     - check-release-version
     - string-replace:latest_version
