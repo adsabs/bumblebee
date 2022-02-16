@@ -1,4 +1,4 @@
-.print-visible {
+.print-only {
   display: none;
 }
 @media print {
@@ -13,8 +13,12 @@
     overflow-x: visible !important;
   }
 
-  .print-visible {
+  .print-only {
     display: block;
+  }
+
+  .print-hidden {
+    display: none !important;
   }
 
   .s-results-links {
@@ -102,5 +106,29 @@
 
   #darkSwitch {
     display: none;
+  }
+
+  .custom-checkbox {
+    display: none;
+  }
+
+  .s-show-details-container {
+    display: none;
+  }
+
+  .s-pagination-controls {
+    display: none;
+  }
+
+  #backToTopBtn {
+    display: none;
+  }
+
+  .print-visible-inline-1 {
+    display: inline !important;
+  }
+
+  .print-visible-block-1 {
+    display: block !important;
   }
 }
