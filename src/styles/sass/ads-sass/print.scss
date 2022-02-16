@@ -6,6 +6,7 @@
   *:before,
   *:after {
     overflow: visible !important;
+    border: none;
   }
 
   //THIS IS SUPER IMPORTANT otherwise page breaks don't work
@@ -73,10 +74,6 @@
     display: none;
   }
 
-  .s-metrics-title {
-    padding: 10px 0;
-  }
-
   .s-metrics-section {
     page-break-after: always;
     page-break-inside: avoid;
@@ -90,13 +87,11 @@
 
   .s-metrics-table,
   .s-metrics-graph {
-    display: block !important;
     margin: 0 auto;
     width: 100%;
   }
 
   .s-metrics-table {
-    width: 60%;
     margin-bottom: 50px;
   }
 
@@ -148,6 +143,10 @@
   .library-detail-view {
     margin: 0;
     padding: 0;
+    border: none;
+  }
+
+  .s-inner-div-background > div {
     border: none;
   }
 }
