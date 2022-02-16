@@ -158,6 +158,19 @@ define([
         doc.pubnote = _.unescape(doc.pubnote);
       }
 
+      // handle book_author field
+      if (
+        doc.book_author &&
+        Array.isArray(doc.book_author) &&
+        doc.book_author.length > 0
+      ) {
+        doc.book_author = doc.book_author.map((name, i) => ({
+          name,
+          href: `#search?q=book_author:"${name}"&sort=date%20desc,%20bibcode%20desc`,
+          delim: i < doc.book_author.length - 1 ? '; ' : '',
+        }));
+      }
+
       const ids = Array.isArray(doc.identifier)
         ? doc.identifier
         : doc.original_identifier;
@@ -346,7 +359,7 @@ define([
 
     defaultQueryArguments: {
       fl:
-        'identifier,[citations],abstract,author,orcid_pub,orcid_user,orcid_other,bibcode,citation_count,comment,doi,id,keyword,page,property,pub,pub_raw,pubdate,pubnote,read_count,title,volume',
+        'identifier,[citations],abstract,author,book_author,orcid_pub,orcid_user,orcid_other,bibcode,citation_count,comment,doi,id,keyword,page,property,pub,pub_raw,pubdate,pubnote,read_count,title,volume',
       rows: 1,
     },
 
