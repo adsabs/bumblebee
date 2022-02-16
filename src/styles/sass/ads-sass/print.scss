@@ -131,4 +131,23 @@
   .print-visible-block-1 {
     display: block !important;
   }
+
+  // library
+  .s-user-pill-nav {
+    display: none;
+  }
+
+  .s-lib-header {
+    display: none;
+  }
+
+  .s-library-actions {
+    display: none;
+  }
+
+  .library-detail-view {
+    margin: 0;
+    padding: 0;
+    border: none;
+  }
 }

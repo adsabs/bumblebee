@@ -186,28 +186,37 @@
 </div>
 
 <div>
-{{#if public}}
+  {{#if public}}
   <i
     class="fa fa-lg fa-unlock"
     aria-hidden="true"
     title="This library is public"
   ></i>
-{{else}}
+  {{else}}
   <i
     class="fa fa-lg fa-lock text-light"
     aria-hidden="true"
     title="This library is private"
   ></i>
-{{/if}} 
-{{#compare permission 'owner'}} 
-  {{#compare num_users 1 operator=">"}} 
-    <i class="fa fa-users" aria-hidden="true" title="This library has collaborators"></i>
+  {{/if}} {{#compare permission 'owner'}} {{#compare num_users 1 operator=">"}}
+  <i
+    class="fa fa-users"
+    aria-hidden="true"
+    title="This library has collaborators"
+  ></i>
   {{else}}
-    <i class="fa fa-user" aria-hidden="true" title="This library has no collaborators"></i>
-  {{/compare}} 
-{{else}}
-    <i class="fa fa-users" aria-hidden="true" title="This library has collaborators"></i>
-{{/compare}}
+  <i
+    class="fa fa-user"
+    aria-hidden="true"
+    title="This library has no collaborators"
+  ></i>
+  {{/compare}} {{else}}
+  <i
+    class="fa fa-users"
+    aria-hidden="true"
+    title="This library has collaborators"
+  ></i>
+  {{/compare}}
 </div>
 
 {{#if edit}}
@@ -292,10 +301,9 @@
     {{owner}}
   </div>
   <br />
-{{#compare permission "none"}}
-<br/>
-{{else}}
-  {{#compare permission "read"}}
+  {{#compare permission "none"}}
+  <br />
+  {{else}} {{#compare permission "read"}}
   <br />
   <p>
     <i class="fa fa-cog" aria-hidden="true"></i> You can <b>read</b> this
@@ -311,8 +319,11 @@
     data-target="#library-actions"
     aria-expanded="false"
   >
-    <i class="fa fa-cog" aria-hidden="true"></i> View editing options<span class="hide-xxs"> (You have
-    <b>{{permission}}</b> privileges)</span>
+    <i class="fa fa-cog" aria-hidden="true"></i> View editing options<span
+      class="hide-xxs"
+    >
+      (You have <b>{{permission}}</b> privileges)</span
+    >
   </button>
   <div
     class="collapse"
@@ -349,8 +360,7 @@
     {{/compare}}
   </div>
 
-  {{/compare}}
-{{/compare}}
+  {{/compare}} {{/compare}}
 </div>
 
 <!-- tabs -->

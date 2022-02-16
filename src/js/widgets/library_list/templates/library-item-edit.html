@@ -15,10 +15,10 @@
                 {{identifier}}
             </a>
         </div>
-        <div class="hidden-xs col-xs-2 col-sm-1 s-top-row-col" aria-label="date published">
+        <div class="hidden-xs col-xs-2 col-sm-1 s-top-row-col print-visible-inline-1" aria-label="date published">
             {{formattedDate}}
         </div>
-        <div class="hidden-xs col-sm-2 s-top-row-col" title="citation count">
+        <div class="hidden-xs col-sm-2 s-top-row-col print-visible-inline-1" title="citation count">
             {{#if num_citations}}
                 {{#if normCiteSort}}
                 <a href="#abs/{{bibcode}}/citations">cited (n): {{num_citations}}.00</a>
@@ -83,8 +83,8 @@
             </span>
 
             {{#if permission}}
-            <button class="hidden-xs btn btn-sm btn-danger btn-inverse remove-record pull-right" title="delete record permanently from this library"><i class="fa fa-times" aria-hidden="true"></i></button>
-            <button class="hidden-sm hidden-md hidden-lg btn btn-xs btn-danger btn-inverse remove-record pull-right" title="delete record permanently from this library"><i class="fa fa-times" aria-hidden="true"></i></button>
+            <button class="hidden-xs btn btn-sm btn-danger btn-inverse remove-record pull-right print-hidden" title="delete record permanently from this library"><i class="fa fa-times" aria-hidden="true"></i></button>
+            <button class="hidden-sm hidden-md hidden-lg btn btn-xs btn-danger btn-inverse remove-record pull-right print-hidden" title="delete record permanently from this library"><i class="fa fa-times" aria-hidden="true"></i></button>
             {{/if}}
         </div>
 
