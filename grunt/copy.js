@@ -340,14 +340,16 @@ module.exports = function(grunt) {
             './styles/**',
             './*.html',
             './shared/dist/**',
-            '!./styles/favicon/**',
           ],
           dest: 'dist/',
         },
+        // keep favicon assets where they are in the directory structure, but
+        // spread out those files into the root so they can be found by browsers that auto-
+        // fetch favicons
         {
           expand: true,
-          cwd: 'src',
-          src: ['./styles/favicon/**'],
+          cwd: 'src/styles/favicon',
+          src: ['*'],
           dest: 'dist/',
           flatten: true,
         },
@@ -395,7 +397,7 @@ module.exports = function(grunt) {
       ],
     },
 
-    //give the concatenated file a cache busting hash
+    // give the concatenated file a cache busting hash
     bumblebee_app: {
       files: [
         {
