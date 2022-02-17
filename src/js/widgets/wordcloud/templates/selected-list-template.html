@@ -1,22 +1,19 @@
-<h5> Selected Terms: </h5>
-<ul class="vis-select-list s-vis-select-list">
+<div class="print-hidden">
+  <h5>Selected Terms:</h5>
+  <ul class="vis-select-list s-vis-select-list">
+    {{#if selectedWords}} {{#each selectedWords}}
 
-    {{#if selectedWords}}
+    <li>
+      <span class="selected-word">{{this}}</span> <i class="close">&times;</i>
+    </li>
 
-    {{#each selectedWords}}
+    {{/each}} {{else}}
 
-        <li><span class="selected-word">{{this}}</span> <i class="close">&times;</i></li>
-
-    {{/each}}
-
-    {{else}}
-
-    <li> Click on a term to add it to this list.</li>
-    <li> Click again on the term to remove it.</li>
+    <li>Click on a term to add it to this list.</li>
+    <li>Click again on the term to remove it.</li>
 
     {{/if}}
+  </ul>
 
-
-</ul>
-
-<button class="btn btn-info apply-vis-facet">Apply Filter to Search</button>
+  <button class="btn btn-info apply-vis-facet">Apply Filter to Search</button>
+</div>
