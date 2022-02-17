@@ -149,4 +149,19 @@
   .s-inner-div-background > div {
     border: none;
   }
+
+  // network graph
+  .s-control-row {
+    border: none;
+    padding: 0;
+  }
+
+  .s-network-title {
+    margin: 0;
+    padding: 1px;
+  }
+
+  .s-network-container > .graph-container {
+    page-break-after: always;
+  }
 }
