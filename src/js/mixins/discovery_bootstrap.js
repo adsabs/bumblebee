@@ -30,7 +30,7 @@ define([
       'orcid-instructions',
       'public-libraries',
     ];
-    var regx = new RegExp('^#(/?(' + routes.join('|') + ').*/?)?$', 'i');
+    var regx = new RegExp('^#?(/?(' + routes.join('|') + ').*/?)?$', 'i');
 
     var isPushState = function() {
       return (
