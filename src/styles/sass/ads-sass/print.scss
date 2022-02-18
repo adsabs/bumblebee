@@ -41,6 +41,7 @@
   #navbar-container,
   .s-stable-search-bar-height,
   .s-metrics-metadata,
+  .s-results-border-bottom,
   .footer {
     display: none !important;
   }
@@ -58,10 +59,15 @@
   .main-content-container {
     border: none;
   }
+
   //abstract-page
 
   li.author a {
     font-weight: bold;
+  }
+
+  .s-nav-button-container {
+    border: none;
   }
 
   //metrics
