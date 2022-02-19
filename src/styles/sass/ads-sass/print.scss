@@ -1,4 +1,4 @@
-.print-visible {
+.print-only {
   display: none;
 }
 @media print {
@@ -6,6 +6,11 @@
   *:before,
   *:after {
     overflow: visible !important;
+    border: none;
+  }
+
+  a[href]:after {
+    content: '';
   }
 
   //THIS IS SUPER IMPORTANT otherwise page breaks don't work
@@ -13,8 +18,12 @@
     overflow-x: visible !important;
   }
 
-  .print-visible {
+  .print-only {
     display: block;
+  }
+
+  .print-hidden {
+    display: none !important;
   }
 
   .s-results-links {
@@ -36,6 +45,7 @@
   #navbar-container,
   .s-stable-search-bar-height,
   .s-metrics-metadata,
+  .s-results-border-bottom,
   .footer {
     display: none !important;
   }
@@ -53,10 +63,15 @@
   .main-content-container {
     border: none;
   }
+
   //abstract-page
 
   li.author a {
     font-weight: bold;
+  }
+
+  .s-nav-button-container {
+    border: none;
   }
 
   //metrics
@@ -67,10 +82,6 @@
 
   .close-widget {
     display: none;
-  }
-
-  .s-metrics-title {
-    padding: 10px 0;
   }
 
   .s-metrics-section {
@@ -86,13 +97,11 @@
 
   .s-metrics-table,
   .s-metrics-graph {
-    display: block !important;
     margin: 0 auto;
     width: 100%;
   }
 
   .s-metrics-table {
-    width: 60%;
     margin-bottom: 50px;
   }
 
@@ -102,5 +111,67 @@
 
   #darkSwitch {
     display: none;
+  }
+
+  .custom-checkbox {
+    display: none;
+  }
+
+  .s-show-details-container {
+    display: none;
+  }
+
+  .s-pagination-controls {
+    display: none;
+  }
+
+  #backToTopBtn {
+    display: none;
+  }
+
+  .print-visible-inline-1 {
+    display: inline !important;
+  }
+
+  .print-visible-block-1 {
+    display: block !important;
+  }
+
+  // library
+  .s-user-pill-nav {
+    display: none;
+  }
+
+  .s-lib-header {
+    display: none;
+  }
+
+  .s-library-actions {
+    display: none;
+  }
+
+  .library-detail-view {
+    margin: 0;
+    padding: 0;
+    border: none;
+  }
+
+  .s-inner-div-background > div {
+    border: none;
+  }
+
+  // network graph
+  .s-control-row {
+    border: none;
+    padding: 0;
+  }
+
+  .s-network-title {
+    margin: 0;
+    padding: 1px;
+  }
+
+  .s-network-container > .graph-container {
+    page-break-after: always;
   }
 }

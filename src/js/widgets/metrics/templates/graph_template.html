@@ -1,40 +1,56 @@
-
 {{#if showingSimple}}
 
-<div>
+<div class="print-hidden">
   <p>
-   <b>Currently showing a limited subset of data for this view. </b>
+    <b>Currently showing a limited subset of data for this view. </b>
   </p>
   <p>
-    <button class="btn btn-primary-faded btn-sm show-all" style="max-width: 90%; white-space: normal;">Click here to load the graph and
-   RIQ and Tori indices. <i>(This may take a few moments.)</i></button>
-
+    <button
+      class="btn btn-primary-faded btn-sm show-all"
+      style="max-width: 90%; white-space: normal;"
+    >
+      Click here to load the graph and RIQ and Tori indices.
+      <i>(This may take a few moments.)</i>
+    </button>
   </p>
 </div>
 
 {{else}}
 <div class="graph-container s-graph-container">
-    {{#if normalizedGraphData}}
-    <div class="graph-tab s-graph-tab {{#unless normalizedGraphData}} no-show {{/unless}} {{#unless normalized}}active{{/unless}} " data-tab="total">
-      Total</div>
-    <div class="graph-tab s-graph-tab {{#unless normalizedGraphData}} no-show {{/unless}} {{#if normalized}}active{{/if}} " data-tab="normalized">
-      Normalized</div>
-    {{/if}}
-    <div>
-      <form action="" class="stacked-form">
-      <label class="custom-radio"> stacked
-        <input type="radio" name="bar-arrangement" value="stacked" checked/>
+  {{#if normalizedGraphData}}
+  <div
+    class="graph-tab s-graph-tab {{#unless normalizedGraphData}} no-show {{/unless}} {{#unless normalized}}active{{/unless}} "
+    data-tab="total"
+  >
+    Total
+  </div>
+  <div
+    class="graph-tab s-graph-tab {{#unless normalizedGraphData}} no-show {{/unless}} {{#if normalized}}active{{/if}} "
+    data-tab="normalized"
+  >
+    Normalized
+  </div>
+  {{/if}}
+  <div>
+    <form action="" class="stacked-form">
+      <label class="custom-radio">
+        stacked
+        <input type="radio" name="bar-arrangement" value="stacked" checked />
       </label>
-      <label class="custom-radio"> grouped
-        <input type="radio" name="bar-arrangement" value="grouped"/>
+      <label class="custom-radio">
+        grouped
+        <input type="radio" name="bar-arrangement" value="grouped" />
       </label>
-      </form>
-      <div class="pull-right graph-key">
-      </div>
-      <div class="s-metrics-svg-container" style="padding-bottom: 58%">
-        <svg class="s-metrics-svg" viewbox="0 0 480 250" preserveAspectRatio="xMinYMin meet"></svg>
-      </div>
+    </form>
+    <div class="pull-right graph-key"></div>
+    <div class="s-metrics-svg-container" style="padding-bottom: 58%">
+      <svg
+        class="s-metrics-svg"
+        viewbox="0 0 480 250"
+        preserveAspectRatio="xMinYMin meet"
+      ></svg>
     </div>
+  </div>
 </div>
 
 {{/if}}

@@ -1,33 +1,42 @@
-<div class="author-detail-header">
-    <div style="border-bottom:4px solid {{groupColor}}" >
-        <h4>{{name}}</h4>
-            {{#if inFilter}}
-            <button class="btn btn-sm  btn-default filter-remove"><i class="s-filter-image"></i>remove from filter</button>
-            {{else}}
-            <button class="btn btn-sm btn-default filter-add"> <i class="s-filter-image"></i> add to filter</button>
-            {{/if}}
-    </div>
-    <div>
-        Total Papers: {{total}}
-        Most recent Paper: {{mostRecentYear}}
-    </div>
-    <button class="btn btn-default load-author-network" data-query="{{dataQuery}}">View author network for this author</button>
-
-
+<div class="author-detail-header print-hidden">
+  <div style="border-bottom:4px solid {{groupColor}}">
+    <h4>{{name}}</h4>
+    {{#if inFilter}}
+    <button class="btn btn-sm  btn-default filter-remove">
+      <i class="s-filter-image"></i>remove from filter
+    </button>
+    {{else}}
+    <button class="btn btn-sm btn-default filter-add">
+      <i class="s-filter-image"></i> add to filter
+    </button>
+    {{/if}}
+  </div>
+  <div>
+    Total Papers: {{total}} Most recent Paper: {{mostRecentYear}}
+  </div>
+  <button
+    class="btn btn-default load-author-network"
+    data-query="{{dataQuery}}"
+  >
+    View author network for this author
+  </button>
 </div>
 <div class="paper-description">
-<h5> Papers by this author </h5>
-    <ul class="list-unstyled">
-        {{#each papers}}
-        <li>
-            <a href="#abs/{{bibcode}}"  target="_blank" rel="noreferrer noopener"><b>{{title}}</b></a> {{#if citation_count}}
-            <small> {{citation_count}} citations</small>
-            {{else}}
-            <small>no citations</small>
-            {{/if}} {{#if numAuthors}}
-            <small>({{numAuthors}} authors from this group)</small>
-            {{/if}}
-        </li>
-        {{/each}}
-    </ul>
+  <h5>Papers by this author</h5>
+  <ul class="list-unstyled">
+    {{#each papers}}
+    <li>
+      <a href="#abs/{{bibcode}}" target="_blank" rel="noreferrer noopener"
+        ><b>{{title}}</b></a
+      >
+      {{#if citation_count}}
+      <small> {{citation_count}} citations</small>
+      {{else}}
+      <small>no citations</small>
+      {{/if}} {{#if numAuthors}}
+      <small>({{numAuthors}} authors from this group)</small>
+      {{/if}}
+    </li>
+    {{/each}}
+  </ul>
 </div>

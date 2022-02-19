@@ -1,22 +1,24 @@
 <div class="metrics-container">
-  <div class="print-visible">
-    <h2 style="font-weight: 800;text-align:center;">NASA/ADS Metrics Report</h2>
+  <div class="print-only">
+    <div style="font-weight: 300;text-align:center; font-size: medium;">
+      NASA/ADS Metrics Report
+    </div>
   </div>
-  <div class="print-visible" style="text-align:center">{{url}}</div>
+  <div class="print-only" style="text-align:center">{{url}}</div>
 
   <div class="col-xs-12 s-explore-close-container">
     <div class="s-large-close close-widget close">x</div>
     {{#if loading}}
 
-      <div class="s-metrics-metadata">
-        <i class="icon-loading" aria-hidden="true" /> Loading metrics...
-      </div>
+    <div class="s-metrics-metadata">
+      <i class="icon-loading" aria-hidden="true" /> Loading metrics...
+    </div>
 
-      {{else}}
+    {{else}}
 
-      <div class="metrics-metadata s-metrics-metadata">
-        <p>Currently showing metrics for <b>{{numFound}}</b> records.</p>
-      </div>
+    <div class="metrics-metadata s-metrics-metadata">
+      <p>Currently showing metrics for <b>{{numFound}}</b> records.</p>
+    </div>
 
     {{/if}}
   </div>
@@ -32,7 +34,11 @@
     <div class="s-metrics-title">
       <h3>Papers</h3>
       <button class="btn btn-link download s-download hidden">
-        <i class="fa fa-download fa-2x" aria-hidden="true" title="download data in csv"></i>
+        <i
+          class="fa fa-download fa-2x"
+          aria-hidden="true"
+          title="download data in csv"
+        ></i>
         <span class="sr-only">download data in csv</span>
       </button>
     </div>
@@ -43,7 +49,11 @@
     <div class="s-metrics-title">
       <h3>Citations</h3>
       <button class="btn btn-link download s-download hidden">
-        <i class="fa fa-download fa-2x" aria-hidden="true" title="download data in csv"></i>
+        <i
+          class="fa fa-download fa-2x"
+          aria-hidden="true"
+          title="download data in csv"
+        ></i>
         <span class="sr-only">download data in csv</span>
       </button>
     </div>
@@ -54,7 +64,11 @@
     <div class="s-metrics-title">
       <h3>Reads</h3>
       <button class="btn btn-link download s-download hidden">
-        <i class="fa fa-download fa-2x" aria-hidden="true" title="download data in csv"></i>
+        <i
+          class="fa fa-download fa-2x"
+          aria-hidden="true"
+          title="download data in csv"
+        ></i>
         <span class="sr-only">download data in csv</span>
       </button>
     </div>
@@ -65,7 +79,11 @@
     <div class="s-metrics-title">
       <h3>Indices</h3>
       <button class="btn btn-link s-download download-indices hidden">
-        <i class="fa fa-download fa-2x" aria-hidden="true" title="download data in csv"></i>
+        <i
+          class="fa fa-download fa-2x"
+          aria-hidden="true"
+          title="download data in csv"
+        ></i>
         <span class="sr-only">download data in csv</span>
       </button>
     </div>
