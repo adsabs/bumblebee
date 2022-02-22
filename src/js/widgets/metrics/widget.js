@@ -345,8 +345,6 @@ define([
       }
 
       function transitionGrouped() {
-        y.domain([0, yGroupMax]);
-
         rect
           .transition()
           .duration(500)
