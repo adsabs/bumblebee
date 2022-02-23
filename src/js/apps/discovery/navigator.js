@@ -417,7 +417,7 @@ define([
           .then(function() {
             app
               .getObject('LibraryController')
-              .getLibraryMetadata(data.id)
+              .getLibraryMetadata(data.id, !data.publicView)
               .done(function(metadata) {
                 data.editRecords =
                   _.contains(
