@@ -99,18 +99,14 @@ define([
     },
 
     feedbackPage: function(subview, query) {
-      const q = new ApiQuery();
-      if (query) {
-        try {
-          q.load(query);
-        } catch (e) {
-          // ignore query loading errors
-        }
-      }
+      // if necessary encode ampersands present in the bibcode
+      query = query.replace('&', encodeURIComponent('&'));
+      const params = new URLSearchParams(query);
+
       this.routerNavigate(`ShowFeedback`, {
         subview,
         href: `#feedback/${subview}`,
-        bibcode: q.has('bibcode') ? q.get('bibcode')[0] : null,
+        bibcode: params.get('bibcode'),
       });
     },
 
@@ -230,7 +226,9 @@ define([
         this.routerNavigate('UserSettings', {
           subView: subView,
         });
-      } else if (_.contains(['librarylink', 'orcid', 'application', 'export'], subView)) {
+      } else if (
+        _.contains(['librarylink', 'orcid', 'application', 'export'], subView)
+      ) {
         // show preferences if no subview provided
         this.routerNavigate('UserPreferences', {
           subView: subView,
