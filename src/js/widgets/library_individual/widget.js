@@ -85,7 +85,7 @@ define([
 
       this.getBeeHive()
         .getObject('LibraryController')
-        .getLibraryMetadata(this.model.get('id'))
+        .getLibraryMetadata(this.model.get('id'), !this.model.get('publicView'))
         .done(done);
     },
 

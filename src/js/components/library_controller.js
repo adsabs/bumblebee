@@ -245,11 +245,11 @@ define([
      * about the lib with that id
      * */
 
-    getLibraryMetadata: function(id) {
+    getLibraryMetadata: function(id, merge = true) {
       // check to see if the id is even in the collection,
       // if not return fetchLibraryMetadata;
       if (id && !this.collection.get(id)) {
-        return this.fetchLibraryMetadata(id);
+        return this.fetchLibraryMetadata(id, merge);
       }
       var deferred = $.Deferred();
       var that = this;
@@ -278,7 +278,7 @@ define([
      * in case the new data hasn't been added to the collection yet
      * */
 
-    fetchLibraryMetadata: function(id) {
+    fetchLibraryMetadata: function(id, merge = true) {
       var that = this;
       if (!id) throw new Error('need to provide a library id');
       var deferred = $.Deferred();
@@ -287,7 +287,9 @@ define([
         .done(function(data) {
           deferred.resolve(data.metadata);
           // set into collection
-          that.collection.add(data.metadata, { merge: true });
+          if (merge) {
+            that.collection.add(data.metadata, { merge: true });
+          }
         })
         .fail(function(xhr) {
           deferred.reject(xhr);
