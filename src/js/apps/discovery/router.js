@@ -98,15 +98,22 @@ define([
       this.routerNavigate('PaperSearchForm');
     },
 
-    feedbackPage: function(subview, query) {
-      // if necessary encode ampersands present in the bibcode
-      query = query.replace('&', encodeURIComponent('&'));
-      const params = new URLSearchParams(query);
+    feedbackPage: function(subview, query = '') {
+      let bibcode = '';
+
+      try {
+        // if necessary encode ampersands present in the bibcode
+        query = query.replace('&', encodeURIComponent('&'));
+        const params = new URLSearchParams(query);
+        bibcode = params.get('bibcode');
+      } catch (e) {
+        bibcode = '';
+      }
 
       this.routerNavigate(`ShowFeedback`, {
         subview,
         href: `#feedback/${subview}`,
-        bibcode: params.get('bibcode'),
+        bibcode,
       });
     },
 
