@@ -163,13 +163,17 @@
   border-bottom: 1px solid lighten(#e8e8e8, 3%);
 }
 
-.library-detail-view,
+.s-library-list,
 .library-widget .main {
   margin: 15px auto;
   padding: 20px 3.7%;
   max-width: 1000px;
 
   @extend .s-ads-card;
+}
+
+.s-library-missing-record {
+  margin-bottom: 0;
 }
 
 .library-widget .main:empty {

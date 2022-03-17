@@ -922,7 +922,7 @@
     .facet__dropdown,
     .ui-autocomplete,
     .s-all-libraries-widget,
-    .library-detail-view,
+    .s-library-list,
     .library-widget .main,
     .s-main-content-container,
     .s-inner-div-background > div,
@@ -1342,7 +1342,7 @@
       border-color: $darkmode-border;
     }
 
-    .library-detail-view {
+    .s-library-list {
       background: transparent;
     }
 

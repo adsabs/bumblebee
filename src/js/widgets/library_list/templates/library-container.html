@@ -1,42 +1,49 @@
-<div class="s-library-actions">
-    {{#if itemDeleted}}
-        <h3 class="record-deleted"><i class="icon-success" aria-hidden="true" /> Record successfully deleted</h3>
-    {{/if}}
-    {{#if hasRecords}}
-      <div class="row" style="margin-left: 0">
-        <div class="col-xs-1 col-sm-1" style="padding-left: 12.5px; text-align: right;">
-        {{#unless public}}
-        <div class="select-all-docs">
-          <label class="custom-checkbox">
-            <input type="checkbox" id="select-all-docs-cb" name="select-all-docs-cb" title="select all docs" {{#if allSelected}} checked {{/if}}>
-          </label>
-          <label for="select-all-docs-cb" class="sr-only custom-checkbox">Select All Docs</label>
-        </div>
-        {{/unless}}
-        </div>
-        <div class="col-xs-11 col-sm-6">
-          <div class="button-toolbar">
-            {{#if editRecords}}
-            <button class="btn btn-danger btn-sm hidden" id="bulk-delete">Delete Selected</button>
-            {{/if}}
-            <button class="btn btn-default btn-sm hidden" id="bulk-limit">
-              <i class="fa fa-archive" aria-hidden="true"></i> Show Selection in Results Page
-            </button>
+{{#compare numMissing 0 operator=">"}}
+<div class="alert alert-warning s-library-missing-record print-hidden">Displaying {{numFound}} out of {{numRecords}} records due to {{numMissing}} unmatched or merged record{{#compare numMissing 1 operator=">"}}s{{/compare}}
+  <a href="https://ui.adsabs.harvard.edu/help/faq/#ads-libraries" target="_blank" rel="noopener noreferrr"><i class="fa fa-question-circle alert-warning" title="See help page" style="margin: 5px"></i></a>
+</div>
+{{/compare}}
+<div class="s-library-list">
+  <div class="s-library-actions">
+      {{#if itemDeleted}}
+          <h3 class="record-deleted"><i class="icon-success" aria-hidden="true" /> Record successfully deleted</h3>
+      {{/if}}
+      {{#if hasRecords}}
+        <div class="row" style="margin-left: 0">
+          <div class="col-xs-1 col-sm-1" style="padding-left: 12.5px; text-align: right;">
+          {{#unless public}}
+          <div class="select-all-docs">
+            <label class="custom-checkbox">
+              <input type="checkbox" id="select-all-docs-cb" name="select-all-docs-cb" title="select all docs" {{#if allSelected}} checked {{/if}}>
+            </label>
+            <label for="select-all-docs-cb" class="sr-only custom-checkbox">Select All Docs</label>
+          </div>
+          {{/unless}}
+          </div>
+          <div class="col-xs-11 col-sm-6">
+            <div class="button-toolbar">
+              {{#if editRecords}}
+              <button class="btn btn-danger btn-sm hidden" id="bulk-delete">Delete Selected</button>
+              {{/if}}
+              <button class="btn btn-default btn-sm hidden" id="bulk-limit">
+                <i class="fa fa-archive" aria-hidden="true"></i> Show Selection in Results Page
+              </button>
+            </div>
           </div>
         </div>
-      </div>
-      <div style="text-align: right;">
-        <div id="sort-container"></div>
-      </div>
-    {{/if}}
-</div>
-<hr class="print-hidden"/>
+        <div style="text-align: right;">
+          <div id="sort-container"></div>
+        </div>
+      {{/if}}
+  </div>
+  <hr class="print-hidden"/>
 
-<ul class="library-list-container s-library-list-container">
-</ul>
+  <ul class="library-list-container s-library-list-container">
+  </ul>
 
-{{#if pagination}}
-    {{> js/widgets/list_of_things/templates/pagination-partial}}
-{{/if}}
+  {{#if pagination}}
+      {{> js/widgets/list_of_things/templates/pagination-partial}}
+  {{/if}}
 
+  </div>
 </div>
