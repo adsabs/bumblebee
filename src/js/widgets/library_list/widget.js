@@ -325,12 +325,11 @@ define([
       }
 
       // number of records actually found
-      this.model.set('numRecords', resp.metadata.num_documents);
-      this.model.set('numFound', resp.solr.response.numFound);
-      this.model.set(
-        'numMissing',
-        resp.metadata.num_documents - resp.solr.response.numFound
-      );
+      this.model.set({
+        numRecords: resp.metadata.num_documents,
+        numFound: resp.solr.response.numFound,
+        numMissing: resp.metadata.num_documents - resp.solr.response.numFound,
+      });
 
       // set sort
       var sort = resp.solr.responseHeader.params.sort;
