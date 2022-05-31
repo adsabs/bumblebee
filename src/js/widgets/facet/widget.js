@@ -184,7 +184,11 @@ define([
       // we don't need actual records so set rows to 1
       q.set('rows', 1);
       // set prefix from 0/ to 1/
-      if (id) q.set('facet.prefix', id.replace('0/', '1/'));
+      if (id) {
+        // append '/' so that we properly match the prefix
+        const childPrefix = id.replace('0/', '1/') + '/';
+        q.set('facet.prefix', childPrefix);
+      }
 
       var req = this.composeRequest(q);
       pubsub.publish(pubsub.DELIVERING_REQUEST, req);
