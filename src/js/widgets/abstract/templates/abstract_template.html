@@ -201,16 +201,18 @@ hideCloseButton=true widgetLoadingSize="big"}} {{else if error}}
   {{/if}} {{#if doi}}
   <dt>DOI:</dt>
   <dd>
-    <span>
+    {{#each doi}}
+    <p class="doi-p">
       <a
         data-target="DOI"
-        href="{{doi.href}}"
+        href="{{href}}"
         target="_blank"
         rel="noreferrer noopener"
-        >{{doi.doi}}</a
+        >{{doi}}</a
       >
       <i class="fa fa-external-link" aria-hidden="true"></i>
-    </span>
+    </p>
+    {{/each}}
   </dd>
   {{/if}} {{#if arxiv}}
   <dt>arXiv:</dt>
