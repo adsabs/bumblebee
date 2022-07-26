@@ -62,13 +62,16 @@ define([
     },
 
     parse: function(doc, maxAuthors = MAX_AUTHORS) {
-      // add doi link
-      if (_.isArray(doc.doi) && _.isPlainObject(LinkGeneratorMixin)) {
-        doc.doi = {
-          doi: doc.doi,
-          href: LinkGeneratorMixin.createUrlByType(doc.bibcode, 'doi', doc.doi),
-        };
-      }
+      const getDOIUrl = (doi) =>
+        LinkGeneratorMixin.createUrlByType(doc.bibcode, 'doi', doi);
+
+      // generate URLs for each doi
+      doc.doi = Array.isArray(doc.doi)
+        ? doc.doi.map((doi) => ({ doi, href: getDOIUrl(doi) }))
+        : doc.doi
+        ? [{ doi: doc.doi, href: getDOIUrl(doc.doi) }]
+        : doc.doi;
+
       // "aff" is the name of the affiliations array that comes from solr
       doc.aff = Array.isArray(doc.aff) ? doc.aff : [];
       doc.author = Array.isArray(doc.author) ? doc.author : [];

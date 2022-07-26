@@ -84,6 +84,7 @@ define(['underscore', 'react', 'prop-types'], function(_, React, PropTypes) {
       <div className="resources__content">
         {_.map(items, (item) => (
           <a
+            key={item.name}
             href={item.url}
             target="_blank"
             rel="noreferrer noopener"
