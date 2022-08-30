@@ -17,7 +17,7 @@
     padding: 10px 0;
     .btn {
       font-size: 16px;
-      margin:2px;
+      margin: 2px;
       @media screen and (max-width: $screen-xs) {
         font-size: 0.8em;
       }
@@ -132,14 +132,13 @@
   }
 }
 
-
 .s-create-notification-title__title {
   display: flex;
   justify-content: space-between;
   color: #5d5d5d;
   font-size: 1.25em;
 }
-  
+
 .create-notification-title {
   &:hover,
   &:focus {
@@ -179,11 +178,9 @@
       transform: translate(-100%);
     }
   }
-  
 }
 
 #search-results-actions {
-  border-bottom: 1px solid darken($gray-lighter, 10%);
   padding: 5px 0 15px 0;
 
   &.sticky {
