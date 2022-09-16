@@ -1,10 +1,33 @@
-<div class="pull-right s-view-metrics-button-container"></div>
 {{#if statsCount}}
-  <div style="width:80%">
-    {{statsDescription}} : <b>{{statsCount}}</b>
-  </div>
-  <hr/>
+
+  <!-- citations section -->
+  {{#compare section "citations"}}
+    <div style="display: flex;">
+      <div style="flex: 1; padding-right: 10px"> 
+        <p style="font-size: 1.3rem;">{{totalCount}} top cited records with <strong>{{subTotal}}</strong> total citations</p>
+      </div>
+      <div class="s-view-metrics-button-container" style="width:40px"></div>
+    </div>
+    {{#if showTotalMessage}}
+      <p style="font-size: 1.3rem;">(<strong>{{statsCount}}</strong> total citations for full set)</p>
+    {{/if}}
+  {{/compare}}
+  
+  <!-- reads section -->
+  {{#compare section "reads"}}
+    <div style="display: flex;">
+      <div style="flex: 1; padding-right: 10px">
+        <p style="font-size: 1.3rem;">{{totalCount}} top read records with <strong>{{subTotal}}</strong> total recent reads </p>
+      </div>
+      <div class="s-view-metrics-button-container" style="width:40px"></div>
+    </div>
+    {{#if showTotalMessage}}
+      <p style="font-size: 1.3rem;">(<strong>{{statsCount}}</strong> total recent reads for full set)</p>
+    {{/if}}
+  {{/compare}}
 {{/if}}
+{{#if statsCount}}<hr/>{{/if}}
+
 <div class="graph-legend" {{#unless statsCount}} style="width:80%" {{/unless}}></div>
 {{#unless graphData}}
   {{#if error}}

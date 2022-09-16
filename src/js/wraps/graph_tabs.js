@@ -78,6 +78,7 @@ define([
           // if the year exists, then grab it, otherwise fill with an empty (x,y)
           if (yearMap.has(year)) {
             const { refereed, notrefereed } = yearMap.get(year);
+
             return {
               x: year,
               y: refereed + notrefereed,
@@ -90,6 +91,7 @@ define([
         if (finalData.length <= 1) {
           return noData();
         }
+
         this.model.set({ graphData: finalData });
 
         // update widget state
@@ -131,6 +133,7 @@ define([
         // map counts into coordinates for graph
         const finalData = [];
         let xCounter = 0;
+        let yCounter = 0;
         counts.some((item) => {
           xCounter += item.count;
           // one dot per paper (this way we'll only plot the top ranked X - fraction of results)
@@ -138,6 +141,7 @@ define([
             xCounter > finalData.length &&
             finalData.length < maxDataPoints
           ) {
+            yCounter += item.val;
             finalData.push({ y: item.val, x: finalData.length + 1 });
           }
           if (finalData.length > maxDataPoints) {
@@ -157,9 +161,12 @@ define([
         }
 
         this.model.set({
+          section: 'citations',
           graphData: finalData,
-          statsCount: statsCount,
-          statsDescription: `${finalData.length} top ranked citations of`,
+          statsCount: statsCount.toLocaleString(),
+          totalCount: finalData.length.toLocaleString(),
+          subTotal: yCounter.toLocaleString(),
+          showTotalMessage: finalData.length === maxDataPoints,
         });
       },
     });
@@ -197,6 +204,7 @@ define([
 
         // map counts into coordinates for graph
         const finalData = [];
+        let yCounter = 0;
         let xCounter = 0;
         counts.some((item) => {
           xCounter += item.count;
@@ -205,6 +213,7 @@ define([
             xCounter > finalData.length &&
             finalData.length < maxDataPoints
           ) {
+            yCounter += item.val;
             finalData.push({ y: item.val, x: finalData.length + 1 });
           }
           if (finalData.length > maxDataPoints) {
@@ -224,9 +233,12 @@ define([
         }
 
         this.model.set({
+          section: 'reads',
           graphData: finalData,
-          statsCount: statsCount,
-          statsDescription: `${finalData.length} top ranked reads of`,
+          statsCount: statsCount.toLocaleString(),
+          totalCount: finalData.length.toLocaleString(),
+          subTotal: yCounter.toLocaleString(),
+          showTotalMessage: finalData.length === maxDataPoints,
         });
       },
     });

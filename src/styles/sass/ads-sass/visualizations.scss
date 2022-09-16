@@ -88,8 +88,7 @@ Year, Citation and Reference Graphs
 */
 
 .s-view-metrics-button-container {
-  @extend .pull-right;
-  margin-right: 10px;
+  width: 30px;
 }
 
 .change-scale {
@@ -673,7 +672,6 @@ rect.selection {
 }
 
 .s-bubble-chart {
-
   .s-controls {
     font-size: 14px;
     background-color: $gray-lighter;
