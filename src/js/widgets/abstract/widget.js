@@ -129,8 +129,8 @@ define([
 
       if (doc.pubdate) {
         doc.formattedDate = PapersUtils.formatDate(doc.pubdate, {
-          format: 'MM d yy',
-          missing: { day: 'MM yy', month: 'yy' },
+          format: 'MMMM DD YYYY',
+          missing: { day: 'MMMM YYYY', month: 'YYYY' },
         });
       }
 

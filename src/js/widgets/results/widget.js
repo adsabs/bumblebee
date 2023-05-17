@@ -362,10 +362,7 @@ define([
         }
 
         d.formattedDate = d.pubdate
-          ? self.formatDate(d.pubdate, {
-              format: 'yy/mm',
-              missing: { day: 'yy/mm', month: 'yy' },
-            })
+          ? self.formatDate(d.pubdate)
           : undefined;
         d.shortAbstract = d.abstract
           ? self.shortenAbstract(d.abstract)
