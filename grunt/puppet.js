@@ -18,7 +18,7 @@ module.exports = function(grunt) {
       });
 
       // grab all the test files
-      let specs = grunt.file
+      const specs = grunt.file
         .expand(
           {
             cwd: path.resolve('test/mocha/js/'),
@@ -209,17 +209,24 @@ module.exports = function(grunt) {
     prod: {
       options: {
         env: 'production',
+        launchOptions: { headless: true, args: ['--no-sandbox'] },
       },
     },
     dev: {
       options: {
         env: 'development',
+        launchOptions: { headless: true, args: ['--no-sandbox'] },
       },
     },
     debug: {
       options: {
         env: 'development',
-        launchOptions: { headless: false, devtools: true, slowMo: 250 },
+        launchOptions: {
+          headless: false,
+          devtools: true,
+          slowMo: 250,
+          args: ['--no-sandbox'],
+        },
       },
     },
   };

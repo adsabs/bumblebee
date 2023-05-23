@@ -1,20 +1,56 @@
-define([
-    'js/mixins/papers_utils'
-  ],
-  function(
-    PapersUtils
-    ){
+define(['js/mixins/papers_utils'], function(Utils) {
+  describe('Papers Utils Mixin (mixins/papers_utils.spec.js)', function() {
+    it('returns formatted date with complete input', () => {
+      const dateString = '2023-05-22';
+      const format = 'YYYY/MM/DD';
 
-    describe("Papers Utils Mixin (mixins/papers_utils.spec.js)", function(){
+      const result = Utils.formatDate(dateString, { format });
 
-      it("should know to format dates", function() {
-        expect(PapersUtils.formatDate('2011-01-01T00:00:00Z', {format: 'mm/yy'})).to.be.eql('01/2011');
+      expect(result).to.equal('2023/05/22');
+    });
 
-        expect(PapersUtils.formatDate('2011-12-01', {format: 'mm/yy', missing: {day: 'mm/yy', month: '--/yy'}})).to.be.eql('12/2011');
-        expect(PapersUtils.formatDate('2011-12-00', {format: 'mm/yy', missing: {day: 'mm/yy', month: '--/yy'}})).to.be.eql('12/2011');
-        expect(PapersUtils.formatDate('2011-00-00', {format: 'mm/yy', missing: {day: 'mm/yy', month: '--/yy'}})).to.be.eql('--/2011');
+    it('returns formatted date with missing month', () => {
+      const dateString = '2023-00-22';
+      const missing = { month: 'YYYY', day: 'YYYY/MM' };
 
-        expect(function() {PapersUtils.formatDate('2011-12-0x', {format: 'mm/yy', missing: {day: 'mm/yy', month: '--/yy'}})}).to.throw.Exception;
-      });
-    })
+      const result = Utils.formatDate(dateString, { missing });
+
+      expect(result).to.equal('2023');
+    });
+
+    it('returns formatted date with missing day', () => {
+      const dateString = '2023-05-00';
+      const missing = { day: 'YYYY/MM', month: 'YYYY' };
+
+      const result = Utils.formatDate(dateString, { missing });
+
+      expect(result).to.equal('2023/05');
+    });
+
+    it('returns formatted date with missing month and day', () => {
+      const dateString = '2023-00-00';
+      const missing = { dayAndMonth: 'YYYY' };
+
+      const result = Utils.formatDate(dateString, { missing });
+
+      expect(result).to.equal('2023');
+    });
+
+    it('returns year if parsed date is invalid', () => {
+      const dateString = '2023-13-45';
+      const format = 'YYYY/MM';
+
+      const result = Utils.formatDate(dateString, { format });
+
+      expect(result).to.equal('2023');
+    });
+
+    it('returns null if input does not match regex', () => {
+      const dateString = 'invalid-date';
+
+      const result = Utils.formatDate(dateString);
+
+      expect(result).to.equal(null);
+    });
+  });
 });
