@@ -20,10 +20,14 @@ define(['underscore', 'jquery-ui', 'jquery', 'moment'], function(
      * @returns {*}
      */
     formatDate: function(dateString, options = {}) {
-      const {
-        format = 'YYYY/MM',
-        missing = { day: 'YYYY/MM', month: 'YYYY', dayAndMonth: 'YYYY' },
-      } = options;
+      const { format = 'YYYY/MM', missing: missingOpts = {} } = options;
+
+      const missing = {
+        day: 'YYYY/MM',
+        month: 'YYYY',
+        dayAndMonth: 'YYYY',
+        ...missingOpts,
+      };
 
       // break apart date
       const regex = /^(?<year>\d{4})-(?<month>\d{2}|00)-(?<day>\d{2}|00)$/;
@@ -34,10 +38,17 @@ define(['underscore', 'jquery-ui', 'jquery', 'moment'], function(
         const monthMissing = month === '00';
         const dayMissing = day === '00';
 
-        const utc = moment.utc(new Date(year, month, day));
+        const date = [
+          Number.parseInt(year, 10),
+
+          // months are zero-based, everything else is one-based
+          monthMissing ? 0 : Number.parseInt(month, 10) - 1,
+          dayMissing ? 1 : Number.parseInt(day, 10),
+        ];
+
+        const utc = moment.utc(date);
 
         if (!utc.isValid()) {
-
           // if for some reason the parsed date is invalid, and assuming the year is always there, use that
           return year;
         }
