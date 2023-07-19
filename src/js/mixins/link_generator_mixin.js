@@ -5,13 +5,52 @@ define(['underscore', 'js/mixins/openurl_generator'], function(
   const GATEWAY_BASE_URL = '/link_gateway/';
 
   const DEFAULT_ORDERING = [
-    'ADS PDF',
-    'ADS Scanned Article',
-    'My Institution',
-    'Publisher Article',
-    'Publisher PDF',
-    'arXiv PDF',
+    'ADS_PDF',
+    'ADS_SCAN',
+    'INSTITUTION',
+    'PUB_HTML',
+    'PUB_PDF',
+    'EPRINT_PDF',
+    'EPRINT_HTML',
+    'AUTHOR_PDF',
+    'AUTHOR_HTML',
   ];
+
+  const sortByDefaultOrdering = (sources) => {
+    // initially sort the whole list by the DEFAULT_ORDERING array
+    const sortedSources = sources.sort((a, b) => {
+      const aIndex = DEFAULT_ORDERING.indexOf(a.rawType);
+      const bIndex = DEFAULT_ORDERING.indexOf(b.rawType);
+
+      // If both elements are in the DEFAULT_ORDERING array, sort based on their indices
+      if (aIndex !== -1 && bIndex !== -1) {
+        return aIndex - bIndex;
+      }
+
+      // If only 'a' is in DEFAULT_ORDERING, move it before 'b'
+      if (aIndex !== -1) {
+        return -1;
+      }
+
+      // If only 'b' is in DEFAULT_ORDERING, move it before 'a'
+      if (bIndex !== -1) {
+        return 1;
+      }
+
+      // If both elements are not in DEFAULT_ORDERING, maintain their relative order
+      return 0;
+    });
+
+    // then make sure that sources in DEFAULT_ORDERING are pushed to the top
+    return [
+      ...sortedSources.filter((source) =>
+        DEFAULT_ORDERING.includes(source.rawType)
+      ),
+      ...sortedSources.filter(
+        (source) => !DEFAULT_ORDERING.includes(source.rawType)
+      ),
+    ];
+  };
 
   /**
    * @typedef {Object} LinkType
@@ -452,7 +491,7 @@ define(['underscore', 'js/mixins/openurl_generator'], function(
    */
   const _processLinkData = function(data) {
     const createGatewayUrl = this._createGatewayUrl;
-    let fullTextSources = [];
+    const fullTextSources = [];
     let dataProducts = [];
     let countOpenUrls = 0;
     const property = data.property;
@@ -477,6 +516,7 @@ define(['underscore', 'js/mixins/openurl_generator'], function(
           shortName: 'My Institution',
           name: 'My Institution',
           description: 'Find Article At My Institution',
+          rawType: 'INSTITUTION',
         });
         countOpenUrls += 1;
       }
@@ -489,6 +529,7 @@ define(['underscore', 'js/mixins/openurl_generator'], function(
           name: (linkInfo && linkInfo.name) || el,
           type: (linkInfo && linkInfo.type) || 'HTML',
           description: linkInfo && linkInfo.description,
+          rawType: el,
         });
 
         // if entry cannot be split, then it will not be open access
@@ -500,6 +541,7 @@ define(['underscore', 'js/mixins/openurl_generator'], function(
           name: (linkInfo && linkInfo.name) || el,
           type: (linkInfo && linkInfo.type) || 'HTML',
           description: linkInfo && linkInfo.description,
+          rawType: el,
         });
       }
     });
@@ -520,16 +562,11 @@ define(['underscore', 'js/mixins/openurl_generator'], function(
             name: (info && info.name) || link.type,
             type: (info && info.type) || 'HTML',
             description: info && info.description,
+            rawType: 'EPRINT_PDF',
           });
         }
       });
     }
-
-    // reorder the full text sources based on our default ordering
-    fullTextSources = _.sortBy(fullTextSources, function(source) {
-      const rank = DEFAULT_ORDERING.indexOf(source.name);
-      return rank > -1 ? rank : 9999;
-    });
 
     // check the data property
     _.forEach(data.data, function(product) {
@@ -558,7 +595,7 @@ define(['underscore', 'js/mixins/openurl_generator'], function(
     dataProducts = _.sortBy(dataProducts, 'count').reverse();
 
     return {
-      fullTextSources: fullTextSources,
+      fullTextSources: sortByDefaultOrdering(fullTextSources),
       dataProducts: dataProducts,
     };
   };

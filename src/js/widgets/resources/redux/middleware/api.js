@@ -82,15 +82,27 @@ define(['underscore', 'es6!../modules/api', 'es6!../modules/ui'], function(
   /**
    * Sorts a set of sources by type and then groups them by name
    * @param {Array} sources sources to reformat
-   * @param {object} object keyed by the source shortnames
+   * @returns {object} object keyed by the source shortnames
    */
-  const reformatSources = (sources) => {
-    const typeOrder = ['PDF', 'HTML', 'SCAN'];
+  const groupSources = (sources) => {
+    const groups = {};
 
-    return _(sources)
-      .sortBy((s) => typeOrder.indexOf(s.type))
-      .groupBy('shortName')
-      .value();
+    if (sources.length === 0) {
+      return groups;
+    }
+
+    // group the sources by name, maintaining the incoming order
+    sources.forEach((source) => {
+      // if the source is not in the groups object, add it
+      if (!groups[source.shortName]) {
+        groups[source.shortName] = [];
+      }
+
+      // add the source to the groups object
+      groups[source.shortName].push(source);
+    });
+
+    return groups;
   };
 
   /**
@@ -123,7 +135,7 @@ define(['underscore', 'es6!../modules/api', 'es6!../modules/ui'], function(
           }
 
           if (data.fullTextSources.length > 0) {
-            const fullTextSources = reformatSources(data.fullTextSources);
+            const fullTextSources = groupSources(data.fullTextSources);
             dispatch({ type: SET_FULL_TEXT_SOURCES, result: fullTextSources });
           }
 
