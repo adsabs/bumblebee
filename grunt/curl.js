@@ -36,7 +36,8 @@ module.exports = {
     dest: 'src/libs/array-flat-polyfill.js',
   },
   polyfill: {
-    src: 'https://polyfill.io/v3/polyfill.min.js?features=IntersectionObserver',
+    src:
+      'https://raw.githubusercontent.com/que-etc/intersection-observer-polyfill/master/dist/IntersectionObserver.global.js',
     dest: 'src/libs/polyfill.js',
   },
   jqueryui: {
