@@ -107,6 +107,18 @@ define([], function() {
       syntax: 'doctype:%',
       examples: ['software'],
     },
+    {
+      label: 'newly ingested',
+      syntax: 'entdate:[NOW-7DAYS TO NOW]',
+      examples: [],
+      tooltip: 'papers entered in the last week',
+    },
+    {
+      label: 'eprint',
+      syntax: 'property:"eprint_openaccess”',
+      examples: [],
+      tooltip: 'papers which are or have an eprint',
+    },
   ];
 
   return searchExamples;
