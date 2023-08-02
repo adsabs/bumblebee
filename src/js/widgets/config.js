@@ -64,6 +64,12 @@ define([], function() {
           ext: 'xml',
         },
         {
+          value: 'jatsxml',
+          label: 'JATSXML',
+          help: 'JATS Journal Publishing XML',
+          ext: 'xml',
+        },
+        {
           value: 'refxml',
           label: 'REF-XML',
           help: 'ADS link data in XML format',
