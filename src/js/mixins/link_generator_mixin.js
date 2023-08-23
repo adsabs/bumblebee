@@ -204,15 +204,15 @@ define(['underscore', 'js/mixins/openurl_generator'], function(
       description: 'An instrument suite on the Van Allen Probes',
     },
     EPRINT_HTML: {
-      name: 'arXiv Article',
-      shortName: 'arXiv',
-      description: 'Arxiv article',
+      name: 'Preprint Article',
+      shortName: 'Preprint',
+      description: 'Preprint article',
       type: 'HTML',
     },
     EPRINT_PDF: {
-      name: 'arXiv PDF',
-      shortName: 'arXiv',
-      description: 'ArXiv eprint',
+      name: 'Preprint PDF',
+      shortName: 'Preprint',
+      description: 'Preprint PDF',
       type: 'PDF',
     },
     ERGSC: {
@@ -546,7 +546,7 @@ define(['underscore', 'js/mixins/openurl_generator'], function(
       }
     });
 
-    // if no arxiv link is present, check links_data as well to make sure
+    // if no preprint link is present, check links_data as well to make sure
     const hasEprint = _.find(fullTextSources, {
       name: LINK_TYPES.EPRINT_PDF.name,
     });
