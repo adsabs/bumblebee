@@ -51,7 +51,6 @@ require.config({
           DynamicConfig: 'config/discovery.vars',
           MasterPageManager: 'js/page_managers/master',
           AppStorage: 'js/components/app_storage',
-          RecaptchaManager: 'js/components/recaptcha_manager',
           CSRFManager: 'js/components/csrf_manager',
           LibraryController: 'js/components/library_controller',
           DocStashController: 'js/components/doc_stash_controller',
