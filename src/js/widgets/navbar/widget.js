@@ -186,8 +186,6 @@ define([
 
       // just after it has been shown
       $modal.on('shown.bs.modal', () => {
-        this.trigger('activate-recaptcha');
-
         $generalForm.off().submit((e) => {
           e.preventDefault();
           this.trigger('feedback-form-submit', $(e.target), $modal);
@@ -359,7 +357,6 @@ define([
       'user-change-orcid-mode': 'toggleOrcidMode',
       'logout-only-orcid': 'orcidLogout',
       'search-author': 'searchAuthor',
-      'activate-recaptcha': 'activateRecaptcha',
     },
 
     submitForm: function($form, $modal) {
@@ -412,22 +409,22 @@ define([
           .getService('Api')
           .request(request);
       };
-      const has = (el) => {
-        let res = false;
-        $form.serializeArray().forEach((i) => {
-          if (i.name === el && !_.isEmpty(i.value)) {
-            return (res = true);
-          }
-        });
-        return res;
-      };
 
-      has('g-recaptcha-response')
-        ? submit()
-        : this.getBeeHive()
-            .getObject('RecaptchaManager')
-            .execute()
-            .then(submit);
+      const siteKey = this.getBeeHive()
+        .getObject('AppStorage')
+        .getConfigCopy().recaptchaKey;
+      window.grecaptcha.ready(() => {
+        window.grecaptcha
+          .execute(siteKey, { action: 'feedback/general' })
+          .then((token) => {
+            const input = document.createElement('input');
+            input.type = 'hidden';
+            input.name = 'g-recaptcha-response';
+            input.value = token;
+            $form.append(input);
+            submit();
+          });
+      });
     },
 
     navigateToOrcidLink: function() {
@@ -550,19 +547,6 @@ define([
       if (this._latestPage === 'orcid-page') {
         pubsub.publish(pubsub.NAVIGATE, 'index-page');
       }
-    },
-
-    activateRecaptcha: function() {
-      if (this._activated) {
-        return;
-      }
-      this._activated = true;
-
-      // right now, modal is not part of main view.$el because it has to be inserted at the bottom of the page
-      var view = new Marionette.ItemView({ el: '#feedback-modal' });
-      this.getBeeHive()
-        .getObject('RecaptchaManager')
-        .activateRecaptcha(view);
     },
   });
 
