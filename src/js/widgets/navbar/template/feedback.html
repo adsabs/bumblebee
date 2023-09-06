@@ -60,10 +60,10 @@
           class="feedback-form"
           style="display: none"
         >
-          <input type="hidden" name="_subject" value="Bumblebee Feedback" />
-          <input type="hidden" name="feedback-type" value="feedback" />
+          <input type="hidden" name="_subject" value="Bumblebee Feedback"/>
+          <input type="hidden" name="feedback-type" value="feedback"/>
 
-          <input type="text" name="_gotcha" style="display:none" />
+          <input type="text" name="_gotcha" style="display:none"/>
 
           <div class="form-group half-width">
             <label>
@@ -91,7 +91,7 @@
 
           <div class="form-group">
             <label
-              >Feedback <br />
+            >Feedback <br/>
               <textarea
                 rows="8"
                 cols="50"
@@ -108,15 +108,19 @@
           </div>
 
           <div class="form-group">
-            <div class="g-recaptcha"></div>
-          </div>
-          <div class="form-group">
             <p class="alert alert-info text-center">
               You can also reach us at
               <span class="s-text-bold">adshelp [at] cfa.harvard.edu</span>
             </p>
           </div>
           <input type="hidden" name="origin" value="bbb_feedback">
+          <div class="form-group">
+            <div class="g-recaptcha">
+              <small class="recaptcha-msg">This site is protected by reCAPTCHA and the Google
+                <a href="https://policies.google.com/privacy" target="_blank" rel="noreferrer">Privacy Policy</a> and
+                <a href="https://policies.google.com/terms" target="_blank" rel="noreferrer">Terms of Service</a> apply.</small>
+            </div>
+          </div>
         </form>
       </div>
       <div class="modal-footer">

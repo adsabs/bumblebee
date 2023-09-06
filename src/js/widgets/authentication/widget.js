@@ -583,7 +583,7 @@ define([
     activateRecaptcha: function(view) {
       this.getBeeHive()
         .getObject('RecaptchaManager')
-        .activateRecaptcha(view);
+        .activateRecaptcha({ view: view });
     },
 
     getRecaptchaToken: function() {

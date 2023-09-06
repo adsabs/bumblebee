@@ -11,9 +11,8 @@ define([
 ], function(Backbone, GenericModule, Hardened, Dependon) {
   var RecaptchaManager = GenericModule.extend({
     initialize: function() {
-      this.grecaptchaDeferred = window.__grecaptcha__;
       this.siteKeyDeferred = $.Deferred();
-      this.when = $.when(this.siteKeyDeferred, this.grecaptchaDeferred);
+      this.when = $.when(this.siteKeyDeferred);
       this.execPromise = $.Deferred();
     },
 
@@ -39,23 +38,9 @@ define([
      * @param view to render recaptcha on
      */
     activateRecaptcha: function(view) {
-      if (this.when.state() !== 'resolved') {
-        this.renderLoading(view);
-      }
-
-      var self = this;
-      clearTimeout(this.to);
-      this.to = setTimeout(function() {
-        if (self.when.state() !== 'resolved') {
-          self.renderError(view);
-        }
-      }, 5000);
-
-      this.when
-        .done(_.partial(_.bind(this.renderRecaptcha, this), view))
-        .fail(function() {
-          self.renderError(view);
-        });
+      const $el = this.getEl(view);
+      const msg = $('<div class="form-group"></div>').append(this.googleMsg());
+      $el.closest('form').append(msg);
     },
 
     getEl: function(view) {
@@ -70,10 +55,21 @@ define([
       return $el;
     },
 
-    execute: function() {
-      this.execPromise = $.Deferred();
-      grecaptcha.execute();
-      return this.execPromise.promise();
+    execute: function(action = '') {
+      const siteKey = this.getBeeHive()
+        .getObject('AppStorage')
+        .getConfigCopy().recaptchaKey;
+      return new Promise((resolve, reject) => {
+        window.grecaptcha.ready(() => {
+          console.log('grecaptcha ready', siteKey);
+          window.grecaptcha
+            .execute(siteKey, {
+              action,
+            })
+            .then((token) => resolve(token))
+            .catch((err) => reject(err));
+        });
+      });
     },
 
     renderLoading: function(view) {
@@ -115,20 +111,20 @@ define([
       const $el = this.getEl(view);
       const msg = $('<div class="form-group"></div>').append(this.googleMsg());
       $el.closest('form').append(msg);
-      grecaptcha.render($el[0], {
-        sitekey: siteKey,
-        size: 'invisible',
-        badge: 'inline',
-        callback: (response) => {
-          // this might need to be inserted into the model.
-          // or in the case of feedback form, it just needs
-          // to be in the serialized form
-          if (view.model) {
-            view.model.set('g-recaptcha-response', response);
-          }
-          this.execPromise.resolve(response);
-        },
-      });
+      // grecaptcha.render($el[0], {
+      //   sitekey: siteKey,
+      //   size: 'invisible',
+      //   badge: 'inline',
+      //   callback: (response) => {
+      //     // this might need to be inserted into the model.
+      //     // or in the case of feedback form, it just needs
+      //     // to be in the serialized form
+      //     if (view.model) {
+      //       view.model.set('g-recaptcha-response', response);
+      //     }
+      //     this.execPromise.resolve(response);
+      //   },
+      // });
       this.enableSubmit(view, true);
     },
 

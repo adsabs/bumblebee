@@ -21,7 +21,6 @@ define(['./actions', '../shared/helpers'], function(
         }
         return acc;
       }, '');
-      console.log(query);
       trigger('doSearch', query, () => {});
     }
   });
