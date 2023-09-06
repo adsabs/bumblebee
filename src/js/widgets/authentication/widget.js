@@ -29,6 +29,10 @@ define([
   User,
   analytics
 ) {
+  // Creating module level variable since I can't figure out best way to pass this value into a subview from the model
+  // This value should be always available, and unchanging, so should be safe to set like this here
+  // TODO: figure out how to make this value available to the subview without having to set it like this
+  let siteKey = '';
   /*
    *
    * any submit action forces the widget to rerender when it
@@ -46,21 +50,21 @@ define([
     checkValidationState: FormFunctions.checkValidationState,
     triggerSubmit: function(ev) {
       ev.preventDefault();
-
-      // simple check if we need to get the recaptcha token
-      if (
-        this.$el.find('.g-recaptcha').length > 0 &&
-        !this.model.has('g-recaptcha-response')
-      ) {
-        this.model.once('change:g-recaptcha-response', () => {
-          FormFunctions.triggerSubmit.apply(this, arguments);
-        });
-        this.trigger('get-recaptcha-token');
+      const formName = ev.currentTarget.dataset.formName;
+      if (typeof formName === 'string') {
+        window.grecaptcha.ready(() =>
+          window.grecaptcha
+            .execute(siteKey, { action: `auth/${formName}` })
+            .then((token) => {
+              this.model.set('g-recaptcha-response', token);
+              FormFunctions.triggerSubmit.apply(this, arguments);
+            })
+        );
       } else {
         FormFunctions.triggerSubmit.apply(this, arguments);
       }
     },
-    dissmissError: function() {
+    dismissError: function() {
       this.model.set(this.model.defaults());
       this.render();
     },
@@ -71,7 +75,7 @@ define([
 
     events: {
       'click button[type=submit]': 'triggerSubmit',
-      'click a#dismiss-error': 'dissmissError',
+      'click a#dismiss-error': 'dismissError',
     },
   });
 
@@ -150,7 +154,6 @@ define([
 
     onRender: function() {
       this.activateValidation();
-      this.trigger('activate-recaptcha');
     },
   });
 
@@ -237,7 +240,6 @@ define([
 
     onRender: function() {
       this.activateValidation();
-      this.trigger('activate-recaptcha');
     },
   });
 
@@ -362,14 +364,6 @@ define([
       }
 
       view.on('submit-form', this.forwardSubmit, this);
-      view.on(
-        'activate-recaptcha',
-        _.bind(this.forwardActivateRecaptcha, this, view)
-      );
-      view.on(
-        'get-recaptcha-token',
-        _.bind(this.forwardGetRecaptchaToken, this, view)
-      );
       this.container.show(view);
     },
 
@@ -382,14 +376,6 @@ define([
       }
 
       view.on('submit-form', this.forwardSubmit, this);
-      view.on(
-        'activate-recaptcha',
-        _.bind(this.forwardActivateRecaptcha, this, view)
-      );
-      view.on(
-        'get-recaptcha-token',
-        _.bind(this.forwardGetRecaptchaToken, this, view)
-      );
       this.container.show(view);
     },
 
@@ -418,14 +404,6 @@ define([
     forwardSubmit: function(viewModel) {
       this.trigger('submit-form', viewModel);
     },
-
-    forwardActivateRecaptcha: function(view) {
-      this.trigger('activate-recaptcha', view);
-    },
-
-    forwardGetRecaptchaToken: function() {
-      this.trigger('get-recaptcha-token');
-    },
   });
 
   var AuthenticationWidget = BaseWidget.extend({
@@ -449,12 +427,8 @@ define([
         'navigateToResetPassword1Form',
         this.navigateToResetPassword1Form
       );
-      this.listenTo(this.view, 'activate-recaptcha', this.activateRecaptcha);
-      this.listenTo(this.view, 'get-recaptcha-token', this.getRecaptchaToken);
 
       this.nextNav = null;
-
-      if (options.test) window.grecaptcha = null;
     },
 
     activate: function(beehive) {
@@ -462,6 +436,7 @@ define([
       var pubsub = beehive.getService('PubSub');
       _.bindAll(this, ['handleUserAnnouncement']);
       pubsub.subscribe(pubsub.USER_ANNOUNCEMENT, this.handleUserAnnouncement);
+      siteKey = beehive.getObject('AppStorage').getConfigCopy().recaptchaKey;
     },
 
     navigateToLoginForm: function() {
@@ -578,18 +553,6 @@ define([
     onShow: function() {
       // force a clearing of the view every time the widget is shown again
       this.view.render();
-    },
-
-    activateRecaptcha: function(view) {
-      this.getBeeHive()
-        .getObject('RecaptchaManager')
-        .activateRecaptcha({ view: view });
-    },
-
-    getRecaptchaToken: function() {
-      this.getBeeHive()
-        .getObject('RecaptchaManager')
-        .execute();
     },
   });
 
