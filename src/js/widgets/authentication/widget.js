@@ -436,7 +436,9 @@ define([
       var pubsub = beehive.getService('PubSub');
       _.bindAll(this, ['handleUserAnnouncement']);
       pubsub.subscribe(pubsub.USER_ANNOUNCEMENT, this.handleUserAnnouncement);
-      siteKey = beehive.getObject('AppStorage').getConfigCopy().recaptchaKey;
+      if (!window.__BUMBLEBEE_TESTING_MODE__) {
+        siteKey = beehive.getObject('AppStorage').getConfigCopy().recaptchaKey;
+      }
     },
 
     navigateToLoginForm: function() {
