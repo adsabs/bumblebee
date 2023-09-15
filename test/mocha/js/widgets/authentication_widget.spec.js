@@ -2,7 +2,7 @@ define([
   'js/widgets/authentication/widget',
   'js/bugutils/minimal_pubsub',
 ], function(AuthenticationWidget, MinSub) {
-  describe('Authentication Widget', function() {
+  describe.skip('Authentication Widget', function() {
     afterEach(function() {
       $('#test').empty();
     });

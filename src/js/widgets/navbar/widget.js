@@ -410,18 +410,18 @@ define([
           .request(request);
       };
 
-      const siteKey = this.getBeeHive()
-        .getObject('AppStorage')
-        .getConfigCopy().recaptchaKey;
+      const siteKey = this.getBeeHive().getObject('DynamicConfig').getRecaptchaKey();
       window.grecaptcha.ready(() => {
         window.grecaptcha
           .execute(siteKey, { action: 'feedback/general' })
           .then((token) => {
+            console.log('called', token);
             const input = document.createElement('input');
             input.type = 'hidden';
             input.name = 'g-recaptcha-response';
             input.value = token;
             $form.append(input);
+            console.log('form', $form.html());
             submit();
           });
       });
