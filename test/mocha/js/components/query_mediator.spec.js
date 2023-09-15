@@ -103,7 +103,7 @@ define([
         sinon.spy(api, 'request');
         beehive.addService('Api', api);
         var ps = new PubSub();
-        ps.debug = true;
+        ps.debug = false;
         this.pubSpy = sinon.spy();
         ps.on('all', this.pubSpy);
         beehive.addService('PubSub', ps);
