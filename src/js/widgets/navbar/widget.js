@@ -410,7 +410,7 @@ define([
           .request(request);
       };
 
-      const siteKey = this.getBeeHive().getObject('DynamicConfig').getRecaptchaKey();
+      const siteKey = this.getBeeHive().getObject('AppStorage').getConfigCopy().recaptchaKey;
       window.grecaptcha.ready(() => {
         window.grecaptcha
           .execute(siteKey, { action: 'feedback/general' })
