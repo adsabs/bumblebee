@@ -31,6 +31,10 @@ define([
           name: 'General',
           value: false,
         },
+        {
+          name: 'Earth Science',
+          value: false,
+        },
       ],
     },
     hideSidebars: {
