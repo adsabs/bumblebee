@@ -43,6 +43,13 @@ define([
   select2,
   oldMatcher
 ) {
+
+  /**
+   * The default databases to filter by if the user has not set any in their preferences
+   * @type {string[]}
+   */
+  const DEFAULT_DATABASES = ['Astronomy', 'Physics'];
+
   var SearchBarModel = Backbone.Model.extend({
     defaults: function() {
       return {
@@ -635,8 +642,8 @@ define([
         : this.defaultDatabases;
     },
 
-    applyDefaultFilters: function(apiQuery) {
-      var dbfilters = this.defaultDatabases || [];
+    applyDefaultFilters: function (apiQuery) {
+      const dbfilters = Array.isArray(this.defaultDatabases) && this.defaultDatabases.length > 0 ? this.defaultDatabases : DEFAULT_DATABASES;
       if (dbfilters.length > 0) {
         var fqString = '{!type=aqp v=$fq_database}';
 
