@@ -1242,14 +1242,33 @@ define([
       }
     },
 
-    insertViews: function() {
+    insertViews: function(data) {
       // render the container view
       this.view.render();
       // attach table and graph views
-      ['papers', 'citations', 'indices', 'reads'].forEach(function(name) {
-        this.view[name + 'Table'].show(this.childViews[name + 'TableView']);
-        this.view[name + 'Graph'].show(this.childViews[name + 'GraphView']);
-      }, this);
+
+      this.view.papersTable.show(this.childViews.papersTableView);
+      if (this.hasPapers(data)) {
+        this.view.papersGraph.show(this.childViews.papersGraphView);
+      }
+
+      this.view.citationsTable.show(this.childViews.citationsTableView);
+      if (this.hasCitations(data)) {
+        this.view.citationsGraph.show(this.childViews.citationsGraphView);
+      }
+
+      this.view.readsTable.show(this.childViews.readsTableView);
+      if (this.hasReads(data)) {
+        this.view.readsGraph.show(this.childViews.readsGraphView);
+      }
+
+      if (this.hasIndicesTable(data)) {
+        this.view.indicesTable.show(this.childViews.indicesTableView);
+      }
+
+      if (this.hasIndicesGraph(data)) {
+        this.view.indicesGraph.show(this.childViews.indicesGraphView);
+      }
       this.view.showDownloadButtons(this.childViews);
     },
 
@@ -1420,12 +1439,24 @@ define([
       return data;
     },
 
+    hasPapers: function(data) {
+      return data['basic stats']['number of papers'] > 0;
+    },
+
     hasCitations: function(data) {
       return data['citation stats']['total number of citations'] > 0;
     },
 
     hasReads: function(data) {
       return data['basic stats']['total number of reads'] > 0;
+    },
+
+    hasIndicesTable: function(data) {
+      return !!data['indicators'] && !!data['indicators refereed'];
+    },
+
+    hasIndicesGraph: function(data) {
+      return !!data['time series'];
     },
 
     /*
