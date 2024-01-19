@@ -259,8 +259,7 @@ define([
               fail: function(response, status) {
                 // if user hasnt registered yet
                 if (
-                  response.responseJSON.error ==
-                  'This user has not set up an ADS Classic account'
+                  response.responseJSON?.error == 'This user has not set up an ADS Classic account'
                 )
                   return;
                 console.error(response);
