@@ -1,4 +1,4 @@
-define([], function() {
+define([], function () {
   if (window.skipMain) {
     requirejs.config({
       baseUrl: '../../',
@@ -9,13 +9,13 @@ define([], function() {
     shim: {
       mathjax: {
         exports: 'MathJax',
-        init: function() {
+        init: function () {
           MathJax.Hub.Config({
             messageStyle: 'none',
             HTML: ['input/TeX', 'output/HTML-CSS'],
             TeX: {
               extensions: ['AMSmath.js', 'AMSsymbols.js'],
-              equationNumbers: { autoNumber: 'AMS' },
+              equationNumbers: {autoNumber: 'AMS'},
             },
             extensions: ['tex2jax.js'],
             jax: ['input/TeX', 'output/HTML-CSS'],
@@ -32,7 +32,7 @@ define([], function() {
             },
             'HTML-CSS': {
               availableFonts: ['TeX'],
-              linebreaks: { automatic: true },
+              linebreaks: {automatic: true},
             },
           });
           MathJax.Hub.Startup.onload();
@@ -48,19 +48,19 @@ define([], function() {
     'array-flat-polyfill',
     'polyfill',
     'js/dark-mode-switch',
-  ], function(config) {
+  ], function (config) {
     // rca: not sure why the ganalytics is loaded here instead of inside analytics.js
     //      perhaps it is because it is much/little sooner this way?
 
     // make sure that google analytics never blocks app load
-    setTimeout(function() {
-      require(['google-analytics', 'analytics'], function(_, analytics) {
+    setTimeout(function () {
+      require(['google-analytics', 'analytics'], function (_, analytics) {
         // set ganalytics debugging
         //window.ga_debug = {trace: true};
         analytics(
           'create',
           config.googleTrackingCode || '',
-          config.googleTrackingOptions
+          config.googleTrackingOptions,
         );
 
         // if we ever want to modify what experiment/variant the user
@@ -75,7 +75,7 @@ define([], function() {
           analytics('require', config.googleOptimizeCode);
           if (!config.debugExportBBB)
             console.warn(
-              'AB testing will be loaded, but bbb object is not exposed. Change debugExportBBB if needed.'
+              'AB testing will be loaded, but bbb object is not exposed. Change debugExportBBB if needed.',
             );
         }
       });
@@ -83,13 +83,13 @@ define([], function() {
   });
 
   // set up handlebars helpers
-  require(['hbs/handlebars'], function(Handlebars) {
+  require(['hbs/handlebars'], function (Handlebars) {
     // register helpers
     // http://doginthehat.com.au/2012/02/comparison-block-helper-for-handlebars-templates/#comment-44
 
     // eg  (where current is a variable): {{#compare current 1 operator=">"}}
 
-    Handlebars.registerHelper('compare', function(lvalue, rvalue, options) {
+    Handlebars.registerHelper('compare', function (lvalue, rvalue, options) {
       var operators;
       var result;
       var operator;
@@ -104,37 +104,37 @@ define([], function() {
       }
 
       operators = {
-        '==': function(l, r) {
+        '==': function (l, r) {
           return l == r;
         },
-        '===': function(l, r) {
+        '===': function (l, r) {
           return l === r;
         },
-        '!=': function(l, r) {
+        '!=': function (l, r) {
           return l != r;
         },
-        '!==': function(l, r) {
+        '!==': function (l, r) {
           return l !== r;
         },
-        '<': function(l, r) {
+        '<': function (l, r) {
           return l < r;
         },
-        '>': function(l, r) {
+        '>': function (l, r) {
           return l > r;
         },
-        '<=': function(l, r) {
+        '<=': function (l, r) {
           return l <= r;
         },
-        '>=': function(l, r) {
+        '>=': function (l, r) {
           return l >= r;
         },
-        typeof: function(l, r) {
+        typeof: function (l, r) {
           return typeof l === r;
         },
       };
       if (!operators[operator]) {
         throw new Error(
-          "Handlerbars Helper 'compare' doesn't know the operator " + operator
+          "Handlerbars Helper 'compare' doesn't know the operator " + operator,
         );
       }
       result = operators[operator](lvalue, rvalue);
@@ -143,41 +143,56 @@ define([], function() {
       }
       return options.inverse(this);
     });
-    Handlebars.registerHelper('toJSON', function(object) {
+    Handlebars.registerHelper('toJSON', function (object) {
       return JSON.stringify(object);
     });
-    Handlebars.registerHelper('isdefined', function(value) {
+    Handlebars.registerHelper('isdefined', function (value) {
       return typeof value !== 'undefined';
     });
-    Handlebars.registerHelper('ifInSet', function(s, value, options) {
+    Handlebars.registerHelper('ifInSet', function (s, value, options) {
       if (s.has(value)) {
         return options.fn(this);
       }
       return options.inverse(this);
     });
-    Handlebars.registerHelper('ifSetEmpty', function(s, options) {
+    Handlebars.registerHelper('ifSetEmpty', function (s, options) {
       if (s.size === 0) {
         return options.fn(this);
       }
       return options.inverse(this);
     });
+    Handlebars.registerHelper({
+      eq: (v1, v2) => v1 === v2,
+      ne: (v1, v2) => v1 !== v2,
+      lt: (v1, v2) => v1 < v2,
+      gt: (v1, v2) => v1 > v2,
+      lte: (v1, v2) => v1 <= v2,
+      gte: (v1, v2) => v1 >= v2,
+      not: (v1) => !v1,
+      and() {
+        return Array.prototype.every.call(arguments, Boolean);
+      },
+      or() {
+        return Array.prototype.slice.call(arguments, 0, -1).some(Boolean);
+      },
+    });
   });
 
   // set validation callbacks used by authentication and user settings widgets
-  require(['backbone-validation'], function() {
+  require(['backbone-validation'], function () {
     // this allows for instant validation of form fields using the backbone-validation plugin
     _.extend(Backbone.Validation.callbacks, {
-      valid: function(view, attr, selector) {
+      valid: function (view, attr, selector) {
         var $el = view.$('input[name=' + attr + ']');
 
         $el
-          .closest('.form-group')
-          .removeClass('has-error')
-          .find('.help-block')
-          .html('')
-          .addClass('no-show');
+        .closest('.form-group')
+        .removeClass('has-error')
+        .find('.help-block')
+        .html('')
+        .addClass('no-show');
       },
-      invalid: function(view, attr, error, selector) {
+      invalid: function (view, attr, error, selector) {
         var $el = view.$('[name=' + attr + ']');
         $group = $el.closest('.form-group');
 
@@ -185,16 +200,16 @@ define([], function() {
           // only show error states if there has been a submit event
           $group.addClass('has-error');
           $group
-            .find('.help-block')
-            .html(error)
-            .removeClass('no-show');
+          .find('.help-block')
+          .html(error)
+          .removeClass('no-show');
         }
       },
     });
   });
 
   // d3/d3-cloud don't like to load normally from a CDN
-  require(['d3', 'd3-cloud'], function(d3, cloud) {
+  require(['d3', 'd3-cloud'], function (d3, cloud) {
     var g = window;
     if (!g.d3) {
       g.d3 = d3;
@@ -209,9 +224,9 @@ define([], function() {
      * (C) 2012 ziggy.jonsson.nyc@gmail.com
      * MIT licence
      */
-    (function() {
-      d3.legend = function(g) {
-        g.each(function() {
+    (function () {
+      d3.legend = function (g) {
+        g.each(function () {
           var g = d3.select(this);
           var items = {};
           var svg = d3.select(g.property('nearestViewportElement'));
@@ -220,14 +235,14 @@ define([], function() {
           var li = g.selectAll('.legend-items').data([true]);
 
           lb.enter()
-            .append('rect')
-            .classed('legend-box', true);
+          .append('rect')
+          .classed('legend-box', true);
           li.enter()
-            .append('g')
-            .classed('legend-items', true);
+          .append('g')
+          .classed('legend-items', true);
 
           try {
-            svg.selectAll('[data-legend]').each(function() {
+            svg.selectAll('[data-legend]').each(function () {
               var self = d3.select(this);
               items[self.attr('data-legend')] = {
                 pos: self.attr('data-legend-pos') || this.getBBox().y,
@@ -235,8 +250,8 @@ define([], function() {
                   self.attr('data-legend-color') != undefined
                     ? self.attr('data-legend-color')
                     : self.style('fill') != 'none'
-                    ? self.style('fill')
-                    : self.style('stroke'),
+                      ? self.style('fill')
+                      : self.style('stroke'),
               };
             });
           } catch (e) {
@@ -244,65 +259,65 @@ define([], function() {
             // should continue if it doesn't die here
           }
 
-          items = d3.entries(items).sort(function(a, b) {
+          items = d3.entries(items).sort(function (a, b) {
             return a.value.pos - b.value.pos;
           });
           var itemOffset = 0;
           li.selectAll('text')
-            .data(items, function(d) {
-              return d.key;
-            })
-            .call(function(d) {
-              d.enter().append('text');
-            })
-            .call(function(d) {
-              d.exit().remove();
-            })
-            .attr('y', function(d, i) {
-              if (i === 0) {
-                return '0em';
-              }
-              itemOffset += 0.2;
-              return i + itemOffset + 'em';
-            })
-            .attr('x', '1em')
-            .text(function(d) {
-              return d.key;
-            });
+          .data(items, function (d) {
+            return d.key;
+          })
+          .call(function (d) {
+            d.enter().append('text');
+          })
+          .call(function (d) {
+            d.exit().remove();
+          })
+          .attr('y', function (d, i) {
+            if (i === 0) {
+              return '0em';
+            }
+            itemOffset += 0.2;
+            return i + itemOffset + 'em';
+          })
+          .attr('x', '1em')
+          .text(function (d) {
+            return d.key;
+          });
 
           li.selectAll('circle')
-            .data(items, function(d) {
-              return d.key;
-            })
-            .call(function(d) {
-              d.enter().append('circle');
-            })
-            .call(function(d) {
-              d.exit().remove();
-            })
-            .attr('cy', function(d, i) {
-              return i - 0.25 + 'em';
-            })
-            .attr('cx', 0)
-            .attr('r', '0.4em')
-            .style('fill', function(d) {
-              return d.value.color;
-            });
+          .data(items, function (d) {
+            return d.key;
+          })
+          .call(function (d) {
+            d.enter().append('circle');
+          })
+          .call(function (d) {
+            d.exit().remove();
+          })
+          .attr('cy', function (d, i) {
+            return i - 0.25 + 'em';
+          })
+          .attr('cx', 0)
+          .attr('r', '0.4em')
+          .style('fill', function (d) {
+            return d.value.color;
+          });
 
           // Reposition and resize the box
           var lbbox = li[0][0].getBBox();
           lb.attr('x', lbbox.x - legendPadding)
-            .attr('y', lbbox.y - legendPadding)
-            .attr('height', lbbox.height + 2 * legendPadding)
-            .attr('width', lbbox.width + 2 * legendPadding);
+          .attr('y', lbbox.y - legendPadding)
+          .attr('height', lbbox.height + 2 * legendPadding)
+          .attr('width', lbbox.width + 2 * legendPadding);
         });
         return g;
       };
     })();
   });
 
-  require(['jquery'], function($) {
-    $.fn.getCursorPosition = function() {
+  require(['jquery'], function ($) {
+    $.fn.getCursorPosition = function () {
       var input = this.get(0);
       if (!input) return; // No (input) element found
       if ('selectionStart' in input) {
@@ -320,9 +335,9 @@ define([], function() {
     };
 
     // manually highlight a selection of text, or just move the cursor if no end val is given
-    $.fn.selectRange = function(start, end) {
+    $.fn.selectRange = function (start, end) {
       if (!end) end = start;
-      return this.each(function() {
+      return this.each(function () {
         if (this.setSelectionRange) {
           this.focus();
           this.setSelectionRange(start, end);
