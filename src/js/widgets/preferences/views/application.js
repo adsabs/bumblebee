@@ -3,7 +3,7 @@ define([
   'marionette',
   'hbs!js/widgets/preferences/templates/application',
   'js/widgets/config',
-], function(_, Marionette, ApplicationTemplate, config) {
+], function (_, Marionette, ApplicationTemplate, config) {
   var DEFAULTS = {
     numAuthors: {
       initialOptions: _.range(1, 11).concat(['all']),
@@ -43,6 +43,22 @@ define([
     },
   };
 
+  const mergeDatabases = (databases) => {
+    if (
+      !Array.isArray(databases) ||
+      (Array.isArray(databases) && databases.length === 0)
+    ) {
+      return DEFAULTS.database.initialValue;
+    }
+
+    const merged = [];
+    DEFAULTS.database.initialValue.forEach((database) => {
+      const found = databases.find((d) => d.name === database.name);
+      merged.push(found || database);
+    });
+    return merged;
+  };
+
   const watchedProps = [
     'numAuthorsSelected',
     'externalLinksSelected',
@@ -52,7 +68,7 @@ define([
   ];
 
   var ApplicationView = Marionette.ItemView.extend({
-    initialize: function() {
+    initialize: function () {
       // Get the latest value from the incoming model, or just take the default
       var numAuthors =
         this.model.get('minAuthorsPerResult') ||
@@ -62,11 +78,11 @@ define([
         DEFAULTS.externalLinks.initialValue;
       var homePage =
         this.model.get('homePage') || DEFAULTS.homePage.initialValue;
-      var database =
-        this.model.get('defaultDatabase') || DEFAULTS.database.initialValue;
+      var database = mergeDatabases(this.model.get('defaultDatabase'));
       var hideSidebars =
         this.model.get('defaultHideSidebars') ||
         DEFAULTS.hideSidebars.initialValue;
+
 
       // must clone the props that will get mutated
       this.model.set({
@@ -83,10 +99,11 @@ define([
         hideSideBarsDefault: DEFAULTS.hideSidebars.initialValue,
         hideSideBarsOptions: DEFAULTS.hideSidebars.initialOptions,
         hideSideBarsSelected: _.clone(hideSidebars),
+        databaseALLSelected: data,
       });
       this.model.trigger('change');
 
-      this.render = _.debounce(_.bind(this.render), 280);
+      this.render = _.debounce(_.bind(this.render), 60);
     },
 
     template: ApplicationTemplate,
@@ -94,7 +111,8 @@ define([
     className: 'panel panel-default s-form-container',
 
     events: {
-      'click .database-select': 'onDatabaseSelect',
+      'change .database-select': 'onDatabaseSelect',
+      'change #database_all': 'onDatabaseALLSelect',
       'change select': 'syncModel',
     },
 
@@ -102,27 +120,39 @@ define([
       change: 'render',
     },
 
-    onDatabaseSelect: function(e) {
-      var data = this.model.get('databaseSelected');
+    onDatabaseALLSelect: function (e) {
+      const checked = $(e.currentTarget).prop('checked');
+      this.model.set('databaseALLSelected', checked);
+      if (checked) {
+        this.model.set('databaseSelected', DEFAULTS.database.initialValue);
+      }
+      this.model.trigger('change');
+    },
+
+    onDatabaseSelect: function (e) {
+      if (this.model.get('databaseALLSelected')) {
+        return;
+      }
+      const data = this.model.get('databaseSelected');
 
       // find the current index of the element
-      var idx = $('.database-select', this.el).index(e.currentTarget);
+      const idx = $('.database-select', this.el).index(e.currentTarget);
 
       // grab the object at [idx] and make our change
-      var newVal = _.assign({}, data[idx], {
+      const newVal = _.assign({}, data[idx], {
         value: !data[idx].value,
       });
 
       // place our new value in the array
-      var newData = data
-        .slice(0, idx)
-        .concat(newVal)
-        .concat(data.slice(idx + 1));
+      const newData = data
+      .slice(0, idx)
+      .concat(newVal)
+      .concat(data.slice(idx + 1));
       this.model.set('databaseSelected', newData);
       this.model.trigger('change');
     },
 
-    _convertToNumber: function(val) {
+    _convertToNumber: function (val) {
       try {
         return _.isNaN(Number(val)) ? val : Number(val);
       } catch (e) {
@@ -130,7 +160,7 @@ define([
       }
     },
 
-    _convertToString: function(val) {
+    _convertToString: function (val) {
       try {
         return String(val) !== '[object Object]' ? String(val) : val;
       } catch (e) {
@@ -138,10 +168,10 @@ define([
       }
     },
 
-    syncModel: function() {
+    syncModel: function () {
       var update = {};
       var convert = this._convertToNumber;
-      $('.form-control', this.el).each(function() {
+      $('.form-control', this.el).each(function () {
         var $el = $(this);
         var val = $el.val();
 
@@ -153,7 +183,7 @@ define([
       this.model.set(update);
     },
 
-    onSubmit: function() {
+    onSubmit: function () {
       this.model.set({
         updateSucceeded: false,
         updateFailed: false,
@@ -162,7 +192,7 @@ define([
       this.syncModel();
       this.trigger('change:applicationSettings', {
         minAuthorsPerResult: this._convertToString(
-          this.model.get('numAuthorsSelected')
+          this.model.get('numAuthorsSelected'),
         ),
         externalLinkAction: this.model.get('externalLinksSelected'),
         defaultDatabase: this.model.get('databaseSelected'),
@@ -172,12 +202,12 @@ define([
       return false;
     },
 
-    onCancel: function(e) {
+    onCancel: function (e) {
       this.initialize();
       return false;
     },
 
-    onResetToDefaults: function() {
+    onResetToDefaults: function () {
       // clear the model
       this.model.set(
         {
@@ -188,13 +218,13 @@ define([
         },
         {
           unset: true,
-        }
+        },
       );
 
       this.onCancel.apply(this, arguments);
     },
 
-    onError: function() {
+    onError: function () {
       var model = this.model;
       model.set({
         updateFailed: true,
@@ -208,7 +238,7 @@ define([
       }, 5000);
     },
 
-    onSuccess: function() {
+    onSuccess: function () {
       var model = this.model;
       model.set({
         updateSucceeded: true,
@@ -222,13 +252,13 @@ define([
       }, 3000);
     },
 
-    hideMessage: function() {
-      $('#app-settings-msg').fadeOut(500, function() {
+    hideMessage: function () {
+      $('#app-settings-msg').fadeOut(500, function () {
         $(this).empty();
       });
     },
 
-    onSortChange: function(e, ui) {
+    onSortChange: function (e, ui) {
       var items = _.clone(this.model.get('addCustomFormatOptions'));
       var index = this.$('#addCustomFormat .list-group-item').index(ui.item);
       var id = this.$(ui.item).data('id');
@@ -244,13 +274,13 @@ define([
       this.model.set('addCustomFormatOptions', items);
     },
 
-    isEditing: function() {
+    isEditing: function () {
       return _.any(this.model.get('addCustomFormatOptions'), {
         editing: true,
       });
     },
 
-    onRender: function() {
+    onRender: function () {
       var onSortChange = _.bind(this.onSortChange, this);
       setTimeout(() => {
         $('#addCustomFormat').sortable({
