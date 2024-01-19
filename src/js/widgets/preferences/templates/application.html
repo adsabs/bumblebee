@@ -109,10 +109,30 @@
               </div>
             </div>
           </p>
+          <p>
+            <label class="label">
+              <input type="checkbox" name="database" id="database_all" value="all" {{#if this.databaseALLSelected}}checked{{/if}}>
+              All Collections
+            </label>
+          </p>
+
           <div class="btn-group" data-toggle="buttons" role="group" aria-labelledby="defaultDatabaseLabel">
             {{#each databaseSelected}}
-            <label class="database-select btn btn-default {{#if this.value}} active {{/if}}">
-              <input type="checkbox" name="database" checked="{{this.value}}" id="database_{{this.name}}"> {{this.name}}
+            <label
+              class="database-select btn btn-default{{#if (and this.value (not ../databaseALLSelected))}} active{{/if}}"
+              {{#if ../databaseALLSelected}}disabled{{/if}}
+            >
+
+            {{#if (not ../databaseALLSelected)}}
+              <input
+                type="checkbox"
+                name="database"
+                id="database_{{this.name}}"
+                value="{{this.name}}"
+                {{#if this.value}}checked{{/if}}
+              />
+            {{/if}}
+            {{this.name}}
             </label> {{/each}}
           </div>
         </div>
