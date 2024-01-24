@@ -176,6 +176,14 @@ define([], function () {
         return Array.prototype.slice.call(arguments, 0, -1).some(Boolean);
       },
     });
+
+    // array helpers
+    Handlebars.registerHelper({
+      includes(value, arr) {
+        return Array.isArray(arr) && arr.includes(value);
+      },
+      prop: (key, obj) => (typeof obj === 'object' ? obj[key] : undefined),
+    });
   });
 
   // set validation callbacks used by authentication and user settings widgets

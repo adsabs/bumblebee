@@ -18,24 +18,11 @@ define([
       initialValue: 'Modern Form',
     },
     database: {
-      initialValue: [
-        {
-          name: 'Physics',
-          value: false,
-        },
-        {
-          name: 'Astronomy',
-          value: false,
-        },
-        {
-          name: 'General',
-          value: false,
-        },
-        {
-          name: 'Earth Science',
-          value: false,
-        },
-      ],
+      'All': false,
+      'Physics': false,
+      'Astronomy': false,
+      'General': false,
+      'Earth Science': false,
     },
     hideSidebars: {
       initialValue: 'Show',
@@ -43,20 +30,58 @@ define([
     },
   };
 
+  const isEqualToDefault = (prop, value) => {
+    if (prop === 'numAuthorsSelected') {
+      return value === DEFAULTS.numAuthors.initialValue;
+    }
+    if (prop === 'externalLinksSelected') {
+      return value === DEFAULTS.externalLinks.initialValue;
+    }
+    if (prop === 'homePageSelected') {
+      return value === DEFAULTS.homePage.initialValue;
+    }
+    if (prop === 'hideSideBarsSelected') {
+      return value === DEFAULTS.hideSidebars.initialValue;
+    }
+    if (prop === 'databaseSelected') {
+      return _.isEqual(value, DEFAULTS.database.initialValue);
+    }
+    return false;
+  };
+
+  /**
+   * Incoming database isa an array of objects, we need to transform and merge it to our internal format
+   * @param databases
+   * @returns {*|*[]}
+   */
   const mergeDatabases = (databases) => {
     if (
       !Array.isArray(databases) ||
       (Array.isArray(databases) && databases.length === 0)
     ) {
-      return DEFAULTS.database.initialValue;
+      return DEFAULTS.database;
     }
 
-    const merged = [];
-    DEFAULTS.database.initialValue.forEach((database) => {
-      const found = databases.find((d) => d.name === database.name);
-      merged.push(found || database);
+    // remove any undefined values
+    const cleanedDbs = databases.filter((d) => !!d);
+
+    const merged = {};
+    Object.keys(DEFAULTS.database).forEach((name) => {
+      const found = cleanedDbs.find((d) => d.name === name);
+      merged[name] = found ? !!found.value : DEFAULTS.database[name];
     });
     return merged;
+  };
+
+  /**
+   * Transform the internal database format to the external format
+   * @param databases
+   */
+  const transformDatabases = (databases) => {
+    return Object.keys(databases).map((name) => ({
+      name,
+      value: databases[name],
+    }));
   };
 
   const watchedProps = [
@@ -67,22 +92,21 @@ define([
     'hideSideBarsSelected',
   ];
 
-  var ApplicationView = Marionette.ItemView.extend({
+  const ApplicationView = Marionette.ItemView.extend({
     initialize: function () {
       // Get the latest value from the incoming model, or just take the default
-      var numAuthors =
+      const numAuthors =
         this.model.get('minAuthorsPerResult') ||
         DEFAULTS.numAuthors.initialValue;
-      var externalLinks =
+      const externalLinks =
         this.model.get('externalLinkAction') ||
         DEFAULTS.externalLinks.initialValue;
-      var homePage =
+      const homePage =
         this.model.get('homePage') || DEFAULTS.homePage.initialValue;
-      var database = mergeDatabases(this.model.get('defaultDatabase'));
-      var hideSidebars =
+      const hideSidebars =
         this.model.get('defaultHideSidebars') ||
         DEFAULTS.hideSidebars.initialValue;
-
+      const databases = mergeDatabases(this.model.get('defaultDatabase'));
 
       // must clone the props that will get mutated
       this.model.set({
@@ -92,14 +116,23 @@ define([
         externalLinksOptions: DEFAULTS.externalLinks.initialOptions,
         externalLinksDefault: DEFAULTS.externalLinks.initialValue,
         externalLinksSelected: _.clone(externalLinks),
-        databaseSelected: _.cloneDeep(database),
+
+        // remove the 'All' database from the list, so it doesn't get rendered as a button
+        databaseSelected: databases,
+        databaseOptions: Object.keys(databases).filter((name) => name !== 'All'),
         homePageOptions: DEFAULTS.homePage.initialOptions,
         homePageDefault: DEFAULTS.homePage.initialValue,
         homePageSelected: _.clone(homePage),
         hideSideBarsDefault: DEFAULTS.hideSidebars.initialValue,
         hideSideBarsOptions: DEFAULTS.hideSidebars.initialOptions,
         hideSideBarsSelected: _.clone(hideSidebars),
-        databaseALLSelected: data,
+
+        modifySections: [
+          // databases section is modified if any of the entries are true
+          ...(Object.keys(databases).some((name) => databases[name])
+            ? ['database']
+            : []),
+        ],
       });
       this.model.trigger('change');
 
@@ -111,9 +144,12 @@ define([
     className: 'panel panel-default s-form-container',
 
     events: {
-      'change .database-select': 'onDatabaseSelect',
+      'click .database-select': 'onDatabaseSelect',
       'change #database_all': 'onDatabaseALLSelect',
       'change select': 'syncModel',
+      'click .section-modify': 'onModifySection',
+      'click .section-reset': 'onResetSection',
+      'click .reset-to-defaults': 'onResetToDefaults',
     },
 
     modelEvents: {
@@ -122,33 +158,52 @@ define([
 
     onDatabaseALLSelect: function (e) {
       const checked = $(e.currentTarget).prop('checked');
-      this.model.set('databaseALLSelected', checked);
-      if (checked) {
-        this.model.set('databaseSelected', DEFAULTS.database.initialValue);
-      }
+
+      this.model.set('databaseSelected', {
+        ...DEFAULTS.database,
+        All: checked,
+      });
+
       this.model.trigger('change');
     },
 
     onDatabaseSelect: function (e) {
-      if (this.model.get('databaseALLSelected')) {
+      const dbState = this.model.get('databaseSelected');
+
+      // if 'ALL' selected, then the other options are disabled
+      if (dbState.All) {
         return;
       }
-      const data = this.model.get('databaseSelected');
 
-      // find the current index of the element
-      const idx = $('.database-select', this.el).index(e.currentTarget);
+      const id = $(e.currentTarget).data('id');
 
-      // grab the object at [idx] and make our change
-      const newVal = _.assign({}, data[idx], {
-        value: !data[idx].value,
+      this.model.set('databaseSelected', {
+        ...dbState,
+
+        // toggle the state of the database entry
+        [id]: !dbState[id],
       });
+      this.model.trigger('change');
+    },
 
-      // place our new value in the array
-      const newData = data
-      .slice(0, idx)
-      .concat(newVal)
-      .concat(data.slice(idx + 1));
-      this.model.set('databaseSelected', newData);
+    onModifySection(e) {
+      const section = $(e.currentTarget).data('section');
+      this.model.set('modifySections', [
+        ...this.model.get('modifySections'),
+        section,
+      ]);
+    },
+
+    onResetSection(e) {
+      const section = $(e.currentTarget).data('section');
+      this.model.set({
+        modifySections: this.model.get('modifySections').filter((s) => s !== section),
+        ...(section === 'database'
+          ? {
+            databaseSelected: DEFAULTS.database,
+          }
+          : {}),
+      });
       this.model.trigger('change');
     },
 
@@ -190,12 +245,13 @@ define([
         loading: true,
       });
       this.syncModel();
+
       this.trigger('change:applicationSettings', {
         minAuthorsPerResult: this._convertToString(
           this.model.get('numAuthorsSelected'),
         ),
         externalLinkAction: this.model.get('externalLinksSelected'),
-        defaultDatabase: this.model.get('databaseSelected'),
+        defaultDatabase: transformDatabases(this.model.get('databaseSelected')),
         defaultHideSidebars: this.model.get('hideSideBarsSelected'),
         homePage: this.model.get('homePageSelected'),
       });
@@ -280,7 +336,15 @@ define([
       });
     },
 
+    _renderCount: 1,
+
     onRender: function () {
+      // skip initial x renders, because when we first get data it'll render and detect a change
+      if (this._renderCount > 0) {
+        this._renderCount -= 1;
+        return;
+      }
+
       var onSortChange = _.bind(this.onSortChange, this);
       setTimeout(() => {
         $('#addCustomFormat').sortable({
