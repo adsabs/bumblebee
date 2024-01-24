@@ -1,4 +1,7 @@
-<div class="panel-heading">Search Settings</div>
+<div class="panel-heading" style="display: flex; justify-content: space-between">
+  Search Settings
+  <button class="btn btn-link btn-xs reset-to-defaults" type="button">Reset to defaults</button>
+</div>
 
 <div class="panel-body" id="application-settings-container">
   <div class="row">
@@ -10,25 +13,26 @@
           <label for="numAuthors">
             Authors Visible Per Result
             <button href="#collapseNumAuthorsDesc" data-toggle="collapse" class="btn-link" aria-expanded="false"
-              aria-controls="collapseNumAuthorsDesc" aria-label="number of authors per result">
+                    aria-controls="collapseNumAuthorsDesc" aria-label="number of authors per result">
               <i class="fa fa-question-circle" aria-hidden="true"></i>
             </button>
           </label>
           <p>
-            <div class="collapse" id="collapseNumAuthorsDesc">
-              <div class="card card-body">
-                <p>
-                  Specifies the number of authors to show under each result before the list is truncated.
-                  <br> (
-                  <strong>default: {{numAuthorsDefault}}</strong>)
-                </p>
-              </div>
+          <div class="collapse" id="collapseNumAuthorsDesc">
+            <div class="card card-body">
+              <p>
+                Specifies the number of authors to show under each result before the list is truncated.
+                <br> (
+                <strong>default: {{numAuthorsDefault}}</strong>)
+              </p>
             </div>
+          </div>
           </p>
           <select class="form-control" id="numAuthors" aria-describedby="collapseNumAuthorsDesc">
             {{#each numAuthorsOptions}}
-            <option value="{{this}}" {{#compare this ../numAuthorsSelected}} selected="selected" {{/compare}}>{{this}}
-            </option>
+              <option value="{{this}}" {{#compare this ..
+              /numAuthorsSelected}} selected="selected" {{/compare}}>{{this}}
+              </option>
             {{/each}}
           </select>
         </div>
@@ -38,25 +42,26 @@
           <label for="externalLinks">
             Default Action For External Links
             <button href="#collapseExternalLinks" data-toggle="collapse" class="btn-link" aria-expanded="false"
-              aria-controls="collapseExternalLinks" aria-label="default action for external links">
+                    aria-controls="collapseExternalLinks" aria-label="default action for external links">
               <i class="fa fa-question-circle" aria-hidden="true"></i>
-          </button>
+            </button>
           </label>
           <p>
-            <div class="collapse" id="collapseExternalLinks">
-              <div class="card card-body">
-                <p>
-                  Select the default action when opening an external link.
-                  <br> (
-                  <strong>default: {{externalLinksDefault}}</strong>)
-                </p>
-              </div>
+          <div class="collapse" id="collapseExternalLinks">
+            <div class="card card-body">
+              <p>
+                Select the default action when opening an external link.
+                <br> (
+                <strong>default: {{externalLinksDefault}}</strong>)
+              </p>
             </div>
+          </div>
           </p>
           <select class="form-control" id="externalLinks" aria-describedby="collapseExternalLinks">
             {{#each externalLinksOptions}}
-            <option value="{{this}}" {{#compare this ../externalLinksSelected}} selected="selected" {{/compare}}>
-              {{this}}</option>
+              <option value="{{this}}" {{#compare this ..
+              /externalLinksSelected}} selected="selected" {{/compare}}>
+                {{this}}</option>
             {{/each}}
           </select>
         </div>
@@ -66,75 +71,96 @@
           <label for="homePage">
             Default Home Page
             <button href="#collapseHomePage" data-toggle="collapse" class="btn-link" aria-expanded="false"
-              aria-controls="collapseHomePage" aria-label="default home page">
+                    aria-controls="collapseHomePage" aria-label="default home page">
               <i class="fa fa-question-circle" aria-hidden="true"></i>
             </button>
           </label>
           <p>
-            <div class="collapse" id="collapseHomePage">
-              <div class="card card-body">
-                <p>
-                  Select the default landing page shown when loading the application or starting a new search.
-                  <br> (
-                  <strong>default: {{homePageDefault}}</strong>)
-                </p>
-              </div>
+          <div class="collapse" id="collapseHomePage">
+            <div class="card card-body">
+              <p>
+                Select the default landing page shown when loading the application or starting a new search.
+                <br> (
+                <strong>default: {{homePageDefault}}</strong>)
+              </p>
             </div>
+          </div>
           </p>
           <select class="form-control" id="homePage" aria-describedby="collapseHomePage">
             {{#each homePageOptions}}
-            <option value="{{this}}" {{#compare this ../homePageSelected}} selected="selected" {{/compare}}>
-              {{this}}</option>
+              <option value="{{this}}" {{#compare this ..
+              /homePageSelected}} selected="selected" {{/compare}}>
+                {{this}}</option>
             {{/each}}
           </select>
         </div>
 
         <!-- Default Collection -->
         <div class="form-group">
-          <label id="defaultDatabaseLabel">
-            Default Collection(s)
-            <button href="#collapseDatabase" data-toggle="collapse" class="btn-link" aria-expanded="false"
-              aria-controls="collapseDatabase" aria-label="default collection">
-              <i class="fa fa-question-circle" aria-hidden="true"></i>
-            </button>
-          </label>
-          <p>
-            <div class="collapse" id="collapseDatabase">
-              <div class="card card-body">
-                <p>
-                  This will apply a default collection facet to each search. You can manually remove or alter it from there.
-                  <br> (
-                  <strong>default: none</strong>)
-                </p>
-              </div>
-            </div>
-          </p>
-          <p>
-            <label class="label">
-              <input type="checkbox" name="database" id="database_all" value="all" {{#if this.databaseALLSelected}}checked{{/if}}>
-              All Collections
+          <div style="display:flex;">
+            <label id="defaultDatabaseLabel">
+              Default Collection(s)
+              <button href="#collapseDatabase" data-toggle="collapse" class="btn-link" aria-expanded="false"
+                      aria-controls="collapseDatabase" aria-label="default collection">
+                <i class="fa fa-question-circle" aria-hidden="true"></i>
+              </button>
             </label>
+            <div style="width: 40px"></div>
+            <div>
+              {{#if (not (includes 'database' this.modifySections))}}
+                <button class="btn btn-info btn-xs section-modify" type="button" data-section="database">Modify</button>
+              {{/if}}
+              {{#if (includes 'database' this.modifySections)}}
+                <button class="btn btn-link btn-xs section-reset" type="button" data-section="database">Reset</button>
+              {{/if}}
+            </div>
+          </div>
+          <p>
+          <div class="collapse" id="collapseDatabase">
+            <div class="card card-body">
+              <p>
+                This will apply a default collection facet to each search. You can manually remove or alter it from
+                there.
+                <br> (
+                <strong>default: none</strong>)
+              </p>
+            </div>
+          </div>
           </p>
 
-          <div class="btn-group" data-toggle="buttons" role="group" aria-labelledby="defaultDatabaseLabel">
-            {{#each databaseSelected}}
-            <label
-              class="database-select btn btn-default{{#if (and this.value (not ../databaseALLSelected))}} active{{/if}}"
-              {{#if ../databaseALLSelected}}disabled{{/if}}
-            >
+          {{#if (includes 'database' this.modifySections)}}
+            <p>
+              <label style="font-size: 1.5rem">
+                <input type="checkbox" name="database" id="database_all" value="all"
+                       {{#if (prop 'All' databaseSelected)}}checked{{/if}}
+                >
+                All Collections
+              </label>
+            </p>
 
-            {{#if (not ../databaseALLSelected)}}
-              <input
-                type="checkbox"
-                name="database"
-                id="database_{{this.name}}"
-                value="{{this.name}}"
-                {{#if this.value}}checked{{/if}}
-              />
-            {{/if}}
-            {{this.name}}
-            </label> {{/each}}
-          </div>
+            <div class="btn-group" data-toggle="buttons" role="group" aria-labelledby="defaultDatabaseLabel">
+              {{#each databaseOptions}}
+                <label
+                  class="database-select btn btn-default{{#if
+                    (and (prop this ../databaseSelected) (not (prop 'All' ../databaseSelected)))}} active{{/if}}"
+                  data-id="{{this}}"
+                  {{#if (prop 'All' ../databaseSelected)}}disabled{{/if}}
+                >
+                  {{#if (not (prop 'All' ../databaseSelected))}}
+                    <input
+                      type="checkbox"
+                      name="database"
+                      id="database_{{this}}"
+                      value="{{this}}"
+                      {{#if (prop this ../databaseSelected)}}checked{{/if}}
+                    />
+                  {{/if}}
+                  {{this}}
+                </label>
+              {{/each}}
+            </div>
+          {{/if}}
+
         </div>
 
         <!-- Default Show/Hide Sidebars -->
@@ -142,25 +168,26 @@
           <label for="hideSideBars">
             Results List Side Bars
             <button href="#collapseHideSideBars" data-toggle="collapse" class="btn-link" aria-expanded="false"
-              aria-controls="collapseHideSideBars" aria-label="results list side bars">
+                    aria-controls="collapseHideSideBars" aria-label="results list side bars">
               <i class="fa fa-question-circle" aria-hidden="true"></i>
             </button>
           </label>
           <p>
-            <div class="collapse" id="collapseHideSideBars">
-              <div class="card card-body">
-                <p>
-                  Select the default state of the results list sidebars (hide/show)
-                  <br> (
-                  <strong>default: {{hideSideBarsDefault}}</strong>)
-                </p>
-              </div>
+          <div class="collapse" id="collapseHideSideBars">
+            <div class="card card-body">
+              <p>
+                Select the default state of the results list sidebars (hide/show)
+                <br> (
+                <strong>default: {{hideSideBarsDefault}}</strong>)
+              </p>
             </div>
+          </div>
           </p>
           <select class="form-control" id="hideSideBars" aria-describedby="collapseHideSideBars">
             {{#each hideSideBarsOptions}}
-            <option value="{{this}}" {{#compare this ../hideSideBarsSelected}} selected="selected" {{/compare}}>{{this}}
-            </option>
+              <option value="{{this}}" {{#compare this ..
+              /hideSideBarsSelected}} selected="selected" {{/compare}}>{{this}}
+              </option>
             {{/each}}
           </select>
         </div>
@@ -168,15 +195,15 @@
 
       <div class="col-md-6 col-md-offset-3 text-center" id="app-settings-msg">
         {{#if loading}}
-        <i class="text-muted fa fa-refresh fa-spin fa-3x" aria-hidden="true"></i> {{/if}} {{#if updateSucceeded}}
+          <i class="text-muted fa fa-refresh fa-spin fa-3x" aria-hidden="true"></i> {{/if}} {{#if updateSucceeded}}
         <div class="alert alert-success fade in h4" role="alert">
           <i class="fa fa-check fa-2x" aria-hidden="true"></i> Settings updated successfully
         </div>
-        {{/if}} {{#if updateFailed}}
+      {{/if}} {{#if updateFailed}}
         <div class="alert alert-danger fade in h4" role="alert">
           <i class="fa fa-times fa-3x" aria-hidden="true"></i> Settings not updated, please try again.
         </div>
-        {{/if}}
+      {{/if}}
       </div>
     </div>
   </div>

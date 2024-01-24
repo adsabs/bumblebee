@@ -20,7 +20,7 @@ define([
   'js/components/query_validator',
   'select2',
   'libs/select2/matcher',
-], function(
+], function (
   _,
   Marionette,
   bowser,
@@ -33,7 +33,7 @@ define([
   ApiTargets,
   ApiFeedback,
   FormatMixin,
-  { render: renderAutocomplete, autocompleteSource: autocompleteArray },
+  {render: renderAutocomplete, autocompleteSource: autocompleteArray},
   quickFieldDesc,
   bootstrap,
   jqueryUI,
@@ -41,7 +41,7 @@ define([
   analytics,
   QueryValidator,
   select2,
-  oldMatcher
+  oldMatcher,
 ) {
 
   /**
@@ -51,7 +51,7 @@ define([
   const DEFAULT_DATABASES = ['Astronomy', 'Physics'];
 
   var SearchBarModel = Backbone.Model.extend({
-    defaults: function() {
+    defaults: function () {
       return {
         citationCount: undefined,
         numFound: undefined,
@@ -78,13 +78,13 @@ define([
 
     className: 's-search-bar-widget',
 
-    initialize: function(options) {
+    initialize: function (options) {
       _.bindAll(this, 'fieldInsert');
       this.queryValidator = new QueryValidator();
       this.defaultDatabases = [];
     },
 
-    activate: function(beehive) {
+    activate: function (beehive) {
       this.setBeeHive(beehive);
       var that = this;
     },
@@ -93,7 +93,7 @@ define([
       change: 'render',
     },
 
-    onRender: function() {
+    onRender: function () {
       var that = this;
       const $container = this.$('#option-dropdown-container');
       /*
@@ -107,32 +107,33 @@ define([
         }
         return false;
       }
+
       var $select = this.$('.quick-add-dropdown');
 
       $select
-        .select2({
-          placeholder: 'All Search Terms',
-          matcher: oldMatcher(matchStart),
-        })
-        .on('change', function(e) {
-          var val = e.target.value;
-          // prevent infinite loop!
-          if (!val) return;
-          var $option = $(this).find('option[value="' + e.target.value + '"]');
+      .select2({
+        placeholder: 'All Search Terms',
+        matcher: oldMatcher(matchStart),
+      })
+      .on('change', function (e) {
+        var val = e.target.value;
+        // prevent infinite loop!
+        if (!val) return;
+        var $option = $(this).find('option[value="' + e.target.value + '"]');
 
-          // Grab any default value that is present on the element
-          var defaultValue = $option.data('defaultValue');
-          var label = $option.closest('optgroup').attr('label');
-          $select.val(null).trigger('change');
-          setTimeout(function() {
-            that.selectFieldInsert(val, label, defaultValue);
-            // not entirely sure why this timeout is necessary...
-            // without it, focus is moved from the main query bar
-          }, 100);
-        })
-        // this seems to be necessary to show the placeholder on initial render
-        .val(null)
-        .trigger('change');
+        // Grab any default value that is present on the element
+        var defaultValue = $option.data('defaultValue');
+        var label = $option.closest('optgroup').attr('label');
+        $select.val(null).trigger('change');
+        setTimeout(function () {
+          that.selectFieldInsert(val, label, defaultValue);
+          // not entirely sure why this timeout is necessary...
+          // without it, focus is moved from the main query bar
+        }, 100);
+      })
+      // this seems to be necessary to show the placeholder on initial render
+      .val(null)
+      .trigger('change');
 
       const $select2Instance = $select.data('select2');
 
@@ -154,7 +155,7 @@ define([
         // hide popovers one open and close, focusing will re-open them after this
         $select2Instance.on('open', closeAllPopovers);
 
-        $select2Instance.on('results:focus', ({ data: { id } }) => {
+        $select2Instance.on('results:focus', ({data: {id}}) => {
           // hide any opened popovers
           closeAllPopovers();
           // grab the title/body from our list
@@ -166,21 +167,21 @@ define([
           // create the popover
           const syntax = data.syntax.map((s) => `<code>${s}</code>`).join(', ');
           const example = data.example
-            .map((e) => `<code>${e}</code>`)
-            .join(', ');
+          .map((e) => `<code>${e}</code>`)
+          .join(', ');
           $('.select2-dropdown')
-            .popover({
-              title: `<strong>${data.title}</strong>`,
-              content: `${data.description}<br/><br/>Syntax: <br/>${syntax}<br/><br/>Example: </br>${example}`,
-              html: true,
-              placement: 'top right',
-              trigger: 'manual',
-              container: 'body',
-              animation: false,
-            })
-            .data('bs.popover')
-            .tip()
-            .attr('class', 'search-term-popover popover right in');
+          .popover({
+            title: `<strong>${data.title}</strong>`,
+            content: `${data.description}<br/><br/>Syntax: <br/>${syntax}<br/><br/>Example: </br>${example}`,
+            html: true,
+            placement: 'top right',
+            trigger: 'manual',
+            container: 'body',
+            animation: false,
+          })
+          .data('bs.popover')
+          .tip()
+          .attr('class', 'search-term-popover popover right in');
 
           $('.select2-dropdown').popover('show');
         });
@@ -217,20 +218,20 @@ define([
       'click .bigquery-close': 'clearBigquery',
     },
 
-    toggleClear: function() {
+    toggleClear: function () {
       this.$('.icon-clear').toggleClass('hidden', !this.$input.val());
     },
 
-    clearInput: function() {
+    clearInput: function () {
       this.$input.val('').focus();
       this.toggleClear();
     },
 
-    getFormVal: function() {
+    getFormVal: function () {
       return this.$input.val();
     },
 
-    setFormVal: function(v) {
+    setFormVal: function (v) {
       /*
               bigquery special case: don't show the confusing *:*, just empty bar
              */
@@ -242,7 +243,7 @@ define([
       this.toggleClear();
     },
 
-    serializeData: function() {
+    serializeData: function () {
       var j = this.model.toJSON();
       j.numFound = j.numFound ? this.formatNum(j.numFound) : 0;
       j.citationCount = j.citationCount
@@ -252,20 +253,20 @@ define([
         if (this.model.get('bigquerySource').match(/library/i)) {
           this.model.set({
             libraryName: this.model
-              .get('bigquerySource')
-              .match(/library:(.*)/i)[1],
+            .get('bigquerySource')
+            .match(/library:(.*)/i)[1],
           });
         }
       }
       return j;
     },
 
-    onShowForm: function() {
+    onShowForm: function () {
       // show the form
       this.specifyFormWidth();
     },
 
-    toggleFormSection: function(e) {
+    toggleFormSection: function (e) {
       var $p = $(e.target).parent();
       $p.next().toggleClass('hide');
       $p.toggleClass('search-form-header-active');
@@ -277,7 +278,7 @@ define([
       startIndex: 0,
     },
 
-    storeCursorInfo: function(e) {
+    storeCursorInfo: function (e) {
       var selected = getSelectedText(e.currentTarget);
       var startIndex = this.$input.getCursorPosition();
       this._cursorInfo = {
@@ -287,7 +288,7 @@ define([
       this.toggleClear();
     },
 
-    selectFieldInsert: function(val, label, initialValue) {
+    selectFieldInsert: function (val, label, initialValue) {
       var newVal;
       var specialCharacter;
       var highlightedText = this._cursorInfo.selected;
@@ -306,16 +307,15 @@ define([
       // newVal = df + ":\"" + selected + "\"";
       //
       switch (label) {
-        case 'fields':
-          {
-            if (val === 'first-author') {
-              val = 'author';
-              selected = selected.replace(/"/, '"^');
-            } else if (val === 'year') {
-              selected = selected.replace(/"/g, '');
-            }
-            newVal = val + ':' + selected;
+        case 'fields': {
+          if (val === 'first-author') {
+            val = 'author';
+            selected = selected.replace(/"/, '"^');
+          } else if (val === 'year') {
+            selected = selected.replace(/"/g, '');
           }
+          newVal = val + ':' + selected;
+        }
           break;
         case 'operators':
           newVal = val + '(' + (selected === '""' ? '' : selected) + ')';
@@ -333,8 +333,8 @@ define([
       if (highlightedText.length) {
         this.setFormVal(
           currentVal.substr(0, startIndex) +
-            newVal +
-            currentVal.substr(startIndex + selected.length)
+          newVal +
+          currentVal.substr(startIndex + selected.length),
         );
       } else {
         // append to the end
@@ -351,11 +351,11 @@ define([
         'event',
         'interaction',
         'field-insert-dropdown-selected',
-        val
+        val,
       );
     },
 
-    fieldInsert: function(e) {
+    fieldInsert: function (e) {
       var newVal;
       var operator;
       var currentVal = this.getFormVal();
@@ -393,8 +393,8 @@ define([
       if (selected) {
         this.setFormVal(
           currentVal.substr(0, startIndex) +
-            newVal +
-            currentVal.substr(startIndex + selected.length)
+          newVal +
+          currentVal.substr(startIndex + selected.length),
         );
       } else {
         // append to the end
@@ -413,12 +413,12 @@ define([
         'event',
         'interaction',
         'field-insert-button-pressed',
-        df
+        df,
       );
       return false;
     },
 
-    submitQuery: function(e) {
+    submitQuery: function (e) {
       var fields;
       var fielded;
       var query;
@@ -433,7 +433,7 @@ define([
       ) {
         // show a popup to tell the user to type in a query
         $input.popover('show');
-        $input.on('input change blur', function() {
+        $input.on('input change blur', function () {
           $(this).popover('hide');
         });
         return false;
@@ -441,7 +441,7 @@ define([
       $input.popover('hide');
 
       // replace uppercased fields with lowercase
-      query = query.replace(/([A-Z])\w+:/g, function(letter) {
+      query = query.replace(/([A-Z])\w+:/g, function (letter) {
         return letter.toLowerCase();
       });
       // store the query in case it gets changed (which happens when there is an object query)
@@ -475,7 +475,7 @@ define([
               '<strong><a href="/help/search/search-syntax">reading our help page.</a></strong></p>',
             type: 'info',
             fade: true,
-          })
+          }),
         );
         return false;
       }
@@ -483,17 +483,17 @@ define([
 
       // let analytics know what type of query it was
       fields = _.chain(autocompleteArray)
-        .pluck('value')
-        .map(function(b) {
-          var m = b.match(/\w+:|\w+\(/);
-          if (m && m.length) return m[0];
-        })
-        .unique()
-        .value();
+      .pluck('value')
+      .map(function (b) {
+        var m = b.match(/\w+:|\w+\(/);
+        if (m && m.length) return m[0];
+      })
+      .unique()
+      .value();
 
       fielded = false;
 
-      _.each(fields, function(f) {
+      _.each(fields, function (f) {
         if (query.indexOf(f) > -1) {
           fielded = true;
         }
@@ -505,12 +505,12 @@ define([
         'event',
         'interaction',
         type + '-query-submitted-from-search-bar',
-        query
+        query,
       );
       return false;
     },
 
-    clearBigquery: function() {
+    clearBigquery: function () {
       this.trigger('clear_big_query');
     },
   });
@@ -518,21 +518,21 @@ define([
   _.extend(SearchBarView.prototype, FormatMixin, Dependon.BeeHive);
 
   var SearchBarWidget = BaseWidget.extend({
-    initialize: function(options) {
+    initialize: function (options) {
       this.model = new SearchBarModel();
 
       this.view = new SearchBarView({
         model: this.model,
       });
 
-      this.listenTo(this.view, 'start_search', function(query) {
+      this.listenTo(this.view, 'start_search', function (query) {
         this.changeDefaultSort(query);
         this.navigate(query);
         this.updateState('loading');
         this.view.setFormVal(query.get('q'));
       });
 
-      this.listenTo(this.view, 'clear_big_query', function(query) {
+      this.listenTo(this.view, 'clear_big_query', function (query) {
         var query = this._currentQuery.clone();
         // awkward but need to remove qid + provide __clearBigQuery
         // for querymediator to do the correct thing
@@ -545,7 +545,7 @@ define([
         this.navigate(query);
       });
 
-      this.listenTo(this.view, 'render', function() {
+      this.listenTo(this.view, 'render', function () {
         var newQueryString = '';
         var query = this.getCurrentQuery();
         var oldQueryString = query.get('q');
@@ -568,7 +568,7 @@ define([
       BaseWidget.prototype.initialize.call(this, options);
     },
 
-    activate: function(beehive) {
+    activate: function (beehive) {
       this.setBeeHive(beehive);
       this.activateWidget();
       var pubsub = this.getPubSub();
@@ -580,19 +580,19 @@ define([
       this.view.activate(beehive.getHardenedInstance());
       pubsub.subscribe(
         pubsub.INVITING_REQUEST,
-        _.bind(this.dispatchRequest, this)
+        _.bind(this.dispatchRequest, this),
       );
       pubsub.subscribe(pubsub.DELIVERING_RESPONSE, this.processResponse);
       pubsub.subscribe(
         pubsub.USER_ANNOUNCEMENT,
-        _.bind(this.updateFromUserData, this)
+        _.bind(this.updateFromUserData, this),
       );
       pubsub.subscribe(pubsub.CUSTOM_EVENT, _.bind(this.onCustomEvent, this));
       pubsub.subscribe(pubsub.START_SEARCH, _.bind(this.onStartSearch, this));
       this.updateFromUserData();
     },
 
-    getUserData: function() {
+    getUserData: function () {
       try {
         var beehive = _.isFunction(this.getBeeHive) && this.getBeeHive();
         var user = _.isFunction(beehive.getObject) && beehive.getObject('User');
@@ -607,11 +607,11 @@ define([
       }
     },
 
-    onStartSearch: function() {
+    onStartSearch: function () {
       this.model.unset('timing');
     },
 
-    onCustomEvent: function(event, arg) {
+    onCustomEvent: function (event, arg) {
       if (event === 'timing:results-loaded') {
         this.model.set('timing', arg / 1000);
       } else if (event === 'hotkey/search') {
@@ -630,20 +630,26 @@ define([
       }
     },
 
-    updateFromUserData: function() {
+    updateFromUserData: function () {
       var userData = this.getUserData();
       this.defaultDatabases = _.has(userData, 'defaultDatabase')
         ? _.map(
-            _.filter(userData.defaultDatabase, {
-              value: true,
-            }),
-            'name'
-          )
+          _.filter(userData.defaultDatabase, {
+            value: true,
+          }),
+          'name',
+        )
         : this.defaultDatabases;
     },
 
     applyDefaultFilters: function (apiQuery) {
       const dbfilters = Array.isArray(this.defaultDatabases) && this.defaultDatabases.length > 0 ? this.defaultDatabases : DEFAULT_DATABASES;
+
+      // if the user has selected all databases, don't apply ANY filter
+      if (dbfilters.length > 0 && dbfilters.includes('All')) {
+        return apiQuery;
+      }
+
       if (dbfilters.length > 0) {
         var fqString = '{!type=aqp v=$fq_database}';
 
@@ -660,28 +666,28 @@ define([
         if (!apiQuery.has('fq_database')) {
           var fq_database_string = _.reduce(
             dbfilters,
-            function(res, db, i) {
+            function (res, db, i) {
               var d = db.toLowerCase();
               return res.replace(
                 /(\(.*)(\))/,
                 i === 0
                   ? '$1database:' + d + '$2'
-                  : '$1 OR database:' + d + '$2'
+                  : '$1 OR database:' + d + '$2',
               );
             },
-            '()'
+            '()',
           );
           apiQuery.set('fq_database', fq_database_string);
         }
 
         // finally add the filters
         if (!apiQuery.has('__filter_database_fq_database')) {
-          var fq_database_filters = _.map(dbfilters, function(db) {
+          var fq_database_filters = _.map(dbfilters, function (db) {
             return 'database:' + db.toLowerCase();
           });
           apiQuery.set(
             '__filter_database_fq_database',
-            ['OR'].concat(fq_database_filters)
+            ['OR'].concat(fq_database_filters),
           );
         }
       }
@@ -689,7 +695,7 @@ define([
       return apiQuery;
     },
 
-    processResponse: function(apiResponse) {
+    processResponse: function (apiResponse) {
       var res = apiResponse.toJSON();
       var sort = res.responseHeader.params.sort;
       if (res.stats && /citation.*/.test(sort)) {
@@ -716,7 +722,7 @@ define([
       fl: 'id',
     },
 
-    dispatchRequest: function(apiQuery) {
+    dispatchRequest: function (apiQuery) {
       var sort = apiQuery.get('sort');
       if (/citation_count_norm/i.test(sort)) {
         this.defaultQueryArguments = _.extend(this.defaultQueryArguments, {
@@ -742,24 +748,24 @@ define([
      * when users return to index page, we should re-focus on the search bar
      * */
 
-    focusInput: function() {
+    focusInput: function () {
       if (this._onIndexPage()) {
         this.clearBigQueryPill();
         this.view.clearInput();
       }
     },
 
-    clearBigQueryPill: function() {
+    clearBigQueryPill: function () {
       this.model.unset('bigquerySource');
       this.model.unset('bigquery');
     },
 
-    onNavigate: function(page) {
+    onNavigate: function (page) {
       this.currentPage = page;
       this.focusInput(page);
     },
 
-    handleFeedback: function(feedback) {
+    handleFeedback: function (feedback) {
       if (
         feedback.code === ApiFeedback.CODES.SEARCH_CYCLE_STARTED ||
         feedback.code === ApiFeedback.CODES.SEARCH_CYCLE_FAILED_TO_START
@@ -788,7 +794,7 @@ define([
       }
     },
 
-    changeDefaultSort: function(query) {
+    changeDefaultSort: function (query) {
       var currentQuery = this.getCurrentQuery();
 
       // make sure not to override an explicit sort if there is one
@@ -821,16 +827,16 @@ define([
       }
     },
 
-    _onIndexPage: function() {
+    _onIndexPage: function () {
       // look out for these names, or that the current page is undefined
       return (
         /(index-page|SearchWidget)/.test(this.currentPage) || !this.currentPage
       );
     },
 
-    navigate: function(newQuery) {
+    navigate: function (newQuery) {
       var newQ = newQuery.toJSON();
-      var oldQ = _.omit(this.getCurrentQuery().toJSON(), function(val, key) {
+      var oldQ = _.omit(this.getCurrentQuery().toJSON(), function (val, key) {
         // omit certain fields (highlights, paging)
         return (
           /^hl.*/.test(key) ||
@@ -862,14 +868,14 @@ define([
       });
     },
 
-    openQueryAssistant: function(queryString) {
+    openQueryAssistant: function (queryString) {
       if (queryString) {
         this.view.setFormVal(queryString);
       }
       this.view.$el.find('.show-form').click();
     },
 
-    onShow: function() {
+    onShow: function () {
       // only focus on the index-page
       if (this._onIndexPage()) {
         var $input = this.view.$('input[name=q]');
@@ -886,15 +892,15 @@ define([
       }
     },
 
-    onDestroy: function() {
+    onDestroy: function () {
       this.view.destroy();
     },
 
-    onLoading: function() {
+    onLoading: function () {
       this.model.set('loading', true);
     },
 
-    onIdle: function() {
+    onIdle: function () {
       this.model.set('loading', false);
     },
   });
