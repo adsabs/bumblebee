@@ -5,7 +5,7 @@
  * and any related limits
  */
 
-define([], function() {
+define([], function () {
   var config = {
     BOOTSTRAP: '/accounts/bootstrap',
     SEARCH: 'search/query',
@@ -31,13 +31,15 @@ define([], function() {
     USER_DATA: 'vault/user-data',
     SITE_CONFIGURATION: 'vault/configuration',
     TOKEN: 'accounts/token',
+    LOGIN: 'accounts/login',
     LOGOUT: 'accounts/logout',
     REGISTER: 'accounts/register',
     VERIFY: 'accounts/verify',
-    DELETE: 'accounts/user/delete',
+    DELETE: 'accounts/delete',
     RESET_PASSWORD: 'accounts/reset-password',
     CHANGE_PASSWORD: 'accounts/change-password',
     CHANGE_EMAIL: 'accounts/change-email',
+    INFO: 'accounts/info',
 
     RECOMMENDER: 'recommender',
     GRAPHICS: 'graphics',

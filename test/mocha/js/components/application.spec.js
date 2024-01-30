@@ -2,46 +2,46 @@ define([
   'jquery',
   'js/components/application',
   'module',
-  'js/services/api'
-], function(
+  'js/services/api',
+], function (
   $,
   Application,
   module,
-  Api
-  ) {
+  Api,
+) {
   describe("Application Scaffolding (application.spec.js)", function () {
 
     var config = null;
-    beforeEach(function(done) {
+    beforeEach(function (done) {
       config = {
         core: {
           controllers: {
-            FeedbackMediator: 'js/wraps/discovery_mediator'
+            FeedbackMediator: 'js/wraps/discovery_mediator',
           },
           services: {
             'Api': 'js/services/api',
-            'PubSub': 'js/services/pubsub'
+            'PubSub': 'js/services/pubsub',
           },
           objects: {
-            User: 'js/components/user'
+            User: 'js/components/user',
           },
           modules: {
-            QM: 'js/components/query_mediator'
-          }
+            QM: 'js/components/query_mediator',
+          },
         },
         widgets: {
           ApiResponse: 'js/widgets/api_response/widget',
-          ApiResponse2: 'js/widgets/api_response/widget'
+          ApiResponse2: 'js/widgets/api_response/widget',
         },
         plugins: {
-          Test: 'js/widgets/api_response/widget'
-        }
+          Test: 'js/widgets/api_response/widget',
+        },
       };
       done();
     });
 
 
-    it("should create application object", function(done) {
+    it("should create application object", function (done) {
       expect(new Application()).to.be.instanceof(Application);
       var app = new Application();
       expect(app.getBeeHive()).to.be.defined;
@@ -52,12 +52,12 @@ define([
       done();
     });
 
-    it("loads components", function(done) {
+    it("loads components", function (done) {
       var app = new Application();
       var defer = app.loadModules(config);
       expect(defer.state()).to.be.equal("pending");
 
-      defer.done(function() {
+      defer.done(function () {
         expect(app.getBeeHive()).to.be.defined;
         var beehive = app.getBeeHive();
 
@@ -81,14 +81,14 @@ define([
 
     });
 
-    it("handles errors of loading components", function(done) {
+    it("handles errors of loading components", function (done) {
       var app = new Application();
       config.core.services.Api = 'js/components/nonexisting';
 
       var promise = app.loadModules(config);
       expect(promise.state()).to.be.equal("pending");
 
-      promise.fail(function() {
+      promise.fail(function () {
         expect(app.getBeeHive()).to.be.defined;
         var beehive = app.getBeeHive();
 
@@ -102,58 +102,60 @@ define([
       });
     });
 
-    it("provides methods to retrieve widgets/plugins", function(done) {
+    it("provides methods to retrieve widgets/plugins", function (done) {
       var app = new Application();
-      app.loadModules(config).done(function() {
+      app.loadModules(config).done(function () {
         var promises = [];
         promises.push(app._getWidget('ApiResponse'));
         promises.push(app._getWidget('ApiResponse2'));
         promises.push(app._getPlugin('Test'));
-        
-        $.when.apply($, promises).then(function() {
-          app.getAllWidgets().done(function(w) {
+
+        $.when.apply($, promises).then(function () {
+          app.getAllWidgets().done(function (w) {
             expect(w.length).to.be.eql(2);
           });
-          app.getAllPlugins().done(function(w) {
+          app.getAllPlugins().done(function (w) {
             expect(w.length).to.be.eql(1);
           });
 
           expect(app.isActivated()).to.be.equal(false);
           app.activate();
           expect(app.isActivated()).to.be.equal(true);
-    
+
           app.getWidget('ApiResponse', 'ApiResponse2').done(
-            function(w) {
+            function (w) {
               var w1 = w.ApiResponse;
               var w2 = w.ApiResponse2;
-    
+
               expect(app.getPluginOrWidgetByPubSubKey(w1.getPubSub().getCurrentPubSubKey().getId())).to.be.eql(w1);
               expect(app.getPluginOrWidgetByPubSubKey(w2.getPubSub().getCurrentPubSubKey().getId())).to.be.eql(w2);
-    
+
               expect(app.getPluginOrWidgetByPubSubKey('foo')).to.be.undefined;
               delete app.__barbarianRegistry[w1.getPubSub().getCurrentPubSubKey()];
-              expect(function() {app.getPluginOrWidgetByPubSubKey('foo')}).to.throw.Error;
-    
+              expect(function () {
+                app.getPluginOrWidgetByPubSubKey('foo')
+              }).to.throw.Error;
+
               done();
-          });
+            });
         })
       })
     });
 
-    it("has triggerMethod", function(done) {
+    it("has triggerMethod", function (done) {
       var app = new Application();
-      app.loadModules(config).done(function() {
+      app.loadModules(config).done(function () {
         var counter = 0;
         var args = [];
-        _.each(app.getAllControllers(), function(w) {
-          w[1].foox = function(options) {
+        _.each(app.getAllControllers(), function (w) {
+          w[1].foox = function (options) {
             counter += 1;
             args.push(options);
           }
         });
-  
-        app._getWidget('ApiResponse').done(function(w) {
-          w.foox = function(options) {
+
+        app._getWidget('ApiResponse').done(function (w) {
+          w.foox = function (options) {
             counter += 1;
             args.push(options);
           }
@@ -161,7 +163,7 @@ define([
           app.triggerMethodOnAll('foox', 'foo');
           expect(counter).to.be.equal(2);
           expect(args).to.be.eql(['foo', 'foo']);
-  
+
           done();
         });
 
@@ -170,11 +172,11 @@ define([
 
     });
 
-    it("has getApiAccess", function(done) {
+    it("has getApiAccess", function (done) {
       var app = new Application();
       var api = new Api();
 
-      api.request =  function(apiRequest, options) {
+      api.request = function (apiRequest, options) {
         expect(apiRequest.url()).to.contain('/accounts/bootstrap');
         options.done(
           {
@@ -184,40 +186,40 @@ define([
             "token_type": "Bearer",
             "csrf": "1428969367##8460e442cb2984810486bf959048a05d7e7d9e78",
             "expire_in": "2500-01-01T00:00:00",
-            "refresh_token": "KKGJp56UlpKgfHUuNNNJvj3XgepWlkTfKKtqmpkM"
+            "refresh_token": "KKGJp56UlpKgfHUuNNNJvj3XgepWlkTfKKtqmpkM",
           });
       };
 
       app.getBeeHive().addService('Api', api);
-      var fakeUser = {setUser : sinon.spy()};
+      var fakeUser = {setUser: sinon.spy()};
       app.getBeeHive().addObject("User", fakeUser);
       var spy = sinon.spy(app, 'onBootstrap');
       app.getApiAccess({reconnect: true})
-        .done(function() {
-          expect(spy.called).to.eql(true);
-          expect(api.access_token).to.eql('Bearer:ap0MkGjroS1zzijLlk9fV2UKXdRDo5nzUueTNaog');
-          //every time onbootstrap is called, update the user object with username/undefined to show that user is anonymous
-          expect(fakeUser.setUser.args[0]).to.eql(["user@gmail.com"]);
-          done();
-        })
+      .done(function () {
+        expect(spy.called).to.eql(true);
+        expect(api.access_token).to.eql('Bearer ap0MkGjroS1zzijLlk9fV2UKXdRDo5nzUueTNaog');
+        //every time onbootstrap is called, update the user object with username/undefined to show that user is anonymous
+        expect(fakeUser.setUser.args[0]).to.eql(["user@gmail.com"]);
+        done();
+      })
     });
 
-    it("uses reference counters to get rid of objects", function(done) {
+    it("uses reference counters to get rid of objects", function (done) {
       var app = new Application();
       var defer = app.loadModules(config);
 
-      defer.done(function() {
+      defer.done(function () {
         var counter = 0;
         app.getWidget('ApiResponse')
-          .done(function(widget) {
-            expect(widget.getBeeHive).to.be.defined;
-            expect(widget.getPubSub).to.be.defined;
-            expect(app.getWidgetRefCount('ApiResponse')).to.eql(1);
-            expect(app.getPluginRefCount('ApiResponse')).to.eql(-1);
-          });
+        .done(function (widget) {
+          expect(widget.getBeeHive).to.be.defined;
+          expect(widget.getPubSub).to.be.defined;
+          expect(app.getWidgetRefCount('ApiResponse')).to.eql(1);
+          expect(app.getPluginRefCount('ApiResponse')).to.eql(-1);
+        });
 
 
-        setTimeout(function() {
+        setTimeout(function () {
           expect(app.__barbarianInstances['widget:' + 'ApiResponse']).to.be.undefined;
           done();
         }, 10)
