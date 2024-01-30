@@ -97,8 +97,8 @@
 
         <!-- Default Collection -->
         <div class="form-group">
-          <div style="display:flex;">
-            <label id="defaultDatabaseLabel">
+          <div style="display:flex; align-items: center;">
+            <label id="defaultDatabaseLabel" style="margin: 0;">
               Default Collection(s)
               <button href="#collapseDatabase" data-toggle="collapse" class="btn-link" aria-expanded="false"
                       aria-controls="collapseDatabase" aria-label="default collection">
@@ -106,14 +106,13 @@
               </button>
             </label>
             <div style="width: 40px"></div>
-            <div>
-              {{#if (not (includes 'database' this.modifySections))}}
-                <button class="btn btn-info btn-xs section-modify" type="button" data-section="database">Modify</button>
-              {{/if}}
-              {{#if (includes 'database' this.modifySections)}}
-                <button class="btn btn-link btn-xs section-reset" type="button" data-section="database">Reset</button>
-              {{/if}}
-            </div>
+            {{#if (not (includes 'database' this.modifySections))}}
+              <button class="btn btn-primary btn-xs section-modify" type="button" data-section="database">Modify
+              </button>
+            {{/if}}
+            {{#if (includes 'database' this.modifySections)}}
+              <button class="btn btn-link btn-xs section-reset" type="button" data-section="database">Reset</button>
+            {{/if}}
           </div>
           <p>
           <div class="collapse" id="collapseDatabase">
