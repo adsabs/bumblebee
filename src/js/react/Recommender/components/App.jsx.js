@@ -6,14 +6,14 @@ define([
   '../actions',
   'es6!./RecommendedList.jsx',
   'es6!./SearchExamples.jsx',
-], function(
+], function (
   React,
-  { Nav, NavItem },
+  {Nav, NavItem},
   PropTypes,
-  { useDispatch, useSelector },
-  { setTab, emitAnalytics },
+  {useDispatch, useSelector},
+  {setTab, emitAnalytics},
   RecommendedList,
-  SearchExamples
+  SearchExamples,
 ) {
   const selector = (state) => ({
     tab: state.tab,
@@ -21,16 +21,16 @@ define([
 
   const App = () => {
     const dispatch = useDispatch();
-    const { tab } = useSelector(selector);
+    const {tab} = useSelector(selector);
     const onSelected = (key) => {
       dispatch(setTab(key));
       dispatch(
         emitAnalytics([
           'send',
           'event',
-          'interaction.main-page',
+          'interaction', 'main-page',
           key === 1 ? 'recommender' : 'help',
-        ])
+        ]),
       );
     };
 
@@ -63,8 +63,8 @@ define([
             Search examples
           </NavItem>
         </Nav>
-        <div style={{ minHeight: 200, padding: '1rem 0' }}>
-          {tab === 1 ? <RecommendedList /> : <SearchExamples />}
+        <div style={{minHeight: 200, padding: '1rem 0'}}>
+          {tab === 1 ? <RecommendedList/> : <SearchExamples/>}
         </div>
       </div>
     );

@@ -4,14 +4,14 @@ define([
   'react-redux',
   '../models/index',
   '../actions',
-], function(
+], function (
   React,
   PropTypes,
-  { useDispatch },
-  { searchExamples },
-  { updateSearchBar, emitAnalytics }
+  {useDispatch},
+  {searchExamples},
+  {updateSearchBar, emitAnalytics},
 ) {
-  const Dl = ({ children }) => {
+  const Dl = ({children}) => {
     return <dl className="dl-horizontal">{children}</dl>;
   };
 
@@ -19,12 +19,12 @@ define([
     children: PropTypes.element.isRequired,
   };
 
-  const Entry = ({ label, text, onClick, tooltip }) => {
+  const Entry = ({label, text, onClick, tooltip}) => {
     return (
       // eslint-disable-next-line react/jsx-fragments
       <React.Fragment>
         <dt>{label}</dt>
-        <dd style={{ display: 'flex' }}>
+        <dd style={{display: 'flex'}}>
           <button type="button" onClick={onClick} className="text-link">
             {text}
           </button>
@@ -44,7 +44,8 @@ define([
     label: '',
     text: '',
     tooltip: '',
-    onClick: () => {},
+    onClick: () => {
+    },
   };
 
   Entry.propTypes = {
@@ -58,7 +59,9 @@ define([
     const dispatch = useDispatch();
     const onClick = (text) => {
       dispatch(updateSearchBar(text));
-      dispatch(emitAnalytics(['send', 'event', 'interaction.suggestion-used']));
+      dispatch(
+        emitAnalytics(['send', 'event', 'interaction', 'suggestion-used']),
+      );
     };
 
     const generateRandom = (max) => {
