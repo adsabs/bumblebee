@@ -499,12 +499,11 @@ define([
         }
       });
 
-      var type = fielded ? 'fielded' : 'unfiielded';
       analytics(
         'send',
         'event',
         'interaction',
-        type + '-query-submitted-from-search-bar',
+        `search-bar-${fielded ? 'fielded' : 'unfielded'}-query-submitted`,
         query,
       );
       return false;

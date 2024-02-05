@@ -1,4 +1,4 @@
-define(['underscore', 'jquery'], function(_, $) {
+define(['underscore', 'jquery'], function (_, $) {
   /*
    * Set of targets
    * each has a set of hooks which coorespond to the event label passed
@@ -34,8 +34,8 @@ define(['underscore', 'jquery'], function(_, $) {
    * @param {string} url
    * @param {object} data
    */
-  var sendEvent = function(url) {
-    $.ajax({ url: url, type: 'GET' });
+  var sendEvent = function (url) {
+    $.ajax({url: url, type: 'GET'});
   };
 
   /**
@@ -46,12 +46,12 @@ define(['underscore', 'jquery'], function(_, $) {
    * @param {string} label - the event label
    * @param {object} data - the event data
    */
-  var adsLogger = function(label, data) {
+  var adsLogger = function (label, data) {
     // if label or data is not present, do nothing
     if (_.isString(label) && _.isPlainObject(data) && _.has(data, 'target')) {
-      _.forEach(TARGETS, function(val) {
+      _.forEach(TARGETS, function (val) {
         var target = null;
-        _.forEach(val.types, function(type) {
+        _.forEach(val.types, function (type) {
           if (_.isArray(type)) {
             if (type[0] === data.target && _.has(type[1], 'redirectTo')) {
               target = type[1].redirectTo;
@@ -63,7 +63,7 @@ define(['underscore', 'jquery'], function(_, $) {
 
         // send event if we find a hook and the target is in the list of types
         if (_.contains(val.hooks, label) && target) {
-          var params = _.assign({}, data, { target: target });
+          var params = _.assign({}, data, {target: target});
           sendEvent(data.url ? data.url : val.url(params));
         }
       });
@@ -73,31 +73,31 @@ define(['underscore', 'jquery'], function(_, $) {
   var buffer = [];
   var gaName = window.GoogleAnalyticsObject || 'ga';
 
-  var cleanBuffer = function() {
+  var cleanBuffer = function () {
     if (window[gaName]) {
-      for (var i=0; i<buffer.length; i++) {
+      for (var i = 0; i < buffer.length; i++) {
         window[gaName].apply(this, buffer[i]);
       }
       buffer = []
     }
   }
 
-  var Analytics = function() {
+  const Analytics = function (action, event, type, description, ...args) {
     adsLogger.apply(null, _.rest(arguments, 3));
-    
-    if (window[gaName]) {
-      if (buffer.length > 0)
-        cleanBuffer()
-      window[gaName].apply(this, arguments);
-      return true;
+
+    // if the action is send and the event is event, then we want to send the event to the dataLayer
+    if (action === 'send' && event === 'event') {
+
+      // some events are 'interaction' or 'error', so add that to the event name
+      window.dataLayer.push({
+        event: `${type}_${description}`,
+
+        // if the next argument is an object, we'll use that as the data, ignore an extra arguments
+        value1: args[0],
+        value2: args[1],
+        value3: args[2],
+      });
     }
-    else {
-      console.log('Buffering GA signal', arguments);
-      buffer.push(arguments);
-      setTimeout(cleanBuffer, 1000);
-      return false;
-    }
-    
   };
 
   return Analytics;
