@@ -86,8 +86,11 @@ define(['underscore', 'jquery'], function (_, $) {
     adsLogger.apply(null, _.rest(arguments, 3));
 
     // if the action is send and the event is event, then we want to send the event to the dataLayer
-    if (action === 'send' && event === 'event') {
-
+    if (
+      action === 'send' &&
+      event === 'event' &&
+      Array.isArray(window.dataLayer)
+    ) {
       // some events are 'interaction' or 'error', so add that to the event name
       window.dataLayer.push({
         event: `${type}_${description}`,
