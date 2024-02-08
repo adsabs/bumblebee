@@ -55,6 +55,7 @@ $base-loading-text-size: 1em;
 .close-circle {
   position: absolute;
   right: 10px;
+
   a {
     text-align: center;
     float: left;
@@ -64,12 +65,14 @@ $base-loading-text-size: 1em;
     border-radius: 100%;
     text-decoration: none;
   }
+
   i {
     font-size: 2.8em;
     line-height: 1.3em;
     color: #909090;
   }
 }
+
 div[data-widget='ShowPaperExport'] .close-circle {
   display: none;
 }
@@ -134,8 +137,18 @@ div[data-widget='ShowPaperExport'] .close-circle {
   & .resources__content__links {
     font-size: 1em;
 
+    // Centers the links vertically with the title
+    display: flex;
+    align-items: center;
+
     @media screen and (max-width: $screen-xs-max) {
       font-size: x-large;
+    }
+
+    // this ensures the links are not displayed on top of each other
+    & span {
+      display: flex;
+      align-items: center;
     }
   }
 
@@ -237,6 +250,7 @@ div[data-widget='ShowPaperExport'] .close-circle {
       color: #333;
       white-space: nowrap;
       cursor: pointer;
+
       &:hover {
         color: #262626;
         text-decoration: none;
