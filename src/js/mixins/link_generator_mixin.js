@@ -1,6 +1,6 @@
-define(['underscore', 'js/mixins/openurl_generator'], function(
+define(['underscore', 'js/mixins/openurl_generator'], function (
   _,
-  { getOpenUrl }
+  {getOpenUrl},
 ) {
   const GATEWAY_BASE_URL = '/link_gateway/';
 
@@ -44,10 +44,10 @@ define(['underscore', 'js/mixins/openurl_generator'], function(
     // then make sure that sources in DEFAULT_ORDERING are pushed to the top
     return [
       ...sortedSources.filter((source) =>
-        DEFAULT_ORDERING.includes(source.rawType)
+        DEFAULT_ORDERING.includes(source.rawType),
       ),
       ...sortedSources.filter(
-        (source) => !DEFAULT_ORDERING.includes(source.rawType)
+        (source) => !DEFAULT_ORDERING.includes(source.rawType),
       ),
     ];
   };
@@ -458,7 +458,7 @@ define(['underscore', 'js/mixins/openurl_generator'], function(
     },
   };
 
-  const enc = function(str) {
+  const enc = function (str) {
     return encodeURIComponent(str);
   };
 
@@ -468,7 +468,7 @@ define(['underscore', 'js/mixins/openurl_generator'], function(
    * @param {string} target - the source target (i.e. PUB_HTML)
    * @returns {string} - the new url
    */
-  const _createGatewayUrl = function(bibcode, target) {
+  const _createGatewayUrl = function (bibcode, target) {
     if (_.isString(bibcode) && _.isString(target)) {
       return GATEWAY_BASE_URL + enc(bibcode) + '/' + target;
     }
@@ -489,7 +489,7 @@ define(['underscore', 'js/mixins/openurl_generator'], function(
    * @param {object} data - the data object to process
    * @returns {object} - the fulltext and data sources
    */
-  const _processLinkData = function(data) {
+  const _processLinkData = function (data) {
     const createGatewayUrl = this._createGatewayUrl;
     const fullTextSources = [];
     let dataProducts = [];
@@ -497,7 +497,7 @@ define(['underscore', 'js/mixins/openurl_generator'], function(
     const property = data.property;
 
     // check the esources property
-    _.forEach(data.esources, function(el) {
+    _.forEach(data.esources, function (el) {
       const parts = el.split('_');
       const linkInfo = LINK_TYPES[el];
       const linkServer = data.link_server;
@@ -510,7 +510,7 @@ define(['underscore', 'js/mixins/openurl_generator'], function(
       //   - the user HAS a library link server
       if (identifier && linkServer && countOpenUrls < 1) {
         fullTextSources.push({
-          url: getOpenUrl({ metadata: data, linkServer }),
+          url: getOpenUrl({metadata: data, linkServer}),
           openUrl: true,
           type: 'INSTITUTION',
           shortName: 'My Institution',
@@ -522,16 +522,31 @@ define(['underscore', 'js/mixins/openurl_generator'], function(
       }
 
       if (parts.length > 1) {
-        fullTextSources.push({
-          url: createGatewayUrl(data.bibcode, el),
-          open: _.contains(property, parts[0] + '_OPENACCESS'),
-          shortName: (linkInfo && linkInfo.shortName) || el,
-          name: (linkInfo && linkInfo.name) || el,
-          type: (linkInfo && linkInfo.type) || 'HTML',
-          description: linkInfo && linkInfo.description,
-          rawType: el,
-        });
 
+        // if the entry is a publisher link, we need to do an extra step
+        if (parts[0] === 'PUB') {
+          fullTextSources.push({
+            url: createGatewayUrl(data.bibcode, el),
+            open: _.contains(property, parts[0] + '_OPENACCESS'),
+
+            // if the publisher field is present, use it as the shortName & name
+            shortName: data.publisher || (linkInfo && linkInfo.shortName) || el,
+            name: data.publisher || (linkInfo && linkInfo.name) || el,
+            type: (linkInfo && linkInfo.type) || 'HTML',
+            description: linkInfo && linkInfo.description,
+            rawType: el,
+          });
+        } else {
+          fullTextSources.push({
+            url: createGatewayUrl(data.bibcode, el),
+            open: _.contains(property, parts[0] + '_OPENACCESS'),
+            shortName: (linkInfo && linkInfo.shortName) || el,
+            name: (linkInfo && linkInfo.name) || el,
+            type: (linkInfo && linkInfo.type) || 'HTML',
+            description: linkInfo && linkInfo.description,
+            rawType: el,
+          });
+        }
         // if entry cannot be split, then it will not be open access
       } else {
         fullTextSources.push({
@@ -551,7 +566,7 @@ define(['underscore', 'js/mixins/openurl_generator'], function(
       name: LINK_TYPES.EPRINT_PDF.name,
     });
     if (!hasEprint && _.isArray(data.links_data)) {
-      _.forEach(data.links_data, function(linkData) {
+      _.forEach(data.links_data, function (linkData) {
         const link = JSON.parse(linkData);
         if (/preprint/i.test(link.type)) {
           const info = LINK_TYPES.EPRINT_PDF;
@@ -569,7 +584,7 @@ define(['underscore', 'js/mixins/openurl_generator'], function(
     }
 
     // check the data property
-    _.forEach(data.data, function(product) {
+    _.forEach(data.data, function (product) {
       const parts = product.split(':');
       const linkInfo = LINK_TYPES[parts[0]];
 
@@ -606,9 +621,9 @@ define(['underscore', 'js/mixins/openurl_generator'], function(
    * @param {object} _data - the data object to parse
    * @returns {object} - copy of the data object with links prop added
    */
-  const _parseLinksDataForModel = function(_data, linksData) {
-    let links = { list: [], data: [], text: [] };
-    const data = _.extend({}, _data, { links: links });
+  const _parseLinksDataForModel = function (_data, linksData) {
+    let links = {list: [], data: [], text: []};
+    const data = _.extend({}, _data, {links: links});
 
     // map linksData to links object
     if (_.isPlainObject(linksData)) {
@@ -671,11 +686,11 @@ define(['underscore', 'js/mixins/openurl_generator'], function(
    * by the processData method of a widget.
    *
    */
-  const parseLinksData = function(data) {
+  const parseLinksData = function (data) {
     const parseLinksDataForModel = _.bind(this._parseLinksDataForModel, this);
     const parseResourcesData = _.bind(this.parseResourcesData, this);
     if (_.isArray(data)) {
-      return _.map(data, function(d) {
+      return _.map(data, function (d) {
         try {
           const linkData = parseResourcesData(d);
           return parseLinksDataForModel(d, linkData);
@@ -692,7 +707,7 @@ define(['underscore', 'js/mixins/openurl_generator'], function(
    *
    * @param {object} data - the data to parse
    */
-  const parseResourcesData = function(data) {
+  const parseResourcesData = function (data) {
     const processLinkData = _.bind(this._processLinkData, this);
 
     // data must have 'property' and sub-props
@@ -701,12 +716,12 @@ define(['underscore', 'js/mixins/openurl_generator'], function(
         // make sure if property has a esource or data, we find it on data as well
         if (_.contains(data.property, 'ESOURCE') && !_.has(data, 'esources')) {
           throw new Error(
-            'if `property` property contains `ESOURCE`, then data must have `esources` field'
+            'if `property` property contains `ESOURCE`, then data must have `esources` field',
           );
         }
         if (_.contains(data.property, 'DATA') && !_.has(data, 'data')) {
           throw new Error(
-            'if `property` property contains `DATA`, then data must have `data` field'
+            'if `property` property contains `DATA`, then data must have `data` field',
           );
         }
         return processLinkData(_.extend({}, data));
@@ -724,7 +739,7 @@ define(['underscore', 'js/mixins/openurl_generator'], function(
    * @param {string|array} identifier - the identifier to use to build the url
    * @returns {string}
    */
-  const createUrlByType = function(bibcode, type, identifier) {
+  const createUrlByType = function (bibcode, type, identifier) {
     let id = identifier;
     if (_.isArray(id)) {
       id = id[0];
