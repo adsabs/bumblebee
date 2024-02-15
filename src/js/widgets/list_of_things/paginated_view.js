@@ -21,7 +21,7 @@ define([
   'analytics',
   'mathjax',
   'hbs!js/wraps/widget/loading/template',
-], function(
+], function (
   _,
   Marionette,
   Backbone,
@@ -38,7 +38,7 @@ define([
   ItemView,
   analytics,
   MathJax,
-  loadingTemplate
+  loadingTemplate,
 ) {
   /**
    * A simple model that holds attributes of the
@@ -46,7 +46,7 @@ define([
    * propagated to the view
    */
   var MainViewModel = Backbone.Model.extend({
-    defaults: function() {
+    defaults: function () {
       return {
         mainResults: false,
         title: undefined,
@@ -78,7 +78,7 @@ define([
   };
 
   var EmptyView = Marionette.ItemView.extend({
-    template: function(data) {
+    template: function (data) {
       if (data.query) {
         return EmptyViewTemplate(data);
       }
@@ -89,7 +89,7 @@ define([
         _.extend(data, {
           widgetLoadingSize: 'big',
           hideCloseButton: true,
-        })
+        }),
       );
     },
   });
@@ -102,11 +102,11 @@ define([
     childView: ItemView,
     emptyView: EmptyView,
 
-    initialize: function(options) {
+    initialize: function (options) {
       this.model = new MainViewModel();
     },
 
-    serializeData: function() {
+    serializeData: function () {
       var data = this.model.toJSON();
       // if it's an abstract page list with an 'export to results page'
       // option, provide the properly escaped url
@@ -121,7 +121,7 @@ define([
       return data;
     },
 
-    onRender: function() {
+    onRender: function () {
       if (MathJax) {
         MathJax.Hub.Queue(['Typeset', MathJax.Hub, this.el]);
       }
@@ -131,7 +131,7 @@ define([
 
     alreadyRendered: false,
 
-    emptyViewOptions: function(model) {
+    emptyViewOptions: function (model) {
       var query = this.model.get('query');
       var isTugboat = this.model.get('isTugboat');
       var error = this.model.get('error');
@@ -173,57 +173,77 @@ define([
       'change #per-page-select': 'changePerPage',
     },
 
-    toggleHighlights: function(e) {
+    toggleHighlights: function (e) {
       var state = this.model.get('showHighlights');
       state =
         _.isBoolean(state) && state
           ? 'closed'
           : state === 'open'
-          ? 'closed'
-          : 'open';
+            ? 'closed'
+            : 'open';
 
       this.model.set('showHighlights', state);
       if (!this.model.get('highlightsLoaded')) {
         this.model.set('highlightsLoaded', true);
         this.trigger('toggle-highlights', state === 'open');
       }
+      analytics(
+        'send',
+        'event',
+        'interaction',
+        `search_result_meta_toggled`,
+        {
+          search_result_meta_name: 'highlights',
+          search_result_meta_state: state === 'open' ? 'open' : 'closed',
+        },
+      );
     },
 
-    toggleAbstract: function() {
-      if (this.model.get('showAbstract') == 'open') {
-        this.model.set('showAbstract', 'closed');
-      } else if (this.model.get('showAbstract') == 'closed') {
-        this.model.set('showAbstract', 'open');
-        analytics('send', 'event', 'interaction', 'abstracts-toggled-on');
-      }
+    toggleAbstract: function () {
+      const value = this.model.get('showAbstract');
+      this.model.set('showAbstract', value === 'open' ? 'closed' : 'open');
+      analytics(
+        'send',
+        'event',
+        'interaction',
+        `search_result_meta_toggled`,
+        {
+          search_result_meta_name: 'abstracts',
+          search_result_meta_state: value === 'open' ? 'open' : 'closed',
+        },
+      );
     },
 
-    toggleShowSidebars: function() {
+    toggleShowSidebars: function () {
       var val = !this.model.get('showSidebars');
       this.model.set('showSidebars', val);
       analytics(
         'send',
         'event',
         'interaction',
-        'sidebars-toggled-' + val ? 'on' : 'off'
+        `search_result_meta_toggled`,
+        {
+          search_result_meta_name: 'sidebars',
+          search_result_meta_state: val ? 'open' : 'closed',
+        },
       );
     },
 
-    goToBottom: function() {
+    goToBottom: function () {
       $(document.documentElement).animate(
         {
           scrollTop: this.$el.outerHeight(),
         },
-        'fast'
+        'fast',
       );
     },
 
-    goToTop: function() {
+    goToTop: function () {
       $(document.documentElement).animate(
         {
           scrollTop: 0,
         },
-        'fast'
+        'fast',
       );
     },
 
@@ -239,7 +259,7 @@ define([
 
     template: ResultsContainerTemplate,
 
-    onResetCollection: function() {
+    onResetCollection: function () {
       this.model.set('highlightsLoaded', false);
       this.model.trigger('change:showAbstract');
     },
@@ -249,17 +269,17 @@ define([
      * with details (this place is normally hidden
      * by default)
      */
-    toggleChildrenHighlights: function() {
+    toggleChildrenHighlights: function () {
       var show = this.model.get('showHighlights');
       this.collection.invoke('set', 'showHighlights', show === 'open');
     },
 
-    toggleChildrenAbstracts: function() {
+    toggleChildrenAbstracts: function () {
       var show = this.model.get('showAbstract');
       this.collection.invoke('set', 'showAbstract', show === 'open');
     },
 
-    changePageWithButton: function(e) {
+    changePageWithButton: function (e) {
       var $target = $(e.currentTarget);
       if ($target.parent().hasClass('disabled')) return;
       var transform = $target.hasClass('next-page') ? 1 : -1;
@@ -272,13 +292,13 @@ define([
           'event',
           'interaction',
           'results-list-pagination',
-          pageVal
+          pageVal,
         );
       }
       return false;
     },
 
-    tabOrEnterChangePageWithInput: function(e) {
+    tabOrEnterChangePageWithInput: function (e) {
       // subtract one since pages are 0 indexed
       var pageVal = parseInt($(e.target).val() - 1);
       // enter or tab
@@ -292,15 +312,15 @@ define([
           'event',
           'interaction',
           'results-list-pagination',
-          pageVal
+          pageVal,
         );
       }
     },
 
-    changePerPage: function(e) {
+    changePerPage: function (e) {
       var val = parseInt(e.currentTarget ? e.currentTarget.value : 25);
       val !== this.model.get('perPage') &&
-        this.trigger('pagination:changePerPage', val);
+      this.trigger('pagination:changePerPage', val);
       return false;
     },
   });
