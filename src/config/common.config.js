@@ -114,7 +114,7 @@ define([], function () {
       return options.inverse(this);
     });
     Handlebars.registerHelper('toJSON', function (object) {
-      return JSON.stringify(object);
+      return JSON.stringify(object, null, 2);
     });
     Handlebars.registerHelper('isdefined', function (value) {
       return typeof value !== 'undefined';
@@ -145,6 +145,7 @@ define([], function () {
       or() {
         return Array.prototype.slice.call(arguments, 0, -1).some(Boolean);
       },
+      startsWith: (str, prefix) => typeof str === 'string' && typeof prefix === 'string' ? str.startsWith(prefix) : false,
     });
 
     // array helpers
