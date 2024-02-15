@@ -20,6 +20,7 @@ define([
         links_data: undefined,
         resultsIndex: undefined,
         visible: false,
+        publisher: undefined,
         actionsVisible: true,
         showCheckbox: true,
         isMobileOrTablet: false,
