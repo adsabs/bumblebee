@@ -672,6 +672,7 @@ define([
         var defer = $.Deferred();
         var format = options.format || 'bibtex';
         var storage = app.getObject('AppStorage');
+        var that = this;
 
         app
           .getObject('MasterPageManager')
@@ -683,6 +684,9 @@ define([
             app
               .getWidget('ExportWidget')
               .done(function(widget) {
+                that.route = `#search/${storage
+                .getCurrentQuery()
+                .url()}/export-${format}`;
                 if (format === 'authoraff') {
                   if (options.onlySelected && storage.hasSelectedPapers()) {
                     widget.getAuthorAffForm({
