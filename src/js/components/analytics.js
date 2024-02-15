@@ -100,6 +100,20 @@ define(['underscore', 'jquery'], function (_, $) {
         value2: args[1],
         value3: args[2],
       });
+    } else if (action === 'send') {
+      window.dataLayer.push({
+        event,
+        value1: type,
+        value2: description,
+        value3: args[0],
+      });
+    } else if (action === 'set') {
+      window.dataLayer.push({
+        event: 'config',
+        value1: event,
+        value2: type,
+        value3: description,
+      });
     }
   };
 
