@@ -1,79 +1,71 @@
 <!DOCTYPE html>
 <html>
-  <head>
-    <link rel="preload" href="./styles/css/styles.css" as="style" />
-    <link rel="stylesheet" href="./styles/css/styles.css" />
-    <link rel="preload" href="./libs/require.js" as="script" />
-    <!-- favicon -->
-    <link rel="apple-touch-icon" sizes="180x180" href="./styles/favicon/apple-touch-icon.png" />
-    <link rel="icon" type="image/png" sizes="32x32" href="./styles/favicon/favicon-32x32.png" />
-    <link rel="icon" type="image/png" sizes="16x16" href="./styles/favicon/favicon-16x16.png" />
-    <link rel="manifest" href="./styles/favicon/site.webmanifest" />
-    <link rel="mask-icon" href="./styles/favicon/safari-pinned-tab.svg" color="#5bbad5" />
-    <meta name="apple-mobile-web-app-title" content="NASA ADS" />
-    <meta name="application-name" content="NASA ADS" />
-    <meta name="msapplication-TileColor" content="#ffc40d" />
-    <meta name="theme-color" content="#ffffff" />
-    <!-- /favicon -->
-    <script src="./libs/require.js"></script>
-    <script>
-      require.config({
-        paths: {
-          underscore: [
-            'https://unpkg.com/lodash@2.4.2/dist/lodash.compat.min',
-            'libs/lodash',
-          ],
-          'google-analytics': ['libs/g', 'data:application/javascript,'],
-          analytics: 'js/components/analytics',
-          jquery: [
-            'https://unpkg.com/jquery@2.2.4/dist/jquery.min',
-            'libs/jquery',
-          ],
-        },
-        shim: {
-          'google-analytics': {
-            exports: '__ga__',
-          },
-        },
-        callback: function() {
-          window.GoogleAnalyticsObject = '__ga__';
+<head>
+  <link rel="preload" href="./styles/css/styles.css" as="style"/>
+  <link rel="stylesheet" href="./styles/css/styles.css"/>
+  <link rel="preload" href="./libs/require.js" as="script"/>
+  <!-- favicon -->
+  <link rel="apple-touch-icon" sizes="180x180" href="./styles/favicon/apple-touch-icon.png"/>
+  <link rel="icon" type="image/png" sizes="32x32" href="./styles/favicon/favicon-32x32.png"/>
+  <link rel="icon" type="image/png" sizes="16x16" href="./styles/favicon/favicon-16x16.png"/>
+  <link rel="manifest" href="./styles/favicon/site.webmanifest"/>
+  <link rel="mask-icon" href="./styles/favicon/safari-pinned-tab.svg" color="#5bbad5"/>
+  <meta name="apple-mobile-web-app-title" content="NASA ADS"/>
+  <meta name="application-name" content="NASA ADS"/>
+  <meta name="msapplication-TileColor" content="#ffc40d"/>
+  <meta name="theme-color" content="#ffffff"/>
+  <!-- /favicon -->
+  <script src="./libs/require.js"></script>
+  <!-- Google Tag Manager -->
+  <script>(function (w, d, s, l, i) {
+    w[l] = w[l] || [];
+    w[l].push({
+      'gtm.start':
+        new Date().getTime(), event: 'gtm.js',
+    });
+    var f = d.getElementsByTagName(s)[0],
+      j = d.createElement(s), dl = l != 'dataLayer' ? '&l=' + l : '';
+    j.async = true;
+    j.src =
+      'https://www.googletagmanager.com/gtm.js?id=' + i + dl;
+    f.parentNode.insertBefore(j, f);
+  })(window, document, 'script', 'dataLayer', 'GTM-NT2453N');</script>
+  <!-- End Google Tag Manager -->
+  <script>
+    require.config({
+      paths: {
+        underscore: [
+          'https://unpkg.com/lodash@2.4.2/dist/lodash.compat.min',
+          'libs/lodash',
+        ],
+        analytics: 'js/components/analytics',
+        jquery: [
+          'https://unpkg.com/jquery@2.2.4/dist/jquery.min',
+          'libs/jquery',
+        ],
+      },
+    });
+    require(['analytics'], function (analytics) {
+      analytics('send', 'virtual_page_view', '/404');
+      analytics(
+        'send',
+        'event',
+        'error',
+        'automatic_redirection',
+        '404.html',
+      );
+    });
+  </script>
+</head>
+<body>
+<div
+  style="display: flex; flex-direction: column; min-height: screen; min-width: screen; justify-content: center; align-items: center;"
+>
+  <h1>Bumblebee failed to load. Please try again.</h1>
 
-          require(['config/discovery.vars'], function(config) {
-            setTimeout(function() {
-              require(['google-analytics', 'analytics'], function() {
-                var qa = window[window.GoogleAnalyticsObject];
-                qa.l = Date.now();
-                qa(
-                  'create',
-                  config.googleTrackingCode || '',
-                  config.googleTrackingOptions
-                );
-              });
-            }, 0);
-          });
-        },
-      });
-      require(['analytics'], function(analytics) {
-        analytics('send', 'pageview');
-        analytics(
-          'send',
-          'event',
-          'error',
-          'automatic_redirection',
-          '404.html'
-        );
-      });
-    </script>
-  </head>
-  <body>
-    <div
-      style="display: flex; flex-direction: column; min-height: screen; min-width: screen; justify-content: center; align-items: center;"
-    >
-      <h1>Bumblebee failed to load. Please try again.</h1>
-
-      <h2>
-        <a href="javascript:history.back()">Go Back</a>
-      </h2>
-    </div>
-  </body>
+  <h2>
+    <a href="javascript:history.back()">Go Back</a>
+  </h2>
+</div>
+</body>
 </html>
