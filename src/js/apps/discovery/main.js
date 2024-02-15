@@ -194,10 +194,10 @@ define(['config/discovery.config', 'module'], function(config, module) {
             const url = window.getCanonicalUrl();
             const msg = `
               <p>
-                You are using a proxied version of ADS, we recommend you switch to the regular non-proxied URL: 
+                You are using a proxied version of ADS, we recommend you switch to the regular non-proxied URL:
                 <a href="${url}${location.pathname}" rel="noopener noreferrer">${url}</a></p>
               <p>
-                Configure authenticated access to publisher content via the Library Link Server in your account  
+                Configure authenticated access to publisher content via the Library Link Server in your account
                 <a href="${url}/user/settings/librarylink" rel="noopener noreferrer">preferences</a>.
               </p>
             `;
@@ -216,8 +216,9 @@ define(['config/discovery.config', 'module'], function(config, module) {
 
           if (window.__PAGE_LOAD_TIMESTAMP) {
             var time = new Date() - window.__PAGE_LOAD_TIMESTAMP;
-            analytics('send', {
-              hitType: 'timing',
+            analytics('send',
+              'timing',
+              {
               timingCategory: 'Application',
               timingVar: 'Loaded',
               timingValue: time,
