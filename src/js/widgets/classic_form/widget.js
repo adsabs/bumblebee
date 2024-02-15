@@ -253,7 +253,7 @@ define([
      */
     onChangeToCollections: function(data) {
       Object.keys(data).forEach((key) => {
-        const $el = $(`div[data-field=database] input[name=${key}]`, this.$el);
+        const $el = $(`div[data-field=database] input[name="${key}"]`, this.$el);
         if ($el.length > 0) {
           $el.prop('checked', data[key]);
         }
@@ -266,7 +266,7 @@ define([
      */
     onChangeToProperty: function(data) {
       Object.keys(data).forEach((key) => {
-        const $el = $(`div[data-field=property] input[name=${key}]`, this.$el);
+        const $el = $(`div[data-field=property] input[name="${key}"]`, this.$el);
 
         if ($el.length > 0) {
           $el.prop('checked', data[key]);
