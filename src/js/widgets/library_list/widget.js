@@ -242,7 +242,7 @@ define([
 
     defaultQueryArguments: {
       fl:
-        'title,bibcode,author,keyword,pub,volume,year,links_data,[citations],property,esources,data,pubdate,abstract',
+        'title,bibcode,author,keyword,pub,volume,year,links_data,[citations],property,esources,data,pubdate,abstract,publisher',
       rows: 25,
       start: 0,
       sort: 'date desc',
