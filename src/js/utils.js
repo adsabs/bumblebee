@@ -100,8 +100,9 @@ define([
         return;
       }
       const time = +new Date() - this.time;
-      analytics('send', {
-        hitType: 'timing',
+      analytics('send',
+        'timing',
+        {
         timingCategory: this.timingCategory,
         timingVar: this.timingVar,
         timingLabel: this.timingLabel,
