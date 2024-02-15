@@ -109,15 +109,14 @@ define([
       const query = new ApiQuery(options);
       BaseWidget.prototype.dispatchRequest.call(this, query);
     },
-    emitAnalytics: function (text) {
+    emitAnalytics: function (source, value) {
       analytics(
         'send',
         'event',
         'interaction',
-        'full-text-link-followed',
-        text,
+        `${source === 'ftl' ? 'full-text' : 'data'}-link-followed`,
         {
-          transport: 'beacon',
+          link_followed: value,
         },
       );
     },

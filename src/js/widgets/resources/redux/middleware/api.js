@@ -166,7 +166,7 @@ define(['underscore', 'es6!../modules/api', 'es6!../modules/ui'], function(
   const sendAnalytics = (ctx, { dispatch, getState }) => (next) => (action) => {
     next(action);
     if (action.type === SEND_ANALYTICS) {
-      ctx.emitAnalytics(action.result);
+      ctx.emitAnalytics(action.source, action.result);
     }
   };
 

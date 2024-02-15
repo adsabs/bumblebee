@@ -42,7 +42,7 @@ define([], function() {
   };
 
   // action creators
-  const handleLinkClick = (result) => ({ type: actions.LINK_CLICKED, result });
+  const handleLinkClick = (source, result) => ({type: actions.LINK_CLICKED, source, result});
   const setError = (result) => ({ type: actions.SET_HAS_ERROR, result });
   const reset = () => ({ type: actions.RESET });
 
