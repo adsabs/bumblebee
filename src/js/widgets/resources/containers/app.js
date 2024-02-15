@@ -18,7 +18,7 @@ define([
 
   // dispatch to props
   const mapDispatchToProps = (dispatch) => ({
-    onLinkClick: (link) => dispatch(handleLinkClick(link)),
+    onLinkClick: (source, link) => dispatch(handleLinkClick(source, link)),
   });
 
   return ReactRedux.connect(mapStateToProps, mapDispatchToProps)(App);
