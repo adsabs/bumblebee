@@ -460,7 +460,7 @@ define([
       this.stateModel.set('subView', subView);
     },
 
-    fireAnalytics: _.partial(analytics, 'send', 'event', 'user'),
+    fireAnalytics: _.partial(analytics, 'send', 'event', 'authentication'),
 
     handleUserAnnouncement: function(name, msg) {
       // reset all views and view models
@@ -469,42 +469,50 @@ define([
       switch (name) {
         case User.prototype.USER_SIGNED_IN:
           // will immediately redirect
-          this.fireAnalytics('login', 'status', 1);
+          this.fireAnalytics('login', {
+            auth_result: 'login_success',
+          });
           break;
         case 'login_fail':
           // will also see a relevant alert over the widget
           this.view.showLoginForm(msg);
-          this.fireAnalytics('login', 'status', 0, {
-            message: msg,
+          this.fireAnalytics('login', {
+            auth_result: 'login_failed',
+            auth_error: msg,
           });
           break;
         case 'register_success':
           this.view.showRegisterSuccessView();
-          this.fireAnalytics('login', 'status', 0);
+          this.fireAnalytics('login', 'status', {
+            auth_result: 'register_success',
+          });
           break;
         case 'register_fail':
           // will also see a relevant alert over the widget
           this.view.showRegisterForm(msg);
-          this.fireAnalytics('register', 'status', 0, {
-            message: msg,
-          });
+          this.fireAnalytics('register', {
+            auth_result: 'register_failed',
+            auth_error: msg,
+          })
           break;
         case 'reset_password_1_success':
           this.view.showResetPasswordSuccessView(msg);
-          this.fireAnalytics('reset-password', 'status', 1, {
-            message: msg,
+          this.fireAnalytics('reset-password', {
+            auth_result: 'reset_password_1_success',
           });
           break;
         case 'reset_password_1_fail':
           this.view.showResetPasswordForm1(msg);
-          this.fireAnalytics('reset-password', 'status', 0, {
-            message: msg,
+          this.fireAnalytics('reset-password', {
+            auth_result: 'reset_password_1_failed',
+            auth_error: msg,
           });
           break;
         case 'reset_password_2_fail':
           this.view.showResetPasswordForm2(msg);
-          this.fireAnalytics('reset-password', 'status', 0, {
-            message: msg,
+          this.fireAnalytics('reset-password', {
+            auth_result: 'reset_password_2_failed',
+            auth_error: msg,
           });
           break;
       }
