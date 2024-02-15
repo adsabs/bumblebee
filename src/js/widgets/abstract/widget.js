@@ -273,13 +273,13 @@ define([
     },
 
     emitAnalytics: function(e) {
-      analytics(
-        'send',
-        'event',
-        'interaction',
-        'abs-full-text-link-followed',
-        e.target.dataset.target
-      );
+      // analytics(
+      //   'send',
+      //   'event',
+      //   'interaction',
+      //   'abs-full-text-link-followed',
+      //   e.target.dataset.target
+      // );
     },
 
     copyBibcode() {

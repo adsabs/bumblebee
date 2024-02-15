@@ -62,7 +62,7 @@
 
                             {{#each links.text}}
                             <li>
-                              <a {{#if this.openAccess}} class="s-open-access"{{/if}} href="{{this.url}}"
+                              <a {{#if this.openAccess}} class="s-open-access"{{/if}} href="{{this.url}}" data-ftl="{{this.name}}"
                                 target="_blank" rel="noreferrer noopener" aria-label="open access link">
                               {{this.name}}{{#if (and ../publisher (startsWith this.rawType "PUB_")) }}&nbsp;{{this.type}}{{/if}}
                               </a>
@@ -94,13 +94,13 @@
                 <ul class="hidden list-unstyled list-unstyled link-details s-link-details" role="menu">
 
                     {{#each links.list}}
-                    <li><a href="{{this.url}}">{{this.name}}</a></li>
+                    <li><a href="{{this.url}}" data-quicklink="{{this.name}}">{{this.name}}</a></li>
                     {{/each}}
                 </ul>
 
                 {{else}}
                 <div title="references, citations (none)">
-                    <a href="javascript:void(0)" class="btn-link disabled" aria-disabled="true">
+                    <a href="javascript:void(0)" class="btn-link disabled" aria-disabled="true" data-quick-link="references">
                         <i class="s-list-icon" aria-hidden="true"></i>
                         <span class="sr-only">quick links to lists of references, citations etc</span>
                     </a>
@@ -122,7 +122,7 @@
                 <ul class="hidden list-unstyled link-details s-link-details" role="menu">
 
                     {{#each links.data}}
-                    <li><a {{#if this.openAccess}} class="s-open-access"{{/if}} href="{{this.url}}" target="_blank" rel="noreferrer noopener"
+                    <li><a {{#if this.openAccess}} class="s-open-access"{{/if}} href="{{this.url}}" data-datalink="{{this.name}}" target="_blank" rel="noreferrer noopener"
                         >{{this.name}}</a></li>
                     {{/each}}
                 </ul>
