@@ -272,14 +272,7 @@ define([
       return false;
     },
 
-    emitAnalytics: function(e) {
-      // analytics(
-      //   'send',
-      //   'event',
-      //   'interaction',
-      //   'abs-full-text-link-followed',
-      //   e.target.dataset.target
-      // );
+    emitAnalytics: function (e) {
     },
 
     copyBibcode() {
@@ -362,7 +355,7 @@ define([
 
     defaultQueryArguments: {
       fl:
-        'identifier,[citations],abstract,author,book_author,orcid_pub,orcid_user,orcid_other,bibcode,citation_count,comment,doi,id,keyword,page,property,pub,pub_raw,pubdate,pubnote,read_count,title,volume',
+        'identifier,[citations],abstract,author,book_author,orcid_pub,publisher,orcid_user,orcid_other,bibcode,citation_count,comment,doi,id,keyword,page,property,pub,pub_raw,pubdate,pubnote,read_count,title,volume,database',
       rows: 1,
     },
 

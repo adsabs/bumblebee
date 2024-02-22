@@ -12,7 +12,7 @@
     </div>
 
     <div class="col-xs-4 col-sm-3 s-top-row-col identifier s-identifier">
-        <a href="#abs/{{encodedIdentifier}}/abstract" aria-label="bibcode" class="abs-redirect-link">
+        <a href="#abs/{{encodedIdentifier}}/abstract" data-item-index="{{indexToShow}}" aria-label="bibcode" class="abs-redirect-link">
             {{identifier}}
         </a>
     </div>
@@ -148,14 +148,14 @@
     <div class="col-xs-10 col-xs-offset-1">
         {{#if isOrcidWidget}}
             {{#if encodedIdentifier}}
-                <a href="#abs/{{encodedIdentifier}}/abstract" class="abs-redirect-link">
+                <a href="#abs/{{encodedIdentifier}}/abstract" data-item-index="{{indexToShow}}" class="abs-redirect-link">
                     <h3 class="s-results-title">{{{title}}}</h3>
                 </a>
             {{else}}
                 <h3 class="s-results-title">{{{title}}}</h3>
             {{/if}}
         {{else}}
-            <a href="#abs/{{encodedIdentifier}}/abstract" class="abs-redirect-link">
+            <a href="#abs/{{encodedIdentifier}}/abstract" data-item-index="{{indexToShow}}" class="abs-redirect-link">
                 <h3 class="s-results-title">{{{title}}}</h3>
             </a>
         {{/if}}

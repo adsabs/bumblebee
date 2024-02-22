@@ -35,6 +35,8 @@ define([
   var APP_TITLE = 'NASA/ADS';
   var TITLE_SEP = ' - ';
 
+  const FIELDS_TO_SEND = ['bibcode', 'database', 'bibstem', 'property', 'resultsIndex'];
+
   // This function is used to hash the user id before sending it to Analytics
   const digestMessage = function (message) {
     const crypto = window.crypto || window.msCrypto;
@@ -87,9 +89,65 @@ define([
       }
     },
 
+    _debouncedAnalyticsCall: _.debounce(function (...args) {
+      analytics.push(...args)
+    }, 500),
+
     _onCustomEvent: function (ev, data) {
-      if (ev === 'update-document-title') {
-        this._updateDocumentTitle(data);
+
+      switch (ev) {
+        case 'update-document-title':
+          this._updateDocumentTitle(data);
+          break;
+        case 'latest-abstract-data':
+          this._debouncedAnalyticsCall({
+            event: 'view_item',
+            items: [
+              {
+                item_id: data.bibcode,
+                item_name: data.title,
+                ...data.database.slice(1).reduce(
+                  (acc, cat, idx) => ({
+                    ...acc,
+                    [`item_category${idx + 1}`]: cat,
+                  }),
+                  {item_category: data.database[0]},
+                ),
+                index: data.resultsIndex,
+                property: data.property,
+                refereed: data.property.includes('REFEREED'),
+              },
+            ],
+          });
+          break;
+        case 'search-page-results':
+          // clear items array on the data layer
+          this._debouncedAnalyticsCall({
+            event: 'view_item_list',
+            item_list_id: 'search_results',
+            item_list_name: 'Search Results',
+            items: data.docs.map((doc) => {
+              return {
+                item_id: doc.identifier,
+                item_name: doc.title[0],
+                ...doc.database.slice(1).reduce(
+                  (acc, cat, idx) => ({
+                    ...acc,
+                    [`item_category${idx + 1}`]: cat,
+                  }),
+                  {item_category: doc.database[0]},
+                ),
+                item_list_id: 'search_results',
+                item_list_name: 'Search Results',
+                item_variant: 'search_result_item',
+                index: doc.resultsIndex,
+                property: doc.property,
+                refereed: doc.property.includes('REFEREED'),
+              };
+            }),
+          });
+          break;
+        default: // do nothing
       }
     },
 
@@ -102,6 +160,7 @@ define([
     },
 
     _setPageAndEmitEvent: _.debounce(function (route, pageName) {
+      analytics.reset();
       analytics('send', 'virtual_page_view', {
         page_name: pageName,
         clean_route: this._cleanRoute(route),

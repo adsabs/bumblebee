@@ -85,6 +85,7 @@ define(['underscore', 'jquery'], function (_, $) {
   const Analytics = function (action, event, type, description, ...args) {
     adsLogger.apply(null, _.rest(arguments, 3));
 
+
     // if the action is send and the event is event, then we want to send the event to the dataLayer
     if (
       action === 'send' &&
@@ -116,6 +117,13 @@ define(['underscore', 'jquery'], function (_, $) {
       });
     }
   };
+
+  // expose a function to send custom events
+  Analytics.push = (data) => Array.isArray(window.dataLayer) && window.dataLayer.push(data);
+  Analytics.reset = () => Array.isArray(window.dataLayer) && (window.dataLayer.push(function () {
+    this.reset();
+  }));
+
 
   return Analytics;
 });
