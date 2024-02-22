@@ -87,10 +87,8 @@ define(['underscore', 'jquery'], function (_, $) {
 
 
     // if the action is send and the event is event, then we want to send the event to the dataLayer
-    if (
-      action === 'send' &&
-      event === 'event' &&
-      Array.isArray(window.dataLayer)
+    if (Array.isArray(window.dataLayer) &&
+      action === 'send' && event === 'event'
     ) {
       // some events are 'interaction' or 'error', so add that to the event name
       window.dataLayer.push({
@@ -101,14 +99,14 @@ define(['underscore', 'jquery'], function (_, $) {
         value2: args[1],
         value3: args[2],
       });
-    } else if (action === 'send') {
+    } else if (Array.isArray(window.dataLayer) && action === 'send') {
       window.dataLayer.push({
         event,
         value1: type,
         value2: description,
         value3: args[0],
       });
-    } else if (action === 'set') {
+    } else if (Array.isArray(window.dataLayer) && action === 'set') {
       window.dataLayer.push({
         event: 'config',
         value1: event,

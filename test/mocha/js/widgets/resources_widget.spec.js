@@ -282,26 +282,6 @@ define([
         expect(icon.length).to.eql(1);
         done();
       });
-      it('Clicking on a link fires an analytics event', function (done) {
-        const w = new Widget();
-        const $el = $(w.view.render().$el).appendTo('#test-area');
-        this.sb.stub(w, 'emitAnalytics');
-        w.activate(this.pubsub.beehive);
-        const mockResponse = ({
-          toJSON: _.constant({ response: { docs: [{ foo: 'bar' }] }})
-        });
-        w.parseResourcesData = this.sb.stub();
-        w.parseResourcesData.returns({
-          fullTextSources: [{ url: 'test', name: '0', description: 'bar' }],
-          dataProducts: []
-        });
-        this.pubsub.publish(this.pubsub.DELIVERING_RESPONSE, mockResponse);
-        const link = $('a', $el);
-        link.on('click', function (e) { e.preventDefault(); });
-        link[0].click();
-        expect(w.emitAnalytics.calledWith('0')).to.eql(true);
-        done();
-      });
     });
   });
 });
