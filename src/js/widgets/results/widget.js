@@ -381,12 +381,13 @@ define([
         console.warn(e.message);
       }
 
+      const pubsub = this.getPubSub();
+
       // if the latest request equals the total perPage, then we're done, send off event
       if (
         this.pagination &&
         this.pagination.perPage === +params.start + +params.rows
       ) {
-        var pubsub = this.getPubSub();
         pubsub.publish(
           pubsub.CUSTOM_EVENT,
           'timing:results-loaded',
@@ -395,6 +396,11 @@ define([
       }
 
       this.model.set('loading', false);
+
+      pubsub.publish(pubsub.CUSTOM_EVENT, 'search-page-results', {
+        docs,
+      });
+
       return docs;
     },
 
