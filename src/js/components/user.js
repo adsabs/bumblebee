@@ -410,7 +410,11 @@ define([
 
     deleteAccount: function() {
       var that = this;
-      return this.postData('DELETE', { csrf: true }).done(function() {
+      return this.composeRequest({
+        target: 'USER',
+        method: 'DELETE',
+        data: {csrf: true},
+      }).done(function () {
         that.getApiAccess({ reconnect: true }).done(function() {
           that.completeLogOut();
         });
