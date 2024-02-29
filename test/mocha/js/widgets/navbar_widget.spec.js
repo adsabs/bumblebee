@@ -383,7 +383,7 @@ define([
       // $('form.feedback-form').submit();
       // console.log(requestStub);
       // expect(requestStub.args[0][0].toJSON().target).to.eql(
-      //   'feedback/userfeedback'
+      //   'feedback'
       // );
       // expect(requestStub.args[0][0].toJSON().options.dataType).to.eql('json');
       //

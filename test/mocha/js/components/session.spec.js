@@ -68,29 +68,38 @@ define([
       csrfManager.resolvePromiseWithNewKey();
 
       expect(requestStub.args[1][0]).to.be.instanceof(ApiRequest);
-      expect(requestStub.args[1][0].toJSON().target).to.eql('accounts/logout');
+      expect(requestStub.args[1][0].toJSON().target).to.eql(
+        'accounts/user/logout',
+      );
       expect(requestStub.args[1][0].toJSON().options.type).to.eql('POST');
       expect(requestStub.args[1][0].toJSON().options.done).to.eql(
         s.logoutSuccess
       );
 
-      s.register({
+      const registerPayload = {
         email: 'goo@goo.com',
         password1: 'foo',
         password2: 'foo',
         'g-recaptcha-response': 'boo',
-      });
+        given_name: 'foo',
+        family_name: 'bar',
+      };
+
+      s.register(registerPayload);
+
+      const stringify = (obj) => JSON.stringify(obj, Object.keys(obj).sort());
 
       csrfManager.resolvePromiseWithNewKey();
 
       expect(requestStub.args[2][0]).to.be.instanceof(ApiRequest);
       expect(requestStub.args[2][0].toJSON().target).to.eql(
-        'accounts/register'
+        'accounts/user',
       );
       expect(requestStub.args[2][0].toJSON().options.type).to.eql('POST');
-      //test version just uses string  "location.origin", real version will use the actual origin
-      expect(requestStub.args[2][0].toJSON().options.data).to.eql(
-        '{"email":"goo@goo.com","password1":"foo","password2":"foo","g-recaptcha-response":"boo","verify_url":"location.origin/#user/account/verify/register"}'
+      expect(
+        stringify(JSON.parse(requestStub.args[2][0].toJSON().options.data)),
+      ).to.eql(
+        stringify(registerPayload),
       );
       expect(requestStub.args[2][0].toJSON().options.done).to.eql(
         s.registerSuccess
@@ -99,17 +108,19 @@ define([
         s.registerFail
       );
 
-      s.resetPassword1({ email: 'goo@goo.com', 'g-recaptcha-response': 'boo' });
+      const resetPasswordPayload = {email: 'goo@goo.com', 'g-recaptcha-response': 'boo'}
+      s.resetPassword1(resetPasswordPayload);
 
       csrfManager.resolvePromiseWithNewKey();
 
       expect(requestStub.args[3][0]).to.be.instanceof(ApiRequest);
       expect(requestStub.args[3][0].toJSON().target).to.eql(
-        'accounts/reset-password/goo@goo.com'
+        'accounts/user/reset-password/goo@goo.com',
       );
       expect(requestStub.args[3][0].toJSON().options.type).to.eql('POST');
-      expect(requestStub.args[3][0].toJSON().options.data).to.eql(
-        '{"g-recaptcha-response":"boo","reset_url":"location.origin/#user/account/verify/reset-password"}'
+      expect(
+        requestStub.args[3][0].toJSON().options.data).to.eql(
+        '{"g-recaptcha-response":"boo"}',
       );
       expect(requestStub.args[3][0].toJSON().options.done).to.eql(
         s.resetPassword1Success
@@ -128,7 +139,7 @@ define([
       expect(requestStub.args[4][0]).to.be.instanceof(ApiRequest);
       //test version just uses string  "location.origin", real version will use the actual origin
       expect(requestStub.args[4][0].toJSON().target).to.eql(
-        'accounts/reset-password/fakeToken'
+        'accounts/user/reset-password/fakeToken',
       );
       expect(requestStub.args[4][0].toJSON().options.type).to.eql('PUT');
       expect(requestStub.args[4][0].toJSON().options.data).to.eql(
