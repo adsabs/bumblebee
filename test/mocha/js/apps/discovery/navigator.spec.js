@@ -350,7 +350,7 @@ define([
 
       //3. reset password is slightly more complicated, should redirect to part 2 of the form in authentication widget
       p = navigator.get('user-action').execute('user-action', {subView: "reset-password", token: "fakeToken3"});
-      expect(fakeApi.request.args[0][0].toJSON().target).to.eql("accounts/reset-password/fakeToken3");
+      expect(fakeApi.request.args[0][0].toJSON().target).to.eql("accounts/user/reset-password/fakeToken3");
       fakeApi.request.args[0][0].get("options").done.call(navigator);
 
       //store the change token for re-submittal after user fills out second form
