@@ -95,6 +95,8 @@ define([
 
   RegisterModel = FormModel.extend({
     validation: {
+      given_name: {},
+      family_name: {},
       email: {
         required: true,
         pattern: 'email',
@@ -129,6 +131,12 @@ define([
     className: 'register s-register',
 
     bindings: {
+      'input[name=given_name]': {
+        observe: 'given_name',
+      },
+      'input[name=family_name]': {
+        observe: 'family_name',
+      },
       'input[name=email]': {
         observe: 'email',
         setOptions: {
@@ -493,7 +501,7 @@ define([
           this.fireAnalytics('register', {
             auth_result: 'register_failed',
             auth_error: msg,
-          })
+          });
           break;
         case 'reset_password_1_success':
           this.view.showResetPasswordSuccessView(msg);
@@ -528,14 +536,7 @@ define([
       const session = this.getBeeHive().getObject('Session');
       switch (model.target) {
         case 'REGISTER':
-          session.register(
-            _.extend({}, model.toJSON(), {
-              verify_url:
-                location.origin +
-                '/#user/account/verify/' +
-                ApiTargets.REGISTER,
-            })
-          );
+          session.register(model.toJSON());
           break;
         case 'USER':
           session.login(model.toJSON()).done(() => {

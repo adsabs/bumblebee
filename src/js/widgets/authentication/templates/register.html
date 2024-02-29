@@ -3,23 +3,47 @@
   </legend>
   <form class="panel-body">
     <div class="form-group has-feedback">
-      <label for="email" class="control-label"> Email address </label>
+      <label for="given_name" class="control-label">
+        First Name
+      </label>
       <span class="help-block no-show s-help-block"></span>
-      <input type="email" class="form-control" name="email" id="email" placeholder="Enter email"/>
-
-    </div>
-    <div class="form-group has-feedback">
-      <label for="password1" class="control-label"> Password <small class="s-user-help"> at least 5 characters, with at
-        least 1 number and 1 letter</small> </label>
-      <span class="help-block no-show s-help-block"></span>
-      <input type="password" class="form-control" name="password1" id="password1" placeholder="Password"/>
-
+      <input type="text" class="form-control" name="given_name" id="given_name" placeholder="Arthur"/>
     </div>
 
     <div class="form-group has-feedback">
-      <label for="password2" class="control-label"> Re-enter Password </label>
+      <label for="family_name" class="control-label">
+        Last Name
+      </label>
       <span class="help-block no-show s-help-block"></span>
-      <input type="password" class="form-control" name="password2" id="password2" placeholder="Re-enter password"/>
+      <input type="text" class="form-control" name="family_name" id="family_name" placeholder="Dent"/>
+    </div>
+
+    <div class="form-group has-feedback">
+      <label for="email" class="control-label">
+        Email address
+        <span style="color:red">*</span>
+      </label>
+      <span class="help-block no-show s-help-block"></span>
+      <input type="email" class="form-control" name="email" id="email" placeholder="me@example.com"/>
+    </div>
+
+    <div class="form-group has-feedback">
+      <label for="password1" class="control-label">
+        Password
+        <span style="color:red">*</span>
+        <small class="s-user-help"> at least 5 characters, with at least 1 number and 1 letter</small>
+      </label>
+      <span class="help-block no-show s-help-block"></span>
+      <input type="password" class="form-control" name="password1" id="password1" placeholder="*******"/>
+    </div>
+
+    <div class="form-group has-feedback">
+      <label for="password2" class="control-label">
+        Re-enter Password
+        <span style="color:red">*</span>
+      </label>
+      <span class="help-block no-show s-help-block"></span>
+      <input type="password" class="form-control" name="password2" id="password2" placeholder="*******"/>
     </div>
 
     <div class="form-group">
