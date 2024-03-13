@@ -85,7 +85,7 @@ Basically, for ADS it goes like this:
   response is:
 
 ```
-  {"access_token":"ea12a66a-2a07-49fc-b0cb-9d0967c484c8","token_type":"bearer","expires_in":3599,"scope":"/orcid-works/create /orcid-profile/read-limited /orcid-works/update","orcid":"0000-0001-8178-9506","name":"Roman Chyla"}
+  {"access_token":"ea12a66a-2a07-49fc-b0cb-9d0967c484c8","token_type":"Bearer","expires_in":3599,"scope":"/orcid-works/create /orcid-profile/read-limited /orcid-works/update","orcid":"0000-0001-8178-9506","name":"Roman Chyla"}
 ```
 
   then with the access_token, we can start doing stuff:
@@ -100,33 +100,33 @@ Alternative, obtain permanent access token (this can be good only for testing, i
 curl -i -L -H 'Accept: application/json' --data 'client_id=APP-P5ANJTQRRTMA6GXZ&client_secret=989e54c8-7093-4128-935f-30c19ed9158c&grant_type=client_credentials&scope=/orcid-profile/read-limited%20/orcid-works/create%20/orcid-works/update' 'https://api.sandbox.orcid.org/oauth/token'
 
 ```
-{"access_token":"8f314d8d-928f-4df1-b276-5be866eac3b2","token_type":"bearer","expires_in":3599,"scope":"/activities/read-limited /activities/update /affiliations/create /affiliations/read-limited /affiliations/update /authenticate /funding/create /funding/read-limited /funding/update /orcid-bio/external-identifiers/create /orcid-bio/read-limited /orcid-bio/update /orcid-profile/read-limited /orcid-works/create /orcid-works/read-limited /orcid-works/update /person/read-limited /person/update /read-public","orcid":null}
+{"access_token":"8f314d8d-928f-4df1-b276-5be866eac3b2","token_type":"Bearer","expires_in":3599,"scope":"/activities/read-limited /activities/update /affiliations/create /affiliations/read-limited /affiliations/update /authenticate /funding/create /funding/read-limited /funding/update /orcid-bio/external-identifiers/create /orcid-bio/read-limited /orcid-bio/update /orcid-profile/read-limited /orcid-works/create /orcid-works/read-limited /orcid-works/update /person/read-limited /person/update /read-public","orcid":null}
 ```
 
 ```
 {
-  "message-version": "1.2", 
+  "message-version": "1.2",
   "orcid-profile": {
-    "group-type": null, 
-    "client-type": null, 
+    "group-type": null,
+    "client-type": null,
     "orcid-identifier": {
-      "path": "0000-0001-8178-9506", 
-      "host": "sandbox.orcid.org", 
-      "uri": "http://sandbox.orcid.org/0000-0001-8178-9506", 
+      "path": "0000-0001-8178-9506",
+      "host": "sandbox.orcid.org",
+      "uri": "http://sandbox.orcid.org/0000-0001-8178-9506",
       "value": null
-    }, 
+    },
     "orcid-activities": {
-      "affiliations": null, 
+      "affiliations": null,
       "orcid-works": {
-        "scope": null, 
+        "scope": null,
         "orcid-work": [
           {
             "work-title": {
-              "subtitle": null, 
+              "subtitle": null,
               "title": {
                 "value": "ADS 3.0"
               }
-            }, 
+            },
             "work-external-identifiers": {
               "work-external-identifier": [
                  {
@@ -137,53 +137,53 @@ curl -i -L -H 'Accept: application/json' --data 'client_id=APP-P5ANJTQRRTMA6GXZ&
             },
             "last-modified-date": {
               "value": 1422645668284
-            }, 
+            },
             "created-date": {
               "value": 1422645668284
-            }, 
-            "visibility": "PUBLIC", 
-            "work-type": "JOURNAL_ARTICLE", 
+            },
+            "visibility": "PUBLIC",
+            "work-type": "JOURNAL_ARTICLE",
             "publication-date": {
               "month": {
                 "value": "01"
-              }, 
+              },
               "day": {
                 "value": "01"
-              }, 
-              "media-type": null, 
+              },
+              "media-type": null,
               "year": {
                 "value": "2015"
               }
-            }, 
+            },
             "journal-title": {
               "value": "foo"
-            }, 
+            },
             "url": null
           }
         ]
       }
-    }, 
-    "orcid": null, 
-    "type": "USER", 
+    },
+    "orcid": null,
+    "type": "USER",
     "orcid-preferences": {
       "locale": "EN"
-    }, 
+    },
     "orcid-history": {
       "last-modified-date": {
         "value": 1424114629494
-      }, 
-      "creation-method": "DIRECT", 
+      },
+      "creation-method": "DIRECT",
       "submission-date": {
         "value": 1422645321288
-      }, 
+      },
       "verified-primary-email": {
         "value": false
-      }, 
+      },
       "verified-email": {
         "value": false
-      }, 
-      "visibility": null, 
-      "source": null, 
+      },
+      "visibility": null,
+      "source": null,
       "claimed": {
         "value": true
       }
@@ -200,7 +200,7 @@ curl -i -L -H 'Accept: application/json' --data 'client_id=APP-P5ANJTQRRTMA6GXZ&
 <message-version>1.2</message-version>
 <orcid-profile>
   <orcid-activities>
-    <orcid-works> 
+    <orcid-works>
       <orcid-work>
         <work-title>
           <title>API Test Title</title>

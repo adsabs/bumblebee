@@ -168,7 +168,7 @@ define([
               expect(apiRequest.get('query').get('code')).to.eql(['secret']);
               return {
                 access_token: '4274a0f1-36a1-4152-9a6b-4246f166bafe',
-                token_type: 'bearer',
+                token_type: 'Bearer',
                 expires_in: 3599,
                 scope:
                   '/orcid-works/create /orcid-profile/read-limited /orcid-works/update',
@@ -213,7 +213,7 @@ define([
         r.done(function(res) {
           expect(res).to.eql({
             access_token: '4274a0f1-36a1-4152-9a6b-4246f166bafe',
-            token_type: 'bearer',
+            token_type: 'Bearer',
             expires_in: 3599,
             scope:
               '/orcid-works/create /orcid-profile/read-limited /orcid-works/update',
