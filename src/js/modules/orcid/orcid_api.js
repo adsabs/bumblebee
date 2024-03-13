@@ -306,7 +306,7 @@ define([
      * Using access code retrieve the access_token from ORCID
      *
      * Example response:
-     *  {"access_token":"4274a0f1-36a1-4152-9a6b-4246f166bafe","token_type":"bearer","ex
+     *  {"access_token":"4274a0f1-36a1-4152-9a6b-4246f166bafe","token_type":"Bearer","ex
      *  pires_in":3599,"scope":"/orcid-works/create /orcid-profile/read-limited /orcid-w
      *  orks/update","orcid":"0000-0001-8178-9506","name":"Roman Chyla"}
      *
