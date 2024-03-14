@@ -65,7 +65,7 @@ define([
 
       this.sendRequestWithNewCSRF(function(csrfToken) {
         var request = new ApiRequest({
-          target: ApiTargets.USER,
+          target: ApiTargets.LOGIN,
           query: new ApiQuery({}),
           options: {
             type: 'POST',
