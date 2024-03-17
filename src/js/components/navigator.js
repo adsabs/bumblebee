@@ -35,8 +35,6 @@ define([
   var APP_TITLE = 'NASA/ADS';
   var TITLE_SEP = ' - ';
 
-  const FIELDS_TO_SEND = ['bibcode', 'database', 'bibstem', 'property', 'resultsIndex'];
-
   // This function is used to hash the user id before sending it to Analytics
   const digestMessage = function (message) {
     const crypto = window.crypto || window.msCrypto;
@@ -94,32 +92,46 @@ define([
     }, 500),
 
     _onCustomEvent: function (ev, data) {
+      console.log('Custom Event', ev, data);
 
       switch (ev) {
         case 'update-document-title':
           this._updateDocumentTitle(data);
           break;
-        case 'latest-abstract-data':
-          this._debouncedAnalyticsCall({
-            event: 'view_item',
-            items: [
-              {
-                item_id: data.bibcode,
-                item_name: data.title,
-                ...data.database.slice(1).reduce(
-                  (acc, cat, idx) => ({
-                    ...acc,
-                    [`item_category${idx + 1}`]: cat,
-                  }),
-                  {item_category: data.database[0]},
-                ),
-                index: data.resultsIndex,
-                property: data.property,
-                refereed: data.property.includes('REFEREED'),
-              },
-            ],
-          });
+        case 'latest-abstract-data': {
+          if (Array.isArray(data.database)) {
+            analytics.set('items', undefined);
+            data.database.forEach((database) => {
+              // do not debounce here, since we want multiple
+              analytics.push({
+                event: 'view_item',
+                items: [
+                  {
+                    item_id: data.bibcode,
+                    item_name: data.title,
+                    item_category: database,
+                    index: data.resultsIndex,
+                    refereed: data.property.includes('REFEREED'),
+                  },
+                ],
+              });
+            });
+          } else {
+            this._debouncedAnalyticsCall({
+              event: 'view_item',
+              items: [
+                {
+                  item_id: data.bibcode,
+                  item_name: data.title,
+                  item_category: '(no collection)',
+                  index: data.resultsIndex,
+                  refereed: data.property.includes('REFEREED'),
+                },
+              ],
+            });
+          }
           break;
+        }
         case 'search-page-results':
           // clear items array on the data layer
           this._debouncedAnalyticsCall({
@@ -141,7 +153,6 @@ define([
                 item_list_name: 'Search Results',
                 item_variant: 'search_result_item',
                 index: doc.resultsIndex,
-                property: doc.property,
                 refereed: doc.property.includes('REFEREED'),
               };
             }),
