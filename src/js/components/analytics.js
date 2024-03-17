@@ -82,10 +82,58 @@ define(['underscore', 'jquery'], function (_, $) {
     }
   }
 
+  const CACHE_TIMEOUT = 300;
+  /**
+   * Simple debouncing mechanism with caching
+   * this will store stringified version of the incoming events and provide a way to
+   * check if the event has recently been cached.  With a short rolling timer to keep the timeout short to hopefully
+   * only target duplicate calls.
+   */
+  class AnalyticsCacher {
+    constructor() {
+      this.timer = null;
+      this.cache = new Set();
+    }
+
+    stringify(args) {
+      return JSON.stringify(args, function (key, value) {
+
+        // filter out this cache-buster id added by GTM
+        if (key === 'gtm.uniqueEventId') {
+          return undefined;
+        }
+        return value;
+      });
+    }
+
+    add(...args) {
+      this._resetTimeout();
+      return this.cache.add(this.stringify(args));
+    }
+
+    has(...args) {
+      return this.cache.has(this.stringify(args));
+    }
+
+    _resetTimeout() {
+      clearTimeout(this.timer);
+      this.timer = setTimeout(this._clear.bind(this), CACHE_TIMEOUT);
+    }
+
+    _clear() {
+      this.cache.clear();
+    }
+  }
+
+  const cacher = new AnalyticsCacher();
   const Analytics = function (action, event, type, description, ...args) {
+    if (cacher.has(arguments)) {
+      return;
+    }
+
+    cacher.add(arguments);
+
     adsLogger.apply(null, _.rest(arguments, 3));
-
-
     // if the action is send and the event is event, then we want to send the event to the dataLayer
     if (Array.isArray(window.dataLayer) &&
       action === 'send' && event === 'event'
@@ -116,12 +164,60 @@ define(['underscore', 'jquery'], function (_, $) {
     }
   };
 
-  // expose a function to send custom events
-  Analytics.push = (data) => Array.isArray(window.dataLayer) && window.dataLayer.push(data);
-  Analytics.reset = () => Array.isArray(window.dataLayer) && (window.dataLayer.push(function () {
-    this.reset();
-  }));
+  /**
+   * Get the datalayer for sending events to
+   * @returns {*|*[]}
+   */
+  Analytics.getDL = () => {
+    if (window.dataLayer && Array.isArray(window.dataLayer)) {
+      return window.dataLayer;
+    }
+    return [];
+  }
 
+  /**
+   * Push a new object to the datalayer
+   * @param {Object} data
+   */
+  Analytics.push = (data) => {
+    if (cacher.has(data)) {
+      return;
+    }
+    cacher.add(data);
+    Analytics.getDL().push(data);
+  }
+
+  /**
+   * Reset the datalayer
+   */
+  Analytics.reset = () => {
+    Analytics.getDL().push(function() {
+      this.reset();
+    });
+  }
+
+  /**
+   * set a value on the datalayer
+   * @param {string} property
+   * @param {unknown} value
+   */
+  Analytics.set = (property, value) => {
+    Analytics.getDL().push(function() {
+      this.set(property, value);
+    });
+  }
+
+  /**
+   * get a value on the datalayer
+   * @param {string} property
+   */
+  Analytics.get = (property) => {
+    let value;
+    Analytics.getDL().push(function() {
+      value = this.get(property);
+    });
+    return value;
+  }
 
   return Analytics;
 });
