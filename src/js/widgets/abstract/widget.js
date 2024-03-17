@@ -325,6 +325,7 @@ define([
       this._docs = {};
       this.maxAuthors = MAX_AUTHORS;
       this.isFetchingAff = false;
+      this.listenTo(this.model, 'change:abstract', this._onAbstractLoaded);
     },
 
     activate: function(beehive) {
@@ -430,11 +431,6 @@ define([
           ps.CUSTOM_EVENT,
           'update-document-title',
           this._docs[bibcode].title
-        );
-        ps.publish(
-          ps.CUSTOM_EVENT,
-          'latest-abstract-data',
-          this._docs[bibcode]
         );
       }
       this.updateState(this.STATES.IDLE);
@@ -558,6 +554,14 @@ define([
         );
       } else {
         cb();
+      }
+    },
+
+    _onAbstractLoaded: function() {
+      const doc = this.model.toJSON();
+      const ps = this.getPubSub();
+      if (ps && doc) {
+        ps.publish(ps.CUSTOM_EVENT, 'latest-abstract-data', doc);
       }
     },
 
