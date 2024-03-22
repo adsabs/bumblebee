@@ -169,9 +169,9 @@ define([
   var LogInModel;
 
   LogInModel = FormModel.extend({
-    skipReset: ['username'],
+    skipReset: ['email'],
     validation: {
-      username: {
+      email: {
         required: true,
         pattern: 'email',
         msg: '(A valid email is required)',
@@ -192,8 +192,8 @@ define([
     className: 'log-in s-log-in',
 
     bindings: {
-      'input[name=username]': {
-        observe: 'username',
+      'input[name=email]': {
+        observe: 'email',
         setOptions: {
           validate: true,
         },

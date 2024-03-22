@@ -298,7 +298,7 @@ define([
       expect(p.state()).to.eql('resolved');
       expect(fakePubSub.publish.args[0][2].toJSON()).to.eql({
         "code": 0,
-        "msg": "<p>You have been successfully registered with the username</p> <p><b>foo</b></p>"
+        "msg": "<p>You have been successfully registered with the email</p> <p><b>foo</b></p>"
       })
 
 

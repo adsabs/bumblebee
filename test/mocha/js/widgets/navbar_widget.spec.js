@@ -209,7 +209,7 @@ define([
           .replace(/\W+/g, ' ')
       ).to.eql('You are signed in as bumblebee');
 
-      // lack of username indicates user is logged out
+      // lack of email indicates user is logged out
       u.setUser(undefined);
 
       minsub.publish(

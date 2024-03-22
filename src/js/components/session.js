@@ -69,7 +69,7 @@ define([
           query: new ApiQuery({}),
           options: {
             type: 'POST',
-            data: JSON.stringify(data),
+            data: JSON.stringify(_.pick(data, 'email', 'password')),
             contentType: 'application/json',
             headers: { 'X-CSRFToken': csrfToken },
             done: function() {

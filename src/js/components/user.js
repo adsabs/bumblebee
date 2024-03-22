@@ -385,8 +385,8 @@ define([
     },
 
     /* set user */
-    setUser: function(username) {
-      this.userModel.set('user', username);
+    setUser: function(email) {
+      this.userModel.set('user', email);
       if (this.isLoggedIn()) {
         this.completeLogIn();
       }
@@ -538,7 +538,7 @@ define([
     },
 
     hardenedInterface: {
-      setUser: 'set username into user',
+      setUser: 'set email into user',
       isLoggedIn: 'whether the user is logged in',
       getUserName: "get the user's email before the @",
       setLocalStorage: "sets an object in to user's local storage",
