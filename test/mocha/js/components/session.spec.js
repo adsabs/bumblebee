@@ -49,7 +49,7 @@ define([
       s.activate(minsub.beehive);
 
       s.login({
-        username: 'goo',
+        email: 'goo',
         password: 'foo',
         'g-recaptcha-response': 'boo',
       });
@@ -60,7 +60,7 @@ define([
       expect(requestStub.args[0][0].toJSON().target).to.eql('accounts/user/login');
       expect(requestStub.args[0][0].toJSON().options.type).to.eql('POST');
       expect(requestStub.args[0][0].toJSON().options.data).to.eql(
-        '{"username":"goo","password":"foo","g-recaptcha-response":"boo"}'
+        '{"email":"goo","password":"foo","g-recaptcha-response":"boo"}'
       );
 
       s.logout();

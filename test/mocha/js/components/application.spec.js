@@ -180,7 +180,7 @@ define([
         expect(apiRequest.url()).to.contain('/accounts/bootstrap');
         options.done(
           {
-            "username": "user@gmail.com",
+            "email": "user@gmail.com",
             "scopes": ["user"],
             "access_token": "ap0MkGjroS1zzijLlk9fV2UKXdRDo5nzUueTNaog",
             "token_type": "Bearer",
@@ -198,7 +198,7 @@ define([
       .done(function () {
         expect(spy.called).to.eql(true);
         expect(api.access_token).to.eql('Bearer ap0MkGjroS1zzijLlk9fV2UKXdRDo5nzUueTNaog');
-        //every time onbootstrap is called, update the user object with username/undefined to show that user is anonymous
+        //every time onbootstrap is called, update the user object with email/undefined to show that user is anonymous
         expect(fakeUser.setUser.args[0]).to.eql(["user@gmail.com"]);
         done();
       })

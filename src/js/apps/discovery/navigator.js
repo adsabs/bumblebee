@@ -1031,7 +1031,7 @@ define([
                   .execute()
                   .then(function() {
                     var msg =
-                      '<p>You have been successfully registered with the username</p> <p><b>' +
+                      '<p>You have been successfully registered with the email</p> <p><b>' +
                       reply.email +
                       '</b></p>';
                     self.getPubSub().publish(
