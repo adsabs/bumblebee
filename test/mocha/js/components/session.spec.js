@@ -29,7 +29,7 @@ define([
     it('has an explicit method for every action (login, logout, register, etc) a user might need to do before he/she is authenticated', function() {
       var s = new Session({ test: true });
       var minsub = new (MinSub.extend({
-        request: function(apiRequest) {},
+        request: function(apiRequest) { },
       }))({ verbose: false });
 
       var api = new Api();
@@ -51,7 +51,6 @@ define([
       s.login({
         email: 'goo',
         password: 'foo',
-        'g-recaptcha-response': 'boo',
       });
 
       csrfManager.resolvePromiseWithNewKey();
@@ -60,7 +59,7 @@ define([
       expect(requestStub.args[0][0].toJSON().target).to.eql('accounts/user/login');
       expect(requestStub.args[0][0].toJSON().options.type).to.eql('POST');
       expect(requestStub.args[0][0].toJSON().options.data).to.eql(
-        '{"email":"goo","password":"foo","g-recaptcha-response":"boo"}'
+        '{"email":"goo","password":"foo"}'
       );
 
       s.logout();
@@ -108,7 +107,7 @@ define([
         s.registerFail
       );
 
-      const resetPasswordPayload = {email: 'goo@goo.com', 'g-recaptcha-response': 'boo'}
+      const resetPasswordPayload = { email: 'goo@goo.com', 'g-recaptcha-response': 'boo' }
       s.resetPassword1(resetPasswordPayload);
 
       csrfManager.resolvePromiseWithNewKey();
@@ -120,8 +119,8 @@ define([
       expect(requestStub.args[3][0].toJSON().options.type).to.eql('POST');
       expect(
         requestStub.args[3][0].toJSON().options.data).to.eql(
-        '{"g-recaptcha-response":"boo"}',
-      );
+          '{"g-recaptcha-response":"boo"}',
+        );
       expect(requestStub.args[3][0].toJSON().options.done).to.eql(
         s.resetPassword1Success
       );
@@ -157,7 +156,7 @@ define([
 
     it('handles fail of method by 1) sending pubsub method and 2) sending alert', function() {
       var minsub = new (MinSub.extend({
-        request: function(apiRequest) {},
+        request: function(apiRequest) { },
       }))({ verbose: false });
 
       var s = new Session();
@@ -213,7 +212,7 @@ define([
 
     it('handles success of methods by 1) sending pubsub method and 2) optionally doing additional work', function() {
       var minsub = new (MinSub.extend({
-        request: function(apiRequest) {},
+        request: function(apiRequest) { },
       }))({ verbose: false });
 
       var s = new Session();
