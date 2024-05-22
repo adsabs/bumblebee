@@ -30,7 +30,7 @@ define([
 
     access_token: null,
     refresh_token: null,
-    expire_in: null,
+    expire_at: null,
     defaultTimeoutInMs: 60000,
 
     activate: function(beehive) {
@@ -250,8 +250,8 @@ define([
   };
 
   // stubbable for testing
-  Api.prototype.getCurrentUTCMoment = function() {
-    return Moment().utc();
+  Api.prototype.getCurrentTimestamp = function () {
+    return Math.floor(Date.now() / 1000);
   };
 
   Api.prototype.request = function(request, options) {
@@ -261,6 +261,7 @@ define([
       var d = $.Deferred();
       var req = that.getApiAccess({ tokenRefresh: true, reconnect: true });
       req.done(function() {
+
         d.resolve(that._request(request, options));
       });
       req.fail(function() {
@@ -271,18 +272,22 @@ define([
       return d.promise();
     };
 
-    if (!this.expire_in) {
+    if (!this.expire_at) {
       return refreshToken();
     }
 
-    // expire_in is in UTC, not local time
-    var expiration = Moment.utc(this.expire_in);
-    var now = this.getCurrentUTCMoment();
+    // expire_at is in UTC, not local time
+    var expiration = this.expire_at;
+    var now = this.getCurrentTimestamp();
 
-    var difference = now.diff(expiration, 'minutes');
+    var difference = expiration - now;
+
     // fewer than 2 minutes before token expires
+    if (difference < 120) {
+      return refreshToken();
+    }
 
-    return difference > -2 ? refreshToken() : that._request(request, options);
+    return this._request(request, options);
   };
 
   _.extend(Api.prototype, Mixin.BeeHive, Hardened, ApiAccess);

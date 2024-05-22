@@ -22,7 +22,7 @@ define([
         beehive.getService('Api').setVals({
           access_token: `${data.token_type} ${data.access_token}`,
           refresh_token: data.refresh_token,
-          expire_in: data.expire_in,
+          expire_at: data.expire_at,
         });
 
         console.warn('Redefining access_token: ' + data.access_token);
