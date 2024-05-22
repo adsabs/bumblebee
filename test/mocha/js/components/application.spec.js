@@ -180,14 +180,15 @@ define([
         expect(apiRequest.url()).to.contain('/accounts/bootstrap');
         options.done(
           {
-            "email": "user@gmail.com",
+            "username": "user@gmail.com",
             "scopes": ["user"],
             "access_token": "ap0MkGjroS1zzijLlk9fV2UKXdRDo5nzUueTNaog",
             "token_type": "Bearer",
-            "csrf": "1428969367##8460e442cb2984810486bf959048a05d7e7d9e78",
-            "expire_in": "2500-01-01T00:00:00",
-            "refresh_token": "KKGJp56UlpKgfHUuNNNJvj3XgepWlkTfKKtqmpkM",
-          });
+            "csrf": "142896367##8460e442cb2984810486bf959048a05d7e7d9e78",
+            "expire_at": 16725225600,
+            "refresh_token": "KKGJp56UlpKgfHUuNNNvJvJ3XqepWLkTfKKtqmpKM",
+          }
+        );
       };
 
       app.getBeeHive().addService('Api', api);
@@ -197,8 +198,8 @@ define([
       app.getApiAccess({reconnect: true})
       .done(function () {
         expect(spy.called).to.eql(true);
-        expect(api.access_token).to.eql('Bearer ap0MkGjroS1zzijLlk9fV2UKXdRDo5nzUueTNaog');
-        //every time onbootstrap is called, update the user object with email/undefined to show that user is anonymous
+        expect(api.access_token).to.eql('Bearer test-token');
+        //every time onbootstrap is called, update the user object with username/undefined to show that user is anonymous
         expect(fakeUser.setUser.args[0]).to.eql(["user@gmail.com"]);
         done();
       })
