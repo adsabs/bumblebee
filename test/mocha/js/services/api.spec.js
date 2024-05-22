@@ -22,7 +22,7 @@ define([
 
   var __getApi = function (options) {
     var api = new Api(options);
-    api.expire_in = Date.now() + 10000000;
+    api.expire_at = Math.floor(new Date('2500-01-01').getTime() / 1000);
     return api;
   };
 
@@ -189,49 +189,49 @@ define([
       expect(spy.thisValues[0]).to.have.ownProperty('api', 'request');
     });
 
-    it("should automatically request a new token if there is less than 2 minutes before token expiration", function(){
+    it("should automatically request a new token if there is less than 2 minutes before token expiration", function() {
+      var api = __getApi({ url: '/api/1' }); // url is there, but i want to be explicit
 
-      var api = __getApi({url: '/api/1'}); // url is there, but i want to be explicit
+      const getSecondsInFuture = (seconds) => {
+        return Math.floor(
+          new Date(new Date().getTime() + seconds * 1000).getTime() / 1000
+        );
+      };
 
       api.access_token = 'foo';
-      api.expire_in = "2016-08-16T18:12:00"
 
-      api.getCurrentUTCMoment = function(){
-        //mock a EDT time
-        return  Moment.parseZone("2016-08-16T14:11:00-04:00").utc();
-      }
-
+      // set to less than the expiration time
+      api.expire_at = getSecondsInFuture(90);
       api._request = sinon.spy();
 
-      api.getApiAccess = sinon.spy(function(){
+      api.getApiAccess = sinon.spy(function() {
         var d = $.Deferred();
         d.resolve();
-        api.access_token = 'boo'
+        api.access_token = 'boo';
         return d.promise();
       });
 
-      var q = new ApiQuery({q: 'foo'});
+      var q = new ApiQuery({ q: 'foo' });
 
-    api.request(new ApiRequest({target: '/test', query: q, sender: 'woo'}));
+      api.request(new ApiRequest({ target: '/test', query: q, sender: 'woo' }));
 
+      // we should have called getApiAccess once and _request once because we are less than 2 minutes away from expiration
       expect(api.getApiAccess.callCount).to.eql(1);
       expect(api.access_token).to.eql('boo');
       expect(api._request.callCount).to.eql(1);
 
-    //this request should not lead to an access_token refresh bc
-    //expiration is 3 minutes in the future
+      // set to more than the expiration time
+      api.expire_at = getSecondsInFuture(180);
 
-    api.expire_in = "2016-08-16T18:13:05.982Z";
-
-    api.getCurrentUTCMoment = function(){
-      return Moment("2016-08-16T18:11:05.982Z").utc();
-    }
+      // reset the call counts
+      api.getApiAccess.reset();
+      api._request.reset();
 
       api.request(new ApiRequest({target: '/test', query: q, sender: 'woo'}));
 
-       expect(api.getApiAccess.callCount).to.eql(1);
-       expect(api._request.callCount).to.eql(2);
-
+      // because we are more than 2 minutes away from expiration, we should not call getApiAccess
+      expect(api.getApiAccess.callCount).to.eql(0);
+      expect(api._request.callCount).to.eql(1);
     });
 
     it("should correctly reset the token if it has expired", function () {
@@ -243,8 +243,9 @@ define([
           }
         };
       });
+
       api.access_token = 'foo';
-      api.expire_in = Date.now();
+      api.expire_at = Math.floor(Date.now() / 1000); // Set expire_at to current time in seconds since epoch
 
       var sendRequest = function () {
         api.request(new ApiRequest({
@@ -257,6 +258,7 @@ define([
       expect(sendRequest).to.not.throw('Maximum call stack size exceeded');
       api.getBeeHive.restore();
     });
+
 
     describe("Testing request options", function() {
 
