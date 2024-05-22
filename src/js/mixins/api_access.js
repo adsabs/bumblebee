@@ -28,7 +28,7 @@ define([
         console.warn('Redefining access_token: ' + data.access_token);
 
         var userObject = beehive.getObject('User');
-        var userName = data.anonymous ? undefined : data.email;
+        var userName = data.anonymous ? undefined : data.username;
         userObject.setUser(userName);
         var storage = beehive.getService('PersistentStorage');
         storage && storage.set && storage.set('appConfig', data);
