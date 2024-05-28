@@ -185,7 +185,7 @@ define([
             "access_token": "ap0MkGjroS1zzijLlk9fV2UKXdRDo5nzUueTNaog",
             "token_type": "Bearer",
             "csrf": "142896367##8460e442cb2984810486bf959048a05d7e7d9e78",
-            "expire_at": 16725225600,
+            "expires_at": 16725225600,
             "refresh_token": "KKGJp56UlpKgfHUuNNNvJvJ3XqepWLkTfKKtqmpKM",
           }
         );
