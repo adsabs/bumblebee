@@ -182,7 +182,7 @@ define([
           {
             "username": "user@gmail.com",
             "scopes": ["user"],
-            "access_token": "ap0MkGjroS1zzijLlk9fV2UKXdRDo5nzUueTNaog",
+            "access_token": "test-token",
             "token_type": "Bearer",
             "csrf": "142896367##8460e442cb2984810486bf959048a05d7e7d9e78",
             "expires_at": 16725225600,
