@@ -22,7 +22,7 @@ define([
 
   var __getApi = function (options) {
     var api = new Api(options);
-    api.expire_at = Math.floor(new Date('2500-01-01').getTime() / 1000);
+    api.expires_at = Math.floor(new Date('2500-01-01').getTime() / 1000);
     return api;
   };
 
@@ -201,7 +201,7 @@ define([
       api.access_token = 'foo';
 
       // set to less than the expiration time
-      api.expire_at = getSecondsInFuture(90);
+      api.expires_at = getSecondsInFuture(90);
       api._request = sinon.spy();
 
       api.getApiAccess = sinon.spy(function() {
@@ -221,7 +221,7 @@ define([
       expect(api._request.callCount).to.eql(1);
 
       // set to more than the expiration time
-      api.expire_at = getSecondsInFuture(180);
+      api.expires_at = getSecondsInFuture(180);
 
       // reset the call counts
       api.getApiAccess.reset();
@@ -245,7 +245,7 @@ define([
       });
 
       api.access_token = 'foo';
-      api.expire_at = Math.floor(Date.now() / 1000); // Set expire_at to current time in seconds since epoch
+      api.expires_at = Math.floor(Date.now() / 1000); // Set expires_at to current time in seconds since epoch
 
       var sendRequest = function () {
         api.request(new ApiRequest({

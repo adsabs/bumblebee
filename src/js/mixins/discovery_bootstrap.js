@@ -164,8 +164,8 @@ define([
       var config = storage.get('appConfig');
       if (
         config &&
-        config.expire_at &&
-        config.expire_at > Math.floor(Date.now() / 1000)
+        config.expires_at &&
+        config.expires_at > Math.floor(Date.now() / 1000)
       ) {
         return defer.resolve(config).promise();
       }

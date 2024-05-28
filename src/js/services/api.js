@@ -30,7 +30,7 @@ define([
 
     access_token: null,
     refresh_token: null,
-    expire_at: null,
+    expires_at: null,
     defaultTimeoutInMs: 60000,
 
     activate: function(beehive) {
@@ -272,12 +272,12 @@ define([
       return d.promise();
     };
 
-    if (!this.expire_at) {
+    if (!this.expires_at) {
       return refreshToken();
     }
 
-    // expire_at is in UTC, not local time
-    var expiration = this.expire_at;
+    // expires_at is in UTC, not local time
+    var expiration = this.expires_at;
     var now = this.getCurrentTimestamp();
 
     var difference = expiration - now;
