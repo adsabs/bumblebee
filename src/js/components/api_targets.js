@@ -30,7 +30,7 @@ define([], function () {
     USER: 'accounts/user',
     USER_DATA: 'vault/user-data',
     SITE_CONFIGURATION: 'vault/configuration',
-    TOKEN: 'accounts/token',
+    TOKEN: 'accounts/user/token',
     LOGIN: 'accounts/user/login',
     LOGOUT: 'accounts/user/logout',
     VERIFY: 'accounts/verify',
