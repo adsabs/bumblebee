@@ -449,7 +449,7 @@ define([
         this.getPubSub().publish(this.getPubSub().NAVIGATE, 'index-page');
       };
 
-      data = _.extend(data, { csrf: true });
+      data = _.extend(_.pick(data, ['email', 'password']), { csrf: true });
       return this.postData('CHANGE_EMAIL', data).done(onDone);
     },
 
