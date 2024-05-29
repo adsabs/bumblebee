@@ -450,7 +450,7 @@ define([
       var request2 = requestStub.args[1][0];
        expect(request2.toJSON().target).to.eql("accounts/user/change-email");
       expect(request2.toJSON().options.type).to.eql("POST");
-      expect(request2.toJSON().options.data).to.eql('{"email":"alex@alex.com","confirm_email":"alex@alex.com","password":"foo","verify_url":"http://localhost:8000/#user/account/verify/change-email"}');
+      expect(request2.toJSON().options.data).to.eql('{"email":"alex@alex.com","password":"foo"}');
       expect(fakeCSRF.getCSRF.callCount).to.eql(2);
 
       setTimeout(function () {
