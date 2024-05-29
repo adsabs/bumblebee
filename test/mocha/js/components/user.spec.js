@@ -411,7 +411,7 @@ define([
      var api = new Api();
      var requestStub = sinon.stub(Api.prototype, "request", function(apiRequest){
 
-       if (apiRequest.get("target") == "accounts/token" ){
+       if (apiRequest.get("target") == "accounts/user/token" ){
 
          apiRequest.get("options").done({access_token : "foo"});
 
@@ -458,7 +458,7 @@ define([
         var tokenPromise = u.generateToken();
 
         var request3 = requestStub.args[2][0];
-        expect(request3.toJSON().target).to.eql("accounts/token");
+        expect(request3.toJSON().target).to.eql("accounts/user/token");
         expect(request3.toJSON().options.type).to.eql("PUT");
         tokenPromise.done(function(data){token = data});
         expect(token).to.eql({access_token : "foo"});
