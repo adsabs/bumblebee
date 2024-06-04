@@ -34,6 +34,22 @@ define([
     },
   });
 
+  const payloads = {
+    login: ['email', 'password'],
+    register: [
+      'given_name',
+      'family_name',
+      'email',
+      'password1',
+      'password2',
+      'g-recaptcha-response',
+    ],
+    resetPassword1: ['g-recaptcha-response'],
+    resetPassword2: ['password1', 'password2'],
+  };
+
+  const getPayload = (data, type) => JSON.stringify(_.pick(data, payloads[type]));
+
   var Session = GenericModule.extend({
     initialize: function(options) {
       var options = options || {};
@@ -69,7 +85,7 @@ define([
           query: new ApiQuery({}),
           options: {
             type: 'POST',
-            data: JSON.stringify(_.pick(data, 'email', 'password')),
+            data: getPayload(data, 'login'),
             contentType: 'application/json',
             headers: { 'X-CSRFToken': csrfToken },
             done: function() {
@@ -133,7 +149,7 @@ define([
           query: new ApiQuery({}),
           options: {
             type: 'POST',
-            data: JSON.stringify(_.pick(data, 'given_name', 'family_name', 'email', 'password1', 'password2', 'g-recaptcha-response')),
+            data: getPayload(data, 'register'),
             contentType: 'application/json',
             headers: { 'X-CSRFToken': csrfToken },
             done: this.registerSuccess,
@@ -156,7 +172,7 @@ define([
           query: new ApiQuery({}),
           options: {
             type: 'POST',
-            data: JSON.stringify(data),
+            data: getPayload(data, 'resetPassword1'),
             headers: { 'X-CSRFToken': csrfToken },
             contentType: 'application/json',
             done: this.resetPassword1Success,
@@ -179,7 +195,7 @@ define([
           query: new ApiQuery({}),
           options: {
             type: 'PUT',
-            data: JSON.stringify(data),
+            data: getPayload(data, 'resetPassword2'),
             contentType: 'application/json',
             headers: { 'X-CSRFToken': csrfToken },
             done: this.resetPassword2Success,
