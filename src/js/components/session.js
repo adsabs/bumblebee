@@ -208,6 +208,58 @@ define([
       });
     },
 
+
+    /**
+     * Resend verification email
+     * @param {string} email
+     */
+    resendVerificationEmail: function(email) {
+      const self = this;
+      this.sendRequestWithNewCSRF(function(csrfToken) {
+        const request = new ApiRequest({
+          target: ApiTargets.RESEND_VERIFY.replace('{email}', email),
+          query: new ApiQuery({}),
+          options: {
+            type: 'PUT',
+            headers: { 'X-CSRFToken': csrfToken },
+            done: function() {
+              const pubsub = self.getPubSub();
+              pubsub.publish(
+                pubsub.USER_ANNOUNCEMENT,
+                'resend_verification_email_success'
+              );
+            },
+            fail: function(xhr) {
+              const pubsub = self.getPubSub();
+              const error = utils.extractErrorMessageFromAjax(
+                xhr,
+                'error unknown'
+              );
+              const message = `Resending verification email was unsuccessful (${error})`;
+              pubsub.publish(
+                pubsub.ALERT,
+                new ApiFeedback({
+                  code: 0,
+                  msg: message,
+                  type: 'danger',
+                  fade: true,
+                })
+              );
+              pubsub.publish(
+                pubsub.USER_ANNOUNCEMENT,
+                'resend_verification_email_fail',
+                message
+              );
+            },
+          },
+        });
+
+        return this.getBeeHive()
+          .getService('Api')
+          .request(request);
+      });
+    },
+
     setChangeToken: function(token) {
       this.model.set('resetPasswordToken', token);
     },
@@ -365,6 +417,7 @@ define([
       resetPassword1: 'sends an email to account',
       resetPassword2: 'updates the password',
       setChangeToken: 'the router stores the token to reset password here',
+      resendVerificationEmail: 'resends the verification email',
     },
   });
 

@@ -34,6 +34,7 @@ define([], function () {
     LOGIN: 'accounts/user/login',
     LOGOUT: 'accounts/user/logout',
     VERIFY: 'accounts/verify',
+    RESEND_VERIFY: `accounts/user/{email}/verify`,
     RESET_PASSWORD: 'accounts/user/reset-password',
     CHANGE_PASSWORD: 'accounts/user/change-password',
     CHANGE_EMAIL: 'accounts/user/change-email',

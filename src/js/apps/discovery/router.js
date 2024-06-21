@@ -214,7 +214,7 @@ define([
       if (
         subView &&
         !_.contains(
-          ['login', 'register', 'reset-password-1', 'reset-password-2'],
+          ['login', 'register', 'reset-password-1', 'reset-password-2', 'resend-verification-email'],
           subView
         )
       ) {
