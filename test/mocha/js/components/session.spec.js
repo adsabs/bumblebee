@@ -21,6 +21,7 @@ define([
         'resetPassword1',
         'resetPassword2',
         'setChangeToken',
+        'resendVerificationEmail',
         '__facade__',
         'mixIn',
       ]);
