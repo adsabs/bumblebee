@@ -32,7 +32,7 @@ define([
   analytics,
 ) {
   // Document Title Constants
-  var APP_TITLE = 'NASA/ADS';
+  var APP_TITLE = 'Astrophysics Data System';
   var TITLE_SEP = ' - ';
 
   // This function is used to hash the user id before sending it to Analytics
