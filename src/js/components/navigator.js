@@ -32,7 +32,7 @@ define([
   analytics,
 ) {
   // Document Title Constants
-  var APP_TITLE = 'NASA/ADS';
+  var APP_TITLE = 'Astrophysics Data System';
   var TITLE_SEP = ' - ';
 
   const FIELDS_TO_SEND = ['bibcode', 'database', 'bibstem', 'property', 'resultsIndex'];
