@@ -541,12 +541,14 @@ define([
     /**
      * Delete a single work from ORCiD
      *
-     * @param {Number} putCode - putcode of work to be deleted
+     * @param {String | Number} putCode - putcode of work to be deleted
      * @returns {jQuery.Promise} - promise for the request
      */
     deleteWork: function(putCode) {
-      if (!_.isNumber(putCode)) {
-        throw new TypeError('putcode should be a number');
+      if (!putCode) {
+        return $.Deferred()
+          .reject('No Putcode found')
+          .promise();
       }
       var $dd = $.Deferred();
       this.deleteCache.push({
