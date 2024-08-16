@@ -325,7 +325,7 @@ define([
       this._docs = {};
       this.maxAuthors = MAX_AUTHORS;
       this.isFetchingAff = false;
-      this.listenTo(this.model, 'change:abstract', this._onAbstractLoaded);
+      this.listenTo(this.model, 'change:bibcode', this._onAbstractLoaded);
     },
 
     activate: function(beehive) {
