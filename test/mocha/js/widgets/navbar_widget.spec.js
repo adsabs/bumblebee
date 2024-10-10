@@ -209,7 +209,7 @@ define([
           .replace(/\W+/g, ' ')
       ).to.eql('You are signed in as bumblebee');
 
-      // lack of username indicates user is logged out
+      // lack of email indicates user is logged out
       u.setUser(undefined);
 
       minsub.publish(
@@ -383,7 +383,7 @@ define([
       // $('form.feedback-form').submit();
       // console.log(requestStub);
       // expect(requestStub.args[0][0].toJSON().target).to.eql(
-      //   'feedback/userfeedback'
+      //   'feedback'
       // );
       // expect(requestStub.args[0][0].toJSON().options.dataType).to.eql('json');
       //

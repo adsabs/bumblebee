@@ -10,6 +10,7 @@ define([
   'hbs!js/widgets/authentication/templates/container',
   'hbs!js/widgets/authentication/templates/reset-password-1',
   'hbs!js/widgets/authentication/templates/reset-password-2',
+  'hbs!js/widgets/authentication/templates/resend-verification-email',
   'js/components/user',
   'analytics',
   'backbone-validation',
@@ -26,8 +27,9 @@ define([
   ContainerTemplate,
   ResetPassword1Template,
   ResetPassword2Template,
+  ResendVerificationEmail,
   User,
-  analytics
+  analytics,
 ) {
   // Creating module level variable since I can't figure out best way to pass this value into a subview from the model
   // This value should be always available, and unchanging, so should be safe to set like this here
@@ -54,11 +56,11 @@ define([
       if (typeof formName === 'string') {
         window.grecaptcha.ready(() =>
           window.grecaptcha
-            .execute(siteKey, { action: `auth/${formName}` })
-            .then((token) => {
-              this.model.set('g-recaptcha-response', token);
-              FormFunctions.triggerSubmit.apply(this, arguments);
-            })
+          .execute(siteKey, { action: `auth/${formName}` })
+          .then((token) => {
+            this.model.set('g-recaptcha-response', token);
+            FormFunctions.triggerSubmit.apply(this, arguments);
+          }),
         );
       } else {
         FormFunctions.triggerSubmit.apply(this, arguments);
@@ -95,6 +97,8 @@ define([
 
   RegisterModel = FormModel.extend({
     validation: {
+      given_name: {},
+      family_name: {},
       email: {
         required: true,
         pattern: 'email',
@@ -129,6 +133,12 @@ define([
     className: 'register s-register',
 
     bindings: {
+      'input[name=given_name]': {
+        observe: 'given_name',
+      },
+      'input[name=family_name]': {
+        observe: 'family_name',
+      },
       'input[name=email]': {
         observe: 'email',
         setOptions: {
@@ -161,9 +171,9 @@ define([
   var LogInModel;
 
   LogInModel = FormModel.extend({
-    skipReset: ['username'],
+    skipReset: ['email'],
     validation: {
-      username: {
+      email: {
         required: true,
         pattern: 'email',
         msg: '(A valid email is required)',
@@ -184,8 +194,8 @@ define([
     className: 'log-in s-log-in',
 
     bindings: {
-      'input[name=username]': {
-        observe: 'username',
+      'input[name=email]': {
+        observe: 'email',
         setOptions: {
           validate: true,
         },
@@ -293,6 +303,39 @@ define([
     },
   });
 
+  const ResendVerificationModel = FormModel.extend({
+    skipReset: ['email'],
+    validation: {
+      email: {
+        required: true,
+        pattern: 'email',
+        msg: '(A valid email is required)',
+      },
+    },
+
+    target: 'RESEND_VERIFY',
+    method: 'PUT',
+  });
+
+  const ResendVerificationView = FormView.extend({
+    template: ResendVerificationEmail,
+
+    className: 'resend-verification',
+
+    bindings: {
+      'input[name=email]': {
+        observe: 'email',
+        setOptions: {
+          validate: true,
+        },
+      },
+    },
+
+    onRender: function() {
+      this.activateValidation();
+    },
+  });
+
   var StateModel = Backbone.Model.extend({
     defaults: function() {
       return {
@@ -309,6 +352,7 @@ define([
       this.registerModel = new RegisterModel();
       this.resetPassword1Model = new ResetPassword1Model();
       this.resetPassword2Model = new ResetPassword2Model();
+      this.resendVerificationModel = new ResendVerificationModel();
     },
 
     modelEvents: { 'change:subView': 'renderSubView' },
@@ -323,6 +367,8 @@ define([
       'click .show-login': 'navigateToLoginForm',
       'click .show-register': 'navigateToRegisterForm',
       'click .show-reset-password-1': 'navigateToResetPassword1Form',
+      'click .show-resend-verification-email':
+        'navigateToResendVerificationForm',
     },
 
     onRender: function() {
@@ -340,6 +386,8 @@ define([
         this.showResetPasswordForm1();
       } else if (subView === 'reset-password-2') {
         this.showResetPasswordForm2();
+      } else if (subView === 'resend-verification-email') {
+        this.showResendVerificationForm();
       }
     },
 
@@ -391,8 +439,25 @@ define([
       this.container.show(view);
     },
 
+    showResendVerificationForm: function(error) {
+      const view = new ResendVerificationView({ model: this.resendVerificationModel });
+
+      // show error message
+      if (error) {
+        view.model.set({ hasError: true, errorMsg: error });
+      }
+
+      view.on('submit-form', this.forwardSubmit, this);
+      this.container.show(view);
+    },
+
     showRegisterSuccessView: function() {
       var view = new SuccessView({ title: 'Registration Successful' });
+      this.container.show(view);
+    },
+
+    showResendVerificationSuccessView: function() {
+      var view = new SuccessView({ title: 'Verification Email Sent Successfully' });
       this.container.show(view);
     },
 
@@ -420,12 +485,17 @@ define([
       this.listenTo(
         this.view,
         'navigateToRegisterForm',
-        this.navigateToRegisterForm
+        this.navigateToRegisterForm,
       );
       this.listenTo(
         this.view,
         'navigateToResetPassword1Form',
-        this.navigateToResetPassword1Form
+        this.navigateToResetPassword1Form,
+      );
+      this.listenTo(
+        this.view,
+        'navigateToResendVerificationForm',
+        this.navigateToResendVerificationForm
       );
 
       this.nextNav = null;
@@ -449,6 +519,10 @@ define([
 
     navigateToResetPassword1Form: function() {
       this._navigate({ subView: 'reset-password-1' });
+    },
+
+    navigateToResendVerificationForm: function() {
+      this._navigate({ subView: 'resend-verification-email' });
     },
 
     _navigate: function(opts) {
@@ -493,7 +567,7 @@ define([
           this.fireAnalytics('register', {
             auth_result: 'register_failed',
             auth_error: msg,
-          })
+          });
           break;
         case 'reset_password_1_success':
           this.view.showResetPasswordSuccessView(msg);
@@ -515,6 +589,17 @@ define([
             auth_error: msg,
           });
           break;
+        case 'resend_verification_email_success':
+          this.view.showResendVerificationSuccessView();
+          this.fireAnalytics('resend-verification', {
+            auth_result: 'resend_verification_email_success',
+          });
+          break;
+        case 'resend_verification_email_fail':
+          this.fireAnalytics('resend-verification', {
+            auth_result: 'resend_verification_email_fail',
+          });
+          break;
       }
     },
 
@@ -528,14 +613,7 @@ define([
       const session = this.getBeeHive().getObject('Session');
       switch (model.target) {
         case 'REGISTER':
-          session.register(
-            _.extend({}, model.toJSON(), {
-              verify_url:
-                location.origin +
-                '/#user/account/verify/' +
-                ApiTargets.REGISTER,
-            })
-          );
+          session.register(model.toJSON());
           break;
         case 'USER':
           session.login(model.toJSON()).done(() => {
@@ -546,11 +624,14 @@ define([
             }
           });
           break;
-        case 'RESET_PASSWORD': {
+        case 'RESET_PASSWORD':
           model.method === 'POST'
             ? session.resetPassword1(model.toJSON())
             : session.resetPassword2(model.toJSON());
-        }
+          break;
+        case 'RESEND_VERIFY':
+          session.resendVerificationEmail(model.get('email'));
+          break;
       }
     },
 

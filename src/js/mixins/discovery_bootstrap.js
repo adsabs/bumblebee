@@ -164,12 +164,11 @@ define([
       var config = storage.get('appConfig');
       if (
         config &&
-        config.expire_in &&
-        new Date(config.expire_in) > new Date()
+        config.expires_at &&
+        config.expires_at > Math.floor(Date.now() / 1000)
       ) {
         return defer.resolve(config).promise();
       }
-
       // this is the application dynamic config
       var api = this.getBeeHive().getService('Api');
 

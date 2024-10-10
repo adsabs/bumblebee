@@ -216,11 +216,7 @@ define([
     buildAdditionalParameters: function() {
       // any extra info that needs to be sent in post or get requests
       // but not known about by the widget models goes here
-      var additional = {};
-      additional.CHANGE_EMAIL = {
-        verify_url: this.base_url + '/#user/account/verify/change-email',
-      };
-      this.additionalParameters = additional;
+      this.additionalParameters = {};
     },
 
     handleFailedPOST: function(jqXHR, status, errorThrown, target) {
@@ -385,8 +381,8 @@ define([
     },
 
     /* set user */
-    setUser: function(username) {
-      this.userModel.set('user', username);
+    setUser: function(email) {
+      this.userModel.set('user', email);
       if (this.isLoggedIn()) {
         this.completeLogIn();
       }
@@ -410,7 +406,11 @@ define([
 
     deleteAccount: function() {
       var that = this;
-      return this.postData('DELETE', { csrf: true }).done(function() {
+      return this.composeRequest({
+        target: 'USER',
+        method: 'DELETE',
+        data: {csrf: true},
+      }).done(function () {
         that.getApiAccess({ reconnect: true }).done(function() {
           that.completeLogOut();
         });
@@ -445,7 +445,7 @@ define([
         this.getPubSub().publish(this.getPubSub().NAVIGATE, 'index-page');
       };
 
-      data = _.extend(data, { csrf: true });
+      data = _.extend(_.pick(data, ['email', 'password']), { csrf: true });
       return this.postData('CHANGE_EMAIL', data).done(onDone);
     },
 
@@ -534,7 +534,7 @@ define([
     },
 
     hardenedInterface: {
-      setUser: 'set username into user',
+      setUser: 'set email into user',
       isLoggedIn: 'whether the user is logged in',
       getUserName: "get the user's email before the @",
       setLocalStorage: "sets an object in to user's local storage",

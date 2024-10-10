@@ -36,7 +36,7 @@ define([
     var minsub;
     beforeEach(function() {
       var api = new Api();
-      api.expire_in = Date.now() + 100000000;
+      api.expires_at = Date.now() + 100000000;
       minsub = new MinimalPubSub({verbose: false, Api: api});
 
       this.server = sinon.fakeServer.create();

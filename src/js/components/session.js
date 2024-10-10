@@ -34,6 +34,22 @@ define([
     },
   });
 
+  const payloads = {
+    login: ['email', 'password'],
+    register: [
+      'given_name',
+      'family_name',
+      'email',
+      'password1',
+      'password2',
+      'g-recaptcha-response',
+    ],
+    resetPassword1: ['g-recaptcha-response'],
+    resetPassword2: ['password1', 'password2'],
+  };
+
+  const getPayload = (data, type) => JSON.stringify(_.pick(data, payloads[type]));
+
   var Session = GenericModule.extend({
     initialize: function(options) {
       var options = options || {};
@@ -65,11 +81,11 @@ define([
 
       this.sendRequestWithNewCSRF(function(csrfToken) {
         var request = new ApiRequest({
-          target: ApiTargets.USER,
+          target: ApiTargets.LOGIN,
           query: new ApiQuery({}),
           options: {
             type: 'POST',
-            data: JSON.stringify(data),
+            data: getPayload(data, 'login'),
             contentType: 'application/json',
             headers: { 'X-CSRFToken': csrfToken },
             done: function() {
@@ -127,19 +143,13 @@ define([
     },
 
     register: function(data) {
-      var current_loc = this.test ? 'location.origin' : location.origin;
-      // add base_url to data so email redirects to right url
-      _.extend(data, {
-        verify_url: current_loc + '/#user/account/verify/register',
-      });
-
       this.sendRequestWithNewCSRF(function(csrfToken) {
         var request = new ApiRequest({
-          target: ApiTargets.REGISTER,
+          target: ApiTargets.USER,
           query: new ApiQuery({}),
           options: {
             type: 'POST',
-            data: JSON.stringify(data),
+            data: getPayload(data, 'register'),
             contentType: 'application/json',
             headers: { 'X-CSRFToken': csrfToken },
             done: this.registerSuccess,
@@ -153,12 +163,6 @@ define([
     },
 
     resetPassword1: function(data) {
-      var current_loc = this.test ? 'location.origin' : location.origin;
-      // add base_url to data so email redirects to right url
-      _.extend(data, {
-        reset_url: current_loc + '/#user/account/verify/reset-password',
-      });
-
       var email = data.email;
       var data = _.omit(data, 'email');
 
@@ -168,7 +172,7 @@ define([
           query: new ApiQuery({}),
           options: {
             type: 'POST',
-            data: JSON.stringify(data),
+            data: getPayload(data, 'resetPassword1'),
             headers: { 'X-CSRFToken': csrfToken },
             contentType: 'application/json',
             done: this.resetPassword1Success,
@@ -191,13 +195,65 @@ define([
           query: new ApiQuery({}),
           options: {
             type: 'PUT',
-            data: JSON.stringify(data),
+            data: getPayload(data, 'resetPassword2'),
             contentType: 'application/json',
             headers: { 'X-CSRFToken': csrfToken },
             done: this.resetPassword2Success,
             fail: this.resetPassword2Fail,
           },
         });
+        return this.getBeeHive()
+          .getService('Api')
+          .request(request);
+      });
+    },
+
+
+    /**
+     * Resend verification email
+     * @param {string} email
+     */
+    resendVerificationEmail: function(email) {
+      const self = this;
+      this.sendRequestWithNewCSRF(function(csrfToken) {
+        const request = new ApiRequest({
+          target: ApiTargets.RESEND_VERIFY.replace('{email}', email),
+          query: new ApiQuery({}),
+          options: {
+            type: 'PUT',
+            headers: { 'X-CSRFToken': csrfToken },
+            done: function() {
+              const pubsub = self.getPubSub();
+              pubsub.publish(
+                pubsub.USER_ANNOUNCEMENT,
+                'resend_verification_email_success'
+              );
+            },
+            fail: function(xhr) {
+              const pubsub = self.getPubSub();
+              const error = utils.extractErrorMessageFromAjax(
+                xhr,
+                'error unknown'
+              );
+              const message = `Resending verification email was unsuccessful (${error})`;
+              pubsub.publish(
+                pubsub.ALERT,
+                new ApiFeedback({
+                  code: 0,
+                  msg: message,
+                  type: 'danger',
+                  fade: true,
+                })
+              );
+              pubsub.publish(
+                pubsub.USER_ANNOUNCEMENT,
+                'resend_verification_email_fail',
+                message
+              );
+            },
+          },
+        });
+
         return this.getBeeHive()
           .getService('Api')
           .request(request);
@@ -361,6 +417,7 @@ define([
       resetPassword1: 'sends an email to account',
       resetPassword2: 'updates the password',
       setChangeToken: 'the router stores the token to reset password here',
+      resendVerificationEmail: 'resends the verification email',
     },
   });
 

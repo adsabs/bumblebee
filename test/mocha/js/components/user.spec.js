@@ -411,7 +411,7 @@ define([
      var api = new Api();
      var requestStub = sinon.stub(Api.prototype, "request", function(apiRequest){
 
-       if (apiRequest.get("target") == "accounts/token" ){
+       if (apiRequest.get("target") == "accounts/user/token" ){
 
          apiRequest.get("options").done({access_token : "foo"});
 
@@ -437,7 +437,7 @@ define([
 
      var request = requestStub.args[0][0];
      expect(request).to.be.instanceof(ApiRequest);
-     expect(request.toJSON().target).to.eql("accounts/change-password");
+     expect(request.toJSON().target).to.eql("accounts/user/change-password");
      expect(request.toJSON().options.type).to.eql("POST");
      expect(request.toJSON().options.data).to.eql('{"old_password":"foo","new_password1":"goo","new_password_2":"goo"}');
      expect(fakeCSRF.getCSRF.callCount).to.eql(1);
@@ -448,9 +448,9 @@ define([
       u.changeEmail({email : "alex@alex.com", confirm_email: "alex@alex.com", password : "foo"});
 
       var request2 = requestStub.args[1][0];
-      expect(request2.toJSON().target).to.eql("accounts/change-email");
+       expect(request2.toJSON().target).to.eql("accounts/user/change-email");
       expect(request2.toJSON().options.type).to.eql("POST");
-      expect(request2.toJSON().options.data).to.eql('{"email":"alex@alex.com","confirm_email":"alex@alex.com","password":"foo","verify_url":"http://localhost:8000/#user/account/verify/change-email"}');
+      expect(request2.toJSON().options.data).to.eql('{"email":"alex@alex.com","password":"foo"}');
       expect(fakeCSRF.getCSRF.callCount).to.eql(2);
 
       setTimeout(function () {
@@ -458,7 +458,7 @@ define([
         var tokenPromise = u.generateToken();
 
         var request3 = requestStub.args[2][0];
-        expect(request3.toJSON().target).to.eql("accounts/token");
+        expect(request3.toJSON().target).to.eql("accounts/user/token");
         expect(request3.toJSON().options.type).to.eql("PUT");
         tokenPromise.done(function(data){token = data});
         expect(token).to.eql({access_token : "foo"});

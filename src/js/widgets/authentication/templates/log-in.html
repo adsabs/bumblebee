@@ -4,9 +4,9 @@
   </legend>
   <form class="panel-body">
     <div class="form-group has-feedback">
-      <label for="username" class="control-label"> Email address </label>
+      <label for="email" class="control-label"> Email address </label>
       <span class="help-block no-show s-help-block"></span>
-      <input type="email" class="form-control" name="username" id="username" placeholder="Enter email" />
+      <input type="email" class="form-control" name="email" id="email" placeholder="Enter email" />
     </div>
 
     <div class="form-group has-feedback">
@@ -28,7 +28,10 @@
     </div>
 
     <div style="display: flex; justify-content: center;">
-      <strong>Don't have an account yet?&nbsp;<a class="show-register">Register</a></strong>
+      <strong>Don't have an account yet?&nbsp;<button type="button" href="#" class="btn btn-link show-register">Register</button></strong>
+    </div>
+    <div style="display: flex; justify-content: center; align-items: center">
+      <div style="margin-right: 1rem"></div> <button type="button" class="btn btn-link show-resend-verification-email">Resend verification email?</button>
     </div>
   </form>
 

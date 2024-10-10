@@ -71,6 +71,10 @@ module.exports = function(grunt) {
 
       // start a headless browser session
       const browser = await puppeteer.launch(options.launchOptions);
+
+      // on disconnect, end task
+      browser.on('disconnected', () => done());
+
       const page = await browser.newPage();
 
       // assume EST
@@ -78,18 +82,27 @@ module.exports = function(grunt) {
       await page.goto('http://localhost:8000/test/mocha/tests.html', {
         waitUntil: 'networkidle0',
       });
+
       await page.on('console', async (msg) => {
-        let args = [];
         try {
-          args = await Promise.all(
-            msg.args().map(async (a) => await a.jsonValue())
+          const args = await Promise.all(
+            msg.args().map((a) =>  {
+
+              // attempt the extract out the underlying object, otherwise this sometimes gets skipped in the output
+              if (a._remoteObject.type === 'object' && Array.isArray(a._remoteObject?.preview?.properties)) {
+                return a._remoteObject.preview.properties.reduce((acc, prop) => {
+                  acc[prop.name] = prop.value;
+                  return acc;
+                }, {});
+              }
+              return a.jsonValue()
+            })
           );
+          const logType = console[msg.type()] || console.log;
+          logType.apply(console, args);
         } catch (e) {
-          args = [];
+          console.error('Error processing console message:', e);
         }
-        typeof console[msg.type()] === 'undefined'
-          ? console.log.apply(console, args)
-          : console[msg.type()].apply(console, args);
       });
 
       await page.on('pageerror', async (error) => {
@@ -201,7 +214,6 @@ module.exports = function(grunt) {
         console.error(e);
       }
       await browser.close();
-      done();
     }
   );
 

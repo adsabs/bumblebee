@@ -268,6 +268,10 @@ define([
           var firstName = bio.getFirstName();
           var lastName = bio.getLastName();
 
+          if (lastName === undefined) {
+            lastName = '';
+          }
+
           self.model.set({
             orcidID: bio.getOrcid(),
             orcidUserName: firstName + ' ' + lastName,

@@ -1,0 +1,25 @@
+<div class="panel panel-default">
+  <div class="panel-heading">Resend Verification Email</div>
+  <form class="panel-body">
+    <div class="form-group has-feedback">
+      <label for="email" class="control-label">Email address</label>
+      <input type="email" class="form-control" id="email" name="email" placeholder="Enter email" required>
+      <span class="help-block no-show s-help-block"></span>
+    </div>
+    <button type="submit" class="btn btn-primary">Resend Verification Email</button>
+  </form>
+  <div style="margin-top: 1rem; text-align: center;">
+    <button type="button" class="btn btn-link show-login">Back to Login</button>
+  </div>
+
+  {{#if hasError}}
+  <div class="row">
+    <div class="col-sm-10 col-sm-offset-1 text-center">
+      <div class="alert alert-danger">
+        <p>{{errorMsg}}</p>
+        <p><a class="link" id="dismiss-error">Dismiss</a></p>
+      </div>
+    </div>
+  </div>
+  {{/if}}
+</div>

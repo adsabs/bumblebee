@@ -21,6 +21,7 @@ define([
         'resetPassword1',
         'resetPassword2',
         'setChangeToken',
+        'resendVerificationEmail',
         '__facade__',
         'mixIn',
       ]);
@@ -29,7 +30,7 @@ define([
     it('has an explicit method for every action (login, logout, register, etc) a user might need to do before he/she is authenticated', function() {
       var s = new Session({ test: true });
       var minsub = new (MinSub.extend({
-        request: function(apiRequest) {},
+        request: function(apiRequest) { },
       }))({ verbose: false });
 
       var api = new Api();
@@ -49,18 +50,17 @@ define([
       s.activate(minsub.beehive);
 
       s.login({
-        username: 'goo',
+        email: 'goo',
         password: 'foo',
-        'g-recaptcha-response': 'boo',
       });
 
       csrfManager.resolvePromiseWithNewKey();
 
       expect(requestStub.args[0][0]).to.be.instanceof(ApiRequest);
-      expect(requestStub.args[0][0].toJSON().target).to.eql('accounts/user');
+      expect(requestStub.args[0][0].toJSON().target).to.eql('accounts/user/login');
       expect(requestStub.args[0][0].toJSON().options.type).to.eql('POST');
       expect(requestStub.args[0][0].toJSON().options.data).to.eql(
-        '{"username":"goo","password":"foo","g-recaptcha-response":"boo"}'
+        '{"email":"goo","password":"foo"}'
       );
 
       s.logout();
@@ -68,29 +68,38 @@ define([
       csrfManager.resolvePromiseWithNewKey();
 
       expect(requestStub.args[1][0]).to.be.instanceof(ApiRequest);
-      expect(requestStub.args[1][0].toJSON().target).to.eql('accounts/logout');
+      expect(requestStub.args[1][0].toJSON().target).to.eql(
+        'accounts/user/logout',
+      );
       expect(requestStub.args[1][0].toJSON().options.type).to.eql('POST');
       expect(requestStub.args[1][0].toJSON().options.done).to.eql(
         s.logoutSuccess
       );
 
-      s.register({
+      const registerPayload = {
         email: 'goo@goo.com',
         password1: 'foo',
         password2: 'foo',
         'g-recaptcha-response': 'boo',
-      });
+        given_name: 'foo',
+        family_name: 'bar',
+      };
+
+      s.register(registerPayload);
+
+      const stringify = (obj) => JSON.stringify(obj, Object.keys(obj).sort());
 
       csrfManager.resolvePromiseWithNewKey();
 
       expect(requestStub.args[2][0]).to.be.instanceof(ApiRequest);
       expect(requestStub.args[2][0].toJSON().target).to.eql(
-        'accounts/register'
+        'accounts/user',
       );
       expect(requestStub.args[2][0].toJSON().options.type).to.eql('POST');
-      //test version just uses string  "location.origin", real version will use the actual origin
-      expect(requestStub.args[2][0].toJSON().options.data).to.eql(
-        '{"email":"goo@goo.com","password1":"foo","password2":"foo","g-recaptcha-response":"boo","verify_url":"location.origin/#user/account/verify/register"}'
+      expect(
+        stringify(JSON.parse(requestStub.args[2][0].toJSON().options.data)),
+      ).to.eql(
+        stringify(registerPayload),
       );
       expect(requestStub.args[2][0].toJSON().options.done).to.eql(
         s.registerSuccess
@@ -99,18 +108,20 @@ define([
         s.registerFail
       );
 
-      s.resetPassword1({ email: 'goo@goo.com', 'g-recaptcha-response': 'boo' });
+      const resetPasswordPayload = { email: 'goo@goo.com', 'g-recaptcha-response': 'boo' }
+      s.resetPassword1(resetPasswordPayload);
 
       csrfManager.resolvePromiseWithNewKey();
 
       expect(requestStub.args[3][0]).to.be.instanceof(ApiRequest);
       expect(requestStub.args[3][0].toJSON().target).to.eql(
-        'accounts/reset-password/goo@goo.com'
+        'accounts/user/reset-password/goo@goo.com',
       );
       expect(requestStub.args[3][0].toJSON().options.type).to.eql('POST');
-      expect(requestStub.args[3][0].toJSON().options.data).to.eql(
-        '{"g-recaptcha-response":"boo","reset_url":"location.origin/#user/account/verify/reset-password"}'
-      );
+      expect(
+        requestStub.args[3][0].toJSON().options.data).to.eql(
+          '{"g-recaptcha-response":"boo"}',
+        );
       expect(requestStub.args[3][0].toJSON().options.done).to.eql(
         s.resetPassword1Success
       );
@@ -128,7 +139,7 @@ define([
       expect(requestStub.args[4][0]).to.be.instanceof(ApiRequest);
       //test version just uses string  "location.origin", real version will use the actual origin
       expect(requestStub.args[4][0].toJSON().target).to.eql(
-        'accounts/reset-password/fakeToken'
+        'accounts/user/reset-password/fakeToken',
       );
       expect(requestStub.args[4][0].toJSON().options.type).to.eql('PUT');
       expect(requestStub.args[4][0].toJSON().options.data).to.eql(
@@ -146,7 +157,7 @@ define([
 
     it('handles fail of method by 1) sending pubsub method and 2) sending alert', function() {
       var minsub = new (MinSub.extend({
-        request: function(apiRequest) {},
+        request: function(apiRequest) { },
       }))({ verbose: false });
 
       var s = new Session();
@@ -202,7 +213,7 @@ define([
 
     it('handles success of methods by 1) sending pubsub method and 2) optionally doing additional work', function() {
       var minsub = new (MinSub.extend({
-        request: function(apiRequest) {},
+        request: function(apiRequest) { },
       }))({ verbose: false });
 
       var s = new Session();

@@ -272,8 +272,7 @@ define([
       return false;
     },
 
-    emitAnalytics: function (e) {
-    },
+    emitAnalytics: function(e) {},
 
     copyBibcode() {
       if (!this.bibcodeClipboard) {
@@ -325,7 +324,7 @@ define([
       this._docs = {};
       this.maxAuthors = MAX_AUTHORS;
       this.isFetchingAff = false;
-      this.listenTo(this.model, 'change:abstract', this._onAbstractLoaded);
+      this.listenTo(this.model, 'change:bibcode', this._onAbstractLoaded);
     },
 
     activate: function(beehive) {
