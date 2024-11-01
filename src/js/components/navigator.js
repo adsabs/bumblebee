@@ -95,6 +95,13 @@ define([
       console.log('Custom Event', ev, data);
 
       switch (ev) {
+        case 'timing:results-loaded':
+          window.getSentry((sentry) => {
+            const activeSpan = sentry.getActiveSpan().getSpanJSON();
+            const time = new Date().getTime() - activeSpan.start_timestamp * 1000;
+            sentry.setMeasurement('timing.results.shown', time, 'millisecond');
+          });
+          break;
         case 'update-document-title':
           this._updateDocumentTitle(data);
           break;
@@ -175,6 +182,9 @@ define([
       analytics('send', 'virtual_page_view', {
         page_name: pageName,
         clean_route: this._cleanRoute(route),
+      });
+      getSentry((sentry) => {
+        sentry.setTag('page.name', pageName);
       });
     }, 300),
 

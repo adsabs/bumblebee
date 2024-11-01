@@ -19,6 +19,7 @@ define([
 
       // set the API key and other data from bootstrap
       if (data.access_token) {
+
         beehive.getService('Api').setVals({
           access_token: `${data.token_type} ${data.access_token}`,
           refresh_token: data.refresh_token,
@@ -55,6 +56,12 @@ define([
         }),
         {
           done: function (data) {
+            window.getSentry((sentry) => {
+              sentry.setUser({
+                id: data.access_token,
+                anonymous: data.anonymous,
+              });
+            });
             if (options.reconnect) {
               self.onBootstrap(data);
             }

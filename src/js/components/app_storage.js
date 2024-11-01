@@ -47,6 +47,16 @@ define([
           .getService('PersistentStorage')
           .set('currentQuery', apiQuery.toJSON());
       }
+
+      // provide this query to sentry
+      window.getSentry((sentry) => {
+        const currentQuery = apiQuery.toJSON();
+        Object.keys(currentQuery).forEach((key) => {
+          if (!key.startsWith('__') || key === 'fq') {
+            sentry.setTag(`query.${key}`, currentQuery[key].join(' | '));
+          }
+        });
+      });
     },
 
     setCurrentNumFound: function(numFound) {
