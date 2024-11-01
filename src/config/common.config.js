@@ -44,12 +44,14 @@ define([], function () {
 
   require([
     'config/discovery.vars',
+    'config/utils',
     'regenerator-runtime',
     'array-flat-polyfill',
     'polyfill',
     'js/dark-mode-switch',
   ], function (config) {
     // stub here to make sure these load before the main app
+
   });
 
   // set up handlebars helpers

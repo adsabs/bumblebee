@@ -418,31 +418,42 @@ define([
       cycle.inprogress[firstReqKey] = data;
 
       this._executeRequest(data.request, data.key)
-        .done(function(response) {
-          if (data.request.__STALE) {
-            return;
+        .done(function(resOrPromise) {
+
+          const sendStartCycleEvent = (response) => {
+            if (data.request.__STALE) {
+              return;
+            }
+            cycle.done[firstReqKey] = data;
+            delete cycle.inprogress[firstReqKey];
+
+            var numFound;
+            if (response.response && response.response.numFound) {
+              numFound = response.response.numFound;
+            }
+
+            ps.publish(
+              ps.FEEDBACK,
+              new ApiFeedback({
+                code: ApiFeedback.CODES.SEARCH_CYCLE_STARTED,
+                query: cycle.query,
+                request: data.request,
+                numFound: numFound,
+                cycle: cycle,
+                response: response, // this is a raw response (and it is save to send, cause it was already copied by the first 'done' callback
+              })
+            );
+
+            self.displayTugboatMessages();
+          };
+
+          if (resOrPromise.then) {
+            Promise.resolve(resOrPromise).then((response) => {
+              sendStartCycleEvent(response);
+            });
+          } else {
+            sendStartCycleEvent(resOrPromise);
           }
-          cycle.done[firstReqKey] = data;
-          delete cycle.inprogress[firstReqKey];
-
-          var numFound;
-          if (response.response && response.response.numFound) {
-            numFound = response.response.numFound;
-          }
-
-          ps.publish(
-            ps.FEEDBACK,
-            new ApiFeedback({
-              code: ApiFeedback.CODES.SEARCH_CYCLE_STARTED,
-              query: cycle.query,
-              request: data.request,
-              numFound: numFound,
-              cycle: cycle,
-              response: response, // this is a raw response (and it is save to send, cause it was already copied by the first 'done' callback
-            })
-          );
-
-          self.displayTugboatMessages();
 
           // after we are done with the first query, start executing other queries
           var f = function() {
