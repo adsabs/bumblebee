@@ -25,7 +25,8 @@
     "grecaptcha": true,
     "onRecaptchaLoad": true,
     "assert": true,
-    "R": true
+    "R": true,
+    "Sentry": true
   },
   "rules": {
     "import/no-amd": "off",
