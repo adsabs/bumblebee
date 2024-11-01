@@ -6,6 +6,7 @@
 module.exports = {
   release: {
     options: {
+      sourceMap: true,
       mangle: true,
       compress: {
         sequences: true,

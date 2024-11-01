@@ -43,3 +43,6 @@ src/config/discovery.vars.js
 !.gitmodules
 
 test/test_manual.html
+
+# Sentry Config File
+.sentryclirc

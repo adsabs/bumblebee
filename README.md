@@ -20,10 +20,9 @@ $ git submodule update --init
 # install assets
 $ npm install -g grunt-cli
 $ npm install
-$ grunt setup
 
 # start the server
-$ ./server
+$ npm run dev
 ```
 
 You should then be able to access the application locally at `http://localhost:8000`.
@@ -35,10 +34,10 @@ Create a `src/config/discovery.vars.js` file, based on `discovery.vars.js.defaul
 #### Building
 
 ```bash
-$ grunt release
+$ npm run release
 # full build will be in dist/ directory
 # point the dev server to there:
-$ ./server dist
+$ npm start
 ```
 
 ### Testing
@@ -49,10 +48,10 @@ During testing, you can add `debugger` statements and use mocha's `only` to isol
 
 ```bash
 # Run everything
-$ grunt test
+$ npm run test
 
 # Run with puppeteer window open
-$ grunt test:debug
+$ npm run test:debug
 ```
 
 ### Documentation

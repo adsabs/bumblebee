@@ -11,15 +11,21 @@
     "url": "git://github.com/adsabs/bumblebee.git"
   },
   "scripts": {
-    "release": "grunt release",
+    "release": "grunt release && npm run sentry:sourcemaps",
+    "start": "docker compose --project-directory nginx up --build",
+    "dev": "APP_DIR=../src ENV=development docker compose --project-directory nginx up --build",
+    "test": "grunt --stack test",
     "test:prod": "grunt --stack test:prod",
-    "postinstall": "grunt setup"
+    "test:debug": "grunt --stack test:debug",
+    "postinstall": "grunt setup",
+    "sentry:sourcemaps": "sentry-cli sourcemaps inject --org adsabs --project bumblebee ./dist && sentry-cli sourcemaps upload --org adsabs --project bumblebee ./dist"
   },
   "browserslist": [
     "cover 99% in my stats"
   ],
   "dependencies": {
     "@hookform/resolvers": "^0.1.0",
+    "@sentry/cli": "^2.38.0",
     "array-flat-polyfill": "^1.0.1",
     "backbone": "^1.1.2",
     "backbone-validation": "^0.11.3",
