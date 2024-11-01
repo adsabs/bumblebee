@@ -1,0 +1,19 @@
+services:
+  nginx:
+    container_name: bbb-nginx
+    build:
+      context: .
+      dockerfile: ./Dockerfile
+      args:
+        ENABLE_MODULES: 'subs-filter'
+    ports:
+      - "8000:80"
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./default.conf:/etc/nginx/templates/default.conf.template:ro
+      - ${APP_DIR:-../dist}:/app/production:ro
+    environment:
+      ENVIRONMENT: "${ENV:-production}"
+      NGINX_ENTRYPOINT_QUIET_LOGS: 1
+    healthcheck:
+      test: 'curl --fail http://localhost:8000/ready || exit 1'
