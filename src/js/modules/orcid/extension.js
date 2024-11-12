@@ -43,10 +43,17 @@ define([
        * Trigger the action on each of the views
        */
       var orcidAction = _.bind(function(action, bibcodes) {
-        var models = _.filter(this.collection.models, function(m) {
-          return _.contains(bibcodes, m.get('bibcode'));
+        var models = [];
+
+        bibcodes.forEach(( bibcode ) => {
+          var model = this.hiddenCollection.find((m) => m.get('bibcode') === bibcode);
+          if (model) {
+            models.push(model);
+          }
         });
 
+        console.group('Orcid Action');
+        console.log(`Running action: ${action} on ${models.length} models`);
         // go through each model and grab the view for triggering
         _.forEach(
           models,
@@ -58,15 +65,23 @@ define([
               var view = this.view.children.findByModel(m);
 
               if (view) {
+                console.log('Found view for model, firing event on view', m);
                 view.trigger('OrcidAction', {
                   action: action,
                   view: view,
+                  model: m,
+                });
+              } else {
+                console.warn('Could not find view for model, firing event directly', m);
+                WidgetClass.prototype.onAllInternalEvents.call(this, 'childview:OrcidAction', null, {
+                  action: action,
                   model: m,
                 });
               }
             }
           }, this)
         );
+        console.groupEnd('Orcid Action');
       }, this);
 
       switch (event) {
