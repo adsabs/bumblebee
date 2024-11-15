@@ -4,49 +4,76 @@
   const APP_VERSION="";
   // #################################
 
-  /*
-    Dynamically pick which configuration to use based on the url.
-    Then attempt to load the resource, using require, upon failure we
-    load a known resource (discovery.config.js)
-  */
   const PATHS = {
     LANDING: 'landing-page',
     SEARCH: 'search-page',
     ABSTRACT: 'abstract-page',
   };
 
+  const log = (message) => console.debug(`[DEBUG] ${message}`);
+
   const getDefaultLoader = () => {
-    /* eslint-disable */
-    // @ts-ignore
+    log('Using default loader');
     return () =>
       require(['config/main.config'], function() {
-        require(['config/discovery.config']);
+        log('Loaded main.config successfully');
+        try {
+          require(['config/discovery.config'], function() {
+            log('Loaded discovery.config successfully');
+          }, function() {
+            log('Failed to load discovery.config');
+          });
+        } catch (e) {
+          log(`Error loading discovery.config: ${e.message}`);
+        }
       }, function() {
-        require(['config/discovery.config']);
+        log('Failed to load main.config, loading discovery.config as fallback');
+        try {
+          require(['config/discovery.config'], function() {
+            log('Loaded discovery.config successfully');
+          }, function() {
+            log('Failed to load discovery.config');
+          });
+        } catch (e) {
+          log(`Error loading discovery.config: ${e.message}`);
+        }
       });
-    /* eslint-enable */
   };
 
   const getPathLoader = (path) => {
-    /* eslint-disable */
-    // @ts-ignore
+    log(`Using path loader for ${path}`);
     return () =>
       require(['config/main.config'], function() {
-        require([`config/${path}.config`]);
+        log('Loaded main.config successfully');
+        try {
+          require([`config/${path}.config`], function() {
+            log(`Loaded ${path}.config successfully`);
+          }, function() {
+            log(`Failed to load ${path}.config`);
+          });
+        } catch (e) {
+          log(`Error loading ${path}.config: ${e.message}`);
+        }
       }, function() {
-        require(['config/discovery.config']);
+        log(`Failed to load main.config, loading discovery.config as fallback for ${path}`);
+        try {
+          require(['config/discovery.config'], function() {
+            log('Loaded discovery.config successfully');
+          }, function() {
+            log('Failed to load discovery.config');
+          });
+        } catch (e) {
+          log(`Error loading discovery.config: ${e.message}`);
+        }
       });
-    /* eslint-enable */
   };
 
   let load = getDefaultLoader();
   const version = APP_VERSION ? 'v=' + APP_VERSION : '';
+
   try {
     const loc = window.location;
-    const fullPath = loc[loc.pathname === '/' ? 'hash' : 'pathname'].replace(
-      /#/g,
-      ''
-    );
+    const fullPath = loc[loc.pathname === '/' ? 'hash' : 'pathname'].replace(/#/g, '');
 
     if (fullPath === '') {
       load = getPathLoader(PATHS.LANDING);
@@ -56,18 +83,21 @@
       load = getPathLoader(PATHS.ABSTRACT);
     }
   } catch (e) {
+    log(`Error determining path: ${e.message}`);
     load = getDefaultLoader();
   } finally {
     (function checkLoad() {
-      // sometimes requirejs isn't ready yet, this will wait for it
       if (window.requirejs) {
+        log('RequireJS is ready, configuring...');
         window.requirejs.config({
-          waitSeconds: 0,
+          waitSeconds: 30,
           urlArgs: version,
         });
 
+        log('Starting module load');
         return load();
       }
+      log('RequireJS not ready, retrying...');
       return setTimeout(checkLoad, 10);
     })();
   }

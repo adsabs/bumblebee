@@ -209,7 +209,7 @@ module.exports = function(grunt) {
       const rjs = require('requirejs');
       const fullConfig = {};
       const options = this.options({
-        waitSeconds: 7,
+        waitSeconds: 30,
         logLevel: 4,
         baseUrl: 'dist',
         optimize: 'none',
