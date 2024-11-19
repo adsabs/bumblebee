@@ -52,8 +52,6 @@ define([
           }
         });
 
-        console.group('Orcid Action');
-        console.log(`Running action: ${action} on ${models.length} models`);
         // go through each model and grab the view for triggering
         _.forEach(
           models,
@@ -65,14 +63,12 @@ define([
               var view = this.view.children.findByModel(m);
 
               if (view) {
-                console.log('Found view for model, firing event on view', m);
                 view.trigger('OrcidAction', {
                   action: action,
                   view: view,
                   model: m,
                 });
               } else {
-                console.warn('Could not find view for model, firing event directly', m);
                 WidgetClass.prototype.onAllInternalEvents.call(this, 'childview:OrcidAction', null, {
                   action: action,
                   model: m,
@@ -81,7 +77,6 @@ define([
             }
           }, this)
         );
-        console.groupEnd('Orcid Action');
       }, this);
 
       switch (event) {
