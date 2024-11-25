@@ -16,7 +16,7 @@ define([], function() {
      * of 'http://localhost:8000' you can also use the production
      * API of //api.adsabs.harvard.edu/v1/
      */
-    apiRoot: '//api.adsabs.harvard.edu/v1/',
+    apiRoot: '/dev/v1/',
 
     /**
      * The url for orcid proxy, which adds the application token and
@@ -90,7 +90,7 @@ define([], function() {
      */
        orcidClientId: 'APP-P5ANJTQRRTMA6GXZ',
        orcidLoginEndpoint: 'http://sandbox.orcid.org/oauth/authorize',
-       orcidApiEndpoint: '//ecs-staging-elb-2044121877.us-east-1.elb.amazonaws.com/v1/orcid',
+       orcidApiEndpoint: '/dev/v1/orcid/',
 
 
 
