@@ -225,6 +225,9 @@
       crossorigin="anonymous"
     ></script>
     <script>
+      // Set the environment variable
+      window.process = { env: { NODE_ENV: window.ENV ?? 'production' } };
+
       window.getSentry = (cb, errCb) => {
         if (typeof errCb === 'function') {
           errCb.call(null, new Error('Failed to get Sentry'));
