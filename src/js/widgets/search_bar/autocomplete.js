@@ -2,10 +2,10 @@ define(['jquery', 'analytics'], function($, analytics) {
   const autocompleteSource = [
     { value: 'author:""', label: 'Author', match: 'author:"' },
 
-    { value: 'author:"^"', label: 'First Author', match: 'author:"' },
-    { value: 'author:"^"', label: 'First Author', match: 'first author' },
-    { value: 'author:"^"', label: 'First Author', match: '^author' },
-    { value: 'author:"^"', label: 'First Author', match: 'author:"^' },
+    { value: 'first_author:""', label: 'First Author', match: 'author:"' },
+    { value: 'first_author:""', label: 'First Author', match: 'first author' },
+    { value: 'first_author:""', label: 'First Author', match: '^author' },
+    { value: 'first_author:""', label: 'First Author', match: 'author:"^' },
 
     {
       value: 'bibstem:""',

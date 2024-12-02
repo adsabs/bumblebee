@@ -301,8 +301,8 @@ define([
         case 'fields':
           {
             if (val === 'first-author') {
-              val = 'author';
-              selected = selected.replace(/"/, '"^');
+              val = 'first_author';
+              // selected = selected.replace(/"/, '"^');
             } else if (val === 'year') {
               selected = selected.replace(/"/g, '');
             }
@@ -372,7 +372,7 @@ define([
           return;
         }
       } else if (df == 'first-author') {
-        newVal = ' author:"^' + selected + '"';
+        newVal = ' first_author:"' + selected + '"';
       } else if (punc == '"') {
         newVal = df + ':"' + selected + '"';
       } else if (punc == '(') {

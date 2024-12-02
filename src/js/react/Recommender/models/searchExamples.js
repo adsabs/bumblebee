@@ -39,7 +39,7 @@ define([], function() {
     },
     {
       label: 'first author',
-      syntax: 'author:"^%"',
+      syntax: 'first_author:"%"',
       examples: authors,
     },
     {

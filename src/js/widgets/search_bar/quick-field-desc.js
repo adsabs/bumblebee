@@ -120,8 +120,8 @@ define({
   'first-author': {
     title: 'first author',
     description: 'Search by first author of the paper',
-    syntax: ['author:"^Last, F"'],
-    example: ['author:"^huchra, j"'],
+    syntax: ['first_author:"Last, F"'],
+    example: ['first_author:"huchra, j"'],
   },
   full: {
     title: 'fulltext',
