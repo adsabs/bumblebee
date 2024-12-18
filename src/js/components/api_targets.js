@@ -5,7 +5,7 @@
  * and any related limits
  */
 
-define([], function () {
+define([], function() {
   var config = {
     BOOTSTRAP: '/accounts/bootstrap',
     SEARCH: 'search/query',
@@ -35,7 +35,7 @@ define([], function () {
     LOGOUT: 'accounts/logout',
     REGISTER: 'accounts/register',
     VERIFY: 'accounts/verify',
-    DELETE: 'accounts/delete',
+    DELETE: 'accounts/user/delete',
     RESET_PASSWORD: 'accounts/reset-password',
     CHANGE_PASSWORD: 'accounts/change-password',
     CHANGE_EMAIL: 'accounts/change-email',
