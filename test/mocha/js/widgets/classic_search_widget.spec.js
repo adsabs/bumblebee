@@ -108,7 +108,7 @@ define([
       $Q.bibstem().val('a b c d +e -f =g +"h" -"i"');
       triggerChanges();
       setTimeout(function() {
-        
+
         expect(w.model.get('query')).to.eql({
           "q": [
             "pubdate:[2010-10 TO 9999-12]",
@@ -248,23 +248,23 @@ define([
 
         w.view.render();
 
-        // try some crappy input
-        authorInput([
-          't e s t',
-          '    testing    ',
-          ' - test ',
-          'test',
-          '+testing',
-          '-testing'
-        ]);
-        setLogic('author', 'BOOLEAN');
-        setTimeout(function() {
-          submitForm();
-          expect(publishSpy.args[1][3]['q'].toJSON()).to.eql({
-            q: [
-              'author:("t e s t" "testing" -" test" "test" +"testing" -"testing")',
-            ],
-            fq: ['{!type=aqp v=$fq_database}'],
+          // try some crappy input
+          authorInput([
+            't e s t',
+            '    testing    ',
+            ' - test ',
+            'test',
+            '+testing',
+            '-testing'
+          ]);
+          setLogic('author', 'BOOLEAN');
+          setTimeout(function() {
+            submitForm();
+            expect(publishSpy.args[1][3]['q'].toJSON()).to.eql({
+              q: [
+                'author:("t e s t" "testing" -" test" "test" +"testing" -"testing")',
+              ],
+              fq: ['{!type=aqp v=$fq_database}'],
             __fq_database: ['AND', 'astronomy'],
             fq_database: ['database: astronomy'],
             sort: ['date desc'],
@@ -283,7 +283,25 @@ define([
               fq_database: ['database: astronomy'],
               sort: ['date desc'],
             });
-            done();
+
+
+            // ---- testing first_author field is parsed properly
+
+            authorInput(['^Tester, T', '^Testing, T', 'Foo, B', 'Baz, B']);
+            setLogic('author', 'AND');
+            setTimeout(function () {
+              submitForm();
+              expect(publishSpy.args[3][3]['q'].toJSON()).to.eql({
+                q: [
+                  'author:("Foo, B" "Baz, B") first_author:("Tester, T" "Testing, T")',
+                ],
+                fq: ['{!type=aqp v=$fq_database}'],
+                __fq_database: ['AND', 'astronomy'],
+                fq_database: ['database: astronomy'],
+                sort: ['date desc'],
+              });
+              done();
+            }, 100);
           }, 100);
         }, 100);
       }, 100);

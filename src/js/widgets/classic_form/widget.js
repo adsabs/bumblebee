@@ -87,6 +87,68 @@ define([
         return prefix + updater.quoteIfNecessary(l);
       });
     },
+
+    /**
+     * Parse the incoming author lines and convert into a string to add to the query
+     *
+     * @param {string[]} text
+     * @param {BOOLEAN} logic
+     * @returns {string} the author query string
+     */
+    handleAuthorInput(text, logic) {
+      if (text.length === 0) return '';
+      const authors = [];
+      const firstAuthors = [];
+      let doRestrictAuthors = false;
+      let result = '';
+
+      text.forEach((line) => {
+        let name = line;
+        let prefix;
+        let suffix;
+
+        if (/^[\^=\-+]/.test(name) && name.length > 1) {
+          prefix = name.substring(0, 1);
+          name = name.substring(1);
+        }
+
+        if (/[$]$/.test(name) && name.length > 1) {
+          suffix = name.substring(name.length - 1);
+          name = name.substring(0, name.length - 1);
+        }
+
+        if (suffix === '$') {
+          doRestrictAuthors = true;
+        }
+
+        if (prefix === '^' && name.length > 0) {
+          firstAuthors.push(`"${name}"`);
+          return;
+        }
+
+        if (prefix && name.length > 0) {
+          authors.push(`${prefix}"${name}"`);
+        } else if (name.length > 0) {
+          authors.push(`"${name}"`);
+        }
+      });
+
+      // if we have authors, add them to the result
+      if (authors.length > 0) {
+        result = `author:(${authors.join(logic)})`;
+      }
+
+      if (firstAuthors.length > 0) {
+        result = `${result.length > 0 ? `${result} ` : ''}first_author:(${firstAuthors.join(logic)})`;
+      }
+
+      if (doRestrictAuthors) {
+        result = `${result.length > 0 ? `${result} ` : ''}author_count:1`;
+      }
+
+      return result;
+    },
+
     serialize: _.debounce(function() {
       var updater = this.updater;
       var data = this.toJSON();
@@ -129,28 +191,8 @@ define([
         query.q.push('pubdate:' + date);
       }
 
-      // authors
-      var authorLogic = BOOLEAN[data['author-logic']];
-      var restrictAuthors = false;
-      var authors = _.map(data['author-names'], function(name) {
-        var prefix = '';
-        if (/^[=\-+]/.test(name)) {
-          prefix = name.substr(0, 1);
-          name = name.substr(1);
-        }
-        if (/[\$]$/.test(name)) {
-          restrictAuthors = true;
-          name = name.substr(0, name.length - 1);
-        }
-        return prefix + '"' + name + '"';
-      });
-      var result = 'author:(' + authors.join(authorLogic) + ')';
-      if (restrictAuthors) {
-        result += ' ' + 'author_count:1';
-      }
-      if (authors.length) {
-        query.q.push(result);
-      }
+      // handle author names
+      query.q.push(this.handleAuthorInput(data['author-names'], BOOLEAN[data['author-logic']]));
 
       // objects
       var objectLogic = BOOLEAN[data['object-logic']];
