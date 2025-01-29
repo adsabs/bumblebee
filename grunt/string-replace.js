@@ -58,7 +58,7 @@ module.exports = {
   },
   latest_version: {
     files: {
-      'dist/config/shim.js': 'dist/config/shim.js',
+      'dist/config/init.js': 'dist/config/init.js',
       'dist/index.html': 'dist/index.html',
     },
     options: {

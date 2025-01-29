@@ -31,7 +31,7 @@
     as="style"
   />
   <link rel="preload" href="./libs/require.js" as="script"/>
-  <link rel="preload" href="./config/shim.js?v=<APP_VERSION>" as="script"/>
+  <link rel="preload" href="config/init.js?v=<APP_VERSION>" as="script"/>
   <link rel="stylesheet" href="./styles/css/styles.css?v=<APP_VERSION>"/>
 
     <link
@@ -136,6 +136,11 @@
             >
             (for slow connections/low resources)
           </h3>
+          <div class="hidden well-sm center-block" id="app-error-container" data-testid="app-error">
+            <div class="alert alert-warning small">
+              <span id="app-error-message"></span>
+            </div>
+          </div>
         </article>
       </div>
     </div>
@@ -224,6 +229,7 @@
 
             // Performance Monitoring
             tracesSampleRate: window.ENV === 'development' ? 1.0 : 0.75,
+            debug: false,
 
             // Session Replay
             replaysSessionSampleRate: window.ENV === 'development' ? 1.0 : 0.1,
@@ -267,6 +273,6 @@
 
     <!-- start the discovery application -->
     <script src="./libs/require.js"></script>
-    <script src="./config/shim.js?v=<APP_VERSION>"></script>
+    <script src="config/init.js?v=<APP_VERSION>"></script>
   </body>
 </html>
