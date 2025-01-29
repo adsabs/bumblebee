@@ -162,7 +162,7 @@ module.exports = function(grunt) {
             files: [
               'config/**/*.js',
               '!config/discovery.vars.js',
-              '!config/shim.js',
+              '!config/init.js',
               'js/apps/discovery/**/*.js',
               '!js/apps/discovery/router.js',
               'js/components/**/*.js',
