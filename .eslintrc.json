@@ -29,6 +29,8 @@
     "Sentry": true
   },
   "rules": {
+    "max-len": ["off", 120],
+    "prettier/prettier": "warn",
     "import/no-amd": "off",
     "vars-on-top": "off",
     "no-var": "off",
