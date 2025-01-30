@@ -33,7 +33,7 @@ module.exports = {
       {
         expand: true,
         cwd: 'dist/config',
-        src: '**/*.js',
+        src: ['**/*.js', '!init.js'],
         dest: 'dist/config',
       },
     ],
