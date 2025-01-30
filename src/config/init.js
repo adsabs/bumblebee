@@ -106,16 +106,19 @@
    * @returns {Promise<*>}
    */
   const getLoader = () => {
-    switch (fullPath) {
-      case '':
-        return getPageConfigLoader(PATHS.LANDING);
-      case '/search':
-        return getPageConfigLoader(PATHS.SEARCH);
-      case '/abs':
-        return getPageConfigLoader(PATHS.ABSTRACT);
-      default:
-        return getMainConfigLoader();
+    if (fullPath.startsWith('/abs')) {
+      return getPageConfigLoader(PATHS.ABSTRACT);
     }
+
+    if (fullPath.startsWith('/search')) {
+      return getPageConfigLoader(PATHS.SEARCH);
+    }
+
+    if (fullPath === '/') {
+      return getPageConfigLoader(PATHS.LANDING);
+    }
+
+    return getMainConfigLoader();
   };
 
   /**
