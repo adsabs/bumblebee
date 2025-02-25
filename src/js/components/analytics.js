@@ -1,4 +1,4 @@
-define(['underscore', 'jquery'], function (_, $) {
+define([], function () {
   /*
    * Set of targets
    * each has a set of hooks which coorespond to the event label passed
@@ -24,7 +24,7 @@ define(['underscore', 'jquery'], function (_, $) {
         'associated',
         'toc',
       ],
-      url: _.template('link_gateway/<%= bibcode %>/<%= target %>'),
+      url: ({ bibcode, target }) => `link_gateway/${bibcode}/${target}`,
     },
   };
 
@@ -35,7 +35,11 @@ define(['underscore', 'jquery'], function (_, $) {
    * @param {object} data
    */
   var sendEvent = function (url) {
-    $.ajax({url: url, type: 'GET'});
+    window.fetch(url, { method: 'GET' }).catch((error) => {
+      window.getSentry().captureMessage('Failed to send analytics event', {
+        extra: { url, error: error.message },
+      });
+    });
   };
 
   /**
@@ -48,12 +52,12 @@ define(['underscore', 'jquery'], function (_, $) {
    */
   var adsLogger = function (label, data) {
     // if label or data is not present, do nothing
-    if (_.isString(label) && _.isPlainObject(data) && _.has(data, 'target')) {
-      _.forEach(TARGETS, function (val) {
+    if (typeof label === 'string' && typeof data === 'object' && data.target) {
+      TARGETS.forEach(function (val) {
         var target = null;
-        _.forEach(val.types, function (type) {
-          if (_.isArray(type)) {
-            if (type[0] === data.target && _.has(type[1], 'redirectTo')) {
+        val.types.forEach(function (type) {
+          if (Array.isArray(type)) {
+            if (type[0] === data.target && 'redirectTo' in type[1]) {
               target = type[1].redirectTo;
             }
           } else if (type === data.target) {
@@ -62,8 +66,8 @@ define(['underscore', 'jquery'], function (_, $) {
         });
 
         // send event if we find a hook and the target is in the list of types
-        if (_.contains(val.hooks, label) && target) {
-          var params = _.assign({}, data, {target: target});
+        if (val.hooks.includes(label) && target) {
+          var params = { ...data, target };
           sendEvent(data.url ? data.url : val.url(params));
         }
       });
@@ -133,7 +137,7 @@ define(['underscore', 'jquery'], function (_, $) {
 
     cacher.add(arguments);
 
-    adsLogger.apply(null, _.rest(arguments, 3));
+    adsLogger.apply(null, Array.prototype.slice.call(arguments, 3));
     // if the action is send and the event is event, then we want to send the event to the dataLayer
     if (Array.isArray(window.dataLayer) &&
       action === 'send' && event === 'event'
