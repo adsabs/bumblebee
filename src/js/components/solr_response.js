@@ -14,6 +14,21 @@ define([
   'underscore',
   'jquery',
 ], function(JsonResponse, SolrParams, Backbone, _, $) {
+
+  /*
+   * Cleans the parameters object by removing empty values
+   * @param {Object} obj
+   */
+  const cleanParams = (obj) => {
+    const out = {};
+    Object.keys(obj).forEach((key) => {
+      if (!_.isEmpty(obj[key])) {
+        cleanParams[key] = obj[key];
+      }
+    });
+    return out;
+  };
+
   var SolrResponse = JsonResponse.extend({
     initialize: function() {
       if (!this.has('responseHeader.params')) {
@@ -25,7 +40,7 @@ define([
         this._url = new SolrParams(p.parse(this._url)).url();
       } else {
         var queryParams = this.get('responseHeader.params');
-        this._url = new SolrParams(queryParams).url();
+        this._url = new SolrParams(cleanParams(queryParams)).url();
       }
     },
     url: function(resp, options) {
