@@ -145,7 +145,11 @@ define([
       $select2Instance.on('close', () => {
         document.getElementById('query-search-input').focus();
         setTimeout(() => {
-          document.getElementsByClassName('search-term-popover')[0].remove();
+          try {
+            document.getElementsByClassName('search-term-popover')[0].remove();
+          } catch (e) {
+            // do nothing
+          }
         }, 10);
       });
 
