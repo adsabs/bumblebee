@@ -11,7 +11,7 @@ module.exports = function(grunt) {
     jitGrunt: {
       staticMappings: {
         express: 'grunt-express-server',
-        uglify: 'grunt-contrib-uglify-es',
+        uglify: 'grunt-contrib-uglify',
       },
     },
   });
