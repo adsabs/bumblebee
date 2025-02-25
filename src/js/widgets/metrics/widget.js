@@ -196,13 +196,15 @@ define([
 
       // must delay to make sure element exists
       setTimeout(function() {
-        svg
-          .append('g')
-          .attr('class', 'legend')
-          .attr('transform', 'translate(70, 20)')
-          .attr('data-style-padding', 7)
-          .style('font-size', '12px')
-          .call(d3.legend);
+        if (window.d3.legend) {
+          svg
+            .append('g')
+            .attr('class', 'legend')
+            .attr('transform', 'translate(70, 20)')
+            .attr('data-style-padding', 7)
+            .style('font-size', '12px')
+            .call(window.d3.legend);
+        }
       }, 500);
 
       // cache it so it can be applied to the rects later
@@ -212,9 +214,7 @@ define([
           .attr('class', 'd3-tip')
           .offset([-10, 0])
           .html(function(d) {
-            var dataType = that.model.get('normalized')
-              ? 'normalizedGraphData'
-              : 'graphData';
+            var dataType = that.model.get('normalized') ? 'normalizedGraphData' : 'graphData';
             var data = that.model.get(dataType);
 
             let sum = 0;
@@ -244,10 +244,7 @@ define([
       graphContainerG
         .append('text')
         .attr('text-anchor', 'middle') // this makes it easy to centre the text as the transform is applied to the anchor
-        .attr(
-          'transform',
-          'translate(' + -40 + ',' + height / 2 + ')rotate(-90)'
-        ) // text is drawn off the screen top left, move down and out and rotate
+        .attr('transform', 'translate(' + -40 + ',' + height / 2 + ')rotate(-90)') // text is drawn off the screen top left, move down and out and rotate
         .classed('graph-label', true)
         .text(this.model.get('yAxisLabel'));
 
@@ -436,9 +433,7 @@ define([
         g.append('text')
           .attr('x', 10)
           .attr('y', 100)
-          .text(
-            'time period is less than a year, refer to table to the left for values'
-          );
+          .text('time period is less than a year, refer to table to the left for values');
 
         return;
       }
@@ -591,19 +586,11 @@ define([
               return;
             }
             var out = '<table>';
-            out +=
-              '<tr><td><strong>Year:</strong></td><td>&nbsp;' +
-              data.year +
-              '</td></tr>';
+            out += '<tr><td><strong>Year:</strong></td><td>&nbsp;' + data.year + '</td></tr>';
             for (var i in data.groups) {
               var g = data.groups[i];
               out += '<tr>';
-              out +=
-                '<td style="color:' +
-                g.color +
-                '"><strong>' +
-                g.key +
-                ':</strong></td>';
+              out += '<td style="color:' + g.color + '"><strong>' + g.key + ':</strong></td>';
               out += '<td>&nbsp;' + g.val.toFixed(5) + '</td>';
               out += '</tr>';
             }
@@ -631,8 +618,7 @@ define([
               var pos = bisector(data, domainX);
               var smaller = data[pos - 1] || 0;
               var larger = data[pos] || data[data.length - 1];
-              var closest =
-                domainX - smaller.x < larger.x === domainX ? smaller : larger;
+              var closest = domainX - smaller.x < larger.x === domainX ? smaller : larger;
               var tranX = x(closest.x) + margin.left;
               var tranY = y(closest.y) + margin.top;
               out.push({
@@ -756,13 +742,15 @@ define([
 
       // must delay to make sure the element is available
       setTimeout(function() {
-        svg
-          .append('g')
-          .attr('class', 'legend')
-          .attr('transform', 'translate(70, 36)')
-          .attr('data-style-padding', 7)
-          .style('font-size', '12px')
-          .call(d3.legend);
+        if (window.d3.legend) {
+          svg
+            .append('g')
+            .attr('class', 'legend')
+            .attr('transform', 'translate(70, 36)')
+            .attr('data-style-padding', 7)
+            .style('font-size', '12px')
+            .call(window.d3.legend);
+        }
       }, 500);
     },
 
@@ -782,10 +770,7 @@ define([
     onRender: function() {
       this.drawGraph();
       setTimeout(() => {
-        $('svg', this.el).attr(
-          'aria-label',
-          this.model.get('yAxisLabel') + ' graph'
-        );
+        $('svg', this.el).attr('aria-label', this.model.get('yAxisLabel') + ' graph');
       }, 0);
     },
   });
@@ -833,10 +818,7 @@ define([
     },
 
     signalShowAll: function() {
-      this.$('.show-all').html(
-        '<i class="icon-loading" aria-hidden="true"/>&nbsp;&nbsp;' +
-          this.$('.show-all').html()
-      );
+      this.$('.show-all').html('<i class="icon-loading" aria-hidden="true"/>&nbsp;&nbsp;' + this.$('.show-all').html());
       this.trigger('show-all');
     },
 
@@ -879,11 +861,7 @@ define([
       this.containerModel = new ContainerModel();
       this.view = new ContainerView({ model: this.containerModel });
       this.childViews = {};
-      Marionette.bindEntityEvents(
-        this,
-        this.view,
-        Marionette.getOption(this, 'viewEvents')
-      );
+      Marionette.bindEntityEvents(this, this.view, Marionette.getOption(this, 'viewEvents'));
 
       // for widgets that extend the base MetricsWidget, so they can access this stuff
       this.dataExtractor = DataExtractor;
@@ -906,12 +884,7 @@ define([
 
     activate: function(beehive) {
       this.setBeeHive(beehive);
-      _.bindAll(
-        this,
-        'setCurrentQuery',
-        'processMetrics',
-        'checkIfSimpleRequired'
-      );
+      _.bindAll(this, 'setCurrentQuery', 'processMetrics', 'checkIfSimpleRequired');
       var pubsub = beehive.getService('PubSub');
       pubsub.subscribe(pubsub.INVITING_REQUEST, this.setCurrentQuery);
       this.activateWidget();
@@ -932,31 +905,22 @@ define([
     },
 
     downloadPapers: function() {
-      const data = this.prepareDownloadData(
-        this.childViews.papersGraphView.model.get('graphData')
-      );
+      const data = this.prepareDownloadData(this.childViews.papersGraphView.model.get('graphData'));
       this.download(data, 'metrics-papers.csv');
     },
 
     downloadCitations: function() {
-      const data = this.prepareDownloadData(
-        this.childViews.citationsGraphView.model.get('graphData')
-      );
+      const data = this.prepareDownloadData(this.childViews.citationsGraphView.model.get('graphData'));
       this.download(data, 'metrics-citations.csv');
     },
 
     downloadReads: function() {
-      const data = this.prepareDownloadData(
-        this.childViews.readsGraphView.model.get('graphData')
-      );
+      const data = this.prepareDownloadData(this.childViews.readsGraphView.model.get('graphData'));
       this.download(data, 'metrics-reads.csv');
     },
 
     downloadIndices: function() {
-      const data = this.prepareDownloadData(
-        this.childViews.indicesGraphView.model.get('graphData'),
-        false
-      );
+      const data = this.prepareDownloadData(this.childViews.indicesGraphView.model.get('graphData'), false);
       this.download(data, 'metrics-indices.csv');
     },
 
@@ -1021,10 +985,7 @@ define([
     },
 
     createTableViews: function(response, num_bibcodes) {
-      var tableData =
-        num_bibcodes === 1
-          ? this.createTableDataForOnePaper(response)
-          : this.createTableData(response);
+      var tableData = num_bibcodes === 1 ? this.createTableDataForOnePaper(response) : this.createTableData(response);
 
       this.childViews.papersTableView = new TableView({
         template: PaperTableTemplate,
@@ -1066,10 +1027,7 @@ define([
       };
 
       data.paperModelData = {
-        totalNumberOfPapers: [
-          generalData.total['number of papers'],
-          generalData.refereed['number of papers'],
-        ],
+        totalNumberOfPapers: [generalData.total['number of papers'], generalData.refereed['number of papers']],
         totalNormalizedPaperCount: [
           generalData.total['normalized paper count'],
           generalData.refereed['normalized paper count'],
@@ -1077,10 +1035,7 @@ define([
       };
 
       data.readsModelData = {
-        totalNumberOfReads: [
-          generalData.total['total number of reads'],
-          generalData.refereed['total number of reads'],
-        ],
+        totalNumberOfReads: [generalData.total['total number of reads'], generalData.refereed['total number of reads']],
         averageNumberOfReads: [
           generalData.total['average number of reads'],
           generalData.refereed['average number of reads'],
@@ -1287,17 +1242,13 @@ define([
         this.view.readsTable.show(this.childViews.readsTableView);
         this.view.readsGraph.show(this.childViews.readsGraphView);
       } else {
-        this.view
-          .$(this.view.readsTable.el)
-          .html('No reads found for this article.');
+        this.view.$(this.view.readsTable.el).html('No reads found for this article.');
       }
       if (this.hasCitations(data)) {
         this.view.citationsTable.show(this.childViews.citationsTableView);
         this.view.citationsGraph.show(this.childViews.citationsGraphView);
       } else {
-        this.view
-          .$(this.view.citationsTable.el)
-          .html('No citations found for this article.');
+        this.view.$(this.view.citationsTable.el).html('No citations found for this article.');
       }
       // some table rows need to be hidden
       this.view.$('.hidden-abstract-page').hide();
@@ -1360,10 +1311,7 @@ define([
       };
 
       data.readsModelData = {
-        totalNumberOfReads: [
-          generalData.total['total number of reads'],
-          generalData.refereed['total number of reads'],
-        ],
+        totalNumberOfReads: [generalData.total['total number of reads'], generalData.refereed['total number of reads']],
         averageNumberOfReads: [
           generalData.total['average number of reads'],
           generalData.refereed['average number of reads'],
@@ -1452,7 +1400,7 @@ define([
     },
 
     hasIndicesTable: function(data) {
-      return !!data['indicators'] && !!data['indicators refereed'];
+      return !!data.indicators && !!data['indicators refereed'];
     },
 
     hasIndicesGraph: function(data) {
@@ -1500,8 +1448,7 @@ define([
           start += rows;
           if (start >= numFound || start >= limit) {
             // if more than 6000 records, automatically request the simple version
-            if (numFound > limit && options.simple === undefined)
-              options.simple = true;
+            if (numFound > limit && options.simple === undefined) options.simple = true;
 
             // set numFound  + bibcodes into the view Model
             that.containerModel.set({
@@ -1535,9 +1482,7 @@ define([
       });
 
       return this._executeSearch(query).then(function(apiResponse) {
-        var citationCount = apiResponse.get(
-          'stats.stats_fields.citation_count.sum'
-        );
+        var citationCount = apiResponse.get('stats.stats_fields.citation_count.sum');
         return citationCount > 50000;
       });
     },
