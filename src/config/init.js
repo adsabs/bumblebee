@@ -139,7 +139,8 @@
    */
   const getCookie = (name) => {
     const cookies = document.cookie.split('; ');
-    for (const cookie of cookies) {
+    for (let i = 0; i < cookies.length; i += 1) {
+      const cookie = cookies[i];
       const [key, value] = cookie.split('=');
       if (key === name) {
         return decodeURIComponent(value);
