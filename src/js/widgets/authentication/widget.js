@@ -46,13 +46,35 @@ define([
 
   var FormView;
   var FormModel;
+  const ERROR_TIMEOUT = 5000;
 
   FormView = Marionette.ItemView.extend({
     activateValidation: FormFunctions.activateValidation,
     checkValidationState: FormFunctions.checkValidationState,
+
+    /**
+     * Shows an error message to the user
+     * and then hides it after a timeout
+     *
+     * @todo figure out why we have to force a re-render
+     * @param msg
+     */
+    showError(msg) {
+      this.model({ hasError: true, errorMsg: msg });
+      this.render();
+
+      setTimeout(() => {
+        this.model({ hasError: false, errorMsg: undefined });
+        this.render();
+      }, ERROR_TIMEOUT);
+    },
     triggerSubmit: function(ev) {
       ev.preventDefault();
       const formName = ev.currentTarget.dataset.formName;
+      if (!window.grecaptcha) {
+        this.showError('Sorry reCAPTCHA did not load properly. Please try refreshing the page.');
+        return;
+      }
       if (typeof formName === 'string') {
         window.grecaptcha.ready(() =>
           window.grecaptcha
@@ -60,7 +82,7 @@ define([
           .then((token) => {
             this.model.set('g-recaptcha-response', token);
             FormFunctions.triggerSubmit.apply(this, arguments);
-          }),
+          })
         );
       } else {
         FormFunctions.triggerSubmit.apply(this, arguments);
