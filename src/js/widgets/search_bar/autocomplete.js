@@ -282,14 +282,19 @@ define(['jquery', 'analytics'], function($, analytics) {
 
       // use only the right-most term
       const { active } = findActiveAndInactive(term);
+      let suggestions = [];
 
-      // match on the item regex, and return the label
-      const reg = new RegExp(`^${$.ui.autocomplete.escapeRegex(active)}`, 'i');
-      const suggestions = _.uniq(
-        _.filter(autocompleteSource, (item) => reg.test(item.match)),
-        false,
-        _.property('label')
-      );
+      try { // match on the item regex, and return the label
+        const reg = new RegExp(`^${$.ui.autocomplete.escapeRegex(active)}`, 'i');
+        suggestions = _.uniq(
+          _.filter(autocompleteSource, (item) => reg.test(item.match)),
+          false,
+          _.property('label'),
+        );
+      } catch (e) {
+        // if there is an error, just don't show any suggestions
+        suggestions = [];
+      }
 
       response(suggestions);
     };
