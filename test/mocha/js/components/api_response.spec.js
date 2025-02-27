@@ -1,6 +1,6 @@
 define(['js/components/api_response', 'backbone', 'jquery'], function(Response, Backbone, $) {
   describe("ApiResponse Object (API)", function () {
-      
+
     // Runs once before all tests start.
     // test: http://adswhy:9000/solr/collection1/select?q=title%3Astar&fq=database%3Aastronomy&start=10&rows=5&fl=title%2Cbibcode%2Cauthor&wt=json&indent=true&hl=true&hl.fl=title&hl.simple.pre=%3Cem%3E&hl.simple.post=%3C%2Fem%3E&facet=true&facet.query=title%3Astar&facet.field=author
     before(function () {
@@ -75,12 +75,12 @@ define(['js/components/api_response', 'backbone', 'jquery'], function(Response, 
       );
 
     });
-  
+
     // Runs once when all tests finish.
     after(function () {
       delete this.jsonData;
     });
-  
+
     it("should return simple API response object", function() {
       expect(new Response(this.jsonData)).to.be.instanceof(Response);
       expect(new Response(this.jsonData)).not.to.be.instanceof(Backbone.Model);
@@ -151,13 +151,13 @@ define(['js/components/api_response', 'backbone', 'jquery'], function(Response, 
       expect(rsp.get('boo')).to.be.equal('bar');
 
     });
-    
+
 
     it("is not forgiving (accessing unknown keys is throwing error)", function() {
       expect(function() {new Response(this.jsonData).get('foo.bar');}).to.throw(Error);
       expect(new Response(this.jsonData).has('foo.bar')).to.be.false;
     });
-    
+
     it("can be serialized and de-serialized (saved as string and reloaded)", function() {
       var rsp =  new Response(this.jsonData);
       var rsp2 = rsp.clone();
@@ -166,10 +166,8 @@ define(['js/components/api_response', 'backbone', 'jquery'], function(Response, 
       var rsp3 = new Response(JSON.parse(JSON.stringify(rsp.toJSON())));
       expect(rsp.get()).to.be.eql(rsp3.get());
     });
-    
+
     it("provides a key under which this object can be cached/retrieved", function() {
-
-
       // default is to get params from the response
       var rsp =  new Response(this.jsonData);
       expect(rsp.url()).to.be.equal('facet=true&facet.field=author&facet.query=title%3Astar' +
@@ -180,9 +178,19 @@ define(['js/components/api_response', 'backbone', 'jquery'], function(Response, 
       // but url can be set when response is created and it will be parsed (and ordered)
       rsp =  new Response(this.jsonData, {'url': 'foo=bar&boo=bar'});
       expect(rsp.url()).to.be.equal('boo=bar&foo=bar');
-
     });
-    
-    
+
+    it('rejects empty responseHeader params', function() {
+      // default is to get params from the response
+      const json = { ...this.jsonData, responseHeader: {
+          ...this.jsonData.responseHeader,
+          params: { ...this.jsonData.responseHeader.params, deleteme: '', keepme: 'foo' }
+        }
+      };
+      var rsp = new Response(json);
+      const url = new URLSearchParams(rsp.url());
+      expect(url.has('deleteme')).to.be.false;
+      expect(url.has('keepme')).to.be.true;
+    });
   });
 });

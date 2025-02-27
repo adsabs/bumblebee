@@ -81,8 +81,19 @@ module.exports = function(grunt) {
       await page.on('console', async (msg) => {
         let args = [];
         try {
-          args = await Promise.all(
-            msg.args().map(async (a) => await a.jsonValue())
+          const args = await Promise.all(
+            msg.args().map((a) =>  {
+              const ro = a.remoteObject();
+
+              // attempt the extract out the underlying object, otherwise this sometimes gets skipped in the output
+              if (ro.type === 'object' && Array.isArray(ro.preview?.properties)) {
+                return ro.preview.properties.reduce((acc, prop) => {
+                  acc[prop.name] = prop.value;
+                  return acc;
+                }, {});
+              }
+              return a.jsonValue()
+            })
           );
         } catch (e) {
           args = [];
