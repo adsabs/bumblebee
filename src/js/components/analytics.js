@@ -42,6 +42,13 @@ define([], function () {
     });
   };
 
+  const isValidEvent = ({ label, target }) => {
+    if (typeof label !== 'string' || typeof target !== 'string') {
+      return false;
+    }
+    return TARGETS.resolver.hooks.includes(label) && TARGETS.resolver.types.includes(target);
+  }
+
   /**
    * Go through the targets and fire the event if the label passed
    * matches one of the hooks specified.  Also the data.target must match one
@@ -51,26 +58,11 @@ define([], function () {
    * @param {object} data - the event data
    */
   var adsLogger = function (label, data) {
-    // if label or data is not present, do nothing
-    if (typeof label === 'string' && typeof data === 'object' && data.target) {
-      TARGETS.forEach(function (val) {
-        var target = null;
-        val.types.forEach(function (type) {
-          if (Array.isArray(type)) {
-            if (type[0] === data.target && 'redirectTo' in type[1]) {
-              target = type[1].redirectTo;
-            }
-          } else if (type === data.target) {
-            target = type;
-          }
-        });
+    const target = data ? data.target : null;
+    const bibcode = data ? data.bibcode : null;
 
-        // send event if we find a hook and the target is in the list of types
-        if (val.hooks.includes(label) && target) {
-          var params = { ...data, target };
-          sendEvent(data.url ? data.url : val.url(params));
-        }
-      });
+    if (bibcode !== null && isValidEvent({ label, target })) {
+      sendEvent(data.url ? data.url : TARGETS.resolver.url({ bibcode, target }));
     }
   };
 
@@ -139,9 +131,7 @@ define([], function () {
 
     adsLogger.apply(null, Array.prototype.slice.call(arguments, 3));
     // if the action is send and the event is event, then we want to send the event to the dataLayer
-    if (Array.isArray(window.dataLayer) &&
-      action === 'send' && event === 'event'
-    ) {
+    if (Array.isArray(window.dataLayer) && action === 'send' && event === 'event') {
       // some events are 'interaction' or 'error', so add that to the event name
       window.dataLayer.push({
         event: `${type}_${description}`,
