@@ -23,7 +23,7 @@ define([
     const out = {};
     Object.keys(obj).forEach((key) => {
       if (!_.isEmpty(obj[key])) {
-        cleanParams[key] = obj[key];
+        out[key] = obj[key];
       }
     });
     return out;

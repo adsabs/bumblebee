@@ -87,10 +87,11 @@ module.exports = function(grunt) {
         try {
           const args = await Promise.all(
             msg.args().map((a) =>  {
+              const ro = a.remoteObject();
 
               // attempt the extract out the underlying object, otherwise this sometimes gets skipped in the output
-              if (a._remoteObject.type === 'object' && Array.isArray(a._remoteObject?.preview?.properties)) {
-                return a._remoteObject.preview.properties.reduce((acc, prop) => {
+              if (ro.type === 'object' && Array.isArray(ro.preview?.properties)) {
+                return ro.preview.properties.reduce((acc, prop) => {
                   acc[prop.name] = prop.value;
                   return acc;
                 }, {});
