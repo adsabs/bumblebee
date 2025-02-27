@@ -157,10 +157,10 @@ define([
           if ($link) {
             // found it, clear the interval and scroll
             clearInterval(focusInterval);
-            $(document.documentElement).animate(
-              { scrollTop: $link.offset().top },
-              'fast'
-            );
+              $(document.documentElement).animate(
+                { scrollTop: $link.offset() && $link.offset().top ? $link.offset().top : 0 },
+                'fast'
+              );
           }
         }, 100);
 
