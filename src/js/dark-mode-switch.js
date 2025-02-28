@@ -3,7 +3,7 @@ define(['analytics'], function(analytics) {
   let darkSwitch;
   const getDarkSwitchValue = () => {
     try {
-      localStorage.getItem('darkSwitch');
+      return localStorage.getItem(STORAGE_KEY);
     } catch (e) {
       return null;
     }
@@ -11,7 +11,7 @@ define(['analytics'], function(analytics) {
 
   const setDarkSwitchValue = (val) => {
     try {
-      localStorage.setItem('darkSwitch', val);
+      localStorage.setItem(STORAGE_KEY, val);
     } catch (e) {
       // localStorage is disabled
     }
@@ -56,8 +56,7 @@ define(['analytics'], function(analytics) {
 
     const savedMode = getDarkSwitchValue();
     // 1. check app setting
-    if (savedMode !== null) {
-      // eslint-disable-next-line no-unused-expressions
+    if (!savedMode) {
       savedMode !== 'on' ? turnOffDarkMode(false) : turnOnDarkMode(false);
     } else if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
       // 2. check system setting
