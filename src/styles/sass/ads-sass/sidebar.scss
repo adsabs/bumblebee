@@ -33,6 +33,7 @@ $sidenav-background: $body-bg;
   transition: transform 0.5s ease-in-out;
   //sticky to the side
   border-right: 1px solid darken($sidenav-background, 15%);
+  padding-bottom: 20px;
 
   // @media (min-width: $screen-md-min) {
   //   padding: 0 0 99999px 0;

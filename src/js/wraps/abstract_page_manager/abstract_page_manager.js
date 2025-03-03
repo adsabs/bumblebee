@@ -5,22 +5,9 @@ define([
   'hbs!js/wraps/abstract_page_manager/abstract-nav',
   'utils',
   'analytics',
-], function(
-  PageManagerController,
-  PageManagerView,
-  PageManagerTemplate,
-  TOCTemplate,
-  utils
-) {
+], function(PageManagerController, PageManagerView, PageManagerTemplate, TOCTemplate, utils) {
   var PageManager = PageManagerController.extend({
-    persistentWidgets: [
-      'SearchWidget',
-      'ShowAbstract',
-      'ShowCitations',
-      'ShowToc',
-      'ShowReferences',
-      'tocWidget',
-    ],
+    persistentWidgets: ['SearchWidget', 'ShowAbstract', 'ShowCitations', 'ShowToc', 'ShowReferences', 'tocWidget'],
 
     TOCTemplate: TOCTemplate,
 
@@ -68,10 +55,7 @@ define([
       // menu
       $('.s-nav-container').attr('style', `position:fixed;top:${top}px;left:0`);
       // full text sources widget
-      $('#resources-container').attr(
-        'style',
-        `position:fixed;top:${top}px;left:100%`
-      );
+      $('#resources-container').attr('style', `position:fixed;top:${top}px;left:100%`);
     },
 
     unStickElements: function() {
@@ -92,45 +76,36 @@ define([
       this.view = this.createView({ debug: this.debug, widgets: this.widgets });
       var pubsub = this.getPubSub();
       this.onDetailsPage = false;
-      pubsub.subscribe(
-        pubsub.DISPLAY_DOCUMENTS,
-        _.bind(this.onDisplayDocuments, this)
-      );
+      pubsub.subscribe(pubsub.DISPLAY_DOCUMENTS, _.bind(this.onDisplayDocuments, this));
       pubsub.subscribe(pubsub.NAVIGATE, (name, data) => {
-        this.onDetailsPage =
-          data && data.href && data.href.indexOf('abs/') > -1;
+        this.onDetailsPage = data && data.href && data.href.indexOf('abs/') > -1;
       });
     },
 
     assemble: function(app) {
       var self = this;
 
-      return PageManagerController.prototype.assemble
-        .apply(this, arguments)
-        .done(function() {
-          self.addQuery(self.getCurrentQuery());
+      return PageManagerController.prototype.assemble.apply(this, arguments).done(function() {
+        self.addQuery(self.getCurrentQuery());
 
-          try {
-            _.forEach(_.keys(self.widgets), (k) => {
-              const w = self.widgets[k];
-              const handler = _.debounce(() => {
-                if (
-                  k === 'ShowAbstract' &&
-                  $(self.widgetDoms[k]).text() !== ''
-                ) {
-                  self.abstractTimer.stop();
-                }
-              }, 300);
-
-              if (w.widgets && w.widgets.length > 0) {
-                _.forEach(w.widgets, (sub) => (sub.onIdle = handler));
+        try {
+          _.forEach(_.keys(self.widgets), (k) => {
+            const w = self.widgets[k];
+            const handler = _.debounce(() => {
+              if (k === 'ShowAbstract' && $(self.widgetDoms[k]).text() !== '') {
+                self.abstractTimer.stop();
               }
-              w.onIdle = handler;
-            });
-          } catch (e) {
-            // do nothing
-          }
-        });
+            }, 300);
+
+            if (w.widgets && w.widgets.length > 0) {
+              _.forEach(w.widgets, (sub) => (sub.onIdle = handler));
+            }
+            w.onIdle = handler;
+          });
+        } catch (e) {
+          // do nothing
+        }
+      });
     },
 
     addQuery: function(apiQuery) {
@@ -140,9 +115,7 @@ define([
     show: function(pageName) {
       // hide drawers
       $('#abs-full-txt-toggle').text('Full Text Sources');
-      $('#abs-nav-menu-toggle').html(
-        '<i class="fa fa-bars" aria-hidden="true"></i> Show Menu'
-      );
+      $('#abs-nav-menu-toggle').html('<i class="fa fa-bars" aria-hidden="true"></i> Show Menu');
       $('.s-nav-container').removeClass('show');
       $('#resources-container').removeClass('show');
 
@@ -167,10 +140,7 @@ define([
       }
 
       // when arriving at the abstract page, scroll back to the top
-      if (
-        pageName === 'ShowAbstract' &&
-        typeof window.scrollTo === 'function'
-      ) {
+      if (pageName === 'ShowAbstract' && typeof window.scrollTo === 'function') {
         window.scrollTo(0, 0);
       }
       return ret;
@@ -253,27 +223,6 @@ define([
         category: 'export',
         alwaysThere: 'true',
         order: 8,
-      },
-      ShowFeedback__missingreferences: {
-        title: 'Missing/Incorrect References',
-        path: 'feedback/missingreferences',
-        category: 'feedback',
-        alwaysThere: 'true',
-        order: 9,
-      },
-      ShowFeedback__associatedarticles: {
-        title: 'Associated References',
-        path: 'feedback/associatedarticles',
-        category: 'feedback',
-        alwaysThere: 'true',
-        order: 10,
-      },
-      ShowFeedback__correctabstract: {
-        title: 'Submit/Correct Abstract',
-        path: 'feedback/correctabstract',
-        category: 'feedback',
-        alwaysThere: 'true',
-        order: 11,
       },
     },
   });
