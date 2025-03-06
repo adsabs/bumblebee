@@ -654,20 +654,20 @@ define([
 
     getDbSelectionFromUserData: function() {
       try {
-        const userData = this.getBeeHive()
-          .getObject('User')
-          .getUserData();
-        let hasTrueVal = false;
-        const dbs = userData.defaultDatabase.reduce((acc, db) => {
-          if (db.value) {
-            hasTrueVal = true;
-          }
-          acc[db.name.toLowerCase()] = db.value;
-          return acc;
-        }, {});
+        const userData = this.getBeeHive().getObject('User').getUserData();
+        let dbs = {};
+        if (userData && 'defaultDatabase' in userData) {
+          userData.defaultDatabase.forEach(db => {
+
+            // Skip the 'ALL' database, and only take true entries
+            if (db.name !== 'All' && db.value) {
+              dbs[db.name.toLowerCase()] = db.value;
+            }
+          });
+        }
 
         // only return something if at least one is true
-        return hasTrueVal ? dbs : null;
+        return Object.keys(dbs).length > 0 ? dbs : null;
       } catch (e) {
         return null;
       }
