@@ -50,9 +50,7 @@ define([
       var queryUpdater = new ApiQueryUpdater('navigator');
 
       var publishFeedback = function(data) {
-        self
-          .getPubSub()
-          .publish(self.getPubSub().FEEDBACK, new ApiFeedback(data));
+        self.getPubSub().publish(self.getPubSub().FEEDBACK, new ApiFeedback(data));
       };
 
       // right now, user navbar widget depends on this to show the correct highlighted pill
@@ -253,10 +251,7 @@ define([
 
           var subView = data.subView || defaultView;
           if (!subView) {
-            console.error(
-              'no subview or default view provided /' +
-                'to the navigator function!'
-            );
+            console.error('no subview or default view provided /' + 'to the navigator function!');
           }
 
           app
@@ -277,20 +272,10 @@ define([
       }
 
       // request for the widget
-      this.set(
-        'UserSettings',
-        settingsPreferencesView('UserSettings', undefined)
-      );
+      this.set('UserSettings', settingsPreferencesView('UserSettings', undefined));
 
       // request for the widget
-      this.set(
-        'UserPreferences',
-        settingsPreferencesView(
-          'UserPreferences',
-          'application',
-          'Search Settings'
-        )
-      );
+      this.set('UserPreferences', settingsPreferencesView('UserPreferences', 'application', 'Search Settings'));
 
       this.set('MyAdsDashboard', function() {
         var defer = $.Deferred();
@@ -370,10 +355,7 @@ define([
         // only setting a nav event to hide previous widgets
         app
           .getObject('MasterPageManager')
-          .show('LibrariesPage', [
-            'IndividualLibraryWidget',
-            'UserNavbarWidget',
-          ])
+          .show('LibrariesPage', ['IndividualLibraryWidget', 'UserNavbarWidget'])
           .then(function() {
             app.getWidget('IndividualLibraryWidget').done(function(widget) {
               widget.setSubView({ subView: 'admin' });
@@ -396,9 +378,7 @@ define([
         if (!data.publicView && redirectIfNotSignedIn(that.endpoint)) {
           return defer.resolve().promise();
         }
-        this.route = data.publicView
-          ? '#public-libraries/' + data.id
-          : '#user/libraries/' + data.id;
+        this.route = data.publicView ? '#public-libraries/' + data.id : '#user/libraries/' + data.id;
 
         var pub = data.publicView;
 
@@ -408,36 +388,24 @@ define([
             pub ? 'PublicLibrariesPage' : 'LibrariesPage',
             pub
               ? ['IndividualLibraryWidget', 'LibraryListWidget']
-              : [
-                  'IndividualLibraryWidget',
-                  'LibraryListWidget',
-                  'UserNavbarWidget',
-                ]
+              : ['IndividualLibraryWidget', 'LibraryListWidget', 'UserNavbarWidget']
           )
           .then(function() {
             app
               .getObject('LibraryController')
               .getLibraryMetadata(data.id, !data.publicView)
               .done(function(metadata) {
-                data.editRecords =
-                  _.contains(
-                    ['write', 'admin', 'owner'],
-                    metadata.permission
-                  ) && !data.publicView;
-                that.title = data.publicView
-                  ? 'Public'
-                  : 'Private' + ' Library | ' + metadata.name;
+                data.editRecords = _.contains(['write', 'admin', 'owner'], metadata.permission) && !data.publicView;
+                that.title = data.publicView ? 'Public' : 'Private' + ' Library | ' + metadata.name;
 
-                app
-                  .getWidget('LibraryListWidget', 'IndividualLibraryWidget')
-                  .then(function(w) {
-                    w['LibraryListWidget'].setData(data);
-                    w['IndividualLibraryWidget'].setSubView(data);
-                    if (pub) {
-                      publishPageChange('libraries-page');
-                    }
-                    defer.resolve();
-                  });
+                app.getWidget('LibraryListWidget', 'IndividualLibraryWidget').then(function(w) {
+                  w['LibraryListWidget'].setData(data);
+                  w['IndividualLibraryWidget'].setSubView(data);
+                  if (pub) {
+                    publishPageChange('libraries-page');
+                  }
+                  defer.resolve();
+                });
               });
           });
 
@@ -477,16 +445,14 @@ define([
                 app.getWidget(widgetName).then(function(subWidget) {
                   additional = _.extend({}, additional, { sort: sort });
                   subWidget.renderWidgetForListOfBibcodes(bibcodes, additional);
-                  app
-                    .getWidget('IndividualLibraryWidget')
-                    .then(function(indWidget) {
-                      indWidget.setSubView({
-                        subView: subView,
-                        publicView: publicView,
-                        id: id,
-                      });
-                      defer.resolve();
+                  app.getWidget('IndividualLibraryWidget').then(function(indWidget) {
+                    indWidget.setSubView({
+                      subView: subView,
+                      publicView: publicView,
+                      id: id,
                     });
+                    defer.resolve();
+                  });
                 });
               });
             });
@@ -508,10 +474,7 @@ define([
               if (publicView) {
                 app
                   .getObject('MasterPageManager')
-                  .show('PublicLibrariesPage', [
-                    'IndividualLibraryWidget',
-                    widgetName,
-                  ])
+                  .show('PublicLibrariesPage', ['IndividualLibraryWidget', widgetName])
                   .then(function() {
                     renderLibrarySub(id).done(function() {
                       that.route = '#public-libraries/' + data.id; // XXX:rca - i think this should be that.route
@@ -521,11 +484,7 @@ define([
               } else {
                 app
                   .getObject('MasterPageManager')
-                  .show('LibrariesPage', [
-                    'IndividualLibraryWidget',
-                    'UserNavbarWidget',
-                    widgetName,
-                  ])
+                  .show('LibrariesPage', ['IndividualLibraryWidget', 'UserNavbarWidget', widgetName])
                   .then(function() {
                     renderLibrarySub(id).done(function() {
                       that.route = '#user/libraries/' + data.id;
@@ -597,7 +556,12 @@ define([
                 }
                 w.setSubView(subView);
                 that.route = '#user/account/' + subView;
-                that.title = subView === 'login' ? 'Sign In' : 'Register';
+                that.title =
+                  subView === 'login'
+                    ? 'Sign In'
+                    : subView === 'reset-password-1' || subView === 'reset-password-2'
+                    ? 'Reset Password'
+                    : 'Register';
                 defer.resolve();
               });
             });
@@ -676,17 +640,12 @@ define([
 
         app
           .getObject('MasterPageManager')
-          .show(
-            'SearchPage',
-            ['ExportWidget'].concat(searchPageAlwaysVisible.slice(1))
-          )
+          .show('SearchPage', ['ExportWidget'].concat(searchPageAlwaysVisible.slice(1)))
           .then(function() {
             app
               .getWidget('ExportWidget')
               .done(function(widget) {
-                that.route = `#search/${storage
-                .getCurrentQuery()
-                .url()}/export-${format}`;
+                that.route = `#search/${storage.getCurrentQuery().url()}/export-${format}`;
                 if (format === 'authoraff') {
                   if (options.onlySelected && storage.hasSelectedPapers()) {
                     widget.getAuthorAffForm({
@@ -705,21 +664,13 @@ define([
 
                 // is a special case, it opens in a new tab
                 if (options.onlySelected && storage.hasSelectedPapers()) {
-                  widget.renderWidgetForListOfBibcodes(
-                    storage.getSelectedPapers(),
-                    {
-                      format: format,
-                      sort:
-                        storage.hasCurrentQuery() &&
-                        storage.getCurrentQuery().get('sort')[0],
-                    }
-                  );
+                  widget.renderWidgetForListOfBibcodes(storage.getSelectedPapers(), {
+                    format: format,
+                    sort: storage.hasCurrentQuery() && storage.getCurrentQuery().get('sort')[0],
+                  });
                 }
                 // all records specifically requested
-                else if (
-                  options.onlySelected === false &&
-                  storage.hasCurrentQuery()
-                ) {
+                else if (options.onlySelected === false && storage.hasCurrentQuery()) {
                   widget.renderWidgetForCurrentQuery({
                     format: format,
                     currentQuery: storage.getCurrentQuery(),
@@ -727,14 +678,8 @@ define([
                   });
                 }
                 // no request for selected or not selected, show selected
-                else if (
-                  options.onlySelected === undefined &&
-                  storage.hasSelectedPapers()
-                ) {
-                  widget.renderWidgetForListOfBibcodes(
-                    storage.getSelectedPapers(),
-                    { format: format }
-                  );
+                else if (options.onlySelected === undefined && storage.hasSelectedPapers()) {
+                  widget.renderWidgetForListOfBibcodes(storage.getSelectedPapers(), { format: format });
                 }
                 // no selected, show all papers
                 else if (storage.hasCurrentQuery()) {
@@ -746,8 +691,7 @@ define([
                 } else {
                   var alerts = app.getController('AlertsController');
                   alerts.alert({
-                    msg:
-                      'There are no records to export yet (please search or select some)',
+                    msg: 'There are no records to export yet (please search or select some)',
                   });
                   self.get('results-page')(); // XXX:rca - .execute?, also
                 }
@@ -823,13 +767,7 @@ define([
           isTugboat = document.referrer.indexOf('tugboat/adsabs') > -1;
         } catch (e) {}
         var defer = $.Deferred();
-        var possibleSearchSubPages = [
-          'Metrics',
-          'AuthorNetwork',
-          'PaperNetwork',
-          'ConceptCloud',
-          'BubbleChart',
-        ];
+        var possibleSearchSubPages = ['Metrics', 'AuthorNetwork', 'PaperNetwork', 'ConceptCloud', 'BubbleChart'];
 
         var widgetName, pages;
 
@@ -925,10 +863,7 @@ define([
           // subscribe to the search cycle finished event
           // so that we know that the current query has been set
           var onFeedback = function(feedback) {
-            if (
-              feedback &&
-              feedback.code === ApiFeedback.CODES.SEARCH_CYCLE_FINISHED
-            ) {
+            if (feedback && feedback.code === ApiFeedback.CODES.SEARCH_CYCLE_FINISHED) {
               handler();
               ps.unsubscribe(ps.FEEDBACK, onFeedback);
             }
@@ -995,10 +930,7 @@ define([
             .get('index-page')
             .execute()
             .then(function() {
-              var error =
-                jqXHR.responseJSON && jqXHR.responseJSON.error
-                  ? jqXHR.responseJSON.error
-                  : 'error unknown';
+              var error = jqXHR.responseJSON && jqXHR.responseJSON.error ? jqXHR.responseJSON.error : 'error unknown';
               // call alerts widget
               self.getPubSub().publish(
                 self.getPubSub().ALERT,
@@ -1016,8 +948,7 @@ define([
 
         if (subView === 'register') {
           failTitle = 'Registration failed.';
-          failMessage =
-            '<p>Please try again, or contact <b> adshelp@cfa.harvard.edu for support </b></p>';
+          failMessage = '<p>Please try again, or contact <b> adshelp@cfa.harvard.edu for support </b></p>';
           route = ApiTargets.VERIFY + '/' + token;
 
           done = function(reply) {
@@ -1031,9 +962,7 @@ define([
                   .execute()
                   .then(function() {
                     var msg =
-                      '<p>You have been successfully registered with the email</p> <p><b>' +
-                      reply.email +
-                      '</b></p>';
+                      '<p>You have been successfully registered with the email</p> <p><b>' + reply.email + '</b></p>';
                     self.getPubSub().publish(
                       self.getPubSub().ALERT,
                       new ApiFeedback({
@@ -1053,8 +982,7 @@ define([
           };
         } else if (subView === 'change-email') {
           failTitle = 'Attempt to change email failed';
-          failMessage =
-            'Please try again, or contact adshelp@cfa.harvard.edu for support';
+          failMessage = 'Please try again, or contact adshelp@cfa.harvard.edu for support';
           route = ApiTargets.VERIFY + '/' + token;
 
           done = function(reply) {
@@ -1067,8 +995,7 @@ define([
                   .get('index-page')
                   .execute()
                   .then(function() {
-                    var msg =
-                      'Your new ADS email is <b>' + reply.email + '</b>';
+                    var msg = 'Your new ADS email is <b>' + reply.email + '</b>';
                     self.getPubSub().publish(
                       self.getPubSub().ALERT,
                       new ApiFeedback({
@@ -1094,11 +1021,9 @@ define([
               .getBeeHive()
               .getObject('Session')
               .setChangeToken(token);
-            self
-              .getPubSub()
-              .publish(self.getPubSub().NAVIGATE, 'authentication-page', {
-                subView: 'reset-password-2',
-              });
+            self.getPubSub().publish(self.getPubSub().NAVIGATE, 'authentication-page', {
+              subView: 'reset-password-2',
+            });
             defer.resolve();
           };
           failTitle = 'Password reset failed';
@@ -1163,9 +1088,7 @@ define([
               self.getPubSub().publish(self.getPubSub().APP_EXIT, {
                 url:
                   window.location.pathname +
-                  (targetRoute && _.isString(targetRoute)
-                    ? targetRoute
-                    : window.location.hash),
+                  (targetRoute && _.isString(targetRoute) ? targetRoute : window.location.hash),
               });
             })
             .fail(function() {
@@ -1203,8 +1126,7 @@ define([
                 // don't show modal if we're just going to redirect to the ads-orcid form anyway
                 if (
                   !data.hasOwnProperty('authorizedUser') &&
-                  JSON.stringify(appStorage.get('stashedNav')) !==
-                    '["UserPreferences",{"subView":"orcid"}]'
+                  JSON.stringify(appStorage.get('stashedNav')) !== '["UserPreferences",{"subView":"orcid"}]'
                 ) {
                   // the form has yet to be filled out by the user
                   // now tailor the message depending on whether they are signed in to ADS or not
@@ -1269,10 +1191,7 @@ define([
         }).join('');
         app
           .getObject('MasterPageManager')
-          .show(
-            'SearchPage',
-            [widgetName].concat(searchPageAlwaysVisible.slice(1))
-          )
+          .show('SearchPage', [widgetName].concat(searchPageAlwaysVisible.slice(1)))
           .done(function() {
             var route =
               '#search/' +
@@ -1326,9 +1245,7 @@ define([
       this.set('visualization-closed', this.get('results-page'));
 
       var showResultsPage = function(pages, ctx) {
-        return app
-          .getObject('MasterPageManager')
-          .show('SearchPage', pages, ctx);
+        return app.getObject('MasterPageManager').show('SearchPage', pages, ctx);
       };
 
       /*
@@ -1370,34 +1287,16 @@ define([
               if (!subPage) {
                 navigateString = 'ShowAbstract';
               } else {
-                navigateString =
-                  'Show' + subPage[0].toUpperCase() + subPage.slice(1);
+                navigateString = 'Show' + subPage[0].toUpperCase() + subPage.slice(1);
                 href = '#abs/' + bibcode + '/' + subPage;
               }
               //self.routerNavigate(navigateString, { href: href });
 
-              if (
-                resp.response &&
-                resp.response.docs &&
-                resp.response.docs[0]
-              ) {
+              if (resp.response && resp.response.docs && resp.response.docs[0]) {
                 bibcode = resp.response.docs[0].bibcode;
-                self
-                  .getPubSub()
-                  .publish(
-                    self.getPubSub().DISPLAY_DOCUMENTS,
-                    new ApiQuery({ q: 'bibcode:' + bibcode })
-                  );
-              } else if (
-                resp.response &&
-                resp.response.docs &&
-                !resp.response.docs.length
-              ) {
-                console.error(
-                  'the query  ' +
-                    q.get('q')[0] +
-                    '  did not return any bibcodes'
-                );
+                self.getPubSub().publish(self.getPubSub().DISPLAY_DOCUMENTS, new ApiQuery({ q: 'bibcode:' + bibcode }));
+              } else if (resp.response && resp.response.docs && !resp.response.docs.length) {
+                console.error('the query  ' + q.get('q')[0] + '  did not return any bibcodes');
               }
             },
             fail: function() {
@@ -1443,18 +1342,9 @@ define([
         return $dd.promise();
       };
 
-      const showDetailsSubPage = function({
-        id,
-        bibcode,
-        page,
-        prefix,
-        subView,
-      }) {
+      const showDetailsSubPage = function({ id, bibcode, page, prefix, subView }) {
         const ps = self.getPubSub();
-        ps.publish(
-          ps.DISPLAY_DOCUMENTS,
-          new ApiQuery({ q: `identifier:${bibcode}` })
-        );
+        ps.publish(ps.DISPLAY_DOCUMENTS, new ApiQuery({ q: `identifier:${bibcode}` }));
         page.setActive(id, subView);
 
         if (prefix) {
@@ -1644,10 +1534,7 @@ define([
               translateIdentifier(data.bibcode).then((bibcode) => {
                 self
                   .getPubSub()
-                  .publish(
-                    self.getPubSub().DISPLAY_DOCUMENTS,
-                    new ApiQuery({ q: 'identifier:' + bibcode })
-                  );
+                  .publish(self.getPubSub().DISPLAY_DOCUMENTS, new ApiQuery({ q: 'identifier:' + bibcode }));
 
                 if (bibcode === 'null') {
                   return page.setActive(null);
@@ -1693,10 +1580,7 @@ define([
         var q = app.getObject('AppStorage').getCurrentQuery();
         app
           .getObject('MasterPageManager')
-          .show(
-            'SearchPage',
-            ['AuthorAffiliationTool'].concat(searchPageAlwaysVisible.slice(1))
-          )
+          .show('SearchPage', ['AuthorAffiliationTool'].concat(searchPageAlwaysVisible.slice(1)))
           .done(function() {
             publishFeedback({ code: ApiFeedback.CODES.MAKE_SPACE });
             app.getWidget('AuthorAffiliationTool').done(function(w) {
