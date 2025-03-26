@@ -561,6 +561,8 @@ define([
                     ? 'Sign In'
                     : subView === 'reset-password-1' || subView === 'reset-password-2'
                     ? 'Reset Password'
+                    : subView === 'resend-verification-email'
+                    ? 'Resend Verification Eamil'
                     : 'Register';
                 defer.resolve();
               });
