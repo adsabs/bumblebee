@@ -29,7 +29,7 @@ define([
   ResetPassword2Template,
   ResendVerificationEmail,
   User,
-  analytics,
+  analytics
 ) {
   // Creating module level variable since I can't figure out best way to pass this value into a subview from the model
   // This value should be always available, and unchanging, so should be safe to set like this here
@@ -77,9 +77,7 @@ define([
       }
       if (typeof formName === 'string') {
         window.grecaptcha.ready(() =>
-          window.grecaptcha
-          .execute(siteKey, { action: `auth/${formName}` })
-          .then((token) => {
+          window.grecaptcha.execute(siteKey, { action: `auth/${formName}` }).then((token) => {
             this.model.set('g-recaptcha-response', token);
             FormFunctions.triggerSubmit.apply(this, arguments);
           })
@@ -389,8 +387,7 @@ define([
       'click .show-login': 'navigateToLoginForm',
       'click .show-register': 'navigateToRegisterForm',
       'click .show-reset-password-1': 'navigateToResetPassword1Form',
-      'click .show-resend-verification-email':
-        'navigateToResendVerificationForm',
+      'click .show-resend-verification-email': 'navigateToResendVerificationForm',
     },
 
     onRender: function() {
@@ -504,21 +501,9 @@ define([
       });
       this.listenTo(this.view, 'submit-form', this.triggerCorrectSubmit);
       this.listenTo(this.view, 'navigateToLoginForm', this.navigateToLoginForm);
-      this.listenTo(
-        this.view,
-        'navigateToRegisterForm',
-        this.navigateToRegisterForm,
-      );
-      this.listenTo(
-        this.view,
-        'navigateToResetPassword1Form',
-        this.navigateToResetPassword1Form,
-      );
-      this.listenTo(
-        this.view,
-        'navigateToResendVerificationForm',
-        this.navigateToResendVerificationForm
-      );
+      this.listenTo(this.view, 'navigateToRegisterForm', this.navigateToRegisterForm);
+      this.listenTo(this.view, 'navigateToResetPassword1Form', this.navigateToResetPassword1Form);
+      this.listenTo(this.view, 'navigateToResendVerificationForm', this.navigateToResendVerificationForm);
 
       this.nextNav = null;
     },
@@ -618,6 +603,7 @@ define([
           });
           break;
         case 'resend_verification_email_fail':
+          this.view.showResendVerificationForm(msg);
           this.fireAnalytics('resend-verification', {
             auth_result: 'resend_verification_email_fail',
           });
@@ -647,9 +633,7 @@ define([
           });
           break;
         case 'RESET_PASSWORD':
-          model.method === 'POST'
-            ? session.resetPassword1(model.toJSON())
-            : session.resetPassword2(model.toJSON());
+          model.method === 'POST' ? session.resetPassword1(model.toJSON()) : session.resetPassword2(model.toJSON());
           break;
         case 'RESEND_VERIFY':
           session.resendVerificationEmail(model.get('email'));
