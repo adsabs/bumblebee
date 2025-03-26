@@ -1,9 +1,9 @@
 define([
   'underscore',
   'react',
-  'es6!./TemplatePill.jsx',
+  'es6!js/react/MyAdsDashboard/components/TemplatePill.jsx',
   'moment',
-  'es6!./ActionsDropdown.jsx',
+  'es6!js/react/MyAdsDashboard/components/ActionsDropdown.jsx',
   'prop-types',
 ], function(_, React, TemplatePill, moment, ActionsDropdown, PropTypes) {
   const getFriendlyDateString = (dateStr) => {
@@ -44,7 +44,7 @@ define([
   };
 
   /**
-   * @typedef {import('../typedefs.js').Notification} Notification
+   * @typedef {import('js/react/MyAdsDashboard/typedefs.js').Notification} Notification
    */
 
   class MyAdsDashboard extends React.Component {

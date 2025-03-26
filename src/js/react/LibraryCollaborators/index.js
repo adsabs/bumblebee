@@ -1,11 +1,11 @@
 define([
-  'es6!./components/Dashboard.jsx',
+  'es6!js/react/LibraryCollaborators/components/Dashboard.jsx',
   'js/react/WithBackboneView',
   'js/react/configureStore',
   'react-redux',
-  './actions',
-  './middleware',
-  './reducer',
+  'js/react/LibraryCollaborators/actions',
+  'js/react/LibraryCollaborators/middleware',
+  'js/react/LibraryCollaborators/reducer',
   'js/react/shared/helpers',
   'js/react/shared/middleware/index',
 ], function(

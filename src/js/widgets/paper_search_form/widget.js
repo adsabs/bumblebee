@@ -6,7 +6,7 @@ define([
   'js/components/api_request',
   'js/components/api_targets',
   'hbs!js/widgets/paper_search_form/form',
-  './topterms',
+  'js/widgets/paper_search_form/topterms',
 ], function(
   _,
   $,

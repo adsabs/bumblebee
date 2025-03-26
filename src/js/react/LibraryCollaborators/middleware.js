@@ -1,4 +1,4 @@
-define(['underscore', './actions', 'js/react/shared/helpers'], function(
+define(['underscore', 'js/react/LibraryCollaborators/actions', 'js/react/shared/helpers'], function(
   _,
   {
     GET_COLLABORATORS,

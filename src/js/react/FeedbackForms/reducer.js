@@ -1,4 +1,4 @@
-define(['redux', './actions', './models/index'], function(
+define(['redux', 'js/react/FeedbackForms/actions', 'js/react/FeedbackForms/models'], function(
   { combineReducers },
   { SET_BIBCODE, SET_FORM },
   { FORMS }

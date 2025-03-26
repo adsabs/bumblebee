@@ -17,7 +17,7 @@ define([
   'hbs!js/widgets/list_of_things/templates/empty-view-template',
   'hbs!js/widgets/list_of_things/templates/error-view-template',
   'hbs!js/widgets/list_of_things/templates/initial-view-template',
-  './item_view',
+  'js/widgets/list_of_things/item_view',
   'analytics',
   'mathjax',
   'hbs!js/wraps/widget/loading/template',

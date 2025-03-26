@@ -2,8 +2,8 @@ define([
   'react',
   'prop-types',
   'react-redux',
-  '../models/index',
-  '../actions',
+  'js/react/Recommender/models/index',
+  'js/react/Recommender/actions',
 ], function (
   React,
   PropTypes,

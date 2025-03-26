@@ -11,8 +11,8 @@ define([
   'js/components/api_targets',
   'js/components/api_feedback',
   'js/mixins/formatter',
-  './autocomplete',
-  './quick-field-desc',
+  'js/widgets/search_bar/autocomplete',
+  'js/widgets/search_bar/quick-field-desc',
   'bootstrap', // if bootstrap is missing, jQuery events get propagated
   'jquery-ui',
   'js/mixins/dependon',

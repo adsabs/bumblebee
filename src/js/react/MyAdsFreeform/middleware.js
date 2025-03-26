@@ -1,4 +1,4 @@
-define(['underscore', './actions', 'js/react/shared/helpers'], function(
+define(['underscore', 'js/react/MyAdsFreeform/actions', 'js/react/shared/helpers'], function(
   _,
   {
     SET_UPDATE_DATA,

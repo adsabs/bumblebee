@@ -1,11 +1,11 @@
 define([
-  'es6!./components/App.jsx',
+  'es6!js/react/FeedbackForms/components/App.jsx',
   'js/react/WithBackboneView',
   'js/react/configureStore',
   'react-redux',
-  './actions',
-  './middleware',
-  './reducer',
+  'js/react/FeedbackForms/actions',
+  'js/react/FeedbackForms/middleware',
+  'js/react/FeedbackForms/reducer',
   'js/react/shared/helpers',
   'js/react/shared/middleware/index',
 ], function(

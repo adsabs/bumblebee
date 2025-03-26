@@ -1,4 +1,4 @@
-define(['es6!../constants/actionNames', 'moment'], function(ACTIONS, Moment) {
+define(['es6!js/widgets/author_affiliation_tool/constants/actionNames', 'moment'], function(ACTIONS, Moment) {
   const currentYear = Number(new Moment().year());
 
   // Initial state
