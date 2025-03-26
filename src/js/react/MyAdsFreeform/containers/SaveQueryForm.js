@@ -1,5 +1,5 @@
 define([
-  'es6!js/react/MyAdsFreeform/components/SaveQueryForm.jsx.js',
+  'es6!js/react/MyAdsFreeform/components/SaveQueryForm.jsx',
   'react-redux',
   'js/react/MyAdsFreeform/actions',
 ], function(SaveQueryForm, { connect }, actions) {

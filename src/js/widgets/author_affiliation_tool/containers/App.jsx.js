@@ -3,7 +3,7 @@ define([
   'react',
   'redux',
   'react-redux',
-  'es6!js/widgets/author_affiliation_tool/actions',
+  'es6!js/widgets/author_affiliation_tool/actions/index',
   'es6!js/widgets/author_affiliation_tool/constants/actionNames',
   'es6!js/widgets/author_affiliation_tool/components/ExportFormatControl.jsx',
   'es6!js/widgets/author_affiliation_tool/components/SelectionButtons.jsx',

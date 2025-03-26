@@ -1,7 +1,7 @@
 define([
   'es6!js/react/MyAdsDashboard/components/KeywordForm.jsx',
   'react-redux',
-  'js/react/MyAdsDashboard/actions',
+  'js/react/MyAdsDashboard/actions/index',
   'js/react/MyAdsDashboard/constants',
 ], function(KeywordForm, { connect }, actions, { page }) {
   const mapStateToProps = ({
