@@ -248,10 +248,14 @@
             // Performance Monitoring
             tracesSampleRate: window.ENV === 'development' ? 1.0 : 0.75,
             debug: false,
+            tracePropagationTargets: [
+              'localhost',
+              /^\//, // match on same-origin requests only
+            ],
 
             // Session Replay
             replaysSessionSampleRate: window.ENV === 'development' ? 1.0 : 0.1,
-            replaysOnErrorSampleRate: 1.0,
+            replaysOnErrorSampleRate: 0.5,
             environment: window.ENV ?? 'production',
             integrations: [
               Sentry.browserTracingIntegration(),
@@ -260,12 +264,6 @@
                 blockAllMedia: false,
                 unmask: ['[name=q]'],
               }),
-            ],
-            tracePropagationTargets: [
-              'localhost',
-              'https://ui.adsabs.harvard.edu',
-              'https://devui.adsabs.harvard.edu',
-              'https://qa.adsabs.harvard.edu',
             ],
           });
         } catch (e) {
