@@ -1,0 +1,25 @@
+name: Build and Deploy Static Assets to Cloudflare
+on:
+  push:
+      branches:
+      - master
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      deployments: write
+    name: Deploy to Cloudflare Pages
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: Build
+        run: npm install && npm run release
+      - name: Publish
+        uses: cloudflare/pages-action@v1
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          projectName: ads
+          directory: dist
+          gitHubToken: ${{ secrets.GITHUB_TOKEN }}
