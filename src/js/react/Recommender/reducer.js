@@ -1,4 +1,4 @@
-define(['redux', './actions'], function(
+define(['redux', 'js/react/Recommender/actions'], function(
   { combineReducers },
   {
     SET_DOCS,

@@ -24,8 +24,8 @@ define([
   'hbs!js/widgets/list_of_things/templates/item-template',
   'hbs!js/widgets/list_of_things/templates/results-container-template',
   'js/mixins/add_stable_index_to_collection',
-  './model',
-  './paginated_view',
+  'js/widgets/list_of_things/model',
+  'js/widgets/list_of_things/paginated_view',
 ], function(
   Marionette,
   Backbone,

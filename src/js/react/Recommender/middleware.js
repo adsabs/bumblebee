@@ -1,4 +1,4 @@
-define(['../shared/helpers', './actions'], function(
+define(['js/react/shared/helpers', 'js/react/Recommender/actions'], function(
   { middleware, apiSuccess, apiFailure, parseScope },
   {
     GET_RECOMMENDATIONS,

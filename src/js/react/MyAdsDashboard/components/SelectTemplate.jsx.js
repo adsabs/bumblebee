@@ -1,4 +1,4 @@
-define(['react', '../constants'], function(React, { page }) {
+define(['react', 'js/react/MyAdsDashboard/constants'], function(React, { page }) {
   class SelectTemplate extends React.Component {
     render() {
       return (

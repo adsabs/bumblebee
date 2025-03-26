@@ -2,7 +2,7 @@ define([
   'underscore',
   'react',
   'react-bootstrap',
-  'es6!./CitationsEntry.jsx',
+  'es6!js/react/MyAdsDashboard/components/CitationsEntry.jsx',
   'js/react/shared/helpers',
   'prop-types',
 ], function(

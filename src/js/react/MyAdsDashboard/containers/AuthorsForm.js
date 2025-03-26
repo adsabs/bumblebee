@@ -1,8 +1,8 @@
 define([
   'es6!js/react/MyAdsDashboard/components/AuthorsForm.jsx',
   'react-redux',
-  '../actions',
-  '../constants',
+  'js/react/MyAdsDashboard/actions',
+  'js/react/MyAdsDashboard/constants',
 ], function(KeywordForm, { connect }, actions, { page }) {
   const mapStateToProps = ({
     requests,

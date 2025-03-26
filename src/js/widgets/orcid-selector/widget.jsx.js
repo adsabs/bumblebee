@@ -4,10 +4,10 @@ define([
   'react',
   'react-redux',
   'react-dom',
-  'es6!./redux/configure-store',
-  'es6!./redux/modules/orcid-selector-app',
+  'es6!js/widgets/orcid-selector/redux/configure-store',
+  'es6!js/widgets/orcid-selector/redux/modules/orcid-selector-app',
   'js/widgets/base/base_widget',
-  'es6!./containers/orcid-selector-container',
+  'es6!js/widgets/orcid-selector/containers/orcid-selector-container',
 ], function(
   _,
   Backbone,

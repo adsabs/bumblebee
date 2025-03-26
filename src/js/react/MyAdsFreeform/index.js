@@ -1,11 +1,11 @@
 define([
-  'es6!./components/App.jsx',
+  'es6!js/react/MyAdsFreeform/components/App.jsx',
   'js/react/WithBackboneView',
   'js/react/configureStore',
   'react-redux',
-  './actions',
-  './middleware',
-  './reducer',
+  'js/react/MyAdsFreeform/actions',
+  'js/react/MyAdsFreeform/middleware',
+  'js/react/MyAdsFreeform/reducer',
   'js/react/shared/helpers',
   'js/react/shared/middleware/api',
 ], function(

@@ -5,8 +5,8 @@ define([
   'hbs!js/page_managers/templates/results-page-layout',
   'hbs!js/page_managers/templates/results-control-row',
   'js/widgets/base/base_widget',
-  './three_column_view',
-  './view_mixin',
+  'js/page_managers/three_column_view',
+  'js/page_managers/view_mixin',
   'js/mixins/dependon',
 ], function(
   $,

@@ -1,8 +1,8 @@
 define([
   'es6!js/react/MyAdsDashboard/components/Dashboard.jsx',
   'react-redux',
-  '../actions',
-  '../constants',
+  'js/react/MyAdsDashboard/actions',
+  'js/react/MyAdsDashboard/constants',
 ], function(Dashboard, { connect }, actions, { page }) {
   const mapStateToProps = ({ notifications, requests }) => ({
     notifications,

@@ -2,7 +2,7 @@ define([
   'react',
   'react-bootstrap',
   'prop-types',
-  'es6!./CitationsEntry.jsx',
+  'es6!js/react/MyAdsDashboard/components/CitationsEntry.jsx',
   'js/react/shared/helpers',
 ], function(
   React,

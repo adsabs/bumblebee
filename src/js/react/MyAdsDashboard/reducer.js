@@ -1,4 +1,4 @@
-define(['./actions', 'redux', './constants'], function(
+define(['js/react/MyAdsDashboard/actions', 'redux', 'js/react/MyAdsDashboard/constants'], function(
   actions,
   { combineReducers },
   { page: PAGE }
@@ -12,7 +12,7 @@ define(['./actions', 'redux', './constants'], function(
   } = actions;
 
   /**
-   * @typedef {Object.<string, import('./typedefs').Notification>} NotificationState
+   * @typedef {Object.<string, import('js/react/MyAdsDashboard/typedefs').Notification>} NotificationState
    */
 
   /** @type {NotificationState} */
@@ -50,7 +50,7 @@ define(['./actions', 'redux', './constants'], function(
   };
 
   /**
-   * @typedef {Object.<string, import('./typedefs').Request>} RequestState
+   * @typedef {Object.<string, import('js/react/MyAdsDashboard/typedefs').Request>} RequestState
    */
 
   /** @type {RequestState} */

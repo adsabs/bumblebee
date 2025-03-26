@@ -1,7 +1,7 @@
 define([
   'marionette',
   'js/widgets/base/base_widget',
-  './views/view_all_libraries',
+  'js/widgets/libraries_all/views/view_all_libraries',
   'utils',
 ], function(Marionette, BaseWidget, LibrariesView, utils) {
   var LibraryModel = Backbone.Model.extend({

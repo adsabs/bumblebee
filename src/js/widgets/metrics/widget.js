@@ -3,7 +3,7 @@ define([
   'marionette',
   'd3',
   'js/widgets/base/base_widget',
-  './extractor_functions',
+  'js/widgets/metrics/extractor_functions',
   'js/components/api_response',
   'js/components/json_response',
   'js/components/api_request',
@@ -18,7 +18,7 @@ define([
   'bootstrap',
   'js/components/api_feedback',
   'js/components/api_targets',
-  './d3-tip',
+  'js/widgets/metrics/d3-tip',
 ], function(
   _,
   Marionette,
@@ -39,7 +39,7 @@ define([
   bs,
   ApiFeedback,
   ApiTargets,
-  d3Tip
+  _d3Tip
 ) {
   /*
     NOTE: importing d3-tip from the metrics folder bc it is a modified file made to

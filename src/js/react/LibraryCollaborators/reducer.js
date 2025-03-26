@@ -1,4 +1,4 @@
-define(['underscore', 'redux', './constants', './actions'], function(
+define(['underscore', 'redux', 'js/react/LibraryCollaborators/constants', 'js/react/LibraryCollaborators/actions'], function(
   _,
   { combineReducers },
   { Permissions },

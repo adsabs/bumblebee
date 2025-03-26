@@ -1,4 +1,4 @@
-define(['react', 'prop-types', '../constants'], function(
+define(['react', 'prop-types', 'js/react/LibraryCollaborators/constants'], function(
   React,
   PropTypes,
   { Permissions }

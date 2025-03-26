@@ -1,7 +1,7 @@
 define([
   'react',
   'react-bootstrap',
-  'es6!./ArxivClassList.jsx',
+  'es6!js/react/MyAdsDashboard/components/ArxivClassList.jsx',
   'prop-types',
 ], function(
   React,

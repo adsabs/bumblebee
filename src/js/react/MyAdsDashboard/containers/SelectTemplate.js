@@ -1,7 +1,7 @@
 define([
   'es6!js/react/MyAdsDashboard/components/SelectTemplate.jsx',
   'react-redux',
-  '../actions'
+  'js/react/MyAdsDashboard/actions'
 ], function(
   SelectTemplate,
   {connect},

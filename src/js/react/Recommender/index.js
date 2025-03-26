@@ -1,9 +1,9 @@
 define([
-  'es6!./components/App.jsx',
+  'es6!js/react/Recommender/components/App.jsx',
   'js/react/WithBackboneView',
   'js/react/configureStore',
-  './middleware',
-  './reducer',
+  'js/react/Recommender/middleware',
+  'js/react/Recommender/reducer',
   'js/react/shared/helpers',
   'js/react/shared/middleware/index',
 ], function(

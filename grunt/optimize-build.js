@@ -4,6 +4,7 @@ module.exports = function(grunt) {
   const buildConfig = {
     options: {
       paths: {
+        'array-flat-polyfill': 'empty:',
         'backbone-validation': 'empty:',
         'backbone.stickit': 'empty:',
         'backbone.wreqr': 'empty:',
@@ -11,6 +12,7 @@ module.exports = function(grunt) {
         bootstrap: 'empty:',
         bowser: 'empty:',
         classnames: 'empty:',
+        cache: 'empty:',
         clipboard: 'empty:',
         'create-react-class': 'empty:',
         'd3-cloud': 'empty:',
@@ -25,6 +27,7 @@ module.exports = function(grunt) {
         mathjax: 'empty:',
         moment: 'empty:',
         'persist-js': 'empty:',
+        polyfill: 'empty:',
         'react-bootstrap': 'empty:',
         'react-dom': 'empty:',
         'prop-types': 'empty:',

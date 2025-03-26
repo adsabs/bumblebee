@@ -1,7 +1,7 @@
 define([
   'underscore',
-  'es6!../models/authorAffiliation',
-  'es6!../constants/actionNames',
+  'es6!js/widgets/author_affiliation_tool/models/authorAffiliation',
+  'es6!js/widgets/author_affiliation_tool/constants/actionNames',
   'filesaver',
 ], function(_, authorAffiliation, ACTIONS) {
   /**

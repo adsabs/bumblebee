@@ -1,7 +1,7 @@
 define([
-  'es6!../components/SaveQueryForm.jsx',
+  'es6!js/react/MyAdsFreeform/components/SaveQueryForm.jsx.js',
   'react-redux',
-  '../actions',
+  'js/react/MyAdsFreeform/actions',
 ], function(SaveQueryForm, { connect }, actions) {
   const mapStateToProps = ({ requests }) => ({
     requests: {

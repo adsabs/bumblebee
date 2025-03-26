@@ -3,9 +3,9 @@ define([
   'js/react/WithBackboneView',
   'js/react/configureStore',
   'react-redux',
-  './actions',
-  './middleware',
-  './reducer',
+  'js/react/MyAdsDashboard/actions',
+  'js/react/MyAdsDashboard/middleware',
+  'js/react/MyAdsDashboard/reducer',
   'js/react/shared/helpers',
   'js/react/shared/middleware/api',
 ], function(
