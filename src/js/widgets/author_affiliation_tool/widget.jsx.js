@@ -13,8 +13,8 @@ define([
   'js/widgets/base/base_widget',
   'es6!js/widgets/author_affiliation_tool/containers/App.jsx',
   'es6!js/widgets/author_affiliation_tool/constants/actionNames',
-  'es6!js/widgets/author_affiliation_tool/actions',
-  'es6!js/widgets/author_affiliation_tool/reducers',
+  'es6!js/widgets/author_affiliation_tool/actions/index',
+  'es6!js/widgets/author_affiliation_tool/reducers/index',
 ], function(
   $,
   _,

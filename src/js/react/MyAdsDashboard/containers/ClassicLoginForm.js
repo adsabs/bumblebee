@@ -1,7 +1,7 @@
 define([
   'es6!js/react/MyAdsDashboard/components/ClassicLoginForm.jsx',
   'react-redux',
-  'js/react/MyAdsDashboard/actions',
+  'js/react/MyAdsDashboard/actions/index',
 ], function(ClassicLoginForm, { connect }, actions) {
   const mapStateToProps = ({ requests }) => ({
     classicMirrorsRequest: requests.FETCH_CLASSIC_MIRRORS,

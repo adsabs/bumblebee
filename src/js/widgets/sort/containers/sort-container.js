@@ -1,7 +1,7 @@
 define([
   'react-redux',
-  'es6!.js/widgets/sort/redux/modules/sort-app',
-  'es6!.js/widgets/sort/components/sort-app.jsx',
+  'es6!js/widgets/sort/redux/modules/sort-app',
+  'es6!js/widgets/sort/components/sort-app.jsx',
 ], function(ReactRedux, actions, SortApp) {
   // actions
   const { setSort, setDirection } = actions;

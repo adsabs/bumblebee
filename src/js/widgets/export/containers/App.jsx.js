@@ -3,7 +3,7 @@ define([
   'react',
   'react-redux',
   'prop-types',
-  'es6!js/widgets/export/actions',
+  'es6!js/widgets/export/actions/index',
   'es6!js/widgets/export/components/Closer.jsx',
   'es6!js/widgets/export/components/Setup.jsx',
   'es6!js/widgets/export/components/Export.jsx',

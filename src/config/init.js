@@ -13,6 +13,7 @@
   };
   const MAX_RETRIES = 3;
   const MODULE_TIMEOUTS = { slow: 30, default: 7 };
+  const CDN = 'https://ads-assets.pages.dev';
 
   /**
    * Get the module timeout based on the user's connection speed.
@@ -27,9 +28,8 @@
     }
     return MODULE_TIMEOUTS.default;
   };
-  const now = () => Date.now();
   const fullPath = window.location[window.location.pathname === '/' ? 'hash' : 'pathname'].replace(/#/g, '');
-  const version = APP_VERSION ? `v=${APP_VERSION}` : `dev-${now()}`;
+  const version = APP_VERSION ? `v=${APP_VERSION}` : '';
   const log = (message) => console.debug(`[DEBUG] ${message}`);
 
   /**
@@ -43,91 +43,48 @@
     errorMessage.innerHTML = message;
   };
 
-  /**
-   * Load the discovery.config file.
-   * @returns {Promise<unknown>}
-   */
-  const getDiscoveryConfigLoader = () => {
-    return new Promise((res, rej) => {
-      log('Loading discovery.config');
-      require({
-        waitSeconds: getModuleTimeout(),
-        paths: {
-          cdn: 'js/plugins/cdn',
+  const createLoader = function(module) {
+    if (typeof require !== 'function') {
+      throw new Error('RequireJS is not available, app cannot load');
+    }
+    log(`Loading ${module}...`);
+    return () =>
+      new Promise((res, rej) => {
+        const cb = (mod) => {
+          log(`Loaded module ${module} successfully`);
+          res(mod);
+        };
+        const errBack = (err) => {
+          log(`Error loading module ${module}.`, err);
+          rej(err);
+        };
+        if (process.env.NODE_ENV === 'development') {
+          require([module], cb, errBack);
+          return;
         }
-      }, ['cdn!config/discovery.config'], function() {
-        log('Loaded discovery.config successfully');
-        res();
-      }, function(e) {
-        log('Failed to load discovery.config');
-        rej(e);
+        require([`${CDN}/${module}.js`], cb, () => {
+          require([module], cb, errBack);
+        });
       });
-    });
-  };
-
-  /**
-   * Load the main.config file.
-   * @returns {Promise<unknown>}
-   */
-  const getMainConfigLoader = () => {
-    return new Promise((res, rej) => {
-      log('Loading main.config');
-      require({
-        waitSeconds: getModuleTimeout(),
-        paths: {
-          cdn: 'js/plugins/cdn',
-        }
-      }, ['cdn!config/main.config'], function() {
-        log('Loaded main.config successfully');
-        res();
-      }, function(e) {
-        log('Failed to load main.config');
-        rej(e);
-      });
-    });
-  };
-
-  /**
-   * Load the page config file.
-   * @param path
-   * @returns {Promise<unknown>}
-   */
-  const getPageConfigLoader = (path) => {
-    return new Promise((res, rej) => {
-      log(`Loading ${path}.config`);
-      require({
-        waitSeconds: getModuleTimeout(),
-        paths: {
-          cdn: 'js/plugins/cdn',
-        }
-      }, [`cdn!config/${path}.config`], function() {
-        log(`Loaded ${path}.config successfully`);
-        res();
-      }, function(e) {
-        log(`Failed to load ${path}.config`);
-        rej(e);
-      });
-    });
   };
 
   /**
    * Get the appropriate loader based on the current path.
-   * @returns {Promise<*>}
    */
-  const getLoader = () => {
+  const getPathLoader = () => {
     if (fullPath.startsWith('/abs')) {
-      return getPageConfigLoader(PATHS.ABSTRACT);
+      return createLoader(`config/${PATHS.ABSTRACT}.config`);
     }
 
     if (fullPath.startsWith('/search')) {
-      return getPageConfigLoader(PATHS.SEARCH);
+      return createLoader(`config/${PATHS.SEARCH}.search`);
     }
 
     if (fullPath === '/') {
-      return getPageConfigLoader(PATHS.LANDING);
+      return createLoader(`config/${PATHS.LANDING}.search`);
     }
 
-    return getMainConfigLoader();
+    return () => Promise.resolve();
   };
 
   /**
@@ -186,7 +143,6 @@
    * @returns {Promise<void>}
    */
   const load = async () => {
-
     // handle if the user is offline
     if (!navigator.onLine) {
       showAppErrorMessage(`
@@ -209,7 +165,10 @@
       return;
     }
 
-    const loaders = [getLoader, getMainConfigLoader, getDiscoveryConfigLoader];
+    const loaders =
+      process.env.NODE_ENV === 'development'
+        ? [createLoader('config/discovery.config')]
+        : [getPathLoader(), createLoader('config/main.config'), createLoader('config/discovery.config')];
 
     // eslint-disable-next-line no-restricted-syntax
     for (const loader of loaders) {
@@ -240,7 +199,7 @@
   const checkForRequireJS = (cb) => {
     if (window.requirejs) {
       log('RequireJS is ready, configuring...');
-      window.requirejs.config({ urlArgs: version });
+      window.requirejs.config({ urlArgs: version, waitSeconds: getModuleTimeout() });
       if (typeof cb === 'function') cb();
       return;
     }
@@ -286,9 +245,7 @@ window.getCanonicalUrl = () => {
     { env: 'demo', url: 'https://demo.adsabs.harvard.edu' },
   ];
 
-  const [changedUrl] = couldChangeUrls.filter(
-    ({ url }) => !canonicalUrlPattern.test(url)
-  );
+  const [changedUrl] = couldChangeUrls.filter(({ url }) => !canonicalUrlPattern.test(url));
 
   // if we detect a change in one of the URLs, return an interpolated string to keep from getting rewritten
   if (typeof changedUrl !== 'undefined') {

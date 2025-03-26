@@ -4,7 +4,7 @@
 define([
   'underscore',
   'js/components/api_targets',
-  'es6!js/widgets/export/actions',
+  'es6!js/widgets/export/actions/index',
   'js/widgets/config',
   'redux',
 ], function(_, ApiTargets, actions, config, Redux) {
