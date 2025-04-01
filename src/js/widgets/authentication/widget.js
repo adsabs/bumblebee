@@ -60,11 +60,11 @@ define([
      * @param msg
      */
     showError(msg) {
-      this.model({ hasError: true, errorMsg: msg });
+      this.model.set({ hasError: true, errorMsg: msg });
       this.render();
 
       setTimeout(() => {
-        this.model({ hasError: false, errorMsg: undefined });
+        this.model.set({ hasError: false, errorMsg: undefined });
         this.render();
       }, ERROR_TIMEOUT);
     },
