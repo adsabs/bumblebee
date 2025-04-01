@@ -7,16 +7,7 @@ define([
   'js/components/api_targets',
   'js/mixins/dependon',
   'js/mixins/widget_state_manager',
-], function(
-  Backbone,
-  Marionette,
-  ApiQuery,
-  ApiRequest,
-  WidgetMixin,
-  ApiTargets,
-  Dependon,
-  WidgetStateManagerMixin
-) {
+], function(Backbone, Marionette, ApiQuery, ApiRequest, WidgetMixin, ApiTargets, Dependon, WidgetStateManagerMixin) {
   /**
    * Default PubSub based widget; the main functionality is inside
    *
@@ -66,10 +57,7 @@ define([
         this._currentQuery = new ApiQuery();
         this.defaultQueryArguments = this.defaultQueryArguments || {};
         if (options.defaultQueryArguments) {
-          this.defaultQueryArguments = _.extend(
-            this.defaultQueryArguments,
-            options.defaultQueryArguments
-          );
+          this.defaultQueryArguments = _.extend(this.defaultQueryArguments, options.defaultQueryArguments);
         }
 
         if (options.view) {
@@ -78,18 +66,8 @@ define([
         }
 
         // our way of listening to views/models
-        if (this.view)
-          Marionette.bindEntityEvents(
-            this,
-            this.view,
-            Marionette.getOption(this, 'viewEvents')
-          );
-        if (this.model)
-          Marionette.bindEntityEvents(
-            this,
-            this.model,
-            Marionette.getOption(this, 'modelEvents')
-          );
+        if (this.view) Marionette.bindEntityEvents(this, this.view, Marionette.getOption(this, 'viewEvents'));
+        if (this.model) Marionette.bindEntityEvents(this, this.model, Marionette.getOption(this, 'modelEvents'));
       },
 
       /**
@@ -106,15 +84,9 @@ define([
         var pubsub = beehive.getService('PubSub');
 
         // custom dispatchRequest function goes here
-        pubsub.subscribe(
-          pubsub.INVITING_REQUEST,
-          _.bind(this.dispatchRequest, this)
-        );
+        pubsub.subscribe(pubsub.INVITING_REQUEST, _.bind(this.dispatchRequest, this));
         // custom handleResponse function goes here
-        pubsub.subscribe(
-          pubsub.DELIVERING_RESPONSE,
-          _.bind(this.processResponse, this)
-        );
+        pubsub.subscribe(pubsub.DELIVERING_RESPONSE, _.bind(this.processResponse, this));
       },
 
       /**
@@ -156,10 +128,11 @@ define([
        * @param apiQuery
        */
       customizeQuery: function(apiQuery) {
-        var q = apiQuery.clone();
+        const q = apiQuery instanceof ApiQuery ? apiQuery.clone() : this.getCurrentQuery();
+
         q.unlock();
         if (this.defaultQueryArguments) {
-          q = this.composeQuery(this.defaultQueryArguments, q);
+          return this.composeQuery(this.defaultQueryArguments, q);
         }
         return q;
       },
