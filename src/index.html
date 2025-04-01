@@ -5,49 +5,21 @@
     <base href="/" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
     <meta name="viewport" content="width=device-width,user-scalable=no" />
-    <meta
-      name="google-site-verification"
-      content="XxQuw38lagr8-TgtCyhAMP_6ELS9dy35fgrqo9dxw3o"
-    />
+    <meta name="google-site-verification" content="XxQuw38lagr8-TgtCyhAMP_6ELS9dy35fgrqo9dxw3o" />
     <title>Astrophysics Data System</title>
-    <meta
-      name="description"
-      content="A powerful, streamlined new Astrophysics Data System"
-    />
+    <meta name="description" content="A powerful, streamlined new Astrophysics Data System" />
     <!-- favicon -->
-    <link
-      rel="apple-touch-icon"
-      sizes="180x180"
-      href="./styles/favicon/apple-touch-icon.png"
-    />
-    <link
-      rel="icon"
-      type="image/png"
-      sizes="32x32"
-      href="./styles/favicon/favicon-32x32.png"
-    />
-    <link
-      rel="icon"
-      type="image/png"
-      sizes="16x16"
-      href="./styles/favicon/favicon-16x16.png"
-    />
+    <link rel="apple-touch-icon" sizes="180x180" href="./styles/favicon/apple-touch-icon.png" />
+    <link rel="icon" type="image/png" sizes="32x32" href="./styles/favicon/favicon-32x32.png" />
+    <link rel="icon" type="image/png" sizes="16x16" href="./styles/favicon/favicon-16x16.png" />
     <link rel="manifest" href="./styles/favicon/site.webmanifest" />
-    <link
-      rel="mask-icon"
-      href="./styles/favicon/safari-pinned-tab.svg"
-      color="#5bbad5"
-    />
+    <link rel="mask-icon" href="./styles/favicon/safari-pinned-tab.svg" color="#5bbad5" />
     <meta name="apple-mobile-web-app-title" content="Astrophysics Data System" />
     <meta name="application-name" content="Astrophysics Data System" />
     <meta name="msapplication-TileColor" content="#ffc40d" />
     <meta name="theme-color" content="#ffffff" />
     <!-- /favicon -->
-    <link
-      rel="preload"
-      href="./styles/css/styles.css?v=<APP_VERSION>"
-      as="style"
-    />
+    <link rel="preload" href="./styles/css/styles.css?v=<APP_VERSION>" as="style" />
     <link rel="preload" href="./libs/require.js" as="script" />
     <link rel="preload" href="config/init.js?v=<APP_VERSION>" as="script" />
     <link rel="stylesheet" href="./styles/css/styles.css?v=<APP_VERSION>" />
@@ -107,9 +79,7 @@
           Sorry, but the fully featured ADS requires JavaScript to be enabled.
         </p>
         <p>
-          <a class="btn btn-primary" href="https://ui.adsabs.harvard.edu/core"
-            >Click here to switch to Basic HTML</a
-          >
+          <a class="btn btn-primary" href="https://ui.adsabs.harvard.edu/core">Click here to switch to Basic HTML</a>
         </p>
       </div>
       <iframe
@@ -149,9 +119,7 @@
           </section>
           <h3 id="basic-html-message">
             Loading ADS |
-            <a href="https://ui.adsabs.harvard.edu/core"
-              >Click here to switch to Basic HTML</a
-            >
+            <a href="https://ui.adsabs.harvard.edu/core">Click here to switch to Basic HTML</a>
             (for slow connections/low resources)
           </h3>
           <div class="hidden well-sm center-block" id="app-error-container" data-testid="app-error">
@@ -185,9 +153,7 @@
         var loadingContainer = document.querySelector('.loading-screen');
         var progressBar = document.getElementById('loading-screen-progress');
         var message = document.getElementById('loading-screen-message');
-        var progressInner = document.querySelector(
-          '#loading-screen-progress>span'
-        );
+        var progressInner = document.querySelector('#loading-screen-progress>span');
         var progressValue = 0;
 
         // show nothing for the first 3 seconds
@@ -224,36 +190,34 @@
       })();
     </script>
 
-    <!-- Add Sentry SDK -->
-    <script
-      src="https://js.sentry-cdn.com/46062cbe0aeb7a3b2bb4c3a9b8cd1ac7.min.js"
-      crossorigin="anonymous"
-    ></script>
     <script>
-      // Set the environment variable
+      // Simulate a process.env-like environment
       window.process = { env: { NODE_ENV: window.ENV ?? 'production' } };
 
-      window.getSentry = (cb, errCb) => {
-        if (typeof errCb === 'function') {
-          errCb.call(null, new Error('Failed to get Sentry'));
+      // Define getSentry only once, always safe
+      window.getSentry = function(cb, errCb = () => {}) {
+        try {
+          if (!window.Sentry) throw new Error('Sentry not found');
+          cb.call(window, window.Sentry);
+        } catch (e) {
+          console.warn('unable to run sentry callback', e);
+          errCb.call(window, e);
         }
       };
 
+      // Called after the SDK finishes loading
       window.sentryOnLoad = function() {
         try {
           Sentry.init({
-            dsn:
-              'https://46062cbe0aeb7a3b2bb4c3a9b8cd1ac7@o1060269.ingest.us.sentry.io/4507341192036352',
-
-            // Performance Monitoring
+            dsn: 'https://46062cbe0aeb7a3b2bb4c3a9b8cd1ac7@o1060269.ingest.us.sentry.io/4507341192036352',
             tracesSampleRate: window.ENV === 'development' ? 1.0 : 0.75,
             debug: false,
-            tracePropagationTargets: [
-              'localhost',
-              /^\//, // match on same-origin requests only
+            tracePropagationTargets: ['localhost', /https:\/\/.*\.adsabs\.harvard\.edu\/.*/],
+            allowUrls: [
+              /https:\/\/.*\.adsabs\.harvard\.edu\/.*/,
+              /https:\/\/code\.jquery\.com\/.*/,
+              /https:\/\/cdn\.jsdelivr\.net\/.*/,
             ],
-
-            // Session Replay
             replaysSessionSampleRate: window.ENV === 'development' ? 1.0 : 0.1,
             replaysOnErrorSampleRate: 0.5,
             environment: window.ENV ?? 'production',
@@ -270,22 +234,13 @@
           console.error('Could not initialize Sentry', e);
         }
       };
-
-      window.getSentry = function(cb, errCb = () => {}) {
-        try {
-          if (!window.Sentry) {
-            throw new Error('Sentry not found');
-          }
-          return cb.call(window, Sentry);
-        } catch (e) {
-          console.warn('unable to run sentry callback', e);
-          if (typeof errCb === 'function') {
-            errCb.call(window, e);
-          }
-        }
-      };
     </script>
-    <!-- END Add Sentry SDK -->
+
+    <script
+      src="https://js.sentry-cdn.com/46062cbe0aeb7a3b2bb4c3a9b8cd1ac7.min.js"
+      crossorigin="anonymous"
+      onload="window.sentryOnLoad()"
+    ></script>
 
     <!-- start the discovery application -->
     <script src="./libs/require.js"></script>
