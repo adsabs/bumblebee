@@ -101,10 +101,15 @@ define([
               var facetParts = facet.split('/');
               var simbid = facetParts[facetParts.length - 1];
               // in the form "1/Star/* bet Pic"
-              var facetVal = facetParts
-                .slice(0, 2)
-                .concat([data[simbid].canonical])
-                .join('/');
+              var facetVal;
+              if (data[simbid] && data[simbid].canonical) {
+                facetVal = facetParts
+                  .slice(0, 2)
+                  .concat([data[simbid].canonical])
+                  .join('/');
+              } else {
+                facetVal = facet;
+              }
               // store it in case the widget is submitted later
               widget._simbidCache[facetVal] = simbid;
               return facetVal;
