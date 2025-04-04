@@ -94,6 +94,9 @@ define([
     onSortChange: function() {
       const pubsub = this.getPubSub();
       const app = this.store.getState();
+      if (!app || !app.sort) {
+        return;
+      }
       const sort = app.sort.id;
       const dir = app.direction;
       let query = app.query;
