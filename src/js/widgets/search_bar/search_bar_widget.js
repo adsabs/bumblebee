@@ -356,8 +356,8 @@ define([
       var operator;
       var currentVal = this.getFormVal();
       var $target = $(e.target);
-      var df = $target.attr('data-field');
-      var punc = $target.attr('data-punc');
+      var df = $target.attr('data-field') || '';
+      var punc = $target.attr('data-punc') || '(';
 
       var startIndex = this._cursorInfo.startIndex;
       var selected = this._cursorInfo.selected;
