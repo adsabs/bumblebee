@@ -926,6 +926,11 @@ define([
 
     prepareDownloadData: function(data, recordTotal = true) {
       let output = 'data:text/csv;charset=utf-8,';
+
+      if (!data || !data.length || !data[0] || !data[0].values) {
+        return output;
+      }
+
       const dim = data.length;
       const len = data[0].values.length;
 
