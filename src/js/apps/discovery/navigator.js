@@ -1541,9 +1541,10 @@ define([
                 if (bibcode === 'null') {
                   return page.setActive(null);
                 }
-
-                // guarantees the bibcode is set on the widget
-                page.widgets[id].ingestBroadcastedPayload(bibcode);
+                if (page.widgets && page.widgets[id]) {
+                  // guarantees the bibcode is set on the widget
+                  page.widgets[id].ingestBroadcastedPayload(bibcode);
+                }
                 page.setActive(id, format);
                 this.route = data.href;
                 this.replace = true;
