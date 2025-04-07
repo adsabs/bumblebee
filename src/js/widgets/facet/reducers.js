@@ -201,13 +201,19 @@ define(['underscore'], function(_) {
     }
 
     var facets = facetFields[firstField];
+    if (!Array.isArray(facets)) {
+      return state;
+    }
+
     var finished =
       facets.length / 2 != parseInt(data.responseHeader.params['facet.limit']);
     facets = reducer.processData(facets, state.config.preprocessors);
+    
     // for children array
     var dataIds = facets.map(function(d) {
-      return d.value;
-    });
+      return d && d.value ? d.value : null;
+    }).filter(function(d) { return d !== null; });
+
     // turn data into object to merge into the facets key in state
     facets = _.object(dataIds, facets);
 
