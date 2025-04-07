@@ -254,7 +254,7 @@ define(['react', 'd3', 'prop-types', 'react-redux'], function(
       children: PropTypes.array,
       facets: PropTypes.object,
     }).isRequired,
-    children: PropTypes.children,
+    children: PropTypes.node,
     currentLevel: PropTypes.number.isRequired,
     showMoreFacets: PropTypes.func.isRequired,
     resetVisibleFacets: PropTypes.func.isRequired,
