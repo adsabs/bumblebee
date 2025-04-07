@@ -381,15 +381,13 @@ define([
         works: '/orcid-works',
         work: '/orcid-work',
       };
-      var url =
-        this.config.apiEndpoint + '/' + this.authData.orcid + targets[name];
-
-      var end = _.isArray(putCodes) ? putCodes.join(',') : putCodes;
-
-      if (end) {
-        url += '/' + end;
+      if (!this.hasAccess()) {
+        throw new Error('User does not have access to the ORCiD API');
       }
-      return url;
+
+      const url = `${this.config.apiEndpoint}/${this.authData.orcid}${targets[name]}`;
+      const end = _.isArray(putCodes) ? putCodes.join(',') : putCodes;
+      return end ? `${url}/${end}` : url;
     },
 
     /**
