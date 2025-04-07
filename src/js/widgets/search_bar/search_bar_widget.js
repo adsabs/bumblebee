@@ -286,8 +286,8 @@ define([
     selectFieldInsert: function(val, label, initialValue) {
       var newVal;
       var specialCharacter;
-      var highlightedText = this._cursorInfo.selected;
-      var startIndex = this._cursorInfo.startIndex;
+      var highlightedText = this._cursorInfo.selected || '';
+      var startIndex = this._cursorInfo.startIndex || 0;
       var currentVal = this.getFormVal();
 
       // By default, selected will be the highlighted text surrounded by double qoutes
