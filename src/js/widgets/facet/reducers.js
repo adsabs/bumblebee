@@ -189,10 +189,18 @@ define(['underscore'], function(_) {
   };
 
   reducer.dataReceived = function(state, data, id) {
-    var facets =
-      data.facet_counts.facet_fields[
-        Object.keys(data.facet_counts.facet_fields)[0]
-      ];
+    if (!data || !data.facet_counts || !data.facet_counts.facet_fields) {
+      return state;
+    }
+
+    var facetFields = data.facet_counts.facet_fields;
+    var firstField = Object.keys(facetFields)[0];
+    
+    if (!firstField || !facetFields[firstField]) {
+      return state;
+    }
+
+    var facets = facetFields[firstField];
     var finished =
       facets.length / 2 != parseInt(data.responseHeader.params['facet.limit']);
     facets = reducer.processData(facets, state.config.preprocessors);
