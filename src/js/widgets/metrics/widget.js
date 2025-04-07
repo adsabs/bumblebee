@@ -927,7 +927,19 @@ define([
     prepareDownloadData: function(data, recordTotal = true) {
       let output = 'data:text/csv;charset=utf-8,';
 
-      if (!data || !data.length || !data[0] || !data[0].values) {
+      // Check if data is valid and has the expected structure
+      if (!data || !Array.isArray(data) || data.length === 0) {
+        return output;
+      }
+
+      // Check if the first item has values property
+      if (!data[0] || !data[0].values || !Array.isArray(data[0].values) || data[0].values.length === 0) {
+        return output;
+      }
+
+      // Check if all data items have values property
+      const hasValidValues = data.every(item => item && item.values && Array.isArray(item.values) && item.values.length === data[0].values.length);
+      if (!hasValidValues) {
         return output;
       }
 
@@ -942,9 +954,20 @@ define([
       output += recordTotal ? ', Total\n' : '\n';
 
       for (let i = 0; i < len; i++) {
+        // Check if the current value exists
+        if (!data[0].values[i] || typeof data[0].values[i].x === 'undefined') {
+          continue;
+        }
+        
         output += `${data[0].values[i].x}`; // year
         let total = 0;
         for (let j = 0; j < dim; j++) {
+          // Check if the current value exists
+          if (!data[j].values[i] || typeof data[j].values[i].y === 'undefined') {
+            output += `, 0`; // Use 0 for missing values
+            continue;
+          }
+          
           output += `, ${data[j].values[i].y}`; // value
           total += data[j].values[i].y;
         }
@@ -1563,7 +1586,7 @@ define([
       at the moment the promise is only used by
       the abstract page metrics widget that shows metrics
       for 1 paper
-    */
+   */
 
       var d = $.Deferred();
 
