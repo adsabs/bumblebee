@@ -321,7 +321,7 @@ define(['jquery', 'analytics'], function($, analytics) {
     };
 
     const select = (event, ui) => {
-      const newVal = $input.data('previewSuggestion');
+      const newVal = $input.data('previewSuggestion') || '';
       $input.val(newVal);
 
       // place cursor inside quotes or parens, or if none, just put it at the end
