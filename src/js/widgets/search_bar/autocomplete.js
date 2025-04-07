@@ -350,27 +350,47 @@ define(['jquery', 'analytics'], function($, analytics) {
 
     // render the suggestion list with some highlighting
     $input.data('ui-autocomplete')._renderItem = function(ul, item) {
-      const re = new RegExp('(' + this.term + ')', 'i');
-      const label = item.label.replace(
-        re,
-        '<span class="ui-state-highlight">$1</span>'
-      );
-      if (item.desc) {
+      try {
+        const escapedTerm = $.ui.autocomplete.escapeRegex(this.term);
+        const re = new RegExp('(' + escapedTerm + ')', 'i');
+        const label = item.label.replace(
+          re,
+          '<span class="ui-state-highlight">$1</span>'
+        );
+        if (item.desc) {
+          return $('<li class="search-bar-suggestion">')
+            .append(
+              '<a>' +
+                label +
+                '<span class="s-auto-description">&nbsp;&nbsp;' +
+                item.desc +
+                '</span></a>'
+            )
+            .appendTo(ul);
+        }
+
         return $('<li class="search-bar-suggestion">')
-          .append(
-            '<a>' +
-              label +
-              '<span class="s-auto-description">&nbsp;&nbsp;' +
-              item.desc +
-              '</span></a>'
-          )
+          .on('hover', (e) => e.preventDefault())
+          .append('<a>' + label + '</a>')
+          .appendTo(ul);
+      } catch (e) {
+        // If regex creation fails, just return the unmodified label
+        if (item.desc) {
+          return $('<li class="search-bar-suggestion">')
+            .append(
+              '<a>' +
+                item.label +
+                '<span class="s-auto-description">&nbsp;&nbsp;' +
+                item.desc +
+                '</span></a>'
+            )
+            .appendTo(ul);
+        }
+        return $('<li class="search-bar-suggestion">')
+          .on('hover', (e) => e.preventDefault())
+          .append('<a>' + item.label + '</a>')
           .appendTo(ul);
       }
-
-      return $('<li class="search-bar-suggestion">')
-        .on('hover', (e) => e.preventDefault())
-        .append('<a>' + label + '</a>')
-        .appendTo(ul);
     };
 
     $input.bind({
