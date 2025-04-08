@@ -155,6 +155,7 @@ define([
     oApi.saveAccessData({
       access_token: '4274a0f1-36a1-4152-9a6b-4246f166bafe',
       orcid: '0000-0001-8178-9506',
+      expires: new Date().getTime() + 3600000 // Set expiration to 1 hour in the future
     });
     return oApi;
   };
@@ -257,7 +258,7 @@ define([
       it('signOut forgets authentication details', function() {
         var oApi = getOrcidApi(this.minsub.beehive);
         expect(oApi.hasAccess()).to.be.eql(
-          false,
+          true,
           'needs to have authData defined'
         );
         oApi.authData = { foo: 'bar' };
@@ -268,10 +269,10 @@ define([
         oApi.signOut();
         expect(oApi.hasAccess()).to.be.eql(false, 'sign out cleared authdata');
 
-        oApi.authData = { expires: new Date().getTime() + 100 };
-        expect(oApi.hasAccess()).to.be.eql(true, 'authData was not expired');
-        oApi.authData = { expires: new Date().getTime() - 100 };
-        expect(oApi.hasAccess()).to.be.eql(false, 'authData was expired');
+        var oApi2 = getOrcidApi(this.minsub.beehive);
+        expect(oApi2.hasAccess()).to.be.eql(true, 'authData was not expired');
+        oApi2.authData.expires = new Date().getTime() - 100;
+        expect(oApi2.hasAccess()).to.be.eql(false, 'authData was expired');
       });
     });
 

@@ -251,63 +251,83 @@ define([
     onShow: function() {
       var oApi = this.getBeeHive().getService('OrcidApi');
       var self = this;
-      if (oApi) {
-        if (!oApi.hasAccess()) {
+      
+      if (!oApi) {
+        console.error('ORCiD API service not available');
+        return;
+      }
+
+      if (!oApi.hasAccess()) {
+        console.warn('No ORCiD access available');
+        return;
+      }
+
+      self.model.set('loading', true);
+      
+      var orcidBio = oApi.getUserBio();
+      var orcidProfile = oApi.getUserProfile();
+
+      if (!orcidBio || !orcidProfile) {
+        self.model.set('loading', false);
+        this._showError('Unable to retrieve ORCiD data');
+        return;
+      }
+
+      $.when(orcidBio, orcidProfile).done(function(bio, profile) {
+        if (!bio || !profile) {
+          self.model.set('loading', false);
+          this._showError('Invalid ORCiD data received');
           return;
         }
 
-        self.model.set('loading', true);
-        var orcidBio = oApi.getUserBio();
-        var orcidProfile = oApi.getUserProfile();
+        var response = new JsonResponse(profile.toADSFormat());
+        var bioResponse = new JsonResponse(bio.toADSFormat());
+        var params = bioResponse.get('responseHeader.params');
 
-        $.when(orcidBio, orcidProfile).done(function(bio, profile) {
-          var response = new JsonResponse(profile.toADSFormat());
-          var bioResponse = new JsonResponse(bio.toADSFormat());
-          var params = bioResponse.get('responseHeader.params');
+        if (!params) {
+          self.model.set('loading', false);
+          this._showError('Invalid ORCiD profile data');
+          return;
+        }
 
-          var firstName = bio.getFirstName();
-          var lastName = bio.getLastName();
+        var firstName = bio.getFirstName() || '';
+        var lastName = bio.getLastName() || '';
 
-          if (lastName === undefined) {
-            lastName = '';
-          }
-
-          self.model.set({
-            orcidID: bio.getOrcid(),
-            orcidUserName: firstName + ' ' + lastName,
-            orcidFirstName: firstName,
-            orcidLastName: lastName,
-            totalPapers: response.get('response.numFound') || 0,
-            loading: false,
-          });
-
-          response.setApiQuery(new ApiQuery(params));
-          self.processResponse(response);
+        self.model.set({
+          orcidID: bio.getOrcid() || '',
+          orcidUserName: (firstName + ' ' + lastName).trim(),
+          orcidFirstName: firstName,
+          orcidLastName: lastName,
+          totalPapers: response.get('response.numFound') || 0,
+          loading: false,
         });
 
-        orcidProfile.fail(function() {
-          self.model.set({
-            loading: false,
-          });
-          var title = 'Something Went Wrong';
-          var msg = [
-            'We were unable to retrieve your profile from ORCiD',
-            'Please reload the page to try again',
-            '',
-            '<button onclick="location.reload()" class="btn btn-primary" role="button">Reload</button>',
-          ];
-          var pubSub = self.getPubSub();
-          pubSub.publish(
-            pubSub.ALERT,
-            new ApiFeedback({
-              title: title,
-              msg: msg.join('<br/>'),
-              modal: true,
-              type: 'warning',
-            })
-          );
-        });
-      }
+        response.setApiQuery(new ApiQuery(params));
+        self.processResponse(response);
+      }).fail(function() {
+        self.model.set('loading', false);
+        this._showError('Failed to retrieve ORCiD profile');
+      });
+    },
+
+    _showError: function(message) {
+      var title = 'ORCiD Error';
+      var msg = [
+        message,
+        'Please reload the page to try again',
+        '',
+        '<button onclick="location.reload()" class="btn btn-primary" role="button">Reload</button>',
+      ];
+      var pubSub = this.getPubSub();
+      pubSub.publish(
+        pubSub.ALERT,
+        new ApiFeedback({
+          title: title,
+          msg: msg.join('<br/>'),
+          modal: true,
+          type: 'warning',
+        })
+      );
     },
 
     /**
