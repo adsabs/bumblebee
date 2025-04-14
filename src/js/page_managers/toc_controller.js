@@ -1,8 +1,8 @@
 define([
   'underscore',
   'marionette',
-  'js/page_managers/controller',
-  'js/page_managers/toc_widget',
+  './controller',
+  './toc_widget',
   'analytics',
 ], function(_, Marionette, BasicPageManagerController, TOCWidget, analytics) {
   /*

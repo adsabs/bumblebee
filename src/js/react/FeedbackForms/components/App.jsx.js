@@ -3,7 +3,7 @@ define([
   'suit',
   'react-redux',
   'styled-components',
-  'js/react/FeedbackForms/models/index',
+  '../models/index',
 ], function(React, { FeedbackForms }, { useSelector }, styled, { FORMS }) {
   const Container = styled.div`
     padding: 4rem 1rem;

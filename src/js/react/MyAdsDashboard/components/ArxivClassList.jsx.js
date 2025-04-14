@@ -3,7 +3,7 @@ define([
   'underscore',
   'react',
   'react-bootstrap',
-  'js/react/MyAdsDashboard/models/arxivClasses',
+  '../models/arxivClasses',
 ], function(
   _,
   React,

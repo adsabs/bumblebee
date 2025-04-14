@@ -1,4 +1,4 @@
-define(['redux', 'js/react/MyAdsFreeform/actions'], function(
+define(['redux', './actions'], function(
   { combineReducers },
   { SET_UPDATE_DATA, RESET, ERROR, ERROR_RESET, SET_LOGIN_STATUS }
 ) {

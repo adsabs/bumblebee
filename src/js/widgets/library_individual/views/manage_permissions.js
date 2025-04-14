@@ -2,7 +2,7 @@ define([
   'marionette',
   'hbs!js/widgets/library_individual/templates/manage-permissions-container',
   'hbs!js/widgets/library_individual/templates/make-public',
-  'hbs!js/widgets/library_individual/templates/transfer-ownership-modal',
+  'hbs!../templates/transfer-ownership-modal',
   'reactify!js/react/BumblebeeWidget?LibraryCollaborators',
 ], function(
   Marionette,

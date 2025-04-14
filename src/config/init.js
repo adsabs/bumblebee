@@ -52,10 +52,7 @@
       log('Loading discovery.config');
       require({
         waitSeconds: getModuleTimeout(),
-        paths: {
-          cdn: 'js/plugins/cdn',
-        }
-      }, ['cdn!config/discovery.config'], function() {
+      }, ['config/discovery.config'], function() {
         log('Loaded discovery.config successfully');
         res();
       }, function(e) {
@@ -74,10 +71,7 @@
       log('Loading main.config');
       require({
         waitSeconds: getModuleTimeout(),
-        paths: {
-          cdn: 'js/plugins/cdn',
-        }
-      }, ['cdn!config/main.config'], function() {
+      }, ['config/main.config'], function() {
         log('Loaded main.config successfully');
         res();
       }, function(e) {
@@ -97,10 +91,7 @@
       log(`Loading ${path}.config`);
       require({
         waitSeconds: getModuleTimeout(),
-        paths: {
-          cdn: 'js/plugins/cdn',
-        }
-      }, [`cdn!config/${path}.config`], function() {
+      }, [`config/${path}.config`], function() {
         log(`Loaded ${path}.config successfully`);
         res();
       }, function(e) {

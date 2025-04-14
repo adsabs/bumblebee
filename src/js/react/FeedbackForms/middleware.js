@@ -1,4 +1,4 @@
-define(['js/react/FeedbackForms/actions', 'js/react/shared/helpers'], function(
+define(['./actions', '../shared/helpers'], function(
   { CHECK_BIBCODES },
   { middleware }
 ) {

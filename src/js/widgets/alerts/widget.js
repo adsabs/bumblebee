@@ -11,8 +11,8 @@ define([
   'js/components/api_feedback',
   // list of possible alerts
   'js/components/alerts',
-  'js/widgets/alerts/modal_view',
-  'js/widgets/alerts/page_top_alert',
+  './modal_view',
+  './page_top_alert',
   'jquery',
   'jquery-ui',
   'bootstrap',

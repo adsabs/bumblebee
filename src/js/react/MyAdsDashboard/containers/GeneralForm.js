@@ -1,8 +1,8 @@
 define([
   'es6!js/react/MyAdsDashboard/components/GeneralForm.jsx',
   'react-redux',
-  'js/react/MyAdsDashboard/actions',
-  'js/react/MyAdsDashboard/constants',
+  '../actions',
+  '../constants',
 ], function(GeneralForm, { connect }, actions, { page }) {
   const mapStateToProps = ({
     requests,
