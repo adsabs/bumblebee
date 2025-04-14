@@ -3,9 +3,9 @@ define([
   'react-bootstrap',
   'prop-types',
   'react-redux',
-  'js/react/Recommender/actions',
-  'es6!js/react/Recommender/components/RecommendedList.jsx',
-  'es6!js/react/Recommender/components/SearchExamples.jsx',
+  '../actions',
+  'es6!./RecommendedList.jsx',
+  'es6!./SearchExamples.jsx',
 ], function (
   React,
   {Nav, NavItem},

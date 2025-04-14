@@ -22,7 +22,7 @@ define([
   'backbone',
   'underscore',
   'js/components/generic_module',
-  'js/modules/orcid/orcid_api',
+  './orcid_api',
 ], function(Backbone, _, GenericModule, OrcidApi) {
   var OrcidModule = GenericModule.extend({
     activate: function(beehive) {

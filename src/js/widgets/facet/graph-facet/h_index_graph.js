@@ -1,5 +1,5 @@
 define([
-  'js/widgets/facet/graph-facet/base_graph',
+  './base_graph',
   'hbs!js/widgets/facet/graph-facet/templates/h-index-graph-legend',
   'hbs!js/widgets/facet/graph-facet/templates/h-index-slider-window',
   'marionette',

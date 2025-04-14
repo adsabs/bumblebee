@@ -1,3 +1,3 @@
-define(['js/react/shared/middleware/api'], function(api) {
+define(['./api'], function(api) {
   return [api];
 });

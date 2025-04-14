@@ -3,7 +3,7 @@ define([
   'underscore',
   'react',
   'react-bootstrap',
-  'js/react/MyAdsDashboard/containers/ClassicLoginForm',
+  '../containers/ClassicLoginForm',
   'prop-types',
 ], function(
   { debounce },

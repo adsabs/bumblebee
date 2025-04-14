@@ -5,7 +5,7 @@
  */
 
 define([
-  'js/widgets/list_of_things/widget',
+  './widget',
   'js/mixins/add_stable_index_to_collection',
   'js/mixins/link_generator_mixin',
   'js/mixins/papers_utils',

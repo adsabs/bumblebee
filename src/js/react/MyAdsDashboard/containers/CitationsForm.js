@@ -1,8 +1,8 @@
 define([
   'es6!js/react/MyAdsDashboard/components/CitationsForm.jsx',
   'react-redux',
-  'js/react/MyAdsDashboard/actions',
-  'js/react/MyAdsDashboard/constants',
+  '../actions',
+  '../constants',
 ], function(CitationsForm, { connect }, actions, { page }) {
   const mapStateToProps = ({
     requests,

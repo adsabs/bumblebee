@@ -1,8 +1,8 @@
 define([
   'underscore',
-  'js/react/MyAdsDashboard/actions',
-  'js/react/MyAdsDashboard/constants',
-  'js/react/shared/helpers',
+  './actions',
+  './constants',
+  '../shared/helpers',
 ], function(_, actions, { page }, { middleware, apiSuccess }) {
   const {
     SET_NOTIFICATIONS,

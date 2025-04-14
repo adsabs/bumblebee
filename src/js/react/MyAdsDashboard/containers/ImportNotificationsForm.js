@@ -1,8 +1,8 @@
 define([
   'es6!js/react/MyAdsDashboard/components/ImportNotificationsForm.jsx',
   'react-redux',
-  'js/react/MyAdsDashboard/actions',
-  'js/react/MyAdsDashboard/constants',
+  '../actions',
+  '../constants',
 ], function(ImportNotificationsForm, { connect }, actions, { page }) {
   const mapStateToProps = ({ requests }) => ({
     importClassicRequest: requests.IMPORT_CLASSIC,

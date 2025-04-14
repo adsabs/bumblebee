@@ -3,7 +3,7 @@ define([
   'react',
   'prop-types',
   'react-bootstrap',
-  'js/react/MyAdsFreeform/constants',
+  '../constants',
   'js/react/shared/helpers',
 ], function(
   _,

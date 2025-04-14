@@ -1,8 +1,8 @@
 define([
   'es6!js/react/MyAdsDashboard/components/ArxivForm.jsx',
   'react-redux',
-  'js/react/MyAdsDashboard/actions',
-  'js/react/MyAdsDashboard/constants',
+  '../actions',
+  '../constants',
 ], function(ArxivForm, { connect }, actions, { page }) {
   const mapStateToProps = ({
     requests,
