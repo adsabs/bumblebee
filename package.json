@@ -12,7 +12,6 @@
   },
   "scripts": {
     "release": "grunt release",
-    "release:quick": "grunt release:quick",
     "release:sourcemaps": "grunt release && npm run sentry:sourcemaps",
     "start": "docker compose --project-directory nginx up --build",
     "dev": "APP_DIR=../src ENV=development docker compose --project-directory nginx up --build",
