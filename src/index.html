@@ -218,7 +218,7 @@
               /https:\/\/cdn\.jsdelivr\.net\/.*/,
             ],
             replaysSessionSampleRate: window.ENV === 'development' ? 1.0 : 0.1,
-            replaysOnErrorSampleRate: 0.5,
+            replaysOnErrorSampleRate: 0.25,
             environment: window.ENV ?? 'production',
             integrations: [
               Sentry.browserTracingIntegration(),
