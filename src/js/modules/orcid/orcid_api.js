@@ -146,10 +146,21 @@ define([
      * @returns {boolean}
      */
     hasAccess: function() {
-      if (this.authData && this.authData.expires) {
+      if (!this.authData) {
+        return false;
+      }
+      
+      // Check if we have the minimum required auth data
+      if (!this.authData.access_token || !this.authData.orcid) {
+        return false;
+      }
+
+      // Check expiration if it exists
+      if (this.authData.expires) {
         return this.authData.expires > new Date().getTime();
       }
-      return false;
+
+      return true;
     },
 
     /**
@@ -258,6 +269,7 @@ define([
      * Forgets the OAuth access_token
      */
     signOut: function() {
+      this.authData = null;
       this.saveAccessData(null);
       this.getPubSub().publish(this.getPubSub().ORCID_ANNOUNCEMENT, 'logout');
     },
@@ -381,15 +393,13 @@ define([
         works: '/orcid-works',
         work: '/orcid-work',
       };
-      var url =
-        this.config.apiEndpoint + '/' + this.authData.orcid + targets[name];
-
-      var end = _.isArray(putCodes) ? putCodes.join(',') : putCodes;
-
-      if (end) {
-        url += '/' + end;
+      if (!this.hasAccess()) {
+        throw new Error('User does not have access to the ORCiD API');
       }
-      return url;
+
+      const url = `${this.config.apiEndpoint}/${this.authData.orcid}${targets[name]}`;
+      const end = _.isArray(putCodes) ? putCodes.join(',') : putCodes;
+      return end ? `${url}/${end}` : url;
     },
 
     /**

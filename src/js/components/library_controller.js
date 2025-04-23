@@ -132,7 +132,15 @@ define([
       function fail(error) {
         // on fail, send a custom event to alert library widgets
         var ps = this.getPubSub();
-        ps.publish(ps.CUSTOM_EVENT, 'libraries:request:fail', error);
+        // Create a safe error object that can be serialized
+        var safeError = {};
+        if (error) {
+          // Only include properties that are defined
+          if (error.status) safeError.status = error.status;
+          if (error.statusText) safeError.statusText = error.statusText;
+          if (error.responseText) safeError.responseText = error.responseText;
+        }
+        ps.publish(ps.CUSTOM_EVENT, 'libraries:request:fail', safeError);
         deferred.reject.apply(undefined, arguments);
       }
 

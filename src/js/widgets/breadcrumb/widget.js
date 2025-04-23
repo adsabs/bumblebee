@@ -150,9 +150,17 @@ define([
 
       if (event == 'childview:item-click') {
         // TODO: destroy all models after this one and issue new query with this request
-        arguments[2].destroy();
+        var model = arguments[2];
+        if (model) {
+          // Remove the model from the collection instead of destroying it directly
+          this.collection.remove(model);
+        }
       } else if (event == 'childview:item-remove') {
-        arguments[2].destroy();
+        var model = arguments[2];
+        if (model) {
+          // Remove the model from the collection instead of destroying it directly
+          this.collection.remove(model);
+        }
       }
     },
 

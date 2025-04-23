@@ -229,13 +229,19 @@ define([
 
         widget.onShow();
 
-        expect($("#test .s-results-control-row-container").text().replace(/\s{2,}/g, "")).to.eql("My ORCID Papers(3)ORCID Username: Tim HostetlerORCID ID: 0000-0001-9790-1275To share this list of your ORCID papers:Search for your ORCID ID in ADS (orcid:0000-0001-9790-1275)You can then share the url of your results:https://ui.adsabs.harvard.edu/search/q=orcid%3A0000-0001-9790-1275&sort=date+descPlease note that claims take up to 24 hours to be indexed in ADS.To claim papers in ORCID and add to this listclick here to search your name in ADSLearn more about using ORCID with ADS")
+        expect($("#test .s-results-control-row-container").text().replace(/\s{2,}/g, "")).to.eql(
+"My ORCID Papers(3)ORCID Username: Tim HostetlerORCID ID: 0000-0001-9790-1275To share this list of your ORCID papers:Search for your ORCID ID in ADS (orcid:0000-0001-9790-1275)You can then share the url of your results:https://ui.adsabs.harvard.edu/search/q=orcid%3A0000-0001-9790-1275&sort=date+descPlease note that claims take up to 24 hours to be indexed in ADS.To claim papers in ORCID and add to this listclick here to search your name in ADSLearn more about using ORCID with ADS"
+        );
       });
 
       it("should allow the user to search in ADS when search button is clicked", function(done){
 
         var orcidApi = getOrcidApi(this.minsub.beehive);
-        orcidApi.saveAccessData({access: true});
+        orcidApi.saveAccessData({
+          access_token: '4274a0f1-36a1-4152-9a6b-4246f166bafe',
+          orcid: '0000-0001-8178-9506',
+          expires: new Date().getTime() + 3600000 // Set expiration to 1 hour in the future
+        });
         orcidApi.getUserBio = function() {
           return $.Deferred()
             .resolve(new Bio(helpers.getMock('bio'))).promise();
@@ -243,10 +249,8 @@ define([
 
         orcidApi.getADSUserData = sinon.spy(function(){
           var d = $.Deferred();
-
           d.resolve({ nameVariations : ["Name, Variation 1", "Name, Variation 2"]});
           return d.promise();
-
         });
 
         var fakeUser = {
