@@ -54,6 +54,16 @@ $ npm run test
 $ npm run test:debug
 ```
 
+### Switching API Environments
+You'll need to head to `src/config/discovery.vars.js` and change the `apiRoot` and the `orcidApiEndpoint`.
+
+For example:
+```javascript
+// apiRoot: '/dev/v1', // for the dev environment
+// apiRoot: '/v1', // for the production environment
+// apiRoot: '/qa/v1', // for the QA environment
+```
+
 ### Documentation
 
 - [How to write a widget](https://github.com/adsabs/bumblebee/blob/master/docs/how-to-write-widget.md)
