@@ -28,10 +28,11 @@ src/styles/fonts
 src/styles/css
 
 .idea
+.wrangler
 
 .vagrant
 
-src/config/discovery.vars.js
+.env
 .*
 !.babelrc
 !.travis.yml

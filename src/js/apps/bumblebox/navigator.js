@@ -3,18 +3,16 @@
  * the application) - this is a companion to the 'router'
  */
 
-define([
-  'jquery',
-  'backbone',
-  'underscore',
-  'js/components/navigator',
-], function($, Backbone, _, Navigator) {
+define(['jquery', 'backbone', 'lodash/dist/lodash.compat', 'js/components/navigator'], function(
+  $,
+  Backbone,
+  _,
+  Navigator
+) {
   var NavigatorService = Navigator.extend({
     start: function(app) {
       this.set('index-page', function() {
-        app
-          .getObject('MasterPageManager')
-          .show('PageManager', ['TargetWidget']);
+        app.getObject('MasterPageManager').show('PageManager', ['TargetWidget']);
         this.route = '';
       });
       this.set('404', function() {

@@ -1,4 +1,5 @@
 define([
+  'lodash/dist/lodash.compat',
   'redux',
   'js/widgets/facet/actions',
   'js/widgets/facet/reducers',
@@ -6,8 +7,8 @@ define([
   'js/wraps/author_facet',
   'js/bugutils/minimal_pubsub',
   'react',
-  'react-dom',
 ], function(
+  _,
   Redux,
   Actions,
   Reducers,
@@ -15,7 +16,6 @@ define([
   AuthorFacet,
   MinSub,
   React,
-  ReactDOM
 ) {
   describe('FacetWidget', function() {
     var sampleResponse = {

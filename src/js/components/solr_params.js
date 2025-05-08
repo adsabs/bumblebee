@@ -20,12 +20,12 @@ Instead, import 'api_query' and configure it properly
  * @class ParameterStore
  */
 
-define([
-  'js/components/multi_params',
-  'backbone',
-  'underscore',
-  'jquery',
-], function(MultiParams, Backbone, _, $) {
+define(['js/components/multi_params', 'backbone', 'lodash/dist/lodash.compat', 'jquery'], function(
+  MultiParams,
+  Backbone,
+  _,
+  $
+) {
   var SolrParams = MultiParams.extend({
     fieldsToConcatenate: [],
     defaultOperator: ' ',
@@ -37,14 +37,7 @@ define([
 
     initialize: function(attributes, options) {
       if (options) {
-        _.extend(
-          this,
-          _.pick(options, [
-            'fieldsToConcatenate',
-            'defaultOperator',
-            'fieldProcessors',
-          ])
-        );
+        _.extend(this, _.pick(options, ['fieldsToConcatenate', 'defaultOperator', 'fieldProcessors']));
       }
     },
 

@@ -1,5 +1,5 @@
 define([
-  'underscore',
+  'lodash/dist/lodash.compat',
   'js/bugutils/minimal_pubsub',
   'js/widgets/orcid-selector/widget.jsx'
 ], function (_, MinPubSub, Widget) {

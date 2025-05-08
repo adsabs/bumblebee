@@ -1,61 +1,147 @@
-[![Build Status](https://travis-ci.org/adsabs/bumblebee.svg?branch=master)](https://travis-ci.org/adsabs/bumblebee) [![Coverage Status](https://coveralls.io/repos/github/adsabs/bumblebee/badge.svg)](https://coveralls.io/github/adsabs/bumblebee)
+# Bumblebee
 
-## bumblebee
+A modern web application for the [NASA Astrophysics Data System (ADS)](https://ui.adsabs.harvard.edu).
 
-Official web application built for the [Astrophysics Data System](https://ui.adsabs.harvard.edu) and its API.
+---
 
-### Development
+[![Build Status](https://travis-ci.org/adsabs/bumblebee.svg?branch=master)](https://travis-ci.org/adsabs/bumblebee)
+[![Coverage Status](https://coveralls.io/repos/github/adsabs/bumblebee/badge.svg)](https://coveralls.io/github/adsabs/bumblebee)
 
-You will need to have Docker installed to run the development server. [Get Docker](https://docs.docker.com/get-docker/)
+---
 
-#### Installation
+## 🚀 Features
 
-```bash
-# fork and/or clone repo
-$ git clone git@github.com:adsabs/bumblebee.git
+- Built with Webpack
+- Fast dependency management with [PNPM](https://pnpm.io)
+- Docker support for QA/Production parity
+- Modular architecture with support for remote assets via CDN
+- Source map uploading to Sentry for production builds
 
-# initialize submodule
-$ git submodule update --init
+---
 
-# install assets
-$ npm install -g grunt-cli
-$ npm install
+## 🛠 Prerequisites
 
-# start the server
-$ npm run dev
-```
+- [Node.js](https://nodejs.org/) (LTS recommended)
+- [PNPM](https://pnpm.io)
+- [Docker](https://docs.docker.com/get-docker/)
+- [Wrangler CLI](https://developers.cloudflare.com/workers/wrangler/) (for asset uploads)
 
-You should then be able to access the application locally at `http://localhost:8000`.
+---
 
-#### Configuration
-
-Create a `src/config/discovery.vars.js` file, based on `discovery.vars.js.default`.
-
-#### Building
+## 📦 Installation
 
 ```bash
-$ npm run release
-# full build will be in dist/ directory
-# point the dev server to there:
-$ npm start
+git clone git@github.com:adsabs/bumblebee.git
+cd bumblebee
+
+# Ensure PNPM is used
+pnpm install
 ```
 
-### Testing
+---
 
-**Note!** There is a separate server for testing, you'll need to first stop the dev server then start the testing server: `grunt server`.
+## 🧪 Development
 
-During testing, you can add `debugger` statements and use mocha's `only` to isolate a test when running in debug mode.
+Start a local development server with hot reload:
 
 ```bash
-# Run everything
-$ npm run test
-
-# Run with puppeteer window open
-$ npm run test:debug
+pnpm dev
 ```
 
-### Documentation
+App will be available at `http://localhost:8000` (or configured port).
 
-- [How to write a widget](https://github.com/adsabs/bumblebee/blob/master/docs/how-to-write-widget.md)
-- [Architecture Overview](https://github.com/adsabs/bumblebee/blob/master/docs/architecture.md)
-- [Explanation of the Search Cycle](https://github.com/adsabs/bumblebee/blob/master/docs/search-cycle.md)
+---
+
+## ⚙️ Configuration
+
+Create a local config file from the template:
+
+```bash
+cp src/config/discovery.vars.js.default src/config/discovery.vars.js
+```
+
+Customize values as needed.
+
+---
+
+## 🔨 Building
+
+### Local production build (uses relative paths):
+
+```bash
+pnpm build
+```
+
+### CDN-based production build (uses full URLs for assets):
+
+```bash
+pnpm build:release
+```
+
+Artifacts will be output to the `dist/` directory.
+
+---
+
+## 🚚 Deployment
+
+After building with `build:release`, run:
+
+```bash
+pnpm upload:assets
+```
+
+This will:
+- Upload static assets to Cloudflare Pages
+- Upload source maps to Sentry (via `sentry-cli`)
+
+**Note:** In CI, this step should be automated and triggered post-build.
+
+---
+
+## 🧪 Testing
+
+Run the test suite:
+
+```bash
+pnpm test
+```
+
+---
+
+## 📁 Project Structure
+
+```text
+src/
+├── components/      # UI widgets and reusable elements
+├── config/          # Environment-specific configuration
+├── core/            # Application logic, routers, managers
+├── styles/          # Sass/CSS files
+└── index.js         # Entry point
+```
+
+---
+
+## 📚 Documentation
+
+- [Architecture Overview](docs/architecture.md)
+- [Search Cycle Explanation](docs/search-cycle.md)
+- [How to Write a Widget](docs/how-to-write-widget.md)
+
+---
+
+## 🧵 Scripts Reference
+
+| Script                 | Description                                          |
+|------------------------|------------------------------------------------------|
+| `pnpm dev`             | Start dev server with hot reload                     |
+| `pnpm build`           | Local production build                               |
+| `pnpm build:release`   | CDN-ready production build                           |
+| `pnpm upload:assets`   | Uploads assets to Cloudflare + sourcemaps to Sentry |
+| `pnpm test`            | Run test suite                                       |
+| `pnpm start[:env]`     | Run Docker container (`dev`, `qa`, `prod`)           |
+
+---
+
+## 👥 License & Contributors
+
+See `LICENSE.md`.

@@ -1,21 +1,24 @@
 define([
+  'lodash/dist/lodash.compat',
   'marionette',
   'js/widgets/base/base_widget',
   'js/components/api_feedback',
   'js/mixins/form_view_functions',
   'js/widgets/success/view',
   'js/components/api_targets',
-  'hbs!js/widgets/authentication/templates/log-in',
-  'hbs!js/widgets/authentication/templates/register',
-  'hbs!js/widgets/authentication/templates/container',
-  'hbs!js/widgets/authentication/templates/reset-password-1',
-  'hbs!js/widgets/authentication/templates/reset-password-2',
-  'hbs!js/widgets/authentication/templates/resend-verification-email',
+  'js/widgets/authentication/templates/log-in.hbs',
+  'js/widgets/authentication/templates/register.hbs',
+  'js/widgets/authentication/templates/container.hbs',
+  'js/widgets/authentication/templates/reset-password-1.hbs',
+  'js/widgets/authentication/templates/reset-password-2.hbs',
+  'js/widgets/authentication/templates/resend-verification-email.hbs',
   'js/components/user',
   'analytics',
+  'backbone',
   'backbone-validation',
   'backbone.stickit',
 ], function(
+  _,
   Marionette,
   BaseWidget,
   ApiFeedback,
@@ -29,7 +32,8 @@ define([
   ResetPassword2Template,
   ResendVerificationEmail,
   User,
-  analytics
+  analytics,
+  Backbone
 ) {
   // Creating module level variable since I can't figure out best way to pass this value into a subview from the model
   // This value should be always available, and unchanging, so should be safe to set like this here

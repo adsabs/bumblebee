@@ -2,11 +2,14 @@ define([
   'js/widgets/base/base_widget',
   'js/components/api_query',
   'js/components/api_query_updater',
-  'hbs!js/widgets/classic_form/form',
+  'js/widgets/classic_form/form.hbs',
   'js/widgets/paper_search_form/topterms',
   'analytics',
-  'es6!js/widgets/sort/widget.jsx',
-  'es6!js/widgets/sort/redux/modules/sort-app',
+  'js/widgets/sort/widget.jsx',
+  'js/widgets/sort/redux/modules/sort-app',
+  'marionette',
+  'lodash/dist/lodash.compat',
+  'backbone',
 ], function(
   BaseWidget,
   ApiQuery,
@@ -15,7 +18,10 @@ define([
   AutocompleteData,
   analytics,
   SortWidget,
-  SortActions
+  SortActions,
+  Marionette,
+  _,
+  Backbone
 ) {
   // for autocomplete
   function split(val) {
@@ -64,7 +70,7 @@ define([
     },
     _makeFqStr: function(data, fullSet) {
       var keys = _.keys(data);
-      var trues = _(data)
+      var trues = _.chain(data)
         .pick(_.identity)
         .keys()
         .value();
@@ -176,17 +182,7 @@ define([
 
       // pubdate
       var pd = data.pubdate;
-      var date = [
-        '[',
-        pd.year_from,
-        '-',
-        pd.month_from,
-        ' TO ',
-        pd.year_to,
-        '-',
-        pd.month_to,
-        ']',
-      ].join('');
+      var date = ['[', pd.year_from, '-', pd.month_from, ' TO ', pd.year_to, '-', pd.month_to, ']'].join('');
       if (!_.isEqual(pd, this.defaults.pubdate)) {
         query.q.push('pubdate:' + date);
       }
@@ -284,8 +280,7 @@ define([
       'input textarea': 'textareaUpdate',
       'change div[data-field="database"] input': 'updateCollection',
       'change div[data-field="property"] input': 'updateProperty',
-      'input input[name="title"],input[name="abs"],input[name="bibstem"]':
-        'inputUpdate',
+      'input input[name="title"],input[name="abs"],input[name="bibstem"]': 'inputUpdate',
       'input input[name^="month"],input[name^="year"]': 'dateUpdate',
     },
 
@@ -340,20 +335,14 @@ define([
       var $el = this.$(e.currentTarget);
       var data = {};
       data[$el.attr('name')] = $el.prop('checked');
-      this.model.set(
-        'collections',
-        _.extend({}, this.model.get('collections'), data)
-      );
+      this.model.set('collections', _.extend({}, this.model.get('collections'), data));
     },
 
     updateProperty: function(e) {
       var $el = this.$(e.currentTarget);
       var data = {};
       data[$el.attr('name')] = $el.prop('checked');
-      this.model.set(
-        'property',
-        _.extend({}, this.model.get('property'), data)
-      );
+      this.model.set('property', _.extend({}, this.model.get('property'), data));
     },
 
     inputUpdate: function(e) {
@@ -455,10 +444,7 @@ define([
         var re = new RegExp('(' + term + ')', 'i');
         var label = item.label;
         if (term.length > 0) {
-          label = label.replace(
-            re,
-            '<span class="ui-state-highlight">$1</span>'
-          );
+          label = label.replace(re, '<span class="ui-state-highlight">$1</span>');
         }
         var $li = $('<li/>').appendTo(ul);
         $('<a/>')
@@ -494,19 +480,10 @@ define([
       ps.subscribe(ps.USER_ANNOUNCEMENT, (ev, data) => {
         if (ev === 'user_info_change' && data.defaultDatabase) {
           // check first to make sure that collections is set to the default
-          if (
-            JSON.stringify(this.model.get('collections')) ===
-            JSON.stringify(this.model.defaults.collections)
-          ) {
+          if (JSON.stringify(this.model.get('collections')) === JSON.stringify(this.model.defaults.collections)) {
             const dbs = this.getDbSelectionFromUserData();
-            this.model.set(
-              'collections',
-              dbs || this.model.defaults.collections
-            );
-            this.view.triggerMethod(
-              'changeToCollections',
-              dbs || this.model.defaults.collections
-            );
+            this.model.set('collections', dbs || this.model.defaults.collections);
+            this.view.triggerMethod('changeToCollections', dbs || this.model.defaults.collections);
           }
         }
       });
@@ -639,26 +616,21 @@ define([
       this.setFocus('#classic-author');
 
       // check to make sure collections is set to the default first
-      if (
-        JSON.stringify(this.model.get('collections')) ===
-        JSON.stringify(this.model.defaults.collections)
-      ) {
+      if (JSON.stringify(this.model.get('collections')) === JSON.stringify(this.model.defaults.collections)) {
         const dbs = this.getDbSelectionFromUserData();
         this.model.set('collections', dbs || this.model.defaults.collections);
-        this.view.triggerMethod(
-          'changeToCollections',
-          dbs || this.model.defaults.collections
-        );
+        this.view.triggerMethod('changeToCollections', dbs || this.model.defaults.collections);
       }
     },
 
     getDbSelectionFromUserData: function() {
       try {
-        const userData = this.getBeeHive().getObject('User').getUserData();
-        let dbs = {};
+        const userData = this.getBeeHive()
+          .getObject('User')
+          .getUserData();
+        const dbs = {};
         if (userData && 'defaultDatabase' in userData) {
-          userData.defaultDatabase.forEach(db => {
-
+          userData.defaultDatabase.forEach((db) => {
             // Skip the 'ALL' database, and only take true entries
             if (db.name !== 'All' && db.value) {
               dbs[db.name.toLowerCase()] = db.value;
@@ -687,13 +659,7 @@ define([
         },
       };
       ps.publish(ps.NAVIGATE, 'search-page', options);
-      analytics(
-        'send',
-        'event',
-        'interaction',
-        'classic-form-submit',
-        JSON.stringify(queryDict)
-      );
+      analytics('send', 'event', 'interaction', 'classic-form-submit', JSON.stringify(queryDict));
     },
 
     // notify application to keep me around in memory indefinitely

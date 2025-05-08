@@ -1,4 +1,4 @@
-define(['underscore'], function(_) {
+define(['lodash/dist/lodash.compat'], function(_) {
   // Action Constants
   const SET_DIRECTION = 'SET_DIRECTION';
   const SET_SORT = 'SET_SORT';
@@ -70,10 +70,7 @@ define(['underscore'], function(_) {
     }
 
     // create a new timer, which resets the locked state after a period of time
-    const timer = setTimeout(
-      () => dispatch({ type: SET_LOCKED, value: false }),
-      30000
-    );
+    const timer = setTimeout(() => dispatch({ type: SET_LOCKED, value: false }), 30000);
 
     // dispatch the new state
     dispatch({ type: SET_LOCKED, value, timer: timer });

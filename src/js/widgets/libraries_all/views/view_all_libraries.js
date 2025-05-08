@@ -1,13 +1,15 @@
 define([
+  'lodash/dist/lodash.compat',
   'marionette',
-  'hbs!js/widgets/libraries_all/templates/libraries-list-container',
-  'hbs!js/widgets/libraries_all/templates/library-item',
-  'hbs!js/widgets/libraries_all/templates/no-libraries',
-  'hbs!js/widgets/libraries_all/templates/loading-libraries',
-  'hbs!js/widgets/libraries_all/templates/error-libraries',
-  'hbs!js/widgets/libraries_all/templates/no-result',
-  'moment',
+  'js/widgets/libraries_all/templates/libraries-list-container.hbs',
+  'js/widgets/libraries_all/templates/library-item.hbs',
+  'js/widgets/libraries_all/templates/no-libraries.hbs',
+  'js/widgets/libraries_all/templates/loading-libraries.hbs',
+  'js/widgets/libraries_all/templates/error-libraries.hbs',
+  'js/widgets/libraries_all/templates/no-result.hbs',
+  'dayjs',
 ], function(
+  _,
   Marionette,
   LibraryContainer,
   LibraryItem,
@@ -15,12 +17,12 @@ define([
   LoadingTemplate,
   ErrorTemplate,
   NoResultTemplate,
-  moment
+  dayjs
 ) {
   var LibraryItemView = Marionette.ItemView.extend({
     // time is returned from library endpoint as utc time, but without info that it is utc
     formatDate: function(d) {
-      return moment
+      return dayjs
         .utc(d)
         .local()
         .format('MMM D YYYY, h:mma');
@@ -43,8 +45,7 @@ define([
   });
 
   var LibraryCollectionView = Marionette.CompositeView.extend({
-    initialize: function(options) {
-      options = options || {};
+    initialize: function() {
       this.model.set('search_value', '');
       this.model.on('change:search_value', () => this.triggerSearchLibraries());
     },
@@ -105,19 +106,15 @@ define([
       var sortData = $(e.currentTarget).data('sort');
       var sort = sortData.sort;
 
-      var order =
-        sort !== this.model.get('sort')
-          ? 'asc'
-          : this.model.get('order') == 'asc'
-          ? 'desc'
-          : 'asc';
+      var order = sort !== this.model.get('sort') ? 'asc' : this.model.get('order') == 'asc' ? 'desc' : 'asc';
       this.model.set({ sort: sort, type: sortData.type, order: order });
     },
 
     render: function() {
       if (this.collection.length > 0) {
         return Marionette.CompositeView.prototype.render.apply(this, arguments);
-      } else if (this.model.get('loading')) {
+      }
+      if (this.model.get('loading')) {
         this.$el.html(LoadingTemplate());
       } else if (this.model.get('error')) {
         this.$el.html(ErrorTemplate());

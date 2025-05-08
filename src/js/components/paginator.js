@@ -13,7 +13,7 @@
  * you call 'setMaxNum' -- this typically happens after the first
  * batch of results arrives from server (the widget must call 'setMaxNum')
  */
-define(['underscore'], function(_) {
+define(['lodash/dist/lodash.compat'], function(_) {
   var Paginator = function(options) {
     this.start = options.start || 0; // the beginning offset
     this.rows = options.rows || 20; // how many to fetch in one go

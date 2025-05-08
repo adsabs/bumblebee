@@ -1,13 +1,5 @@
-define(['react', 'prop-types', '../constants'], function(
-  React,
-  PropTypes,
-  { Permissions }
-) {
-  const ManageButton = ({
-    permission = Permissions.READ,
-    onChange,
-    ...otherProps
-  }) => {
+define(['react', 'prop-types', '../constants'], function(React, PropTypes, { Permissions }) {
+  const ManageButton = ({ permission = Permissions.READ, onChange, ...otherProps }) => {
     const handleChange = (e) => {
       onChange(Permissions[e.currentTarget.value.toUpperCase()]);
     };
@@ -27,11 +19,7 @@ define(['react', 'prop-types', '../constants'], function(
           className="form-control"
         >
           {Object.values(Permissions).map((item) => (
-            <option
-              key={`option-${item.id}`}
-              value={item.id}
-              title={item.description}
-            >
+            <option key={`option-${item.id}`} value={item.id} title={item.description}>
               {item.label}
             </option>
           ))}

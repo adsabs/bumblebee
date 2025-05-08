@@ -1,8 +1,8 @@
 define([
+  'lodash/dist/lodash.compat',
   'js/widgets/library_individual/widget',
   'js/bugutils/minimal_pubsub',
-  'moment',
-], function(LibraryWidget, MinSub, moment) {
+], function(_, LibraryWidget, MinSub) {
   describe('Library Widget (library_individual.spec.js)', function() {
     var stubLibraryMetadata = [
       {

@@ -5,6 +5,7 @@
  */
 
 define([
+  'lodash/dist/lodash.compat',
   'marionette',
   'js/widgets/base/base_widget',
   'js/components/api_query',
@@ -14,20 +15,8 @@ define([
   './modal_view',
   './page_top_alert',
   'jquery',
-  'jquery-ui',
-  'bootstrap',
-], function(
-  Marionette,
-  BaseWidget,
-  ApiQuery,
-  Alerts,
-  ApiFeedback,
-  ModalView,
-  BannerView,
-  $,
-  $ui,
-  bootstrap
-) {
+  'backbone',
+], function(_, Marionette, BaseWidget, ApiQuery, Alerts, ApiFeedback, ModalView, BannerView, $, Backbone) {
   var AlertModel = Backbone.Model.extend({
     defaults: {
       type: 'info',
@@ -64,7 +53,7 @@ define([
     // when 'event' is fired, it will call/resolve the
     // promise object with the name of the event
     if (events) {
-      _.each(events, function(evtValue, evt) {
+      _.each(events, (evtValue, evt) => {
         var match = evt.match(delegateEventSplitter);
         var eventName = match[1];
         var selector = match[2];
@@ -72,7 +61,7 @@ define([
 
         // create an event listener that resolves the promise
         // with the supplied data when there is the proper event
-        var method = function(ev) {
+        var method = (ev) => {
           var promise = this.model.get('promise');
           var evts = this.model.get('events');
           if (evts[key]) {
@@ -87,7 +76,6 @@ define([
           return false;
         };
 
-        method = _.bind(method, self);
         eventName += '.customEvents' + this.mid;
         if (selector === '') {
           self.$el.on(eventName, method);

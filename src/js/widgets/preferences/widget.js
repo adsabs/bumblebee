@@ -1,5 +1,5 @@
 define([
-  'underscore',
+  'lodash/dist/lodash.compat',
   'marionette',
   'js/widgets/base/base_widget',
   './views/openurl',
@@ -7,7 +7,7 @@ define([
   './views/application',
   './views/export',
   'js/components/api_feedback',
-  'hbs!js/widgets/preferences/templates/orcid-form-submit-modal',
+  'js/widgets/preferences/templates/orcid-form-submit-modal.hbs',
 ], function(
   _,
   Marionette,
@@ -39,9 +39,9 @@ define([
       content: '.content-container',
     },
 
-    setSubView: function(viewConstructor) {
+    setSubView: function(ViewConstructor) {
       // providing all views with a copy of the model
-      var view = new viewConstructor({ model: this.model });
+      const view = new ViewConstructor({ model: this.model });
 
       this.getRegion('content').show(view);
 
@@ -64,23 +64,19 @@ define([
 
       this.model = new PreferencesModel();
       this.view = new PreferencesView({ model: this.model });
-      this.listenTo(this.view, 'all', this.handleViewEvents);
+      this.listenTo(this.view, 'all', this.handleViewEvents.bind(this));
 
       BaseWidget.prototype.initialize.apply(this, arguments);
 
-      this.fetchNecessaryData = _.debounce(
-        _.bind(this.fetchNecessaryData, this),
-        300
-      );
+      this.fetchNecessaryData = _.debounce(_.bind(this.fetchNecessaryData, this), 300);
     },
 
     activate: function(beehive) {
-      var that = this;
       this.setBeeHive(beehive);
-      _.bindAll(this);
+
       var pubsub = beehive.getService('PubSub');
-      pubsub.subscribe(pubsub.USER_ANNOUNCEMENT, this.handleUserAnnouncement);
-      pubsub.subscribe(pubsub.ORCID_ANNOUNCEMENT, this.handleOrcidAnnouncement);
+      pubsub.subscribe(pubsub.USER_ANNOUNCEMENT, this.handleUserAnnouncement.bind(this));
+      pubsub.subscribe(pubsub.ORCID_ANNOUNCEMENT, this.handleOrcidAnnouncement.bind(this));
 
       this.updateFromUser();
     },
@@ -197,8 +193,7 @@ define([
                 code: ApiFeedback.CODES.ALERT,
                 msg: OrcidModalTemplate(),
                 type: 'success',
-                title:
-                  'Thanks for submitting your supplemental ORCID information',
+                title: 'Thanks for submitting your supplemental ORCID information',
                 modal: true,
               })
             );

@@ -5,7 +5,7 @@
  even if you try to set strings, you will always have
  list of strings
  */
-define(['backbone', 'underscore', 'jquery'], function(Backbone, _, $) {
+define(['backbone', 'lodash/dist/lodash.compat', 'jquery'], function(Backbone, _, $) {
   var Model = Backbone.Model.extend({
     locked: false,
     _checkLock: function() {
@@ -46,14 +46,7 @@ define(['backbone', 'underscore', 'jquery'], function(Backbone, _, $) {
         // remove empty strings
         var tempVal = attributes[attr];
 
-        tempVal = _.without(
-          _.flatten(tempVal),
-          '',
-          false,
-          null,
-          undefined,
-          NaN
-        );
+        tempVal = _.without(_.flatten(tempVal), '', false, null, undefined, NaN);
 
         if (!_.isArray(tempVal)) {
           throw new Error('Values were not converted to an Array');

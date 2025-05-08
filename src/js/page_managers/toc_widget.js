@@ -1,4 +1,4 @@
-define(['backbone', 'marionette'], function(Backbone, Marionette) {
+define(['lodash/dist/lodash.compat', 'backbone', 'marionette'], function(_, Backbone, Marionette) {
   /*
    * widget to coordinate the showing of other widgets within the framework of a TOC page manager
    * You need to provide a template with a nav that looks like this: (with the data attributes

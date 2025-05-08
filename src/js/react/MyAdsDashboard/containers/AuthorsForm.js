@@ -1,14 +1,10 @@
-define([
-  'es6!js/react/MyAdsDashboard/components/AuthorsForm.jsx',
-  'react-redux',
-  '../actions',
-  '../constants',
-], function(KeywordForm, { connect }, actions, { page }) {
-  const mapStateToProps = ({
-    requests,
-    notifications,
-    editingNotification,
-  }) => ({
+define(['js/react/MyAdsDashboard/components/AuthorsForm.jsx', 'react-redux', '../actions', '../constants'], function(
+  KeywordForm,
+  { connect },
+  actions,
+  { page }
+) {
+  const mapStateToProps = ({ requests, notifications, editingNotification }) => ({
     addNotificationRequest: requests.ADD_NOTIFICATION,
     updateNotificationRequest: requests.UPDATE_NOTIFICATION,
     editingNotification,

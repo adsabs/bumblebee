@@ -41,7 +41,7 @@
  */
 
 define([
-  'underscore',
+  'lodash/dist/lodash.compat',
   'jquery',
   'backbone',
   'module',
@@ -51,9 +51,7 @@ define([
   const DEFAULT_MODULE_TIMEOUT = 60 * 1000; // 60 seconds
 
   const updateProgress =
-    typeof window.__setAppLoadingProgress === 'function'
-      ? window.__setAppLoadingProgress
-      : function() {};
+    typeof window.__setAppLoadingProgress === 'function' ? window.__setAppLoadingProgress : function() {};
 
   var Application = function(options) {
     options || (options = {});
@@ -134,9 +132,7 @@ define([
 
       var core = config.core;
       if (core) {
-        _.each(['controllers', 'modules', 'services', 'objects'], function(
-          name
-        ) {
+        _.each(['controllers', 'modules', 'services', 'objects'], function(name) {
           if (core[name]) {
             promise = self._loadModules(name, core[name]);
             if (promise) {
@@ -166,20 +162,14 @@ define([
           _.each(plugins, function(value, key) {
             var x = {};
             x[key] = value;
-            self.__plugins.add(
-              key,
-              self._loadModules('plugins', x, false, true)
-            );
+            self.__plugins.add(key, self._loadModules('plugins', x, false, true));
           });
         }
         if (widgets) {
           _.each(widgets, function(value, key) {
             var x = {};
             x[key] = value;
-            self.__widgets.add(
-              key,
-              self._loadModules('widgets', x, false, true)
-            );
+            self.__widgets.add(key, self._loadModules('widgets', x, false, true));
           });
         }
       }
@@ -213,10 +203,7 @@ define([
           bigPromise.resolve();
         })
         .fail(function() {
-          console.error(
-            'Generic error - we were not successul in loading all modules for config',
-            config
-          );
+          console.error('Generic error - we were not successul in loading all modules for config', config);
           if (arguments.length) console.error(arguments);
           bigPromise.reject.apply(bigPromise, arguments);
         });
@@ -331,9 +318,7 @@ define([
         var impl = module[1];
 
         if (!_.isString(symbolicName) || !_.isString(impl))
-          throw new Error(
-            'You are kidding me, the key/implementation must be string values'
-          );
+          throw new Error('You are kidding me, the key/implementation must be string values');
       });
     },
 
@@ -351,12 +336,7 @@ define([
      * @param modulePrescription
      * @private
      */
-    _loadModules: function(
-      sectionName,
-      modulePrescription,
-      ignoreErrors,
-      lazyLoad
-    ) {
+    _loadModules: function(sectionName, modulePrescription, ignoreErrors, lazyLoad) {
       var self = this;
       this._checkPrescription(modulePrescription);
 
@@ -394,17 +374,13 @@ define([
           });
         }
         if (self.debug) {
-          console.log(
-            'Loaded: type=' + sectionName + ' state=' + defer.state(),
-            ret
-          );
+          console.log('Loaded: type=' + sectionName + ' state=' + defer.state(), ret);
         }
       };
 
       var errback = function(err) {
         var symbolicName = err.requireModules && err.requireModules[0];
-        if (self.debug)
-          console.warn('Error loading impl=' + symbolicName, err.requireMap);
+        if (self.debug) console.warn('Error loading impl=' + symbolicName, err.requireMap);
         if (ignoreErrors) {
           if (self.debug) console.warn('Ignoring error');
           return;
@@ -416,7 +392,8 @@ define([
         if (self.debug) console.time('startLoading' + sectionName);
         // start loading the modules
         // console.log('loading', implNames, impls)
-        require(impls, callback, errback);
+        // require(impls, callback, errback);
+        console.log('REQUIRE()', impls, callback, errback);
         return self._setTimeout(defer).promise();
       };
 
@@ -434,10 +411,7 @@ define([
     },
 
     logModuleLoaded: function(idx, total) {
-      updateProgress(
-        (val) => val + 50 / total,
-        `Loading Modules ${idx} of ${total}`
-      );
+      updateProgress((val) => val + 50 / total, `Loading Modules ${idx} of ${total}`);
     },
 
     destroy: function() {
@@ -458,9 +432,7 @@ define([
       // all of them must succeed; we don't catch errors
       _.each(this.getAllControllers(), function(el) {
         if (self.debug) {
-          console.log(
-            'application: controllers: ' + el[0] + '.activate(beehive, app)'
-          );
+          console.log('application: controllers: ' + el[0] + '.activate(beehive, app)');
         }
         var plugin = el[1];
         if ('activate' in plugin) {
@@ -472,9 +444,7 @@ define([
       _.each(this.getAllModules(), function(el) {
         try {
           if (self.debug) {
-            console.log(
-              'application: modules: ' + el[0] + '.activate(beehive)'
-            );
+            console.log('application: modules: ' + el[0] + '.activate(beehive)');
           }
           var plugin = el[1];
           if ('activate' in plugin) {
@@ -723,10 +693,7 @@ define([
 
       if (this._isBarbarianAlive(k)) return this._getBarbarian(k);
 
-      throw new Error(
-        'Eeeek, thisis unexpectEED bEhAvjor! Cant find barbarian with ID: ' +
-          psk
-      );
+      throw new Error('Eeeek, thisis unexpectEED bEhAvjor! Cant find barbarian with ID: ' + psk);
     },
 
     getPskOfPluginOrWidget: function(symbolicName) {
@@ -755,22 +722,13 @@ define([
     _getOrCreateBarbarian: function(cat, name) {
       var symbolicName = cat + ':' + name;
 
-      if (
-        (cat === 'plugin' && !this.hasPlugin(name)) ||
-        (cat === 'widget' && !this.hasWidget(name))
-      ) {
-        throw new Error(
-          'We cannot give you ' +
-            symbolicName +
-            ' (cause there is no constructor for it)'
-        );
+      if ((cat === 'plugin' && !this.hasPlugin(name)) || (cat === 'widget' && !this.hasWidget(name))) {
+        throw new Error('We cannot give you ' + symbolicName + ' (cause there is no constructor for it)');
       }
 
-      if (this._isBarbarianAlive(symbolicName))
-        return this._getBarbarian(symbolicName);
+      if (this._isBarbarianAlive(symbolicName)) return this._getBarbarian(symbolicName);
 
-      var constructor =
-        cat === 'plugin' ? this.__plugins.get(name) : this.__widgets.get(name);
+      var constructor = cat === 'plugin' ? this.__plugins.get(name) : this.__widgets.get(name);
       var instance = new constructor();
       var hardenedBee = this.getBeeHive().getHardenedInstance();
       var children;
@@ -788,17 +746,8 @@ define([
         children = instance.activate(hardenedBee);
       }
 
-      var newSubscribers = _.without(
-        _.keys(pubsub._issuedKeys),
-        _.keys(pubsub._issuedKeys)
-      );
-      this._registerBarbarian(
-        symbolicName,
-        instance,
-        children,
-        hardenedBee,
-        newSubscribers
-      );
+      var newSubscribers = _.without(_.keys(pubsub._issuedKeys), _.keys(pubsub._issuedKeys));
+      this._registerBarbarian(symbolicName, instance, children, hardenedBee, newSubscribers);
       return instance;
     },
 
@@ -839,13 +788,7 @@ define([
       return this.__barbarianInstances[symbolicName].parent;
     },
 
-    _registerBarbarian: function(
-      symbolicName,
-      instance,
-      children,
-      hardenedBee,
-      illegitimateChildren
-    ) {
+    _registerBarbarian: function(symbolicName, instance, children, hardenedBee, illegitimateChildren) {
       this._killBarbarian(symbolicName);
 
       if ('getBeeHive' in instance) {
@@ -909,14 +852,10 @@ define([
         children,
         function(child, key) {
           var name = prefix + '-' + (child.name || key);
-          if (this.debug)
-            console.log('adding child object to registry: ' + name);
+          if (this.debug) console.log('adding child object to registry: ' + name);
 
           if (this._isBarbarianAlive(name)) {
-            throw new Error(
-              'Contract breach, there already exists instance with a name: ' +
-                name
-            );
+            throw new Error('Contract breach, there already exists instance with a name: ' + name);
           }
 
           if ('getBeeHive' in child) {
@@ -927,11 +866,7 @@ define([
               .getId();
 
             if (this.__barbarianRegistry[childPubKey])
-              throw new Error(
-                'Contract breach, the child of ' +
-                  prefix +
-                  'is using the same pub-sub-key'
-              );
+              throw new Error('Contract breach, the child of ' + prefix + 'is using the same pub-sub-key');
 
             this.__barbarianRegistry[childPubKey] = name;
           }
@@ -1044,8 +979,7 @@ define([
         if (k.indexOf(key) > -1) w.unshift(k.replace(key, ''));
       });
 
-      var getter =
-        key.indexOf('plugin:') > -1 ? this.getPlugin : this.getWidget;
+      var getter = key.indexOf('plugin:') > -1 ? this.getPlugin : this.getWidget;
       getter.apply(this, w).done(function(widget) {
         var out = [];
         if (w.length > 1) {
@@ -1078,34 +1012,17 @@ define([
      * @param options
      */
     triggerMethodOnAll: function(funcName, options) {
-      this.triggerMethod(
-        this.getAllControllers(),
-        'controllers',
-        funcName,
-        options
-      );
+      this.triggerMethod(this.getAllControllers(), 'controllers', funcName, options);
       this.triggerMethod(this.getAllModules(), 'modules', funcName, options);
       var self = this;
       this.getAllPlugins().done(function(plugins) {
-        if (plugins.length)
-          self.triggerMethod(plugins, 'plugins', funcName, options);
+        if (plugins.length) self.triggerMethod(plugins, 'plugins', funcName, options);
       });
       this.getAllWidgets().done(function(widgets) {
-        if (widgets.length)
-          self.triggerMethod(widgets, 'widgets', funcName, options);
+        if (widgets.length) self.triggerMethod(widgets, 'widgets', funcName, options);
       });
-      this.triggerMethod(
-        this.getBeeHive().getAllServices(),
-        'BeeHive:services',
-        funcName,
-        options
-      );
-      this.triggerMethod(
-        this.getBeeHive().getAllObjects(),
-        'BeeHive:objects',
-        funcName,
-        options
-      );
+      this.triggerMethod(this.getBeeHive().getAllServices(), 'BeeHive:services', funcName, options);
+      this.triggerMethod(this.getBeeHive().getAllObjects(), 'BeeHive:objects', funcName, options);
     },
 
     triggerMethod: function(objects, msg, funcName, options) {
@@ -1114,26 +1031,12 @@ define([
         var obj = el[1];
         if (funcName in obj) {
           if (self.debug) {
-            console.log(
-              'application.triggerMethod: ' +
-                msg +
-                ': ' +
-                el[0] +
-                '.' +
-                funcName +
-                '()'
-            );
+            console.log('application.triggerMethod: ' + msg + ': ' + el[0] + '.' + funcName + '()');
           }
           obj[funcName].call(obj, options);
         } else if (_.isFunction(funcName)) {
           if (self.debug) {
-            console.log(
-              'application.triggerMethod: ' +
-                msg +
-                ': ' +
-                el[0] +
-                ' customCallback()'
-            );
+            console.log('application.triggerMethod: ' + msg + ': ' + el[0] + ' customCallback()');
           }
           funcName.call(obj, msg + ':' + el[0], options);
         }

@@ -1,8 +1,4 @@
-define(['react', 'prop-types', 'react-bootstrap'], function(
-  React,
-  PropTypes,
-  { Panel }
-) {
+define(['react', 'prop-types', 'react-bootstrap'], function(React, PropTypes, { Panel }) {
   const initialState = {
     open: false,
     hovered: false,
@@ -48,23 +44,17 @@ define(['react', 'prop-types', 'react-bootstrap'], function(
               >
                 <div className="s-create-notification-title__title">
                   <span>
-                    <i className="fa fa-bell" aria-hidden="true" /> Create email
-                    notification
+                    <i className="fa fa-bell" aria-hidden="true" /> Create email notification
                   </span>
                   <span>
-                    <i
-                      className={`fa fa-caret-${caretDir}`}
-                      aria-hidden="true"
-                    />
+                    <i className={`fa fa-caret-${caretDir}`} aria-hidden="true" />
                   </span>
                 </div>
               </button>
             </Panel.Title>
           </Panel.Heading>
           <Panel.Collapse>
-            <Panel.Body>
-              {this.props.render({ collapse: () => this.toggle() })}
-            </Panel.Body>
+            <Panel.Body>{this.props.render({ collapse: () => this.toggle() })}</Panel.Body>
           </Panel.Collapse>
         </Panel>
       );

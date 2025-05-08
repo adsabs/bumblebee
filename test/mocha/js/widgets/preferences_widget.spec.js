@@ -1,9 +1,11 @@
 define([
+    'lodash/dist/lodash.compat',
   "js/widgets/preferences/widget",
   "js/bugutils/minimal_pubsub",
   "js/components/user"
 ],
 function(
+  _,
   PreferencesWidget,
   MinSub,
   User

@@ -1,26 +1,13 @@
 define([
   'marionette',
   'backbone',
-  'underscore',
+  'lodash/dist/lodash.compat',
   'js/components/api_request',
   'js/components/api_query',
   'js/widgets/base/base_widget',
-  'hbs!js/widgets/query_info/query_info_template',
+  'js/widgets/query_info/query_info_template.hbs',
   'js/mixins/formatter',
-  'bootstrap',
-  'js/components/api_feedback',
-], function(
-  Marionette,
-  Backbone,
-  _,
-  ApiRequest,
-  ApiQuery,
-  BaseWidget,
-  queryInfoTemplate,
-  FormatMixin,
-  Bootstrap,
-  ApiFeedback
-) {
+], function(Marionette, Backbone, _, ApiRequest, ApiQuery, BaseWidget, queryInfoTemplate, FormatMixin) {
   var QueryModel = Backbone.Model.extend({
     defaults: {
       selected: 0,
@@ -98,9 +85,7 @@ define([
           data.recordsToAdd = 'all';
         }
         // show loading view
-        this.$('.submit-add-to-library').html(
-          '<i class="fa fa-spinner fa-pulse" aria-hidden="true"></i>'
-        );
+        this.$('.submit-add-to-library').html('<i class="fa fa-spinner fa-pulse" aria-hidden="true"></i>');
         this.trigger('library-add', data);
       }
 
@@ -116,9 +101,7 @@ define([
         data.name = this.model.get('newLibraryName') || '';
         data.name = data.name.trim();
         // show loading view
-        this.$('.submit-add-to-library').html(
-          '<i class="fa fa-spinner fa-pulse" aria-hidden="true"></i>'
-        );
+        this.$('.submit-add-to-library').html('<i class="fa fa-spinner fa-pulse" aria-hidden="true"></i>');
         this.trigger('library-create', data);
       }
 
@@ -140,11 +123,7 @@ define([
     },
 
     toggleLibraryDrawer: function() {
-      this.model.set(
-        'libraryDrawerOpen',
-        !this.model.get('libraryDrawerOpen'),
-        { silent: true }
-      );
+      this.model.set('libraryDrawerOpen', !this.model.get('libraryDrawerOpen'), { silent: true });
     },
 
     onOpen() {
@@ -199,9 +178,8 @@ define([
 
     activate: function(beehive) {
       this.setBeeHive(beehive);
-      _.bindAll(this);
-
       var that = this;
+      _.bindAll(this, ['processLibraryInfo', 'handleUserAnnouncement', 'onStoragePaperChange']);
 
       var pubsub = this.getPubSub();
       pubsub.subscribe(pubsub.STORAGE_PAPER_UPDATE, this.onStoragePaperChange);
@@ -284,8 +262,7 @@ define([
         .getObject('LibraryController')
         .addBibcodesToLib(options)
         .done(function(response, status) {
-          var numAlreadyInLib =
-            response.numBibcodesRequested - parseInt(response.number_added);
+          var numAlreadyInLib = response.numBibcodesRequested - parseInt(response.number_added);
           that.model.unset('selectedLibrary');
           that.model.set('feedback', {
             success: true,
@@ -308,8 +285,8 @@ define([
     },
 
     libraryCreateSubmit: function(data) {
-      var options = {},
-        that = this;
+      var options = {};
+      var that = this;
       // are we adding the current query or just the selected bibcodes?
       // if it's an abstract page widget, will have this._bibcode val
       if (this.abstractPage) {
@@ -347,9 +324,9 @@ define([
     },
 
     clearFeedbackWithDelay: function() {
-      var that = this,
-        // ten seconds
-        timeout = 30000;
+      var that = this;
+      // ten seconds
+      var timeout = 30000;
 
       setTimeout(function() {
         that.model.unset('feedback');

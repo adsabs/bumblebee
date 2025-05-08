@@ -1,4 +1,5 @@
 define([
+    'lodash/dist/lodash.compat',
     'backbone',
     'js/widgets/base/base_widget',
     'js/widgets/wordcloud/widget',
@@ -7,6 +8,7 @@ define([
 
   ],
   function(
+    _,
     Backbone,
     BaseWidget,
     WordCloud,

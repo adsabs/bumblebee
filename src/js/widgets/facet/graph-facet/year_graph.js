@@ -1,9 +1,10 @@
 define([
-  './base_graph',
-  'hbs!js/widgets/facet/graph-facet/templates/year-graph-legend',
+  'lodash/dist/lodash.compat',
+  'js/widgets/facet/graph-facet/base_graph',
+  'js/widgets/facet/graph-facet/templates/year-graph-legend.hbs',
   'marionette',
   'jquery-ui',
-], function(BaseGraphView, legendTemplate, Marionette) {
+], function(_, BaseGraphView, legendTemplate, Marionette) {
   var YearGraphView = BaseGraphView.extend({
     bins: 10,
 
@@ -88,10 +89,7 @@ define([
       this.innerChart = chart
         .append('g')
         .classed('inner-chart', true)
-        .attr(
-          'transform',
-          'translate(' + this.margin.left + ',' + this.margin.top + ')'
-        );
+        .attr('transform', 'translate(' + this.margin.left + ',' + this.margin.top + ')');
 
       bar = this.innerChart
         .selectAll('g')

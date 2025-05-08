@@ -53,8 +53,7 @@ define([], function() {
         {
           value: 'medlars',
           label: 'MEDLARS',
-          help:
-            'Medical Literature Analysis and Retrieval System (MEDLARS) format',
+          help: 'Medical Literature Analysis and Retrieval System (MEDLARS) format',
           ext: 'txt',
         },
         {

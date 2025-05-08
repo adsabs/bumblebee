@@ -1,6 +1,6 @@
 define([
   'jquery',
-  'underscore',
+  'lodash/dist/lodash.compat',
   'backbone',
   'react',
   'react-redux',
@@ -11,10 +11,10 @@ define([
   'js/components/api_query',
   'js/components/api_request',
   'js/widgets/base/base_widget',
-  'es6!./containers/App.jsx',
-  'es6!./constants/actionNames',
-  'es6!./actions/index',
-  'es6!./reducers/index',
+  'js/widgets/author_affiliation_tool/containers/App.jsx',
+  'js/widgets/author_affiliation_tool/constants/actionNames',
+  'js/widgets/author_affiliation_tool/actions/index',
+  'js/widgets/author_affiliation_tool/reducers/index',
 ], function(
   $,
   _,
@@ -61,13 +61,10 @@ define([
      */
     initialize: function() {
       // setup the thunk middleware
-      var middleware = Redux.applyMiddleware(
-        ReduxThunk.default.withExtraArgument(this)
-      );
+      var middleware = Redux.applyMiddleware(ReduxThunk.default.withExtraArgument(this));
 
       // add redux devtools extension hook (safe for production)
-      const composeEnhancers =
-        window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || Redux.compose;
+      const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || Redux.compose;
 
       // setup the store
       this.store = Redux.createStore(reducers, composeEnhancers(middleware));
@@ -248,13 +245,7 @@ define([
      */
     onError: function() {
       const { dispatch } = this.store;
-      dispatch(
-        actions.showMessage(
-          'danger',
-          'Something happened during the request, please try again',
-          0
-        )
-      );
+      dispatch(actions.showMessage('danger', 'Something happened during the request, please try again', 0));
     },
   });
 

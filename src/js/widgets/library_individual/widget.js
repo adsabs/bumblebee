@@ -1,20 +1,14 @@
 define([
+  'lodash/dist/lodash.compat',
+  'backbone',
   'marionette',
   'js/components/api_query',
   'js/widgets/base/base_widget',
-  './views/library_header',
-  './views/manage_permissions',
-  'hbs!js/widgets/library_individual/templates/layout-container',
-  'hbs!js/widgets/library_individual/templates/loading-library',
-], function(
-  Marionette,
-  ApiQuery,
-  BaseWidget,
-  HeaderView,
-  AdminView,
-  ContainerTemplate,
-  LoadingTemplate
-) {
+  'js/widgets/library_individual/views/library_header',
+  'js/widgets/library_individual/views/manage_permissions',
+  'js/widgets/library_individual/templates/layout-container.hbs',
+  'js/widgets/library_individual/templates/loading-library.hbs',
+], function(_, Backbone, Marionette, ApiQuery, BaseWidget, HeaderView, AdminView, ContainerTemplate, LoadingTemplate) {
   var LoadingView = Marionette.ItemView.extend({
     template: LoadingTemplate,
   });
@@ -54,7 +48,6 @@ define([
 
     activate: function(beehive) {
       this.setBeeHive(beehive);
-      _.bindAll(this);
       var pubsub = beehive.getService('PubSub');
       pubsub.subscribe(pubsub.LIBRARY_CHANGE, this.onLibraryChange);
       // now that beehive is present, attach event handlers to header view
@@ -92,14 +85,12 @@ define([
     updateSubView: function() {
       this.view.main.empty();
 
-      var that = this,
-        id = this.model.get('id'),
-        view = this.model.get('subView');
+      var that = this;
+      var id = this.model.get('id');
+      var view = this.model.get('subView');
 
       if (!id || !view) {
-        console.warn(
-          "library widget's updateSubView called without requisite library id and view name in model"
-        );
+        console.warn("library widget's updateSubView called without requisite library id and view name in model");
         return;
       }
 
@@ -108,16 +99,7 @@ define([
       // create header
       this.updateHeader();
 
-      if (
-        [
-          'library',
-          'export',
-          'authoraff',
-          'metrics',
-          'visualization',
-          'citation_helper',
-        ].indexOf(view) > -1
-      ) {
+      if (['library', 'export', 'authoraff', 'metrics', 'visualization', 'citation_helper'].indexOf(view) > -1) {
         that.view.main.empty();
       } else if (view === 'admin') {
         var subView = new AdminView({ model: this.headerModel });
@@ -153,8 +135,8 @@ define([
 
       switch (event) {
         case 'update-public-status':
-          var data = { public: arg1 },
-            id = this.model.get('id');
+          var data = { public: arg1 };
+          var id = this.model.get('id');
           libController
             .updateLibraryMetadata(id, data)
             .done(function(response, status) {
@@ -180,10 +162,10 @@ define([
     },
 
     handleHeaderEvents: function(event, arg1, arg2) {
-      var that = this,
-        id = this.model.get('id'),
-        pubsub = this.getBeeHive().getService('PubSub'),
-        libController = this.getBeeHive().getObject('LibraryController');
+      var that = this;
+      var id = this.model.get('id');
+      var pubsub = this.getBeeHive().getService('PubSub');
+      var libController = this.getBeeHive().getObject('LibraryController');
 
       switch (event) {
         case 'updateVal':
@@ -207,12 +189,7 @@ define([
           /*
            * these subviews require requesting bibcode data first
            * */
-          if (
-            _.contains(
-              ['export', 'metrics', 'visualization', 'citation_helper'],
-              data.subView
-            )
-          ) {
+          if (_.contains(['export', 'metrics', 'visualization', 'citation_helper'], data.subView)) {
             switch (arg1) {
               case 'export':
                 data.widgetName = 'ExportWidget';

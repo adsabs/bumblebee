@@ -1,4 +1,4 @@
-define(['underscore'], function(_) {
+define(['lodash/dist/lodash.compat'], function(_) {
   /**
    * Take in an array of affiliations, and figure out which should be
    * selected
@@ -12,11 +12,7 @@ define(['underscore'], function(_) {
       if (affs[0].name === '-') {
         const idx = affs.findIndex((a) => a.name !== '-');
         if (idx) {
-          return [
-            ...affs.slice(0, idx),
-            { ...affs[idx], selected: true },
-            ...affs.slice(idx + 1),
-          ];
+          return [...affs.slice(0, idx), { ...affs[idx], selected: true }, ...affs.slice(idx + 1)];
         }
       }
     }

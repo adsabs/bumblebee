@@ -1,0 +1,192 @@
+//http://support.orcid.org/knowledgebase/articles/433434-orcid-example-web-graphics?
+
+.login-orcid-button, .signout-orcid-button{
+  border: 1px solid #D3D3D3;
+  padding: 3em;
+  background-color: #fff;
+  border-radius: 8px;
+  box-shadow: 1px 1px 3px #999;
+  cursor: pointer;
+  color: #999;
+  font-weight: bold;
+  font-size: 8em;
+  line-height: 24px;
+  vertical-align: middle;
+}
+
+.login-orcid-button:hover, .signout-orcid-button:hover{
+  border: 1px solid #338caf;
+  color: #338caf;
+}
+
+.orcid-id-logo{
+  display: block;
+  margin: 0 5em 0 0;
+  padding: 0;
+  float: left;
+}
+
+.orcid-wait {
+  &:after {
+    @extend .fa;
+    @extend .fa-spin;
+    @extend .fa-2x;
+
+    content: $fa-var-cog;
+    color: $brand-info;
+  }
+}
+
+.orcid-works {
+  margin-top: 8em;
+
+  .s-results-title{
+    display: inline;
+  }
+
+  .s-display-block {
+
+    margin-bottom : .8em
+  }
+  .orcid-actions{
+    display: inline;
+  }
+
+}
+
+.orcid-action{
+  cursor: pointer; cursor: hand;
+}
+
+.s-orcid-icon {
+  @extend .fa;
+  &:before {
+    content : $fa-var-user;
+  }
+}
+
+.mini-orcid-icon {
+  background-size: 20px 20px;
+  width: 20px;
+  height: 20px;
+  display: block;
+  float: left;
+
+  &.green {
+    background: url('../../assets/images/orcid-mini-icon-green.png') transparent no-repeat;
+    background-size: 20px 20px;
+  }
+  &.gray{
+    background: url('../../assets/images/orcid-mini-icon-gray.png') transparent no-repeat;
+    background-size: 20px 20px;
+  }
+}
+
+.s-orcid-img {
+  height: 18px;
+}
+
+.s-orcid-loading  {
+  width: 117px;
+
+i{
+  color: $gray-light;
+  }
+}
+
+.s-results-orcid-container{
+  position:relative;
+  top: 2px;
+  margin-bottom: 20px;
+}
+
+.s-orcid-success {
+  font-weight: 600;
+  position: relative;
+   top: 5px;
+}
+
+.s-orcid-alert{
+  margin-bottom: 0 !important;
+  padding: 5px 2% 5px 2% !important
+}
+
+.s-orcid-provenance-others {
+  background-color: $gray-lightest;
+}
+
+.orcid-info  {
+
+  h2 {
+    font-size: 22px;
+  }
+
+  .nav-tabs {
+    margin-top: 20px;
+    a {
+      font-size: 22px;
+      font-weight: bold;
+    }
+  }
+
+  .tab-content {
+    margin-bottom: 60px;
+  }
+
+}
+
+.orcid-info__intro {
+
+  &:after {
+    content: "";
+    height: 10px;
+    width: 100%;
+    background-image: linear-gradient(90deg, #799FFF, #A4F1AB);
+    position: relative;
+    top: 10px;
+  }
+
+  font-size: 20px;
+  padding: 30px 0;
+  font-weight: 300;
+  color: darken($text-color, 10%);
+
+  @extend .clearfix;
+
+ .orcid-logo {
+   max-width: 69px;
+   border: 6px solid #383C41;
+   border-radius: 100%;
+ }
+  ul {
+    display: block;
+    max-width: 500px;
+    margin: auto;
+    padding-left:20px;
+    list-style: none;
+
+  }
+
+  .header {
+    text-align: center;
+    h1 {
+      color: darken($text-color, 10%);
+      font-weight:400;
+      margin:10px 0 20px 0;
+    }
+
+    }
+}
+
+.orcid-info__instructions {
+  font-size: 16px;
+
+  h3 {
+    font-size: 19px;
+    font-weight:normal;
+  }
+
+  ol {
+    margin-left: -2.5%;
+  }
+}

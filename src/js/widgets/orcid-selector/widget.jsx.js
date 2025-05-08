@@ -1,13 +1,13 @@
 define([
-  'underscore',
+  'lodash/dist/lodash.compat',
   'backbone',
   'react',
   'react-redux',
   'react-dom',
-  'es6!./redux/configure-store',
-  'es6!./redux/modules/orcid-selector-app',
+  'js/widgets/orcid-selector/redux/configure-store',
+  'js/widgets/orcid-selector/redux/modules/orcid-selector-app',
   'js/widgets/base/base_widget',
-  'es6!./containers/orcid-selector-container',
+  'js/widgets/orcid-selector/containers/orcid-selector-container',
 ], function(
   _,
   Backbone,
@@ -72,18 +72,11 @@ define([
       const pubsub = this.getPubSub();
 
       // grab the current mode while activating, in case we should render
-      const mode =
-        beehive.hasObject('User') && beehive.getObject('User').isOrcidModeOn();
+      const mode = beehive.hasObject('User') && beehive.getObject('User').isOrcidModeOn();
       this.store.dispatch(OrcidSelectorApp.updateMode(mode));
 
-      pubsub.subscribe(
-        pubsub.STORAGE_PAPER_UPDATE,
-        _.bind(this.onStoragePaperChange, this)
-      );
-      pubsub.subscribe(
-        pubsub.USER_ANNOUNCEMENT,
-        _.bind(this.onUserAnnouncement, this)
-      );
+      pubsub.subscribe(pubsub.STORAGE_PAPER_UPDATE, _.bind(this.onStoragePaperChange, this));
+      pubsub.subscribe(pubsub.USER_ANNOUNCEMENT, _.bind(this.onUserAnnouncement, this));
     },
 
     onStoragePaperChange: function() {

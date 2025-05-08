@@ -6,7 +6,7 @@
 define([
   'jquery',
   'backbone',
-  'underscore',
+  'lodash/dist/lodash.compat',
   'js/components/navigator',
   'js/components/api_feedback',
   'js/components/api_query_updater',
@@ -14,8 +14,7 @@ define([
   'js/components/api_query',
   'js/components/api_request',
   'js/components/api_targets',
-  'hbs!404',
-  'hbs!js/apps/discovery/templates/orcid-modal-template',
+  'js/apps/discovery/templates/orcid-modal-template.hbs',
   'js/mixins/api_access',
   'react-redux',
 ], function(
@@ -29,7 +28,6 @@ define([
   ApiQuery,
   ApiRequest,
   ApiTargets,
-  ErrorTemplate,
   OrcidModalTemplate,
   ApiAccessMixin,
   ReactRedux
@@ -399,8 +397,8 @@ define([
                 that.title = data.publicView ? 'Public' : 'Private' + ' Library | ' + metadata.name;
 
                 app.getWidget('LibraryListWidget', 'IndividualLibraryWidget').then(function(w) {
-                  w['LibraryListWidget'].setData(data);
-                  w['IndividualLibraryWidget'].setSubView(data);
+                  w.LibraryListWidget.setData(data);
+                  w.IndividualLibraryWidget.setSubView(data);
                   if (pub) {
                     publishPageChange('libraries-page');
                   }
@@ -525,13 +523,13 @@ define([
 
       this.set('authentication-page', function(page, data) {
         var defer = $.Deferred();
-        var data = data || {},
-          subView = data.subView || 'login',
-          loggedIn = app
-            .getBeeHive()
-            .getObject('User')
-            .isLoggedIn(),
-          that = this;
+        var data = data || {};
+        var subView = data.subView || 'login';
+        var loggedIn = app
+          .getBeeHive()
+          .getObject('User')
+          .isLoggedIn();
+        var that = this;
 
         if (loggedIn) {
           // redirect to index
@@ -771,7 +769,8 @@ define([
         var defer = $.Deferred();
         var possibleSearchSubPages = ['Metrics', 'AuthorNetwork', 'PaperNetwork', 'ConceptCloud', 'BubbleChart'];
 
-        var widgetName, pages;
+        var widgetName;
+        var pages;
 
         // convention is that a navigate command for search page widget starts with "show-"
         // waits for the navigate to results page emitted by the discovery_mediator
@@ -819,7 +818,7 @@ define([
               that.route += '&__tb=1';
             }
 
-            let q = query;
+            const q = query;
             if (q instanceof ApiQuery) {
               var update = {};
               var par = function(str) {
@@ -918,14 +917,14 @@ define([
       });
 
       this.set('user-action', function(endPoint, data) {
-        var failMessage = '',
-          failTitle = '',
-          route,
-          done,
-          defer = $.Deferred();
+        var failMessage = '';
+        var failTitle = '';
+        var route;
+        var done;
+        var defer = $.Deferred();
 
-        var token = data.token,
-          subView = data.subView;
+        var token = data.token;
+        var subView = data.subView;
 
         function fail(jqXHR, status, errorThrown) {
           self
@@ -1114,7 +1113,8 @@ define([
                 });
             });
           return;
-        } else if (orcidApi.hasAccess()) {
+        }
+        if (orcidApi.hasAccess()) {
           // XXX:rca = this block is async; showing modals even if the page under may be
           // changing; likely not intended to be doing that but not sure...
 
@@ -1178,8 +1178,8 @@ define([
        * */
 
       function showResultsPageWidgetWithUniqueUrl(command, options) {
-        var defer = $.Deferred(),
-          that = this;
+        var defer = $.Deferred();
+        var that = this;
         options = options || {};
         var q = app.getObject('AppStorage').getCurrentQuery();
         if (!q && options.q) {
@@ -1270,10 +1270,10 @@ define([
       this.set('verify-abstract', function() {
         // XXX:rca - moved from router; not in a working state
         // check we are using the canonical bibcode and redirect to it if necessary
-        var q,
-          req,
-          defer = $.Deferred,
-          that = this;
+        var q;
+        var req;
+        var defer = $.Deferred;
+        var that = this;
 
         q = new ApiQuery({
           q: 'identifier:' + this.queryUpdater.quoteIfNecessary(bibcode),
@@ -1284,7 +1284,8 @@ define([
           target: ApiTargets.SEARCH,
           options: {
             done: function(resp) {
-              var navigateString, href;
+              var navigateString;
+              var href;
 
               if (!subPage) {
                 navigateString = 'ShowAbstract';
@@ -1292,7 +1293,7 @@ define([
                 navigateString = 'Show' + subPage[0].toUpperCase() + subPage.slice(1);
                 href = '#abs/' + bibcode + '/' + subPage;
               }
-              //self.routerNavigate(navigateString, { href: href });
+              // self.routerNavigate(navigateString, { href: href });
 
               if (resp.response && resp.response.docs && resp.response.docs[0]) {
                 bibcode = resp.response.docs[0].bibcode;
@@ -1303,7 +1304,7 @@ define([
             },
             fail: function() {
               console.log('Cannot identify page to load, bibcode: ' + bibcode);
-              self.getPubSub().publish(this.getPubSub().NAVIGATE, 'index-page');
+              self.getPubSub().publish(self.getPubSub().NAVIGATE, 'index-page');
             },
           },
         });
@@ -1577,8 +1578,8 @@ define([
       });
 
       this.set('show-author-affiliation-tool', function(id, options) {
-        var defer = $.Deferred(),
-          that = this;
+        var defer = $.Deferred();
+        var that = this;
         var q = app.getObject('AppStorage').getCurrentQuery();
         app
           .getObject('MasterPageManager')

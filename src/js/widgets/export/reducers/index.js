@@ -2,9 +2,9 @@
  * Collects and combines all reducers
  */
 define([
-  'underscore',
+  'lodash/dist/lodash.compat',
   'js/components/api_targets',
-  'es6!../actions/index',
+  'js/widgets/export/actions/index',
   'js/widgets/config',
   'redux',
 ], function(_, ApiTargets, actions, config, Redux) {
@@ -79,8 +79,7 @@ define([
   const error = (
     state = {
       hasError: false,
-      errorMsg:
-        'Sorry, something happened during the request. Please try again',
+      errorMsg: 'Sorry, something happened during the request. Please try again',
     },
     action
   ) => {
@@ -189,10 +188,7 @@ define([
       case SET_MAX_COUNT:
         return {
           ...state,
-          maxCount:
-            action.maxCount > state.totalRecs
-              ? state.totalRecs
-              : action.maxCount,
+          maxCount: action.maxCount > state.totalRecs ? state.totalRecs : action.maxCount,
         };
       case SET_PAGE:
         return { ...state, page: action.page };

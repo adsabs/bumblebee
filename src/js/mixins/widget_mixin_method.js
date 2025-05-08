@@ -1,4 +1,4 @@
-define(['js/mixins/widget_utility'], function(Utils) {
+define(['lodash/dist/lodash.compat', 'js/mixins/widget_utility'], function(_, Utils) {
   var mixin = function(from, methods) {
     var to = this.prototype;
     // we add those methods which exists on `from` but not on `to` to the latter

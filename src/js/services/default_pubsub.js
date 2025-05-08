@@ -25,12 +25,12 @@
  * callbacks.
  * */
 
-define([
-  'backbone',
-  'underscore',
-  'js/components/generic_module',
-  'js/components/pubsub_key',
-], function(Backbone, _, GenericModule, PubSubKey) {
+define(['backbone', 'lodash/dist/lodash.compat', 'js/components/generic_module', 'js/components/pubsub_key'], function(
+  Backbone,
+  _,
+  GenericModule,
+  PubSubKey
+) {
   // unfortunately, these methods are not part of the BB.Events class
   // so we have to duplicate them iff we want to provide a queue which
   // handles failed callbacks
@@ -75,10 +75,7 @@ define([
       this.handleErrors = true;
       this._errors = {};
       this.errWarningCount = 10; // this many errors trigger warning
-      _.extend(
-        this,
-        _.pick(options, ['strict', 'handleErrors', 'errWarningCount'])
-      );
+      _.extend(this, _.pick(options, ['strict', 'handleErrors', 'errWarningCount']));
       this.pubSubKey = PubSubKey.newInstance({ creator: {} }); // this.getPubSubKey(); // the key the pubsub uses for itself
       this._issuedKeys[this.pubSubKey.getId()] = this.pubSubKey.getCreator();
       this.running = true;
@@ -127,13 +124,10 @@ define([
       }
       this._checkKey(key, name, callback);
       if (_.isUndefined(name)) {
-        throw new Error(
-          'You tried to subscribe to undefined event. Error between chair and keyboard?'
-        );
+        throw new Error('You tried to subscribe to undefined event. Error between chair and keyboard?');
       }
       this.on(name, callback, key); // the key becomes context
-      if (name.indexOf(key.getId()) == -1)
-        this.on(name + key.getId(), callback, key); // this is for individual responses
+      if (name.indexOf(key.getId()) == -1) this.on(name + key.getId(), callback, key); // this is for individual responses
     },
 
     /*
@@ -155,13 +149,10 @@ define([
     subscribeOnce: function(key, name, callback) {
       this._checkKey(key, name, callback);
       if (_.isUndefined(name)) {
-        throw new Error(
-          'You tried to subscribe to undefined event. Error between chair and keyboard?'
-        );
+        throw new Error('You tried to subscribe to undefined event. Error between chair and keyboard?');
       }
       this.once(name, callback, key); // the key becomes context
-      if (name.indexOf(key.getId()) == -1)
-        this.once(name + key.getId(), callback, key); // this is for individual responses
+      if (name.indexOf(key.getId()) == -1) this.once(name + key.getId(), callback, key); // this is for individual responses
     },
 
     /*
@@ -243,9 +234,7 @@ define([
       var args = Array.prototype.slice.call(arguments, 1);
 
       if (args.length == 0 || _.isUndefined(args[0])) {
-        throw new Error(
-          'You tried to trigger undefined event. Error between chair and keyboard?'
-        );
+        throw new Error('You tried to trigger undefined event. Error between chair and keyboard?');
       }
 
       // push the key back into the arguments (it identifies the sender)
@@ -280,11 +269,7 @@ define([
       var k = PubSubKey.newInstance({ creator: this.pubSubKey }); // creator identifies issuer of the key
       if (this.strict) {
         if (this._issuedKeys[k.getId()]) {
-          throw Error(
-            'The key with id',
-            k.getId(),
-            'has been already registered!'
-          );
+          throw Error('The key with id', k.getId(), 'has been already registered!');
         }
         this._issuedKeys[k.getId()] = k.getCreator();
       }
@@ -317,14 +302,10 @@ define([
         }
 
         if (!this._issuedKeys.hasOwnProperty(key.getId())) {
-          throw new Error(
-            "Your key is not known to us, sorry, you can't use this queue."
-          );
+          throw new Error("Your key is not known to us, sorry, you can't use this queue.");
         }
         if (this._issuedKeys[key.getId()] !== key.getCreator()) {
-          throw new Error(
-            "Your key has wrong identity, sorry, you can't use this queue."
-          );
+          throw new Error("Your key has wrong identity, sorry, you can't use this queue.");
         }
       }
     },

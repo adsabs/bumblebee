@@ -1,0 +1,255 @@
+$landing-page-hero-background: desaturate(lighten($brand-info, 20%), 15%);
+
+.s-landing-page-layout {
+  padding-left: 15px;
+  padding-right: 15px;
+}
+
+.s-starry-background-wrapper {
+  background-image: linear-gradient(
+      to bottom,
+      rgba(0, 0, 0, 0.2),
+      rgba(0, 0, 0, 0.5)
+    ),
+    url('../../assets/images/background.jpg');
+  margin: 0 -15px;
+  background-attachment: fixed;
+}
+
+.s-logo-header {
+  font-size: 18px;
+  @media only screen and (min-width: $screen-xs-min) {
+    font-size: 22px;
+  }
+  @media only screen and (min-width: $screen-sm-min) {
+    font-size: 40px;
+  }
+  color: white;
+  -webkit-font-smoothing: antialiased;
+  font-weight: 300;
+
+  img {
+    max-width: 75px;
+    position: relative;
+    top: -5px;
+    max-height: 66px;
+  }
+
+  display: flex;
+  justify-content: center;
+
+  background-attachment: fixed;
+  padding-top: 20px;
+  text-align: center;
+}
+
+.s-landing-tabs {
+  text-align: center;
+
+  .landing-tab {
+    display: inline-block;
+    margin-top: 10px;
+    width: 32%;
+    font-size: 18px;
+    border-radius: 4px;
+    position: relative;
+    top: 4px;
+    min-width: 100px;
+
+    @media (min-width: $screen-sm-min) {
+      font-size: 20px;
+      width: 160px;
+    }
+
+    a {
+      width: 100%;
+      display: inline-block;
+      padding: 10px;
+      height: 100%;
+      text-align: center;
+      &:hover {
+        text-decoration: none;
+      }
+    }
+  }
+
+  .landing-tab:not(.active) {
+    a {
+      color: $gray-lighter;
+    }
+    &:hover {
+      background-color: hsla(360, 100%, 100%, 0.15);
+    }
+  }
+
+  .landing-tab.active {
+    background-color: #fff;
+    color: lighten($brand-primary-faded, 5%);
+  }
+}
+
+.s-search-bar-rows-container {
+  margin: auto;
+  max-width: 780px;
+
+  // for the quick add buttons
+
+  .btn-sm {
+    font-size: 17px;
+  }
+}
+
+.s-bumblebee-info {
+  h2 {
+    color: $brand-primary-faded;
+    font-size: 22px;
+  }
+
+  .s-bottom-line {
+    font-size: 1.5em;
+    padding-top: 10%;
+    font-weight: bold;
+  }
+
+  .s-second-action {
+    text-align: center;
+  }
+}
+
+.s-landing-section-4 {
+  color: $text-color;
+  background-color: white;
+  min-height: 730px;
+  font-size: 24px;
+  text-align: center;
+  margin: 0 -15px;
+}
+
+.s-description {
+  font-size: 1.6em;
+  padding: 15px;
+  text-align: center;
+}
+
+.s-team {
+  font-weight: 500;
+  font-size: 1.2em;
+  margin-top: 50px;
+  letter-spacing: 2px;
+
+  .s-title {
+    font-style: italic;
+    font-weight: 300;
+  }
+}
+
+.s-landing-page-layout {
+  .s-search-bar-rows-container {
+    border-radius: $border-radius-large;
+    background-color: #fff;
+    margin: 0 auto;
+    @media only screen and (max-width: $screen-sm-max) {
+      padding: 0px 25px 0px 25px;
+    }
+    @media only screen and (max-width: $screen-xs-max) {
+      padding: 0px 15px 0px 15px;
+    }
+  }
+
+  .s-message-control-row {
+    text-align: center;
+  }
+
+  .s-tab-container {
+    box-shadow: 0 2px 2px -1px rgba(0, 0, 0, 0.2);
+  }
+}
+
+//classic form widget
+
+.classic-form__logic-group {
+  label {
+    font-variant: small-caps;
+    font-weight: 400;
+    font-size: 17px;
+    margin-right: 3px;
+  }
+}
+
+div[data-field='date'] {
+  input {
+    width: 90px !important;
+    display: inline-block !important;
+    margin: 0 6px;
+  }
+  input:first-of-type {
+    margin: 0 6px 0 0;
+  }
+}
+
+.classic-form {
+  margin: 10px auto 60px auto;
+
+  label {
+    color: $gray;
+  }
+
+  @extend .basic-form-style;
+
+  div[data-field] {
+    margin-bottom: 15px;
+  }
+
+  .col-sm-6 {
+    padding: 0;
+
+    .classic-author-label,
+    .classic-object-label {
+      position: absolute;
+      top: 2px;
+    }
+
+    .classic-form__logic-group {
+      position: relative;
+      left: 93px;
+    }
+  }
+
+  #classic-author,
+  #classic-object {
+    resize: vertical;
+  }
+}
+
+.unobtrusive-landing-page-alert {
+  padding: 16px;
+  border-bottom: 1px solid $gray-lighter;
+  text-align: center;
+}
+
+.landing-faq {
+  border-top: 1px solid $gray-lighter;
+  max-width: 750px;
+  margin: auto;
+}
+
+.landing-faq i {
+  margin-bottom: 15px;
+}
+
+.landing-faq .col-sm-4 {
+  padding-top: 5%;
+  min-height: 180px;
+  &:hover {
+    background: $gray-lightest;
+  }
+}
+
+.landing-faq a {
+  color: lighten($brand-primary-faded, 5%) !important;
+  font-weight: bold;
+}
+
+.search-quick-links button {
+  border-bottom: 1px dotted rgba(0, 0, 0, 0.5);
+}

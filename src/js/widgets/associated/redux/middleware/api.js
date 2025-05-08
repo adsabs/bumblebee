@@ -1,4 +1,4 @@
-define(['underscore', 'es6!../modules/api', 'es6!../modules/ui'], function(
+define(['lodash', 'js/widgets/associated/redux/modules/api', 'js/widgets/associated/redux/modules/ui'], function(
   _,
   api,
   ui
@@ -17,10 +17,7 @@ define(['underscore', 'es6!../modules/api', 'es6!../modules/ui'], function(
       try {
         if (url.indexOf('http') >= 0) return decodeURIComponent(url);
         // decode and rip the "/#abs..." part off the url and any leading slash
-        return decodeURIComponent(url.slice(url.indexOf(':') + 1)).replace(
-          /^\//,
-          '#'
-        );
+        return decodeURIComponent(url.slice(url.indexOf(':') + 1)).replace(/^\//, '#');
       } catch (e) {
         return url;
       }
@@ -43,9 +40,7 @@ define(['underscore', 'es6!../modules/api', 'es6!../modules/ui'], function(
    * Processes incoming response from server and sends the data off to the
    * link generator, finally dispatching the parsed sources
    */
-  const processResponse = (ctx, { dispatch, getState }) => (next) => (
-    action
-  ) => {
+  const processResponse = (ctx, { dispatch, getState }) => (next) => (action) => {
     next(action);
     if (action.type === RECEIVED_RESPONSE) {
       const response = action.result;
@@ -68,9 +63,7 @@ define(['underscore', 'es6!../modules/api', 'es6!../modules/ui'], function(
    * In the case of an error, attempt to fallback on the data we already retrieved
    * If there is no data, then do nothing and the widget will not show
    */
-  const fallbackOnError = (ctx, { dispatch, getState }) => (next) => (
-    action
-  ) => {
+  const fallbackOnError = (ctx, { dispatch, getState }) => (next) => (action) => {
     next(action);
     if (action.type === FALLBACK_ON_ERROR) {
       const { bibcode } = getState().api;
@@ -105,8 +98,7 @@ define(['underscore', 'es6!../modules/api', 'es6!../modules/ui'], function(
    * binds it's first argument to the first argument of the middleware function
    * returns the wrapped middleware function
    */
-  const withContext = (...fns) => (context) =>
-    fns.map((fn) => _.partial(fn, context));
+  const withContext = (...fns) => (context) => fns.map((fn) => _.partial(fn, context));
 
   return withContext(processResponse, sendAnalytics, fallbackOnError);
 });

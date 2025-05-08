@@ -1,0 +1,23 @@
+<nav class="s-landing-tabs" role="navigation" aria-label="Landing page tabs">
+  <ul class="landing-tabs-list" style="padding-inline-start: 0; list-style: none; margin: 0;" role="tablist">
+    {{#each tabs}}
+      <li
+        class="landing-tab {{#if this.isSelected}}active{{/if}}"
+        role="tab"
+        aria-labelledby="{{this.id}}"
+      >
+        <a
+          href="{{this.path}}"
+          id="{{this.id}}"
+          data-widget-id="{{this.id}}"
+          aria-selected="{{#if this.isSelected}}true{{else}}false{{/if}}"
+          aria-controls="tabpanel-{{this.id}}"
+          {{#if this.isSelected}}aria-current="page"{{/if}}
+        >
+          {{this.title}}
+          <span class="hidden-xs">Form</span>
+        </a>
+      </li>
+    {{/each}}
+  </ul>
+</nav>

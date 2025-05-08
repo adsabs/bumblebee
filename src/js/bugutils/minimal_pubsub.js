@@ -30,7 +30,7 @@
  */
 
 define([
-  'underscore',
+  'lodash/dist/lodash.compat',
   'backbone',
   'js/components/query_mediator',
   'js/services/pubsub',
@@ -40,18 +40,7 @@ define([
   'js/components/api_request',
   'js/components/api_feedback',
   'js/components/api_response',
-], function(
-  _,
-  BackBone,
-  QueryMediator,
-  PubSub,
-  BeeHive,
-  PubSubEvents,
-  ApiQuery,
-  ApiRequest,
-  ApiFeedback,
-  ApiResponse
-) {
+], function(_, BackBone, QueryMediator, PubSub, BeeHive, PubSubEvents, ApiQuery, ApiRequest, ApiFeedback, ApiResponse) {
   var MinimalPubsub = function() {
     this.beehive = null;
     this.pubsub = null;
@@ -112,11 +101,7 @@ define([
     },
 
     listen: function() {
-      this.pubsub.subscribe(
-        this.pubsub.getPubSubKey(),
-        'all',
-        _.bind(this.logAll, this)
-      );
+      this.pubsub.subscribe(this.pubsub.getPubSubKey(), 'all', _.bind(this.logAll, this));
     },
 
     destroy: function() {

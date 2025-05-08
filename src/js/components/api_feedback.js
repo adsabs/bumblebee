@@ -1,8 +1,4 @@
-define(['underscore', 'backbone', 'js/mixins/hardened'], function(
-  _,
-  Backbone,
-  Hardened
-) {
+define(['lodash/dist/lodash.compat', 'backbone', 'js/mixins/hardened'], function(_, Backbone, Hardened) {
   var ApiFeedback = function(options) {
     _.extend(this, _.defaults(options || {}, { code: 200, msg: undefined }));
     this.setCode(this.code);

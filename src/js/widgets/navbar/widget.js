@@ -1,15 +1,14 @@
 define([
-  'underscore',
+  'lodash/dist/lodash.compat',
   'marionette',
   'js/widgets/base/base_widget',
-  'hbs!js/widgets/navbar/template/navbar',
-  'hbs!js/widgets/navbar/template/feedback',
+  'js/widgets/navbar/template/navbar.hbs',
+  'js/widgets/navbar/template/feedback.hbs',
   'js/components/api_query_updater',
   'js/components/api_query',
   'js/components/api_request',
   'js/components/api_targets',
   'utils',
-  'bootstrap',
 ], function(
   _,
   Marionette,
@@ -102,17 +101,13 @@ define([
     },
 
     changeOrcidMode: function(ev) {
-      var checked = _.isBoolean(ev)
-        ? ev
-        : ev && ev.currentTarget && ev.currentTarget.checked;
+      var checked = _.isBoolean(ev) ? ev : ev && ev.currentTarget && ev.currentTarget.checked;
       this.model.set('orcidModeOn', checked);
       this.trigger('user-change-orcid-mode');
       this.render();
     },
 
-    _hiddenTmpl: _.template(
-      '<input type="hidden" name="<%= name %>" value="<%= value %>" />'
-    ),
+    _hiddenTmpl: _.template('<input type="hidden" name="<%= name %>" value="<%= value %>" />'),
 
     // appends a hidden input to the general form
     appendToForm: function(name, value) {
@@ -143,10 +138,7 @@ define([
       const $optionList = $('#feedback-select-group', $modal);
       const $generalForm = $('#feedback-general-form', $modal);
       const $feedbackBackBtn = $('#feedback-back-btn', $modal);
-      const $submitAbstractLink = $(
-        'a#feedback_submit_abstract_link',
-        $optionList
-      );
+      const $submitAbstractLink = $('a#feedback_submit_abstract_link', $optionList);
 
       const showListView = () => {
         $optionList.show();
@@ -169,9 +161,7 @@ define([
       $modal.on('hidden.bs.modal', () => {
         $('input, textarea', $modal).val('');
         const $fg = $('button[type=submit]', $modal).closest('.form-group');
-        $fg.html(
-          '<button class="btn btn-success" type="submit" value="Send">Submit</button>'
-        );
+        $fg.html('<button class="btn btn-success" type="submit" value="Send">Submit</button>');
         showListView();
       });
 
@@ -227,10 +217,7 @@ define([
           this.appendToForm('current_query', this.model.get('currentQuery'));
         }
 
-        if (
-          this.model.get('page') === 'ShowAbstract' &&
-          this.model.has('bibcode')
-        ) {
+        if (this.model.get('page') === 'ShowAbstract' && this.model.has('bibcode')) {
           // update the submit abstract url with the current bibcode, only if we are on an abstract page
           $submitAbstractLink.attr('href', (i, url) => {
             if (url.indexOf('?') > -1) {
@@ -366,19 +353,11 @@ define([
         data += '&user-agent-string=' + encodeURIComponent(navigator.userAgent);
 
         function beforeSend() {
-          $form
-            .find('button[type=submit]')
-            .html(
-              '<i class="icon-loading" aria-hidden="true"></i> Sending form...'
-            );
+          $form.find('button[type=submit]').html('<i class="icon-loading" aria-hidden="true"></i> Sending form...');
         }
 
         function done(data) {
-          $form
-            .find('button[type=submit]')
-            .html(
-              '<i class="icon-success" aria-hidden="true"></i> Message sent!'
-            );
+          $form.find('button[type=submit]').html('<i class="icon-success" aria-hidden="true"></i> Message sent!');
 
           setTimeout(function() {
             $modal.modal('hide');
@@ -389,9 +368,7 @@ define([
           $form
             .find('button[type=submit]')
             .addClass('btn-danger')
-            .html(
-              '<i class="icon-danger" aria-hidden="true"></i> There was an error!'
-            );
+            .html('<i class="icon-danger" aria-hidden="true"></i> There was an error!');
         }
 
         var request = new ApiRequest({
@@ -410,20 +387,20 @@ define([
           .request(request);
       };
 
-      const siteKey = this.getBeeHive().getObject('AppStorage').getConfigCopy().recaptchaKey;
+      const siteKey = this.getBeeHive()
+        .getObject('AppStorage')
+        .getConfigCopy().recaptchaKey;
       window.grecaptcha.ready(() => {
-        window.grecaptcha
-          .execute(siteKey, { action: 'feedback/general' })
-          .then((token) => {
-            console.log('called', token);
-            const input = document.createElement('input');
-            input.type = 'hidden';
-            input.name = 'g-recaptcha-response';
-            input.value = token;
-            $form.append(input);
-            console.log('form', $form.html());
-            submit();
-          });
+        window.grecaptcha.execute(siteKey, { action: 'feedback/general' }).then((token) => {
+          console.log('called', token);
+          const input = document.createElement('input');
+          input.type = 'hidden';
+          input.name = 'g-recaptcha-response';
+          input.value = token;
+          $form.append(input);
+          console.log('form', $form.html());
+          submit();
+        });
       });
     },
 

@@ -7,20 +7,9 @@ define([
   'js/components/api_targets',
   'analytics',
   'cache',
-  'underscore',
+  'lodash/dist/lodash.compat',
   'js/widgets/facet/reducers',
-], function(
-  ApiResponse,
-  ApiRequest,
-  ApiQuery,
-  SolrResponse,
-  FacetFactory,
-  ApiTargets,
-  analytics,
-  Cache,
-  _,
-  Reducers
-) {
+], function(ApiResponse, ApiRequest, ApiQuery, SolrResponse, FacetFactory, ApiTargets, analytics, Cache, _, Reducers) {
   return function() {
     var widget = FacetFactory.makeHierarchicalCheckboxFacet({
       facetField: 'ned_object_facet_hier',
@@ -40,9 +29,7 @@ define([
       if (!id) {
         // top level
         pubsub.subscribeOnce(pubsub.DELIVERING_RESPONSE, function(apiResponse) {
-          that.store.dispatch(
-            that.actions.data_received(apiResponse.toJSON(), id)
-          );
+          that.store.dispatch(that.actions.data_received(apiResponse.toJSON(), id));
         });
       } else {
         pubsub.subscribeOnce(pubsub.DELIVERING_RESPONSE, function(apiResponse) {
@@ -60,9 +47,7 @@ define([
         }
       }
       var q = this.customizeQuery(query);
-      var children = id
-        ? this.store.getState().facets[id].children
-        : this.store.getState().children;
+      var children = id ? this.store.getState().facets[id].children : this.store.getState().children;
       var offset = children.length || 0;
 
       q.set('facet.offset', offset);
@@ -136,10 +121,7 @@ define([
 
       var facetField = this.store.getState().config.facetField;
       var fieldName = 'fq_' + facetField;
-      var selectedFacets = Reducers.getActiveFacets(
-        this.store.getState(),
-        this.store.getState().state.selected
-      );
+      var selectedFacets = Reducers.getActiveFacets(this.store.getState(), this.store.getState().state.selected);
 
       var conditions = selectedFacets.map(function(c) {
         // it's a second level facet, replace the name part with the nedid (unique for object facet)
@@ -199,10 +181,7 @@ define([
         });
         if (prop) {
           var logic = q.get(prop)[0];
-          q.set(
-            'filter_ned_object_facet_hier_fq_ned_object_facet_hier',
-            [logic].concat(selectedFacets)
-          );
+          q.set('filter_ned_object_facet_hier_fq_ned_object_facet_hier', [logic].concat(selectedFacets));
           q.unset('__ned_object_facet_hier_fq_ned_object_facet_hier');
         }
       }

@@ -1,4 +1,4 @@
-define(['underscore'], function(_) {
+define(['lodash/dist/lodash.compat'], function(_) {
   /**
    * @typedef Metadata
    * @property {string[]} page
@@ -49,29 +49,11 @@ define(['underscore'], function(_) {
   const getOpenUrl = (options) => {
     const { metadata, linkServer = '' } = options || {};
 
-    const {
-      page,
-      doi,
-      doctype,
-      bibcode,
-      author,
-      issue,
-      volume,
-      pub,
-      year,
-      title,
-      issn,
-      isbn,
-    } = metadata || {};
+    const { page, doi, doctype, bibcode, author, issue, volume, pub, year, title, issn, isbn } = metadata || {};
 
     // parse out degree based on bibcode
     const degree =
-      isString(bibcode) &&
-      (bibcode.includes('PhDT')
-        ? 'PhD'
-        : bibcode.includes('MsT')
-        ? 'Masters'
-        : false);
+      isString(bibcode) && (bibcode.includes('PhDT') ? 'PhD' : bibcode.includes('MsT') ? 'Masters' : false);
 
     // genre is "disseration" for phd thesis, otherwise use doctype/article
     const genre =
@@ -87,10 +69,7 @@ define(['underscore'], function(_) {
       'rft.spage': isArray(page) ? page[0].split('-')[0] : false,
       id: isArray(doi) ? 'doi:' + doi[0] : false,
       genre: genre,
-      rft_id: [
-        isArray(doi) ? 'info:doi/' + doi[0] : false,
-        isString(bibcode) ? 'info:bibcode/' + bibcode : false,
-      ],
+      rft_id: [isArray(doi) ? 'info:doi/' + doi[0] : false, isString(bibcode) ? 'info:bibcode/' + bibcode : false],
       'rft.degree': degree,
       'rft.aulast': isString(author) ? author.split(', ')[0] : false,
       'rft.aufirst': isString(author) ? author.split(', ')[1] : false,
@@ -102,8 +81,7 @@ define(['underscore'], function(_) {
       'rft.issn': isArray(issn) ? issn[0] : false,
       'rft.isbn': isArray(isbn) ? isbn[0] : false,
       'rft.genre': genre,
-      rft_val_fmt:
-        STATIC_FIELDS.rft_val_fmt + (isString(doctype) ? doctype : 'article'),
+      rft_val_fmt: STATIC_FIELDS.rft_val_fmt + (isString(doctype) ? doctype : 'article'),
     };
 
     // add extra fields to context object
@@ -121,9 +99,7 @@ define(['underscore'], function(_) {
     };
 
     // if the linkServer has query string, just append to the end
-    const openUrl = linkServer.includes('?')
-      ? linkServer + '&'
-      : linkServer + '?';
+    const openUrl = linkServer.includes('?') ? linkServer + '&' : linkServer + '?';
 
     // generate array of query params from the context object
     const fields = Object.keys(context)

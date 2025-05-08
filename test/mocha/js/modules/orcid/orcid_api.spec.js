@@ -1,10 +1,9 @@
 define([
   'js/components/generic_module',
   'js/mixins/dependon',
-  'jquery',
   'js/modules/orcid/orcid_api',
   'js/components/persistent_storage',
-  'underscore',
+  'lodash',
   'js/bugutils/minimal_pubsub',
   'js/components/pubsub_events',
   'js/modules/orcid/module',
@@ -14,7 +13,6 @@ define([
 ], function(
   GenericModule,
   Mixins,
-  $,
   OrcidApi,
   LocalStorage,
   _,

@@ -7,7 +7,7 @@
 
 define([
   'backbone',
-  'underscore',
+  'lodash/dist/lodash.compat',
   'js/components/generic_module',
   'js/mixins/dependon',
   'js/mixins/hardened',
@@ -90,8 +90,7 @@ define([
       Objects: 'objects container',
       debug: 'state of the app',
       active: 'active or not',
-      getHardenedInstance:
-        'allow to create clone of the already hardened instance',
+      getHardenedInstance: 'allow to create clone of the already hardened instance',
     },
   });
 

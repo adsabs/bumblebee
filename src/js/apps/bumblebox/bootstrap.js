@@ -2,20 +2,20 @@
  * This module contains a set of utilities to bootstrap Discovery app
  */
 define([
-  'underscore',
+  'lodash/dist/lodash.compat',
   'jquery',
   'backbone',
   'js/components/api_query',
   'js/components/api_request',
   'js/components/pubsub_events',
-], function (_, $, Backbone, ApiQuery, ApiRequest, PubSubEvents) {
+], function(_, $, Backbone, ApiQuery, ApiRequest, PubSubEvents) {
   var Mixin = {
     /**
      * Happens first, when the application starts (but before it starts
      * loading modules). Here is the time to retrieve whatever configuration
      * and/or files that should be available to the app instance
      */
-    bootstrap: function (conf) {
+    bootstrap: function(conf) {
       conf = conf || {};
       var defer = $.Deferred();
 
@@ -26,7 +26,7 @@ define([
 
         // harvest information from the remote urls and merge it into one object
         var reqs = [];
-        _.each(conf.bootstrapUrls, function (url) {
+        _.each(conf.bootstrapUrls, function(url) {
           if (!url) return;
           if (url.indexOf('.json') > -1) {
             var jqXhr = $.ajax({
@@ -36,7 +36,7 @@ define([
               contentType: 'application/x-www-form-urlencoded',
               cache: false,
               timeout: 3000,
-              success: function (data) {
+              success: function(data) {
                 if (_.isString(data)) {
                   var v = eval(data);
                   if (_.isFunction(v)) {
@@ -50,10 +50,10 @@ define([
             });
           } else {
             jqXhr = $.Deferred();
-            require([url], function (data) {
+            require([url], function(data) {
               _.extend(retVal, data);
               jqXhr.resolve();
-            }, function () {
+            }, function() {
               jqXhr.resolve();
             });
           }
@@ -61,12 +61,12 @@ define([
         });
         if (reqs.length > 0) {
           $.when.apply($, reqs).then(
-            function () {
+            function() {
               defer.resolve(retVal);
             },
-            function () {
+            function() {
               defer.reject(arguments);
-            },
+            }
           );
         } else {
           defer.resolve({});
@@ -85,29 +85,24 @@ define([
      * @param dynamic_config
      * @returns {*}
      */
-    onBootstrap: function (app_config, dynamic_config) {
+    onBootstrap: function(app_config, dynamic_config) {
       // this is little bit of a (necessary) hack, we'll
       // update the configuration of the requirejs's
       var rConfig = null;
       for (var k in requirejs.s.contexts) {
         var kontext = requirejs.s.contexts[k];
-        if (
-          kontext.config &&
-          kontext.config.config &&
-          kontext.config.config['js/apps/bumblebox/main']
-        ) {
+        if (kontext.config && kontext.config.config && kontext.config.config['js/apps/bumblebox/main']) {
           // ignore this context if it's used by some other app already
           if (kontext.config.config['js/apps/bumblebox/main'].bootstrap) return;
-          kontext.config.config['js/apps/bumblebox/main'].bootstrap =
-            'placeholder';
+          kontext.config.config['js/apps/bumblebox/main'].bootstrap = 'placeholder';
           rConfig = kontext.config;
         }
       }
-      var enhanceConfig = function (targetConfig, dynamic_config) {
-        _.each(dynamic_config, function (value, key, obj) {
+      var enhanceConfig = function(targetConfig, dynamic_config) {
+        _.each(dynamic_config, function(value, key, obj) {
           if (targetConfig[key]) {
             var target = rConfig[key];
-            _.each(value, function (value, key, obj) {
+            _.each(value, function(value, key, obj) {
               target[key] = _.defaults(value, target[key]); // use the new values as defaults
             });
           }
@@ -129,7 +124,7 @@ define([
      *
      * @param loadedConfig
      */
-    configure: function (loadedConfig) {
+    configure: function(loadedConfig) {
       var conf = this.getObject('DynamicConfig') || {};
       conf = _.extend(conf, loadedConfig);
 
@@ -153,14 +148,14 @@ define([
       }
 
       this.getBeeHive()
-      .getService('Api')
-      .setVals({
-        access_token: `Bearer ${conf.access_token}`,
-        refresh_token: conf.refresh_token, // will probably be null....
-        expires_in: conf.expires_in,
-        clientVersion: null, // to avoid sending the headers (for now)
-        defaultTimeoutInMs: conf.defaultTimeoutInMs || 15000,
-      });
+        .getService('Api')
+        .setVals({
+          access_token: `Bearer ${conf.access_token}`,
+          refresh_token: conf.refresh_token, // will probably be null....
+          expires_in: conf.expires_in,
+          clientVersion: null, // to avoid sending the headers (for now)
+          defaultTimeoutInMs: conf.defaultTimeoutInMs || 15000,
+        });
 
       // set the API key and other data from bootstrap
       if (conf.access_token) {
@@ -170,28 +165,26 @@ define([
       }
     },
 
-    reload: function (endPage) {
+    reload: function(endPage) {
       throw new Error('Should never be called by an embedded app.');
     },
 
-    redirect: function (endPage) {
+    redirect: function(endPage) {
       throw new Error('Should never be called by an embedded app.');
     },
 
-    start: function (Router) {
+    start: function(Router) {
       var app = this;
       var beehive = this.getBeeHive();
       var api = beehive.getService('Api');
       var conf = this.getObject('DynamicConfig');
 
       this.getBeeHive()
-      .getObject('AppStorage')
-      .setConfig(conf);
+        .getObject('AppStorage')
+        .setConfig(conf);
 
-      var complain = function (x) {
-        throw new Error(
-          'Ooops. Check your config! There is no ' + x + ' component @#!',
-        );
+      var complain = function(x) {
+        throw new Error('Ooops. Check your config! There is no ' + x + ' component @#!');
       };
 
       var navigator = app.getBeeHive().Services.get('Navigator');
@@ -205,8 +198,8 @@ define([
 
       // attach the master page to the body
       $(conf.targetElement || 'div#body-template-container')
-      .empty()
-      .append(masterPageManager.view.el);
+        .empty()
+        .append(masterPageManager.view.el);
 
       // kick off routing
       app.router = new Router();

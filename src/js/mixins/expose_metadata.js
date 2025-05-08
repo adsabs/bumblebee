@@ -1,5 +1,5 @@
 define([
-  'underscore',
+  'lodash/dist/lodash.compat',
   'js/components/api_targets',
   'js/components/api_query',
   'js/components/api_request',
@@ -22,9 +22,7 @@ define([
       window[NAME] = _.once(
         () =>
           new Promise((resolve, reject) => {
-            const ids = docs.map((d) =>
-              _.isArray(d.identifier) ? d.identifier[0] : d.identifier
-            );
+            const ids = docs.map((d) => (_.isArray(d.identifier) ? d.identifier[0] : d.identifier));
             const ps = this.getPubSub();
             const request = new ApiRequest({
               target: ApiTargets.EXPORT + 'bibtex',

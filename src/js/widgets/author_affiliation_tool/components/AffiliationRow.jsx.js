@@ -6,13 +6,10 @@ define(['react'], function(React) {
     <div>
       <div className="col-xs-8">
         <label className={(selected ? '' : 'auth-aff-label ') + 'custom-checkbox'}>
-          <input type="checkbox" checked={selected} onChange={onChange} />{' '}
-          {name === '-' ? '(None)' : name}
+          <input type="checkbox" checked={selected} onChange={onChange} /> {name === '-' ? '(None)' : name}
         </label>
       </div>
-      <div className={'col-xs-4' + (selected ? ' auth-aff-bold' : '')}>
-        {years.join(', ')}
-      </div>
+      <div className={'col-xs-4' + (selected ? ' auth-aff-bold' : '')}>{years.join(', ')}</div>
     </div>
   );
 

@@ -1,5 +1,4 @@
 define([], function() {
-
   const DEFAULT_TIMEOUT = 30000;
 
   /**
@@ -25,11 +24,7 @@ define([], function() {
       // Set a timeout to stop observing if the element doesn't appear in time
       setTimeout(() => {
         observer.disconnect();
-        reject(
-          new Error(
-            `Element with selector "${selector}" was not found within ${timeout}ms.`
-          )
-        );
+        reject(new Error(`Element with selector "${selector}" was not found within ${timeout}ms.`));
       }, timeout);
     });
   }

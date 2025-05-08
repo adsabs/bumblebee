@@ -14,12 +14,12 @@
  * },
  */
 
-define([
-  'underscore',
-  'backbone',
-  'js/components/solr_response',
-  'js/components/facade',
-], function(_, Backbone, ApiResponseImplementation, Facade) {
+define(['lodash/dist/lodash.compat', 'backbone', 'js/components/solr_response', 'js/components/facade'], function(
+  _,
+  Backbone,
+  ApiResponseImplementation,
+  Facade
+) {
   var hardenedInterface = {
     set: 'set (replace existing)',
     get: 'get values',
@@ -42,10 +42,7 @@ define([
     if (data instanceof ApiResponseImplementation) {
       this.innerResponse = new Facade(hardenedInterface, data);
     } else {
-      this.innerResponse = new Facade(
-        hardenedInterface,
-        new ApiResponseImplementation(data, options)
-      );
+      this.innerResponse = new Facade(hardenedInterface, new ApiResponseImplementation(data, options));
     }
   };
 

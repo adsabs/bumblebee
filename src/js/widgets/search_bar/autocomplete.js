@@ -1,4 +1,4 @@
-define(['jquery', 'analytics'], function($, analytics) {
+define(['lodash/dist/lodash.compat', 'jquery', 'analytics'], function(_, $, analytics) {
   const autocompleteSource = [
     { value: 'author:""', label: 'Author', match: 'author:"' },
 
@@ -109,8 +109,7 @@ define(['jquery', 'analytics'], function($, analytics) {
     {
       value: 'trending()',
       label: 'Trending',
-      desc:
-        'the list of documents most read by users who read recent papers on the topic being researched',
+      desc: 'the list of documents most read by users who read recent papers on the topic being researched',
       match: 'trending(',
     },
     {
@@ -123,8 +122,7 @@ define(['jquery', 'analytics'], function($, analytics) {
     {
       value: 'useful()',
       label: 'Useful',
-      desc:
-        'documents frequently cited by the most relevant papers on the topic being researched',
+      desc: 'documents frequently cited by the most relevant papers on the topic being researched',
       match: 'useful(',
     },
 
@@ -284,12 +282,13 @@ define(['jquery', 'analytics'], function($, analytics) {
       const { active } = findActiveAndInactive(term);
       let suggestions = [];
 
-      try { // match on the item regex, and return the label
+      try {
+        // match on the item regex, and return the label
         const reg = new RegExp(`^${$.ui.autocomplete.escapeRegex(active)}`, 'i');
         suggestions = _.uniq(
           _.filter(autocompleteSource, (item) => reg.test(item.match)),
           false,
-          _.property('label'),
+          _.property('label')
         );
       } catch (e) {
         // if there is an error, just don't show any suggestions
@@ -305,9 +304,7 @@ define(['jquery', 'analytics'], function($, analytics) {
       const { inactive } = findActiveAndInactive($autocomplete.term);
       const focusedSuggestion = ui.item.value;
 
-      const all = `${
-        inactive.length > 0 ? inactive + ' ' : ''
-      }${focusedSuggestion}`;
+      const all = `${inactive.length > 0 ? inactive + ' ' : ''}${focusedSuggestion}`;
 
       // don't update the input if user is only hovering
       if (event.originalEvent.originalEvent.type !== 'mouseenter') {
@@ -325,17 +322,9 @@ define(['jquery', 'analytics'], function($, analytics) {
       $input.val(newVal);
 
       // place cursor inside quotes or parens, or if none, just put it at the end
-      $input.selectRange(
-        /[")]$/.test(ui.item.value) ? newVal.length - 1 : newVal.length
-      );
+      $input.selectRange(/[")]$/.test(ui.item.value) ? newVal.length - 1 : newVal.length);
 
-      analytics(
-        'send',
-        'event',
-        'interaction',
-        'autocomplete-used',
-        ui.item.value
-      );
+      analytics('send', 'event', 'interaction', 'autocomplete-used', ui.item.value);
       return false;
     };
 
@@ -351,19 +340,10 @@ define(['jquery', 'analytics'], function($, analytics) {
     // render the suggestion list with some highlighting
     $input.data('ui-autocomplete')._renderItem = function(ul, item) {
       const re = new RegExp('(' + this.term + ')', 'i');
-      const label = item.label.replace(
-        re,
-        '<span class="ui-state-highlight">$1</span>'
-      );
+      const label = item.label.replace(re, '<span class="ui-state-highlight">$1</span>');
       if (item.desc) {
         return $('<li class="search-bar-suggestion">')
-          .append(
-            '<a>' +
-              label +
-              '<span class="s-auto-description">&nbsp;&nbsp;' +
-              item.desc +
-              '</span></a>'
-          )
+          .append('<a>' + label + '<span class="s-auto-description">&nbsp;&nbsp;' + item.desc + '</span></a>')
           .appendTo(ul);
       }
 

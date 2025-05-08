@@ -1,9 +1,9 @@
 define([
   'jquery',
-  'underscore',
+  'lodash/dist/lodash.compat',
   'marionette',
-  'hbs!js/page_managers/templates/results-page-layout',
-  'hbs!js/page_managers/templates/results-control-row',
+  'js/page_managers/templates/results-page-layout.hbs',
+  'js/page_managers/templates/results-control-row.hbs',
   'js/widgets/base/base_widget',
   './three_column_view',
   './view_mixin',
@@ -140,21 +140,21 @@ define([
       );
 
       $.when
-        .apply($, promises)
-        .then(function() {
-          // wait until everything has assembled before swapping out doms
-          _.forEach(domsToRender, function(v, k) {
-            $(self.widgetDoms[k]).html(v);
-          });
-          defer.resolve();
-        })
-        .fail(function() {
-          console.error(
-            'Generic error - we were not successul in assembling page'
-          );
-          if (arguments.length) console.error(arguments);
-          defer.reject();
+      .apply($, promises)
+      .then(function() {
+        // wait until everything has assembled before swapping out doms
+        _.forEach(domsToRender, function(v, k) {
+          $(self.widgetDoms[k]).html(v);
         });
+        defer.resolve();
+      })
+      .fail(function() {
+        console.error(
+          'Generic error - we were not successul in assembling page'
+        );
+        if (arguments.length) console.error(arguments);
+        defer.reject();
+      });
       return defer.promise();
     },
 
@@ -227,10 +227,10 @@ define([
             } else {
               console.warn(
                 'Cannot insert widget: ' +
-                  widgetName +
-                  ' (no selector [data-widget="' +
-                  widgetName +
-                  '"])'
+                widgetName +
+                ' (no selector [data-widget="' +
+                widgetName +
+                '"])'
               );
             }
           } else if (self.debug) console.error('Cannot show widget: ' + widgetName + '(because, frankly... there is no such widget there!)');
@@ -303,8 +303,8 @@ define([
       getPubSub: function() {
         if (this._ps && this.hasPubSub()) return this._ps;
         this._ps = this.getBeeHive()
-          .getHardenedInstance()
-          .getService('PubSub');
+        .getHardenedInstance()
+        .getService('PubSub');
         return this._ps;
       },
     }

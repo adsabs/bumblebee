@@ -1,5 +1,5 @@
 define([
-  'underscore',
+  'lodash/dist/lodash.compat',
   'jquery',
   'js/components/generic_module',
   'js/components/api_request',
@@ -9,20 +9,7 @@ define([
   'js/components/api_feedback',
   'js/mixins/hardened',
   'js/mixins/api_access',
-  'moment',
-], function(
-  _,
-  $,
-  GenericModule,
-  ApiRequest,
-  Mixin,
-  ApiResponse,
-  ApiQuery,
-  ApiFeedback,
-  Hardened,
-  ApiAccess,
-  Moment
-) {
+], function(_, $, GenericModule, ApiRequest, Mixin, ApiResponse, ApiQuery, ApiFeedback, Hardened, ApiAccess) {
   var Api = GenericModule.extend({
     url: '/api/1/', // usually overriden during app bootstrap
     clientVersion: null,
@@ -45,12 +32,7 @@ define([
     },
 
     fail: function(jqXHR, textStatus, errorThrown) {
-      console.error(
-        'API call failed:',
-        JSON.stringify(this.request.url()),
-        jqXHR.status,
-        errorThrown
-      );
+      console.error('API call failed:', JSON.stringify(this.request.url()), jqXHR.status, errorThrown);
       var pubsub = this.api.hasBeeHive() ? this.api.getPubSub() : null;
       if (pubsub) {
         var feedback = new ApiFeedback({
@@ -64,8 +46,7 @@ define([
           beVerbose: true,
         });
         pubsub.publish(pubsub.FEEDBACK, feedback);
-      } else if (this.api)
-        this.api.trigger('api-error', this, jqXHR, textStatus, errorThrown);
+      } else if (this.api) this.api.trigger('api-error', this, jqXHR, textStatus, errorThrown);
     },
 
     initialize: function() {
@@ -118,10 +99,7 @@ define([
     }
 
     if (query) {
-      data =
-        options.contentType === 'application/json'
-          ? JSON.stringify(query.toJSON())
-          : query.url();
+      data = options.contentType === 'application/json' ? JSON.stringify(query.toJSON()) : query.url();
     }
 
     var target = request.get('target') || '';
@@ -130,18 +108,10 @@ define([
     if (target.indexOf('http') > -1) {
       u = target;
     } else {
-      u =
-        this.url +
-        (target.length > 0 && target.indexOf('/') == 0
-          ? target
-          : target
-          ? '/' + target
-          : target);
+      u = this.url + (target.length > 0 && target.indexOf('/') == 0 ? target : target ? '/' + target : target);
     }
 
-    u =
-      u.substring(0, this.url.length - 2) +
-      u.substring(this.url.length - 2, u.length).replace('//', '/');
+    u = u.substring(0, this.url.length - 2) + u.substring(this.url.length - 2, u.length).replace('//', '/');
 
     if (!u) {
       throw Error("Sorry, you can't use api without url");
@@ -250,7 +220,7 @@ define([
   };
 
   // stubbable for testing
-  Api.prototype.getCurrentTimestamp = function () {
+  Api.prototype.getCurrentTimestamp = function() {
     return Math.floor(Date.now() / 1000);
   };
 
@@ -261,13 +231,10 @@ define([
       var d = $.Deferred();
       var req = that.getApiAccess({ tokenRefresh: true, reconnect: true });
       req.done(function() {
-
         d.resolve(that._request(request, options));
       });
       req.fail(function() {
-        --refreshRetries > 0
-          ? _.delay(refreshToken, 1000)
-          : d.reject.apply(d, arguments);
+        --refreshRetries > 0 ? _.delay(refreshToken, 1000) : d.reject.apply(d, arguments);
       });
       return d.promise();
     };

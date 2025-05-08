@@ -18,7 +18,8 @@ define(['redux', './actions'], function(
           error,
         },
       };
-    } else if (/_RESET$/.test(action.type)) {
+    }
+    if (/_RESET$/.test(action.type)) {
       const scope = action.type.replace('_RESET', '');
       return {
         ...state,

@@ -3,7 +3,7 @@
  */
 
 define([
-    'underscore',
+    'lodash/dist/lodash.compat',
     'jquery',
     'js/components/query_mediator',
     'js/components/beehive',

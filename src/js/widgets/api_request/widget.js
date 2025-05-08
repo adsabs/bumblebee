@@ -3,28 +3,17 @@
  */
 
 define([
-  'underscore',
+  'lodash/dist/lodash.compat',
   'jquery',
   'backbone',
   'marionette',
   'js/components/api_request',
   'js/components/api_query',
   'js/components/pubsub_events',
-  'hbs!js/widgets/api_request/templates/widget-view',
-  'hbs!js/widgets/api_request/templates/item-view',
+  'js/widgets/api_request/templates/widget-view.hbs',
+  'js/widgets/api_request/templates/item-view.hbs',
   'js/mixins/dependon',
-], function(
-  _,
-  $,
-  Backbone,
-  Marionette,
-  ApiRequest,
-  ApiQuery,
-  PubSubEvents,
-  WidgetTemplate,
-  ItemTemplate,
-  Dependon
-) {
+], function(_, $, Backbone, Marionette, ApiRequest, ApiQuery, PubSubEvents, WidgetTemplate, ItemTemplate, Dependon) {
   // Model
   var KeyValue = Backbone.Model.extend({});
 
@@ -211,10 +200,7 @@ define([
      */
     onRun: function(apiRequest) {
       if (this.hasPubSub()) {
-        this.getPubSub().publish(
-          this.getPubSub().DELIVERING_REQUEST,
-          apiRequest
-        );
+        this.getPubSub().publish(this.getPubSub().DELIVERING_REQUEST, apiRequest);
       }
     },
   });

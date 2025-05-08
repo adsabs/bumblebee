@@ -1,4 +1,5 @@
 define([
+  'lodash/dist/lodash.compat',
   'marionette',
   'js/widgets/base/base_widget',
   'js/components/api_response',
@@ -6,12 +7,13 @@ define([
   'js/components/api_request',
   'js/components/api_query',
   'js/mixins/dependon',
-  'hbs!js/widgets/citation_helper/templates/citation_helper_template',
-  'bootstrap',
+  'js/widgets/citation_helper/templates/citation_helper_template.hbs',
   'js/components/api_feedback',
   'js/components/api_targets',
+  'backbone',
   'analytics',
 ], function(
+  _,
   Marionette,
   BaseWidget,
   ApiResponse,
@@ -20,10 +22,9 @@ define([
   ApiQuery,
   Dependon,
   CitationHelperTemplate,
-  bs,
   ApiFeedback,
   ApiTargets,
-  analytics
+  Backbone
 ) {
   var Model = Backbone.Model.extend({
     defaults: {
@@ -51,9 +52,7 @@ define([
 
     libraryAdd: function() {
       // show loading view
-      this.$('.submit-add-to-library').html(
-        '<i class="fa fa-spinner fa-pulse" aria-hidden="true"></i>'
-      );
+      this.$('.submit-add-to-library').html('<i class="fa fa-spinner fa-pulse" aria-hidden="true"></i>');
 
       var data = {};
 
@@ -95,11 +94,7 @@ define([
 
       this.model = new Model();
       this.view = new View({ model: this.model });
-      Marionette.bindEntityEvents(
-        this,
-        this.view,
-        Marionette.getOption(this, 'viewEvents')
-      );
+      Marionette.bindEntityEvents(this, this.view, Marionette.getOption(this, 'viewEvents'));
     },
 
     activate: function(beehive) {
@@ -132,8 +127,7 @@ define([
         .getObject('LibraryController')
         .addBibcodesToLib(options)
         .done(function(response, status) {
-          var numAlreadyInLib =
-            response.numBibcodesRequested - parseInt(response.number_added);
+          var numAlreadyInLib = response.numBibcodesRequested - parseInt(response.number_added);
           that.model.set('feedback', {
             success: true,
             name: name,
@@ -216,10 +210,7 @@ define([
     processSuggestions: function(response) {
       // how is the json response formed? need to figure out why attributes is there
       response = response.attributes ? response.attributes : response;
-      if (
-        (response.Error && response.Error === 'Unable to get results!') ||
-        response.status == 500
-      ) {
+      if ((response.Error && response.Error === 'Unable to get results!') || response.status == 500) {
         this.model.set('msg', 'Citation Helper did not find any suggestions.');
       } else {
         this.model.set('items', response);

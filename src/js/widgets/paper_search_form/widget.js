@@ -1,28 +1,17 @@
 define([
-  'underscore',
+  'lodash/dist/lodash.compat',
   'jquery',
   'js/widgets/base/base_widget',
   'js/components/api_query',
   'js/components/api_request',
   'js/components/api_targets',
-  'hbs!js/widgets/paper_search_form/form',
-  './topterms',
-], function(
-  _,
-  $,
-  BaseWidget,
-  ApiQuery,
-  ApiRequest,
-  ApiTargets,
-  FormTemplate,
-  AutocompleteData
-) {
+  'js/widgets/paper_search_form/form.hbs',
+  'js/widgets/paper_search_form/topterms',
+  'marionette',
+], function(_, $, BaseWidget, ApiQuery, ApiRequest, ApiTargets, FormTemplate, AutocompleteData, Marionette) {
   const renderAutoCompleteItem = function(ul, item) {
     const re = new RegExp('(' + this.term + ')', 'i');
-    const label = item.label.replace(
-      re,
-      '<span class="ui-state-highlight">$1</span>'
-    );
+    const label = item.label.replace(re, '<span class="ui-state-highlight">$1</span>');
     const $li = $('<li/>').appendTo(ul);
     $('<a/>')
       .html(label)
@@ -186,22 +175,13 @@ define([
                 if (bib) {
                   return this.doSearch(`bibcode:${bib}`);
                 }
-                this.view.triggerMethod(
-                  'fail',
-                  'No bibcodes matching reference string'
-                );
+                this.view.triggerMethod('fail', 'No bibcodes matching reference string');
               })
               .fail((event) => {
                 if (event.responseJSON && event.responseJSON.error) {
-                  return this.view.triggerMethod(
-                    'fail',
-                    event.responseJSON.error
-                  );
+                  return this.view.triggerMethod('fail', event.responseJSON.error);
                 }
-                this.view.triggerMethod(
-                  'fail',
-                  'Error occurred sending reference request'
-                );
+                this.view.triggerMethod('fail', 'Error occurred sending reference request');
               });
           }
           break;

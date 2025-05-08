@@ -8,8 +8,8 @@
 define([
   'marionette',
   'backbone',
-  'hbs!js/widgets/list_of_things/templates/expanding-item-template',
-  'hbs!js/widgets/list_of_things/templates/expanding-results-container-template',
+  'js/widgets/list_of_things/templates/expanding-item-template.hbs',
+  'js/widgets/list_of_things/templates/expanding-results-container-template.hbs',
 ], function(Marionette, Backbone, ItemTemplate, ResultsContainerTemplate) {
   var ItemView = Marionette.ItemView.extend({
     // should it be hidden initially?

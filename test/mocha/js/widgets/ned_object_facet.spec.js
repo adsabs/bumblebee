@@ -1,6 +1,6 @@
 define([
   'module',
-  'underscore',
+  'lodash/dist/lodash.compat',
   'jquery',
   './test_json/object_facet_solr_ned',
   './test_json/object_service_response_ned',

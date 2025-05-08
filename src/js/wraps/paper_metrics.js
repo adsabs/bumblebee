@@ -1,7 +1,4 @@
-define(['js/widgets/metrics/widget', 'js/components/api_feedback'], function(
-  MetricsWidget,
-  ApiFeedback
-) {
+define(['js/widgets/metrics/widget', 'js/components/api_feedback'], function(MetricsWidget, ApiFeedback) {
   var Widget = MetricsWidget.extend({
     initialize: function(options) {
       var name = 'ShowMetrics';
@@ -16,18 +13,14 @@ define(['js/widgets/metrics/widget', 'js/components/api_feedback'], function(
           this.canLoad = false;
         }
 
-        if (
-          event === 'widget-selected' &&
-          data.idAttribute === name &&
-          !this.canLoad
-        ) {
+        if (event === 'widget-selected' && data.idAttribute === name && !this.canLoad) {
           this.canLoad = true;
           this.payload && this.ingestBroadcastedPayload(this.payload);
         }
       };
 
-      this.on('page-manager-message', handlePMMessages);
-      this.on('page-manager-event', handlePMMessages);
+      this.on('page-manager-message', handlePMMessages.bind(this));
+      this.on('page-manager-event', handlePMMessages.bind(this));
 
       MetricsWidget.prototype.initialize.apply(this, arguments);
     },

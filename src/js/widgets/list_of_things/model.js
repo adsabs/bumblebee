@@ -1,9 +1,9 @@
-define([
-  'backbone',
-  'underscore',
-  'bowser',
-  'js/mixins/add_stable_index_to_collection',
-], function(Backbone, _, bowser, WidgetPaginationMixin) {
+define(['backbone', 'lodash/dist/lodash.compat', 'bowser', 'js/mixins/add_stable_index_to_collection'], function(
+  Backbone,
+  _,
+  bowser,
+  WidgetPaginationMixin
+) {
   var ItemModel = Backbone.Model.extend({
     defaults: function() {
       return {
@@ -39,16 +39,8 @@ define([
 
       if (options && options.paginationModel) {
         this.paginationModel = options.paginationModel;
-        this.listenTo(
-          this.paginationModel,
-          'change:page',
-          this._onPaginationChange
-        );
-        this.listenTo(
-          this.paginationModel,
-          'change:perPage',
-          this._onPaginationChange
-        );
+        this.listenTo(this.paginationModel, 'change:page', this._onPaginationChange);
+        this.listenTo(this.paginationModel, 'change:perPage', this._onPaginationChange);
       }
     },
 
@@ -106,11 +98,7 @@ define([
         attrs.emptyPlaceholder = false;
       }
 
-      return Backbone.Collection.prototype._prepareModel.call(
-        this,
-        attrs,
-        options
-      );
+      return Backbone.Collection.prototype._prepareModel.call(this, attrs, options);
     },
 
     getVisibleModels: function() {
@@ -257,9 +245,7 @@ define([
       return (
         this.updateIndexes(
           this.currentStartIndex,
-          this.currentEndIndex == 0
-            ? howMany - 1
-            : this.currentEndIndex + howMany
+          this.currentEndIndex == 0 ? howMany - 1 : this.currentEndIndex + howMany
         ) - visible
       );
     },

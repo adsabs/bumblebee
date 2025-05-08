@@ -1,4 +1,4 @@
-define([], function() {
+define(['lodash/dist/lodash.compat'], function(_) {
   var Utils = {};
 
   // Helper method to extend an already existing method

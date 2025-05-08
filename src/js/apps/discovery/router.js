@@ -1,5 +1,5 @@
 define([
-  'underscore',
+  'lodash/dist/lodash.compat',
   'jquery',
   'backbone',
   'js/components/api_query',
@@ -9,18 +9,7 @@ define([
   'js/components/api_targets',
   'js/mixins/api_access',
   'js/components/api_query_updater',
-], function(
-  _,
-  $,
-  Backbone,
-  ApiQuery,
-  Dependon,
-  ApiFeedback,
-  ApiRequest,
-  ApiTargets,
-  ApiAccessMixin,
-  ApiQueryUpdater
-) {
+], function(_, $, Backbone, ApiQuery, Dependon, ApiFeedback, ApiRequest, ApiTargets, ApiAccessMixin, ApiQueryUpdater) {
   var Router = Backbone.Router.extend({
     initialize: function(options) {
       options = options || {};
@@ -39,9 +28,7 @@ define([
     activate: function(beehive) {
       this.setBeeHive(beehive);
       if (!this.hasPubSub()) {
-        throw new Error(
-          'Ooops! Who configured this #@$%! There is no PubSub service!'
-        );
+        throw new Error('Ooops! Who configured this #@$%! There is no PubSub service!');
       }
     },
 
@@ -155,11 +142,7 @@ define([
     },
 
     executeQuery: function(queryId) {
-      this.getPubSub().publish(
-        this.getPubSub().NAVIGATE,
-        'execute-query',
-        queryId
-      );
+      this.getPubSub().publish(this.getPubSub().NAVIGATE, 'execute-query', queryId);
     },
 
     view: function(path) {
@@ -180,7 +163,8 @@ define([
       // take the rest and combine into the identifier
       const id = parts.join('/');
 
-      var navigateString, href;
+      var navigateString;
+      var href;
       if (!subPage) {
         navigateString = 'ShowAbstract';
         href = '#abs/' + encodeURIComponent(id) + '/abstract';
@@ -213,14 +197,9 @@ define([
       // possible subViews: "login", "register", "reset-password"
       if (
         subView &&
-        !_.contains(
-          ['login', 'register', 'reset-password-1', 'reset-password-2', 'resend-verification-email'],
-          subView
-        )
+        !_.contains(['login', 'register', 'reset-password-1', 'reset-password-2', 'resend-verification-email'], subView)
       ) {
-        throw new Error(
-          "that isn't a subview that the authentication page knows about"
-        );
+        throw new Error("that isn't a subview that the authentication page knows about");
       }
       this.routerNavigate('authentication-page', {
         subView: subView,
@@ -233,9 +212,7 @@ define([
         this.routerNavigate('UserSettings', {
           subView: subView,
         });
-      } else if (
-        _.contains(['librarylink', 'orcid', 'application', 'export'], subView)
-      ) {
+      } else if (_.contains(['librarylink', 'orcid', 'application', 'export'], subView)) {
         // show preferences if no subview provided
         this.routerNavigate('UserPreferences', {
           subView: subView,
@@ -265,9 +242,7 @@ define([
             subView: subView,
             id: id,
           });
-        } else if (
-          _.contains(['export', 'metrics', 'visualization'], subView)
-        ) {
+        } else if (_.contains(['export', 'metrics', 'visualization'], subView)) {
           subView = 'library-' + subView;
 
           if (subView == 'library-export') {
@@ -291,15 +266,11 @@ define([
 
     publicLibraryPage: function(id) {
       // main libraries view
-      this.getPubSub().publish(
-        this.getPubSub().NAVIGATE,
-        'IndividualLibraryWidget',
-        {
-          id: id,
-          publicView: true,
-          subView: 'library',
-        }
-      );
+      this.getPubSub().publish(this.getPubSub().NAVIGATE, 'IndividualLibraryWidget', {
+        id: id,
+        publicView: true,
+        subView: 'library',
+      });
     },
 
     homePage: function(subView) {

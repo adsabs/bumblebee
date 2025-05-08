@@ -38,10 +38,7 @@
  */
 
 define([
-  'underscore',
-  'bootstrap',
-  'jquery',
-  'backbone',
+  'lodash/dist/lodash.compat',
   'js/components/generic_module',
   'js/mixins/dependon',
   'js/components/pubsub_events',
@@ -57,9 +54,6 @@ define([
   'js/modules/orcid/bio',
 ], function(
   _,
-  Bootstrap,
-  $,
-  Backbone,
   GenericModule,
   Mixins,
   PubSubEvents,
@@ -120,9 +114,9 @@ define([
           this.saveAccessData(orcid.authData);
         }
       }
-      this._addWork = _.debounce(this._addWork, this.addWait);
-      this._getUserProfile = _.debounce(this._getUserProfile, this.profileWait);
-      this._deleteWork = _.debounce(this._deleteWork, this.deleteWait);
+      this._addWork = _.debounce(this._addWork.bind(this), this.addWait);
+      this._getUserProfile = _.debounce(this._getUserProfile.bind(this), this.profileWait);
+      this._deleteWork = _.debounce(this._deleteWork.bind(this), this.deleteWait);
     },
 
     /**
@@ -164,9 +158,7 @@ define([
         url:
           this.config.loginUrl +
           '&redirect_uri=' +
-          encodeURIComponent(
-            this.config.redirectUrlBase + (targetRoute || '/user/orcid')
-          ),
+          encodeURIComponent(this.config.redirectUrlBase + (targetRoute || '/user/orcid')),
       });
 
       // make sure to redirect to the proper page after sign in
@@ -180,11 +172,7 @@ define([
      * @returns {*|jQuery.Promise}
      */
     setADSUserData: function(userData) {
-      var url =
-        this.getBeeHive().getService('Api').url +
-        ApiTargets.ORCID_PREFERENCES +
-        '/' +
-        this.authData.orcid;
+      var url = this.getBeeHive().getService('Api').url + ApiTargets.ORCID_PREFERENCES + '/' + this.authData.orcid;
       var request = this.createRequest(url, { method: 'POST' }, userData);
       request.fail(function() {
         var msg = 'ADS ORCiD preferences could not be set';
@@ -201,11 +189,7 @@ define([
      */
     getADSUserData: function() {
       var self = this;
-      var url =
-        this.getBeeHive().getService('Api').url +
-        ApiTargets.ORCID_PREFERENCES +
-        '/' +
-        this.authData.orcid;
+      var url = this.getBeeHive().getService('Api').url + ApiTargets.ORCID_PREFERENCES + '/' + this.authData.orcid;
       var request = this.createRequest(url);
       request.fail(function() {
         self.signOut();
@@ -236,11 +220,7 @@ define([
 
     getUserBio: function() {
       var dd = new $.Deferred();
-      var url =
-        this.getBeeHive().getService('Api').url +
-        ApiTargets.ORCID_NAME +
-        '/' +
-        this.authData.orcid;
+      var url = this.getBeeHive().getService('Api').url + ApiTargets.ORCID_NAME + '/' + this.authData.orcid;
       var request = this.createRequest(url);
       request.fail(function() {
         var msg = 'ADS name could not be retrieved';
@@ -278,10 +258,7 @@ define([
      * @returns {*|String|Undefined}
      */
     getExchangeCode: function(searchString) {
-      return this.getUrlParameter(
-        'code',
-        searchString || window.location.search
-      );
+      return this.getUrlParameter('code', searchString || window.location.search);
     },
 
     /**
@@ -350,8 +327,7 @@ define([
       var beehive = this.getBeeHive();
 
       if (authData && !authData.expires && authData.expires_in) {
-        authData.expires =
-          new Date().getTime() + (authData.expires_in * 1000 - 1000);
+        authData.expires = new Date().getTime() + (authData.expires_in * 1000 - 1000);
       }
       this.authData = authData;
       var storage = beehive.getService('PersistentStorage');
@@ -381,8 +357,7 @@ define([
         works: '/orcid-works',
         work: '/orcid-work',
       };
-      var url =
-        this.config.apiEndpoint + '/' + this.authData.orcid + targets[name];
+      var url = this.config.apiEndpoint + '/' + this.authData.orcid + targets[name];
 
       var end = _.isArray(putCodes) ? putCodes.join(',') : putCodes;
 
@@ -429,7 +404,7 @@ define([
 
       request.done(function(profile) {
         _.forEach(cache, function(promise) {
-          orcidProfile = new Profile(profile);
+          const orcidProfile = new Profile(profile);
           promise.resolve(
             orcidProfile.setWorks(
               _.map(profile, function(profile, idx) {
@@ -591,15 +566,12 @@ define([
           // ...
           _.delay(function() {
             // create the request for each delete
-            var request = self.createRequest(
-              self.getUrl('works', del.putCode),
-              {
-                beforeSend: function(xhr) {
-                  xhr._id = del.id;
-                },
-                method: 'DELETE',
-              }
-            );
+            var request = self.createRequest(self.getUrl('works', del.putCode), {
+              beforeSend: function(xhr) {
+                xhr._id = del.id;
+              },
+              method: 'DELETE',
+            });
 
             // apply the promise handlers
             request
@@ -619,9 +591,7 @@ define([
         self.deleteCache = _.reduce(
           self.deleteCache,
           function(res, entry) {
-            entry.promise.state() === 'pending'
-              ? entry.promise.reject()
-              : res.push(entry);
+            entry.promise.state() === 'pending' ? entry.promise.reject() : res.push(entry);
             return res;
           },
           []
@@ -866,8 +836,7 @@ define([
 
       options.headers.Authorization = api.access_token;
       if (!options.headers['Orcid-Authorization'] && this.authData) {
-        options.headers['Orcid-Authorization'] =
-          'Bearer ' + this.authData.access_token;
+        options.headers['Orcid-Authorization'] = 'Bearer ' + this.authData.access_token;
       }
       if (!options.headers['Content-Type']) {
         options.headers['Content-Type'] = 'application/json';
@@ -1123,10 +1092,7 @@ define([
 
         // on fail, alert the console and finish the update
         var queryFailure = function() {
-          console.error.apply(
-            console,
-            ['Error processing response from ADS'].concat(arguments)
-          );
+          console.error.apply(console, ['Error processing response from ADS'].concat(arguments));
           finishUpdate(db);
         };
 
@@ -1203,13 +1169,7 @@ define([
           }
         };
 
-        var ids = _.pick(
-          adsWork,
-          'identifier',
-          'bibcode',
-          'doi',
-          'alternate_bibcode'
-        );
+        var ids = _.pick(adsWork, 'identifier', 'bibcode', 'doi', 'alternate_bibcode');
 
         _.each(ids, function(value, key) {
           if (_.isArray(value)) {

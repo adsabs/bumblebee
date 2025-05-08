@@ -1,14 +1,18 @@
 define([
+  'lodash/dist/lodash.compat',
+  'backbone',
   'marionette',
   'js/widgets/base/base_widget',
   'js/components/api_request',
   'js/components/api_response',
   'js/components/api_query',
-  'hbs!js/widgets/graphics/templates/grid',
-  'hbs!js/widgets/graphics/templates/sidebar',
+  'js/widgets/graphics/templates/grid.hbs',
+  'js/widgets/graphics/templates/sidebar.hbs',
   'js/components/api_targets',
   'analytics',
 ], function(
+  _,
+  Backbone,
   Marionette,
   BaseWidget,
   ApiRequest,
@@ -43,16 +47,9 @@ define([
     },
 
     fireAnalyticsEvent(ev) {
-      analytics(
-        'send',
-        'event',
-        'interaction',
-        'graphics-link-followed',
-        ev.currentTarget.href,
-        {
-          transport: 'beacon',
-        }
-      );
+      analytics('send', 'event', 'interaction', 'graphics-link-followed', ev.currentTarget.href, {
+        transport: 'beacon',
+      });
     },
   });
 
@@ -84,9 +81,7 @@ define([
       options = options || {};
       this.model = new GraphicsModel();
       this.view =
-        options.sidebar === true
-          ? new SidebarView({ model: this.model })
-          : new GridView({ model: this.model });
+        options.sidebar === true ? new SidebarView({ model: this.model }) : new GridView({ model: this.model });
       BaseWidget.prototype.initialize.apply(this, arguments);
     },
 

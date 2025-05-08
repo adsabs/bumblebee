@@ -1,7 +1,8 @@
-define([
-  'js/widgets/facet/widget',
-  'js/widgets/facet/graph-facet/widget',
-], function(FacetWidget, BaseGraphWidget) {
+define(['lodash/dist/lodash.compat', 'js/widgets/facet/widget', 'js/widgets/facet/graph-facet/widget'], function(
+  _,
+  FacetWidget,
+  BaseGraphWidget
+) {
   var FacetFactory = {
     makeBasicCheckboxFacet: function(options) {
       var defaultOptions = {

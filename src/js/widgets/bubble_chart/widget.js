@@ -1,14 +1,17 @@
 define([
+  'lodash/dist/lodash.compat',
   'd3',
   'marionette',
   'js/widgets/base/base_widget',
   'js/components/api_request',
-  'hbs!js/widgets/bubble_chart/templates/container',
-  'hbs!js/widgets/bubble_chart/templates/tooltip',
+  'js/widgets/bubble_chart/templates/container.hbs',
+  'js/widgets/bubble_chart/templates/tooltip.hbs',
   'js/components/api_targets',
   'js/components/api_query_updater',
   'js/components/api_query',
+  'backbone',
 ], function(
+  _,
   d3,
   Marionette,
   BaseWidget,
@@ -17,7 +20,8 @@ define([
   TooltipTemplate,
   ApiTargets,
   ApiQueryUpdater,
-  ApiQuery
+  ApiQuery,
+  Backbone
 ) {
   var BubbleModel = Backbone.Model.extend({
     initialize: function(options) {
@@ -210,10 +214,7 @@ define([
         output += keys.join(',') + '\n';
         data.forEach((row) => {
           keys.forEach((key) => {
-            output +=
-              key === 'title'
-                ? `"${row[key].replace(/"/g, "'")}",`
-                : `"${row[key]}",`;
+            output += key === 'title' ? `"${row[key].replace(/"/g, "'")}",` : `"${row[key]}",`;
           });
           output = output.slice(0, -1) + '\n';
         });
@@ -237,13 +238,9 @@ define([
         right: 20,
         top: 60,
       }),
-        (this.config.height =
-          500 - (this.config.margin.top + this.config.margin.bottom));
-      this.config.width =
-        1000 - (this.config.margin.left + this.config.margin.right);
-      this.config.animationLength = Marionette.getOption(this, 'testing')
-        ? 0
-        : 500;
+        (this.config.height = 500 - (this.config.margin.top + this.config.margin.bottom));
+      this.config.width = 1000 - (this.config.margin.left + this.config.margin.right);
+      this.config.animationLength = Marionette.getOption(this, 'testing') ? 0 : 500;
     },
 
     cacheVals: function() {
@@ -251,14 +248,7 @@ define([
       this.cache.svg = d3
         .select(this.$('svg.bubble-chart-svg')[0])
         .append('g')
-        .attr(
-          'transform',
-          'translate(' +
-            this.config.margin.left +
-            ',' +
-            this.config.margin.top +
-            ')'
-        );
+        .attr('transform', 'translate(' + this.config.margin.left + ',' + this.config.margin.top + ')');
       this.cache.realSvg = d3.select(this.$('svg.bubble-chart-svg')[0]);
       this.cache.tooltip = d3.select(this.$('.d3-tooltip')[0]);
     },
@@ -435,9 +425,7 @@ define([
 
     resetSelection: function() {
       this.model.set('selectedBibs', []);
-      this.cache.svg
-        .selectAll('.paper-circle.selected')
-        .classed('selected', false);
+      this.cache.svg.selectAll('.paper-circle.selected').classed('selected', false);
       this.cache.svg.select('rect.selection').remove();
     },
 
@@ -481,15 +469,9 @@ define([
         .tickFormat(d3.format('s'));
 
       // X Axis
-      if (
-        this.model.get('xValue') === 'date' &&
-        this.model.get('timeRange') == 'year'
-      ) {
+      if (this.model.get('xValue') === 'date' && this.model.get('timeRange') == 'year') {
         xTickFormat = d3.time.format('%Y');
-      } else if (
-        this.model.get('xValue') === 'date' &&
-        this.model.get('timeRange') == 'month'
-      ) {
+      } else if (this.model.get('xValue') === 'date' && this.model.get('timeRange') == 'month') {
         // the time range is 2 years or less
         xTickFormat = d3.time.format('%b-%Y');
       } else {
@@ -686,10 +668,7 @@ define([
         realSvg.selectAll(c.container + ' .scale-choice').on(
           'click',
           function(e) {
-            d3.selectAll(c.container + ' .scale-choice').classed(
-              'selected',
-              false
-            );
+            d3.selectAll(c.container + ' .scale-choice').classed('selected', false);
             var d3this = d3.select(this);
 
             if (d3this.classed('linear')) {
@@ -772,12 +751,7 @@ define([
             that.config.width / 2 +
             ',' +
             (function() {
-              return (
-                that.config.height +
-                that.config.margin.top +
-                that.config.margin.bottom +
-                10
-              );
+              return that.config.height + that.config.margin.top + that.config.margin.bottom + 10;
             })() +
             ')'
         )
@@ -815,11 +789,7 @@ define([
           'transform',
           'translate(' +
             (function() {
-              return (
-                that.config.width +
-                that.config.margin.right +
-                that.config.margin.left
-              );
+              return that.config.width + that.config.margin.right + that.config.margin.left;
             })() +
             ',' +
             (function() {
@@ -865,9 +835,7 @@ define([
           d3this.classed('journal-selected', false);
           that.model.set('currentPub', undefined);
         } else {
-          realSvg
-            .selectAll('.journal-selected')
-            .classed('journal-selected', false);
+          realSvg.selectAll('.journal-selected').classed('journal-selected', false);
           d3this.classed('journal-selected', true);
           that.model.set('currentPub', pubName);
         }
@@ -893,10 +861,7 @@ define([
       });
       // adding delegated tooltip events
       realSvg.on('mouseover.tooltip', function(e) {
-        if (
-          d3.select(d3.event.target).classed('paper-circle') &&
-          !isMousePressed
-        ) {
+        if (d3.select(d3.event.target).classed('paper-circle') && !isMousePressed) {
           var yVal = that.model.get('yValue');
           var xVal = that.model.get('xValue');
           var radius = that.model.get('radius');
@@ -909,10 +874,7 @@ define([
           var xPadding;
           var xPosition;
 
-          xPosition =
-            d3.mouse(this.parentElement)[0] - that.config.margin.left > 500
-              ? 'right'
-              : 'left';
+          xPosition = d3.mouse(this.parentElement)[0] - that.config.margin.left > 500 ? 'right' : 'left';
 
           allData = d3
             .selectAll('.paper-circle')
@@ -939,10 +901,7 @@ define([
           that.cache.tooltip.style({ visibility: 'hidden', display: 'block' });
           height = d3.select('.d3-tooltip')[0][0].clientHeight;
 
-          xPadding = d3.max([
-            parseInt(d3.select(d3.event.target).attr('r')) * 2.5,
-            10,
-          ]);
+          xPadding = d3.max([parseInt(d3.select(d3.event.target).attr('r')) * 2.5, 10]);
 
           if (xPosition === 'left') {
             that.cache.tooltip

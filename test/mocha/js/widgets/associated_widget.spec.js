@@ -1,5 +1,5 @@
 define([
-  'underscore',
+  'lodash/dist/lodash.compat',
   'jquery',
   'js/widgets/associated/widget.jsx',
   'js/widgets/base/base_widget',

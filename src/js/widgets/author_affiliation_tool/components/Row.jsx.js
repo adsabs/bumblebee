@@ -1,7 +1,7 @@
 define([
   'react',
-  'es6!../components/LastActiveDateRow.jsx',
-  'es6!../components/AffiliationRow.jsx',
+  'js/widgets/author_affiliation_tool/components/LastActiveDateRow.jsx',
+  'js/widgets/author_affiliation_tool/components/AffiliationRow.jsx',
 ], function(React, LastActiveDateRow, AffiliationRow) {
   /**
    * Simple Row which contains the Affiliation and LastActiveDate sections
@@ -12,15 +12,8 @@ define([
     return (
       <div className="row">
         <div className="col-xs-2">
-          <label
-            className={(selected ? '' : 'auth-aff-label') + 'custom-checkbox'}
-          >
-            <input
-              checked={selected}
-              type="checkbox"
-              onChange={() => onChange()}
-            />{' '}
-            {author}
+          <label className={(selected ? '' : 'auth-aff-label') + 'custom-checkbox'}>
+            <input checked={selected} type="checkbox" onChange={() => onChange()} /> {author}
           </label>
         </div>
         <div className="col-xs-8">

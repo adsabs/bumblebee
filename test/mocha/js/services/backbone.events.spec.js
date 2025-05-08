@@ -1,4 +1,4 @@
-define(['backbone', 'underscore'], function(Backbone, _) {
+define(['backbone', 'lodash/dist/lodash.compat'], function(Backbone, _) {
 
   describe("BackBone.Events - test of problems; this test shows what we have to do to build robust PubSub (backbone.events.spec.js)", function () {
 

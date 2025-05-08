@@ -8,17 +8,14 @@ define([
   'clipboard',
   'backbone',
   'jquery',
-  'underscore',
+  'lodash/dist/lodash.compat',
   'cache',
   'js/widgets/base/base_widget',
-  'hbs!js/widgets/abstract/templates/abstract_template',
+  'js/widgets/abstract/templates/abstract_template.hbs',
   'js/components/api_query',
   'js/mixins/link_generator_mixin',
   'js/mixins/papers_utils',
-  'mathjax',
-  'bootstrap',
   'utils',
-  'analytics',
 ], function(
   Marionette,
   ApiRequest,
@@ -33,10 +30,7 @@ define([
   ApiQuery,
   LinkGeneratorMixin,
   PapersUtils,
-  MathJax,
-  Bootstrap,
-  utils,
-  analytics
+  utils
 ) {
   const MAX_AUTHORS = 20;
 
@@ -62,8 +56,7 @@ define([
     },
 
     parse: function(doc, maxAuthors = MAX_AUTHORS) {
-      const getDOIUrl = (doi) =>
-        LinkGeneratorMixin.createUrlByType(doc.bibcode, 'doi', doi);
+      const getDOIUrl = (doi) => LinkGeneratorMixin.createUrlByType(doc.bibcode, 'doi', doi);
 
       // generate URLs for each doi
       doc.doi = Array.isArray(doc.doi)
@@ -111,16 +104,11 @@ define([
       // now add urls
       if (doc.authorAff) {
         _.each(doc.authorAff, function(el, index) {
-          doc.authorAff[index][5] = encodeURIComponent(
-            '"' + el[0] + '"'
-          ).replace(/%20/g, '+');
+          doc.authorAff[index][5] = encodeURIComponent('"' + el[0] + '"').replace(/%20/g, '+');
         });
 
         if (doc.authorAff.length > maxAuthors) {
-          doc.authorAffExtra = doc.authorAff.slice(
-            maxAuthors,
-            doc.authorAff.length
-          );
+          doc.authorAffExtra = doc.authorAff.slice(maxAuthors, doc.authorAff.length);
           doc.authorAff = doc.authorAff.slice(0, maxAuthors);
         }
 
@@ -162,11 +150,7 @@ define([
       }
 
       // handle book_author field
-      if (
-        doc.book_author &&
-        Array.isArray(doc.book_author) &&
-        doc.book_author.length > 0
-      ) {
+      if (doc.book_author && Array.isArray(doc.book_author) && doc.book_author.length > 0) {
         doc.book_author = doc.book_author.map((name, i) => ({
           name,
           href: `#search?q=book_author:"${name}"&sort=date%20desc,%20bibcode%20desc`,
@@ -174,18 +158,12 @@ define([
         }));
       }
 
-      const ids = Array.isArray(doc.identifier)
-        ? doc.identifier
-        : doc.original_identifier;
+      const ids = Array.isArray(doc.identifier) ? doc.identifier : doc.original_identifier;
       const id = (ids || []).find((v) => v.match(/^arxiv/i));
       if (id) {
         doc.arxiv = {
           id: id,
-          href: LinkGeneratorMixin.createUrlByType(
-            doc.bibcode,
-            'arxiv',
-            id.split(':')[1]
-          ),
+          href: LinkGeneratorMixin.createUrlByType(doc.bibcode, 'arxiv', id.split(':')[1]),
         };
       }
 
@@ -272,8 +250,7 @@ define([
       return false;
     },
 
-    emitAnalytics: function (e) {
-    },
+    emitAnalytics: function(e) {},
 
     copyBibcode() {
       if (!this.bibcodeClipboard) {
@@ -287,6 +264,7 @@ define([
     },
 
     onRender: function() {
+      // Activate Bootstrap popover
       this.$('.icon-help').popover({
         trigger: 'hover',
         placement: 'right',
@@ -294,18 +272,18 @@ define([
         container: 'body',
       });
 
-      if (MathJax) {
-        MathJax.Hub.Queue([
-          'Typeset',
-          MathJax.Hub,
+      // MathJax v3: typeset title and abstract if MathJax is ready
+      if (window.MathJax && window.MathJax.typesetPromise) {
+        const elements = [
           this.$('.s-abstract-title', this.el).get(0),
-        ]);
-        MathJax.Hub.Queue([
-          'Typeset',
-          MathJax.Hub,
           this.$('.s-abstract-text', this.el).get(0),
-        ]);
+        ].filter(Boolean); // filter out nulls in case selectors fail
+
+        window.MathJax.typesetPromise(elements).catch((err) => {
+          console.error('MathJax typeset failed:', err);
+        });
       }
+
       this.copyBibcode();
     },
   });
@@ -313,12 +291,8 @@ define([
   var AbstractWidget = BaseWidget.extend({
     initialize: function(options) {
       options = options || {};
-      this.model = options.data
-        ? new AbstractModel(options.data, { parse: true })
-        : new AbstractModel();
-      this.view = utils.withPrerenderedContent(
-        new AbstractView({ model: this.model })
-      );
+      this.model = options.data ? new AbstractModel(options.data, { parse: true }) : new AbstractModel();
+      this.view = utils.withPrerenderedContent(new AbstractView({ model: this.model }));
       this.listenTo(this.view, 'all', this.onAllInternalEvents);
 
       BaseWidget.prototype.initialize.apply(this, arguments);
@@ -334,12 +308,7 @@ define([
       this.attachGeneralHandler(this.onApiFeedback);
       var pubsub = beehive.getService('PubSub');
 
-      _.bindAll(this, [
-        'onNewQuery',
-        'dispatchRequest',
-        'processResponse',
-        'onDisplayDocuments',
-      ]);
+      _.bindAll(this, ['onNewQuery', 'dispatchRequest', 'processResponse', 'onDisplayDocuments']);
       pubsub.subscribe(pubsub.START_SEARCH, this.onNewQuery);
       pubsub.subscribe(pubsub.INVITING_REQUEST, this.dispatchRequest);
       pubsub.subscribe(pubsub.DELIVERING_RESPONSE, this.processResponse);
@@ -376,10 +345,7 @@ define([
       // only empty docs array if it truly is a new query
       var newQueryJSON = apiQuery.toJSON();
 
-      var currentStreamlined = _.pick(
-        this.getCurrentQuery().toJSON(),
-        _.keys(newQueryJSON)
-      );
+      var currentStreamlined = _.pick(this.getCurrentQuery().toJSON(), _.keys(newQueryJSON));
       if (JSON.stringify(newQueryJSON) !== JSON.stringify(currentStreamlined)) {
         this._docs = {};
       }
@@ -417,8 +383,7 @@ define([
         bibcode: bibcode,
 
         // used by citation list widget
-        citation_discrepancy:
-          this._docs[bibcode].citation_count - resolvedCitations,
+        citation_discrepancy: this._docs[bibcode].citation_count - resolvedCitations,
         citation_count: this._docs[bibcode].citation_count,
         references_count: c.num_references,
         read_count: this._docs[bibcode].read_count,
@@ -427,11 +392,7 @@ define([
 
       if (this.hasPubSub()) {
         var ps = this.getPubSub();
-        ps.publish(
-          ps.CUSTOM_EVENT,
-          'update-document-title',
-          this._docs[bibcode].title
-        );
+        ps.publish(ps.CUSTOM_EVENT, 'update-document-title', this._docs[bibcode].title);
       }
       this.updateState(this.STATES.IDLE);
     },
@@ -497,21 +458,12 @@ define([
     },
 
     fetchAffiliations: function(cb) {
-      if (
-        (!this.model.has('aff') || this.model.get('aff').length === 0) &&
-        !this.isFetchingAff
-      ) {
+      if ((!this.model.has('aff') || this.model.get('aff').length === 0) && !this.isFetchingAff) {
         this.isFetchingAff = true;
         const ps = this.getPubSub();
         const query = this.getCurrentQuery().clone();
         query.unlock();
-        const {
-          bibcode,
-          author,
-          orcid_pub,
-          orcid_user,
-          orcid_other,
-        } = this.model.toJSON();
+        const { bibcode, author, orcid_pub, orcid_user, orcid_other } = this.model.toJSON();
         query.set('q', `identifier:${bibcode}`);
         query.set('fl', ['aff', 'orcid_pub', 'orcid_user', 'orcid_other']);
         query.set('rows', 1);
@@ -525,12 +477,7 @@ define([
                 this.isFetchingAff = false;
               },
               done: (resp) => {
-                if (
-                  resp &&
-                  resp.response &&
-                  resp.response.docs &&
-                  resp.response.docs.length > 0
-                ) {
+                if (resp && resp.response && resp.response.docs && resp.response.docs.length > 0) {
                   const newEntries = this.model.parse({
                     author: author,
                     orcid_pub: orcid_pub,
@@ -577,11 +524,7 @@ define([
 
           // if __show is defined and it is found in the list of identifiers or only a single document
           // was provided - then set the __show value to the bibcode of the document
-          if (
-            __show &&
-            ((ids && ids.length > 0 && _.contains(ids, __show)) ||
-              docs.length === 1)
-          ) {
+          if (__show && ((ids && ids.length > 0 && _.contains(ids, __show)) || docs.length === 1)) {
             __show = d.bibcode;
           }
           self._docs[d.bibcode] = d;

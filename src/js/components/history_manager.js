@@ -1,9 +1,10 @@
 define([
+  'lodash/dist/lodash.compat',
   'js/components/generic_module',
   'js/mixins/dependon',
   'js/mixins/hardened',
   'js/components/pubsub_key',
-], function(GenericModule, Dependon, Hardened, PubSubKey) {
+], function(_, GenericModule, Dependon, Hardened, PubSubKey) {
   var History = GenericModule.extend({
     initialize: function() {
       this._history = [];

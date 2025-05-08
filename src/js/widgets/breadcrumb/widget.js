@@ -13,26 +13,16 @@
  */
 
 define([
-  'underscore',
+  'lodash/dist/lodash.compat',
   'jquery',
   'backbone',
   'marionette',
   'js/components/api_query',
   'js/components/pubsub_events',
-  'hbs!js/widgets/breadcrumb/templates/widget-view',
-  'hbs!js/widgets/breadcrumb/templates/item-view',
+  'js/widgets/breadcrumb/templates/widget-view.hbs',
+  'js/widgets/breadcrumb/templates/item-view.hbs',
   'js/mixins/dependon',
-], function(
-  _,
-  $,
-  Backbone,
-  Marionette,
-  ApiQuery,
-  PubSubEvents,
-  WidgetTemplate,
-  ItemTemplate,
-  Dependon
-) {
+], function(_, $, Backbone, Marionette, ApiQuery, PubSubEvents, WidgetTemplate, ItemTemplate, Dependon) {
   // Model
   var KeyValue = Backbone.Model.extend({});
 
@@ -106,10 +96,7 @@ define([
       if (q) {
         console.log('NEW REQUEST', q);
         // remember who initiated the new-query
-        this.getPubSub().subscribeOnce(
-          this.getPubSub().DELIVERING_RESPONSE + key.getId(),
-          this.onResponse
-        );
+        this.getPubSub().subscribeOnce(this.getPubSub().DELIVERING_RESPONSE + key.getId(), this.onResponse);
         this.listening = false;
       }
     },

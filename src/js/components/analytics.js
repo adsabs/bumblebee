@@ -1,4 +1,4 @@
-define([], function () {
+define(['@sentry/browser'], function(Sentry) {
   /*
    * Set of targets
    * each has a set of hooks which coorespond to the event label passed
@@ -7,23 +7,8 @@ define([], function () {
    */
   var TARGETS = {
     resolver: {
-      hooks: [
-        'toc-link-followed',
-        'abstract-link-followed',
-        'citations-link-followed',
-        'associated-link-followed',
-      ],
-      types: [
-        'abstract',
-        'citations',
-        'references',
-        'metrics',
-        'coreads',
-        'similar',
-        'graphics',
-        'associated',
-        'toc',
-      ],
+      hooks: ['toc-link-followed', 'abstract-link-followed', 'citations-link-followed', 'associated-link-followed'],
+      types: ['abstract', 'citations', 'references', 'metrics', 'coreads', 'similar', 'graphics', 'associated', 'toc'],
       url: ({ bibcode, target }) => `link_gateway/${bibcode}/${target}`,
     },
   };
@@ -34,9 +19,9 @@ define([], function () {
    * @param {string} url
    * @param {object} data
    */
-  var sendEvent = function (url) {
+  var sendEvent = function(url) {
     window.fetch(url, { method: 'GET' }).catch((error) => {
-      window.getSentry().captureMessage('Failed to send analytics event', {
+      Sentry.captureMessage('Failed to send analytics event', {
         extra: { url, error: error.message },
       });
     });
@@ -47,7 +32,7 @@ define([], function () {
       return false;
     }
     return TARGETS.resolver.hooks.includes(label) && TARGETS.resolver.types.includes(target);
-  }
+  };
 
   /**
    * Go through the targets and fire the event if the label passed
@@ -57,7 +42,7 @@ define([], function () {
    * @param {string} label - the event label
    * @param {object} data - the event data
    */
-  var adsLogger = function (label, data) {
+  var adsLogger = function(label, data) {
     const target = data ? data.target : null;
     const bibcode = data ? data.bibcode : null;
 
@@ -69,14 +54,14 @@ define([], function () {
   var buffer = [];
   var gaName = window.GoogleAnalyticsObject || 'ga';
 
-  var cleanBuffer = function () {
+  var cleanBuffer = function() {
     if (window[gaName]) {
       for (var i = 0; i < buffer.length; i++) {
         window[gaName].apply(this, buffer[i]);
       }
-      buffer = []
+      buffer = [];
     }
-  }
+  };
 
   const CACHE_TIMEOUT = 300;
   /**
@@ -92,8 +77,7 @@ define([], function () {
     }
 
     stringify(args) {
-      return JSON.stringify(args, function (key, value) {
-
+      return JSON.stringify(args, function(key, value) {
         // filter out this cache-buster id added by GTM
         if (key === 'gtm.uniqueEventId') {
           return undefined;
@@ -122,7 +106,7 @@ define([], function () {
   }
 
   const cacher = new AnalyticsCacher();
-  const Analytics = function (action, event, type, description, ...args) {
+  const Analytics = function(action, event, type, description, ...args) {
     if (cacher.has(arguments)) {
       return;
     }
@@ -167,7 +151,7 @@ define([], function () {
       return window.dataLayer;
     }
     return [];
-  }
+  };
 
   /**
    * Push a new object to the datalayer
@@ -179,7 +163,7 @@ define([], function () {
     }
     cacher.add(data);
     Analytics.getDL().push(data);
-  }
+  };
 
   /**
    * Reset the datalayer
@@ -188,7 +172,7 @@ define([], function () {
     Analytics.getDL().push(function() {
       this.reset();
     });
-  }
+  };
 
   /**
    * set a value on the datalayer
@@ -199,7 +183,7 @@ define([], function () {
     Analytics.getDL().push(function() {
       this.set(property, value);
     });
-  }
+  };
 
   /**
    * get a value on the datalayer
@@ -211,7 +195,7 @@ define([], function () {
       value = this.get(property);
     });
     return value;
-  }
+  };
 
   return Analytics;
 });

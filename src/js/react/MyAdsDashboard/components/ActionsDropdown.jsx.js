@@ -1,10 +1,10 @@
 /* eslint-disable no-script-url */
-define([
-  'react',
-  'react-bootstrap',
-  'react-aria-menubutton',
-  'prop-types',
-], function(React, { Label }, { Button, Wrapper, Menu, MenuItem }, PropTypes) {
+define(['react', 'react-bootstrap', 'react-aria-menubutton', 'prop-types'], function(
+  React,
+  { Label },
+  { Button, Wrapper, Menu, MenuItem },
+  PropTypes
+) {
   const renderRunButtons = (item) => {
     let labels = [];
     if (item.type === 'template') {
@@ -12,10 +12,7 @@ define([
         if (item.data === null) {
           labels = ['Search'];
         } else {
-          labels = [
-            'Keyword Matches - Recent Papers',
-            'Other Recent Papers in Selected Categories',
-          ];
+          labels = ['Keyword Matches - Recent Papers', 'Other Recent Papers in Selected Categories'];
         }
       } else if (item.template === 'keyword' && item.data !== null) {
         labels = ['Recent Papers', 'Most Popular', 'Most Cited'];
@@ -26,26 +23,13 @@ define([
       labels = ['Search'];
     }
     return labels.map((label, i) => (
-      <MenuItem
-        key={label}
-        text={label}
-        value={{ type: 'runquery', queryKey: i }}
-        className="menuitem"
-      >
+      <MenuItem key={label} text={label} value={{ type: 'runquery', queryKey: i }} className="menuitem">
         <i className="fa fa-search fa-fw" aria-hidden="true" /> {label}
       </MenuItem>
     ));
   };
 
-  const ActionsDropdown = ({
-    onToggleActive,
-    onRunQuery,
-    onEdit,
-    onDelete,
-    item,
-    disable,
-    dropup,
-  }) => {
+  const ActionsDropdown = ({ onToggleActive, onRunQuery, onEdit, onDelete, item, disable, dropup }) => {
     // is a general notification, disallow editing
     const allowEdit = item.type !== 'query';
 
@@ -64,66 +48,32 @@ define([
     };
 
     return (
-      <Wrapper
-        onSelection={handleSelection}
-        className="react-aria-menubutton__wrapper"
-      >
-        <Button
-          className={`btn btn-default ${disable ? 'disabled' : ''}`}
-          disabled={disable}
-        >
-          <i className="fa fa-cog" aria-hidden="true" /> Actions{' '}
-          <i className="fa fa-caret-down" aria-hidden="true" />
+      <Wrapper onSelection={handleSelection} className="react-aria-menubutton__wrapper">
+        <Button className={`btn btn-default ${disable ? 'disabled' : ''}`} disabled={disable}>
+          <i className="fa fa-cog" aria-hidden="true" /> Actions <i className="fa fa-caret-down" aria-hidden="true" />
         </Button>
         <Menu>
           <ul className="react-aria-menubutton__menu">
-            <span
-              key="query-header"
-              aria-hidden="true"
-              className="menuitem__label"
-            >
+            <span key="query-header" aria-hidden="true" className="menuitem__label">
               View in search results page
             </span>
             {renderRunButtons(item)}
             <hr key="divider" />
-            <span
-              key="actions-header"
-              aria-hidden="true"
-              className="menuitem__label"
-            >
+            <span key="actions-header" aria-hidden="true" className="menuitem__label">
               Actions
             </span>
-            <MenuItem
-              key="toggler"
-              text="toggle"
-              className="menuitem"
-              value={{ type: 'toggleactive' }}
-            >
+            <MenuItem key="toggler" text="toggle" className="menuitem" value={{ type: 'toggleactive' }}>
               <div className="label-group">
-                <Label bsStyle={item.active ? 'success' : 'default'}>
-                  ENABLED
-                </Label>
-                <Label bsStyle={item.active ? 'default' : 'danger'}>
-                  DISABLED
-                </Label>
+                <Label bsStyle={item.active ? 'success' : 'default'}>ENABLED</Label>
+                <Label bsStyle={item.active ? 'default' : 'danger'}>DISABLED</Label>
               </div>
             </MenuItem>
             {allowEdit && (
-              <MenuItem
-                key="edit"
-                text="edit"
-                className="menuitem"
-                value={{ type: 'edit' }}
-              >
+              <MenuItem key="edit" text="edit" className="menuitem" value={{ type: 'edit' }}>
                 <i className="fa fa-pencil fa-fw" aria-hidden="true" /> Edit
               </MenuItem>
             )}
-            <MenuItem
-              key="delete"
-              text="delete"
-              className="menuitem"
-              value={{ type: 'delete' }}
-            >
+            <MenuItem key="delete" text="delete" className="menuitem" value={{ type: 'delete' }}>
               <i className="fa fa-trash fa-fw" aria-hidden="true" /> Delete
             </MenuItem>
           </ul>

@@ -14,8 +14,7 @@ define([], function() {
       ADMIN: {
         id: 'admin',
         label: 'Admin',
-        description:
-          'can view and edit a library and add, edit, or remove library collaborators',
+        description: 'can view and edit a library and add, edit, or remove library collaborators',
       },
     }),
   };

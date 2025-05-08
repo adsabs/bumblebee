@@ -1,4 +1,5 @@
 define([
+    'lodash/dist/lodash.compat',
     'marionette',
     'backbone',
     'jquery',
@@ -13,6 +14,7 @@ define([
     './helpers'
   ],
   function (
+    _,
     Marionette,
     Backbone,
     $,

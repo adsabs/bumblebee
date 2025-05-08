@@ -8,7 +8,7 @@
  */
 
 define([
-  'underscore',
+  'lodash/dist/lodash.compat',
   'jquery',
   'cache',
   'js/components/generic_module',
@@ -18,18 +18,7 @@ define([
   'js/components/api_feedback',
   'js/components/pubsub_key',
   'js/mixins/dependon',
-], function(
-  _,
-  $,
-  Cache,
-  GenericModule,
-  ApiRequest,
-  ApiResponse,
-  ApiQueryUpdater,
-  ApiFeedback,
-  PubSubKey,
-  Dependon
-) {
+], function(_, $, Cache, GenericModule, ApiRequest, ApiResponse, ApiQueryUpdater, ApiFeedback, PubSubKey, Dependon) {
   var ErrorMediator = GenericModule.extend({
     initialize: function(options) {
       this._cache = this._getNewCache(options.cache);
@@ -57,8 +46,7 @@ define([
      *    present
      */
     activate: function(beehive, app) {
-      if (!app)
-        throw new Error('This controller absolutely needs access to the app');
+      if (!app) throw new Error('This controller absolutely needs access to the app');
 
       this.setBeeHive(beehive);
       this.setApp(app);
@@ -76,11 +64,7 @@ define([
      */
     receiveFeedback: function(apiFeedback, senderKey) {
       if (this.debug)
-        console.log(
-          '[EM]: received feedback:',
-          apiFeedback.toJSON(),
-          senderKey ? senderKey.getId() : null
-        );
+        console.log('[EM]: received feedback:', apiFeedback.toJSON(), senderKey ? senderKey.getId() : null);
 
       var componentKey = this._getCacheKey(apiFeedback, senderKey);
       var entry = this._retrieveCacheEntry(componentKey);
@@ -103,15 +87,12 @@ define([
     },
 
     removeFeedbackHandler: function(name) {
-      if (name.toString() in this._handlers)
-        delete this._handlers[name.toString()];
+      if (name.toString() in this._handlers) delete this._handlers[name.toString()];
     },
 
     addFeedbackHandler: function(code, func) {
-      if (!code && !_.isNumber(code))
-        throw new Error('first argument must be code or code:string or string');
-      if (!_.isFunction(func))
-        throw new Error('second argument must be executable');
+      if (!code && !_.isNumber(code)) throw new Error('first argument must be code or code:string or string');
+      if (!_.isFunction(func)) throw new Error('second argument must be executable');
       this._handlers[code.toString()] = func;
     },
 
@@ -155,9 +136,7 @@ define([
       if (req) {
         return req.url();
       }
-      throw new Error(
-        'We cannot identify the origin (recipient) of this feedback'
-      );
+      throw new Error('We cannot identify the origin (recipient) of this feedback');
     },
 
     createNewCacheEntry: function(componentKey) {

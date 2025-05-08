@@ -1,4 +1,4 @@
-define(['underscore', 'jquery'], function(_, $) {
+define(['lodash/dist/lodash.compat', 'jquery'], function(_, $) {
   var getMock = function(name) {
     var mocks = {
       profile: {

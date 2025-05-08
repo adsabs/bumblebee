@@ -1,5 +1,6 @@
 
 define([
+    'lodash/dist/lodash.compat',
     'jquery',
     'js/components/api_query',
     'js/bugutils/minimal_pubsub',
@@ -7,7 +8,7 @@ define([
     'js/widgets/sort/redux/modules/sort-app',
     'js/components/api_feedback'
     ],
-  function($, ApiQuery, MinimalPubSub, SortWidget, SortApp, ApiFeedback) {
+  function(_, $, ApiQuery, MinimalPubSub, SortWidget, SortApp, ApiFeedback) {
 
     var init = function () {
       var minsub = new (MinimalPubSub.extend({

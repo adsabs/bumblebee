@@ -18,7 +18,7 @@
  *
  */
 define([
-  'underscore',
+  'lodash/dist/lodash.compat',
   'backbone',
   'js/components/api_request',
   'js/components/api_targets',
@@ -27,17 +27,7 @@ define([
   'js/mixins/hardened',
   'js/components/api_feedback',
   'js/mixins/api_access',
-], function(
-  _,
-  Backbone,
-  ApiRequest,
-  ApiTargets,
-  GenericModule,
-  Dependon,
-  Hardened,
-  ApiFeedback,
-  ApiAccess
-) {
+], function(_, Backbone, ApiRequest, ApiTargets, GenericModule, Dependon, Hardened, ApiFeedback, ApiAccess) {
   var LocalStorageModel;
   var UserModel;
   var User;
@@ -78,11 +68,7 @@ define([
     initialize: function(options) {
       // this model is for settings that come from PersistentStorage service
       this.localStorageModel = new LocalStorageModel();
-      this.listenTo(
-        this.localStorageModel,
-        'change',
-        this.broadcastUserDataChange
-      );
+      this.listenTo(this.localStorageModel, 'change', this.broadcastUserDataChange);
 
       // this model is for settings that come from user accounts
       this.userModel = new UserModel();
@@ -121,10 +107,7 @@ define([
           });
         }
       };
-      this.getPubSub().subscribe(
-        this.getPubSub().APP_STARTING,
-        checkOrcidToken
-      );
+      this.getPubSub().subscribe(this.getPubSub().APP_STARTING, checkOrcidToken);
 
       var storage = beehive.getService('PersistentStorage');
       if (storage) {
@@ -193,23 +176,13 @@ define([
 
     // tell widgets that data changed, and send them that data
     broadcastUserDataChange: function(changedModel) {
-      this.getPubSub().publish(
-        this.getPubSub().USER_ANNOUNCEMENT,
-        this.USER_INFO_CHANGE,
-        changedModel.changed
-      );
+      this.getPubSub().publish(this.getPubSub().USER_ANNOUNCEMENT, this.USER_INFO_CHANGE, changedModel.changed);
     },
 
     broadcastUserChange: function() {
       // user has signed in or out
-      var message = this.userModel.get('user')
-        ? this.USER_SIGNED_IN
-        : this.USER_SIGNED_OUT;
-      this.getPubSub().publish(
-        this.getPubSub().USER_ANNOUNCEMENT,
-        message,
-        this.userModel.get('user')
-      );
+      var message = this.userModel.get('user') ? this.USER_SIGNED_IN : this.USER_SIGNED_OUT;
+      this.getPubSub().publish(this.getPubSub().USER_ANNOUNCEMENT, message, this.userModel.get('user'));
       this.redirectIfNecessary();
     },
 
@@ -231,10 +204,7 @@ define([
         error = 'error unknown';
       }
 
-      console.error(
-        'POST request failed for endpoint: [' + target + ']',
-        error
-      );
+      console.error('POST request failed for endpoint: [' + target + ']', error);
     },
 
     handleFailedGET: function(jqXHR, status, errorThrown, target) {
@@ -314,8 +284,7 @@ define([
 
       // will have a default fail message for get requests or put/post requests
       function fail() {
-        var toCall =
-          method == 'GET' ? that.handleFailedGET : that.handleFailedPOST;
+        var toCall = method == 'GET' ? that.handleFailedGET : that.handleFailedPOST;
         var argsWithTarget = [].slice.apply(arguments);
         argsWithTarget.push(target);
         toCall.apply(that, argsWithTarget);
@@ -355,11 +324,7 @@ define([
       var pubsub = this.getPubSub();
 
       // redirect user to wherever they were before authentication page
-      if (
-        this.getBeeHive().getObject('MasterPageManager').currentChild ===
-          'AuthenticationPage' &&
-        this.isLoggedIn()
-      ) {
+      if (this.getBeeHive().getObject('MasterPageManager').currentChild === 'AuthenticationPage' && this.isLoggedIn()) {
         // so that navigator can redirect to the proper page
         var previousNav = this.getBeeHive()
           .getService('HistoryManager')
@@ -372,8 +337,7 @@ define([
 
         pubsub.publish.apply(pubsub, [pubsub.NAVIGATE].concat(previousNav));
       } else if (
-        this.getBeeHive().getObject('MasterPageManager').currentChild ===
-          'SettingsPage' &&
+        this.getBeeHive().getObject('MasterPageManager').currentChild === 'SettingsPage' &&
         !this.isLoggedIn()
       ) {
         pubsub.publish(pubsub.NAVIGATE, 'authentication-page');
@@ -409,8 +373,8 @@ define([
       return this.composeRequest({
         target: 'USER',
         method: 'DELETE',
-        data: {csrf: true},
-      }).done(function () {
+        data: { csrf: true },
+      }).done(function() {
         that.getApiAccess({ reconnect: true }).done(function() {
           that.completeLogOut();
         });
@@ -517,9 +481,7 @@ define([
       }
 
       var request = new ApiRequest({
-        target: key
-          ? ApiTargets.SITE_CONFIGURATION + '/' + key
-          : ApiTargets.SITE_CONFIGURATION,
+        target: key ? ApiTargets.SITE_CONFIGURATION + '/' + key : ApiTargets.SITE_CONFIGURATION,
         options: {
           type: 'GET',
           done: done,
@@ -558,18 +520,11 @@ define([
     },
   });
 
-  _.extend(
-    User.prototype,
-    Hardened,
-    Dependon.BeeHive,
-    Dependon.App,
-    ApiAccess,
-    {
-      USER_SIGNED_IN: 'user_signed_in',
-      USER_SIGNED_OUT: 'user_signed_out',
-      USER_INFO_CHANGE: 'user_info_change',
-    }
-  );
+  _.extend(User.prototype, Hardened, Dependon.BeeHive, Dependon.App, ApiAccess, {
+    USER_SIGNED_IN: 'user_signed_in',
+    USER_SIGNED_OUT: 'user_signed_out',
+    USER_INFO_CHANGE: 'user_info_change',
+  });
 
   return User;
 });

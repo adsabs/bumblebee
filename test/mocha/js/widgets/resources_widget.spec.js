@@ -1,10 +1,11 @@
 
 define([
+  'lodash/dist/lodash.compat',
   'jquery',
   'js/widgets/resources/widget.jsx',
   'js/widgets/base/base_widget',
   'js/bugutils/minimal_pubsub'
-], function ($, Widget, BaseWidget, MinPubSub) {
+], function (_, $, Widget, BaseWidget, MinPubSub) {
 
   const init = function () {
     this.sb = sinon.sandbox.create();

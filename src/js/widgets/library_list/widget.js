@@ -1,12 +1,13 @@
 define([
+  'lodash/dist/lodash.compat',
   'marionette',
   'js/widgets/list_of_things/item_view',
   'js/widgets/list_of_things/widget',
   'js/widgets/list_of_things/paginated_view',
   'js/widgets/list_of_things/model',
-  'hbs!js/widgets/library_list/templates/library-container',
-  'hbs!js/widgets/library_list/templates/library-item-edit',
-  'hbs!js/widgets/library_list/templates/empty-collection',
+  'js/widgets/library_list/templates/library-container.hbs',
+  'js/widgets/library_list/templates/library-item-edit.hbs',
+  'js/widgets/library_list/templates/empty-collection.hbs',
   'js/mixins/link_generator_mixin',
   'js/mixins/papers_utils',
   'js/mixins/formatter',
@@ -16,11 +17,11 @@ define([
   'js/components/api_targets',
   'js/mixins/add_stable_index_to_collection',
   'js/mixins/add_secondary_sort',
-  'bootstrap',
-  'hbs!js/wraps/widget/loading/template',
-  'es6!js/widgets/sort/widget.jsx',
-  'es6!js/widgets/sort/redux/modules/sort-app',
+  '../../wraps/widget/loading/template.hbs',
+  'js/widgets/sort/widget.jsx',
+  'js/widgets/sort/redux/modules/sort-app',
 ], function(
+  _,
   Marionette,
   DefaultItemView,
   ListOfThingsWidget,
@@ -38,7 +39,6 @@ define([
   ApiTargets,
   PaginationMixin,
   SecondarySort,
-  Bootstrap,
   loadingTemplate,
   SortWidget,
   SortActions
@@ -65,8 +65,8 @@ define([
 
   var LibraryEmptyView = Marionette.ItemView.extend({
     template: function(data) {
-      if (data.query || data.query === '') {
-        return EmptyCollectionTemplate(data);
+      if (data.solrError || data.query || data.query === '') {
+        return EmptyCollectionTemplate(_.extend(data, { solrError: data.solrError }));
       }
       return loadingTemplate(
         _.extend(data, {
@@ -80,10 +80,7 @@ define([
   var LibraryContainerView = ListOfThingsPaginatedContainerView.extend({
     initialize: function() {
       this.sortWidget = new SortWidget();
-      ListOfThingsPaginatedContainerView.prototype.initialize.apply(
-        this,
-        arguments
-      );
+      ListOfThingsPaginatedContainerView.prototype.initialize.apply(this, arguments);
       this.sortWidget.onSortChange = _.bind(this.onSortChange, this);
     },
 
@@ -138,9 +135,7 @@ define([
     },
 
     removeRecord: function(view) {
-      view
-        .$('.remove-record')
-        .html('<i class="fa fa-spinner fa-pulse" aria-hidden="true"></i>');
+      view.$('.remove-record').html('<i class="fa fa-spinner fa-pulse" aria-hidden="true"></i>');
       var bibcode = view.model.get('bibcode');
       this.trigger('removeRecord', bibcode);
     },
@@ -178,18 +173,13 @@ define([
     },
 
     render: function() {
-      ListOfThingsPaginatedContainerView.prototype.render.apply(
-        this,
-        arguments
-      );
+      ListOfThingsPaginatedContainerView.prototype.render.apply(this, arguments);
       this.$('#sort-container').html(this.sortWidget.render().el);
       var numSelected = this.model.get('numSelected');
       var $bulkDeleteBtn = this.$('#bulk-delete');
       $bulkDeleteBtn
         .toggleClass('hidden', !(numSelected > 0))
-        .html(
-          'Delete ' + numSelected + ' Record' + (numSelected > 1 ? 's' : '')
-        );
+        .html('Delete ' + numSelected + ' Record' + (numSelected > 1 ? 's' : ''));
 
       var $bulkLimitBtn = this.$('#bulk-limit');
       $bulkLimitBtn.toggleClass('hidden', !(numSelected > 0));
@@ -250,14 +240,8 @@ define([
 
     activate: function(beehive) {
       var pubsub = beehive.getService('PubSub');
-      pubsub.subscribe(
-        pubsub.STORAGE_PAPER_UPDATE,
-        _.bind(this.onStoragePaperUpdate, this)
-      );
-      ListOfThingsWidget.prototype.activate.apply(
-        this,
-        [].slice.apply(arguments)
-      );
+      pubsub.subscribe(pubsub.STORAGE_PAPER_UPDATE, _.bind(this.onStoragePaperUpdate, this));
+      ListOfThingsWidget.prototype.activate.apply(this, [].slice.apply(arguments));
       this.view.sortWidget.activate(beehive);
       this.updateSortWidget();
     },
@@ -266,14 +250,10 @@ define([
       var sortWidget = this.view.sortWidget;
       var query = query || this.getCurrentQuery();
       query = query.toJSON();
-      var sortStr = sortWidget.extractSort(
-        (query && query.sort && query.sort[0]) || ''
-      );
+      var sortStr = sortWidget.extractSort((query && query.sort && query.sort[0]) || '');
       sortWidget.store.dispatch(SortActions.setQuery(query));
       sortWidget.store.dispatch(SortActions.setSort(sortStr.sort, true));
-      sortWidget.store.dispatch(
-        SortActions.setDirection(sortStr.direction, true)
-      );
+      sortWidget.store.dispatch(SortActions.setDirection(sortStr.direction, true));
       sortWidget.store.dispatch(SortActions.setLocked(false));
     },
 
@@ -317,7 +297,9 @@ define([
     createApiResponse: function(apiQuery, resp) {
       // might have been an error
       if (_.isString(resp.solr)) {
-        throw new Error(resp.solr + ": list of things widget can't render");
+        console.error('data for library list view not received', resp.solr);
+        this.model.set({ solrError: resp.solr });
+        return;
       }
       if (resp.solr.response.docs.length > 1) {
         // otherwise show a message urging users to add to collection
@@ -412,12 +394,8 @@ define([
             d.num_citations = 0;
           }
 
-          d.formattedDate = d.pubdate
-            ? this.formatDate(d.pubdate)
-            : undefined;
-          d.shortAbstract = d.abstract
-            ? this.shortenAbstract(d.abstract)
-            : undefined;
+          d.formattedDate = d.pubdate ? this.formatDate(d.pubdate) : undefined;
+          d.shortAbstract = d.abstract ? this.shortenAbstract(d.abstract) : undefined;
 
           return d;
         },
@@ -479,27 +457,21 @@ define([
           pubsub.publish(pubsub.BULK_PAPER_SELECTION, bibs, arg1);
           break;
         case 'bulkDelete':
-          var chosen = _.map(this.collection.where({ chosen: true }), function(
-            m
-          ) {
+          var chosen = _.map(this.collection.where({ chosen: true }), function(m) {
             return m.get('bibcode');
           });
           if (chosen.length > 0) {
-            var data = { bibcode: chosen, action: 'remove' },
-              id = this.model.get('libraryID');
+            var data = { bibcode: chosen, action: 'remove' };
+            var id = this.model.get('libraryID');
             this.getBeeHive()
               .getObject('LibraryController')
               .updateLibraryContents(id, data)
               .done(function() {
-                const deleted = that.collection.find(
-                  (m) => m.get('bibcode') === chosen[0]
-                );
+                const deleted = that.collection.find((m) => m.get('bibcode') === chosen[0]);
                 that.reset();
                 // flash a success message
                 that.model.set('itemDeleted', { id: deleted.id });
-                var data = that.model.get('sort')
-                  ? { sort: that.model.get('sort') }
-                  : {};
+                var data = that.model.get('sort') ? { sort: that.model.get('sort') } : {};
                 that.dispatchRequest(data);
               });
           }
@@ -516,15 +488,11 @@ define([
             .getObject('LibraryController')
             .updateLibraryContents(id, data)
             .done(function() {
-              const deleted = that.collection.find(
-                (m) => m.get('bibcode') === arg1
-              );
+              const deleted = that.collection.find((m) => m.get('bibcode') === arg1);
               that.reset();
               // flash a success message
               that.model.set('itemDeleted', { id: deleted.id });
-              var data = that.model.get('sort')
-                ? { sort: that.model.get('sort') }
-                : {};
+              var data = that.model.get('sort') ? { sort: that.model.get('sort') } : {};
               that.dispatchRequest(data);
             });
           break;

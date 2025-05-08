@@ -9,25 +9,15 @@
 
 define([
   'jquery',
-  'underscore',
+  'lodash/dist/lodash.compat',
   'js/components/api_query',
   'js/components/api_request',
   'js/components/api_response',
   'js/mixins/dependon',
   'js/components/generic_module',
-  'sprintf',
+  'sprintf-js',
   'js/components/api_targets',
-], function(
-  $,
-  _,
-  ApiQuery,
-  ApiRequest,
-  ApiResponse,
-  Dependon,
-  GenericModule,
-  sprintf,
-  ApiTargets
-) {
+], function($, _, ApiQuery, ApiRequest, ApiResponse, Dependon, GenericModule, sprintf, ApiTargets) {
   var Diagnostics = GenericModule.extend({
     activate: function(beehive, app) {
       this.setApp(app);
@@ -64,8 +54,7 @@ define([
       var api = app.getService('Api');
       options = options || {};
       if (!options.query) throw Error('You must pass in "query"');
-      if (!(options.query instanceof ApiQuery))
-        options.query = new ApiQuery(options.query);
+      if (!(options.query instanceof ApiQuery)) options.query = new ApiQuery(options.query);
 
       var r = new ApiRequest({
         target: options.target || ApiTargets.SEARCH,
@@ -102,11 +91,7 @@ define([
         var parts = xhr.url.split('&');
         _.each(parts, function(p) {
           if (p.startsWith('callback=')) {
-            xhr.url +=
-              '&' +
-              (jsonpParameter || 'json.wrf') +
-              '=' +
-              p.replace('callback=', ''); // jQuery generates a random callback, we'll pass it to solr
+            xhr.url += '&' + (jsonpParameter || 'json.wrf') + '=' + p.replace('callback=', ''); // jQuery generates a random callback, we'll pass it to solr
           }
         });
       };
@@ -117,9 +102,7 @@ define([
       var res = [];
 
       var format = '%40s %40s %40s %10s';
-      res.push(
-        sprintf.sprintf(format, 'field', result.first, result.second, 'diff')
-      );
+      res.push(sprintf.sprintf(format, 'field', result.first, result.second, 'diff'));
       res.push(
         '------------------------------------------------------------------------------------------------------------------------------------'
       );
@@ -132,12 +115,7 @@ define([
       return res;
     },
 
-    compareTwoSearchInstances: function(
-      url1,
-      url2,
-      listOfFields,
-      listOfFields2
-    ) {
+    compareTwoSearchInstances: function(url1, url2, listOfFields, listOfFields2) {
       var self = this;
       var result = $.Deferred();
 
@@ -145,11 +123,9 @@ define([
         var d1 = this.getListOfFields(url1);
         var d2 = this.getListOfFields(url2);
         $.when(d1, d2).done(function(v1, v2) {
-          self
-            .compareTwoSearchInstances(url1, url2, v1, v2)
-            .done(function(res) {
-              result.resolve(res);
-            });
+          self.compareTwoSearchInstances(url1, url2, v1, v2).done(function(res) {
+            result.resolve(res);
+          });
         });
       } else {
         var c1 = this.countDocsInFields(url1, listOfFields);
@@ -332,10 +308,7 @@ define([
 
         _.each(_.keys(pubsub._issuedKeys), function(k) {
           var p;
-          if (
-            pubsub._issuedKeys[k].getId &&
-            objNames[pubsub._issuedKeys[k].getId()]
-          )
+          if (pubsub._issuedKeys[k].getId && objNames[pubsub._issuedKeys[k].getId()])
             p = objNames[pubsub._issuedKeys[k].getId()];
 
           if (p) console.log(k + '(parent:' + p + ') -> ' + objNames[k]);
@@ -353,9 +326,7 @@ define([
           stats[x] = stats[x] ? stats[x] + 1 : 1;
           if (x == undefined) {
             if (!stats['undefined keys']) stats['undefined keys'] = [];
-            stats['undefined keys'].push(
-              key + (v.ctx.getId ? v.ctx.getId() : 'X')
-            );
+            stats['undefined keys'].push(key + (v.ctx.getId ? v.ctx.getId() : 'X'));
           }
         });
       });

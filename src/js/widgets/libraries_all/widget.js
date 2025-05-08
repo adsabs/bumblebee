@@ -1,9 +1,10 @@
-define([
-  'marionette',
-  'js/widgets/base/base_widget',
-  './views/view_all_libraries',
-  'utils',
-], function(Marionette, BaseWidget, LibrariesView, utils) {
+define(['marionette', 'js/widgets/base/base_widget', './views/view_all_libraries', 'utils', 'backbone'], function(
+  Marionette,
+  BaseWidget,
+  LibrariesView,
+  utils,
+  Backbone
+) {
   var LibraryModel = Backbone.Model.extend({
     defaults: function() {
       return {
@@ -61,16 +62,10 @@ define([
         var permissionHierarchy = ['read', 'write', 'admin', 'owner'];
 
         if (order == 'asc') {
-          return (
-            permissionHierarchy.indexOf(model1.get(sort)) -
-            permissionHierarchy.indexOf(model2.get(sort))
-          );
+          return permissionHierarchy.indexOf(model1.get(sort)) - permissionHierarchy.indexOf(model2.get(sort));
         }
 
-        return (
-          permissionHierarchy.indexOf(model2.get(sort)) -
-          permissionHierarchy.indexOf(model1.get(sort))
-        );
+        return permissionHierarchy.indexOf(model2.get(sort)) - permissionHierarchy.indexOf(model1.get(sort));
       }
       if (type == 'int') {
         if (order == 'asc') {
@@ -108,10 +103,9 @@ define([
 
     activate: function(beehive) {
       this.setBeeHive(beehive);
-      _.bindAll(this);
       var ps = this.getPubSub();
-      ps.subscribe(ps.LIBRARY_CHANGE, this.updateCollection);
-      ps.subscribe(ps.CUSTOM_EVENT, this.onCustomEvent);
+      ps.subscribe(ps.LIBRARY_CHANGE, this.updateCollection.bind(this));
+      ps.subscribe(ps.CUSTOM_EVENT, this.onCustomEvent.bind(this));
 
       // initial data request
       this.getData();
@@ -157,7 +151,7 @@ define([
             collection: this.libraryCollection,
             model: this.libraryCollection.containerModel,
           });
-          subView.on('all', this.handleSubViewEvents);
+          subView.on('all', this.handleSubViewEvents.bind(this));
           this.view.container.show(subView);
           break;
       }
@@ -176,9 +170,7 @@ define([
       const regex = new RegExp(`^.*${utils.escapeRegExp(value)}.*$`, 'gi');
       const result = this._oldCollection
         .clone()
-        .filter(
-          (m) => m.get('name').match(regex) || m.get('description').match(regex)
-        );
+        .filter((m) => m.get('name').match(regex) || m.get('description').match(regex));
       this.updateCollection(result);
     },
 

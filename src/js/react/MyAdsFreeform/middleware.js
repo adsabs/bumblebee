@@ -1,4 +1,4 @@
-define(['underscore', './actions', 'js/react/shared/helpers'], function(
+define(['lodash/dist/lodash.compat', './actions', 'js/react/shared/helpers'], function(
   _,
   {
     SET_UPDATE_DATA,
@@ -25,41 +25,39 @@ define(['underscore', './actions', 'js/react/shared/helpers'], function(
     }, {});
   };
 
-  const saveNotification = middleware(
-    ({ trigger, next, dispatch, action, getState }) => {
-      next(action);
+  const saveNotification = middleware(({ trigger, next, dispatch, action, getState }) => {
+    next(action);
 
-      if (action.type === SAVE_NEW_NOTIFICATION) {
-        trigger('getCurrentQuery', (currentQuery) => {
-          if (currentQuery && currentQuery.toJSON) {
-            const queryParams = currentQuery.toJSON();
+    if (action.type === SAVE_NEW_NOTIFICATION) {
+      trigger('getCurrentQuery', (currentQuery) => {
+        if (currentQuery && currentQuery.toJSON) {
+          const queryParams = currentQuery.toJSON();
 
-            // if sort has 'score' then stateful is false
-            let stateful = true;
-            if (queryParams.sort && queryParams.sort[0].startsWith('score')) {
-              stateful = false;
-            }
-            dispatch({ type: SET_UPDATE_DATA, result: { stateful } });
-            dispatch(getQID(filterQueryParams(queryParams)));
-          } else {
-            dispatch(makeError('Current query not found'));
+          // if sort has 'score' then stateful is false
+          let stateful = true;
+          if (queryParams.sort && queryParams.sort[0].startsWith('score')) {
+            stateful = false;
           }
-        });
-        dispatch({ type: SET_UPDATE_DATA, result: action.result });
-      }
-
-      if (action.type === apiSuccess(GET_QID)) {
-        if (action.result && action.result.qid) {
-          const qid = action.result.qid;
-          const { updateData } = getState();
-
-          dispatch(addNotification({ ...updateData, qid }));
+          dispatch({ type: SET_UPDATE_DATA, result: { stateful } });
+          dispatch(getQID(filterQueryParams(queryParams)));
         } else {
-          dispatch(makeError('No QID returned from the server'));
+          dispatch(makeError('Current query not found'));
         }
+      });
+      dispatch({ type: SET_UPDATE_DATA, result: action.result });
+    }
+
+    if (action.type === apiSuccess(GET_QID)) {
+      if (action.result && action.result.qid) {
+        const qid = action.result.qid;
+        const { updateData } = getState();
+
+        dispatch(addNotification({ ...updateData, qid }));
+      } else {
+        dispatch(makeError('No QID returned from the server'));
       }
     }
-  );
+  });
 
   const parseScope = (requestType) => {
     const [scope, status] = requestType.split('_API_REQUEST_');

@@ -1,5 +1,5 @@
 define([
-  'underscore',
+  'lodash/dist/lodash.compat',
   'js/components/api_feedback'
   ], function(
   _,

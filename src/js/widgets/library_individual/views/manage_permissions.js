@@ -1,10 +1,12 @@
 define([
+  'lodash/dist/lodash.compat',
   'marionette',
-  'hbs!js/widgets/library_individual/templates/manage-permissions-container',
-  'hbs!js/widgets/library_individual/templates/make-public',
-  'hbs!../templates/transfer-ownership-modal',
-  'reactify!js/react/BumblebeeWidget?LibraryCollaborators',
+  'js/widgets/library_individual/templates/manage-permissions-container.hbs',
+  'js/widgets/library_individual/templates/make-public.hbs',
+  'js/widgets/library_individual/templates/transfer-ownership-modal.hbs',
+  'js/react/LibraryCollaborators/index',
 ], function(
+  _,
   Marionette,
   ManagePermissionsContainer,
   MakePublicTemplate,
@@ -160,9 +162,7 @@ define([
     renderCollaboratorsView() {
       const $collabContainer = $('#permissions-list', this.$el);
       if ($collabContainer.has('*')) {
-        this.libraryCollaboratorsComponent.view.setElement(
-          $collabContainer.get(0)
-        );
+        this.libraryCollaboratorsComponent.view.setElement($collabContainer.get(0));
         this.libraryCollaboratorsComponent.view.render();
       }
     },

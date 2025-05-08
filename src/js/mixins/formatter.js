@@ -1,4 +1,6 @@
-define([], function() {
+define([
+  'lodash/dist/lodash.compat',
+], function(_) {
   var f = {};
 
   /*

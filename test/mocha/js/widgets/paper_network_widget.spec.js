@@ -1,9 +1,10 @@
 define([
+  'lodash/dist/lodash.compat',
   'js/wraps/paper_network',
   'js/components/json_response',
   'js/components/api_query',
   'js/bugutils/minimal_pubsub',
-], function(PaperNetwork, JsonResponse, ApiQuery, MinPubSub) {
+], function(_, PaperNetwork, JsonResponse, ApiQuery, MinPubSub) {
   describe('Paper Network UI Widget (paper_network_widget.spec.js)', function() {
     var testDataBig = {
       data: {

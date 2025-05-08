@@ -2,15 +2,9 @@ define([
   'react',
   'prop-types',
   'react-bootstrap',
-  '../constants',
-  'es6!./ManageButton.jsx',
-], function(
-  React,
-  PropTypes,
-  { Modal, Button, FormControl, ControlLabel, FormGroup },
-  { Permissions },
-  ManageButton
-) {
+  'js/react/LibraryCollaborators/constants',
+  'js/react/LibraryCollaborators/components/ManageButton.jsx',
+], function(React, PropTypes, { Modal, Button, FormControl, ControlLabel, FormGroup }, { Permissions }, ManageButton) {
   const initialState = {
     permission: Permissions.READ,
     email: '',
@@ -45,29 +39,16 @@ define([
 
     render() {
       return (
-        <Modal
-          show={this.props.show}
-          onHide={this.props.onHide}
-          aria-labelledby="add-collaborator__title"
-        >
+        <Modal show={this.props.show} onHide={this.props.onHide} aria-labelledby="add-collaborator__title">
           <Modal.Header>
-            <Modal.Title id="collaborator__title">
-              Add New Collaborator
-            </Modal.Title>
+            <Modal.Title id="collaborator__title">Add New Collaborator</Modal.Title>
           </Modal.Header>
           <form onSubmit={this.onSubmit}>
             <Modal.Body>
               <FormGroup>
-                <ControlLabel
-                  htmlFor={`manage-permission-${this.state.permission.id}`}
-                >
-                  Permission
-                </ControlLabel>
+                <ControlLabel htmlFor={`manage-permission-${this.state.permission.id}`}>Permission</ControlLabel>
                 <div>
-                  <ManageButton
-                    onChange={this.onManagePermissions}
-                    permission={this.state.permission}
-                  />
+                  <ManageButton onChange={this.onManagePermissions} permission={this.state.permission} />
                 </div>
               </FormGroup>
               <FormGroup>
@@ -83,9 +64,7 @@ define([
               </FormGroup>
               <FormGroup>
                 <FormControl.Static>
-                  <strong>
-                    * This user will be notified via email provided
-                  </strong>
+                  <strong>* This user will be notified via email provided</strong>
                 </FormControl.Static>
               </FormGroup>
             </Modal.Body>

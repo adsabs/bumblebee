@@ -1,5 +1,5 @@
 define([
-  'underscore',
+  'lodash',
   'backbone',
   'react',
   'react-dom',
@@ -9,10 +9,10 @@ define([
   'js/components/api_request',
   'js/components/api_targets',
   'js/widgets/base/base_widget',
-  'es6!./redux/configure-store',
-  'es6!./redux/modules/api',
-  'es6!./redux/modules/ui',
-  'es6!./containers/app',
+  'js/widgets/associated/redux/configure-store',
+  'js/widgets/associated/redux/modules/api',
+  'js/widgets/associated/redux/modules/ui',
+  'js/widgets/associated/containers/app',
 ], function(
   _,
   Backbone,
@@ -59,10 +59,7 @@ define([
       this.view = new View({ store: this.store });
 
       if (!window.__BUMBLEBEE_TESTING_MODE__) {
-        this.processAbstractData = _.debounce(
-          _.bind(this.processAbstractData, this),
-          300
-        );
+        this.processAbstractData = _.debounce(_.bind(this.processAbstractData, this), 300);
       }
     },
     defaultQueryArguments: {},

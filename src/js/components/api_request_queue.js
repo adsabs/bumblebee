@@ -17,7 +17,7 @@
  *   be called for every queued request, instead of just the final one.
  *   Default: false
  * */
-define(['underscore', 'js/components/api_request'], function(_, ApiRequest) {
+define(['lodash/dist/lodash.compat', 'js/components/api_request'], function(_, ApiRequest) {
   var ApiRequestQueue = ApiRequest.extend({
     _queue: [],
     _lock: false,

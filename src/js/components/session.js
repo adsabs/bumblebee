@@ -2,6 +2,7 @@
  * A generic class that lazy-loads User info
  */
 define([
+  'lodash/dist/lodash.compat',
   'backbone',
   'js/components/api_request',
   'js/components/api_targets',
@@ -14,6 +15,7 @@ define([
   'js/mixins/api_access',
   'utils',
 ], function(
+  _,
   Backbone,
   ApiRequest,
   ApiTargets,
@@ -36,14 +38,7 @@ define([
 
   const payloads = {
     login: ['email', 'password'],
-    register: [
-      'given_name',
-      'family_name',
-      'email',
-      'password1',
-      'password2',
-      'g-recaptcha-response',
-    ],
+    register: ['given_name', 'family_name', 'email', 'password1', 'password2', 'g-recaptcha-response'],
     resetPassword1: ['g-recaptcha-response'],
     resetPassword2: ['password1', 'password2'],
   };
@@ -188,10 +183,7 @@ define([
     resetPassword2: function(data) {
       this.sendRequestWithNewCSRF(function(csrfToken) {
         var request = new ApiRequest({
-          target:
-            ApiTargets.RESET_PASSWORD +
-            '/' +
-            this.model.get('resetPasswordToken'),
+          target: ApiTargets.RESET_PASSWORD + '/' + this.model.get('resetPasswordToken'),
           query: new ApiQuery({}),
           options: {
             type: 'PUT',
@@ -208,7 +200,6 @@ define([
       });
     },
 
-
     /**
      * Resend verification email
      * @param {string} email
@@ -224,17 +215,11 @@ define([
             headers: { 'X-CSRFToken': csrfToken },
             done: function() {
               const pubsub = self.getPubSub();
-              pubsub.publish(
-                pubsub.USER_ANNOUNCEMENT,
-                'resend_verification_email_success'
-              );
+              pubsub.publish(pubsub.USER_ANNOUNCEMENT, 'resend_verification_email_success');
             },
             fail: function(xhr) {
               const pubsub = self.getPubSub();
-              const error = utils.extractErrorMessageFromAjax(
-                xhr,
-                'error unknown'
-              );
+              const error = utils.extractErrorMessageFromAjax(xhr, 'error unknown');
               const message = `Resending verification email was unsuccessful (${error})`;
               pubsub.publish(
                 pubsub.ALERT,
@@ -245,11 +230,7 @@ define([
                   fade: true,
                 })
               );
-              pubsub.publish(
-                pubsub.USER_ANNOUNCEMENT,
-                'resend_verification_email_fail',
-                message
-              );
+              pubsub.publish(pubsub.USER_ANNOUNCEMENT, 'resend_verification_email_fail', message);
             },
           },
         });
@@ -339,11 +320,7 @@ define([
           fade: true,
         })
       );
-      pubsub.publish(
-        pubsub.USER_ANNOUNCEMENT,
-        'reset_password_1_fail',
-        message
-      );
+      pubsub.publish(pubsub.USER_ANNOUNCEMENT, 'reset_password_1_fail', message);
     },
 
     resetPassword2Success: function(response, status, jqXHR) {
@@ -373,11 +350,7 @@ define([
       promise.fail(function(xhr) {
         const error = utils.extractErrorMessageFromAjax(xhr, 'error unknown');
         const message = `Your password was not successfully reset. Please try to follow the link from the email you received again.\n\n(${error})`;
-        pubsub.publish(
-          pubsub.USER_ANNOUNCEMENT,
-          'reset_password_2_fail',
-          message
-        );
+        pubsub.publish(pubsub.USER_ANNOUNCEMENT, 'reset_password_2_fail', message);
         pubsub.publish(
           pubsub.ALERT,
           new ApiFeedback({
@@ -403,11 +376,7 @@ define([
           fade: true,
         })
       );
-      pubsub.publish(
-        pubsub.USER_ANNOUNCEMENT,
-        'reset_password_2_fail',
-        message
-      );
+      pubsub.publish(pubsub.USER_ANNOUNCEMENT, 'reset_password_2_fail', message);
     },
 
     hardenedInterface: {

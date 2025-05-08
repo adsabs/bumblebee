@@ -1,4 +1,4 @@
-define(['underscore'], function(_) {
+define(['lodash/dist/lodash.compat'], function(_) {
   var Transition = function(endpoint, options) {
     if (!_.isString(endpoint)) {
       throw new Error('Endpoint name must be a string');

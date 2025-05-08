@@ -10,12 +10,12 @@ define([
   'js/mixins/add_stable_index_to_collection',
   'js/mixins/link_generator_mixin',
   'js/mixins/formatter',
-  'hbs!js/widgets/results/templates/container-template',
+  'js/widgets/results/templates/container-template.hbs',
   'js/mixins/papers_utils',
   'js/mixins/expose_metadata',
   'js/modules/orcid/extension',
   'js/mixins/dependon',
-  'js/components/api_feedback',
+  'lodash',
 ], function(
   ListOfThingsWidget,
   AbstractWidget,
@@ -27,7 +27,7 @@ define([
   MetadataMixin,
   OrcidExtension,
   Dependon,
-  ApiFeedback
+  _
 ) {
   var ResultsWidget = ListOfThingsWidget.extend({
     initialize: function() {
@@ -63,21 +63,16 @@ define([
       this.view.resultsWidget = true;
       this.view.delegateEvents();
       // this must come after the event delegation!
-      this.listenTo(this.collection, 'reset', this.checkDetails);
+      this.listenTo(this.collection, 'reset', this.checkDetails.bind(this));
       // finally, listen
       // to this event on the view
-      this.listenTo(this.view, 'toggle-all', this.triggerBulkAction);
+      this.listenTo(this.view, 'toggle-all', this.triggerBulkAction.bind(this));
       this.minAuthorsPerResult = 3;
 
-      this.model.on(
-        'change:showSidebars',
-        _.bind(this._onToggleSidebars, this)
-      );
+      this.model.on('change:showSidebars', _.bind(this._onToggleSidebars, this));
 
       // update the default fields with whatever the abstract page needs
-      var abstractFields = AbstractWidget.prototype.defaultQueryArguments.fl.split(
-        ','
-      );
+      var abstractFields = AbstractWidget.prototype.defaultQueryArguments.fl.split(',');
       var resultsFields = this.defaultQueryArguments.fl.split(',');
       resultsFields = _.union(abstractFields, resultsFields);
 
@@ -98,10 +93,7 @@ define([
     },
 
     activate: function(beehive) {
-      ListOfThingsWidget.prototype.activate.apply(
-        this,
-        [].slice.apply(arguments)
-      );
+      ListOfThingsWidget.prototype.activate.apply(this, [].slice.apply(arguments));
       var pubsub = beehive.getService('PubSub');
       _.bindAll(
         this,
@@ -157,10 +149,10 @@ define([
           if ($link) {
             // found it, clear the interval and scroll
             clearInterval(focusInterval);
-              $(document.documentElement).animate(
-                { scrollTop: $link.offset() && $link.offset().top ? $link.offset().top : 0 },
-                'fast'
-              );
+            $(document.documentElement).animate(
+              { scrollTop: $link.offset() && $link.offset().top ? $link.offset().top : 0 },
+              'fast'
+            );
           }
         }, 100);
 
@@ -174,11 +166,7 @@ define([
     },
 
     _onToggleSidebars: function() {
-      this.trigger(
-        'page-manager-event',
-        'side-bars-update',
-        this.model.get('showSidebars')
-      );
+      this.trigger('page-manager-event', 'side-bars-update', this.model.get('showSidebars'));
     },
 
     _onSidebarsUpdate: function(value) {
@@ -247,9 +235,7 @@ define([
         var beehive = _.isFunction(this.getBeeHive) && this.getBeeHive();
         var user = _.isFunction(beehive.getObject) && beehive.getObject('User');
         if (_.isPlainObject(user)) {
-          return (
-            _.isFunction(user.getUserData) && user.getUserData('USER_DATA')
-          );
+          return _.isFunction(user.getUserData) && user.getUserData('USER_DATA');
         }
         return {};
       } catch (e) {
@@ -259,9 +245,7 @@ define([
 
     updateMinAuthorsFromUserData: function() {
       var userData = this.getUserData();
-      var min = _.has(userData, 'minAuthorsPerResult')
-        ? userData.minAuthorsPerResult
-        : this.minAuthorsPerResult;
+      var min = _.has(userData, 'minAuthorsPerResult') ? userData.minAuthorsPerResult : this.minAuthorsPerResult;
 
       if (String(min).toUpperCase() === 'ALL') {
         this.minAuthorsPerResult = Number.MAX_SAFE_INTEGER;
@@ -276,9 +260,7 @@ define([
       var params = apiResponse.get('responseHeader.params');
       var start = params.start || 0;
       var docs = PaginationMixin.addPaginationToDocs(docs, start);
-      var highlights = apiResponse.has('highlighting')
-        ? apiResponse.get('highlighting')
-        : {};
+      var highlights = apiResponse.has('highlighting') ? apiResponse.get('highlighting') : {};
       var self = this;
       var userData = this.getBeeHive()
         .getObject('User')
@@ -316,9 +298,7 @@ define([
         d.identifier = d.bibcode ? d.bibcode : d.identifier;
 
         // make sure undefined doesn't become "undefined"
-        d.encodedIdentifier = _.isUndefined(d.identifier)
-          ? d.identifier
-          : encodeURIComponent(d.identifier);
+        d.encodedIdentifier = _.isUndefined(d.identifier) ? d.identifier : encodeURIComponent(d.identifier);
         var h = {};
 
         if (_.keys(highlights).length) {
@@ -361,12 +341,8 @@ define([
           d.allAuthorFormatted = _.map(d.author, format);
         }
 
-        d.formattedDate = d.pubdate
-          ? self.formatDate(d.pubdate)
-          : undefined;
-        d.shortAbstract = d.abstract
-          ? self.shortenAbstract(d.abstract)
-          : undefined;
+        d.formattedDate = d.pubdate ? self.formatDate(d.pubdate) : undefined;
+        d.shortAbstract = d.abstract ? self.shortenAbstract(d.abstract) : undefined;
 
         if (appStorage && appStorage.isPaperSelected(d.identifier)) {
           d.chosen = true;
@@ -384,15 +360,8 @@ define([
       const pubsub = this.getPubSub();
 
       // if the latest request equals the total perPage, then we're done, send off event
-      if (
-        this.pagination &&
-        this.pagination.perPage === +params.start + +params.rows
-      ) {
-        pubsub.publish(
-          pubsub.CUSTOM_EVENT,
-          'timing:results-loaded',
-          +new Date() - this.queryTimer
-        );
+      if (this.pagination && this.pagination.perPage === +params.start + +params.rows) {
+        pubsub.publish(pubsub.CUSTOM_EVENT, 'timing:results-loaded', +new Date() - this.queryTimer);
       }
 
       this.model.set('loading', false);
@@ -437,11 +406,7 @@ define([
 
     triggerBulkAction: function(flag) {
       var bibs = this.collection.pluck('bibcode');
-      this.getPubSub().publish(
-        this.getPubSub().BULK_PAPER_SELECTION,
-        bibs,
-        flag
-      );
+      this.getPubSub().publish(this.getPubSub().BULK_PAPER_SELECTION, bibs, flag);
     },
 
     reset: function() {
@@ -454,11 +419,6 @@ define([
 
   _.extend(ResultsWidget.prototype, LinkGenerator);
   _.extend(ResultsWidget.prototype, Formatter);
-  _.extend(
-    ResultsWidget.prototype,
-    PapersUtilsMixin,
-    MetadataMixin,
-    Dependon.BeeHive
-  );
+  _.extend(ResultsWidget.prototype, PapersUtilsMixin, MetadataMixin, Dependon.BeeHive);
   return OrcidExtension(ResultsWidget);
 });

@@ -2,11 +2,11 @@
  * Main collection point for all the actions
  */
 define([
-  'underscore',
+  'lodash/dist/lodash.compat',
   'jquery',
   'js/components/api_query',
   'js/components/api_targets',
-  'filesaver',
+  'file-saver',
 ], function(_, $, ApiQuery, ApiTargets) {
   // set of action names
   const actions = {
@@ -160,21 +160,13 @@ define([
   actions.fetchUsingQuery = () => (dispatch, getState, widget) => {
     const { exports, main } = getState();
     const { composeRequest } = widget;
-    const {
-      requestIds,
-      receiveIds,
-      requestFailed,
-      setTotalRecs,
-      setHasError,
-      setSort,
-    } = actions;
+    const { requestIds, receiveIds, requestFailed, setTotalRecs, setHasError, setSort } = actions;
 
     // create a new query from the serialized params
     const query = new ApiQuery(main.query);
     query.set({
       // use a specific count, if it's less than the default batchSize
-      rows:
-        exports.count < exports.batchSize ? exports.count : exports.batchSize,
+      rows: exports.count < exports.batchSize ? exports.count : exports.batchSize,
       fl: 'bibcode',
 
       // start at the maxCount - batchSize, to get a particular window
@@ -215,13 +207,7 @@ define([
    * identifiers and some other information.
    */
   actions.fetchUsingIds = (isLibrary) => (dispatch, getState, widget) => {
-    const {
-      requestExport,
-      receiveExport,
-      requestFailed,
-      setIgnore,
-      setHasError,
-    } = actions;
+    const { requestExport, receiveExport, requestFailed, setIgnore, setHasError } = actions;
     const { composeRequest } = widget;
     const { format, exports } = getState();
 
@@ -231,14 +217,11 @@ define([
     dispatch(requestExport());
 
     // get the current count, which the user selected
-    const count =
-      exports.count < exports.batchSize ? exports.count : exports.batchSize;
+    const count = exports.count < exports.batchSize ? exports.count : exports.batchSize;
     const start = exports.maxCount - exports.batchSize;
 
     // only grab the first n records
-    const ids = isLibrary
-      ? exports.ids.slice(start, start + count)
-      : _.take(exports.ids, count);
+    const ids = isLibrary ? exports.ids.slice(start, start + count) : _.take(exports.ids, count);
 
     // setting up a new query using our current ids
     const q = new ApiQuery();
@@ -246,10 +229,7 @@ define([
     q.set('sort', exports.sort);
     if (format.value === 'custom' && exports.customFormatString.length > 0) {
       q.set('format', exports.customFormatString);
-    } else if (
-      format.value === 'custom' &&
-      exports.customFormatString.length <= 0
-    ) {
+    } else if (format.value === 'custom' && exports.customFormatString.length <= 0) {
       // send back an empty response
       return $.Deferred()
         .resolve()
@@ -311,13 +291,7 @@ define([
    * Get the next batch of records
    */
   actions.getNextBatch = () => (dispatch, getState) => {
-    const {
-      setMaxCount,
-      setBatchSize,
-      setCount,
-      fetchUsingQuery,
-      fetchUsingIds,
-    } = actions;
+    const { setMaxCount, setBatchSize, setCount, fetchUsingQuery, fetchUsingIds } = actions;
     const { exports } = getState();
 
     // get the total, based on the max count and our batchsize

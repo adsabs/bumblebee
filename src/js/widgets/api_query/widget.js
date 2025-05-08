@@ -3,26 +3,16 @@
  */
 
 define([
-  'underscore',
+  'lodash/dist/lodash.compat',
   'jquery',
   'backbone',
   'marionette',
   'js/components/api_query',
   'js/components/pubsub_events',
-  'hbs!js/widgets/api_query/templates/widget-view',
-  'hbs!js/widgets/api_query/templates/item-view',
+  'js/widgets/api_query/templates/widget-view.hbs',
+  'js/widgets/api_query/templates/item-view.hbs',
   'js/mixins/dependon',
-], function(
-  _,
-  $,
-  Backbone,
-  Marionette,
-  ApiQuery,
-  PubSubEvents,
-  WidgetTemplate,
-  ItemTemplate,
-  Dependon
-) {
+], function(_, $, Backbone, Marionette, ApiQuery, PubSubEvents, WidgetTemplate, ItemTemplate, Dependon) {
   // Model
   var KeyValue = Backbone.Model.extend({});
 
@@ -188,10 +178,7 @@ define([
      */
     onAllPubSub: function() {
       var event = arguments[0];
-      if (
-        event == PubSubEvents.START_SEARCH ||
-        event == PubSubEvents.INVITING_REQUEST
-      ) {
+      if (event == PubSubEvents.START_SEARCH || event == PubSubEvents.INVITING_REQUEST) {
         console.log('[debug:ApiQueryWidget]', arguments[0]);
         // this.onLoad(arguments[1]);
         this.view.updateInputBox(arguments[1].url()); // update the input

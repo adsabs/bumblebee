@@ -1,8 +1,8 @@
 define([
-  'underscore',
-  'es6!../models/authorAffiliation',
-  'es6!../constants/actionNames',
-  'filesaver',
+  'lodash/dist/lodash.compat',
+  'js/widgets/author_affiliation_tool/models/authorAffiliation',
+  'js/widgets/author_affiliation_tool/constants/actionNames',
+  'file-saver',
 ], function(_, authorAffiliation, ACTIONS) {
   /**
    * Format the data into something the server will accept
@@ -121,13 +121,7 @@ define([
    * @param {object} innerData - the affiliation data
    * @returns {Array} the new data set with the affiliation section (at index) toggled
    */
-  const toggleAffiliationRow = (
-    data,
-    affIdx,
-    authorIdx,
-    authorData,
-    innerData
-  ) => {
+  const toggleAffiliationRow = (data, affIdx, authorIdx, authorData, innerData) => {
     /*
       Take the current affiliations (at index) and swap out the selected one
       for a modified version (toggled).
@@ -147,8 +141,7 @@ define([
       set the author to be selected as well.
      */
     const selected =
-      _.any(affiliations, { selected: true }) ||
-      _.any(data[authorIdx].lastActiveDates, { selected: true });
+      _.any(affiliations, { selected: true }) || _.any(data[authorIdx].lastActiveDates, { selected: true });
 
     /*
       TODO: Find a more elegant solution, this is quite expensive
@@ -176,13 +169,7 @@ define([
    * @param {object} innerData - the affiliation data
    * @returns {Array} the new data set with the lastActiveDate section (at index) toggled
    */
-  const toggleLastActiveDateRow = (
-    data,
-    authorIdx,
-    dateIdx,
-    innerData,
-    authorData
-  ) => {
+  const toggleLastActiveDateRow = (data, authorIdx, dateIdx, innerData, authorData) => {
     // get the current ON date
     const currentSelectedIdx = _.findIndex(data[authorIdx].lastActiveDates, {
       selected: true,
@@ -207,8 +194,7 @@ define([
 
     // figure out if the whole row (author) should be selected
     const selected =
-      _.any(lastActiveDates, { selected: true }) ||
-      _.any(data[authorIdx].affiliations, { selected: true });
+      _.any(lastActiveDates, { selected: true }) || _.any(data[authorIdx].affiliations, { selected: true });
 
     /*
       Finally, return a new set of data that has all the old values except for
@@ -326,7 +312,7 @@ define([
      * @param {array} data - the raw data from the server
      */
     setAffiliationData: (data) => (dispatch) => {
-      data = _(data)
+      data = _.chain(data)
         .groupBy('authorName')
         .map((affs, author) => authorAffiliation.create(author, affs))
         .value();
@@ -348,10 +334,7 @@ define([
      * @param {string} [message=''] - the message
      * @param {number} [timeout=5000] - the timeout of the alert
      */
-    showMessage: (type = 'success', message = '', timeout = 5000) => (
-      dispatch,
-      getState
-    ) => {
+    showMessage: (type = 'success', message = '', timeout = 5000) => (dispatch, getState) => {
       if (timeout !== 0) {
         _.delay(() => {
           dispatch({ type: ACTIONS.setMessage, value: { show: false } });
@@ -442,21 +425,9 @@ define([
 
     // if an index is found for the innerData, run the toggle method for that section
     if (affIdx >= 0) {
-      newData = toggleAffiliationRow(
-        data,
-        affIdx,
-        authorIdx,
-        authorData,
-        innerData
-      );
+      newData = toggleAffiliationRow(data, affIdx, authorIdx, authorData, innerData);
     } else if (dateIdx >= 0) {
-      newData = toggleLastActiveDateRow(
-        data,
-        authorIdx,
-        dateIdx,
-        innerData,
-        authorData
-      );
+      newData = toggleLastActiveDateRow(data, authorIdx, dateIdx, innerData, authorData);
     } else if (authorIdx >= 0) {
       newData = toggleAuthorRow(data, authorIdx, authorData);
     } else {
@@ -492,12 +463,7 @@ define([
         // if browser, then open a new tab and show message if it's blocked
         if (file.ext === 'browser') {
           res.text().then((t) => openInNewTab(t));
-          dispatch(
-            actions.showMessage(
-              'info',
-              "If new tab doesn't appear, you will need to allow popups"
-            )
-          );
+          dispatch(actions.showMessage('info', "If new tab doesn't appear, you will need to allow popups"));
         } else {
           res.blob().then((b) => saveAs(b, `authorAffiliations.${file.ext}`));
 
@@ -508,10 +474,7 @@ define([
 
       // on failure, show error message
       .fail(() => {
-        actions.showMessage(
-          'danger',
-          'Something happened with the request, please try again'
-        );
+        actions.showMessage('danger', 'Something happened with the request, please try again');
       })
 
       // always stop loading

@@ -1,4 +1,4 @@
-define([], function() {
+define(['lodash/dist/lodash.compat'], function(_) {
   /**
    * middleware wrapper with a function that, when called,
    * binds it's first argument to the first argument of the middleware function

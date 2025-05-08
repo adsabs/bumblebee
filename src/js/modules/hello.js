@@ -3,7 +3,7 @@ Example module that simply prints 'hello x'
 as a main page
 */
 
-define(['underscore', 'jquery'], function(_, $) {
+define(['lodash/dist/lodash.compat', 'jquery'], function(_, $) {
   var showName = function(selector, n) {
     console.log(selector);
     console.log(n);

@@ -1,14 +1,16 @@
 define([
-  'es6!./components/Dashboard.jsx',
+  'js/react/BumblebeeWidget',
+  'js/react/LibraryCollaborators/components/Dashboard.jsx',
   'js/react/WithBackboneView',
   'js/react/configureStore',
   'react-redux',
-  './actions',
-  './middleware',
-  './reducer',
+  'js/react/LibraryCollaborators/actions',
+  'js/react/LibraryCollaborators/middleware',
+  'js/react/LibraryCollaborators/reducer',
   'js/react/shared/helpers',
   'js/react/shared/middleware/index',
 ], function(
+  BumblebeeWidget,
   Dashboard,
   WithBackboneView,
   configureStore,
@@ -39,8 +41,14 @@ define([
 
   const middlewares = [middleware, ...sharedMiddleware];
 
-  return WithBackboneView(
-    connect(mapStateToProps, actionCreators)(Dashboard),
-    (context) => configureStore(context, reducer, withContext(...middlewares))
+  const BackboneView = WithBackboneView(connect(mapStateToProps, actionCreators)(Dashboard), (context) =>
+    configureStore(context, reducer, withContext(...middlewares))
   );
+
+  return BumblebeeWidget.extend({
+    initialize() {
+      this.view = new BackboneView();
+      BumblebeeWidget.prototype.initialize.call(this, { componentId: 'LibraryCollaborators', ...arguments });
+    },
+  });
 });

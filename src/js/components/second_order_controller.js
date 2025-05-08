@@ -1,18 +1,12 @@
 define([
+  'lodash/dist/lodash.compat',
   'js/components/generic_module',
   'js/mixins/dependon',
   'js/components/api_query',
   'js/components/api_request',
   'js/components/api_targets',
   'analytics',
-], function(
-  GenericModule,
-  Dependon,
-  ApiQuery,
-  ApiRequest,
-  ApiTargets,
-  analytics
-) {
+], function(_, GenericModule, Dependon, ApiQuery, ApiRequest, ApiTargets, analytics) {
   /**
    * Triggered via pubsub event, this will take a set of identifiers
    * and generate a bigquery id, then replace the current query
@@ -29,10 +23,7 @@ define([
 
       // set up debounced transform
       if (this.options.transformDebounce) {
-        this.transform = _.debounce(
-          this.transform,
-          this.options.transformDebounce
-        );
+        this.transform = _.debounce(this.transform, this.options.transformDebounce);
       }
     },
 
@@ -49,10 +40,7 @@ define([
      */
     onCustomEvent: function(event) {
       if (event.startsWith('second-order-search/')) {
-        this.transform.apply(
-          this,
-          [event.split('/')[1]].concat(_.rest(arguments))
-        );
+        this.transform.apply(this, [event.split('/')[1]].concat(_.rest(arguments)));
       }
     },
 
@@ -72,11 +60,7 @@ define([
      */
     getCurrentQuery: function() {
       const storage = this.getBeeHive().getObject('AppStorage');
-      if (
-        storage &&
-        storage.getCurrentQuery &&
-        storage.getCurrentQuery() instanceof ApiQuery
-      ) {
+      if (storage && storage.getCurrentQuery && storage.getCurrentQuery() instanceof ApiQuery) {
         return storage.getCurrentQuery();
       }
     },
@@ -145,13 +129,7 @@ define([
      * send analytics event
      */
     submitAnalyticsEvent: function(field) {
-      analytics(
-        'send',
-        'event',
-        'interaction',
-        'second-order-operation',
-        field
-      );
+      analytics('send', 'event', 'interaction', 'second-order-operation', field);
     },
 
     /**
@@ -171,8 +149,7 @@ define([
       });
 
       // get the selected records from appStorage
-      const selectedIds =
-        options.ids.length > 0 ? options.ids : this.getSelectedIds();
+      const selectedIds = options.ids.length > 0 ? options.ids : this.getSelectedIds();
 
       // if field is 'limit' it should generate qid from selection
       if (
@@ -213,8 +190,7 @@ define([
      */
     transformCurrentQuery: function(field, _query) {
       const ps = this.getPubSub();
-      const currentQuery =
-        _query instanceof ApiQuery ? _query : this.getCurrentQuery();
+      const currentQuery = _query instanceof ApiQuery ? _query : this.getCurrentQuery();
 
       if (!currentQuery) {
         return;
@@ -276,7 +252,7 @@ define([
         const currentQuery = this.getCurrentQuery() || new ApiQuery();
         newQuery = currentQuery.clone();
         newQuery.set({
-          q: `-docs(${id}) ${currentQuery.get('q')}`
+          q: `-docs(${id}) ${currentQuery.get('q')}`,
         });
       } else {
         // replace the current query with our operator
@@ -300,7 +276,7 @@ define([
     REVIEWS: 'reviews',
     LIMIT: 'limit',
     LIBRARY: 'library',
-    EXCLUDE: 'exclude'
+    EXCLUDE: 'exclude',
   };
 
   _.extend(SecondOrderController.prototype, Dependon.BeeHive);

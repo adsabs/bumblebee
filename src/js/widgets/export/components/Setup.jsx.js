@@ -32,7 +32,6 @@ define(['react', 'prop-types'], function(React, ReactPropTypes) {
           <label htmlFor="ex-dropdown">Select Export Format</label>
           <select
             className="form-control"
-            autoFocus="true"
             id="ex-dropdown"
             value={format.id}
             onChange={(e) => setFormat(e.target.value)}
@@ -47,10 +46,7 @@ define(['react', 'prop-types'], function(React, ReactPropTypes) {
         </div>
         {disabled && (
           <div className="col-sm-2">
-            <div
-              className="export-loading-icon fa fa-spinner fa-spin fa-2x"
-              aria-hidden="true"
-            />
+            <div className="export-loading-icon fa fa-spinner fa-spin fa-2x" aria-hidden="true" />
           </div>
         )}
       </div>
@@ -69,17 +65,11 @@ define(['react', 'prop-types'], function(React, ReactPropTypes) {
                       rel="noreferrer noopener"
                       href="/help/actions/export"
                     >
-                      <i
-                        className="fa fa-info-circle fa-invert"
-                        aria-hidden="true"
-                      />
+                      <i className="fa fa-info-circle fa-invert" aria-hidden="true" />
                     </a>
                   </span>
                   <span style={{ marginLeft: 5 }}>
-                    <a
-                      title="manage custom formats"
-                      href="/#user/settings/application"
-                    >
+                    <a title="manage custom formats" href="/#user/settings/application">
                       <i className="fa fa-cog fa-invert" aria-hidden="true" />
                     </a>
                   </span>
@@ -95,11 +85,7 @@ define(['react', 'prop-types'], function(React, ReactPropTypes) {
                     </option>
                   ))}
                 </select>
-                <button
-                  className="btn btn-link"
-                  role="button"
-                  onClick={onCustomFormatClick}
-                >
+                <button className="btn btn-link" role="button" onClick={onCustomFormatClick}>
                   Or enter your own
                 </button>
               </div>
@@ -115,10 +101,7 @@ define(['react', 'prop-types'], function(React, ReactPropTypes) {
                       rel="noreferrer noopener"
                       href="/help/actions/export"
                     >
-                      <i
-                        className="fa fa-info-circle fa-invert"
-                        aria-hidden="true"
-                      />
+                      <i className="fa fa-info-circle fa-invert" aria-hidden="true" />
                     </a>
                   </span>
                 </label>
@@ -129,11 +112,7 @@ define(['react', 'prop-types'], function(React, ReactPropTypes) {
                   onChange={(e) => onCustomFormatChange(e.target.value)}
                 />
                 {customFormats.length > 0 && (
-                  <button
-                    className="btn btn-link"
-                    role="button"
-                    onClick={onCustomFormatClick}
-                  >
+                  <button className="btn btn-link" role="button" onClick={onCustomFormatClick}>
                     Or select from your saved custom formats
                   </button>
                 )}
@@ -147,8 +126,7 @@ define(['react', 'prop-types'], function(React, ReactPropTypes) {
         <div className="row">
           <div className="col-sm-10">
             <label htmlFor="ex-range">
-              Limit to <strong>{count}</strong>{' '}
-              {count > 1 ? 'records' : 'record'}
+              Limit to <strong>{count}</strong> {count > 1 ? 'records' : 'record'}
             </label>
             <input
               type="range"
@@ -167,11 +145,7 @@ define(['react', 'prop-types'], function(React, ReactPropTypes) {
       <div className="row">
         <div className="col-sm-12 btn-toolbar">
           {(!autoSubmit || format.value === 'custom') && (
-            <button
-              className="btn btn-primary"
-              onClick={onApply}
-              disabled={disabled}
-            >
+            <button className="btn btn-primary" onClick={onApply} disabled={disabled}>
               Apply
             </button>
           )}

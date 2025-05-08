@@ -1,5 +1,5 @@
 define([
-  'es6!./components/App.jsx',
+  './components/App.jsx',
   'js/react/WithBackboneView',
   'js/react/configureStore',
   'react-redux',

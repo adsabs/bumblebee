@@ -1,109 +1,94 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <link rel="preload" href="./styles/css/styles.css" as="style"/>
-  <link rel="preload" href="./libs/require.js" as="script"/>
-  <link rel="stylesheet" href="./styles/css/styles.css"/>
-  <!-- favicon -->
-  <link rel="apple-touch-icon" sizes="180x180" href="./styles/favicon/apple-touch-icon.png"/>
-  <link rel="icon" type="image/png" sizes="32x32" href="./styles/favicon/favicon-32x32.png"/>
-  <link rel="icon" type="image/png" sizes="16x16" href="./styles/favicon/favicon-16x16.png"/>
-  <link rel="manifest" href="./styles/favicon/site.webmanifest"/>
-  <link rel="mask-icon" href="./styles/favicon/safari-pinned-tab.svg" color="#5bbad5"/>
-  <meta name="apple-mobile-web-app-title" content="Astrophysics Data System"/>
-  <meta name="application-name" content="Astrophysics Data System"/>
-  <meta name="msapplication-TileColor" content="#ffc40d"/>
-  <meta name="theme-color" content="#ffffff"/>
-  <!-- /favicon -->
-  <script src="./libs/require.js"></script>
-  <script>
-    !window.requirejs &&
-    document.write(
-      '<script src="./libs/requirejs/require.js">\x3C/script>',
-    );
-  </script>
-  <!-- Google Tag Manager -->
-  <script>(function (w, d, s, l, i) {
-    w[l] = w[l] || [];
-    w[l].push({
-      'gtm.start':
-        new Date().getTime(), event: 'gtm.js',
-    });
-    var f = d.getElementsByTagName(s)[0],
-      j = d.createElement(s), dl = l != 'dataLayer' ? '&l=' + l : '';
-    j.async = true;
-    j.src =
-      'https://www.googletagmanager.com/gtm.js?id=' + i + dl;
-    f.parentNode.insertBefore(j, f);
-  })(window, document, 'script', 'dataLayer', 'GTM-NT2453N');</script>
-  <!-- End Google Tag Manager -->
-  <script>
-    require.config({
-      paths: {
-        underscore: [
-          'https://unpkg.com/lodash@2.4.2/dist/lodash.compat.min',
-          'libs/lodash',
-        ],
-        analytics: 'js/components/analytics',
-        jquery: [
-          'https://unpkg.com/jquery@2.2.4/dist/jquery.min',
-          'libs/jquery',
-        ],
-      },
-    });
-    require(['analytics'], function (analytics) {
-      analytics('send', 'virtual_page_view', '/500');
-      analytics(
-        'send',
-        'event',
-        'error',
-        'automatic_redirection',
-        '500.html',
-      );
-    });
-  </script>
+  <meta charset="utf-8" />
+  <title>500 - Server Error</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <meta name="theme-color" content="#ffffff" />
+  <link rel="icon" type="image/png" sizes="32x32" href="./assets/favicon/favicon-32x32.png" />
+  <link rel="icon" type="image/png" sizes="16x16" href="./assets/favicon/favicon-16x16.png" />
+  <link rel="manifest" href="./assets/favicon/site.webmanifest" />
+
   <style>
     @keyframes moveAcross {
-      from {
-        left: -75%;
-      }
-      to {
-        left: 75%;
-      }
+      from { left: -75%; }
+      to { left: 75%; }
     }
 
     body {
-      max-width: 100%;
-      overflow-x: hidden;
+      margin: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", sans-serif;
+      background: #f7f7f7;
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      color: #333;
     }
 
     .mobile-bbb {
       position: relative;
       width: 40%;
       margin-bottom: 40px;
-      animation: moveAcross linear 20s forwards infinite;
+      animation: moveAcross linear 20s infinite;
+    }
+
+    h1 {
+      font-size: 2.5em;
+      margin-bottom: 0.25em;
+    }
+
+    h3 {
+      margin-top: 0;
+      color: #666;
+    }
+
+    a {
+      color: #0066cc;
+      text-decoration: none;
+    }
+
+    a:hover {
+      text-decoration: underline;
     }
 
     p {
-      font-size: 18px;
+      font-size: 1.1em;
     }
   </style>
+
+  <!-- Google Tag Manager -->
+  <script>
+    (function(w,d,s,l,i){
+      w[l]=w[l]||[];w[l].push({'gtm.start': new Date().getTime(), event:'gtm.js'});
+      var f=d.getElementsByTagName(s)[0],
+        j=d.createElement(s), dl=l!='dataLayer'?'&l='+l:'';
+      j.async=true;
+      j.src='https://www.googletagmanager.com/gtm.js?id='+i+dl;
+      f.parentNode.insertBefore(j,f);
+    })(window,document,'script','dataLayer','GTM-NT2453N');
+  </script>
+  <!-- End Google Tag Manager -->
+
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    dataLayer.push({
+      event: 'virtual_page_view',
+      page: '/500',
+      error_type: 'automatic_redirection',
+      source: '500.html'
+    });
+  </script>
 </head>
 <body>
-<div style="text-align: center;margin-top:10%">
-  <img
-    src="/styles/img/500_bumblerocket.png"
-    alt="500 error image"
-    class="mobile-bbb"
-  />
+<div style="text-align: center; margin-top: 10%;">
+  <img src="./assets/images/500_bumblerocket.png" alt="500 error image" class="mobile-bbb" />
   <h1>500</h1>
   <h3>We've made an error.</h3>
-  <p>
-    <a href="/">Click here to try going to the home page.</a>
-  </p>
-  <p>
-    If that doesn't work, please try again later.
-  </p>
+  <p><a href="/">Click here to try going to the home page.</a></p>
+  <p>If that doesn't work, please try again later.</p>
 </div>
 </body>
 </html>

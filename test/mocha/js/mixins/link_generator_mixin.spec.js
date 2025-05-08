@@ -1,4 +1,4 @@
-define(['underscore', 'js/mixins/link_generator_mixin'], function(
+define(['lodash/dist/lodash.compat', 'js/mixins/link_generator_mixin'], function(
   _,
   LinkGeneratorMixin
 ) {

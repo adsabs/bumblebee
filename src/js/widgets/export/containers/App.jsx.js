@@ -1,22 +1,13 @@
 define([
-  'underscore',
+  'lodash/dist/lodash.compat',
   'react',
   'react-redux',
   'prop-types',
-  'es6!../actions/index',
-  'es6!../components/Closer.jsx',
-  'es6!../components/Setup.jsx',
-  'es6!../components/Export.jsx',
-], function(
-  _,
-  React,
-  ReactRedux,
-  ReactPropTypes,
-  actions,
-  Closer,
-  Setup,
-  Export
-) {
+  'js/widgets/export/actions/index',
+  'js/widgets/export/components/Closer.jsx',
+  'js/widgets/export/components/Setup.jsx',
+  'js/widgets/export/components/Export.jsx',
+], function(_, React, ReactRedux, ReactPropTypes, actions, Closer, Setup, Export) {
   const {
     closeComponent,
     setFormat,
@@ -130,10 +121,7 @@ define([
     }
 
     onCustomFormatClick() {
-      if (
-        this.state.customFormatDirectEntry &&
-        this.props.customFormats.length > 0
-      ) {
+      if (this.state.customFormatDirectEntry && this.props.customFormats.length > 0) {
         this.onCustomFormatChange(this.props.customFormats[0].code);
       }
       this.setState({
@@ -196,14 +184,7 @@ define([
         customFormat,
         customFormats,
       } = this.props;
-      const {
-        count,
-        hasMore,
-        showAlert,
-        alertMsg,
-        remaining,
-        customFormatDirectEntry,
-      } = this.state;
+      const { count, hasMore, showAlert, alertMsg, remaining, customFormatDirectEntry } = this.state;
 
       const low = maxCount - batchSize;
       const lower = low === 0 ? 1 : low;
@@ -216,8 +197,8 @@ define([
           <span>
             {showCloser && <Closer onClick={this.handleCloseClick} />}
             <div className="h4">
-              Exporting record(s) <strong>{lower}</strong> to{' '}
-              <strong>{upper}</strong> <small>(total: {totalRecs})</small>
+              Exporting record(s) <strong>{lower}</strong> to <strong>{upper}</strong>{' '}
+              <small>(total: {totalRecs})</small>
             </div>
           </span>
           <div>

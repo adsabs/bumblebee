@@ -1,10 +1,11 @@
 define([
+  'lodash/dist/lodash.compat',
   'js/components/generic_module',
   'js/mixins/dependon',
   'js/mixins/hardened',
   'js/components/api_feedback',
-  'hotkeys',
-], function(GenericModule, Dependon, Hardened, ApiFeedback, hotkeys) {
+  'hotkeys-js',
+], function(_, GenericModule, Dependon, Hardened, ApiFeedback, hotkeys) {
   const MODIFIER = 'alt+shift';
 
   const mod = (val) => {
@@ -53,7 +54,7 @@ define([
     activate(beehive) {
       this.setBeeHive(beehive);
       HOTKEYS.forEach(({ hotkey, event }) => {
-        hotkeys(hotkey, this.createEvent(`hotkey/${event}`));
+        hotkeys.default(hotkey, this.createEvent(`hotkey/${event}`));
       });
       const ps = this.getPubSub();
       ps.subscribe(ps.CUSTOM_EVENT, (e) => {

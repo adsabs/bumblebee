@@ -1,5 +1,6 @@
 define([
-  'es6!js/react/MyAdsDashboard/components/App.jsx',
+  'js/react/BumblebeeWidget',
+  'js/react/MyAdsDashboard/components/App.jsx',
   'js/react/WithBackboneView',
   'js/react/configureStore',
   'react-redux',
@@ -9,6 +10,7 @@ define([
   'js/react/shared/helpers',
   'js/react/shared/middleware/api',
 ], function(
+  BumblebeeWidget,
   App,
   WithBackboneView,
   configureStore,
@@ -30,16 +32,14 @@ define([
     goTo,
   };
 
-  return WithBackboneView(
-    connect(
-      mapStateToProps,
-      actionCreators
-    )(App),
-    (context) =>
-      configureStore(
-        context,
-        reducer,
-        withContext(middleware, sharedMiddleware)
-      )
+  const BackboneView = WithBackboneView(connect(mapStateToProps, actionCreators)(App), (context) =>
+    configureStore(context, reducer, withContext(middleware, sharedMiddleware))
   );
+
+  return BumblebeeWidget.extend({
+    initialize() {
+      this.view = new BackboneView();
+      BumblebeeWidget.prototype.initialize.call(this, { componentId: 'MyADSDashboard', ...arguments });
+    },
+  });
 });

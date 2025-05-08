@@ -1,6 +1,6 @@
 define([
   'jquery',
-  'underscore',
+  'lodash',
   'backbone',
   'react',
   'react-dom',
@@ -8,9 +8,9 @@ define([
   'react-redux',
   'redux-thunk',
   'js/widgets/base/base_widget',
-  'es6!./reducers/index',
-  'es6!./actions/index',
-  'es6!./containers/App.jsx',
+  'js/widgets/export/reducers/index',
+  'js/widgets/export/actions/index',
+  'js/widgets/export/containers/App.jsx',
   'js/components/api_query',
   'js/components/api_targets',
   'js/components/api_feedback',
@@ -75,13 +75,10 @@ define([
       this.options = options || {};
 
       // create thunk middleware, passing in `this` as extra argument
-      var middleware = Redux.applyMiddleware(
-        ReduxThunk.default.withExtraArgument(this)
-      );
+      var middleware = Redux.applyMiddleware(ReduxThunk.default.withExtraArgument(this));
 
       // create the redux store using reducers and applying middleware
-      const composeEnhancers =
-        window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || Redux.compose;
+      const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || Redux.compose;
       this.store = Redux.createStore(reducers, composeEnhancers(middleware));
 
       // create the view passing the store as the only property
@@ -110,14 +107,9 @@ define([
       const { setQuery } = actions;
       this.activateWidget();
 
-      pubsub.subscribe(pubsub.INVITING_REQUEST, (query) =>
-        dispatch(setQuery(query.toJSON()))
-      );
+      pubsub.subscribe(pubsub.INVITING_REQUEST, (query) => dispatch(setQuery(query.toJSON())));
       this.attachGeneralHandler(this.onApiFeedback);
-      pubsub.subscribe(
-        pubsub.USER_ANNOUNCEMENT,
-        _.bind(this.getFieldsFromUserData, this)
-      );
+      pubsub.subscribe(pubsub.USER_ANNOUNCEMENT, _.bind(this.getFieldsFromUserData, this));
     },
 
     /**
@@ -136,9 +128,7 @@ define([
         var beehive = _.isFunction(this.getBeeHive) && this.getBeeHive();
         var user = _.isFunction(beehive.getObject) && beehive.getObject('User');
         if (_.isPlainObject(user)) {
-          return (
-            _.isFunction(user.getUserData) && user.getUserData('USER_DATA')
-          );
+          return _.isFunction(user.getUserData) && user.getUserData('USER_DATA');
         }
       } catch (e) {}
       return {};
@@ -229,8 +219,7 @@ define([
         bibtexJournalFormat,
       } = this.getFieldsFromUserData();
 
-      const fmt =
-        format === 'default' || format === 'other' ? defaultFormat : format;
+      const fmt = format === 'default' || format === 'other' ? defaultFormat : format;
 
       // perform a full reset of the store
       dispatch(hardReset());
@@ -242,9 +231,7 @@ define([
       dispatch(setBibtexABSKeyFormat(bibtexABSKeyFormat));
       dispatch(setBibtexAuthorCutoff(bibtexAuthorCutoff));
       dispatch(setBibtexABSAuthorCutoff(bibtexABSAuthorCutoff));
-      dispatch(
-        setBibtexJournalFormat(this.getJournalFormatValue(bibtexJournalFormat))
-      );
+      dispatch(setBibtexJournalFormat(this.getJournalFormatValue(bibtexJournalFormat)));
 
       // set the origin of the request (abstract/results/etc.)
       dispatch(setOrigin(this.componentParams && this.componentParams.origin));
@@ -300,9 +287,7 @@ define([
       const $dd = $.Deferred();
 
       const pubsub = this.getPubSub();
-      pubsub.subscribeOnce(pubsub.DELIVERING_RESPONSE, (res) =>
-        $dd.resolve(res)
-      );
+      pubsub.subscribeOnce(pubsub.DELIVERING_RESPONSE, (res) => $dd.resolve(res));
       pubsub.publish(pubsub.EXECUTE_REQUEST, req);
       return $dd.promise();
     },
@@ -349,10 +334,7 @@ define([
         bibtexJournalFormat,
       } = this.getFieldsFromUserData();
 
-      const format =
-        data.format === 'default' || data.format === 'other'
-          ? defaultExportFormat
-          : data.format;
+      const format = data.format === 'default' || data.format === 'other' ? defaultExportFormat : data.format;
 
       const sort = data.sort || 'date desc, bibcode desc';
 
@@ -364,9 +346,7 @@ define([
       dispatch(setBibtexABSKeyFormat(bibtexABSKeyFormat));
       dispatch(setBibtexAuthorCutoff(bibtexAuthorCutoff));
       dispatch(setBibtexABSAuthorCutoff(bibtexABSAuthorCutoff));
-      dispatch(
-        setBibtexJournalFormat(this.getJournalFormatValue(bibtexJournalFormat))
-      );
+      dispatch(setBibtexJournalFormat(this.getJournalFormatValue(bibtexJournalFormat)));
       dispatch(setSort(sort));
       dispatch(setOrigin(this.componentParams && this.componentParams.origin));
       dispatch(receiveIds(recs));

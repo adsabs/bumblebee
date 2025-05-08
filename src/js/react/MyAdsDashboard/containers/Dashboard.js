@@ -1,9 +1,9 @@
-define([
-  'es6!js/react/MyAdsDashboard/components/Dashboard.jsx',
-  'react-redux',
-  '../actions',
-  '../constants',
-], function(Dashboard, { connect }, actions, { page }) {
+define(['js/react/MyAdsDashboard/components/Dashboard.jsx', 'react-redux', '../actions', '../constants'], function(
+  Dashboard,
+  { connect },
+  actions,
+  { page }
+) {
   const mapStateToProps = ({ notifications, requests }) => ({
     notifications,
     getNotificationsRequest: requests.GET_NOTIFICATIONS,

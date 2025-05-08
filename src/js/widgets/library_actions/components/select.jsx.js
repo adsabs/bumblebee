@@ -13,13 +13,7 @@ define(['react'], function(React) {
           <label htmlFor={id} className="control-label">
             {label} {index}
           </label>
-          <select
-            name={id}
-            id={id}
-            className="form-control"
-            onChange={(e) => this.onChange(e)}
-            value={value}
-          >
+          <select name={id} id={id} className="form-control" onChange={(e) => this.onChange(e)} value={value}>
             {items.map((item) => (
               <option value={item.id} key={item.id}>
                 {item.name}

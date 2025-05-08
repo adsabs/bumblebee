@@ -5,11 +5,11 @@
  *
  */
 define([
-  'underscore',
+  'lodash/dist/lodash.compat',
   'jquery',
   'js/widgets/widget_states',
-  'hbs!js/widgets/base/templates/loading-template',
-  'hbs!js/widgets/base/templates/loading-template-small',
+  'js/widgets/base/templates/loading-template.hbs',
+  'js/widgets/base/templates/loading-template-small.hbs',
 ], function(_, $, WidgetStates, LoadingTemplate, LoadingTemplateSmall) {
   /**
    * This function tries hard to grab the topmost container (view)
@@ -19,8 +19,7 @@ define([
    * @returns {*}
    */
   var getView = function(widget) {
-    if (widget.view && widget.view.itemContainerView)
-      return widget.view.itemContainerView;
+    if (widget.view && widget.view.itemContainerView) return widget.view.itemContainerView;
     if (_.isFunction(widget.getView)) return widget.getView();
     if (widget.view) return widget.view;
   };
@@ -50,10 +49,7 @@ define([
 
   handlers[WidgetStates.IDLE] = {
     set: function(state) {
-      this._getStateHandler({ state: WidgetStates.WAITING }).revert.apply(
-        this,
-        state
-      );
+      this._getStateHandler({ state: WidgetStates.WAITING }).revert.apply(this, state);
     },
     revert: function() {
       // pass

@@ -1,7 +1,8 @@
 define([
+  'lodash/dist/lodash.compat',
   'js/widgets/classic_form/widget',
   'js/bugutils/minimal_pubsub',
-], function(ClassicForm, MinimalPubSub) {
+], function(_, ClassicForm, MinimalPubSub) {
   var generateQuery = function(field, selector) {
     return function() {
       return $(selector, 'div[data-field=' + field + ']');

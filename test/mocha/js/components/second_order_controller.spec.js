@@ -1,9 +1,10 @@
 define([
+  'lodash/dist/lodash.compat',
   'js/components/second_order_controller',
   'js/bugutils/minimal_pubsub',
   'js/components/api_request',
   'js/components/api_query'
-], function (SOController, MinSub, ApiRequest, ApiQuery) {
+], function (_, SOController, MinSub, ApiRequest, ApiQuery) {
 
   const init = function () {
     this.requestSpy = sinon.spy();

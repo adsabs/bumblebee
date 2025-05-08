@@ -1,9 +1,9 @@
-define([
-  'marionette',
-  'hbs!js/widgets/library_individual/templates/library-header',
-  'moment',
-  'bootstrap',
-], function(Marionette, LibraryHeaderTemplate, moment, Bootstrap) {
+define(['marionette', 'js/widgets/library_individual/templates/library-header.hbs', 'dayjs', 'backbone'], function(
+  Marionette,
+  LibraryHeaderTemplate,
+  dayjs,
+  Backbone
+) {
   var LibraryTitleModel = Backbone.Model.extend({
     initialize: function(vals, options) {
       options = options || {};
@@ -33,10 +33,7 @@ define([
     },
 
     checkEditPermission: function() {
-      if (
-        this.get('permission') == 'admin' ||
-        this.get('permission') == 'owner'
-      ) {
+      if (this.get('permission') == 'admin' || this.get('permission') == 'owner') {
         this.set('edit', true);
       } else {
         this.set('edit', false);
@@ -65,7 +62,7 @@ define([
     },
 
     formatDate: function(d) {
-      return moment
+      return dayjs
         .utc(d)
         .local()
         .format('MMM D YYYY, h:mma');
@@ -119,9 +116,7 @@ define([
       // Pass empty string if undefined
       data[this.currentEditField] = val;
       this.trigger('updateVal', data);
-      $(e.target).html(
-        '<i class="fa fa-spinner fa-pulse" aria-hidden="true"></i>'
-      );
+      $(e.target).html('<i class="fa fa-spinner fa-pulse" aria-hidden="true"></i>');
       return false;
     },
 

@@ -1,10 +1,10 @@
 define([
-  'underscore',
+  'lodash/dist/lodash.compat',
   'backbone',
   'react',
   'react-dom',
   'js/widgets/base/base_widget',
-  'es6!./components/app.jsx',
+  'js/widgets/library_actions/components/app.jsx',
 ], function(_, Backbone, React, ReactDOM, BaseWidget, App) {
   const Model = Backbone.Model.extend({
     defaults: {
@@ -74,8 +74,7 @@ define([
               (acc, d) => {
                 if (/^(owner|admin|write)$/i.test(d.permission)) {
                   const lib = _.pick(d, ['id', 'name']);
-                  if (d.permission !== 'owner')
-                    lib.name = `${lib.name}  (${d.owner})`;
+                  if (d.permission !== 'owner') lib.name = `${lib.name}  (${d.owner})`;
                   acc.push(lib);
                 }
                 return acc;
@@ -103,10 +102,7 @@ define([
       ps.publish(ps.NAVIGATE, 'AllLibrariesWidget');
     },
     onSubmit: function({ action, secondary, source, target }) {
-      const updateStatus = _.bind(
-        this.view.component.updateStatus,
-        this.view.component
-      );
+      const updateStatus = _.bind(this.view.component.updateStatus, this.view.component);
       this.model.set('submitting', true);
       this.getBeeHive()
         .getObject('LibraryController')
@@ -121,10 +117,7 @@ define([
           let message = '';
           if (id && name) {
             message += `<u><a href="#/user/libraries/${id}">${name}</a></u> created`;
-            const libs = _.sortBy(
-              [...this.model.get('items'), { id, name }],
-              'name'
-            );
+            const libs = _.sortBy([...this.model.get('items'), { id, name }], 'name');
             this.model.set('items', libs);
           }
 

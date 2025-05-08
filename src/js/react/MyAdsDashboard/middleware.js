@@ -1,9 +1,9 @@
-define([
-  'underscore',
-  './actions',
-  './constants',
-  '../shared/helpers',
-], function(_, actions, { page }, { middleware, apiSuccess }) {
+define(['lodash/dist/lodash.compat', './actions', './constants', '../shared/helpers'], function(
+  _,
+  actions,
+  { page },
+  { middleware, apiSuccess }
+) {
   const {
     SET_NOTIFICATIONS,
     SET_EDITING_NOTIFICATION,
@@ -46,42 +46,38 @@ define([
     }
   };
 
-  const runQueries = middleware(
-    ({ action, next, dispatch, trigger, getState }) => {
-      next(action);
+  const runQueries = middleware(({ action, next, dispatch, trigger, getState }) => {
+    next(action);
 
-      if (action.type === RUN_QUERY) {
-        const { id, queryKey } = action.payload;
+    if (action.type === RUN_QUERY) {
+      const { id, queryKey } = action.payload;
 
-        dispatch({
-          type: SET_NOTIFICATION_QUERY_KEY,
-          payload: queryKey,
-        });
-        dispatch(getNotificationQueries(id));
-      }
-
-      if (action.type === apiSuccess('GET_NOTIFICATION_QUERIES')) {
-        const queryKey = getState().queryKey;
-        if (queryKey !== null && action.result && action.result.length > 0) {
-          try {
-            trigger('doSearch', action.result[queryKey]);
-          } catch (e) {
-            dispatch(goTo(page.DASHBOARD));
-          }
-        }
-
-        // reset queryKey
-        dispatch({
-          type: SET_NOTIFICATION_QUERY_KEY,
-          payload: null,
-        });
-      }
+      dispatch({
+        type: SET_NOTIFICATION_QUERY_KEY,
+        payload: queryKey,
+      });
+      dispatch(getNotificationQueries(id));
     }
-  );
 
-  const updateNotifications = (__, { dispatch, getState }) => (next) => (
-    action
-  ) => {
+    if (action.type === apiSuccess('GET_NOTIFICATION_QUERIES')) {
+      const queryKey = getState().queryKey;
+      if (queryKey !== null && action.result && action.result.length > 0) {
+        try {
+          trigger('doSearch', action.result[queryKey]);
+        } catch (e) {
+          dispatch(goTo(page.DASHBOARD));
+        }
+      }
+
+      // reset queryKey
+      dispatch({
+        type: SET_NOTIFICATION_QUERY_KEY,
+        payload: null,
+      });
+    }
+  });
+
+  const updateNotifications = (__, { dispatch, getState }) => (next) => (action) => {
     next(action);
 
     /**
@@ -132,9 +128,7 @@ define([
   /**
    * When going to dashboard, reset the current editing notification
    */
-  const resetEditingNotificationAfterGoTo = (_, { dispatch }) => (next) => (
-    action
-  ) => {
+  const resetEditingNotificationAfterGoTo = (_, { dispatch }) => (next) => (action) => {
     next(action);
 
     if (action.type === 'GOTO' && action.payload === page.DASHBOARD) {
@@ -150,9 +144,7 @@ define([
     }
   };
 
-  const reloadNotificationsAfterGoTo = (_, { dispatch }) => (next) => (
-    action
-  ) => {
+  const reloadNotificationsAfterGoTo = (_, { dispatch }) => (next) => (action) => {
     next(action);
 
     if (action.type === 'GOTO' && action.payload === page.DASHBOARD) {
@@ -160,17 +152,15 @@ define([
     }
   };
 
-  const updateOnNavigate = middleware(
-    ({ action, next, dispatch, getState }) => {
-      next(action);
+  const updateOnNavigate = middleware(({ action, next, dispatch, getState }) => {
+    next(action);
 
-      if (action.type === 'NAVIGATE/MyAdsDashboard') {
-        if (getState().requests.GET_NOTIFICATIONS.status !== 'pending') {
-          dispatch(getNotifications());
-        }
+    if (action.type === 'NAVIGATE/MyAdsDashboard') {
+      if (getState().requests.GET_NOTIFICATIONS.status !== 'pending') {
+        dispatch(getNotifications());
       }
     }
-  );
+  });
 
   return {
     resetAfterRequest,

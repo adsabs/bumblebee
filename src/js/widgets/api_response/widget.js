@@ -8,24 +8,15 @@
  */
 
 define([
-  'underscore',
+  'lodash/dist/lodash.compat',
   'jquery',
   'backbone',
   'marionette',
   'js/components/api_response',
-  'hbs!js/widgets/api_response/templates/widget-view',
+  'js/widgets/api_response/templates/widget-view.hbs',
   'js/components/pubsub_events',
   'js/mixins/dependon',
-], function(
-  _,
-  $,
-  Backbone,
-  Marionette,
-  ApiResponse,
-  WidgetTemplate,
-  PubSubEvents,
-  Dependon
-) {
+], function(_, $, Backbone, Marionette, ApiResponse, WidgetTemplate, PubSubEvents, Dependon) {
   var Model = Backbone.Model.extend({});
 
   var WidgetView = Marionette.ItemView.extend({
@@ -47,8 +38,7 @@ define([
     // },
 
     _onChange: function() {
-      this._changed =
-        this.model.input != $('textarea#api-response-input').val();
+      this._changed = this.model.input != $('textarea#api-response-input').val();
     },
     _load: function(ev) {
       var data = this.$el.find('textarea#api-response-input').val();

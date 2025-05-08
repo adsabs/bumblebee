@@ -1,28 +1,17 @@
 define([
-  'underscore',
+  'lodash/dist/lodash.compat',
   'jquery',
   'js/components/alerts_mediator',
   'js/components/api_feedback',
   'js/widgets/widget_states',
   'js/components/alerts',
   'js/components/api_response',
-], function(
-  _,
-  $,
-  AlertsMediator,
-  ApiFeedback,
-  WidgetStates,
-  Alerts,
-  ApiResponse
-) {
+], function(_, $, AlertsMediator, ApiFeedback, WidgetStates, Alerts, ApiResponse) {
   var Mediator = AlertsMediator.extend({
     activate: function(beehive, app) {
       AlertsMediator.prototype.activate.apply(this, arguments);
       var pubsub = this.getPubSub();
-      pubsub.subscribe(
-        pubsub.APP_STARTED,
-        _.bind(this.displaySiteMessageWithDelay, this)
-      );
+      pubsub.subscribe(pubsub.APP_STARTED, _.bind(this.displaySiteMessageWithDelay, this));
     },
 
     onAlert: function(apiFeedback, psk) {
@@ -83,8 +72,7 @@ define([
             )
             .done(function(v) {
               if (v == 'dismissed') {
-                if (user && user.isLoggedIn())
-                  user.setMyADSData({ last_seen_message: val });
+                if (user && user.isLoggedIn()) user.setMyADSData({ last_seen_message: val });
                 if (storage) storage.set('last_seen_message', val);
               }
             });

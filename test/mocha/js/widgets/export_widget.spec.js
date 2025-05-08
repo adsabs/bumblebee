@@ -1,6 +1,6 @@
 define([
   'module',
-  'underscore',
+  'lodash/dist/lodash.compat',
   'jquery',
   'react',
   'redux',
@@ -16,7 +16,6 @@ define([
   'js/widgets/export/components/Setup.jsx',
   'js/widgets/export/containers/App.jsx',
   'js/bugutils/minimal_pubsub',
-  'js/components/json_response',
 ], function(
   module,
   _,
@@ -35,7 +34,6 @@ define([
   Setup,
   App,
   MinPubSub,
-  JSONResponse
 ) {
   const mockProps = {
     setup: {

@@ -19,7 +19,7 @@ define(['module'], function(module) {
     'js/components/application',
     'js/apps/bumblebox/bootstrap',
     'dynamic_config',
-    'underscore',
+    'lodash/dist/lodash.compat',
   ], function(Router, Application, AppBootstrap, DynamicConfig, Es5Shim, _) {
     Application.prototype.shim();
 
@@ -27,18 +27,14 @@ define(['module'], function(module) {
     _.each(document.getElementsByTagName('script'), function(scriptNode) {
       if (
         scriptNode.hasAttribute('data-main') &&
-        (scriptNode.getAttribute('data-main') || '').indexOf('embed.config') >
-          -1 &&
+        (scriptNode.getAttribute('data-main') || '').indexOf('embed.config') > -1 &&
         !scriptNode.hasAttribute('data-bbb-inuse')
       ) {
         scriptNode.setAttribute('data-bbb-inuse', true);
         var c = scriptNode.getAttribute('data-load');
         if (c) {
           var urls = c.split(',');
-          DynamicConfig.bootstrapUrls = _.union(
-            DynamicConfig.bootstrapUrls || [],
-            urls
-          );
+          DynamicConfig.bootstrapUrls = _.union(DynamicConfig.bootstrapUrls || [], urls);
         }
       }
     });
@@ -69,10 +65,7 @@ define(['module'], function(module) {
 
             // set some important urls, parameters before doing anything
             app.configure(loadedConfig);
-            pubsub.publish(
-              pubsub.getCurrentPubSubKey(),
-              pubsub.APP_BOOTSTRAPPED
-            );
+            pubsub.publish(pubsub.getCurrentPubSubKey(), pubsub.APP_BOOTSTRAPPED);
 
             pubsub.publish(pubsub.getCurrentPubSubKey(), pubsub.APP_STARTING);
             app.start(Router);
@@ -89,17 +82,11 @@ define(['module'], function(module) {
               // so error messages remain in the console
               return;
             }
-            console.error(
-              'Failed to load the application (stage: loading modules)',
-              err
-            );
+            console.error('Failed to load the application (stage: loading modules)', err);
           });
       })
       .fail(function(err) {
-        console.error(
-          'Failed to load the application (stage: bootstrap-config)',
-          err
-        );
+        console.error('Failed to load the application (stage: bootstrap-config)', err);
       });
   });
 });

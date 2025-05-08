@@ -2,22 +2,31 @@
  * This module contains a set of utilities to bootstrap Discovery app
  */
 define([
-  'underscore',
+  'lodash/dist/lodash.compat',
   'backbone',
   'js/components/api_query',
   'js/components/api_request',
   'js/components/pubsub_events',
-  'hbs',
   'js/components/api_targets',
-], function(
-  _,
-  Backbone,
-  ApiQuery,
-  ApiRequest,
-  PubSubEvents,
-  HandleBars,
-  ApiTargets
-) {
+], function(_, Backbone, ApiQuery, ApiRequest, PubSubEvents, ApiTargets) {
+  function hideSplash() {
+    return new Promise((resolve) => {
+      try {
+        const splash = document.getElementById('loading-splash');
+        if (splash) {
+          splash.style.opacity = '0';
+          setTimeout(() => {
+            splash.style.display = 'none';
+            resolve();
+          }, 300);
+        }
+      } catch (e) {
+        console.error('Error hiding splash screen:', e);
+      } finally {
+        resolve();
+      }
+    });
+  }
   var startGlobalHandler = function() {
     var routes = [
       'classic-form',
@@ -33,11 +42,7 @@ define([
     var regx = new RegExp('^#?(/?(' + routes.join('|') + ').*/?)?$', 'i');
 
     var isPushState = function() {
-      return (
-        Backbone.history &&
-        Backbone.history.options &&
-        Backbone.history.options.pushState
-      );
+      return Backbone.history && Backbone.history.options && Backbone.history.options.pushState;
     };
 
     var transformHref = _.memoize(function(href) {
@@ -128,10 +133,7 @@ define([
         api.modifyRequestOptions = function(opts, request) {
           // there is a list of endpoints that DONT require cookies, if this endpoint
           // is not in that list,
-          if (
-            ApiTargets._doesntNeedCredentials.indexOf(request.get('target')) ==
-            -1
-          ) {
+          if (ApiTargets._doesntNeedCredentials.indexOf(request.get('target')) == -1) {
             opts.xhrFields = {
               withCredentials: true,
             };
@@ -162,11 +164,7 @@ define([
       // check out the local storage to see if we have a copy
       var storage = beehive.getService('PersistentStorage');
       var config = storage.get('appConfig');
-      if (
-        config &&
-        config.expires_at &&
-        config.expires_at > Math.floor(Date.now() / 1000)
-      ) {
+      if (config && config.expires_at && config.expires_at > Math.floor(Date.now() / 1000)) {
         return defer.resolve(config).promise();
       }
       // this is the application dynamic config
@@ -242,9 +240,7 @@ define([
       if (location.search && location.search.indexOf('bbbRedirect=1') > -1) {
         return this.redirect(endPage);
       }
-      location.search = location.search
-        ? location.search + '&bbbRedirect=1'
-        : 'bbbRedirect=1';
+      location.search = location.search ? location.search + '&bbbRedirect=1' : 'bbbRedirect=1';
     },
 
     redirect: function(endPage) {
@@ -280,9 +276,7 @@ define([
         .setConfig(conf);
 
       var complain = function(x) {
-        throw new Error(
-          'Ooops. Check you config! There is no ' + x + ' component @#!'
-        );
+        throw new Error('Ooops. Check you config! There is no ' + x + ' component @#!');
       };
 
       var navigator = app.getBeeHive().Services.get('Navigator');
@@ -293,38 +287,40 @@ define([
 
       // get together all pages and insert widgets there
       masterPageManager.assemble(app).done(function() {
-        // attach the master page to the body
-        var $main = $('div#body-template-container');
-        if (window.__PRERENDERED) {
-          var $content = $('div#content-container');
-          $($content.selector, masterPageManager.view.el).html($content.html());
-          $main.html(masterPageManager.view.el);
-        } else {
-          $main.html(masterPageManager.view.el);
-        }
+        hideSplash().then(() => {
+          // attach the master page to the body
+          var $main = $('div#body-template-container');
+          if (window.__PRERENDERED) {
+            var $content = $('div#content-container');
+            $($content.selector, masterPageManager.view.el).html($content.html());
+            $main.html(masterPageManager.view.el);
+          } else {
+            $main.html(masterPageManager.view.el);
+          }
 
-        // kick off routing
-        app.router = new Router();
-        app.router.activate(beehive.getHardenedInstance());
+          // kick off routing
+          app.router = new Router();
+          app.router.activate(beehive.getHardenedInstance());
 
-        // get ready to handle navigation signals
-        navigator.start(app);
-        navigator.router = app.router; // this feels hackish
+          // get ready to handle navigation signals
+          navigator.start(app);
+          navigator.router = app.router; // this feels hackish
 
-        var noPushState = location.search.indexOf('pushstate=false') > -1;
+          var noPushState = location.search.indexOf('pushstate=false') > -1;
 
-        // Trigger the initial route and enable HTML5 History API support
-        var newConf = _.defaults(
-          {
-            pushState: noPushState ? false : undefined,
-          },
-          conf && conf.routerConf
-        );
-        Backbone.history.start(newConf);
+          // Trigger the initial route and enable HTML5 History API support
+          var newConf = _.defaults(
+            {
+              pushState: noPushState ? false : undefined,
+            },
+            conf && conf.routerConf
+          );
+          Backbone.history.start(newConf);
 
-        // apply a global link handler for push state (after router is started)
-        startGlobalHandler();
-        defer.resolve();
+          // apply a global link handler for push state (after router is started)
+          startGlobalHandler();
+          defer.resolve();
+        });
       });
 
       return defer.promise();

@@ -4,7 +4,7 @@
 
 define([
   'backbone',
-  'underscore',
+  'lodash/dist/lodash.compat',
   'js/mixins/hardened',
   'pubsub_service_impl',
   'js/components/pubsub_events',

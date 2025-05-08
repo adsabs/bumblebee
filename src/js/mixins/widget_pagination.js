@@ -3,7 +3,7 @@
  *
  *
  */
-define(['underscore'], function(_) {
+define(['lodash/dist/lodash.compat'], function(_) {
   var PaginatorInteraction = {
     /**
      * This method will automatically paginate through results, provided
@@ -35,14 +35,7 @@ define(['underscore'], function(_) {
      *      before: a function that you should execute before dispatching
      *              the query
      */
-    handlePagination: function(
-      displayNum,
-      maxDisplayNum,
-      numOfLoadedButHiddenItems,
-      paginator,
-      view,
-      collection
-    ) {
+    handlePagination: function(displayNum, maxDisplayNum, numOfLoadedButHiddenItems, paginator, view, collection) {
       var _adjustMaxDisplay = function(currentLen, toDisplay) {
         var allowedMax = maxDisplayNum - currentLen;
         if (allowedMax < toDisplay) {
@@ -65,15 +58,7 @@ define(['underscore'], function(_) {
         throw new Error('Wrong arguments');
       }
 
-      if (
-        !(
-          paginator &&
-          paginator.hasMore &&
-          view &&
-          view.displayMore &&
-          view.disableShowMore
-        )
-      ) {
+      if (!(paginator && paginator.hasMore && view && view.displayMore && view.disableShowMore)) {
         throw new Error(
           'Your paginator (hasMore) and/or view are missing important methods (displayMore/disableShowMore)'
         );
@@ -86,8 +71,7 @@ define(['underscore'], function(_) {
       if (paginator.hasMore()) {
         // sanity check - there is a maximum that we'll allow to display
         // even if we may load slightly more
-        var realDisplayLength =
-          collection.models.length - numOfLoadedButHiddenItems;
+        var realDisplayLength = collection.models.length - numOfLoadedButHiddenItems;
 
         if (realDisplayLength >= maxDisplayNum) {
           view.disableShowMore('Reached max ' + this.maxDisplayNum);
@@ -103,16 +87,10 @@ define(['underscore'], function(_) {
             return;
           }
 
-          var cachedDisplay = _adjustMaxDisplay(
-            realDisplayLength,
-            numOfLoadedButHiddenItems
-          );
+          var cachedDisplay = _adjustMaxDisplay(realDisplayLength, numOfLoadedButHiddenItems);
           view.displayMore(cachedDisplay); // display one part from the hidden items
           realDisplayLength += cachedDisplay;
-          toDisplay = _adjustMaxDisplay(
-            realDisplayLength,
-            toDisplay - cachedDisplay
-          );
+          toDisplay = _adjustMaxDisplay(realDisplayLength, toDisplay - cachedDisplay);
         }
 
         var output = { runQuery: false };

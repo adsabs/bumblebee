@@ -1,6 +1,6 @@
 // @ts-nocheck
 define([
-  'underscore',
+  'lodash/dist/lodash.compat',
   'react',
   'react-bootstrap',
   '../containers/ClassicLoginForm',
@@ -8,16 +8,7 @@ define([
 ], function(
   { debounce },
   React,
-  {
-    Form,
-    FormGroup,
-    FormControl,
-    ControlLabel,
-    HelpBlock,
-    Button,
-    Alert,
-    Modal,
-  },
+  { Form, FormGroup, FormControl, ControlLabel, HelpBlock, Button, Alert, Modal },
   ClassicLoginForm,
   PropTypes
 ) {
@@ -26,16 +17,11 @@ define([
       case 'pending':
         return (
           <span className="text-info">
-            <i className="fa fa-spinner fa-spin" aria-hidden="true" /> Sending
-            request...
+            <i className="fa fa-spinner fa-spin" aria-hidden="true" /> Sending request...
           </span>
         );
       case 'failure':
-        return (
-          <span className="text-danger">
-            {error ? error : 'Unable to import'}
-          </span>
-        );
+        return <span className="text-danger">{error || 'Unable to import'}</span>;
     }
   };
 
@@ -81,8 +67,7 @@ define([
 
     componentWillReceiveProps(next) {
       if (
-        this.props.importClassicRequest.status !==
-          next.importClassicRequest.status &&
+        this.props.importClassicRequest.status !== next.importClassicRequest.status &&
         next.importClassicRequest.status === 'success'
       ) {
         this.setState({
@@ -96,10 +81,7 @@ define([
     render() {
       return (
         <div style={{ paddingTop: '1rem' }}>
-          <ClassicLoginForm
-            onLogin={() => this.onLogin()}
-            onChangeUser={this.onChangeUser}
-          />
+          <ClassicLoginForm onLogin={() => this.onLogin()} onChangeUser={this.onChangeUser} />
           {this.state.isLoggedIn && (
             <div style={{ marginTop: '2rem' }}>
               <Form onSubmit={this.onSubmit}>
@@ -109,10 +91,7 @@ define([
                       Begin Import
                     </Button>
                   </div>
-                  <div
-                    className="col-sm-4 text-center"
-                    style={{ paddingTop: '1rem' }}
-                  >
+                  <div className="col-sm-4 text-center" style={{ paddingTop: '1rem' }}>
                     {getStatusMessage(this.props.importClassicRequest)}
                   </div>
                 </div>
@@ -127,12 +106,12 @@ define([
 
               <Modal.Body>
                 <p>
-                  We successfully imported <strong>{this.state.new}</strong> new
-                  notification{this.state.new !== 1 ? 's' : ''}
+                  We successfully imported <strong>{this.state.new}</strong> new notification
+                  {this.state.new !== 1 ? 's' : ''}
                 </p>
                 <p>
-                  and found <strong>{this.state.existing}</strong> existing
-                  notification{this.state.existing !== 1 ? 's' : ''}
+                  and found <strong>{this.state.existing}</strong> existing notification
+                  {this.state.existing !== 1 ? 's' : ''}
                 </p>
               </Modal.Body>
 

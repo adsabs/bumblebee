@@ -1,11 +1,12 @@
 define([
   'jquery',
-  'underscore',
+  'lodash/dist/lodash.compat',
   'analytics',
   'react',
   'js/components/api_query',
   'js/components/api_request',
-], function($, _, analytics, React, ApiQuery, ApiRequest) {
+  'bowser',
+], function($, _, analytics, React, ApiQuery, ApiRequest, bowser) {
   const qs = function(key, str, separator) {
     // eslint-disable-next-line no-useless-escape
     const k = key.replace(/[*+?^$.[\]{}()|\\\/]/g, '\\$&'); // escape RegEx meta chars
@@ -46,43 +47,18 @@ define([
   const difference = function(obj, base) {
     return _.transform(obj, function(result, value, key) {
       if (!_.isEqual(value, base[key])) {
-        result[key] =
-          _.isObject(value) && _.isObject(base[key])
-            ? difference(value, base[key])
-            : value;
+        result[key] = _.isObject(value) && _.isObject(base[key]) ? difference(value, base[key]) : value;
       }
     });
   };
 
   // get the current browser information
   const getBrowserInfo = function() {
-    // do this inline, so we only request when necessary
-    const $dd = $.Deferred();
-
-    // reject after 3 seconds
-    const timeoutId = setTimeout(() => {
-      $dd.reject();
-    }, 3000);
-    window.require(
-      ['bowser'],
-      (bowser) => {
-        window.clearTimeout(timeoutId);
-        $dd.resolve(bowser.parse(window.navigator.userAgent));
-      },
-      () => {
-        $dd.reject();
-      }
-    );
-
-    return $dd.promise();
+    return $.Deferred().resolve(bowser.parse(window.navigator.userAgent));
   };
 
   class TimingEvent {
-    constructor(
-      timingVar = 'Timers',
-      timingCategory = 'Generic Timer',
-      timingLabel
-    ) {
+    constructor(timingVar = 'Timers', timingCategory = 'Generic Timer', timingLabel) {
       this.timingCategory = timingCategory;
       this.timingVar = timingVar;
       this.timingLabel = timingLabel;
@@ -100,9 +76,7 @@ define([
         return;
       }
       const time = +new Date() - this.time;
-      analytics('send',
-        'timing',
-        {
+      analytics('send', 'timing', {
         timingCategory: this.timingCategory,
         timingVar: this.timingVar,
         timingLabel: this.timingLabel,
@@ -174,17 +148,22 @@ define([
   };
 
   const extractErrorMessageFromAjax = (maybeXHR, defaultMessage) => {
-    if (
-      typeof maybeXHR !== 'undefined' &&
-      typeof maybeXHR.responseJSON !== 'undefined'
-    ) {
+    if (typeof maybeXHR !== 'undefined' && typeof maybeXHR.responseJSON !== 'undefined') {
       if (typeof maybeXHR.responseJSON.error === 'string') {
         return maybeXHR.responseJSON.error;
-      } else if (typeof maybeXHR.responseJSON.message === 'string') {
+      }
+      if (typeof maybeXHR.responseJSON.message === 'string') {
         return maybeXHR.responseJSON.message;
       }
     }
     return defaultMessage;
+  };
+
+  const createCurryHandler = () => {
+    const U = (f) => f(f);
+    return function curry(fn) {
+      return U((r) => (...args) => (args.length < fn.length ? U(r).bind(null, ...args) : fn(...args)));
+    };
   };
 
   return {
@@ -199,5 +178,6 @@ define([
     makeApiQuery: makeApiQuery,
     makeApiRequest: makeApiRequest,
     extractErrorMessageFromAjax,
+    curry: createCurryHandler(),
   };
 });

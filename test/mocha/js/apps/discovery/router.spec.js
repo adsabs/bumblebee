@@ -1,5 +1,5 @@
 define([
-  'underscore',
+  'lodash/dist/lodash.compat',
   'js/apps/discovery/router',
   'js/components/beehive',
   'js/services/api',

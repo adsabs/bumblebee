@@ -1,4 +1,5 @@
 define([
+  'lodash/dist/lodash.compat',
   'backbone',
   'js/components/generic_module',
   'js/mixins/hardened',
@@ -8,17 +9,7 @@ define([
   'js/components/api_query',
   'js/mixins/dependon',
   'utils',
-], function(
-  Backbone,
-  GenericModule,
-  Hardened,
-  ApiTargets,
-  ApiRequest,
-  ApiFeedback,
-  ApiQuery,
-  Dependon,
-  utils
-) {
+], function(_, Backbone, GenericModule, Hardened, ApiTargets, ApiRequest, ApiFeedback, ApiQuery, Dependon, utils) {
   var LibraryModel = Backbone.Model.extend({
     defaults: function() {
       // this is the data we expect to get from the server
@@ -52,14 +43,8 @@ define([
       this.setBeeHive(beehive.getHardenedInstance());
       var pubsub = this.getBeeHive().getService('PubSub');
 
-      pubsub.subscribe(
-        pubsub.INVITING_REQUEST,
-        _.bind(this.updateCurrentQuery, this)
-      );
-      pubsub.subscribe(
-        pubsub.USER_ANNOUNCEMENT,
-        _.bind(this.handleUserAnnouncement, this)
-      );
+      pubsub.subscribe(pubsub.INVITING_REQUEST, _.bind(this.updateCurrentQuery, this));
+      pubsub.subscribe(pubsub.USER_ANNOUNCEMENT, _.bind(this.handleUserAnnouncement, this));
       pubsub.subscribe(pubsub.CUSTOM_EVENT, function(event) {
         if (event === 'invalidate-library-metadata') {
           self._metadataLoaded = false;
@@ -122,10 +107,7 @@ define([
       var deferred = $.Deferred();
 
       function done() {
-        var args = [
-          _.extend(arguments[0], options.extraArguments),
-          [].slice(arguments, 1),
-        ];
+        var args = [_.extend(arguments[0], options.extraArguments), [].slice(arguments, 1)];
         deferred.resolve.apply(undefined, args);
       }
 
@@ -258,16 +240,12 @@ define([
         this._fetchAllMetadata().done(function(data) {
           // make sure the collection is refilled before this promise is resolved
           setTimeout(function() {
-            var data = id
-              ? that.collection.get(id).toJSON()
-              : that.collection.toJSON();
+            var data = id ? that.collection.get(id).toJSON() : that.collection.toJSON();
             deferred.resolve(data);
           }, 1);
         });
       } else {
-        var data = id
-          ? that.collection.get(id).toJSON()
-          : that.collection.toJSON();
+        var data = id ? that.collection.get(id).toJSON() : that.collection.toJSON();
         deferred.resolve(data);
       }
       return deferred.promise();
@@ -342,10 +320,7 @@ define([
 
       // this function gets called repeatedly
       function done(data) {
-        limit =
-          data.solr.response.numFound > maxReturned
-            ? maxReturned
-            : data.solr.response.numFound;
+        limit = data.solr.response.numFound > maxReturned ? maxReturned : data.solr.response.numFound;
         var bibs = _.pluck(data.solr.response.docs, 'bibcode');
         [].push.apply(bibcodes, bibs);
         start += rows;
@@ -392,12 +367,10 @@ define([
       var that = this;
 
       var endpoint = ApiTargets.LIBRARIES;
-      return this.composeRequest(endpoint, 'POST', { data: data }).done(
-        function() {
-          // refresh collection
-          that._fetchAllMetadata();
-        }
-      );
+      return this.composeRequest(endpoint, 'POST', { data: data }).done(function() {
+        // refresh collection
+        that._fetchAllMetadata();
+      });
     },
 
     deleteLibrary: function(id, name) {
@@ -413,11 +386,7 @@ define([
           that
             .getBeeHive()
             .getService('PubSub')
-            .publish(
-              that.getBeeHive().getService('PubSub').NAVIGATE,
-              'AllLibrariesWidget',
-              'libraries'
-            );
+            .publish(that.getBeeHive().getService('PubSub').NAVIGATE, 'AllLibrariesWidget', 'libraries');
           var message = 'Library <b>' + name + '</b> was successfully deleted';
           that
             .getBeeHive()
@@ -429,12 +398,7 @@ define([
         })
         .fail(function(jqXHR) {
           var error = JSON.parse(jqXHR.responseText).error;
-          var message =
-            'Library <b>' +
-            name +
-            '</b> could not be deleted : (' +
-            error +
-            ')';
+          var message = 'Library <b>' + name + '</b> could not be deleted : (' + error + ')';
           that
             .getBeeHive()
             .getService('PubSub')
@@ -466,12 +430,7 @@ define([
         })
         .fail(function(jqXHR) {
           var error = JSON.parse(jqXHR.responseText).error;
-          var message =
-            'Library <b>' +
-            that.collection.get(id).title +
-            '</b> could not be updated: (' +
-            error +
-            ')';
+          var message = 'Library <b>' + that.collection.get(id).title + '</b> could not be updated: (' + error + ')';
           that
             .getBeeHive()
             .getService('PubSub')
@@ -484,9 +443,7 @@ define([
 
     performLibraryOperation: function(libId, options) {
       if (!options) {
-        throw new Error(
-          'must provide options object with action and set of secondary libraries (if necessary)'
-        );
+        throw new Error('must provide options object with action and set of secondary libraries (if necessary)');
       }
       var data = {};
       var action = options.action && options.action.toLowerCase();
@@ -496,10 +453,7 @@ define([
       var isCopyAction = /^copy$/.test(action);
       var isEmptyAction = /^empty$/.test(action);
 
-      if (
-        !_.isString(action) ||
-        (!isAdvancedAction && !isCopyAction && !isEmptyAction)
-      ) {
+      if (!_.isString(action) || (!isAdvancedAction && !isCopyAction && !isEmptyAction)) {
         throw new Error(action + ' is not one of the defined actions');
       }
       if (!_.isString(libId)) {
@@ -570,11 +524,7 @@ define([
         .fail(function(jqXHR) {
           var error = JSON.parse(jqXHR.responseText).error;
           var message =
-            'Library <b>' +
-            that.collection.get(id).get('name') +
-            '</b> could not be updated: (' +
-            error +
-            ')';
+            'Library <b>' + that.collection.get(id).get('name') + '</b> could not be updated: (' + error + ')';
           that
             .getBeeHive()
             .getService('PubSub')
@@ -600,10 +550,7 @@ define([
             action: 'add',
           })
           .fail(function() {
-            var message =
-              'Library <b>' +
-              that.collection.get(data.library).title +
-              '</b> could not be updated';
+            var message = 'Library <b>' + that.collection.get(data.library).title + '</b> could not be updated';
             that
               .getBeeHive()
               .getService('PubSub')
@@ -627,9 +574,7 @@ define([
       var that = this;
       var promise = this._getBibcodes(data).then(function(bibcodes) {
         if (!bibcodes) {
-          throw new Error(
-            "Solr returned no bibcodes, can't put them in the new library"
-          );
+          throw new Error("Solr returned no bibcodes, can't put them in the new library");
         }
         data.bibcode = bibcodes;
         var createLibraryPromise = that.createLibrary(data).fail(function() {
@@ -658,9 +603,7 @@ define([
       } else if (service === 'twopointoh') {
         endpoint = ApiTargets.LIBRARY_IMPORT_ADS2_TO_BBB;
       } else {
-        console.error(
-          "didn't recognize library endpoint! should be one of 'classic' or 'twopointoh' "
-        );
+        console.error("didn't recognize library endpoint! should be one of 'classic' or 'twopointoh' ");
         return;
       }
 
@@ -686,8 +629,7 @@ define([
     },
 
     hardenedInterface: {
-      getLibraryMetadata:
-        'returns json list of libraries, optional lib id as param',
+      getLibraryMetadata: 'returns json list of libraries, optional lib id as param',
       createLibrary: 'createLibrary',
 
       // these two functions fetch bibcodes based on the arguments given

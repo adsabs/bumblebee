@@ -1,4 +1,5 @@
 define([
+  'lodash/dist/lodash.compat',
   'jquery',
   'js/bugutils/minimal_pubsub',
   'js/components/api_query',
@@ -11,6 +12,7 @@ define([
   'js/wraps/references',
   'js/wraps/table_of_contents',
 ], function(
+  _,
   $,
   MinPubSub,
   ApiQuery,

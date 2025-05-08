@@ -1,4 +1,4 @@
-define(['js/page_managers/controller'], function(PageManagerController) {
+define(['js/page_managers/controller', 'backbone'], function(PageManagerController, Backbone) {
   const PageManager = PageManagerController.extend({
     async assemble() {
       // noop

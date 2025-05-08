@@ -7,12 +7,7 @@ define(['react', 'prop-types'], function(React, ReactPropTypes) {
     };
 
     return (
-      <a
-        href="javascript:void(0)"
-        className="pull-right"
-        onClick={(e) => handleClick(e)}
-        aria-label="close"
-      >
+      <a href="javascript:void(0)" className="pull-right" onClick={(e) => handleClick(e)} aria-label="close">
         <i className="fa fa-times fa-2x" aria-hidden="true" />
         <span className="sr-only">close</span>
       </a>

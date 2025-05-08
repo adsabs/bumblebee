@@ -1,9 +1,4 @@
-define([
-  'js/page_managers/controller',
-  'js/page_managers/one_column_view',
-  'hbs!js/wraps/error_page_manager/404',
-  'utils',
-], function(
+define(['js/page_managers/controller', 'js/page_managers/one_column_view', './404.hbs', 'utils'], function(
   PageManagerController,
   PageManagerView,
   PageManagerTemplate,

@@ -7,8 +7,8 @@
  */
 
 define(['babel', 'module'], function(babel, _module) {
-  var fetchText,
-    buildMap = {};
+  var fetchText;
+  var buildMap = {};
   if (typeof window !== 'undefined' && window.navigator && window.document) {
     fetchText = function(url, callback) {
       var xhr = new XMLHttpRequest();
@@ -22,11 +22,7 @@ define(['babel', 'module'], function(babel, _module) {
       };
       xhr.send(null);
     };
-  } else if (
-    typeof process !== 'undefined' &&
-    process.versions &&
-    !!process.versions.node
-  ) {
+  } else if (typeof process !== 'undefined' && process.versions && !!process.versions.node) {
     // Using special require.nodeRequire, something added by r.js.
     fs = require.nodeRequire('fs');
     fetchText = function(path, callback) {
@@ -43,11 +39,7 @@ define(['babel', 'module'], function(babel, _module) {
         // Deep clone babel config (#7)
         babelOptions = JSON.parse(JSON.stringify(config.babel));
         // clone callbacks from babel config manually
-        var callbackNames = [
-          'getModuleId',
-          'shouldPrintComment',
-          'wrapPluginVisitorMethod',
-        ];
+        var callbackNames = ['getModuleId', 'shouldPrintComment', 'wrapPluginVisitorMethod'];
         callbackNames.forEach(function(key) {
           babelOptions[key] = config.babel[key];
         });
@@ -56,10 +48,10 @@ define(['babel', 'module'], function(babel, _module) {
         onload.error(err);
       }
 
-      var pluginOptions = config.es6 || {},
-        fileExtension = pluginOptions.fileExtension || '.js',
-        sourceFileName = name + fileExtension,
-        url = req.toUrl(sourceFileName);
+      var pluginOptions = config.es6 || {};
+      var fileExtension = pluginOptions.fileExtension || '.js';
+      var sourceFileName = name + fileExtension;
+      var url = req.toUrl(sourceFileName);
 
       // Do not load if it is an empty: url
       if (url.indexOf('empty:') === 0) {

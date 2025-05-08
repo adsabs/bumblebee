@@ -3,12 +3,13 @@
  */
 
 define([
+  '@sentry/browser',
   'backbone',
-  'underscore',
+  'lodash/dist/lodash.compat',
   'js/components/api_query',
   'js/mixins/hardened',
   'js/mixins/dependon',
-], function(Backbone, _, ApiQuery, Hardened, Dependon) {
+], function(Sentry, Backbone, _, ApiQuery, Hardened, Dependon) {
   var AppStorage = Backbone.Model.extend({
     activate: function(beehive) {
       this.setBeeHive(beehive);
@@ -22,10 +23,7 @@ define([
       this.on('change:selectedPapers', function(model) {
         this._updateNumSelected();
         if (this.hasPubSub()) var pubsub = this.getPubSub();
-        pubsub.publish(
-          pubsub.STORAGE_PAPER_UPDATE,
-          this.getNumSelectedPapers()
-        );
+        pubsub.publish(pubsub.STORAGE_PAPER_UPDATE, this.getNumSelectedPapers());
       });
     },
 
@@ -49,13 +47,11 @@ define([
       }
 
       // provide this query to sentry
-      window.getSentry((sentry) => {
-        const currentQuery = apiQuery.toJSON();
-        Object.keys(currentQuery).forEach((key) => {
-          if (!key.startsWith('__') || key === 'fq') {
-            sentry.setTag(`query.${key}`, currentQuery[key].join(' | '));
-          }
-        });
+      const currentQuery = apiQuery.toJSON();
+      Object.keys(currentQuery).forEach((key) => {
+        if (!key.startsWith('__') || key === 'fq') {
+          Sentry.setTag(`query.${key}`, currentQuery[key].join(' | '));
+        }
       });
     },
 
@@ -108,8 +104,7 @@ define([
     },
 
     isPaperSelected: function(identifier) {
-      if (_.isArray(identifier))
-        throw new Error('Identifier must be a string or a number');
+      if (_.isArray(identifier)) throw new Error('Identifier must be a string or a number');
       var data = this.get('selectedPapers') || {};
       return !!data[identifier];
     },

@@ -1,8 +1,4 @@
-define(['clipboard', 'react', 'prop-types'], function(
-  Clipboard,
-  React,
-  ReactPropTypes
-) {
+define(['clipboard', 'react', 'prop-types'], function(Clipboard, React, ReactPropTypes) {
   class ClipboardBtn extends React.Component {
     componentWillUnmount() {
       this.clipboard.destroy();

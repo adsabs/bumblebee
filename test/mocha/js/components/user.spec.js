@@ -1,5 +1,5 @@
 define([
-  'underscore',
+  'lodash/dist/lodash.compat',
   'js/components/user',
   'js/components/history_manager',
   'js/components/api_targets',

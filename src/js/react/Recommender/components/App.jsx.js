@@ -1,74 +1,68 @@
 define([
   'react',
-  'react-bootstrap',
   'prop-types',
   'react-redux',
-  '../actions',
-  'es6!./RecommendedList.jsx',
-  'es6!./SearchExamples.jsx',
-], function (
+  'js/react/Recommender/actions',
+  'js/react/Recommender/components/RecommendedList.jsx',
+  'js/react/Recommender/components/SearchExamples.jsx',
+  'bootstrap-sass',
+], function(
   React,
-  {Nav, NavItem},
   PropTypes,
-  {useDispatch, useSelector},
-  {setTab, emitAnalytics},
+  { useDispatch, useSelector },
+  { setTab, emitAnalytics },
   RecommendedList,
-  SearchExamples,
+  SearchExamples
 ) {
-  const selector = (state) => ({
-    tab: state.tab,
-  });
-
-  const App = () => {
+  return () => {
     const dispatch = useDispatch();
-    const {tab} = useSelector(selector);
-    const onSelected = (key) => {
+    const tab = useSelector((state) => state.tab);
+
+    const handleSelect = (key) => {
+      console.log('key', key);
       dispatch(setTab(key));
-      dispatch(
-        emitAnalytics([
-          'send',
-          'event',
-          'interaction', 'main-page',
-          key === 1 ? 'recommender' : 'help',
-        ]),
-      );
+      dispatch(emitAnalytics(['send', 'event', 'interaction', 'main-page', key === 1 ? 'recommender' : 'help']));
+    };
+
+    const handleTabClick = (e) => {
+      console.log('click', e);
+      e.preventDefault();
+      const key = parseInt(e.currentTarget.getAttribute('data-key'), 10);
+      handleSelect(key);
     };
 
     return (
       <div>
-        <Nav
-          className="hidden-xs"
-          bsStyle="tabs"
-          justified
-          activeKey={tab}
-          onSelect={(key) => onSelected(key)}
-        >
-          <NavItem eventKey={1} href="javascript:void(0);">
-            Recommendations
-          </NavItem>
-          <NavItem eventKey={2} href="javascript:void(0);">
-            Search examples
-          </NavItem>
-        </Nav>
-        <Nav
-          className="hidden-sm hidden-md hidden-lg"
-          bsStyle="tabs"
-          activeKey={tab}
-          onSelect={(key) => onSelected(key)}
-        >
-          <NavItem eventKey={1} href="javascript:void(0);">
-            Recommendations
-          </NavItem>
-          <NavItem eventKey={2} href="javascript:void(0);">
-            Search examples
-          </NavItem>
-        </Nav>
-        <div style={{minHeight: 200, padding: '1rem 0'}}>
-          {tab === 1 ? <RecommendedList/> : <SearchExamples/>}
-        </div>
+        {/* Desktop tabs */}
+        <ul className="nav nav-tabs nav-justified hidden-xs">
+          <li className={tab === 1 ? 'active' : ''}>
+            <a href="javascript:void(0)" data-key="1" onClick={handleTabClick}>
+              Recommendations
+            </a>
+          </li>
+          <li className={tab === 2 ? 'active' : ''}>
+            <a href="javascript:void(0)" data-key="2" onClick={handleTabClick}>
+              Search examples
+            </a>
+          </li>
+        </ul>
+
+        {/* Mobile tabs */}
+        <ul className="nav nav-tabs nav-justified hidden-sm hidden-md hidden-lg">
+          <li className={tab === 1 ? 'active' : ''}>
+            <a href="#" onClick={() => handleSelect(1)}>
+              Recommendations
+            </a>
+          </li>
+          <li className={tab === 2 ? 'active' : ''}>
+            <a href="#" onClick={() => handleSelect(2)}>
+              Search examples
+            </a>
+          </li>
+        </ul>
+
+        <div style={{ minHeight: 200, padding: '1rem 0' }}>{tab === 1 ? <RecommendedList /> : <SearchExamples />}</div>
       </div>
     );
   };
-
-  return App;
 });

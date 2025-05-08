@@ -4,7 +4,7 @@ define([
   'js/bugutils/minimal_pubsub',
   'js/components/api_query',
   'js/components/json_response',
-  'underscore',
+  'lodash/dist/lodash.compat',
 ], function(
   Marionette,
   NetworkWidget,

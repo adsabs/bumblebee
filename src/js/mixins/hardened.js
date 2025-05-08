@@ -2,7 +2,7 @@
  * Created by rchyla on 3/18/14.
  */
 
-define(['underscore', 'js/components/facade'], function(_, Facade) {
+define(['lodash/dist/lodash.compat', 'js/components/facade'], function(_, Facade) {
   var Mixin = {
     /*
      * Creates a hardened instance of itself, it uses
@@ -15,10 +15,7 @@ define(['underscore', 'js/components/facade'], function(_, Facade) {
       if (!('hardenedInterface' in this) && !iface) {
         throw Error('Error: this.hardenedInterface is not defined');
       }
-      return new Facade(
-        iface || ('hardenedInterface' in this ? this.hardenedInterface : {}),
-        objectIn
-      );
+      return new Facade(iface || ('hardenedInterface' in this ? this.hardenedInterface : {}), objectIn);
     },
     getHardenedInstance: function(iface) {
       return this._getHardenedInstance(iface, this);

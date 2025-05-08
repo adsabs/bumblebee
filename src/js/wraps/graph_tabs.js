@@ -5,14 +5,7 @@ define([
   'js/widgets/facet/graph-facet/h_index_graph',
   'js/mixins/formatter',
   'analytics',
-], function(
-  TabsWidget,
-  FacetFactory,
-  YearGraphView,
-  HIndexGraph,
-  FormatMixin,
-  analytics
-) {
+], function(TabsWidget, FacetFactory, YearGraphView, HIndexGraph, FormatMixin, analytics) {
   return function() {
     var yearGraphWidget = FacetFactory.makeGraphFacet({
       graphView: YearGraphView,
@@ -44,9 +37,7 @@ define([
           return noData();
         }
 
-        const facetData = apiResponse.get(
-          'facet_counts.facet_pivot.property,year'
-        );
+        const facetData = apiResponse.get('facet_counts.facet_pivot.property,year');
 
         const yearMap = new Map();
         // grab only the 2 property types we want (refereed and non-refereed)
@@ -71,10 +62,7 @@ define([
         const max = Math.max(...years);
 
         // fill in all the years between min and max that don't have values
-        const finalData = Array.from(
-          { length: max - min + 1 },
-          (_v, i) => min + i
-        ).map((year) => {
+        const finalData = Array.from({ length: max - min + 1 }, (_v, i) => min + i).map((year) => {
           // if the year exists, then grab it, otherwise fill with an empty (x,y)
           if (yearMap.has(year)) {
             const { refereed, notrefereed } = yearMap.get(year);
@@ -137,10 +125,7 @@ define([
         counts.some((item) => {
           xCounter += item.count;
           // one dot per paper (this way we'll only plot the top ranked X - fraction of results)
-          while (
-            xCounter > finalData.length &&
-            finalData.length < maxDataPoints
-          ) {
+          while (xCounter > finalData.length && finalData.length < maxDataPoints) {
             yCounter += item.val;
             finalData.push({ y: item.val, x: finalData.length + 1 });
           }
@@ -151,9 +136,7 @@ define([
         });
 
         const statsCount = apiResponse.toJSON().stats
-          ? FormatMixin.formatNum(
-              apiResponse.get('stats.stats_fields.citation_count.sum')
-            )
+          ? FormatMixin.formatNum(apiResponse.get('stats.stats_fields.citation_count.sum'))
           : 0;
 
         if (finalData.length <= 1) {
@@ -209,10 +192,7 @@ define([
         counts.some((item) => {
           xCounter += item.count;
           // one dot per paper (this way we'll only plot the top ranked X - fraction of results)
-          while (
-            xCounter > finalData.length &&
-            finalData.length < maxDataPoints
-          ) {
+          while (xCounter > finalData.length && finalData.length < maxDataPoints) {
             yCounter += item.val;
             finalData.push({ y: item.val, x: finalData.length + 1 });
           }
@@ -223,9 +203,7 @@ define([
         });
 
         const statsCount = apiResponse.toJSON().stats
-          ? FormatMixin.formatNum(
-              apiResponse.get('stats.stats_fields.read_count.sum')
-            )
+          ? FormatMixin.formatNum(apiResponse.get('stats.stats_fields.read_count.sum'))
           : 0;
 
         if (finalData.length <= 1) {
@@ -256,13 +234,7 @@ define([
           widget: citationGraphWidget,
           id: 'citations-facet',
           onActive: () => {
-            analytics(
-              'send',
-              'event',
-              'interaction',
-              'graph-tab-active',
-              'Citations'
-            );
+            analytics('send', 'event', 'interaction', 'graph-tab-active', 'Citations');
           },
         },
         {
@@ -270,13 +242,7 @@ define([
           widget: readsGraphWidget,
           id: 'reads-facet',
           onActive: () => {
-            analytics(
-              'send',
-              'event',
-              'interaction',
-              'graph-tab-active',
-              'Reads'
-            );
+            analytics('send', 'event', 'interaction', 'graph-tab-active', 'Reads');
           },
         },
       ],

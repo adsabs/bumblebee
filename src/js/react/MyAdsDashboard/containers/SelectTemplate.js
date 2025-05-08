@@ -1,21 +1,14 @@
-define([
-  'es6!js/react/MyAdsDashboard/components/SelectTemplate.jsx',
-  'react-redux',
-  '../actions'
-], function(
+define(['js/react/MyAdsDashboard/components/SelectTemplate.jsx', 'react-redux', '../actions'], function(
   SelectTemplate,
-  {connect},
+  { connect },
   actions
 ) {
-
   const mapStateToProps = ({}) => ({});
 
-  const {
-    goTo
-  } = actions;
+  const { goTo } = actions;
 
   const actionCreators = {
-    goTo
+    goTo,
   };
 
   return connect(mapStateToProps, actionCreators)(SelectTemplate);

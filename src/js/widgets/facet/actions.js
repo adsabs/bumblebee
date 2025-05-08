@@ -1,4 +1,4 @@
-define(['underscore'], function(_) {
+define(['lodash/dist/lodash.compat'], function(_) {
   // http://redux.js.org/docs/basics/Actions.html
 
   var actions = {};
@@ -24,12 +24,8 @@ define(['underscore'], function(_) {
     return function(dispatch, getState) {
       var num = 5;
       // check to see if more need to be requested
-      var numLoadedRecords = id
-        ? getState().facets[id].children.length
-        : getState().children.length;
-      var numVisible = id
-        ? getState().facets[id].state.visible
-        : getState().state.visible;
+      var numLoadedRecords = id ? getState().facets[id].children.length : getState().children.length;
+      var numVisible = id ? getState().facets[id].state.visible : getState().state.visible;
       // want to make sure there is always an extra cycle available to
       // minimize impression of loading
       if (numLoadedRecords - (numVisible + num) <= num) {
@@ -61,14 +57,10 @@ define(['underscore'], function(_) {
 
   actions.toggle_facet = function(id, open) {
     return function(dispatch, getState) {
-      var currentOpen = id
-        ? getState().facets[id].state.open
-        : getState().state.open;
+      var currentOpen = id ? getState().facets[id].state.open : getState().state.open;
       // if open was not supplied, just toggle the facet
       open = _.isBoolean(open) ? open : !currentOpen;
-      var hasData = id
-        ? getState().facets[id].children.length
-        : getState().children.length;
+      var hasData = id ? getState().facets[id].children.length : getState().children.length;
       // fetch the data now
       if (open && !hasData) dispatch(this.fetch_data(id));
 

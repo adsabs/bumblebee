@@ -1,9 +1,9 @@
 define([
-  'underscore',
+  'lodash/dist/lodash.compat',
   'react',
-  'es6!./multi-control.jsx',
-  'es6!./select.jsx',
-  'es6!./radio-group.jsx',
+  'js/widgets/library_actions/components/multi-control.jsx',
+  'js/widgets/library_actions/components/select.jsx',
+  'js/widgets/library_actions/components/radio-group.jsx',
 ], function(_, React, MultiControl, Select, RadioGroup) {
   const descriptions = {
     union:
@@ -32,16 +32,10 @@ define([
   const flattenString = (str) => str.toLowerCase().replace(/\W/g, '_');
 
   const Loading = () => (
-    <div
-      className="all-libraries-widget s-all-libraries-widget library-actions"
-      style={AppStyles}
-    >
+    <div className="all-libraries-widget s-all-libraries-widget library-actions" style={AppStyles}>
       <div className="loading-container">
         <div className="loading">
-          <div
-            className="loading-icon-big fa fa-spinner fa-spin"
-            aria-hidden="true"
-          />
+          <div className="loading-icon-big fa fa-spinner fa-spin" aria-hidden="true" />
           <div className="loading-text loading-text-big">Loading...</div>
         </div>
       </div>
@@ -51,11 +45,7 @@ define([
   const Title = () => (
     <div className="row">
       <div className="col-sm-offset-3 col-sm-6 text-center">
-        <i
-          className="fa fa-wrench fa-2x"
-          style={{ marginRight: '5px' }}
-          aria-hidden="true"
-        />
+        <i className="fa fa-wrench fa-2x" style={{ marginRight: '5px' }} aria-hidden="true" />
         <span className="h3">Library Operations</span>
       </div>
     </div>
@@ -99,12 +89,7 @@ define([
 
       return (
         <div className={`alert alert-${type} alert-dismissable text-center`}>
-          <a
-            href="javascript:void(0)"
-            className="close"
-            onClick={(e) => this.onClick(e)}
-            aria-label="close"
-          >
+          <a href="javascript:void(0)" className="close" onClick={(e) => this.onClick(e)} aria-label="close">
             &times;
           </a>
           <p>
@@ -120,13 +105,7 @@ define([
     message: null,
   };
 
-  const Input = ({
-    label,
-    onInput,
-    hasError,
-    helpBlock = 'Invalid Input',
-    onKeyDown,
-  }) => {
+  const Input = ({ label, onInput, hasError, helpBlock = 'Invalid Input', onKeyDown }) => {
     const id = flattenString(label);
 
     return (
@@ -134,13 +113,7 @@ define([
         <label htmlFor={id} className="control-label">
           {label}
         </label>
-        <input
-          id={id}
-          type="text"
-          className="form-control"
-          onInput={onInput}
-          onKeyDown={onKeyDown}
-        />
+        <input id={id} type="text" className="form-control" onInput={onInput} onKeyDown={onKeyDown} />
         {hasError && <span className="help-block">{helpBlock}</span>}
       </div>
     );
@@ -188,8 +161,7 @@ define([
         actions,
         action: action || actions[0],
         source: source || (items.length > 0 && items[0].id),
-        secondary:
-          secondary.length > 0 ? secondary : [items.length > 0 && items[0].id],
+        secondary: secondary.length > 0 ? secondary : [items.length > 0 && items[0].id],
         status: status,
       }));
     }
@@ -217,24 +189,17 @@ define([
       const secondary = _.find(this.props.items, {
         id: this.state.secondary[0],
       });
-      if (
-        this.state.action === 'empty' &&
-        !confirm(`Are you sure you want to empty "${source.name}"?`)
-      ) {
+      if (this.state.action === 'empty' && !confirm(`Are you sure you want to empty "${source.name}"?`)) {
         return;
       }
       if (
         this.state.action === 'copy' &&
-        !confirm(
-          `Are you sure? This operation will append records from "${source.name}" to "${secondary.name}"`
-        )
+        !confirm(`Are you sure? This operation will append records from "${source.name}" to "${secondary.name}"`)
       ) {
         return;
       }
       // this.setState({ status: null });
-      this.props.onSubmit(
-        _.pick(this.state, ['action', 'source', 'secondary', 'target'])
-      );
+      this.props.onSubmit(_.pick(this.state, ['action', 'source', 'secondary', 'target']));
     }
 
     render() {
@@ -243,10 +208,7 @@ define([
       if (loading) return <Loading />;
 
       return (
-        <div
-          className="all-libraries-widget s-all-libraries-widget"
-          style={AppStyles}
-        >
+        <div className="all-libraries-widget s-all-libraries-widget" style={AppStyles}>
           <Title />
           <form onSubmit={(e) => this.onSubmit(e)}>
             <RadioGroup
@@ -273,23 +235,13 @@ define([
                 onChange={(secondary) => this.setState({ secondary })}
               >
                 {(idx, onChange) => (
-                  <Select
-                    label="Secondary Library"
-                    index={idx}
-                    key={idx}
-                    items={items}
-                    onChange={onChange}
-                  />
+                  <Select label="Secondary Library" index={idx} key={idx} items={items} onChange={onChange} />
                 )}
               </MultiControl>
             )}
 
             {action === 'copy' && (
-              <Select
-                label="Target Library"
-                items={items}
-                onChange={(val) => this.setState({ secondary: [val] })}
-              />
+              <Select label="Target Library" items={items} onChange={(val) => this.setState({ secondary: [val] })} />
             )}
 
             {action !== 'empty' && action !== 'copy' && (
@@ -305,15 +257,10 @@ define([
             <div className="form-group">
               {submitting ? (
                 <button className="btn btn-primary" disabled>
-                  <i className="fa fa-spinner fa-spin" aria-hidden="true" />{' '}
-                  Submitting...
+                  <i className="fa fa-spinner fa-spin" aria-hidden="true" /> Submitting...
                 </button>
               ) : (
-                <button
-                  className="btn btn-primary"
-                  type="submit"
-                  disabled={targetInvalid}
-                >
+                <button className="btn btn-primary" type="submit" disabled={targetInvalid}>
                   Submit
                 </button>
               )}

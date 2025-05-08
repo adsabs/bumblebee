@@ -3,7 +3,7 @@
  * just complicates things. For simple things, just use this class.
  */
 
-define(['backbone', 'underscore'], function(Backbone, _) {
+define(['backbone', 'lodash/dist/lodash.compat'], function(Backbone, _) {
   // A list of options to be attached directly to the module, if provided.
   var moduleOptions = ['className', 'activate'];
 

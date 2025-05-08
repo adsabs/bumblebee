@@ -1,8 +1,6 @@
-define(['underscore', 'react', 'prop-types'], function(_, React, PropTypes) {
+define(['lodash/dist/lodash.compat', 'react', 'prop-types'], function(_, React, PropTypes) {
   // No Results View
-  const NoResults = () => (
-    <h3 className="s-right-col-widget-title">No Sources Found</h3>
-  );
+  const NoResults = () => <h3 className="s-right-col-widget-title">No Sources Found</h3>;
 
   // Loading View
   const Loading = () => (
@@ -31,33 +29,17 @@ define(['underscore', 'react', 'prop-types'], function(_, React, PropTypes) {
                   rel="noreferrer noopener"
                   onClick={() => onClick('ftl', g)}
                   title={`${g.description} ${
-                    g.open
-                      ? 'OPEN ACCESS'
-                      : g.type === 'INSTITUTION'
-                      ? ''
-                      : 'SIGN IN REQUIRED'
+                    g.open ? 'OPEN ACCESS' : g.type === 'INSTITUTION' ? '' : 'SIGN IN REQUIRED'
                   }`}
-                  className={`resources__content__link ${
-                    g.open ? 'unlock' : ''
-                  }`}
+                  className={`resources__content__link ${g.open ? 'unlock' : ''}`}
                 >
                   <span className="sr-only">{g.description}</span>
-                  {g.type === 'PDF' && (
-                    <i className="fa fa-file-pdf-o" aria-hidden="true" />
-                  )}
-                  {g.type === 'HTML' && (
-                    <i className="fa fa-file-text" aria-hidden="true" />
-                  )}
-                  {g.type === 'SCAN' && (
-                    <i className="fa fa-file-image-o" aria-hidden="true" />
-                  )}
-                  {g.type === 'INSTITUTION' && (
-                    <i className="fa fa-university" aria-hidden="true" />
-                  )}
+                  {g.type === 'PDF' && <i className="fa fa-file-pdf-o" aria-hidden="true" />}
+                  {g.type === 'HTML' && <i className="fa fa-file-text" aria-hidden="true" />}
+                  {g.type === 'SCAN' && <i className="fa fa-file-image-o" aria-hidden="true" />}
+                  {g.type === 'INSTITUTION' && <i className="fa fa-university" aria-hidden="true" />}
                 </a>
-                {idx < groups.length - 1 && (
-                  <div className="resources__content__link__separator">|</div>
-                )}
+                {idx < groups.length - 1 && <div className="resources__content__link__separator">|</div>}
               </span>
             ))}
           </div>
@@ -108,27 +90,17 @@ define(['underscore', 'react', 'prop-types'], function(_, React, PropTypes) {
   };
 
   // Main View
-  const App = (props) => (
+  const App = ({ dataProducts, fullTextSources, hasError, loading, noResults, onLinkClick }) => (
     <div>
-      {props.loading && <Loading />}
-      {props.noResults && !props.loading && <NoResults />}
-      {!props.loading && !props.hasError && (
+      {loading && <Loading />}
+      {noResults && !loading && <NoResults />}
+      {!loading && !hasError && (
         <>
           <div className="resources__container">
-            {!_.isEmpty(props.fullTextSources) && (
-              <FullTextLinkList
-                items={props.fullTextSources}
-                onClick={props.onLinkClick}
-              />
-            )}
+            {!_.isEmpty(fullTextSources) && <FullTextLinkList items={fullTextSources} onClick={onLinkClick} />}
           </div>
           <div className="resources__container">
-            {!_.isEmpty(props.dataProducts) && (
-              <DataProductLinkList
-                items={props.dataProducts}
-                onClick={props.onLinkClick}
-              />
-            )}
+            {!_.isEmpty(dataProducts) && <DataProductLinkList items={dataProducts} onClick={onLinkClick} />}
           </div>
         </>
       )}
@@ -137,8 +109,8 @@ define(['underscore', 'react', 'prop-types'], function(_, React, PropTypes) {
   App.propTypes = {
     loading: PropTypes.bool,
     noResults: PropTypes.bool,
-    fullTextSources: PropTypes.array,
-    dataProducts: PropTypes.array,
+    fullTextSources: PropTypes.arrayOf(PropTypes.string),
+    dataProducts: PropTypes.arrayOf(PropTypes.string),
     onLinkClick: PropTypes.func,
     hasError: PropTypes.string,
   };

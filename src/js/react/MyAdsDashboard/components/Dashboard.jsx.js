@@ -1,13 +1,13 @@
 define([
-  'underscore',
+  'lodash/dist/lodash.compat',
   'react',
-  'es6!./TemplatePill.jsx',
-  'moment',
-  'es6!./ActionsDropdown.jsx',
+  'js/react/MyAdsDashboard/components/TemplatePill.jsx',
+  'dayjs',
+  'js/react/MyAdsDashboard/components/ActionsDropdown.jsx',
   'prop-types',
-], function(_, React, TemplatePill, moment, ActionsDropdown, PropTypes) {
+], function(_, React, TemplatePill, dayjs, ActionsDropdown, PropTypes) {
   const getFriendlyDateString = (dateStr) => {
-    return moment(dateStr).format('lll');
+    return dayjs(dateStr).format('lll');
   };
 
   const SortableHeader = ({ children, onClick, direction, active }) => {
@@ -20,10 +20,7 @@ define([
     }
     const caret = direction === 'desc' ? 'down' : 'up';
     return (
-      <th
-        scope="col"
-        onClick={() => onClick(direction === 'desc' ? 'asc' : 'desc')}
-      >
+      <th scope="col" onClick={() => onClick(direction === 'desc' ? 'asc' : 'desc')}>
         {children} <i className={`fa fa-caret-${caret}`} aria-hidden="true" />
       </th>
     );
@@ -44,7 +41,7 @@ define([
   };
 
   /**
-   * @typedef {import('../typedefs.js').Notification} Notification
+   * @typedef {import('js/react/MyAdsDashboard/typedefs.js').Notification} Notification
    */
 
   class MyAdsDashboard extends React.Component {
@@ -161,14 +158,7 @@ define([
         removeNotificationRequest: removeRequest,
       } = this.props;
 
-      const {
-        filterText,
-        sortCol,
-        sortDir,
-        searchValue,
-        activeItem,
-        loadingQuery,
-      } = this.state;
+      const { filterText, sortCol, sortDir, searchValue, activeItem, loadingQuery } = this.state;
 
       let ids = Object.keys(notifications);
       if (filterText && filterText.length > 0) {
@@ -192,9 +182,7 @@ define([
           const leftVal = left[prop];
           const rightVal = right[prop];
           if (prop === 'updated') {
-            return moment(dir === 'asc' ? leftVal : rightVal).diff(
-              dir === 'asc' ? rightVal : leftVal
-            );
+            return dayjs(dir === 'asc' ? leftVal : rightVal).diff(dir === 'asc' ? rightVal : leftVal);
           }
 
           if (leftVal < rightVal) {
@@ -207,19 +195,13 @@ define([
         });
       }
       const disable =
-        removeRequest.status === 'pending' ||
-        updateRequest.status === 'pending' ||
-        getRequest.status === 'pending';
+        removeRequest.status === 'pending' || updateRequest.status === 'pending' || getRequest.status === 'pending';
 
-      if (
-        (ids.length === 0 && getRequest.status === 'pending') ||
-        loadingQuery
-      ) {
+      if ((ids.length === 0 && getRequest.status === 'pending') || loadingQuery) {
         return getRequest.status === 'pending' || loadingQuery ? (
           <div className="row text-center">
             <h3 className="h4">
-              <i className="fa fa-spinner fa-spin" aria-hidden="true" />{' '}
-              Loading...
+              <i className="fa fa-spinner fa-spin" aria-hidden="true" /> Loading...
             </h3>
           </div>
         ) : (
@@ -257,11 +239,7 @@ define([
             </div>
             <div className="col-sm-2 col-sm-offset-2 col-md-3 col-md-offset-1">
               <span className="pull-right hidden-xs">
-                <div
-                  className="btn-group"
-                  role="group"
-                  aria-label="group of action buttons"
-                >
+                <div className="btn-group" role="group" aria-label="group of action buttons">
                   <button
                     type="button"
                     className="btn btn-default"
@@ -318,40 +296,20 @@ define([
           <table className="table">
             <thead>
               <tr>
-                <SortableHeader
-                  onClick={this.onSort('#')}
-                  active={sortCol === '#'}
-                  direction={sortDir}
-                >
+                <SortableHeader onClick={this.onSort('#')} active={sortCol === '#'} direction={sortDir}>
                   #
                 </SortableHeader>
-                <SortableHeader
-                  onClick={this.onSort('name')}
-                  active={sortCol === 'name'}
-                  direction={sortDir}
-                >
+                <SortableHeader onClick={this.onSort('name')} active={sortCol === 'name'} direction={sortDir}>
                   Name
                 </SortableHeader>
-                <SortableHeader
-                  onClick={this.onSort('template')}
-                  active={sortCol === 'template'}
-                  direction={sortDir}
-                >
+                <SortableHeader onClick={this.onSort('template')} active={sortCol === 'template'} direction={sortDir}>
                   Type
                 </SortableHeader>
-                <SortableHeader
-                  onClick={this.onSort('frequency')}
-                  active={sortCol === 'frequency'}
-                  direction={sortDir}
-                >
+                <SortableHeader onClick={this.onSort('frequency')} active={sortCol === 'frequency'} direction={sortDir}>
                   Frequency
                 </SortableHeader>
 
-                <SortableHeader
-                  onClick={this.onSort('updated')}
-                  active={sortCol === 'updated'}
-                  direction={sortDir}
-                >
+                <SortableHeader onClick={this.onSort('updated')} active={sortCol === 'updated'} direction={sortDir}>
                   Updated
                 </SortableHeader>
                 <th scope="col">Actions</th>
@@ -365,14 +323,9 @@ define([
                 return (
                   <tr
                     key={id}
-                    className={
-                      (activeItem === id ? 'info ' : '') +
-                      (item.active ? '' : 'inactive')
-                    }
+                    className={(activeItem === id ? 'info ' : '') + (item.active ? '' : 'inactive')}
                     style={{
-                      backgroundColor: item.active
-                        ? 'inherit'
-                        : 'rgba(0,0,0,0.09)',
+                      backgroundColor: item.active ? 'inherit' : 'rgba(0,0,0,0.09)',
                     }}
                   >
                     <th scope="row" className={item.active ? '' : 'text-faded'}>
@@ -384,17 +337,10 @@ define([
                       </h4>
                     </td>
                     <td>
-                      <TemplatePill
-                        name={item.template}
-                        disabled={!item.active}
-                      />
+                      <TemplatePill name={item.template} disabled={!item.active} />
                     </td>
-                    <td className={item.active ? '' : 'text-faded'}>
-                      {item.frequency}
-                    </td>
-                    <td className={item.active ? '' : 'text-faded'}>
-                      {getFriendlyDateString(item.updated)}
-                    </td>
+                    <td className={item.active ? '' : 'text-faded'}>{item.frequency}</td>
+                    <td className={item.active ? '' : 'text-faded'}>{getFriendlyDateString(item.updated)}</td>
                     <td>
                       <ActionsDropdown
                         disable={disable}
@@ -412,12 +358,8 @@ define([
             </tbody>
           </table>
 
-          {ids.length === 0 && searchValue && (
-            <div>Your search is not matching any notifications.</div>
-          )}
-          {ids.length === 0 && !searchValue && (
-            <div>You don&apos;t have any notifications yet!</div>
-          )}
+          {ids.length === 0 && searchValue && <div>Your search is not matching any notifications.</div>}
+          {ids.length === 0 && !searchValue && <div>You don&apos;t have any notifications yet!</div>}
         </div>
       );
     }

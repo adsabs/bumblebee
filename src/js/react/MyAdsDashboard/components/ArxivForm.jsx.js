@@ -1,9 +1,4 @@
-define([
-  'react',
-  'react-bootstrap',
-  'es6!./ArxivClassList.jsx',
-  'prop-types',
-], function(
+define(['react', 'react-bootstrap', 'js/react/MyAdsDashboard/components/ArxivClassList.jsx', 'prop-types'], function(
   React,
   { Form, FormGroup, ControlLabel, FormControl, HelpBlock },
   ArxivClassList,
@@ -14,18 +9,13 @@ define([
       case 'pending':
         return (
           <span className="text-info">
-            <i className="fa fa-spinner fa-spin" aria-hidden="true" /> Sending
-            request...
+            <i className="fa fa-spinner fa-spin" aria-hidden="true" /> Sending request...
           </span>
         );
       case 'failure':
         return <span className="text-danger">Request failed. ({error})</span>;
       case 'success':
-        return (
-          <span className="text-success">
-            Notification {editing ? 'saved' : 'created'}!
-          </span>
-        );
+        return <span className="text-success">Notification {editing ? 'saved' : 'created'}!</span>;
       default:
         return null;
     }
@@ -102,11 +92,7 @@ define([
     onSubmit(e) {
       e.preventDefault();
       const { keywords, groups, name, pending, editing } = this.state;
-      const {
-        updateNotification,
-        editingNotification,
-        addNotification,
-      } = this.props;
+      const { updateNotification, editingNotification, addNotification } = this.props;
 
       if (pending) {
         return;
@@ -140,11 +126,7 @@ define([
 
     render() {
       const { editing, keywords, name, groups, message } = this.state;
-      const {
-        onCancel,
-        updateNotificationRequest,
-        addNotificationRequest,
-      } = this.props;
+      const { onCancel, updateNotificationRequest, addNotificationRequest } = this.props;
 
       return (
         <Form onSubmit={(e) => this.onSubmit(e)}>
@@ -163,9 +145,7 @@ define([
           )}
           <FormGroup>
             <ControlLabel>Keywords (optional)</ControlLabel>
-            <HelpBlock>
-              Used to rank papers from selected arXiv categories (below)
-            </HelpBlock>
+            <HelpBlock>Used to rank papers from selected arXiv categories (below)</HelpBlock>
             <FormControl
               bsSize="large"
               type="text"
@@ -175,8 +155,8 @@ define([
             />
             <FormControl.Feedback />
             <HelpBlock>
-              Boolean &quot;AND&quot; is assumed, but can be overriden by using
-              explicit logical operators between keywords
+              Boolean &quot;AND&quot; is assumed, but can be overriden by using explicit logical operators between
+              keywords
             </HelpBlock>
           </FormGroup>
 
@@ -191,39 +171,24 @@ define([
                 Notification will include all papers from selected categories
               </span>
             </ControlLabel>
-            <ArxivClassList
-              onSelection={this.onClassSelection}
-              initialSelected={groups}
-            />
+            <ArxivClassList onSelection={this.onClassSelection} initialSelected={groups} />
             <HelpBlock>Select the groups to query</HelpBlock>
           </FormGroup>
 
-          <div
-            className="row"
-            style={{ borderTop: 'solid 1px #d9d9d9', paddingTop: '1rem' }}
-          >
+          <div className="row" style={{ borderTop: 'solid 1px #d9d9d9', paddingTop: '1rem' }}>
             <div className="col-sm-4">
               <div className="btn-toolbar">
                 <button type="submit" className="btn btn-primary">
                   {editing ? 'Save notification' : 'Create notification'}
                 </button>
-                <button
-                  type="button"
-                  className="btn btn-default"
-                  onClick={onCancel}
-                >
+                <button type="button" className="btn btn-default" onClick={onCancel}>
                   Cancel
                 </button>
               </div>
             </div>
-            <div
-              className="col-sm-7 col-sm-offset-1"
-              style={{ paddingTop: '1rem' }}
-            >
+            <div className="col-sm-7 col-sm-offset-1" style={{ paddingTop: '1rem' }}>
               {getStatusMessage({
-                ...(editing
-                  ? updateNotificationRequest
-                  : addNotificationRequest),
+                ...(editing ? updateNotificationRequest : addNotificationRequest),
                 editing,
               })}
               <span className="text-info">{message}</span>

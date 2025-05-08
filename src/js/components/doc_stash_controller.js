@@ -1,9 +1,10 @@
-define([
-  'backbone',
-  'js/components/generic_module',
-  'js/mixins/hardened',
-  'js/mixins/dependon',
-], function(Backbone, GenericModule, Hardened, Dependon) {
+define(['lodash', 'backbone', 'js/components/generic_module', 'js/mixins/hardened', 'js/mixins/dependon'], function(
+  _,
+  Backbone,
+  GenericModule,
+  Hardened,
+  Dependon
+) {
   /*
    * this is used to store docs requested by results widget
    * for the use of other widgets, to reduce api requests

@@ -1,9 +1,11 @@
 define([
+  'backbone',
+  'lodash',
   'marionette',
   'js/widgets/base/base_widget',
-  'hbs!js/widgets/dropdown-menu/templates/dropdown',
-  'hbs!js/widgets/dropdown-menu/templates/dropdown-item',
-], function(Marionette, BaseWidget, dropdownTemplate, dropdownItemTemplate) {
+  'js/widgets/dropdown-menu/templates/dropdown.hbs',
+  'js/widgets/dropdown-menu/templates/dropdown-item.hbs',
+], function(Backbone, _, Marionette, BaseWidget, dropdownTemplate, dropdownItemTemplate) {
   /*
    *
    * To use this widget to generate a dropdown list,
@@ -113,9 +115,7 @@ define([
     events: {
       'change input.papers': function(e) {
         var $t = $(e.target);
-        $t.attr('value') == 'all'
-          ? this.model.set('onlySelected', false)
-          : this.model.set('onlySelected', true);
+        $t.attr('value') == 'all' ? this.model.set('onlySelected', false) : this.model.set('onlySelected', true);
       },
 
       'click .dropdown-menu label': function(e) {
@@ -145,12 +145,7 @@ define([
         selectedOption: this.options.selectedOption,
       });
       this.collection = new DropdownCollection(this.options.links);
-      this.view = new DropdownView(
-        _.extend(
-          { collection: this.collection, model: this.model },
-          this.options
-        )
-      );
+      this.view = new DropdownView(_.extend({ collection: this.collection, model: this.model }, this.options));
       this.listenTo(this.collection, 'change:selected', (model, value) => {
         if (model.has('navEvent')) {
           this.emitNavigateEvent(model, value);
@@ -158,20 +153,16 @@ define([
           const onlySelected = this.getOnlySelected();
 
           // if the item has pubsubEvent, call the event
-          this.getPubSub().publish(
-            this.getPubSub().CUSTOM_EVENT,
-            model.get('pubsubEvent'),
-            { onlySelected }
-          );
+          this.getPubSub().publish(this.getPubSub().CUSTOM_EVENT, model.get('pubsubEvent'), { onlySelected });
         }
         model.set('selected', false);
       });
     },
 
     activate: function(beehive) {
-      _.bindAll(this);
       this.setBeeHive(beehive);
       var pubsub = this.getPubSub();
+      _.bindAll(this, ['onStoragePaperChange', 'updateFromUserData']);
       pubsub.subscribe(pubsub.STORAGE_PAPER_UPDATE, this.onStoragePaperChange);
       pubsub.subscribe(pubsub.USER_ANNOUNCEMENT, this.updateFromUserData);
       this.updateFromUserData();
@@ -182,9 +173,7 @@ define([
         var beehive = _.isFunction(this.getBeeHive) && this.getBeeHive();
         var user = _.isFunction(beehive.getObject) && beehive.getObject('User');
         if (_.isPlainObject(user)) {
-          return (
-            _.isFunction(user.getUserData) && user.getUserData('USER_DATA')
-          );
+          return _.isFunction(user.getUserData) && user.getUserData('USER_DATA');
         }
         return {};
       } catch (e) {
@@ -194,9 +183,7 @@ define([
 
     updateFromUserData: function() {
       var userData = this.getUserData();
-      var links =
-        this.options.updateLinks(userData, this.options.links) ||
-        this.options.links;
+      var links = this.options.updateLinks(userData, this.options.links) || this.options.links;
       this.options.links = links;
       this.collection.reset(this.options.links);
     },
@@ -206,25 +193,14 @@ define([
     },
 
     getOnlySelected: function() {
-      return (
-        this.model.get('selectedOption') &&
-        this.model.get('selectedPapers') &&
-        this.model.get('onlySelected')
-      );
+      return this.model.get('selectedOption') && this.model.get('selectedPapers') && this.model.get('onlySelected');
     },
 
     emitNavigateEvent: function(model, value) {
       var onlySelected = this.getOnlySelected();
       if (value) {
-        var args = _.extend(
-          { onlySelected: onlySelected },
-          model.get('params')
-        );
-        this.getPubSub().publish(
-          this.getPubSub().NAVIGATE,
-          model.get('navEvent'),
-          args
-        );
+        var args = _.extend({ onlySelected: onlySelected }, model.get('params'));
+        this.getPubSub().publish(this.getPubSub().NAVIGATE, model.get('navEvent'), args);
       }
       model.set('selected', false);
     },

@@ -1,4 +1,4 @@
-define(['underscore', 'redux', './constants', './actions'], function(
+define(['lodash/dist/lodash.compat', 'redux', './constants', './actions'], function(
   _,
   { combineReducers },
   { Permissions },
@@ -60,9 +60,7 @@ define(['underscore', 'redux', './constants', './actions'], function(
   const collaboratorsState = {};
   const collaborators = (state = collaboratorsState, action) => {
     if (action.type === 'SET_COLLABORATORS' && action.result) {
-      const result = action.result.sort(
-        (a, b) => Object.keys(b)[0] - Object.keys(a)[0]
-      );
+      const result = action.result.sort((a, b) => Object.keys(b)[0] - Object.keys(a)[0]);
       return result.reduce((acc, collab) => {
         const id = _.uniqueId('collaborator_');
         const keys = Object.keys(collab);

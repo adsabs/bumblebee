@@ -11,10 +11,9 @@ define([
   'js/components/json_response',
   'js/components/solr_params',
   'backbone',
-  'underscore',
+  'lodash/dist/lodash.compat',
   'jquery',
 ], function(JsonResponse, SolrParams, Backbone, _, $) {
-
   /*
    * Cleans the parameters object by removing empty values
    * @param {Object} obj

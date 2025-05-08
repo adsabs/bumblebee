@@ -15,12 +15,10 @@
  *
  */
 
-define(['underscore', 'js/components/api_query'], function(_, ApiQuery) {
+define(['lodash/dist/lodash.compat', 'js/components/api_query'], function(_, ApiQuery) {
   var ApiQueryUpdater = function(contextIdentifier, options) {
     if (!contextIdentifier || !_.isString(contextIdentifier)) {
-      throw new Error(
-        'You must initialize the ApiQueryUpdater with a context (which is a string)'
-      );
+      throw new Error('You must initialize the ApiQueryUpdater with a context (which is a string)');
     }
     this.context = contextIdentifier;
     this.defaultOperator = ' ';
@@ -51,9 +49,7 @@ define(['underscore', 'js/components/api_query'], function(_, ApiQuery) {
       });
 
       if (!field || !_.isString(field)) {
-        throw new Error(
-          'You must tell us what parameter to update in the ApiQuery'
-        );
+        throw new Error('You must tell us what parameter to update in the ApiQuery');
       }
       // globalOperator = this._sanitizeOperator(globalOperator);
 
@@ -83,10 +79,7 @@ define(['underscore', 'js/components/api_query'], function(_, ApiQuery) {
         operator = 'OR';
       } else if (mode == 'replace') {
         this._closeExistingVals(apiQuery, this._n(field, options.prefix));
-        apiQuery.set(this._n(field, options.prefix), [
-          'AND',
-          queryCondition[0],
-        ]);
+        apiQuery.set(this._n(field, options.prefix), ['AND', queryCondition[0]]);
         return apiQuery.set(field, queryCondition[0]);
       } else if (mode == 'remove') {
         operator = existingConditions[0];
@@ -109,9 +102,7 @@ define(['underscore', 'js/components/api_query'], function(_, ApiQuery) {
           return this.updateQuery(apiQuery, field, mode, queryCondition);
         }
 
-        oldConditionAsString = this._buildQueryFromConditions(
-          existingConditions
-        );
+        oldConditionAsString = this._buildQueryFromConditions(existingConditions);
       } else {
         existingConditions = [operator]; // first value is always operator
         if (q.length == 1) {
@@ -154,13 +145,7 @@ define(['underscore', 'js/components/api_query'], function(_, ApiQuery) {
 
         var testq = _.clone(q);
         // try to find the pre-condition and replace it with a new value
-        if (
-          this._modifyArrayReplaceString(
-            testq,
-            oldConditionAsString,
-            newConditionAsString
-          )
-        ) {
+        if (this._modifyArrayReplaceString(testq, oldConditionAsString, newConditionAsString)) {
           apiQuery.set(field, testq); // success
           // save the values inside the query (so that we can use them if we are called next time)
           apiQuery.set(n, newConditions);
@@ -175,24 +160,16 @@ define(['underscore', 'js/components/api_query'], function(_, ApiQuery) {
       if (mode == 'exclude') {
         var modifiedExisting = _.clone(existingConditions);
         modifiedExisting[0] = 'OR';
-        oldConditionAsString =
-          ' NOT ' + this._buildQueryFromConditions(modifiedExisting);
+        oldConditionAsString = ' NOT ' + this._buildQueryFromConditions(modifiedExisting);
 
         newConditions = _.union(existingConditions, queryCondition);
         var modifiedConditions = _.clone(newConditions);
         modifiedConditions[0] = 'OR';
-        newConditionAsString =
-          ' NOT ' + this._buildQueryFromConditions(modifiedConditions);
+        newConditionAsString = ' NOT ' + this._buildQueryFromConditions(modifiedConditions);
 
         var testq = _.clone(q);
         // try to find the pre-condition and replace it with a new value
-        if (
-          this._modifyArrayReplaceString(
-            testq,
-            oldConditionAsString,
-            newConditionAsString
-          )
-        ) {
+        if (this._modifyArrayReplaceString(testq, oldConditionAsString, newConditionAsString)) {
           apiQuery.set(field, testq); // success
           // save the values inside the query (so that we can use them if we are called next time)
           apiQuery.set(n, newConditions);
@@ -204,13 +181,7 @@ define(['underscore', 'js/components/api_query'], function(_, ApiQuery) {
 
         var testq = _.clone(q);
         // try to find the pre-condition and replace it with a new value
-        if (
-          this._modifyArrayReplaceString(
-            testq,
-            oldConditionAsString,
-            newConditionAsString
-          )
-        ) {
+        if (this._modifyArrayReplaceString(testq, oldConditionAsString, newConditionAsString)) {
           apiQuery.set(field, testq); // success
           // save the values inside the query (so that we can use them if we are called next time)
           apiQuery.set(n, newConditions);
@@ -393,10 +364,7 @@ define(['underscore', 'js/components/api_query'], function(_, ApiQuery) {
         ) {
           needsQuotes = true;
         }
-        if (
-          (c == quoteChar || c == quoteCharEnd) &&
-          (i == 0 || (i > 0 && s[i - 1] !== '\\'))
-        ) {
+        if ((c == quoteChar || c == quoteCharEnd) && (i == 0 || (i > 0 && s[i - 1] !== '\\'))) {
           sb.push('\\');
         }
         sb.push(c);
@@ -481,9 +449,7 @@ define(['underscore', 'js/components/api_query'], function(_, ApiQuery) {
 
     _buildQueryFromConditions: function(conditions) {
       if (conditions.length <= 1) {
-        throw new Error(
-          'Violation of contract: first condition is always an operator'
-        );
+        throw new Error('Violation of contract: first condition is always an operator');
       }
       var op = conditions[0];
       if (op != ' ') {
@@ -533,13 +499,8 @@ define(['underscore', 'js/components/api_query'], function(_, ApiQuery) {
      */
     _modifyArrayAddString: function(arr, conditions, operator) {
       // will always add to the latest string
-      if (
-        (arr.length == 0 || arr[arr.length - 1].trim() == '') &&
-        (operator == 'NOT' || operator == 'NEAR')
-      ) {
-        throw new Error(
-          'Invalid operation; cannot apply NOT/NEAR on single clause'
-        );
+      if ((arr.length == 0 || arr[arr.length - 1].trim() == '') && (operator == 'NOT' || operator == 'NEAR')) {
+        throw new Error('Invalid operation; cannot apply NOT/NEAR on single clause');
       }
       var newQ = arr[arr.length - 1];
 
@@ -618,14 +579,7 @@ define(['underscore', 'js/components/api_query'], function(_, ApiQuery) {
       if (_.isString(condition)) {
         return [condition];
       }
-      condition = _.without(
-        _.flatten(condition),
-        '',
-        false,
-        null,
-        undefined,
-        NaN
-      );
+      condition = _.without(_.flatten(condition), '', false, null, undefined, NaN);
       if (condition.length == 0) {
         throw new Error('After removing empty values, no condition was left');
       }

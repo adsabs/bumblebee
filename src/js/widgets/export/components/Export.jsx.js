@@ -1,4 +1,5 @@
-define(['react', 'prop-types', 'es6!./ClipboardBtn.jsx'], function(
+define(['lodash/dist/lodash.compat', 'react', 'prop-types', 'js/widgets/export/components/ClipboardBtn.jsx'], function(
+  _,
   React,
   ReactPropTypes,
   ClipboardBtn
@@ -7,19 +8,11 @@ define(['react', 'prop-types', 'es6!./ClipboardBtn.jsx'], function(
     <div>
       <div className="row">
         <div className="col-sm-12 btn-group">
-          <button
-            className="btn btn-default"
-            disabled={isFetching || _.isEmpty(output)}
-            onClick={onDownloadFile}
-          >
+          <button className="btn btn-default" disabled={isFetching || _.isEmpty(output)} onClick={onDownloadFile}>
             <i className="fa fa-download fa-fw" aria-hidden="true" />
             Download to File
           </button>
-          <ClipboardBtn
-            disabled={isFetching || _.isEmpty(output)}
-            onCopy={onCopy}
-            target=".export-textarea"
-          />
+          <ClipboardBtn disabled={isFetching || _.isEmpty(output)} onCopy={onCopy} target=".export-textarea" />
         </div>
       </div>
       <div className="row">
@@ -49,7 +42,6 @@ define(['react', 'prop-types', 'es6!./ClipboardBtn.jsx'], function(
           <div className="text-center">Loading...</div>
         </div>
       )}
-
     </div>
   );
 

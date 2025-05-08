@@ -6,11 +6,11 @@
  * This module contains a set of utilities that can be added to classes
  * to give them certain functionality
  */
-define([
-  'underscore',
-  'js/components/pubsub_events',
-  'js/components/pubsub_key',
-], function(_, PubSubEvents, PubSubKey) {
+define(['lodash/dist/lodash.compat', 'js/components/pubsub_events', 'js/components/pubsub_key'], function(
+  _,
+  PubSubEvents,
+  PubSubKey
+) {
   var Mixin = {
     /*
      * BeeHive is the object that allows modules to get access to objects
@@ -21,22 +21,16 @@ define([
     BeeHive: {
       // called by parents (app) to give modules access
       setBeeHive: function(brundibar) {
-        if (_.isEmpty(brundibar))
-          throw new Error('Huh? Empty Beehive? Trying to be funny?');
+        if (_.isEmpty(brundibar)) throw new Error('Huh? Empty Beehive? Trying to be funny?');
 
         this.__beehive = brundibar;
       },
       getBeeHive: function() {
-        if (!this.hasBeeHive())
-          throw new Error('The BeeHive is inactivate (or dead :<})');
+        if (!this.hasBeeHive()) throw new Error('The BeeHive is inactivate (or dead :<})');
         return this.__beehive;
       },
       hasBeeHive: function() {
-        if (
-          this.__beehive &&
-          (this.__beehive.active ||
-            (this.__beehive.__facade__ && this.__beehive.getActive()))
-        ) {
+        if (this.__beehive && (this.__beehive.active || (this.__beehive.__facade__ && this.__beehive.getActive()))) {
           return true;
         }
         return false;
@@ -53,8 +47,7 @@ define([
        * this.getBeeHive().getService('PubSub')
        */
       getPubSub: function() {
-        if (!this.hasBeeHive())
-          throw new Error('The BeeHive is inactive (or dead >:})');
+        if (!this.hasBeeHive()) throw new Error('The BeeHive is inactive (or dead >:})');
 
         if (!this.__ctx) this.__ctx = {};
 
@@ -71,9 +64,7 @@ define([
             args = _.toArray(args);
 
             if (args[0] instanceof PubSubKey)
-              throw Error(
-                'You have given us a PubSub key, this.publish() method does not need it.'
-              );
+              throw Error('You have given us a PubSub key, this.publish() method does not need it.');
 
             args.unshift(this._key);
             pubsub[name].apply(pubsub, args);
@@ -100,8 +91,7 @@ define([
       },
 
       hasPubSub: function() {
-        if (this.hasBeeHive())
-          return _.isObject(this.__beehive.getService('PubSub'));
+        if (this.hasBeeHive()) return _.isObject(this.__beehive.getService('PubSub'));
         return false;
       },
     },

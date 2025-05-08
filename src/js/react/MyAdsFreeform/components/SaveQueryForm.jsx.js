@@ -1,5 +1,5 @@
 define([
-  'underscore',
+  'lodash/dist/lodash.compat',
   'react',
   'prop-types',
   'react-bootstrap',
@@ -9,15 +9,7 @@ define([
   _,
   React,
   PropTypes,
-  {
-    FormGroup,
-    FormControl,
-    ControlLabel,
-    Checkbox,
-    Radio,
-    Button,
-    ButtonToolbar,
-  },
+  { FormGroup, FormControl, ControlLabel, Checkbox, Radio, Button, ButtonToolbar },
   { Frequency },
   { isEmpty }
 ) {
@@ -60,8 +52,7 @@ define([
 
     onFormChange(prop) {
       return (e) => {
-        const value =
-          e.target.type === 'checkbox' ? e.target.checked : e.target.value;
+        const value = e.target.type === 'checkbox' ? e.target.checked : e.target.value;
         this.setState({
           [prop]: value,
           updated: true,
@@ -80,8 +71,7 @@ define([
       return (
         <form onSubmit={this.onSubmit}>
           <FormGroup>
-            <i className="fa fa-question-circle" aria-hidden="true" /> Create
-            myADS email notification for this query
+            <i className="fa fa-question-circle" aria-hidden="true" /> Create myADS email notification for this query
           </FormGroup>
           <FormGroup controlId="notification-name">
             <ControlLabel>Notification Name</ControlLabel>
@@ -120,20 +110,10 @@ define([
           </FormGroup>
           <FormGroup>
             <ButtonToolbar>
-              <Button
-                type="submit"
-                bsStyle="primary-faded"
-                bsSize="sm"
-                disabled={isDisabled}
-              >
+              <Button type="submit" bsStyle="primary-faded" bsSize="sm" disabled={isDisabled}>
                 Create
               </Button>
-              <Button
-                bsStyle="default"
-                bsSize="sm"
-                onClick={this.onCancel}
-                disabled={isDisabled}
-              >
+              <Button bsStyle="default" bsSize="sm" onClick={this.onCancel} disabled={isDisabled}>
                 Cancel
               </Button>
             </ButtonToolbar>

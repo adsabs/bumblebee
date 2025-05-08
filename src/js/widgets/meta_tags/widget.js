@@ -1,9 +1,9 @@
 define([
   'jquery',
   'backbone',
-  'underscore',
+  'lodash/dist/lodash.compat',
   'js/widgets/base/base_widget',
-  'hbs!js/widgets/meta_tags/template/metatags',
+  'js/widgets/meta_tags/template/metatags.hbs',
   'js/mixins/link_generator_mixin',
 ], function($, Backbone, _, BaseWidget, metatagsTemplate, LinkGenerator) {
   var View = Backbone.View.extend({
@@ -77,6 +77,7 @@ define([
     },
     updateMetaTags: function(data) {
       data.url = Backbone.history.location.href;
+      data.origin = Backbone.history.location.origin;
 
       var sources = {};
       try {
@@ -86,10 +87,7 @@ define([
       }
 
       // Look for `PDF` in title of the source
-      if (
-        _.isArray(sources.fullTextSources) &&
-        sources.fullTextSources.length > 0
-      ) {
+      if (_.isArray(sources.fullTextSources) && sources.fullTextSources.length > 0) {
         var found = _.find(sources.fullTextSources, function(source) {
           return /PDF/.test(source.name);
         });

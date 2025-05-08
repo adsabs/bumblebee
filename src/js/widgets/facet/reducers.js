@@ -1,4 +1,4 @@
-define(['underscore'], function(_) {
+define(['lodash'], function(_) {
   function reducer(state, action) {
     if (!state) state = reducer.getDefaultState();
 
@@ -26,6 +26,16 @@ define(['underscore'], function(_) {
     }
   }
 
+  function getParentName(id) {
+    var parts = id.split('/');
+    if (parts.length > 2) {
+      var parent = parts[parts.length - 2];
+      parent = parseInt(id[0], 10) - 1 + '/' + parent;
+      return parent;
+    }
+    return undefined;
+  }
+
   // utility function called by react components and facet widget
   reducer.getActiveFacets = function(state, selected) {
     // if it's a hierarchical facet, remove the children
@@ -43,9 +53,7 @@ define(['underscore'], function(_) {
     var visibleChildren = state.facets[id].state.visible;
     // if it's a hierarchical facet, select all the CURRENTLY VISIBLE children (might not be loaded yet)
     var selected = _.unique(
-      state.state.selected.concat(
-        state.facets[id].children.slice(0, visibleChildren).concat([id])
-      )
+      state.state.selected.concat(state.facets[id].children.slice(0, visibleChildren).concat([id]))
     );
 
     // or, if all the visible children are selected, but parent is not, select the parent
@@ -59,10 +67,7 @@ define(['underscore'], function(_) {
       parentId = parentId[0][0];
       var parent = state.facets[parentId];
       var mustBeSelected = parent.children.slice(0, parent.state.visible);
-      if (
-        _.intersection(selected, mustBeSelected).length ===
-        mustBeSelected.length
-      ) {
+      if (_.intersection(selected, mustBeSelected).length === mustBeSelected.length) {
         selected = selected.concat([parentId]);
       }
     }
@@ -74,15 +79,6 @@ define(['underscore'], function(_) {
     });
   };
 
-  function getParentName(id) {
-    var parts = id.split('/');
-    if (parts.length > 2) {
-      var parent = parts[parts.length - 2];
-      parent = parseInt(id[0]) - 1 + '/' + parent;
-      return parent;
-    }
-  }
-
   reducer.facetUnselected = function(state, id) {
     var selected = _.without(state.state.selected, id);
     var parent = getParentName(id);
@@ -93,10 +89,7 @@ define(['underscore'], function(_) {
     }
 
     // unselect all the children
-    selected = _.without.apply(
-      undefined,
-      [selected].concat(state.facets[id].children)
-    );
+    selected = _.without.apply(undefined, [selected].concat(state.facets[id].children));
 
     return _.assign({}, state, {
       state: _.assign({}, state.state, {
@@ -171,10 +164,7 @@ define(['underscore'], function(_) {
             name: d.split('/')[d.split('/').length - 1],
             value: d,
             count: data[i + 1],
-            pagination: _.assign(
-              {},
-              _.cloneDeep(reducer.defaultState.pagination)
-            ),
+            pagination: _.assign({}, _.cloneDeep(reducer.defaultState.pagination)),
             children: [],
             state: _.assign({}, _.cloneDeep(reducer.defaultState.state)),
           };
@@ -189,12 +179,8 @@ define(['underscore'], function(_) {
   };
 
   reducer.dataReceived = function(state, data, id) {
-    var facets =
-      data.facet_counts.facet_fields[
-        Object.keys(data.facet_counts.facet_fields)[0]
-      ];
-    var finished =
-      facets.length / 2 != parseInt(data.responseHeader.params['facet.limit']);
+    var facets = data.facet_counts.facet_fields[Object.keys(data.facet_counts.facet_fields)[0]];
+    var finished = facets.length / 2 !== parseInt(data.responseHeader.params['facet.limit'], 10);
     facets = reducer.processData(facets, state.config.preprocessors);
     // for children array
     var dataIds = facets.map(function(d) {
@@ -226,11 +212,7 @@ define(['underscore'], function(_) {
 
     if (state.state.selected.indexOf(id) > -1) {
       // show that these facets are selected
-      var newSelected = _.uniq(
-        state.state.selected.concat(
-          dataIds.slice(0, state.facets[id].state.visible)
-        )
-      );
+      var newSelected = _.uniq(state.state.selected.concat(dataIds.slice(0, state.facets[id].state.visible)));
     } else {
       var newSelected = state.state.selected;
     }

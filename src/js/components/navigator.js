@@ -13,30 +13,23 @@
  */
 
 define([
-  'underscore',
+  '@sentry/browser',
+  'lodash/dist/lodash.compat',
   'jquery',
+  'backbone',
   'cache',
   'js/components/generic_module',
   'js/mixins/dependon',
   'js/components/transition',
   'js/components/transition_catalog',
   'analytics',
-], function (
-  _,
-  $,
-  Cache,
-  GenericModule,
-  Mixins,
-  Transition,
-  TransitionCatalog,
-  analytics,
-) {
+], function(Sentry, _, $, Backbone, Cache, GenericModule, Mixins, Transition, TransitionCatalog, analytics) {
   // Document Title Constants
   var APP_TITLE = 'Astrophysics Data System';
   var TITLE_SEP = ' - ';
 
   // This function is used to hash the user id before sending it to Analytics
-  const digestMessage = function (message) {
+  const digestMessage = function(message) {
     const crypto = window.crypto || window.msCrypto;
     if (!crypto) {
       return Promise.reject(new Error('Crypto not available'));
@@ -52,7 +45,7 @@ define([
   };
 
   var Navigator = GenericModule.extend({
-    initialize: function (options) {
+    initialize: function(options) {
       options = options || {};
       this.router = options.router;
       this.catalog = new TransitionCatalog(); // catalog of nagivation points (later we can build FST)
@@ -64,19 +57,16 @@ define([
      * @param beehive - the full access instance; we excpect PubSub to be
      *    present
      */
-    activate: function (beehive) {
+    activate: function(beehive) {
       this.setBeeHive(beehive);
       this.storage = beehive.getObject('AppStorage');
       var pubsub = this.getPubSub();
       pubsub.subscribe(pubsub.NAVIGATE, _.bind(this.navigate, this));
       pubsub.subscribe(pubsub.CUSTOM_EVENT, _.bind(this._onCustomEvent, this));
-      pubsub.subscribe(
-        pubsub.USER_ANNOUNCEMENT,
-        _.bind(this._onUserAnnouncement, this),
-      );
+      pubsub.subscribe(pubsub.USER_ANNOUNCEMENT, _.bind(this._onUserAnnouncement, this));
     },
 
-    _onUserAnnouncement: function (ev, data) {
+    _onUserAnnouncement: function(ev, data) {
       if (ev === 'user_signed_in' && typeof data === 'string') {
         // the user is signed in, we can associate the user with the session
         digestMessage(data).then((userIdHash) => {
@@ -87,20 +77,26 @@ define([
       }
     },
 
-    _debouncedAnalyticsCall: _.debounce(function (...args) {
-      analytics.push(...args)
+    _debouncedAnalyticsCall: _.debounce(function(...args) {
+      analytics.push(...args);
     }, 500),
 
-    _onCustomEvent: function (ev, data) {
-      console.log('Custom Event', ev, data);
-
+    _onCustomEvent: function(ev, data) {
       switch (ev) {
         case 'timing:results-loaded':
-          window.getSentry((sentry) => {
-            const activeSpan = sentry.getActiveSpan().getSpanJSON();
-            const time = new Date().getTime() - activeSpan.start_timestamp * 1000;
-            sentry.setMeasurement('timing.results.shown', time, 'millisecond');
-          });
+          try {
+            const activeSpan = Sentry.getActiveSpan();
+            if (activeSpan && typeof activeSpan.getSpanJSON === 'function') {
+              const { start_timestamp } = activeSpan.getSpanJSON();
+              if (typeof start_timestamp === 'number') {
+                const durationMs = Date.now() - start_timestamp * 1000;
+                Sentry.setMeasurement('timing.results.shown', durationMs, 'millisecond');
+              }
+            }
+          } catch (err) {
+            console.warn('Sentry timing failed:', err);
+          }
+
           break;
         case 'update-document-title':
           this._updateDocumentTitle(data);
@@ -154,7 +150,7 @@ define([
                     ...acc,
                     [`item_category${idx + 1}`]: cat,
                   }),
-                  {item_category: doc.database[0]},
+                  { item_category: doc.database[0] }
                 ),
                 item_list_id: 'search_results',
                 item_list_name: 'Search Results',
@@ -169,7 +165,7 @@ define([
       }
     },
 
-    _cleanRoute: function (route) {
+    _cleanRoute: function(route) {
       const r = route.match(/[#\/]?([^\/]*)\//);
       if (r && r.length > 1) {
         return '/' + r[1];
@@ -177,25 +173,24 @@ define([
       return route;
     },
 
-    _setPageAndEmitEvent: _.debounce(function (route, pageName) {
+    _setPageAndEmitEvent: _.debounce(function(route, pageName) {
       analytics.reset();
       analytics('send', 'virtual_page_view', {
         page_name: pageName,
         clean_route: this._cleanRoute(route),
       });
-      getSentry((sentry) => {
-        sentry.setTag('page.name', pageName);
-      });
+      Sentry.setTag('page.name', pageName);
     }, 300),
 
     /**
      * Responds to PubSubEvents.NAVIGATE signal
      */
-    navigate: function (ev, arg1, arg2) {
+    navigate: function(ev, arg1, arg2) {
       var defer = $.Deferred();
       var self = this;
 
       if (!this.router || !(this.router instanceof Backbone.Router)) {
+        console.error('Navigator must be given "router" instance', this.router);
         defer.reject(new Error("Navigator must be given 'router' instance"));
         return defer.promise();
       }
@@ -212,7 +207,7 @@ define([
         return defer.resolve().promise();
       }
 
-      var afterNavigation = _.bind(function () {
+      var afterNavigation = _.bind(function() {
         // router can communicate directly with navigator to replace url
         var replace = !!(transition.replace || (arg1 && arg1.replace));
 
@@ -227,8 +222,8 @@ define([
 
         // clear any metadata added to head on the previous page
         $('head')
-        .find('meta[data-highwire]')
-        .remove();
+          .find('meta[data-highwire]')
+          .remove();
         this._updateDocumentTitle(transition.title);
         defer.resolve();
       }, this);
@@ -246,10 +241,10 @@ define([
       return defer.promise();
     },
 
-    _updateDocumentTitle: function (title) {
+    _updateDocumentTitle: function(title) {
       if (_.isUndefined(title) || title === false) return;
       var currTitle = this.storage.getDocumentTitle();
-      var setDocTitle = _.bind(function (t) {
+      var setDocTitle = _.bind(function(t) {
         document.title = t === '' ? APP_TITLE : t + TITLE_SEP + APP_TITLE;
         this.storage.setDocumentTitle(t);
       }, this);
@@ -260,16 +255,14 @@ define([
       }
     },
 
-    handleMissingTransition: function (transition) {
-      console.error(
-        "Cannot handle 'navigate' event: " + JSON.stringify(arguments),
-      );
+    handleMissingTransition: function(transition) {
+      console.error("Cannot handle 'navigate' event: " + JSON.stringify(arguments));
       var ps = this.getPubSub();
       ps.publish(ps.BIG_FIRE, 'navigation-error', arguments);
       if (this.catalog.get('404')) ps.publish(ps.NAVIGATE, '404');
     },
 
-    handleTransitionError: function (transition, error, args) {
+    handleTransitionError: function(transition, error, args) {
       console.error('Error while executing transition', transition, args);
       console.error(error.stack);
       var ps = this.getPubSub();
@@ -281,7 +274,7 @@ define([
      * Sets the transition inside the catalog; you can pass simplified
      * list of options or the Transition instance
      */
-    set: function () {
+    set: function() {
       if (arguments.length == 1) {
         if (arguments[1] instanceof Transition) {
           return this.catalog.add(arguments[1]);
@@ -293,27 +286,21 @@ define([
           return this.catalog.add(
             new Transition(endpoint, {
               execute: arguments[1],
-            }),
+            })
           );
         }
         if (_.isObject(arguments[1]) && arguments[1].execute) {
           return this.catalog.add(new Transition(endpoint, arguments[1]));
         }
 
-        throw new Error(
-          'Himmm, I dont know how to create a catalog rule with this input:',
-          arguments,
-        );
+        throw new Error('Himmm, I dont know how to create a catalog rule with this input:', arguments);
       } else {
         // var args = array.slice.call(arguments, 1);
-        throw new Error(
-          'Himmm, I dont know how to create a catalog rule with this input:',
-          arguments,
-        );
+        throw new Error('Himmm, I dont know how to create a catalog rule with this input:', arguments);
       }
     },
 
-    get: function (endpoint) {
+    get: function(endpoint) {
       return this.catalog.get(endpoint);
     },
   });

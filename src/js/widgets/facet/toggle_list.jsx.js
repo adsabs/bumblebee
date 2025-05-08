@@ -1,9 +1,36 @@
-define(['react', 'd3', 'prop-types', 'react-redux'], function(
-  React,
-  d3,
-  PropTypes,
-  { useSelector }
-) {
+define(['lodash/dist/lodash.compat', 'react', 'd3', 'prop-types', 'react-redux'], function(_, React, d3, PropTypes, { useSelector }) {
+  const reduxStateProp = PropTypes.shape({
+    config: PropTypes.shape({
+      preprocessors: PropTypes.arrayOf(PropTypes.func),
+      hierMaxLevels: PropTypes.number,
+      facetField: PropTypes.string,
+      openByDefault: PropTypes.bool,
+    }),
+    state: PropTypes.shape({
+      open: PropTypes.bool,
+      visible: PropTypes.number,
+      selected: PropTypes.arrayOf(PropTypes.string),
+    }),
+    pagination: PropTypes.shape({
+      state: PropTypes.string,
+      finished: PropTypes.bool,
+    }),
+    children: PropTypes.arrayOf(PropTypes.string),
+    facets: PropTypes.objectOf(
+      PropTypes.shape({
+        state: PropTypes.shape({
+          open: PropTypes.bool,
+          visible: PropTypes.number,
+        }),
+        pagination: PropTypes.shape({
+          state: PropTypes.string,
+          finished: PropTypes.bool,
+        }),
+        children: PropTypes.arrayOf(PropTypes.string),
+      })
+    ),
+  });
+
   const format = (count) => {
     return d3
       .format('s')(count)
@@ -43,9 +70,7 @@ define(['react', 'd3', 'prop-types', 'react-redux'], function(
       }
     };
 
-    const label = `facet-label__title_${config.facetField}_${
-      hierarchical ? '' : 'child'
-    }_${index}`;
+    const label = `facet-label__title_${config.facetField}_${hierarchical ? '' : 'child'}_${index}`;
     var checkbox = (
       <label className="facet-label custom-checkbox" htmlFor={`${label}__checkbox`}>
         <input
@@ -86,17 +111,24 @@ define(['react', 'd3', 'prop-types', 'react-redux'], function(
     return checkbox;
   };
 
+  FacetCheckbox.defaultProps = {
+    currentLevel: 0,
+    showMoreFacets: () => {},
+    resetVisibleFacets: () => {},
+    toggleFacet: () => {},
+    selectFacet: () => {},
+    unselectFacet: () => {},
+    id: '',
+    index: 0,
+    value: '',
+    hierarchical: false,
+  };
+
   FacetCheckbox.propTypes = {
     isChecked: PropTypes.bool.isRequired,
     name: PropTypes.string.isRequired,
+    reduxState: reduxStateProp.isRequired,
     count: PropTypes.number.isRequired,
-    reduxState: PropTypes.shape({
-      config: PropTypes.object,
-      state: PropTypes.object,
-      pagination: PropTypes.object,
-      children: PropTypes.array,
-      facets: PropTypes.object,
-    }).isRequired,
     currentLevel: PropTypes.number,
     showMoreFacets: PropTypes.func,
     resetVisibleFacets: PropTypes.func,
@@ -105,6 +137,8 @@ define(['react', 'd3', 'prop-types', 'react-redux'], function(
     unselectFacet: PropTypes.func,
     id: PropTypes.string,
     index: PropTypes.number,
+    value: PropTypes.string,
+    hierarchical: PropTypes.bool,
   };
 
   const ToggleList = ({
@@ -175,20 +209,12 @@ define(['react', 'd3', 'prop-types', 'react-redux'], function(
     }
 
     var showMore = !finished || facets.length > visible;
-    var moreButtonClasses = showMore
-      ? 'btn btn-default btn-xs facet__pagination-button'
-      : ' hidden';
-    var lessButtonClasses =
-      visible > 5
-        ? 'btn btn-default btn-xs facet__pagination-button'
-        : 'hidden';
+    var moreButtonClasses = showMore ? 'btn btn-default btn-xs facet__pagination-button' : ' hidden';
+    var lessButtonClasses = visible > 5 ? 'btn btn-default btn-xs facet__pagination-button' : 'hidden';
 
     var facetList;
     // level will be either 1 or 2
-    var parentClass =
-      currentLevel > 1
-        ? 'facet__list-container facet__list-container--child'
-        : 'facet__list-container';
+    var parentClass = currentLevel > 1 ? 'facet__list-container facet__list-container--child' : 'facet__list-container';
 
     if (open) {
       facetList = (
@@ -196,18 +222,10 @@ define(['react', 'd3', 'prop-types', 'react-redux'], function(
           <ul className="facet__list">{list}</ul>
           <div className="facet__state-message">{stateMessage}</div>
           <div className="facet__pagination-container">
-            <button
-              type="button"
-              className={lessButtonClasses}
-              onClick={() => resetVisibleFacets(id)}
-            >
+            <button type="button" className={lessButtonClasses} onClick={() => resetVisibleFacets(id)}>
               less
             </button>
-            <button
-              type="button"
-              className={moreButtonClasses}
-              onClick={() => showMoreFacets(id)}
-            >
+            <button type="button" className={moreButtonClasses} onClick={() => showMoreFacets(id)}>
               more
             </button>
           </div>
@@ -223,11 +241,7 @@ define(['react', 'd3', 'prop-types', 'react-redux'], function(
             aria-label="facet toggle"
             aria-hidden="true"
             tabIndex="0"
-            className={
-              open
-                ? 'facet__icon facet__icon--open'
-                : 'facet__icon facet__icon--closed'
-            }
+            className={open ? 'facet__icon facet__icon--open' : 'facet__icon facet__icon--closed'}
             onClick={() => toggleFacet(id, !open)}
             onKeyPress={(e) => {
               if (e.which === 13) {
@@ -247,14 +261,8 @@ define(['react', 'd3', 'prop-types', 'react-redux'], function(
   };
 
   ToggleList.propTypes = {
-    reduxState: PropTypes.shape({
-      config: PropTypes.object,
-      state: PropTypes.object,
-      pagination: PropTypes.object,
-      children: PropTypes.array,
-      facets: PropTypes.object,
-    }).isRequired,
-    children: PropTypes.children,
+    reduxState: reduxStateProp.isRequired,
+    children: PropTypes.node,
     currentLevel: PropTypes.number.isRequired,
     showMoreFacets: PropTypes.func.isRequired,
     resetVisibleFacets: PropTypes.func.isRequired,

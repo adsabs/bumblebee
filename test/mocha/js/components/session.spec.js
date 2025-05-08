@@ -1,11 +1,12 @@
 define([
+  'lodash/dist/lodash.compat',
   'js/components/session',
   'js/bugutils/minimal_pubsub',
   'js/services/api',
   'js/components/api_request',
   'js/components/user',
   'js/components/csrf_manager',
-], function(Session, MinSub, Api, ApiRequest, User, CSRFManager) {
+], function(_, Session, MinSub, Api, ApiRequest, User, CSRFManager) {
   describe('Session Object', function() {
     it('provides a hardened interface with all methods widgets might need (login, logout, register,  user model get/set, etc)', function() {
       var s = new Session();

@@ -1,4 +1,5 @@
 define([
+  'lodash/dist/lodash.compat',
   'js/widgets/metrics/widget',
   'js/widgets/metrics/extractor_functions',
   'js/components/json_response',
@@ -8,6 +9,7 @@ define([
   'js/components/api_targets'
 
 ], function(
+  _,
   MetricsWidget,
   DataExtractor,
   JsonResponse,

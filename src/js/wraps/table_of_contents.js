@@ -1,7 +1,4 @@
-define(['underscore', 'js/widgets/list_of_things/details_widget'], function(
-  _,
-  DetailsWidget
-) {
+define(['lodash/dist/lodash.compat', 'js/widgets/list_of_things/details_widget'], function(_, DetailsWidget) {
   var Widget = DetailsWidget.extend({
     initialize: function() {
       this.name = 'ShowToc';

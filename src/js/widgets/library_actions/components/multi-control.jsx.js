@@ -1,4 +1,4 @@
-define(['underscore', 'react'], function(_, React) {
+define(['lodash/dist/lodash.compat', 'react'], function(_, React) {
   class MultiControl extends React.Component {
     constructor(props) {
       super(props);
@@ -24,11 +24,7 @@ define(['underscore', 'react'], function(_, React) {
         return (value) => {
           this.setState(
             ({ selected }) => ({
-              selected: [
-                ...selected.slice(0, index),
-                value,
-                ...selected.slice(index + 1),
-              ],
+              selected: [...selected.slice(0, index), value, ...selected.slice(index + 1)],
             }),
             () => {
               this.props.onChange(this.state.selected);
@@ -40,20 +36,11 @@ define(['underscore', 'react'], function(_, React) {
 
     render() {
       const { count } = this.state;
-      const {
-        addIcon,
-        removeIcon,
-        addLabel,
-        disableControls,
-        max,
-        children,
-      } = this.props;
+      const { addIcon, removeIcon, addLabel, disableControls, max, children } = this.props;
 
       return (
         <div>
-          {_.range(0, count).map((i) =>
-            children(i > 0 ? i + 1 : null, this.createOnChangeHandler(i))
-          )}
+          {_.range(0, count).map((i) => children(i > 0 ? i + 1 : null, this.createOnChangeHandler(i)))}
           {!disableControls && (
             <div className="form-group btn-toolbar">
               <button

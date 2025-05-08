@@ -1,9 +1,4 @@
-define([
-  'marionette',
-  'hbs!js/widgets/preferences/templates/openurl',
-  'bootstrap',
-  'select2',
-], function(Marionette, OpenURLTemplate, Bootstrap, Select2) {
+define(['lodash/dist/lodash.compat', 'marionette', 'js/widgets/preferences/templates/openurl.hbs'], function(_, Marionette, OpenURLTemplate) {
   var OpenURLView = Marionette.ItemView.extend({
     template: OpenURLTemplate,
 
@@ -63,16 +58,11 @@ define([
       var newVal = this.$('#set-link-server').val();
 
       // check for a re-apply
-      if (
-        this.model.has('link_server') &&
-        newVal === this.model.get('link_server')
-      ) {
+      if (this.model.has('link_server') && newVal === this.model.get('link_server')) {
         return this.model.set('editing', false);
       }
 
-      this.$(e.currentTarget).html(
-        '<i class="fa fa-spinner fa-pulse" aria-hidden="true"></i> Loading'
-      );
+      this.$(e.currentTarget).html('<i class="fa fa-spinner fa-pulse" aria-hidden="true"></i> Loading');
 
       // otherwise, trigger the update
       this.trigger('change:link_server', newVal);

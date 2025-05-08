@@ -1,5 +1,5 @@
 define([
-  'underscore',
+  'lodash/dist/lodash.compat',
   'js/widgets/list_of_things/details_widget',
   'js/bugutils/minimal_pubsub',
   '../../widgets/test_json/test1',

@@ -1,29 +1,17 @@
 define([
   'js/page_managers/controller',
   'js/page_managers/three_column_view',
-  'hbs!js/page_managers/templates/results-page-layout',
+  '../page_managers/templates/results-page-layout.hbs',
   'js/mixins/side_bar_manager',
   'jquery',
   'utils',
-], function(
-  PageManagerController,
-  PageManagerView,
-  PageManagerTemplate,
-  SideBarManagerMixin,
-  $,
-  utils
-) {
+  'lodash',
+], function(PageManagerController, PageManagerView, PageManagerTemplate, SideBarManagerMixin, $, utils, _) {
   var PageManager = PageManagerController.extend({
     initialize: function() {
       PageManagerController.prototype.initialize.apply(this, arguments);
-      this.resultsTimer = new utils.TimingEvent(
-        'all-results-loaded',
-        'workflow'
-      );
-      this.fullResultsTimer = new utils.TimingEvent(
-        'all-results-and-auxillary-loaded',
-        'workflow'
-      );
+      this.resultsTimer = new utils.TimingEvent('all-results-loaded', 'workflow');
+      this.fullResultsTimer = new utils.TimingEvent('all-results-and-auxillary-loaded', 'workflow');
       this._referrer = null;
 
       // observe scrolling and apply sticky menu
@@ -96,10 +84,7 @@ define([
       // button container
       $('#search-results-actions').addClass('sticky');
       // add to library widget
-      $('#query-info-container').attr(
-        'style',
-        `position:fixed;top:${top}px;right:0`
-      );
+      $('#query-info-container').attr('style', `position:fixed;top:${top}px;right:0`);
     },
 
     unStickElements: function() {
@@ -158,13 +143,16 @@ define([
 
       // close any drawers
       const actionBtn = ret.$el.find('#results-actions-toggle')[0];
-      actionBtn.innerHTML = '<i class="fa fa-book" alt="open actions" aria-hidden="true"></i> Actions';
-      if (!isLoggedIn) {
-        actionBtn.classList.add('disabled');
-      } else {
-        actionBtn.classList.remove('disabled');
+      if (actionBtn) {
+        actionBtn.innerHTML = '<i class="fa fa-book" title="open actions" aria-hidden="true"></i> Actions';
+        if (!isLoggedIn) {
+          actionBtn.classList.add('disabled');
+        } else {
+          actionBtn.classList.remove('disabled');
+        }
       }
-      ret.$el.find('#query-info-container')[0].classList.remove('show');
+      const queryInfo = ret.$el.find('#query-info-container')[0];
+      if (queryInfo) queryInfo.classList.remove('show');
 
       return ret;
     },
@@ -176,12 +164,7 @@ define([
     },
 
     setUpIntercepts: function() {
-      const widgets = [
-        'AuthorFacet',
-        'RefereedFacet',
-        'DatabaseFacet',
-        'GraphTabs',
-      ];
+      const widgets = ['AuthorFacet', 'RefereedFacet', 'DatabaseFacet', 'GraphTabs'];
       const interceptRequests = (widget) => {
         let wid = widget;
 
@@ -200,9 +183,7 @@ define([
             let to;
 
             // if there is a new search cycle, then stop watching for changes
-            wps.subscribeOnce(wps.INVITING_REQUEST, () =>
-              window.clearTimeout(to)
-            );
+            wps.subscribeOnce(wps.INVITING_REQUEST, () => window.clearTimeout(to));
 
             // check for changes to sidebar state
             const check = () => {
@@ -226,67 +207,56 @@ define([
 
     assemble: function() {
       var self = this;
-      return PageManagerController.prototype.assemble
-        .apply(this, arguments)
-        .done(function() {
-          self.setUpIntercepts();
-          _.each(
-            _.keys(self.widgets),
-            function(w) {
-              self.listenTo(
-                self.widgets[w],
-                'page-manager-event',
-                _.bind(self.onPageManagerEvent, self, self.widgets[w])
-              );
-            },
-            self
-          );
+      return PageManagerController.prototype.assemble.apply(this, arguments).done(function() {
+        self.setUpIntercepts();
+        _.each(
+          _.keys(self.widgets),
+          function(w) {
+            self.listenTo(
+              self.widgets[w],
+              'page-manager-event',
+              _.bind(self.onPageManagerEvent, self, self.widgets[w])
+            );
+          },
+          self
+        );
 
-          self.setSidebarState(self._getUpdateFromUserData());
+        self.setSidebarState(self._getUpdateFromUserData());
 
-          const defaultWidgets = [
-            'Results',
-            'AuthorFacet',
-            'RefereedFacet',
-            'DatabaseFacet',
-            'GraphTabs',
-          ];
+        const defaultWidgets = ['Results', 'AuthorFacet', 'RefereedFacet', 'DatabaseFacet', 'GraphTabs'];
 
-          try {
-            _.forEach(_.keys(self.widgets), (k) => {
-              const w = self.widgets[k];
+        try {
+          _.forEach(_.keys(self.widgets), (k) => {
+            const w = self.widgets[k];
 
-              const handler = () => {
-                if (k === 'Results') {
-                  self.resultsTimer.stop();
-                }
-                _.remove(defaultWidgets, (t) => t === k);
-                if (defaultWidgets.length === 0) {
-                  self.fullResultsTimer.stop();
-                }
-              };
-
-              if (w.widgets && w.widgets.length > 0) {
-                _.forEach(w.widgets, (sub) => {
-                  sub.onIdle = handler;
-                });
+            const handler = () => {
+              if (k === 'Results') {
+                self.resultsTimer.stop();
               }
-              w.onIdle = handler;
-            });
-          } catch (e) {
-            // do nothing
-          }
-        });
+              _.remove(defaultWidgets, (t) => t === k);
+              if (defaultWidgets.length === 0) {
+                self.fullResultsTimer.stop();
+              }
+            };
+
+            if (w.widgets && w.widgets.length > 0) {
+              _.forEach(w.widgets, (sub) => {
+                sub.onIdle = handler;
+              });
+            }
+            w.onIdle = handler;
+          });
+        } catch (e) {
+          // do nothing
+        }
+      });
     },
 
-    broadcastTo: _.curry(function(widgets, event) {
+    broadcastTo: utils.curry(function(widgets, event) {
       var args = arguments;
       var wids = _.pick(this.widgets, widgets);
       _.each(wids, function(w) {
-        w.trigger.apply(
-          w,
-          ['page-manager-message', event].concat(_.toArray(args).slice(2))
-        );
+        w.trigger.apply(w, ['page-manager-message', event].concat(_.toArray(args).slice(2)));
       });
     }, 2),
 

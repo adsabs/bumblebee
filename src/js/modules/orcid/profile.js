@@ -1,8 +1,4 @@
-define(['underscore', 'jsonpath', 'js/modules/orcid/work'], function(
-  _,
-  jp,
-  Work
-) {
+define(['lodash/dist/lodash.compat', 'jsonpath', 'js/modules/orcid/work'], function(_, jp, Work) {
   var PATHS = {
     workSummaries: '$',
   };

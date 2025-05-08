@@ -1,5 +1,5 @@
 define([
-  'underscore',
+  'lodash/dist/lodash.compat',
   'jquery',
   'js/components/feedback_mediator',
   'js/components/api_feedback',
@@ -7,16 +7,7 @@ define([
   'js/components/alerts',
   'js/components/api_response',
   'analytics',
-], function(
-  _,
-  $,
-  FeedbackMediator,
-  ApiFeedback,
-  WidgetStates,
-  Alerts,
-  ApiResponse,
-  analytics
-) {
+], function(_, $, FeedbackMediator, ApiFeedback, WidgetStates, Alerts, ApiResponse, analytics) {
   var handlers = {};
 
   handlers[ApiFeedback.CODES.MAKE_SPACE] = function() {
@@ -87,9 +78,7 @@ define([
    * form. So it is (perhaps not always) admissible to bother them with modal
    * messages.
    */
-  handlers[ApiFeedback.CODES.SEARCH_CYCLE_FAILED_TO_START] = function(
-    feedback
-  ) {
+  handlers[ApiFeedback.CODES.SEARCH_CYCLE_FAILED_TO_START] = function(feedback) {
     var apiRequest = feedback.request;
     var xhr = feedback.error.jqXHR || {}; // when the response comes from cache, it's empty
 
@@ -194,16 +183,11 @@ define([
                     'event',
                     'error',
                     'unauthorized',
-                    'request=' +
-                      apiRequest.url() +
-                      ' token=...' +
-                      getAccessTokenStump()
+                    'request=' + apiRequest.url() + ' token=...' + getAccessTokenStump()
                   );
                   alerts.alert(
                     new ApiFeedback({
-                      msg:
-                        'Seems like you are not authorized to access: ' +
-                        target,
+                      msg: 'Seems like you are not authorized to access: ' + target,
                       modal: true,
                       type: 'danger',
                     })
@@ -231,27 +215,16 @@ define([
           var apiQuery = apiRequest.get('query');
 
           var msg = '';
-          if (
-            xhr.responseJSON &&
-            xhr.responseJSON.error &&
-            xhr.responseJSON.error.msg
-          ) {
+          if (xhr.responseJSON && xhr.responseJSON.error && xhr.responseJSON.error.msg) {
             msg = _.escape(xhr.responseJSON.error.msg);
             if (msg.indexOf('SyntaxError') > -1) {
               // what will remain: Syntax Error, cannot parse doi:a* keyword_schema:arXiv:
               msg = msg.replace('org.apache.solr.search.SyntaxError:', '');
               msg = msg.replace('org.apache.solr.common.SolrException:', '');
               msg = msg.replace('INVALID_SYNTAX_CANNOT_PARSE:', '');
-              msg = msg.replace(
-                ': The parser reported a syntax error, antlrqueryparser hates errors!',
-                ''
-              );
+              msg = msg.replace(': The parser reported a syntax error, antlrqueryparser hates errors!', '');
               msg = msg.trim();
-              msg =
-                msg.replace(
-                  'Syntax Error, cannot parse',
-                  'Syntax Error, cannot parse<b>'
-                ) + '</b>';
+              msg = msg.replace('Syntax Error, cannot parse', 'Syntax Error, cannot parse<b>') + '</b>';
             }
           }
 
@@ -275,9 +248,7 @@ define([
                   if (q) {
                     widget.openQueryAssistant(q);
                   } else {
-                    widget.openQueryAssistant(
-                      'ooops, the query is complex (we are not yet ready for that)'
-                    );
+                    widget.openQueryAssistant('ooops, the query is complex (we are not yet ready for that)');
                   }
                 });
               }
@@ -298,12 +269,7 @@ define([
                 response.setApiQuery(req.request.get('query'));
                 cycle.done[key] = cycle.inprogress[key];
                 delete cycle.inprogress[key];
-                self
-                  .getPubSub()
-                  .publish(
-                    self.getPubSub().DELIVERING_RESPONSE + key,
-                    response
-                  );
+                self.getPubSub().publish(self.getPubSub().DELIVERING_RESPONSE + key, response);
                 cycle.running = false;
                 app.getController('QueryMediator').startExecutingQueries();
                 return; // we are done!
@@ -344,9 +310,7 @@ define([
       'The server response seems to be highly redshifted, may require another observation to record. (The ADS backend service is down momentarily and we are having trouble accessing: ' +
         target +
         ' but we should be back up soon.)',
-      'A singularity has formed inside our server, and we are having trouble accessing: ' +
-        target +
-        '.',
+      'A singularity has formed inside our server, and we are having trouble accessing: ' + target + '.',
       'Universal Translator Malfunction: Unable to Communicate with ADS Droids. (The ADS backend service is down momentarily and we are having trouble accessing: ' +
         target +
         ' but we should be back up soon.',
@@ -403,18 +367,10 @@ define([
     var app = this.getApp();
     var alerter = this.getAlerter();
 
-    analytics(
-      'send',
-      'event',
-      'error',
-      'api-request',
-      JSON.stringify(errorDetails)
-    );
+    analytics('send', 'event', 'error', 'api-request', JSON.stringify(errorDetails));
 
     if (!psk) {
-      console.error(
-        "We are not going to handle the error (PSK is empty, can't identify the component"
-      );
+      console.error("We are not going to handle the error (PSK is empty, can't identify the component");
       return;
     }
 
@@ -478,20 +434,11 @@ define([
       activate: function() {
         FeedbackMediator.prototype.activate.apply(this, arguments);
         var pubsub = this.getPubSub();
-        pubsub.subscribe(
-          pubsub.INVITING_REQUEST,
-          _.bind(this.onNewCycle, this)
-        );
-        pubsub.subscribe(
-          pubsub.ARIA_ANNOUNCEMENT,
-          _.bind(this.onPageChange, this)
-        );
+        pubsub.subscribe(pubsub.INVITING_REQUEST, _.bind(this.onNewCycle, this));
+        pubsub.subscribe(pubsub.ARIA_ANNOUNCEMENT, _.bind(this.onPageChange, this));
         pubsub.subscribe(pubsub.APP_EXIT, _.bind(this.onAppExit, this));
 
-        pubsub.subscribeOnce(
-          pubsub.APP_STARTING,
-          _.bind(this.onAppStarting, this)
-        );
+        pubsub.subscribeOnce(pubsub.APP_STARTING, _.bind(this.onAppStarting, this));
       },
 
       onAppStarting: function() {
@@ -500,10 +447,7 @@ define([
         var qm = this.getApp().getController('QueryMediator');
 
         // remove the handler of START_SEARCH - we'll do it in place of search-mediator
-        pubsub.unsubscribe(
-          qm.getPubSub().getCurrentPubSubKey(),
-          pubsub.START_SEARCH
-        );
+        pubsub.unsubscribe(qm.getPubSub().getCurrentPubSubKey(), pubsub.START_SEARCH);
 
         // insert our own handler
         this.getPubSub().subscribe(
@@ -544,23 +488,17 @@ define([
               storage &&
               storage.hasCurrentQuery() &&
               apiQuery.url() == storage.getCurrentQuery().url() &&
-              app.getPluginOrWidgetName(senderKey.getId()) !=
-                'widget:SearchWidget' &&
+              app.getPluginOrWidgetName(senderKey.getId()) != 'widget:SearchWidget' &&
               app.getWidgetRefCount('Results') >= 1
             ) {
               // simply navigate to search results page, widgets are already stocked with data
               if (app.hasService('Navigator')) {
-                app
-                  .getService('Navigator')
-                  .navigate('results-page', { replace: true });
+                app.getService('Navigator').navigate('results-page', { replace: true });
                 stupidGoAhead = false;
               }
             }
 
-            if (
-              this.getCurrentPage() !== 'SearchPage' &&
-              app.getWidgetRefCount('Results') <= 0
-            ) {
+            if (this.getCurrentPage() !== 'SearchPage' && app.getWidgetRefCount('Results') <= 0) {
               // switch immediately to the results page -make widgets listen to the START_SEARCH
               var argz = arguments;
               app
@@ -572,8 +510,7 @@ define([
               stupidGoAhead = false;
             }
 
-            if (stupidGoAhead)
-              qm.getQueryAndStartSearchCycle.apply(qm, arguments);
+            if (stupidGoAhead) qm.getQueryAndStartSearchCycle.apply(qm, arguments);
           }, this)
         );
       },
@@ -622,9 +559,7 @@ define([
       },
 
       getAlerter: function() {
-        return this.getApp().getController(
-          this.alertsController || 'AlertsController'
-        );
+        return this.getApp().getController(this.alertsController || 'AlertsController');
       },
       createFeedback: function(options) {
         return new ApiFeedback(options);

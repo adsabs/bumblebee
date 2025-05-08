@@ -12,12 +12,12 @@
 
  */
 
-define([
-  'backbone',
-  'underscore',
-  'js/components/solr_params',
-  'js/components/facade',
-], function(Backbone, _, ApiQueryImplementation, Facade) {
+define(['backbone', 'lodash/dist/lodash.compat', 'js/components/solr_params', 'js/components/facade'], function(
+  Backbone,
+  _,
+  ApiQueryImplementation,
+  Facade
+) {
   var hardenedInterface = {
     add: 'add values',
     set: 'set (replace existing)',
@@ -49,10 +49,7 @@ define([
     if (data instanceof ApiQueryImplementation) {
       this.innerQuery = new Facade(hardenedInterface, data);
     } else {
-      this.innerQuery = new Facade(
-        hardenedInterface,
-        new ApiQueryImplementation(data, options)
-      );
+      this.innerQuery = new Facade(hardenedInterface, new ApiQueryImplementation(data, options));
     }
   };
 

@@ -1,8 +1,9 @@
 define([
+  'lodash/dist/lodash.compat',
   'marionette',
-  'hbs!js/widgets/user_navbar/nav_template',
+  'js/widgets/user_navbar/nav_template.hbs',
   'js/mixins/dependon',
-], function(Marionette, NavTemplate, Dependon) {
+], function(_, Marionette, NavTemplate, Dependon) {
   var NavModel = Backbone.Model.extend({
     defaults: function() {
       return {
@@ -31,11 +32,9 @@ define([
       this.setBeeHive(beehive);
       var pubsub = beehive.getService('PubSub');
 
-      _.bindAll(this);
-
       // custom dispatchRequest function goes here
-      pubsub.subscribe(pubsub.PAGE_CHANGE, this.updateCurrentView);
-      pubsub.subscribe(pubsub.USER_ANNOUNCEMENT, this.updateUser);
+      pubsub.subscribe(pubsub.PAGE_CHANGE, this.updateCurrentView.bind(this));
+      pubsub.subscribe(pubsub.USER_ANNOUNCEMENT, this.updateUser.bind(this));
     },
 
     updateCurrentView: function(page) {

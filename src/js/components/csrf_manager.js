@@ -4,30 +4,21 @@
  *
  * */
 define([
+  'lodash/dist/lodash.compat',
   'backbone',
   'js/components/generic_module',
   'js/mixins/hardened',
   'js/components/api_request',
   'js/components/api_targets',
   'js/mixins/dependon',
-], function(
-  Backbone,
-  GenericModule,
-  Hardened,
-  ApiRequest,
-  ApiTargets,
-  Dependon
-) {
+], function(_, Backbone, GenericModule, Hardened, ApiRequest, ApiTargets, Dependon) {
   var CSRFManager = GenericModule.extend({
     activate: function(beehive) {
       this.setBeeHive(beehive);
       var pubsub = this.getPubSub();
 
       _.bindAll(this, ['resolvePromiseWithNewKey']);
-      pubsub.subscribe(
-        pubsub.DELIVERING_RESPONSE,
-        this.resolvePromiseWithNewKey
-      );
+      pubsub.subscribe(pubsub.DELIVERING_RESPONSE, this.resolvePromiseWithNewKey);
     },
 
     getCSRF: function() {

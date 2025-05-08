@@ -2,7 +2,7 @@ define([
   'react',
   'prop-types',
   'react-bootstrap',
-  'es6!./PermissionEntry.jsx',
+  'js/react/LibraryCollaborators/components/PermissionEntry.jsx',
 ], function(React, PropTypes, { Table }, PermissionEntry) {
   const initialState = {};
   class PermissionList extends React.Component {
@@ -29,10 +29,8 @@ define([
                 data={this.props.permissions[id]}
                 key={id}
                 onRevokeAccess={() => this.props.onRevokeAccess(id)}
-                onChangePermission={(change) =>
-                  this.props.onChangePermission(id, change)
-                }
-                pendingPermissionChange={true}
+                onChangePermission={(change) => this.props.onChangePermission(id, change)}
+                pendingPermissionChange
               />
             ))}
           </tbody>

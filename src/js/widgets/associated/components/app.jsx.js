@@ -1,4 +1,4 @@
-define(['underscore', 'react', 'prop-types'], function(_, React, PropTypes) {
+define(['lodash/dist/lodash.compat', 'react', 'prop-types'], function(_, React, PropTypes) {
   // component styles
   const styles = {
     list: {
@@ -30,12 +30,7 @@ define(['underscore', 'react', 'prop-types'], function(_, React, PropTypes) {
       if (item.external) {
         return (
           <>
-            <a
-              href={item.url}
-              target="_blank"
-              rel="noreferrer noopener"
-              onClick={() => onClick(item)}
-            >
+            <a href={item.url} target="_blank" rel="noreferrer noopener" onClick={() => onClick(item)}>
               {item.name}{' '}
             </a>
             <i className="fa fa-external-link" aria-hidden="true" />
@@ -52,11 +47,7 @@ define(['underscore', 'react', 'prop-types'], function(_, React, PropTypes) {
     return (
       <div style={styles.list} id="associated_works">
         {items.map((i) => (
-          <div
-            key={i.id}
-            style={styles.link}
-            className="resources__content__link associated_work"
-          >
+          <div key={i.id} style={styles.link} className="resources__content__link associated_work">
             {i.circular ? i.name : getLink(i)}
           </div>
         ))}
@@ -93,9 +84,7 @@ define(['underscore', 'react', 'prop-types'], function(_, React, PropTypes) {
       e.preventDefault();
       this.setState((prevState) => ({
         showAll: !prevState.showAll,
-        items: prevState.showAll
-          ? this.props.items.slice(0, 4)
-          : this.props.items,
+        items: prevState.showAll ? this.props.items.slice(0, 4) : this.props.items,
       }));
     }
 

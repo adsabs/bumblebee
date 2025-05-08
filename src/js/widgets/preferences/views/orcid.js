@@ -1,7 +1,7 @@
 define([
   'marionette',
-  'hbs!js/widgets/preferences/templates/orcid',
-  'hbs!js/widgets/preferences/templates/orcid-name-row-template',
+  'js/widgets/preferences/templates/orcid.hbs',
+  'js/widgets/preferences/templates/orcid-name-row-template.hbs',
 ], function(Marionette, orcidTemplate, orcidNameRowTemplate) {
   var OrcidView = Marionette.ItemView.extend({
     template: orcidTemplate,
@@ -53,8 +53,7 @@ define([
         })
         .get();
 
-      var loadingString =
-        '<i class="fa fa-spinner fa-pulse" aria-hidden="true"></i> Loading';
+      var loadingString = '<i class="fa fa-spinner fa-pulse" aria-hidden="true"></i> Loading';
       this.$('.submit').html(loadingString);
       // loading string will be removed when view is re-rendered
 

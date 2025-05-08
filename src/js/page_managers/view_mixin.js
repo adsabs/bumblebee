@@ -1,4 +1,4 @@
-define(['underscore', 'jquery'], function(_, $) {
+define(['lodash/dist/lodash.compat', 'jquery'], function(_, $) {
   var PageManagerMixin = {
     getWidgetsFromTemplate: function(template, isDebug) {
       var widgets = {};

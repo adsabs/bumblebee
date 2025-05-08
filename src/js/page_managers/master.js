@@ -10,14 +10,16 @@
  * */
 
 define([
+  'lodash/dist/lodash.compat',
   'js/widgets/base/base_widget',
   'js/components/generic_module',
   'js/page_managers/controller',
-  'hbs!js/page_managers/templates/aria-announcement',
-  'hbs!js/page_managers/templates/master-page-manager',
+  'js/page_managers/templates/aria-announcement.hbs',
+  'js/page_managers/templates/master-page-manager.hbs',
   'marionette',
   'js/mixins/dependon',
 ], function(
+  _,
   BaseWidget,
   GenericModule,
   PageManagerController,
@@ -87,8 +89,8 @@ define([
 
       // detach previous controller
       this.$('.dynamic-container')
-        .children()
-        .detach();
+      .children()
+      .detach();
       this.$('.dynamic-container').append(res.$el);
       model.attributes.numAttach += 1;
 
@@ -175,8 +177,8 @@ define([
         }
 
         self
-          .getPubSub()
-          .publish(self.getPubSub().ARIA_ANNOUNCEMENT, pageManagerName);
+        .getPubSub()
+        .publish(self.getPubSub().ARIA_ANNOUNCEMENT, pageManagerName);
         defer.resolve();
       };
 

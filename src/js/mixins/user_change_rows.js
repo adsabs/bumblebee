@@ -1,6 +1,8 @@
-define(['marionette', 'js/components/api_targets'], function(
+define(['lodash/dist/lodash.compat', 'marionette', 'js/components/api_targets', 'backbone'], function(
+  _,
   Marionette,
-  ApiTargets
+  ApiTargets,
+  Backbone
 ) {
   /*
    * use this model as a base for any widget that needs to request
@@ -20,9 +22,7 @@ define(['marionette', 'js/components/api_targets'], function(
       this.on('change:rows', this.updateCurrent);
 
       if (!options.widgetName) {
-        throw new Error(
-          'need to configure with widget name so we can get limit/default info from api_targets._limits'
-        );
+        throw new Error('need to configure with widget name so we can get limit/default info from api_targets._limits');
       }
 
       var defaults = {

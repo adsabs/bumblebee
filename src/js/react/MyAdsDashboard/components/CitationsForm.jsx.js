@@ -2,7 +2,7 @@ define([
   'react',
   'react-bootstrap',
   'prop-types',
-  'es6!./CitationsEntry.jsx',
+  'js/react/MyAdsDashboard/components/CitationsEntry.jsx',
   'js/react/shared/helpers',
 ], function(
   React,
@@ -16,18 +16,13 @@ define([
       case 'pending':
         return (
           <span className="text-info">
-            <i className="fa fa-spinner fa-spin" aria-hidden="true" /> Sending
-            request...
+            <i className="fa fa-spinner fa-spin" aria-hidden="true" /> Sending request...
           </span>
         );
       case 'failure':
         return <span className="text-danger">Request failed. ({error})</span>;
       case 'success':
-        return (
-          <span className="text-success">
-            Notification {editing ? 'saved' : 'created'}!
-          </span>
-        );
+        return <span className="text-success">Notification {editing ? 'saved' : 'created'}!</span>;
       default:
         return null;
     }
@@ -172,9 +167,7 @@ define([
                 type="text"
                 bsSize="large"
                 value={this.state.notificationName}
-                onChange={(e) =>
-                  this.setState({ notificationName: e.target.value })
-                }
+                onChange={(e) => this.setState({ notificationName: e.target.value })}
               />
               <FormControl.Feedback />
               <HelpBlock>Set the name for this notification</HelpBlock>
@@ -186,33 +179,20 @@ define([
               entries: this.state.entries,
             }}
           />
-          <div
-            className="row"
-            style={{ borderTop: 'solid 1px #d9d9d9', paddingTop: '1rem' }}
-          >
+          <div className="row" style={{ borderTop: 'solid 1px #d9d9d9', paddingTop: '1rem' }}>
             <div className="col-sm-4">
               <div className="btn-toolbar">
                 <button type="submit" className="btn btn-primary">
-                  {this.state.editing
-                    ? 'Save notification'
-                    : 'Create notification'}
+                  {this.state.editing ? 'Save notification' : 'Create notification'}
                 </button>
-                <button
-                  className="btn btn-default"
-                  onClick={this.props.onCancel}
-                >
+                <button className="btn btn-default" onClick={this.props.onCancel}>
                   Cancel
                 </button>
               </div>
             </div>
-            <div
-              className="col-sm-7 col-sm-offset-1"
-              style={{ paddingTop: '1rem' }}
-            >
+            <div className="col-sm-7 col-sm-offset-1" style={{ paddingTop: '1rem' }}>
               {getStatusMessage({
-                ...(this.state.editing
-                  ? this.props.updateNotificationRequest
-                  : this.props.addNotificationRequest),
+                ...(this.state.editing ? this.props.updateNotificationRequest : this.props.addNotificationRequest),
                 editing: this.state.editing,
               })}
               <span className="text-info">{this.state.message}</span>

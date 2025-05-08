@@ -1,10 +1,7 @@
 /**
  * manages the state of the side bars
  */
-define(['backbone', 'js/components/api_feedback'], function(
-  Backbone,
-  ApiFeedback
-) {
+define(['lodash/dist/lodash.compat', 'backbone', 'js/components/api_feedback'], function(_, Backbone, ApiFeedback) {
   var state = new (Backbone.Model.extend({
     defaults: {
       recent: true,
@@ -12,7 +9,7 @@ define(['backbone', 'js/components/api_feedback'], function(
     },
   }))();
 
-  var SideBarManager = {
+  return {
     /**
      * Try to get the current sidebar state from user data
      * This will be the value coming from user settings
@@ -23,9 +20,7 @@ define(['backbone', 'js/components/api_feedback'], function(
           .getObject('User')
           .getUserData();
         if (!ud) return false;
-        return !ud.defaultHideSidebars
-          ? false
-          : /show/i.test(ud.defaultHideSidebars);
+        return !ud.defaultHideSidebars ? false : /show/i.test(ud.defaultHideSidebars);
       } catch (e) {
         return false;
       }
@@ -37,11 +32,7 @@ define(['backbone', 'js/components/api_feedback'], function(
      */
     init: function() {
       this.setSidebarState(this._getUpdateFromUserData());
-      _.bindAll(this, [
-        '_onFeedback',
-        '_onUserAnnouncement',
-        '_updateSidebarState',
-      ]);
+      _.bindAll(this, ['_onFeedback', '_onUserAnnouncement', '_updateSidebarState']);
       var ps = this.getPubSub();
       if (!ps) return;
       ps.subscribe(ps.FEEDBACK, this._onFeedback);
@@ -69,11 +60,7 @@ define(['backbone', 'js/components/api_feedback'], function(
     _onUserAnnouncement: function(ev, changed) {
       // only update if the changed key was defaultHideSidebars
       if (_.contains(_.keys(changed), 'defaultHideSidebars')) {
-        this.setSidebarState(
-          !changed.defaultHideSidebars
-            ? true
-            : /show/i.test(changed.defaultHideSidebars)
-        );
+        this.setSidebarState(!changed.defaultHideSidebars ? true : /show/i.test(changed.defaultHideSidebars));
       }
     },
 
@@ -142,6 +129,4 @@ define(['backbone', 'js/components/api_feedback'], function(
       return state.get('show');
     },
   };
-
-  return SideBarManager;
 });

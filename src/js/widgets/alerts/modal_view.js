@@ -1,7 +1,4 @@
-define([
-  'marionette',
-  'hbs!js/widgets/alerts/templates/modal_template',
-], function(Marionette, ModalTemplate) {
+define(['marionette', 'js/widgets/alerts/templates/modal_template.hbs'], function(Marionette, ModalTemplate) {
   var ModalView = Marionette.ItemView.extend({
     id: '#alert-modal-content',
     template: ModalTemplate,
@@ -40,11 +37,7 @@ define([
 
       // log the error to console as well
       if (this.model.get('type') === 'danger') {
-        console.error(
-          'error feedback: ',
-          this.model.get('title'),
-          this.model.get('msg')
-        );
+        console.error('error feedback: ', this.model.get('title'), this.model.get('msg'));
       }
       return Marionette.ItemView.prototype.render.apply(this, arguments);
     },

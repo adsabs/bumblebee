@@ -1,8 +1,8 @@
-define([
-  'js/page_managers/controller',
-  'js/page_managers/one_column_view',
-  'hbs!js/wraps/orcid_page_manager/orcid-page-layout',
-], function(PageManagerController, PageManagerView, PageManagerTemplate) {
+define(['js/page_managers/controller', 'js/page_managers/one_column_view', './orcid-page-layout.hbs'], function(
+  PageManagerController,
+  PageManagerView,
+  PageManagerTemplate
+) {
   var PageManager = PageManagerController.extend({
     createView: function(options) {
       options = options || {};

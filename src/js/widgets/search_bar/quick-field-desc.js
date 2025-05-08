@@ -21,15 +21,13 @@ define({
   },
   ack: {
     title: 'acknowledgements',
-    description:
-      'Search for a word or phrase in the acknowledgements extracted from fulltexts.',
+    description: 'Search for a word or phrase in the acknowledgements extracted from fulltexts.',
     syntax: ['ack:"phrase"'],
     example: ['ack:"ADS"'],
   },
   aff: {
     title: 'affiliation',
-    description:
-      'Search for word or phrase in the raw, provided affiliation field',
+    description: 'Search for word or phrase in the raw, provided affiliation field',
     syntax: ['aff:"phrase"'],
     example: ['aff:"harvard"'],
   },
@@ -41,22 +39,19 @@ define({
   },
   author_count: {
     title: 'author count',
-    description:
-      'Find records that have a specific number of authors, or a range of author counts',
+    description: 'Find records that have a specific number of authors, or a range of author counts',
     syntax: ['author_count:count', 'author_count:[min_count TO max_count]'],
     example: ['author_count:40', 'author_count:[10 TO 100]'],
   },
   author: {
     title: 'author',
-    description:
-      'Author name may include just lastname and initial, or stricter author search (recommended)',
+    description: 'Author name may include just lastname and initial, or stricter author search (recommended)',
     syntax: ['author:"Last, F"', 'author:"Last, First […]"'],
     example: ['author:"huchra, john p"', 'author:"huchra, john p"'],
   },
   bibcode: {
     title: 'bibcode',
-    description:
-      'Find a specific record using the ADS bibcode (ADS identifier of a paper)',
+    description: 'Find a specific record using the ADS bibcode (ADS identifier of a paper)',
     syntax: ['bibcode:adsbib'],
     example: ['bibcode:2003AJ….125..525J'],
   },
@@ -68,8 +63,7 @@ define({
   },
   bibstem: {
     title: 'bib abbrev',
-    description:
-      'Find records that contain a specific bibstem in their bibcode',
+    description: 'Find records that contain a specific bibstem in their bibcode',
     syntax: ['bibstem:adsbibstem'],
     example: ['bibstem:ApJ'],
   },
@@ -93,8 +87,7 @@ define({
   },
   citation_count: {
     title: 'citation count',
-    description:
-      'Find records that have a specific number of citations, or a range of citation counts',
+    description: 'Find records that have a specific number of citations, or a range of citation counts',
     syntax: ['citation_count:count', 'citation_count:[min_count TO max_count]'],
     example: ['citation_count:40', 'citation_count:[10 TO 100]'],
   },
@@ -112,8 +105,7 @@ define({
   },
   entdate: {
     title: 'entdate',
-    description:
-      'Creation date of ADS record in user-friendly format (YYYY-MM-DD)',
+    description: 'Creation date of ADS record in user-friendly format (YYYY-MM-DD)',
     syntax: ['entdate:YYYY-MM-DD'],
     example: ['entdate:2019-05-20'],
   },
@@ -125,15 +117,13 @@ define({
   },
   full: {
     title: 'fulltext',
-    description:
-      'Search for word or phrase in fulltext, acknowledgements, abstract, title and keywords',
+    description: 'Search for word or phrase in fulltext, acknowledgements, abstract, title and keywords',
     syntax: ['full:"phrase"'],
     example: ['full:"gravitational waves"'],
   },
   identifier: {
     title: 'identifier',
-    description:
-      'Find a paper using any of its identifiers, arXiv, bibcode, doi, etc.',
+    description: 'Find a paper using any of its identifiers, arXiv, bibcode, doi, etc.',
     syntax: ['identifier:bibcode'],
     example: ['identifier:2003AJ….125..525J'],
   },
@@ -152,15 +142,13 @@ define({
   },
   object: {
     title: 'object',
-    description:
-      'Search for papers tagged with a specific astronomical object or at or near a set of coordinates',
+    description: 'Search for papers tagged with a specific astronomical object or at or near a set of coordinates',
     syntax: ['object:"object"'],
     example: ['object:Andromeda'],
   },
   orcid: {
     title: 'orcid',
-    description:
-      'Search for papers that are associated with a specific ORCiD iD',
+    description: 'Search for papers that are associated with a specific ORCiD iD',
     syntax: ['orcid:id'],
     example: ['orcid:0000-0000-0000-0000'],
   },
@@ -209,8 +197,7 @@ define({
   },
   citations: {
     title: 'citations()',
-    description:
-      'Returns list of citations from given papers; use [citations] to get the field contents',
+    description: 'Returns list of citations from given papers; use [citations] to get the field contents',
     syntax: ['citations(query)'],
     example: ['citations(author:"huchra, john")'],
   },
@@ -236,8 +223,7 @@ define({
   },
   similar: {
     title: 'similar()',
-    description:
-      'Return similar documents, based on the similarity of the abstract text',
+    description: 'Return similar documents, based on the similarity of the abstract text',
     syntax: ['similar(query)'],
     example: ['similar(bibcode:2000A&AS..143...41K)'],
   },

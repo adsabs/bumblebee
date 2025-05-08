@@ -1,8 +1,8 @@
-define([
-  'react-redux',
-  'es6!../redux/modules/sort-app',
-  'es6!../components/sort-app.jsx',
-], function(ReactRedux, actions, SortApp) {
+define(['react-redux', 'js/widgets/sort/redux/modules/sort-app', 'js/widgets/sort/components/sort-app.jsx'], function(
+  ReactRedux,
+  actions,
+  SortApp
+) {
   // actions
   const { setSort, setDirection } = actions;
 

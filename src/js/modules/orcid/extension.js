@@ -6,23 +6,13 @@
  */
 
 define([
-  'underscore',
+  'lodash/dist/lodash.compat',
   'js/components/api_query',
   'js/components/api_request',
   'js/components/api_query_updater',
   'js/components/api_targets',
   'js/modules/orcid/work',
-  'js/components/api_feedback',
-  'js/mixins/dependon',
-], function(
-  _,
-  ApiQuery,
-  ApiRequest,
-  ApiQueryUpdater,
-  ApiTargets,
-  Work,
-  ApiFeedback
-) {
+], function(_, ApiQuery, ApiRequest, ApiQueryUpdater, ApiTargets, Work) {
   return function(WidgetClass) {
     var queryUpdater = new ApiQueryUpdater('OrcidExtension');
     var processDocs = WidgetClass.prototype.processDocs;
@@ -33,7 +23,7 @@ define([
       this.setBeeHive(beehive);
       activate.apply(this, arguments);
       var pubsub = beehive.hasService('PubSub') && beehive.getService('PubSub');
-      pubsub.subscribe(pubsub.CUSTOM_EVENT, _.bind(this.onCustomEvent));
+      pubsub.subscribe(pubsub.CUSTOM_EVENT, this.onCustomEvent.bind(this));
     };
 
     WidgetClass.prototype.onCustomEvent = function(event, bibcodes) {
@@ -45,7 +35,7 @@ define([
       var orcidAction = _.bind(function(action, bibcodes) {
         var models = [];
 
-        bibcodes.forEach(( bibcode ) => {
+        bibcodes.forEach((bibcode) => {
           var model = this.hiddenCollection.find((m) => m.get('bibcode') === bibcode);
           if (model) {
             models.push(model);
@@ -123,23 +113,20 @@ define([
           };
           msg.actions.view = {
             title: 'view in ORCID',
-            caption:
-              "Another version exists (we don't have rights to update it)",
+            caption: "Another version exists (we don't have rights to update it)",
             action: 'orcid-view',
           };
         } else if (recInfo.isCreatedByOthers && !recInfo.isCreatedByADS) {
           if (recInfo.isKnownToADS) {
             msg.actions.add = {
               title: 'add ADS version ORCID',
-              caption:
-                "ORCID already has a record for this article (we don't have rights to update it).",
+              caption: "ORCID already has a record for this article (we don't have rights to update it).",
               action: 'orcid-add',
             };
           }
           msg.actions.view = {
             title: 'view in ORCID',
-            caption:
-              "Another version exists (we don't have rights to update it)",
+            caption: "Another version exists (we don't have rights to update it)",
             action: 'orcid-view',
           };
         } else if (!recInfo.isCreatedByOthers && recInfo.isCreatedByADS) {
@@ -173,12 +160,7 @@ define([
         return msg;
       },
       function(ret) {
-        return [
-          ret.isCreatedByADS,
-          ret.isCreatedByOthers,
-          ret.isKnownToADS,
-          ret.provenance,
-        ];
+        return [ret.isCreatedByADS, ret.isCreatedByOthers, ret.isKnownToADS, ret.provenance];
       }
     );
 
@@ -267,8 +249,7 @@ define([
             // do our best to find the match
             return (
               (_.isPlainObject(work._work) && work._work === m.get('_work')) ||
-              (!_.isUndefined(work.identifier) &&
-                work.identifier === m.get('identifier'))
+              (!_.isUndefined(work.identifier) && work.identifier === m.get('identifier'))
             );
           });
 
@@ -287,9 +268,7 @@ define([
 
             model.set({
               orcid: actions,
-              source_name: _.isArray(sources)
-                ? sources.join('; ')
-                : model.get('source_name'),
+              source_name: _.isArray(sources) ? sources.join('; ') : model.get('source_name'),
             });
           } else if (count < 60) {
             _.delay(_.bind(onSuccess, self, [work], count + 1), 500);
@@ -299,9 +278,7 @@ define([
           if (_.isArray(info.children)) {
             _.forEach(info.children, function(putcode) {
               var model = _.find(self.hiddenCollection.models, function(m) {
-                return (
-                  _.isString(putcode) && putcode === m.get('_work').getPutCode()
-                );
+                return _.isString(putcode) && putcode === m.get('_work').getPutCode();
               });
 
               if (model) {
@@ -345,9 +322,7 @@ define([
         self._setDocsToPending(documents);
 
         // wait for all the promises to resolve
-        $.when
-          .apply($, promises)
-          .then(_.partial(onSuccess, documents), _.partial(onFail, documents));
+        $.when.apply($, promises).then(_.partial(onSuccess, documents), _.partial(onFail, documents));
       };
 
       getDocInfo(docs);
@@ -376,19 +351,13 @@ define([
      * @param {number=} tries - number of current retries
      */
     WidgetClass.prototype._updateModelsWithOrcid = function(models, tries) {
-      var modelsToUpdate = _.filter(
-        models || this.hiddenCollection.models,
-        function(m) {
-          return !m.has('_work') && m.has('identifier');
-        }
-      );
+      var modelsToUpdate = _.filter(models || this.hiddenCollection.models, function(m) {
+        return !m.has('_work') && m.has('identifier');
+      });
 
       if (_.isEmpty(modelsToUpdate)) {
         if (tries < 60) {
-          _.delay(
-            _.bind(self._updateModelsWithOrcid, self, null, tries + 1),
-            500
-          );
+          _.delay(_.bind(this._updateModelsWithOrcid, this, null, tries + 1), 500);
         }
         return;
       }
@@ -409,10 +378,7 @@ define([
                 _work: w,
               });
             } else if (tries < 60) {
-              _.delay(
-                _.bind(self._updateModelsWithOrcid, self, [m], tries + 1),
-                500
-              );
+              _.delay(_.bind(this._updateModelsWithOrcid, this, [m], tries + 1), 500);
             }
           });
         });
@@ -425,17 +391,13 @@ define([
      * @param {array} docs - set of docs to be processed
      * @param {object} pagination - pagination data (i.e. start, page, etc)
      */
-    WidgetClass.prototype.processDocs = function(
-      apiResponse,
-      docs,
-      pagination
-    ) {
+    WidgetClass.prototype.processDocs = function(apiResponse, docs, pagination) {
       docs = processDocs.apply(this, arguments);
       var user = this.getBeeHive().getObject('User');
       // for results list only show if orcidModeOn, for orcid big widget show always
       if ((user && user.isOrcidModeOn()) || this.orcidWidget) {
         var params = apiResponse.get('responseHeader.params');
-        var docsSoFar = parseInt(params.start) + parseInt(params.rows);
+        var docsSoFar = parseInt(params.start, 10) + parseInt(params.rows, 10);
         var result = this.addOrcidInfo(docs, docsSoFar);
         if (pagination.numFound !== result.length) {
           _.extend(pagination, this.getPaginationInfo(apiResponse, docs));
@@ -468,19 +430,14 @@ define([
        * @param {object} adsResponse
        */
       var onRecieveFullADSWork = function(fullOrcidWork, adsResponse) {
-        var adsWork =
-          adsResponse.response &&
-          adsResponse.response.docs &&
-          adsResponse.response.docs[0];
+        var adsWork = adsResponse.response && adsResponse.response.docs && adsResponse.response.docs[0];
 
         // work around to make sure updates work properly
         fullOrcidWork = new Work(fullOrcidWork._root, true);
 
         var parsedOrcidWork = fullOrcidWork.toADSFormat();
 
-        parsedOrcidWork = _.isPlainObject(parsedOrcidWork)
-          ? parsedOrcidWork
-          : {};
+        parsedOrcidWork = _.isPlainObject(parsedOrcidWork) ? parsedOrcidWork : {};
         adsWork = _.isPlainObject(adsWork) ? adsWork : {};
 
         // extend the current model with our new information
@@ -859,7 +816,9 @@ define([
             }
           },
         };
-        handlers[action] && handlers[action](data.model);
+        if (handlers[action]) {
+          handlers[action](data.model);
+        }
       }
       return onAllInternalEvents.apply(this, arguments);
     };

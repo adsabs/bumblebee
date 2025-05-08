@@ -6,13 +6,11 @@ define([
   'js/components/facade',
   'js/components/generic_module',
   'js/mixins/hardened',
-  'underscore',
+  'lodash/dist/lodash.compat',
 ], function(Facade, GenericModule, Hardened, _) {
   var Services = GenericModule.extend({
     initialize: function(options) {
-      this._services = _.has(options, 'services')
-        ? _.clone(options.services)
-        : {};
+      this._services = _.has(options, 'services') ? _.clone(options.services) : {};
     },
 
     activate: function() {
@@ -33,14 +31,10 @@ define([
 
     add: function(name, service) {
       if (this._services.hasOwnProperty(name)) {
-        throw new Error(
-          'The service: ' + name + ' is already registered, remove it first!'
-        );
+        throw new Error('The service: ' + name + ' is already registered, remove it first!');
       }
       if (!(name && service) || !_.isString(name)) {
-        throw new Error(
-          'The key must be a string and the service is an object'
-        );
+        throw new Error('The key must be a string and the service is an object');
       }
       this._services[name] = service;
     },

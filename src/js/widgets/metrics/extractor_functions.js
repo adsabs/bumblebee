@@ -1,4 +1,4 @@
-define([], function() {
+define(['lodash/dist/lodash.compat'], function(_) {
   function hasNonZero(arr) {
     return (
       arr.filter(function(x) {
@@ -28,17 +28,11 @@ define([], function() {
     var p = options.paperhist_data;
 
     if (!options.norm)
-      data = [
-        p['refereed publications'],
-        getNonRef(p['refereed publications'], p['all publications']),
-      ];
+      data = [p['refereed publications'], getNonRef(p['refereed publications'], p['all publications'])];
     else
       data = [
         p['refereed publications normalized'],
-        getNonRef(
-          p['refereed publications normalized'],
-          p['all publications normalized']
-        ),
+        getNonRef(p['refereed publications normalized'], p['all publications normalized']),
       ];
 
     _.each(data, function(a, index) {
@@ -65,18 +59,12 @@ define([], function() {
     if (!options.norm)
       data = [
         options.readshist_data['refereed reads'],
-        getNonRef(
-          options.readshist_data['refereed reads'],
-          options.readshist_data['all reads']
-        ),
+        getNonRef(options.readshist_data['refereed reads'], options.readshist_data['all reads']),
       ];
     else
       data = [
         options.readshist_data['refereed reads normalized'],
-        getNonRef(
-          options.readshist_data['refereed reads normalized'],
-          options.readshist_data['all reads normalized']
-        ),
+        getNonRef(options.readshist_data['refereed reads normalized'], options.readshist_data['all reads normalized']),
       ];
 
     _.each(data, function(a, index) {

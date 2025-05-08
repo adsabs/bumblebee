@@ -1,5 +1,5 @@
 define([
-  'es6!js/react/MyAdsDashboard/components/ImportNotificationsForm.jsx',
+  'js/react/MyAdsDashboard/components/ImportNotificationsForm.jsx',
   'react-redux',
   '../actions',
   '../constants',

@@ -5,7 +5,7 @@
  *
  *
  */
-define(['underscore'], function(_) {
+define(['lodash/dist/lodash.compat'], function(_) {
   var WidgetPaginator = {
     /**
      * returns zero-indexed start val (we expect the page

@@ -1,8 +1,4 @@
-define(['react', 'prop-types', 'react-redux'], function(
-  React,
-  PropTypes,
-  { useSelector }
-) {
+define(['react', 'prop-types', 'react-redux'], function(React, PropTypes, { useSelector }) {
   const Dropdown = ({ activeFacets, onSubmitFilter }) => {
     const { logicOptions, facetTitle } = useSelector((state) => ({
       logicOptions: state.config.logicOptions,
@@ -33,10 +29,7 @@ define(['react', 'prop-types', 'react-redux'], function(
     }
     return (
       <div className="facet__dropdown">
-        <div
-          className="facet__dropdown__title"
-          style={{ display: 'flex', flexDirection: 'column' }}
-        >
+        <div className="facet__dropdown__title" style={{ display: 'flex', flexDirection: 'column' }}>
           <div>{facetTitle}</div>
           <div>
             <b>{activeFacets.length}</b> selected
@@ -51,12 +44,7 @@ define(['react', 'prop-types', 'react-redux'], function(
           }}
         >
           {arr.map((val) => (
-            <button
-              key={val}
-              className="btn btn-default"
-              type="button"
-              onClick={() => onSubmitFilter(val)}
-            >
+            <button key={val} className="btn btn-default" type="button" onClick={() => onSubmitFilter(val)}>
               {val}
             </button>
           ))}

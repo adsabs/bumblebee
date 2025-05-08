@@ -1,86 +1,68 @@
 define([
-    'marionette',
-    'backbone',
-    'js/widgets/base/base_widget',
-    'js/components/api_response',
-    'js/components/api_request',
-    'js/components/api_query',
-    'js/bugutils/minimal_pubsub',
-    'js/widgets/widget_states'
-  ],
-  function(
-    Marionette,
-    Backbone,
-    BaseWidget,
-    ApiResponse,
-    ApiRequest,
-    ApiQuery,
-    MinimalPubSub,
-    WidgetStates
-    ) {
+  'lodash/dist/lodash.compat',
+  'marionette',
+  'backbone',
+  'js/widgets/base/base_widget',
+  'js/components/api_response',
+  'js/components/api_request',
+  'js/components/api_query',
+  'js/bugutils/minimal_pubsub',
+], function(_, Marionette, Backbone, BaseWidget, ApiResponse, ApiRequest, ApiQuery, MinimalPubSub) {
+  describe('Base Widget (base_widget.spec.js)', function() {
+    var minsub;
+    beforeEach(function() {
+      minsub = new (MinimalPubSub.extend({
+        request: function(apiRequest) {
+          return {
+            responseHeader: {
+              status: 0,
+              QTime: 543,
+              params: {
+                q: 'star',
+              },
+            },
+          };
+        },
+      }))({ verbose: false });
+    });
 
-    describe("Base Widget (base_widget.spec.js)", function() {
+    afterEach(function() {
+      minsub.destroy();
+    });
 
-      var minsub;
-      beforeEach(function() {
+    it('returns BaseWidget object', function() {
+      expect(new BaseWidget()).to.be.instanceof(BaseWidget);
+    });
 
-        minsub = new (MinimalPubSub.extend({
-          request: function(apiRequest) {
-            return {
-              "responseHeader": {
-                "status": 0,
-                "QTime": 543,
-                "params": {
-                  "q": "star"
-                }
-              }
-            }
-          }
-        }))({verbose: false});
+    it('listens to certain signals', function(done) {
+      var W = BaseWidget.extend({
+        processResponse: function(response) {
+          this.setCurrentQuery(response.getApiQuery());
+        },
       });
 
-      afterEach(function() {
-        minsub.destroy();
+      var widget = new W();
+      _.each(['dispatchRequest', 'customizeQuery', 'composeRequest', 'processResponse'], function(name) {
+        sinon.spy(widget, name);
       });
 
-      it("returns BaseWidget object", function() {
-        expect(new BaseWidget()).to.be.instanceof(BaseWidget);
-      });
+      widget.activate(minsub.beehive.getHardenedInstance());
 
-      it("listens to certain signals", function(done) {
-        var W = BaseWidget.extend({
-          processResponse: function(response) {
-            this.setCurrentQuery(response.getApiQuery());
-          }
-        });
+      minsub.publish(minsub.START_SEARCH, new ApiQuery({ q: 'pluto' }));
 
-        var widget = new W();
-        _.each(['dispatchRequest', 'customizeQuery', 'composeRequest', 'processResponse'], function(name) {
-          sinon.spy(widget, name);
-        });
+      expect(widget.dispatchRequest.firstCall.args[0].url()).to.eql('q=pluto&sort=date%20desc%2C%20bibcode%20desc');
+      expect(widget.customizeQuery.calledOnce).to.be.true;
+      expect(widget.customizeQuery.calledBefore(widget.composeRequest)).to.be.true;
+      expect(widget.processResponse.called).to.be.true;
+      done();
+    });
 
-        widget.activate(minsub.beehive.getHardenedInstance());
+    it('has the activate and close methods necessary for most/all ui widgets', function() {
+      var widget = new BaseWidget();
 
-
-        minsub.publish(minsub.START_SEARCH, new ApiQuery({q: 'pluto'}));
-
-        expect(widget.dispatchRequest.firstCall.args[0].url()).to.eql('q=pluto&sort=date%20desc%2C%20bibcode%20desc');
-        expect(widget.customizeQuery.calledOnce).to.be.true;
-        expect(widget.customizeQuery.calledBefore(widget.composeRequest)).to.be.true;
-        expect(widget.processResponse.called).to.be.true;
-        done();
-
-      });
-
-      it("has the activate and close methods necessary for most/all ui widgets", function(){
-        var widget = new BaseWidget();
-
-        expect(widget.activate).to.be.instanceof(Function);
-        expect(widget.destroy).to.be.instanceof(Function);
-        expect(widget.render).to.be.instanceof(Function);
-      });
-
-
-    })
-
+      expect(widget.activate).to.be.instanceof(Function);
+      expect(widget.destroy).to.be.instanceof(Function);
+      expect(widget.render).to.be.instanceof(Function);
+    });
   });
+});

@@ -10,28 +10,17 @@
  */
 
 define([
-  'underscore',
+  'lodash/dist/lodash.compat',
   'jquery',
   'backbone',
   'marionette',
   'js/components/api_query',
   'js/components/pubsub_events',
-  'hbs!js/widgets/filter_visualizer/templates/widget-view',
-  'hbs!js/widgets/filter_visualizer/templates/item-view',
+  'js/widgets/filter_visualizer/templates/widget-view.hbs',
+  'js/widgets/filter_visualizer/templates/item-view.hbs',
   'js/components/api_feedback',
   'js/mixins/dependon',
-], function(
-  _,
-  $,
-  Backbone,
-  Marionette,
-  ApiQuery,
-  PubSubEvents,
-  WidgetTemplate,
-  ItemTemplate,
-  ApiFeedback,
-  Dependon
-) {
+], function(_, $, Backbone, Marionette, ApiQuery, PubSubEvents, WidgetTemplate, ItemTemplate, ApiFeedback, Dependon) {
   // Model
   var KeyValue = Backbone.Model.extend({});
 
@@ -49,10 +38,7 @@ define([
     },
     onClick: function(ev) {
       var $t = $(ev.target);
-      this.trigger(
-        'filter-event',
-        $t.attr('value') ? $t.attr('value') : $t.parent().attr('value')
-      );
+      this.trigger('filter-event', $t.attr('value') ? $t.attr('value') : $t.parent().attr('value'));
       return false;
     },
   });
@@ -68,7 +54,7 @@ define([
     activate: function(beehive) {
       _.bindAll(this, 'processFeedback', 'onFilterEvent');
       this.setBeeHive(beehive);
-      pubsub = beehive.getService('PubSub');
+      const pubsub = beehive.getService('PubSub');
       pubsub.subscribe(pubsub.FEEDBACK, this.processFeedback);
     },
 
@@ -129,7 +115,6 @@ define([
      */
     processQuery: function(data) {
       var q = data.q;
-      numFound = data.numFound;
 
       var filters = this.extractFilters(q);
       this._saveInfo(q, filters);
@@ -201,11 +186,7 @@ define([
             };
 
             if (data[k].length > 1) {
-              console.warn(
-                'Breach of an api contract, filter contains too many values',
-                k,
-                data[k]
-              );
+              console.warn('Breach of an api contract, filter contains too many values', k, data[k]);
               return;
             }
 
@@ -268,8 +249,7 @@ define([
      *
      * */
     prepareGUIData: function(filters) {
-      if (this.withoutOperators)
-        return this._prepareGUIDataWithoutOperators(filters);
+      if (this.withoutOperators) return this._prepareGUIDataWithoutOperators(filters);
 
       var guiData = [];
       _.each(
@@ -371,8 +351,7 @@ define([
               var ind = i++ == 0 && operator == 'NOT' ? '' : indicator; // if NOT, the first element is without prefix
               element.push({
                 type: 'operand',
-                display:
-                  ind + this.beautifyOperand(filter.filter_name, operand),
+                display: ind + this.beautifyOperand(filter.filter_name, operand),
                 value: filter.filter_name + '|operand|' + operand,
               });
 

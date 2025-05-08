@@ -1,7 +1,4 @@
-define(['js/widgets/facet/factory', 'analytics'], function(
-  FacetFactory,
-  analytics
-) {
+define(['lodash/dist/lodash.compat', 'js/widgets/facet/factory', 'analytics'], function(_, FacetFactory, analytics) {
   return function() {
     var widget = FacetFactory.makeHierarchicalCheckboxFacet({
       facetField: 'grant_facet_hier',

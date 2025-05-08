@@ -25,10 +25,10 @@
  *  define(['list', 'of', 'imports'], function(my, foo, bar) {return something})
  */
 define([
-  // here we are importing using symbolic names, e.g. 'underscore' - this name
+  // here we are importing using symbolic names, e.g. 'lodash/dist/lodash.compat' - this name
   // is mapped to the underscore library (in our discovery.config.js)
 
-  'underscore', // very useful utilities
+  'lodash/dist/lodash.compat', // very useful utilities
   'jquery', // if you don't know jquery, then shame on you!
   'backbone', // Model-View-Controller framework (for building applications)
   'marionette', // Extension on top of Backbone; does useful things for us
@@ -47,7 +47,7 @@ define([
 
   // 'hbs!' is 'handlebars' template pre-processor, it will load the file and give you
   // executable template
-  'hbs!js/widgets/hello_world/templates/layout',
+  'js/widgets/hello_world/templates/layout.hbs',
 ], function(
   // all of the following names must correspond to the import above
   _,
@@ -164,16 +164,12 @@ define([
       this.setBeeHive(beehive); // most widgets will hold reference, to query BeeHive later...
       var pubsub = beehive.getService('PubSub');
       pubsub.subscribe(pubsub.INVITING_REQUEST, _.bind(this.onRequest, this));
-      pubsub.subscribe(
-        pubsub.DELIVERING_RESPONSE,
-        _.bind(this.onResponse, this)
-      );
+      pubsub.subscribe(pubsub.DELIVERING_RESPONSE, _.bind(this.onResponse, this));
     },
 
     // triggered externally (e.g. by an user submitting a query)
     onRequest: function(apiQuery) {
-      if (!(apiQuery instanceof ApiQuery) || !apiQuery.has('q'))
-        throw new Error('You are kidding me!');
+      if (!(apiQuery instanceof ApiQuery) || !apiQuery.has('q')) throw new Error('You are kidding me!');
 
       var q = apiQuery.clone(); // we are bit parranoid, the queries arrive locked against changes
       q.unlock(); // so you have to create a copy and unlock it for modifications
@@ -185,12 +181,7 @@ define([
     // triggered externally, by a query-mediator, when it receives data for our query
     onResponse: function(apiResponse) {
       if (apiResponse.has('response.numFound')) {
-        this.model.set(
-          'msg',
-          'The query found: ' +
-            apiResponse.get('response.numFound') +
-            ' results.'
-        );
+        this.model.set('msg', 'The query found: ' + apiResponse.get('response.numFound') + ' results.');
       }
     },
 

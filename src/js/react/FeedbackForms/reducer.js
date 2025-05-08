@@ -1,8 +1,4 @@
-define(['redux', './actions', './models/index'], function(
-  { combineReducers },
-  { SET_BIBCODE, SET_FORM },
-  { FORMS }
-) {
+define(['redux', './actions', './models/index'], function({ combineReducers }, { SET_BIBCODE, SET_FORM }, { FORMS }) {
   const mainState = {
     bibcode: null,
     form: 'missingreferences',

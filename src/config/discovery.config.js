@@ -67,14 +67,12 @@ require.config({
         AuthenticationPage: 'js/wraps/authentication_page_manager',
         SettingsPage: 'js/wraps/user_settings_page_manager/user_page_manager',
         OrcidPage: 'js/wraps/orcid_page_manager/orcid_page_manager',
-        OrcidInstructionsPage:
-          'js/wraps/orcid-instructions-page-manager/manager',
+        OrcidInstructionsPage: 'js/wraps/orcid-instructions-page-manager/manager',
         ReactPageManager: 'js/react/PageManager',
 
         LibrariesPage: 'js/wraps/libraries_page_manager/libraries_page_manager',
         HomePage: 'js/wraps/home_page_manager/home_page_manager',
-        PublicLibrariesPage:
-          'js/wraps/public_libraries_page_manager/public_libraries_manager',
+        PublicLibrariesPage: 'js/wraps/public_libraries_page_manager/public_libraries_manager',
         ErrorPage: 'js/wraps/error_page_manager/error_page_manager',
 
         Authentication: 'js/widgets/authentication/widget',
@@ -99,8 +97,7 @@ require.config({
         PaperNetwork: 'js/wraps/paper_network',
         ConceptCloud: 'js/widgets/wordcloud/widget',
         BubbleChart: 'js/widgets/bubble_chart/widget',
-        AuthorAffiliationTool:
-          'es6!js/widgets/author_affiliation_tool/widget.jsx',
+        AuthorAffiliationTool: 'es6!js/widgets/author_affiliation_tool/widget.jsx',
 
         Metrics: 'js/widgets/metrics/widget',
         CitationHelper: 'js/widgets/citation_helper/widget',
@@ -138,7 +135,7 @@ require.config({
         ShowRecommender: 'js/widgets/recommender/widget',
         ShowMetrics: 'js/wraps/paper_metrics',
         ShowExportcitation: 'js/wraps/paper_export',
-        ShowFeedback: 'reactify!js/react/BumblebeeWidget?FeedbackForms',
+        ShowFeedback: 'js/react/FeedbackForms',
         ShowLibraryAdd: 'js/wraps/abstract_page_library_add/widget',
 
         IndividualLibraryWidget: 'js/widgets/library_individual/widget',
@@ -148,9 +145,9 @@ require.config({
 
         // react widgets
 
-        MyAdsFreeform: 'reactify!js/react/BumblebeeWidget?MyAdsFreeform',
-        MyAdsDashboard: 'reactify!js/react/BumblebeeWidget?MyAdsDashboard',
-        RecommenderWidget: 'reactify!js/react/BumblebeeWidget?Recommender',
+        MyAdsFreeform: 'js/react/MyAdsFreeform',
+        MyAdsDashboard: 'js/react/MyAdsDashboard',
+        RecommenderWidget: 'js/react/Recommender',
       },
       plugins: {},
     },
@@ -227,21 +224,13 @@ require.config({
       'https://unpkg.com/bootstrap@3.3.7/dist/js/bootstrap.min',
       'libs/bootstrap/bootstrap',
     ],
-    bowser: [
-      'https://cdn.jsdelivr.net/npm/bowser@2.11.0/es5',
-      'https://unpkg.com/bowser@2.11.0/es5',
-      'libs/bowser',
-    ],
+    bowser: ['https://cdn.jsdelivr.net/npm/bowser@2.11.0/es5', 'https://unpkg.com/bowser@2.11.0/es5', 'libs/bowser'],
     clipboard: [
       'https://cdn.jsdelivr.net/npm/clipboard@1.7.1/dist/clipboard.min',
       'https://unpkg.com/clipboard@1.7.1/dist/clipboard.min',
       'libs/clipboard',
     ],
-    d3: [
-      'https://cdn.jsdelivr.net/npm/d3@3.5.17/d3.min',
-      'https://unpkg.com/d3@3.5.17/d3.min',
-      'libs/d3',
-    ],
+    d3: ['https://cdn.jsdelivr.net/npm/d3@3.5.17/d3.min', 'https://unpkg.com/d3@3.5.17/d3.min', 'libs/d3'],
     'd3-cloud': [
       'https://cdn.jsdelivr.net/npm/d3-cloud@1.2.5/build/d3.layout.cloud',
       'https://unpkg.com/d3-cloud@1.2.5/build/d3.layout.cloud',
@@ -431,12 +420,12 @@ require.config({
       deps: ['jquery', 'jquery-ui'],
     },
     backbone: {
-      deps: ['jquery', 'underscore'],
+      deps: ['jquery', 'lodash/dist/lodash.compat'],
       exports: 'Backbone',
     },
 
     marionette: {
-      deps: ['jquery', 'underscore', 'backbone'],
+      deps: ['jquery', 'lodash/dist/lodash.compat', 'backbone'],
       exports: 'Marionette',
     },
 

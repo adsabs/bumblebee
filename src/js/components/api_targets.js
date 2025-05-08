@@ -5,7 +5,7 @@
  * and any related limits
  */
 
-define([], function () {
+define([], function() {
   var config = {
     BOOTSTRAP: '/accounts/bootstrap',
     SEARCH: 'search/query',

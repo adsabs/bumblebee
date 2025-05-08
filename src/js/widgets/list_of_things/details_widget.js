@@ -5,22 +5,17 @@
  */
 
 define([
+  'lodash/dist/lodash.compat',
+  'marionette',
   './widget',
   'js/mixins/add_stable_index_to_collection',
   'js/mixins/link_generator_mixin',
   'js/mixins/papers_utils',
   'js/components/api_query',
-], function(
-  ListOfThings,
-  PaginationMixin,
-  LinkGenerator,
-  PapersUtilsMixin,
-  ApiQuery
-) {
+], function(_, Marionette, ListOfThings, PaginationMixin, LinkGenerator, PapersUtilsMixin, ApiQuery) {
   var DetailsWidget = ListOfThings.extend({
     defaultQueryArguments: {
-      fl:
-        'title,bibcode,author,keyword,pub,volume,year,[citations],property,pubdate,abstract,esources,data',
+      fl: 'title,bibcode,author,keyword,pub,volume,year,[citations],property,pubdate,abstract,esources,data',
       rows: 25,
       start: 0,
     },
@@ -43,11 +38,7 @@ define([
           this.ingestBroadcastedPayload(data);
         }
 
-        if (
-          event === 'widget-selected' &&
-          data.idAttribute === this.name &&
-          !this.canLoad
-        ) {
+        if (event === 'widget-selected' && data.idAttribute === this.name && !this.canLoad) {
           var doDispatch = _.bind(function() {
             this.canLoad = true;
 
@@ -120,8 +111,7 @@ define([
         q.set('sort', Marionette.getOption(this, 'sortOrder'));
       }
       if (this.model.get('queryOperator')) {
-        var query =
-          this.model.get('queryOperator') + '(' + q.get('q').join(' ') + ')';
+        var query = this.model.get('queryOperator') + '(' + q.get('q').join(' ') + ')';
         // special case for trending aka 'also read'
         if (this.model.get('queryOperator') === 'trending') {
           // remove the bibcode from the set of returned results by

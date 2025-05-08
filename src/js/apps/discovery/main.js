@@ -17,24 +17,16 @@
 define(['config/discovery.config', 'module'], function(config, module) {
   // eslint-disable-next-line import/no-dynamic-require
   require([
+    'lodash/dist/lodash.compat',
     'router',
     'js/components/application',
     'js/mixins/discovery_bootstrap',
     'js/mixins/api_access',
     'js/components/api_feedback',
     'analytics',
-  ], function(
-    Router,
-    Application,
-    DiscoveryBootstrap,
-    ApiAccess,
-    ApiFeedback,
-    analytics
-  ) {
+  ], function(_, Router, Application, DiscoveryBootstrap, ApiAccess, ApiFeedback, analytics) {
     const updateProgress =
-      typeof window.__setAppLoadingProgress === 'function'
-        ? window.__setAppLoadingProgress
-        : function() {};
+      typeof window.__setAppLoadingProgress === 'function' ? window.__setAppLoadingProgress : function() {};
 
     Application.prototype.shim();
 
@@ -86,8 +78,7 @@ define(['config/discovery.config', 'module'], function(config, module) {
           var getUserData = function() {
             try {
               var beehive = _.isFunction(this.getBeeHive) && this.getBeeHive();
-              var user =
-                _.isFunction(beehive.getObject) && beehive.getObject('User');
+              var user = _.isFunction(beehive.getObject) && beehive.getObject('User');
               if (user) {
                 return user.getUserData('USER_DATA');
               }
@@ -101,10 +92,7 @@ define(['config/discovery.config', 'module'], function(config, module) {
           var updateExternalLinkBehavior = _.debounce(
             function() {
               var userData = getUserData.call(app);
-              var action =
-                (userData.externalLinkAction &&
-                  userData.externalLinkAction.toUpperCase()) ||
-                'AUTO';
+              var action = (userData.externalLinkAction && userData.externalLinkAction.toUpperCase()) || 'AUTO';
               if (action === 'OPEN IN CURRENT TAB') {
                 var max = 10;
                 var timeout;
@@ -121,17 +109,12 @@ define(['config/discovery.config', 'module'], function(config, module) {
             { leading: true, trailing: false },
             false
           );
-          pubsub.subscribe(
-            pubsub.getCurrentPubSubKey(),
-            pubsub.NAVIGATE,
-            updateExternalLinkBehavior
-          );
+          pubsub.subscribe(pubsub.getCurrentPubSubKey(), pubsub.NAVIGATE, updateExternalLinkBehavior);
           updateExternalLinkBehavior();
 
           const toggle = ($sidebar, $content, $button) => {
             $sidebar.toggleClass('show');
-            let text =
-              '<i class="fa fa-close" aria-hidden="true"></i> Close Menu';
+            let text = '<i class="fa fa-close" aria-hidden="true"></i> Close Menu';
             if ($sidebar.hasClass('show')) {
               $content.removeClass('full-width');
             } else {
@@ -216,9 +199,7 @@ define(['config/discovery.config', 'module'], function(config, module) {
 
           if (window.__PAGE_LOAD_TIMESTAMP) {
             var time = new Date() - window.__PAGE_LOAD_TIMESTAMP;
-            analytics('send',
-              'timing',
-              {
+            analytics('send', 'timing', {
               timingCategory: 'Application',
               timingVar: 'Loaded',
               timingValue: time,
@@ -236,9 +217,7 @@ define(['config/discovery.config', 'module'], function(config, module) {
                 action = 'appSetting';
                 label = 'light';
               }
-            } else if (
-              window.matchMedia('(prefers-color-scheme: dark)').matches
-            ) {
+            } else if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
               action = 'systemSetting';
               label = 'dark';
             }
@@ -270,13 +249,7 @@ define(['config/discovery.config', 'module'], function(config, module) {
     };
 
     var failedReload = function() {
-      analytics(
-        'send',
-        'event',
-        'introspection',
-        'failed-reloading',
-        arguments
-      );
+      analytics('send', 'event', 'introspection', 'failed-reloading', arguments);
 
       if (debug) {
         // so error messages remain in the console

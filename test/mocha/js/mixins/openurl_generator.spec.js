@@ -1,7 +1,8 @@
 define([
+  'lodash/dist/lodash.compat',
   'jquery',
   'js/mixins/openurl_generator'
-], function ($, OpenURLGenerator) {
+], function (_, $, OpenURLGenerator) {
 
   const {
     getOpenUrl

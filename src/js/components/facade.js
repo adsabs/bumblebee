@@ -15,7 +15,7 @@
  *  var htmlInterface = new Facade(remoteInterface, htmlRemote);
  *
  */
-define(['underscore', 'js/components/facade'], function(_, Facade) {
+define(['lodash/dist/lodash.compat', 'js/components/facade'], function(_, Facade) {
   // The Facade encapsulates objectIn according to the description
   // The exposed facade is guaranteed to have exactly the functions described in description.
   var Facade = function(description, objectIn) {
@@ -53,20 +53,9 @@ define(['underscore', 'js/components/facade'], function(_, Facade) {
           facade[property] = _.bind(p, objectIn);
         } else if (_.isUndefined(p)) {
           // pass
-        } else if (
-          _.isString(p) ||
-          _.isNumber(p) ||
-          _.isBoolean(p) ||
-          _.isDate(p) ||
-          _.isNull(p) ||
-          _.isRegExp(p)
-        ) {
+        } else if (_.isString(p) || _.isNumber(p) || _.isBoolean(p) || _.isDate(p) || _.isNull(p) || _.isRegExp(p)) {
           // build getter method
-          facade[
-            'get' +
-              property.substring(0, 1).toUpperCase() +
-              property.substring(1)
-          ] = _.bind(
+          facade['get' + property.substring(0, 1).toUpperCase() + property.substring(1)] = _.bind(
             function() {
               return this.ctx[this.name];
             },
@@ -93,11 +82,7 @@ define(['underscore', 'js/components/facade'], function(_, Facade) {
       // .name is not supported in IE
       // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Function/name
       facade.__facade__ = Boolean(
-        objectIn.constructor
-          ? objectIn.constructor.name
-            ? objectIn.constructor.name
-            : true
-          : true
+        objectIn.constructor ? (objectIn.constructor.name ? objectIn.constructor.name : true) : true
       );
     } else {
       facade.__facade__ = true;

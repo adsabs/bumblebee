@@ -4,19 +4,13 @@
  * (e.g. solr_response)
  */
 
-define(['underscore', 'backbone', 'js/components/api_query'], function(
-  _,
-  Backbone,
-  ApiQuery
-) {
+define(['lodash/dist/lodash.compat', 'backbone', 'js/components/api_query'], function(_, Backbone, ApiQuery) {
   var JSONResponse = function(attributes, options) {
     var defaults;
     var attrs = attributes || {};
     options || (options = {});
     this.rid = _.uniqueId('r');
-    this.readOnly = options.hasOwnProperty('readOnly')
-      ? options.readOnly
-      : true;
+    this.readOnly = options.hasOwnProperty('readOnly') ? options.readOnly : true;
     this._url = options.hasOwnProperty('url') ? options.url : null;
 
     if (options.parse) attrs = this.parse(attrs, options) || {};
@@ -122,10 +116,7 @@ define(['underscore', 'backbone', 'js/components/api_query'], function(
         } else if (k.indexOf('[') > -1) {
           // foo['something'] or foo[0]
           var m = k.trim().substring(1, k.length - 1);
-          if (
-            (m.indexOf('"') > -1 || m.indexOf("'") > -1) &&
-            pointer.hasOwnProperty(m.substring(1, m.length - 1))
-          ) {
+          if ((m.indexOf('"') > -1 || m.indexOf("'") > -1) && pointer.hasOwnProperty(m.substring(1, m.length - 1))) {
             // object property access
             pointer = pointer[m.substring(1, m.length - 1)];
             found.push(m);
@@ -152,11 +143,7 @@ define(['underscore', 'backbone', 'js/components/api_query'], function(
                 return defaultValue;
               }
               throw new Error(
-                "Can't find: " +
-                  key +
-                  (found.length > 0
-                    ? ' (worked up to: ' + found.join('.') + ')'
-                    : '')
+                "Can't find: " + key + (found.length > 0 ? ' (worked up to: ' + found.join('.') + ')' : '')
               );
             }
           } else {
@@ -167,11 +154,7 @@ define(['underscore', 'backbone', 'js/components/api_query'], function(
               return defaultValue;
             }
             throw new Error(
-              "Can't find: " +
-                key +
-                (found.length > 0
-                  ? ' (worked up to: ' + found.join('.') + ')'
-                  : '')
+              "Can't find: " + key + (found.length > 0 ? ' (worked up to: ' + found.join('.') + ')' : '')
             );
           }
         } else {
@@ -181,13 +164,7 @@ define(['underscore', 'backbone', 'js/components/api_query'], function(
           if (typeof defaultValue !== 'undefined') {
             return defaultValue;
           }
-          throw new Error(
-            "Can't find: " +
-              key +
-              (found.length > 0
-                ? ' (worked up to: ' + found.join('.') + ')'
-                : '')
-          );
+          throw new Error("Can't find: " + key + (found.length > 0 ? ' (worked up to: ' + found.join('.') + ')' : ''));
         }
       }
 

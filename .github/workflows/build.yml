@@ -14,7 +14,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v3
       - name: Build
-        run: npm install && npm run release
+        run: npm install && npm run build
       - name: Publish
         uses: cloudflare/pages-action@v1
         with:

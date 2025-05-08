@@ -1,14 +1,10 @@
-define([
-  'es6!js/react/MyAdsDashboard/components/CitationsForm.jsx',
-  'react-redux',
-  '../actions',
-  '../constants',
-], function(CitationsForm, { connect }, actions, { page }) {
-  const mapStateToProps = ({
-    requests,
-    notifications,
-    editingNotification,
-  }) => ({
+define(['js/react/MyAdsDashboard/components/CitationsForm.jsx', 'react-redux', '../actions', '../constants'], function(
+  CitationsForm,
+  { connect },
+  actions,
+  { page }
+) {
+  const mapStateToProps = ({ requests, notifications, editingNotification }) => ({
     addNotificationRequest: requests.ADD_NOTIFICATION,
     updateNotificationRequest: requests.UPDATE_NOTIFICATION,
     editingNotification,

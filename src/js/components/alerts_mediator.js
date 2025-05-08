@@ -5,7 +5,7 @@
  */
 
 define([
-  'underscore',
+  'lodash/dist/lodash.compat',
   'jquery',
   'cache',
   'js/components/generic_module',
@@ -13,16 +13,7 @@ define([
   'js/components/api_feedback',
   'js/mixins/hardened',
   'js/components/alerts',
-], function(
-  _,
-  $,
-  Cache,
-  GenericModule,
-  Dependon,
-  ApiFeedback,
-  Hardened,
-  Alerts
-) {
+], function(_, $, Cache, GenericModule, Dependon, ApiFeedback, Hardened, Alerts) {
   var AlertsMediator = GenericModule.extend({
     initialize: function(options) {
       _.extend(this, _.pick(options, ['debug', 'widgetName']));
@@ -79,12 +70,7 @@ define([
         if (_.isObject(result) && result.action) {
           switch (result.action) {
             case Alerts.ACTION.TRIGGER_FEEDBACK:
-              self
-                .getPubSub()
-                .publish(
-                  self.getPubSub().FEEDBACK,
-                  new ApiFeedback(result.arguments)
-                );
+              self.getPubSub().publish(self.getPubSub().FEEDBACK, new ApiFeedback(result.arguments));
               break;
             case Alerts.ACTION.CALL_PUBSUB:
               self.getPubSub().publish(result.signal, result.arguments);
@@ -127,9 +113,7 @@ define([
       this.getWidget()
         .done(function(w) {
           if (!w) {
-            console.warn(
-              '"AlertsWidget" has disappeared, we cant display messages to the user'
-            );
+            console.warn('"AlertsWidget" has disappeared, we cant display messages to the user');
             defer.reject('AlertsWidget has disappeared');
           } else {
             // since alerts widget returns a promise that gets
@@ -149,8 +133,7 @@ define([
 
     hardenedInterface: {
       debug: 'state of the alerts',
-      getHardenedInstance:
-        'allow to create clone of the already hardened instance',
+      getHardenedInstance: 'allow to create clone of the already hardened instance',
     },
   });
 

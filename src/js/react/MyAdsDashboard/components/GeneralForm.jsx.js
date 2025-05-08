@@ -1,9 +1,4 @@
-define([
-  'react',
-  'react-bootstrap',
-  'js/react/shared/helpers',
-  'prop-types',
-], function(
+define(['react', 'react-bootstrap', 'js/react/shared/helpers', 'prop-types'], function(
   React,
   { Form, FormGroup, ControlLabel, FormControl, Checkbox, Radio, Button },
   { isEmpty },
@@ -14,17 +9,14 @@ define([
       case 'pending':
         return (
           <span className="text-info">
-            <i className="fa fa-spinner fa-spin" aria-hidden="true" /> Sending
-            request...
+            <i className="fa fa-spinner fa-spin" aria-hidden="true" /> Sending request...
           </span>
         );
       case 'failure':
         return <span className="text-danger">Request failed. ({error})</span>;
       case 'success':
         return (
-          <span className="text-success">
-            {noSuccess ? '' : `Notification ${editing ? 'saved' : 'created'}!`}
-          </span>
+          <span className="text-success">{noSuccess ? '' : `Notification ${editing ? 'saved' : 'created'}!`}</span>
         );
       default:
         return null;
@@ -128,8 +120,7 @@ define([
 
     onFormChange(prop) {
       return (e) => {
-        const value =
-          e.target.type === 'checkbox' ? e.target.checked : e.target.value;
+        const value = e.target.type === 'checkbox' ? e.target.checked : e.target.value;
         this.setState({
           [prop]: value,
           updated: true,
@@ -156,10 +147,7 @@ define([
                 />
               </FormGroup>
               <FormGroup controlId="notification-stateful">
-                <Checkbox
-                  checked={stateful}
-                  onChange={this.onFormChange('stateful')}
-                >
+                <Checkbox checked={stateful} onChange={this.onFormChange('stateful')}>
                   Only receive new results
                 </Checkbox>
               </FormGroup>
@@ -184,19 +172,13 @@ define([
                   Weekly
                 </Radio>
               </FormGroup>
-              <div
-                className="row"
-                style={{ borderTop: 'solid 1px #d9d9d9', paddingTop: '1rem' }}
-              >
+              <div className="row" style={{ borderTop: 'solid 1px #d9d9d9', paddingTop: '1rem' }}>
                 <div className="col-sm-6">
                   <div className="btn-toolbar">
                     <button type="submit" className="btn btn-primary">
                       Save notification
                     </button>
-                    <button
-                      className="btn btn-default"
-                      onClick={this.props.onCancel}
-                    >
+                    <button className="btn btn-default" onClick={this.props.onCancel}>
                       Cancel
                     </button>
                   </div>
@@ -227,16 +209,12 @@ define([
                 <h3 className="h3" id="create-new-general-title">
                   How to create a new general notification:
                 </h3>
-                <ul
-                  className="list-unstyled"
-                  aria-labelledby="create-new-general-title"
-                >
+                <ul className="list-unstyled" aria-labelledby="create-new-general-title">
                   <li>
                     <strong>1.</strong> Perform a new search
                   </li>
                   <li>
-                    <strong>2.</strong> While on results page, expand "Create
-                    email notification" menu
+                    <strong>2.</strong> While on results page, expand "Create email notification" menu
                   </li>
                   <li>
                     <strong>3.</strong> Add a name and frequency
@@ -246,9 +224,8 @@ define([
                   </li>
                 </ul>
                 <span className="text-primary">
-                  <i className="fa fa-bullhorn" aria-hidden="true"></i> Check
-                  out the Gif on the right for an example.{' '}
-                  <i className="fa fa-arrow-right" aria-hidden="true"></i>
+                  <i className="fa fa-bullhorn" aria-hidden="true" /> Check out the Gif on the right for an example.{' '}
+                  <i className="fa fa-arrow-right" aria-hidden="true" />
                 </span>
                 <p style={{ marginTop: '1em' }}>
                   <a href="/" className="btn btn-primary">
@@ -258,7 +235,7 @@ define([
               </div>
               <div>
                 <img
-                  src="styles/img/myADS.gif"
+                  src="assest/images/myADS.gif"
                   alt="how to edit query on results page"
                   style={{ maxWidth: '800px' }}
                 />

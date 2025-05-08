@@ -1,32 +1,20 @@
 define([
+  'lodash/dist/lodash.compat',
   'marionette',
   'backbone',
   'js/components/api_request',
   'js/components/api_query',
   'js/widgets/base/base_widget',
-  'hbs!js/widgets/list_of_things/templates/item-template',
+  'js/widgets/list_of_things/templates/item-template.hbs',
   'analytics',
-  'mathjax',
-], function(
-  Marionette,
-  Backbone,
-  ApiRequest,
-  ApiQuery,
-  BaseWidget,
-  ItemTemplate,
-  analytics,
-  MathJax
-) {
+], function(_, Marionette, Backbone, ApiRequest, ApiQuery, BaseWidget, ItemTemplate, analytics) {
   var ItemView = Marionette.ItemView.extend({
     tagName: 'li',
     template: ItemTemplate,
     constructor: function(options) {
       var self = this;
       if (options) {
-        _.defaults(
-          options,
-          _.pick(this, ['model', 'collectionEvents', 'modelEvents'])
-        );
+        _.defaults(options, _.pick(this, ['model', 'collectionEvents', 'modelEvents']));
       }
       _.bindAll(this, 'resetToggle');
 
@@ -46,9 +34,14 @@ define([
     },
 
     onRender: function() {
-      // this is necessary on every render after the initial one, since the
-      // containe rview also calls mathjax initially
-      if (MathJax) MathJax.Hub.Queue(['Typeset', MathJax.Hub, this.el]);
+      // Re-typeset this element using MathJax v3
+      if (window.MathJax && window.MathJax.typesetPromise) {
+        window.MathJax.typesetPromise([this.el]).catch((err) => {
+          console.error('MathJax typesetting failed:', err);
+        });
+      }
+
+      // Handle Enter key for abs-redirect-link
       $('>', this.$el).on('keyup', (e) => {
         if (e.which === 13) {
           $('a.abs-redirect-link', this.$el)
@@ -90,13 +83,7 @@ define([
     },
 
     emitAnalyticsEvent: function(e) {
-      analytics(
-        'send',
-        'event',
-        'interaction',
-        'letter-link-followed',
-        $(e.target).text()
-      );
+      analytics('send', 'event', 'interaction', 'letter-link-followed', $(e.target).text());
     },
 
     onAbsLinkClick: function(e) {
@@ -229,9 +216,7 @@ define([
       var $target = $(e.currentTarget);
 
       var msg = {
-        action: $target.data('action')
-          ? $target.data('action')
-          : $target.text().trim(),
+        action: $target.data('action') ? $target.data('action') : $target.text().trim(),
         model: this.model,
         view: this,
         target: $target,

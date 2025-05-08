@@ -2,8 +2,8 @@ define([
   'react',
   'prop-types',
   'react-bootstrap',
-  'es6!./CollapsePanel.jsx',
-  '../containers/SaveQueryForm',
+  'js/react/MyAdsFreeform/components/CollapsePanel.jsx',
+  'js/react/MyAdsFreeform/containers/SaveQueryForm',
 ], function(React, PropTypes, { Alert }, CollapsePanel, SaveQueryForm) {
   const Message = ({ children, show, type, ...otherProps }) => {
     return show ? (
@@ -29,12 +29,7 @@ define([
     }
 
     render() {
-      const {
-        requests,
-        saveNewNotification,
-        generalError,
-        loggedIn,
-      } = this.props;
+      const { requests, saveNewNotification, generalError, loggedIn } = this.props;
 
       if (!loggedIn) {
         return null;
@@ -42,58 +37,34 @@ define([
 
       const addNotificationStatus = requests.addNotification.status;
       const getQIDStatus = requests.getQID.status;
-      const isPending =
-        addNotificationStatus === 'pending' || getQIDStatus === 'pending';
+      const isPending = addNotificationStatus === 'pending' || getQIDStatus === 'pending';
       return (
         <section>
           <CollapsePanel
             render={({ collapse }) => (
               <section>
-                <SaveQueryForm
-                  onSubmit={saveNewNotification}
-                  onCancel={collapse}
-                  disabled={isPending}
-                />
+                <SaveQueryForm onSubmit={saveNewNotification} onCancel={collapse} disabled={isPending} />
                 <Message show={isPending} type="info">
-                  <i className="fa fa-spinner fa-spin" aria-hidden="true" />{' '}
-                  Creating...
+                  <i className="fa fa-spinner fa-spin" aria-hidden="true" /> Creating...
                 </Message>
-                <Message
-                  show={addNotificationStatus === 'success'}
-                  type="success"
-                >
+                <Message show={addNotificationStatus === 'success'} type="success">
                   <strong>Success!</strong> Notification created.
                 </Message>
-                <Message
-                  show={addNotificationStatus === 'failure'}
-                  type="danger"
-                >
+                <Message show={addNotificationStatus === 'failure'} type="danger">
                   <strong>
-                    <i
-                      className="fa fa-exclamation-triangle"
-                      aria-hidden="true"
-                    />{' '}
-                    Error!
+                    <i className="fa fa-exclamation-triangle" aria-hidden="true" /> Error!
                   </strong>{' '}
                   {requests.addNotification.error}
                 </Message>
                 <Message show={getQIDStatus === 'failure'} type="danger">
                   <strong>
-                    <i
-                      className="fa fa-exclamation-triangle"
-                      aria-hidden="true"
-                    />{' '}
-                    Error!
+                    <i className="fa fa-exclamation-triangle" aria-hidden="true" /> Error!
                   </strong>{' '}
                   {requests.getQID.error}
                 </Message>
                 <Message show={generalError} type="danger">
                   <strong>
-                    <i
-                      className="fa fa-exclamation-triangle"
-                      aria-hidden="true"
-                    />{' '}
-                    Error!
+                    <i className="fa fa-exclamation-triangle" aria-hidden="true" /> Error!
                   </strong>{' '}
                   {generalError}
                 </Message>

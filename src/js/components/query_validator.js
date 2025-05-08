@@ -1,4 +1,4 @@
-define(['underscore'], function(_) {
+define(['lodash/dist/lodash.compat'], function(_) {
   /**
    * Validator object
    * provides value checking
@@ -49,9 +49,7 @@ define(['underscore'], function(_) {
           continue;
         }
 
-        parsedTokens.push(
-          new QueryToken(subTokens[0], subTokens[1], tokens[j])
-        );
+        parsedTokens.push(new QueryToken(subTokens[0], subTokens[1], tokens[j]));
       }
       return parsedTokens;
     };

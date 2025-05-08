@@ -1,13 +1,6 @@
 define(['redux', './actions'], function(
   { combineReducers },
-  {
-    SET_DOCS,
-    SET_QUERY,
-    SET_TAB,
-    SET_ORACLE_TARGET,
-    SET_QUERY_PARAMS,
-    UPDATE_USERNAME,
-  }
+  { SET_DOCS, SET_QUERY, SET_TAB, SET_ORACLE_TARGET, SET_QUERY_PARAMS, UPDATE_USERNAME }
 ) {
   const requestState = {
     GET_RECOMMENDATIONS: { status: null, result: null, error: null },

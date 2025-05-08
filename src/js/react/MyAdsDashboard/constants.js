@@ -10,7 +10,7 @@ define([], function() {
     CITATIONS_FORM: 'citations-form',
     KEYWORD_FORM: 'keyword-form',
     AUTHORS_FORM: 'authors-form',
-    GENERAL_FORM: 'general-form'
+    GENERAL_FORM: 'general-form',
   };
 
   return {

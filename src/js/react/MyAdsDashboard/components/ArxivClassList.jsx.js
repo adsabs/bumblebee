@@ -1,10 +1,5 @@
 /* eslint-disable max-classes-per-file */
-define([
-  'underscore',
-  'react',
-  'react-bootstrap',
-  '../models/arxivClasses',
-], function(
+define(['lodash/dist/lodash.compat', 'react', 'react-bootstrap', '../models/arxivClasses'], function(
   _,
   React,
   { Checkbox, ListGroup, ListGroupItem },
@@ -117,13 +112,7 @@ define([
         },
         { ..._groups }
       );
-      setTimeout(
-        () =>
-          this.setState({ groups: newGroups }, () =>
-            this.props.onSelection(this._groupsToArray())
-          ),
-        0
-      );
+      setTimeout(() => this.setState({ groups: newGroups }, () => this.props.onSelection(this._groupsToArray())), 0);
     }
 
     _onSelect(key, value) {
@@ -156,9 +145,7 @@ define([
       } else {
         const newGroups = Object.keys(_groups).reduce((acc, k) => {
           if (_groups[k].children && _groups[k].children[key]) {
-            const selected = valueDefined
-              ? value
-              : !_groups[k].children[key].selected;
+            const selected = valueDefined ? value : !_groups[k].children[key].selected;
 
             const children = {
               ..._groups[k].children,
@@ -219,11 +206,7 @@ define([
         <div>
           <ListGroup>
             {Object.keys(this.state.groups).map((k) => (
-              <Item
-                key={this.state.groups[k].key}
-                item={this.state.groups[k]}
-                onSelect={this.onSelect}
-              />
+              <Item key={this.state.groups[k].key} item={this.state.groups[k]} onSelect={this.onSelect} />
             ))}
           </ListGroup>
         </div>
@@ -279,11 +262,7 @@ define([
                   marginRight: 10,
                 }}
               >
-                <i
-                  className={`fa fa-chevron-${
-                    this.state.expanded ? 'down' : 'right'
-                  }`}
-                ></i>
+                <i className={`fa fa-chevron-${this.state.expanded ? 'down' : 'right'}`} />
               </span>
             )}
             <Checkbox
@@ -293,11 +272,7 @@ define([
               onChange={(e) => this.onSelect(e, key)}
               inputRef={(el) => el && (el.indeterminate = indeterminate)}
             >
-              {selected || indeterminate ? (
-                <b>{`${key}: ${label}`}</b>
-              ) : (
-                `${key}: ${label}`
-              )}
+              {selected || indeterminate ? <b>{`${key}: ${label}`}</b> : `${key}: ${label}`}
             </Checkbox>
           </ListGroupItem>
 
@@ -327,11 +302,7 @@ define([
                         textOverflow: 'ellipsis',
                       }}
                     >
-                      {selected ? (
-                        <b>{`${key}: ${label}`}</b>
-                      ) : (
-                        `${key}: ${label}`
-                      )}
+                      {selected ? <b>{`${key}: ${label}`}</b> : `${key}: ${label}`}
                     </Checkbox>
                   </ListGroupItem>
                 );

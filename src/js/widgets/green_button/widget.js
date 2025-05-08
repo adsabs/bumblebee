@@ -3,7 +3,7 @@
  */
 
 define([
-  'underscore',
+  'lodash/dist/lodash.compat',
   'jquery',
   'backbone',
   'marionette',
@@ -16,9 +16,9 @@ define([
   'js/components/alerts',
 
   'js/widgets/base/base_widget',
-  'hbs!js/widgets/green_button/templates/widget-view',
-  'hbs!js/widgets/green_button/templates/item-view',
-  'hbs!js/widgets/green_button/templates/empty-view',
+  'js/widgets/green_button/templates/widget-view.hbs',
+  'js/widgets/green_button/templates/item-view.hbs',
+  'js/widgets/green_button/templates/empty-view.hbs',
 ], function(
   _,
   $,
@@ -144,16 +144,12 @@ define([
       this.setBeeHive(beehive);
       var pubsub = beehive.getService('PubSub');
       pubsub.subscribe(pubsub.INVITING_REQUEST, _.bind(this.onRequest, this));
-      pubsub.subscribe(
-        pubsub.DELIVERING_RESPONSE,
-        _.bind(this.onResponse, this)
-      );
+      pubsub.subscribe(pubsub.DELIVERING_RESPONSE, _.bind(this.onResponse, this));
       pubsub.subscribe('confirmation', _.bind(this.onUserConfirmation, this));
     },
 
     onRequest: function(apiQuery) {
-      if (!(apiQuery instanceof ApiQuery))
-        throw new Error('You are kidding me!');
+      if (!(apiQuery instanceof ApiQuery)) throw new Error('You are kidding me!');
       var q = apiQuery.clone();
       q.unlock();
       this.dispatchRequest(q); // calling out parent's method
@@ -175,9 +171,7 @@ define([
           });
           break;
         case 'store':
-          var key = apiQuery.has('key')
-            ? apiQuery.get('key')[0]
-            : 'green-button';
+          var key = apiQuery.has('key') ? apiQuery.get('key')[0] : 'green-button';
           apiQuery.unset('action');
           apiQuery.unset('key');
           return new ApiRequest({
@@ -260,9 +254,7 @@ define([
       var action = data.action;
       switch (action) {
         case 'restart':
-          this.dispatchRequest(
-            new ApiQuery({ action: action, application: app, environment: env })
-          );
+          this.dispatchRequest(new ApiQuery({ action: action, application: app, environment: env }));
           break;
         case 'revert':
           this.dispatchRequest(
@@ -303,11 +295,7 @@ define([
           break;
         case 'restart':
           this.showAlert(
-            'Are you sure you want to restart ' +
-              env +
-              ' (application: ' +
-              app +
-              ')? <a href="#">Yes!</a>',
+            'Are you sure you want to restart ' + env + ' (application: ' + app + ')? <a href="#">Yes!</a>',
             true,
             {
               'click a': {
@@ -347,13 +335,7 @@ define([
               }
             );
           } else {
-            var msg = [
-              'Please choose the version you want to deploy for ' +
-                env +
-                ' (' +
-                app +
-                ').</br>',
-            ];
+            var msg = ['Please choose the version you want to deploy for ' + env + ' (' + app + ').</br>'];
             var events = {};
             var i = 0;
             _.each(model.get('previous_versions'), function(ver) {
@@ -471,11 +453,7 @@ define([
     _createAppModel: function(appName) {
       var data = {
         id: appName,
-        title:
-          appName +
-          ' (' +
-          (this._store.get('deploy-strategy:' + appName) || ['manual'])[0] +
-          ')',
+        title: appName + ' (' + (this._store.get('deploy-strategy:' + appName) || ['manual'])[0] + ')',
       };
       var options = [
         {
@@ -535,9 +513,7 @@ define([
       }
       data.options = options;
       if (data.previous_versions && data.previous_versions.length > 1) {
-        data.extra_options = [
-          { title: 'Revert to version...', command: 'revert' },
-        ];
+        data.extra_options = [{ title: 'Revert to version...', command: 'revert' }];
       }
       return new Environment(data);
     },

@@ -1,7 +1,4 @@
-define(['marionette', 'hbs!js/widgets/success/success_template'], function(
-  Marionette,
-  SuccessTemplate
-) {
+define(['lodash/dist/lodash.compat', 'marionette', 'js/widgets/success/success_template.hbs'], function(_, Marionette, SuccessTemplate) {
   var SuccessView = Marionette.ItemView.extend({
     initialize: function(options) {
       _.extend(this, options);

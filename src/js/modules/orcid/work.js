@@ -1,4 +1,4 @@
-define(['underscore', 'jsonpath'], function(_, jp) {
+define(['lodash/dist/lodash.compat', 'jsonpath'], function(_, jp) {
   var ADSPATHS = {
     status: '$.status',
     title: '$.title',
@@ -35,26 +35,18 @@ define(['underscore', 'jsonpath'], function(_, jp) {
     publicationDateDay: '$["publication-date"].day.value',
     publicationDateMedia: '$["publication-date"]["media-type"]',
     url: '$.url.value',
-    contributorOrcidUri:
-      '$["contributors"].contributor..["contributor-orcid"].uri',
-    contributorOrcidPath:
-      '$["contributors"].contributor..["contributor-orcid"].path',
-    contributorOrcidHost:
-      '$["contributors"].contributor..["contributor-orcid"].host',
+    contributorOrcidUri: '$["contributors"].contributor..["contributor-orcid"].uri',
+    contributorOrcidPath: '$["contributors"].contributor..["contributor-orcid"].path',
+    contributorOrcidHost: '$["contributors"].contributor..["contributor-orcid"].host',
     contributorName: '$["contributors"].contributor..["credit-name"].value',
-    contributorEmail:
-      '$["contributors"].contributor..["contributor-email"].value',
-    contributorAttributes:
-      '$["contributors"].contributor..["contributor-attributes"]',
-    contributorSequence:
-      '$["contributors"].contributor..["contributor-attributes"]["contributor-sequence"]',
-    contributorRole:
-      '$["contributors"].contributor..["contributor-attributes"]["contributor-role"]',
+    contributorEmail: '$["contributors"].contributor..["contributor-email"].value',
+    contributorAttributes: '$["contributors"].contributor..["contributor-attributes"]',
+    contributorSequence: '$["contributors"].contributor..["contributor-attributes"]["contributor-sequence"]',
+    contributorRole: '$["contributors"].contributor..["contributor-attributes"]["contributor-role"]',
     externalIdValue: '$["external-ids"]["external-id"]..["external-id-value"]',
     externalIdType: '$["external-ids"]["external-id"]..["external-id-type"]',
     externalIdUrl: '$["external-ids"]["external-id"]..["external-id-url"]',
-    externalIdRelationship:
-      '$["external-ids"]["external-id"]..["external-id-relationship"]',
+    externalIdRelationship: '$["external-ids"]["external-id"]..["external-id-relationship"]',
     country: '$.country.value',
     visibility: '$.visibility.value',
     identifier: '$.identifier',
@@ -337,17 +329,9 @@ define(['underscore', 'jsonpath'], function(_, jp) {
       if (get(ads.pubdate).split('-')[1] === '00') {
         put(work, ORCIDPATHS.publicationDateMonth, null);
       } else {
-        put(
-          work,
-          ORCIDPATHS.publicationDateMonth,
-          get(ads.pubdate).split('-')[1]
-        );
+        put(work, ORCIDPATHS.publicationDateMonth, get(ads.pubdate).split('-')[1]);
       }
-      put(
-        work,
-        ORCIDPATHS.shortDescription,
-        get(ads.abstract).slice(0, 4997) + '...'
-      );
+      put(work, ORCIDPATHS.shortDescription, get(ads.abstract).slice(0, 4997) + '...');
       put(work, ORCIDPATHS.externalIdType, exIds.types);
       put(work, ORCIDPATHS.externalIdValue, exIds.values);
       put(work, ORCIDPATHS.externalIdRelationship, exIds.relationships);
@@ -369,6 +353,13 @@ define(['underscore', 'jsonpath'], function(_, jp) {
     }
 
     return work;
+  };
+
+  Work.ensureInstance = function(work) {
+    if (work instanceof Work) {
+      return work;
+    }
+    return new Work(work._root || work, true);
   };
 
   return Work;

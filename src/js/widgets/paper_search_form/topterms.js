@@ -41,8 +41,7 @@ define([], function() {
     { value: 'ApOpt', label: 'Applied Optics (ApOpt)' },
     {
       value: 'SPIE',
-      label:
-        'Society of Photo-Optical Instrumentation Engineers (SPIE) Conference Series (SPIE)',
+      label: 'Society of Photo-Optical Instrumentation Engineers (SPIE) Conference Series (SPIE)',
     },
     { value: 'JFM', label: 'Journal of Fluid Mechanics (JFM)' },
     {
@@ -173,8 +172,7 @@ define([], function() {
     { value: 'EPJC', label: 'European Physical Journal C (EPJC)' },
     {
       value: 'JOSAB',
-      label:
-        'Journal of the Optical Society of America B Optical Physics (JOSAB)',
+      label: 'Journal of the Optical Society of America B Optical Physics (JOSAB)',
     },
     { value: 'JVST', label: 'Journal of Vacuum Science Technology (JVST)' },
     { value: 'JMoSp', label: 'Journal of Molecular Spectroscopy (JMoSp)' },
@@ -204,13 +202,11 @@ define([], function() {
     { value: 'NatPh', label: 'Nature Physics (NatPh)' },
     {
       value: 'RSPTA',
-      label:
-        'Philosophical Transactions of the Royal Society of London Series A (RSPTA)',
+      label: 'Philosophical Transactions of the Royal Society of London Series A (RSPTA)',
     },
     {
       value: 'PCCP',
-      label:
-        'Physical Chemistry Chemical Physics (Incorporating Faraday Transactions) (PCCP)',
+      label: 'Physical Chemistry Chemical Physics (Incorporating Faraday Transactions) (PCCP)',
     },
     { value: 'P&SS', label: 'Planetary and Space Science (P&SS)' },
     { value: 'Geop', label: 'Geophysics (Geop)' },
@@ -256,8 +252,7 @@ define([], function() {
     { value: 'PMag', label: 'Philosophical Magazine (PMag)' },
     {
       value: 'JETPL',
-      label:
-        'Soviet Journal of Experimental and Theoretical Physics Letters (JETPL)',
+      label: 'Soviet Journal of Experimental and Theoretical Physics Letters (JETPL)',
     },
     { value: 'JSP', label: 'Journal of Statistical Physics (JSP)' },
     { value: 'MedPh', label: 'Medical Physics (MedPh)' },
@@ -266,8 +261,7 @@ define([], function() {
     { value: 'IAUS', label: 'IAU Symposium (IAUS)' },
     {
       value: 'JQSRT',
-      label:
-        'Journal of Quantitative Spectroscopy and Radiative Transfer (JQSRT)',
+      label: 'Journal of Quantitative Spectroscopy and Radiative Transfer (JQSRT)',
     },
     { value: 'SSEle', label: 'Solid State Electronics (SSEle)' },
     { value: 'IEDL', label: 'IEEE Electron Device Letters (IEDL)' },
@@ -344,8 +338,7 @@ define([], function() {
     { value: 'JLTP', label: 'Journal of Low Temperature Physics (JLTP)' },
     {
       value: 'JVSTB',
-      label:
-        'Journal of Vacuum Science Technology B: Microelectronics and Nanometer Structures (JVSTB)',
+      label: 'Journal of Vacuum Science Technology B: Microelectronics and Nanometer Structures (JVSTB)',
     },
     { value: 'Tecto', label: 'Tectonics (Tecto)' },
     { value: 'JG', label: 'Journal of Geology (JG)' },
@@ -364,8 +357,7 @@ define([], function() {
     },
     {
       value: 'DSRII',
-      label:
-        'Deep Sea Research Part II: Topical Studies in Oceanography (DSRII)',
+      label: 'Deep Sea Research Part II: Topical Studies in Oceanography (DSRII)',
     },
     {
       value: 'JATP',
@@ -391,8 +383,7 @@ define([], function() {
     },
     {
       value: 'IJNME',
-      label:
-        'International Journal for Numerical Methods in Engineering (IJNME)',
+      label: 'International Journal for Numerical Methods in Engineering (IJNME)',
     },
     { value: 'AnGeo', label: 'Annales Geophysicae (AnGeo)' },
     { value: 'ApSpe', label: 'Applied Spectroscopy (ApSpe)' },
@@ -476,8 +467,7 @@ define([], function() {
     },
     {
       value: 'IJMSI',
-      label:
-        'International Journal of Mass Spectrometry and Ion Processes (IJMSI)',
+      label: 'International Journal of Mass Spectrometry and Ion Processes (IJMSI)',
     },
     { value: 'PApGe', label: 'Pure and Applied Geophysics (PApGe)' },
     { value: 'EPJD', label: 'European Physical Journal D (EPJD)' },
@@ -773,15 +763,13 @@ define([], function() {
     { value: 'NCim', label: 'Il Nuovo Cimento (NCim)' },
     {
       value: 'RSPTB',
-      label:
-        'Philosophical Transactions of the Royal Society of London Series B (RSPTB)',
+      label: 'Philosophical Transactions of the Royal Society of London Series B (RSPTB)',
     },
     { value: 'JCoMa', label: 'Journal of Composite Materials (JCoMa)' },
     { value: 'Optik', label: 'Optik (Optik)' },
     {
       value: 'CNSNS',
-      label:
-        'Communications in Nonlinear Science and Numerical Simulations (CNSNS)',
+      label: 'Communications in Nonlinear Science and Numerical Simulations (CNSNS)',
     },
     { value: 'OcMod', label: 'Ocean Modelling (OcMod)' },
     {
@@ -819,8 +807,7 @@ define([], function() {
     { value: 'PPSB', label: 'Proceedings of the Physical Society B (PPSB)' },
     {
       value: 'GMS',
-      label:
-        'Washington DC American Geophysical Union Geophysical Monograph Series (GMS)',
+      label: 'Washington DC American Geophysical Union Geophysical Monograph Series (GMS)',
     },
     { value: 'HydJ', label: 'Hydrogeology Journal (HydJ)' },
     { value: 'Holoc', label: 'The Holocene (Holoc)' },
@@ -910,8 +897,7 @@ define([], function() {
     { value: 'TePhL', label: 'Technical Physics Letters (TePhL)' },
     {
       value: 'JOM',
-      label:
-        'JOM - Journal of the Minerals, Metals and Materials Society (JOM)',
+      label: 'JOM - Journal of the Minerals, Metals and Materials Society (JOM)',
     },
     { value: 'JNR', label: 'Journal of Nanoparticle Research (JNR)' },
     {
@@ -969,8 +955,7 @@ define([], function() {
     { value: 'InfPh', label: 'Infrared Physics (InfPh)' },
     {
       value: 'SPIE1',
-      label:
-        'Society of Photo-Optical Instrumentation Engineers (SPIE) Conference Series (SPIE1)',
+      label: 'Society of Photo-Optical Instrumentation Engineers (SPIE) Conference Series (SPIE1)',
     },
     { value: 'JGeo', label: 'Journal of Geodynamics (JGeo)' },
     {
@@ -980,8 +965,7 @@ define([], function() {
     { value: 'R&QE', label: 'Radiophysics and Quantum Electronics (R&QE)' },
     {
       value: 'IJAEO',
-      label:
-        'International Journal of Applied Earth Observation and Geoinformation (IJAEO)',
+      label: 'International Journal of Applied Earth Observation and Geoinformation (IJAEO)',
     },
     { value: 'RadR', label: 'Radiation Research (RadR)' },
     { value: 'JTST', label: 'Journal of Thermal Spray Technology (JTST)' },
@@ -1048,8 +1032,7 @@ define([], function() {
     { value: 'Afz', label: 'Astrofizika (Afz)' },
     {
       value: 'BAICz',
-      label:
-        'Bulletin of the Astronomical Institutes of Czechoslovakia (BAICz)',
+      label: 'Bulletin of the Astronomical Institutes of Czechoslovakia (BAICz)',
     },
     { value: 'IAPM', label: 'IEEE Antennas and Propagation Magazine (IAPM)' },
     { value: 'EJPh', label: 'European Journal of Physics (EJPh)' },
@@ -1132,8 +1115,7 @@ define([], function() {
     { value: 'MarMP', label: 'Marine Micropaleontology (MarMP)' },
     {
       value: 'IJNAM',
-      label:
-        'International Journal for Numerical and Analytical Methods in Geomechanics (IJNAM)',
+      label: 'International Journal for Numerical and Analytical Methods in Geomechanics (IJNAM)',
     },
     { value: 'PhyEd', label: 'Physics Education (PhyEd)' },
     {
@@ -1235,8 +1217,7 @@ define([], function() {
     { value: 'C&T', label: 'Ciel et Terre (C&T)' },
     {
       value: 'MPCPS',
-      label:
-        'Mathematical Proceedings of the Cambridge Philosophical Society (MPCPS)',
+      label: 'Mathematical Proceedings of the Cambridge Philosophical Society (MPCPS)',
     },
     {
       value: 'CRSSM',
@@ -1268,8 +1249,7 @@ define([], function() {
     { value: 'PhRvP', label: 'Physical Review Applied (PhRvP)' },
     {
       value: 'ESOC',
-      label:
-        'European Southern Observatory Conference and Workshop Proceedings (ESOC)',
+      label: 'European Southern Observatory Conference and Workshop Proceedings (ESOC)',
     },
     { value: 'ShWav', label: 'Shock Waves (ShWav)' },
     { value: 'EAEJA', label: 'EGS - AGU - EUG Joint Assembly (EAEJA)' },
@@ -1286,8 +1266,7 @@ define([], function() {
     { value: 'PhyM', label: 'Physiological Measurement (PhyM)' },
     {
       value: 'RSPT',
-      label:
-        'Philosophical Transactions of the Royal Society of London Series I (RSPT)',
+      label: 'Philosophical Transactions of the Royal Society of London Series I (RSPT)',
     },
     { value: 'BaltA', label: 'Baltic Astronomy (BaltA)' },
     { value: 'MSHT', label: 'Metal Science and Heat Treatment (MSHT)' },
@@ -1299,8 +1278,7 @@ define([], function() {
     },
     {
       value: 'RMxAC',
-      label:
-        'Revista Mexicana de Astronomia y Astrofisica Conference Series (RMxAC)',
+      label: 'Revista Mexicana de Astronomia y Astrofisica Conference Series (RMxAC)',
     },
     { value: 'BGD', label: 'Biogeosciences Discussions (BGD)' },
     { value: 'ITEdu', label: 'IEEE Transactions on Education (ITEdu)' },
@@ -1365,8 +1343,7 @@ define([], function() {
     { value: 'AAM', label: 'Archive of Applied Mechanics (AAM)' },
     {
       value: 'PDAO',
-      label:
-        'Publications of the Dominion Astrophysical Observatory Victoria (PDAO)',
+      label: 'Publications of the Dominion Astrophysical Observatory Victoria (PDAO)',
     },
     { value: 'JPall', label: 'Journal of Palaeolimnology (JPall)' },
     { value: 'RaF', label: 'Radiofizika (RaF)' },
@@ -1378,8 +1355,7 @@ define([], function() {
     { value: 'JEI', label: 'Journal of Electronic Imaging (JEI)' },
     {
       value: 'TSICE',
-      label:
-        'Transactions of the Society of Instrument and Control Engineers (TSICE)',
+      label: 'Transactions of the Society of Instrument and Control Engineers (TSICE)',
     },
     { value: 'HTrEn', label: 'Heat Transfer Engineering (HTrEn)' },
     { value: 'ATsir', label: 'Astronomicheskij Tsirkulyar (ATsir)' },
@@ -1399,8 +1375,7 @@ define([], function() {
     { value: 'AD', label: 'Atomic Data (AD)' },
     {
       value: 'ITEIS',
-      label:
-        'IEEJ Transactions on Electronics, Information and Systems (ITEIS)',
+      label: 'IEEJ Transactions on Electronics, Information and Systems (ITEIS)',
     },
     { value: 'WRM', label: 'Waves in Random Media (WRM)' },
     {
@@ -1410,13 +1385,11 @@ define([], function() {
     { value: 'HiA', label: 'Highlights of Astronomy (HiA)' },
     {
       value: 'CRASM',
-      label:
-        'Academie des Sciences Paris Comptes Rendus Serie Sciences Mathematiques (CRASM)',
+      label: 'Academie des Sciences Paris Comptes Rendus Serie Sciences Mathematiques (CRASM)',
     },
     {
       value: 'AIHPC',
-      label:
-        "Annales de L'Institut Henri Poincare Section (C) Non Linear Analysis (AIHPC)",
+      label: "Annales de L'Institut Henri Poincare Section (C) Non Linear Analysis (AIHPC)",
     },
     { value: 'CosRe', label: 'Cosmic Research (CosRe)' },
     { value: 'MsT', label: 'Masters Thesis (MsT)' },
@@ -1490,8 +1463,7 @@ define([], function() {
     { value: 'CRMec', label: 'Comptes Rendus Mecanique (CRMec)' },
     {
       value: 'MNSSA',
-      label:
-        'Monthly Notes of the Astronomical Society of South Africa (MNSSA)',
+      label: 'Monthly Notes of the Astronomical Society of South Africa (MNSSA)',
     },
     { value: 'OrLi', label: 'Origins of Life (OrLi)' },
     { value: 'ScChA', label: 'Science in China A: Mathematics (ScChA)' },
@@ -1514,8 +1486,7 @@ define([], function() {
     },
     {
       value: 'CRASB',
-      label:
-        'Academie des Sciences Paris Comptes Rendus Serie B Sciences Physiques (CRASB)',
+      label: 'Academie des Sciences Paris Comptes Rendus Serie B Sciences Physiques (CRASB)',
     },
     { value: 'JFuE', label: 'Journal of Funsion Energy (JFuE)' },
     {
@@ -1534,8 +1505,7 @@ define([], function() {
     { value: 'RvPP', label: 'Reviews of Plasma Physics (RvPP)' },
     {
       value: 'JAVSO',
-      label:
-        'Journal of the American Association of Variable Star Observers (JAAVSO) (JAVSO)',
+      label: 'Journal of the American Association of Variable Star Observers (JAAVSO) (JAVSO)',
     },
     {
       value: 'JBIS',
@@ -1563,8 +1533,7 @@ define([], function() {
     { value: 'GeoPA', label: 'Geofisica Pura e Applicata (GeoPA)' },
     {
       value: 'TeMAE',
-      label:
-        'Terrestrial Magnetism and Atmospheric Electricity (Journal of Geophysical Research) (TeMAE)',
+      label: 'Terrestrial Magnetism and Atmospheric Electricity (Journal of Geophysical Research) (TeMAE)',
     },
     { value: 'ITEnC', label: 'IEEE Transactions on Energy Conversion (ITEnC)' },
     { value: 'BGeod', label: 'Bulletin Geodesique (BGeod)' },
@@ -1576,8 +1545,7 @@ define([], function() {
     { value: 'ESSD', label: 'Earth System Science Data (ESSD)' },
     {
       value: 'IEITF',
-      label:
-        'IEICE Transactions on Fundamentals of Electronics Communications and Computer Sciences (IEITF)',
+      label: 'IEICE Transactions on Fundamentals of Electronics Communications and Computer Sciences (IEITF)',
     },
     { value: 'PApOp', label: 'Pure Applied Optics (PApOp)' },
     { value: 'TrGeo', label: 'Treatise on Geochemistry (TrGeo)' },
@@ -1626,28 +1594,24 @@ define([], function() {
     { value: 'JLasA', label: 'Journal of Laser Applications (JLasA)' },
     {
       value: 'IJGMM',
-      label:
-        'International Journal of Geometric Methods in Modern Physics (IJGMM)',
+      label: 'International Journal of Geometric Methods in Modern Physics (IJGMM)',
     },
     { value: 'MMI', label: 'Metals and Materials International (MMI)' },
     {
       value: 'IzKry',
-      label:
-        'Izvestiya Ordena Trudovogo Krasnogo Znameni Krymskoj Astrofizicheskoj Observatorii (IzKry)',
+      label: 'Izvestiya Ordena Trudovogo Krasnogo Znameni Krymskoj Astrofizicheskoj Observatorii (IzKry)',
     },
     { value: 'EaInt', label: 'Earth Interactions (EaInt)' },
     { value: 'Freq', label: 'Frequenz (Freq)' },
     { value: 'LicOB', label: 'Lick Observatory Bulletin (LicOB)' },
     {
       value: 'IJSTA',
-      label:
-        'IEEE Journal of Selected Topics in Applied Earth Observations and Remote Sensing (IJSTA)',
+      label: 'IEEE Journal of Selected Topics in Applied Earth Observations and Remote Sensing (IJSTA)',
     },
     { value: 'PCEA', label: 'Physics and Chemistry of the Earth A (PCEA)' },
     {
       value: 'CoSka',
-      label:
-        'Contributions of the Astronomical Observatory Skalnate Pleso (CoSka)',
+      label: 'Contributions of the Astronomical Observatory Skalnate Pleso (CoSka)',
     },
     { value: 'BiBi', label: 'Bioinspiration and Biomimetics (BiBi)' },
     { value: 'AeoRe', label: 'Aeolian Research (AeoRe)' },
@@ -1679,8 +1643,7 @@ define([], function() {
     { value: 'PhLRv', label: 'Physics of Life Reviews (PhLRv)' },
     {
       value: 'IJMPS',
-      label:
-        'International Journal of Modern Physics Conference Series (IJMPS)',
+      label: 'International Journal of Modern Physics Conference Series (IJMPS)',
     },
     { value: 'JGeEd', label: 'Journal of Geoscience Education (JGeEd)' },
     { value: 'JBR', label: 'Journal of Breath Research (JBR)' },
@@ -1748,8 +1711,7 @@ define([], function() {
     { value: 'JGE', label: 'Journal of Geophysics and Engineering (JGE)' },
     {
       value: 'JIEEJ',
-      label:
-        'Journal of The Institute of Electrical Engineers of Japan (JIEEJ)',
+      label: 'Journal of The Institute of Electrical Engineers of Japan (JIEEJ)',
     },
     { value: 'SolE', label: 'Solid Earth (SolE)' },
     { value: 'IJDE', label: 'International Journal of Digital Earth (IJDE)' },
@@ -1759,8 +1721,7 @@ define([], function() {
     },
     {
       value: 'BAAA',
-      label:
-        'Boletin de la Asociacion Argentina de Astronomia La Plata Argentina (BAAA)',
+      label: 'Boletin de la Asociacion Argentina de Astronomia La Plata Argentina (BAAA)',
     },
     { value: 'JHA', label: 'Journal for the History of Astronomy (JHA)' },
     { value: 'QuOpt', label: 'Quantum Optics (QuOpt)' },
@@ -1795,8 +1756,7 @@ define([], function() {
     { value: 'PhyEs', label: 'Physics Essays (PhyEs)' },
     {
       value: 'InEPS',
-      label:
-        'Indian Academy of Sciences Proceedings: Earth and Planetary Sciences (InEPS)',
+      label: 'Indian Academy of Sciences Proceedings: Earth and Planetary Sciences (InEPS)',
     },
     { value: 'ApPRv', label: 'Applied Physics Reviews (ApPRv)' },
     { value: 'JAnSc', label: 'Journal of the Astronautical Sciences (JAnSc)' },

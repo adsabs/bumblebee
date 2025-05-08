@@ -1,20 +1,20 @@
 define([
+  'lodash/dist/lodash.compat',
   'jquery',
   'backbone',
   'marionette',
   'd3',
   'js/components/api_request',
   'js/widgets/base/base_widget',
-  'hbs!js/widgets/wordcloud/templates/wordcloud-template',
-  'hbs!js/widgets/wordcloud/templates/selected-list-template',
+  'js/widgets/wordcloud/templates/wordcloud-template.hbs',
+  'js/widgets/wordcloud/templates/selected-list-template.hbs',
   'js/components/api_targets',
   'js/components/api_query_updater',
   'js/components/api_query',
   'js/components/api_feedback',
-  'jquery-ui',
-  'bootstrap',
   'd3-cloud',
 ], function(
+  _,
   $,
   Backbone,
   Marionette,
@@ -26,8 +26,11 @@ define([
   ApiTargets,
   ApiQueryUpdater,
   ApiQuery,
-  ApiFeedback
+  ApiFeedback,
+  d3Cloud
 ) {
+  d3.layout.cloud = d3Cloud;
+
   var helpText =
     '<p>This word cloud allows you to view interesting words from the titles and abstracts of your search results.</p>' +
     '<p> Move the slider towards <strong> Frequent</strong> to view a word cloud that is simply composed of the words that appeared most' +
@@ -115,16 +118,8 @@ define([
 
       this.listView = options.listView;
 
-      this.listenTo(
-        this.model,
-        'change:processedWordList',
-        this.onProcessedWordChange
-      );
-      this.listenTo(
-        this.listView.model,
-        'userChange:selectedWords',
-        this.toggleHighlight
-      );
+      this.listenTo(this.model, 'change:processedWordList', this.onProcessedWordChange);
+      this.listenTo(this.listView.model, 'userChange:selectedWords', this.toggleHighlight);
     },
 
     signalCloseWidget: function() {
@@ -321,9 +316,7 @@ define([
   var WordCloudModel = Backbone.Model.extend({
     initialize: function() {
       // if we have data, move along to build word model, otherwise reset
-      this.on('change:tfidfData', (model) =>
-        model.has('tfidfData') ? this.buildWCDict() : this.reset(false)
-      );
+      this.on('change:tfidfData', (model) => (model.has('tfidfData') ? this.buildWCDict() : this.reset(false)));
       this.on('change:currentSliderVal', this.buildWCDict);
     },
 
@@ -407,9 +400,7 @@ define([
         freq = val.total_occurrences / meanTF;
         idf = val.idf / meanIDF;
 
-        modifiedVal =
-          sliderRange[currentSliderVal][0] * idf +
-          sliderRange[currentSliderVal][1] * freq;
+        modifiedVal = sliderRange[currentSliderVal][0] * idf + sliderRange[currentSliderVal][1] * freq;
         // some stuff might be NaN, so do || 0
         return [key, modifiedVal || 0];
       });
@@ -508,8 +499,7 @@ define([
             that.getPubSub().ALERT,
             new ApiFeedback({
               code: ApiFeedback.CODES.ALERT,
-              msg:
-                'The concept cloud endpoint cannot handle such a large query at this time',
+              msg: 'The concept cloud endpoint cannot handle such a large query at this time',
               modal: true,
             }),
             1
@@ -522,9 +512,7 @@ define([
         // this.getPubSub().publish(this.getPubSub().DELIVERING_REQUEST, this.composeRequest(query));
       } else {
         var request = new ApiRequest({
-          target:
-            Marionette.getOption(this, 'endpoint') ||
-            ApiTargets.SERVICE_WORDCLOUD,
+          target: Marionette.getOption(this, 'endpoint') || ApiTargets.SERVICE_WORDCLOUD,
           query: this.customizeQuery(query),
           options: {
             type: 'POST',
@@ -548,9 +536,7 @@ define([
       query.set('rows', this.max_rows);
 
       var request = new ApiRequest({
-        target:
-          Marionette.getOption(this, 'endpoint') ||
-          ApiTargets.SERVICE_WORDCLOUD,
+        target: Marionette.getOption(this, 'endpoint') || ApiTargets.SERVICE_WORDCLOUD,
         query: new ApiQuery({ query: JSON.stringify(query.toJSON()) }),
         options: {
           type: 'POST',

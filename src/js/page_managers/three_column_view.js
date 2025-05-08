@@ -1,168 +1,96 @@
 define([
-  'underscore',
+  'lodash/dist/lodash.compat',
   'marionette',
-  'hbs!js/page_managers/templates/results-page-layout',
-  'hbs!js/page_managers/templates/results-control-row',
+  './templates/results-page-layout.hbs',
+  './templates/results-control-row.hbs',
   'js/widgets/base/base_widget',
 ], function(_, Marionette, pageTemplate, controlRowTemplate) {
-  /*
-   * keeps track of the open/closed state of the three columns
-   * */
-  var ResultsStateModel = Backbone.Model.extend({
-    defaults: function() {
-      return {
-        left: 'open',
-        right: 'open',
-        user_left: null,
-        user_right: null,
-      };
+  const ResultsStateModel = Backbone.Model.extend({
+    defaults: {
+      left: 'open',
+      right: 'open',
+      user_left: null,
+      user_right: null,
     },
   });
 
-  var ThreeColumnView = Marionette.ItemView.extend({
-    initialize: function(options) {
-      var options = options || {};
-      this.widgets = options.widgets;
-      this.model = new ResultsStateModel();
-    },
-
-    destroy: function() {
-      Marionette.ItemView.prototype.destroy.call(this, arguments);
-    },
-
+  return Marionette.ItemView.extend({
+    id: 'results-container',
+    className: 'results-container',
     template: pageTemplate,
 
-    modelEvents: {
-      'change:left': '_updateColumnView',
-      'change:right': '_updateColumnView',
+    ui: {
+      controlRow: '#results-control-row',
     },
 
-    events: {
-      'click .btn-expand': 'onClickToggleColumns',
+    initialize: function() {
+      this.state = new ResultsStateModel();
+      this.listenTo(this.state, 'change', this.updateLayout);
     },
 
     onRender: function() {
-      this.$('#results-control-row').append(controlRowTemplate());
-
-      this.displaySearchBar(this.options.displaySearchBar);
-      this.displayControlRow(this.options.displayControlRow);
-      this.displayLeftColumn(this.options.displayLeftColumn);
-      this.displayRightColumn(this.options.displayRightColumn);
-      this.displayMiddleColumn(this.options.displayMiddleColumn);
+      $(this.ui.controlRow).html(controlRowTemplate());
+      this.setupToggleButtons();
+      this.updateLayout();
     },
 
-    onShow: function() {
-      // these functions must be called every time the template is inserted
-      this.displaySearchBar(true);
-    },
+    setupToggleButtons: function() {
+      this.$('.btn-expand').on('click', (e) => {
+        const side = $(e.currentTarget).data('side');
+        const current = this.state.get(side);
+        const toggled = current === 'open' ? 'closed' : 'open';
 
-    displaySearchBar: function(show) {
-      $('#search-bar-row').toggle(show === undefined ? true : show);
-    },
+        const update = {
+          [side]: toggled,
+        };
+        update[`user_${side}`] = toggled;
 
-    displayLeftColumn: function(show) {
-      this.$('.s-left-col-container').toggle(show === undefined ? true : show);
-    },
-
-    displayControlRow: function(show) {
-      this.$('#results-control-row').toggle(show === undefined ? true : show);
-    },
-
-    displayRightColumn: function(show) {
-      this.$('.s-left-col-container').toggle(show === undefined ? true : show);
-    },
-
-    displayMiddleColumn: function(show) {
-      this.$('.s-left-col-container').toggle(show === undefined ? true : show);
-    },
-
-    _returnBootstrapClasses: function() {
-      var classes = this.classList;
-      var toRemove = [];
-      _.each(classes, function(c) {
-        if (c.indexOf('col-') !== -1) {
-          toRemove.push(c);
-        }
+        this.state.set(update);
       });
-      return toRemove.join(' ');
     },
 
-    /**
-     * Method to display/hide columns, accepts object with keys:
-     *  left: true/false
-     *  right: true|false
-     *  force: true if you want to override user action (i.e. open
-     *         column, even if they changed it manually)
-     * @param options
-     */
-    showCols: function(options) {
-      options = options || { left: true, right: true, force: false };
-      var keys = ['left', 'right'];
-      for (var i = 0; i < keys.length; i++) {
-        var k = keys[i];
-        if (k in options) {
-          var ul = this.model.get('user_' + k);
-          if (ul === null) {
-            this.model.set(k, options[k] ? 'open' : 'closed');
-          } else if (options.force) {
-            this.model.set(k, options[k] ? 'open' : 'closed');
-            this.model.set('user_' + k, null);
-          }
+    showCols: function({ left, right, force = false }) {
+      const updates = {};
+
+      if (left !== undefined) {
+        updates.left = left ? 'open' : 'closed';
+        if (force || this.state.get('user_left') === null) {
+          updates.user_left = null;
         }
       }
+
+      if (right !== undefined) {
+        updates.right = right ? 'open' : 'closed';
+        if (force || this.state.get('user_right') === null) {
+          updates.user_right = null;
+        }
+      }
+
+      this.state.set(updates);
     },
 
-    _updateColumnView: function() {
-      var leftState;
-      var rightState;
-      var $leftCol;
-      var $rightCol;
-      var $middleCol;
+    updateLayout: function() {
+      const showLeft = this.state.get('left') === 'open';
+      const showRight = this.state.get('right') === 'open';
 
-      leftState = this.model.get('left');
-      rightState = this.model.get('right');
+      this.displayColumn('#results-left-column', showLeft);
+      this.displayColumn('#results-right-column', showRight);
+      this.updateMiddleColumn(showLeft, showRight);
+    },
 
-      $leftCol = this.$('#results-left-column');
-      $rightCol = this.$('#results-right-column');
-      $middleCol = this.$('#results-middle-column');
+    displayColumn: function(selector, show) {
+      this.$(selector).toggle(show);
+    },
 
-      _.each(
-        [
-          ['left', leftState, $leftCol],
-          ['right', rightState, $rightCol],
-        ],
-        function(x) {
-          if (x[1] == 'open') {
-            x[2].removeClass('hidden');
-            var $col = x[2];
-            setTimeout(function() {
-              $col.children().show(0);
-            }, 200);
-          } else {
-            x[2].addClass('hidden');
-          }
-        }
-      );
+    updateMiddleColumn: function(showLeft, showRight) {
+      const $middle = this.$('#results-middle-column');
+      $middle.removeClass('col-md-7 col-md-10 col-md-12');
 
-      if (leftState === 'open' && rightState === 'open') {
-        $middleCol
-          .removeClass(this._returnBootstrapClasses)
-          .addClass('col-sm-9 col-md-7');
-      }
-      // else if (leftState === "closed" && rightState === "open") {
-      //  $middleCol.removeClass(this._returnBootstrapClasses)
-      //      .addClass("col-md-9 col-sm-12")
-      // }
-      // else if (leftState === "open" && rightState === "closed") {
-      //  $middleCol.removeClass(this._returnBootstrapClasses)
-      //      .addClass("col-md-10 col-sm-8")
-      // }
-      else if (leftState === 'closed' && rightState === 'closed') {
-        $middleCol
-          .removeClass(this._returnBootstrapClasses)
-          .addClass('col-md-12 col-sm-12');
-      }
+      let className = 'col-md-7';
+      if (!showLeft || !showRight) className = 'col-md-10';
+      if (!showLeft && !showRight) className = 'col-md-12';
+
+      $middle.addClass(className);
     },
   });
-  return ThreeColumnView;
 });

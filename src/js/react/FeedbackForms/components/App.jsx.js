@@ -1,35 +1,33 @@
-define([
-  'react',
-  'suit',
-  'react-redux',
-  'styled-components',
-  '../models/index',
-], function(React, { FeedbackForms }, { useSelector }, styled, { FORMS }) {
-  const Container = styled.div`
-    padding: 4rem 1rem;
-  `;
+import React from 'react';
+import { useSelector } from 'react-redux';
+import styled from 'styled-components';
+import { FORMS } from '../models/index';
+import { AssociatedReferences, MissingIncorrectRecord, SubmitCorrectAbstract } from '../ts/FeedbackForms/index.ts';
 
-  const formSelector = ({ main }) => ({ form: main.form });
-  const App = () => {
-    const { form } = useSelector(formSelector);
+const Container = styled.div`
+  padding: 4rem 1rem;
+`;
 
-    return (
-      <Container className="container">
-        {(() => {
-          switch (form) {
-            case FORMS.missingreferences:
-              return <FeedbackForms.MissingIncorrectRecord />;
-            case FORMS.associatedarticles:
-              return <FeedbackForms.AssociatedReferences />;
-            case FORMS.correctabstract:
-              return <FeedbackForms.SubmitCorrectAbstract />;
-            default:
-              return <FeedbackForms.SubmitCorrectAbstract />;
-          }
-        })()}
-      </Container>
-    );
-  };
+const formSelector = ({ main }) => ({ form: main.form });
+const App = () => {
+  const { form } = useSelector(formSelector);
 
-  return App;
-});
+  return (
+    <Container className="container">
+      {(() => {
+        switch (form) {
+          case FORMS.missingreferences:
+            return <MissingIncorrectRecord />;
+          case FORMS.associatedarticles:
+            return <AssociatedReferences />;
+          case FORMS.correctabstract:
+            return <SubmitCorrectAbstract />;
+          default:
+            return <SubmitCorrectAbstract />;
+        }
+      })()}
+    </Container>
+  );
+};
+
+export default App;

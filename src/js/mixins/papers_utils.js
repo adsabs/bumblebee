@@ -1,9 +1,5 @@
-define(['underscore', 'jquery-ui', 'jquery', 'moment'], function(
-  _,
-  $ui,
-  $,
-  moment
-) {
+define(['lodash/dist/lodash.compat', 'dayjs', 'dayjs/plugin/utc'], function(_, dayjs, utc) {
+  dayjs.extend(utc);
   var Utils = {
     /**
      * Receives the  ISO8601 date string (actually, browsers will be able to parse
@@ -42,11 +38,11 @@ define(['underscore', 'jquery-ui', 'jquery', 'moment'], function(
           Number.parseInt(year, 10),
 
           // months are zero-based, everything else is one-based
-          monthMissing ? 0 : Number.parseInt(month, 10) - 1,
+          monthMissing ? 0 : Number.parseInt(month, 0) - 1,
           dayMissing ? 1 : Number.parseInt(day, 10),
         ];
 
-        const utc = moment.utc(date);
+        const utc = dayjs.utc(date);
 
         if (!utc.isValid()) {
           // if for some reason the parsed date is invalid, and assuming the year is always there, use that
@@ -107,26 +103,18 @@ define(['underscore', 'jquery-ui', 'jquery', 'moment'], function(
         data.allAuthorFormatted = _.map(data.author, format);
       }
 
-      data.formattedDate =
-        data.formattedDate ||
-        (data.pubdate ? this.formatDate(data.pubdate) : undefined);
-      data.shortAbstract = data.abstract
-        ? this.shortenAbstract(data.abstract)
-        : undefined;
+      data.formattedDate = data.formattedDate || (data.pubdate ? this.formatDate(data.pubdate) : undefined);
+      data.shortAbstract = data.abstract ? this.shortenAbstract(data.abstract) : undefined;
       data.details = data.details || {
         shortAbstract: data.shortAbstract,
         pub: data.pub,
         abstract: data.abstract,
       };
-      data.num_citations = data['[citations]']
-        ? data['[citations]'].num_citations
-        : undefined;
+      data.num_citations = data['[citations]'] ? data['[citations]'].num_citations : undefined;
       data.identifier = data.bibcode ? data.bibcode : data.identifier;
 
       // make sure undefined doesn't become "undefined"
-      data.encodedIdentifier = _.isUndefined(data.identifier)
-        ? data.identifier
-        : encodeURIComponent(data.identifier);
+      data.encodedIdentifier = _.isUndefined(data.identifier) ? data.identifier : encodeURIComponent(data.identifier);
 
       if (data.pubdate || data.shortAbstract) {
         data.popover = true;

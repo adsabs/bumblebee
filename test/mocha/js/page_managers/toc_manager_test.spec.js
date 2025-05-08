@@ -1,5 +1,5 @@
 define([
-  'underscore',
+  'lodash/dist/lodash.compat',
   'jquery',
   'marionette',
   'js/components/application',

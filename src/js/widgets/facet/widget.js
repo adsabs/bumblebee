@@ -1,4 +1,5 @@
 define([
+  'lodash/dist/lodash.compat',
   'backbone',
   'js/components/api_query',
   'js/components/api_request',
@@ -8,12 +9,13 @@ define([
   'react',
   'react-dom',
   'react-redux',
-  'es6!./facet-container.jsx',
-  './actions',
-  './reducers',
-  './create_store',
+  'js/widgets/facet/facet-container.jsx',
+  'js/widgets/facet/actions',
+  'js/widgets/facet/reducers',
+  'js/widgets/facet/create_store',
   'utils',
 ], function(
+  _,
   Backbone,
   ApiQuery,
   ApiRequest,
@@ -65,14 +67,9 @@ define([
       ]);
 
       // will be used by dispatchRequest
-      this.defaultQueryArguments = _.extend(
-        {},
-        this.defaultQueryArguments,
-        options.defaultQueryArguments,
-        {
-          'facet.field': options.facetField,
-        }
-      );
+      this.defaultQueryArguments = _.extend({}, this.defaultQueryArguments, options.defaultQueryArguments, {
+        'facet.field': options.facetField,
+      });
 
       this.store = createStore(config);
       this.actions = createActionObject();
@@ -90,10 +87,7 @@ define([
       this.view = new FacetContainerView();
       this.view.render = _.partial(this.view.render, this.store, this.actions);
       if (!options.debug) {
-        this._dispatchRequest = _.debounce(
-          _.bind(this._dispatchRequest, this),
-          300
-        );
+        this._dispatchRequest = _.debounce(_.bind(this._dispatchRequest, this), 300);
       }
     },
 
@@ -108,10 +102,7 @@ define([
     activate: function(beehive) {
       this.setBeeHive(beehive);
       _.bindAll(this, 'dispatchRequest', 'processResponse');
-      this.getPubSub().subscribe(
-        this.getPubSub().INVITING_REQUEST,
-        this.dispatchRequest
-      );
+      this.getPubSub().subscribe(this.getPubSub().INVITING_REQUEST, this.dispatchRequest);
       this.activateWidget();
       this.attachGeneralHandler(this.onApiFeedback);
       if (window.store) {
@@ -150,10 +141,7 @@ define([
     _sortChanged: function(apiQuery) {
       try {
         // get the difference between the queries
-        var diff = utils.difference(
-          apiQuery.toJSON(),
-          this.getCurrentQuery().toJSON()
-        );
+        var diff = utils.difference(apiQuery.toJSON(), this.getCurrentQuery().toJSON());
       } catch (e) {
         // continue
       }
@@ -168,16 +156,12 @@ define([
       var currentQuery = this.getCurrentQuery();
       this.store.dispatch(this.actions.data_requested(id));
       pubsub.subscribeOnce(pubsub.DELIVERING_RESPONSE, function(apiResponse) {
-        that.store.dispatch(
-          that.actions.data_received(apiResponse.toJSON(), id)
-        );
+        that.store.dispatch(that.actions.data_received(apiResponse.toJSON(), id));
         that.updateState(that.STATES.IDLE);
       });
 
       var q = this.customizeQuery(currentQuery);
-      var children = id
-        ? this.store.getState().facets[id].children
-        : this.store.getState().children;
+      var children = id ? this.store.getState().facets[id].children : this.store.getState().children;
       var offset = children.length || 0;
 
       q.set('facet.offset', offset);
@@ -196,12 +180,8 @@ define([
     },
 
     submitFilter: function(operator) {
-      if (
-        ['and', 'or', 'limit to', 'expand', 'exclude'].indexOf(operator) === -1
-      ) {
-        throw new Error(
-          "we don't recognize this operator you're trying to filter on"
-        );
+      if (['and', 'or', 'limit to', 'expand', 'exclude'].indexOf(operator) === -1) {
+        throw new Error("we don't recognize this operator you're trying to filter on");
       }
 
       var q = this.getCurrentQuery().clone();
@@ -212,12 +192,11 @@ define([
       // not sure why this is necessary, otherwise queryupdater will return a too-long name
       var fieldName = 'fq_' + facetField.replace('_facet_hier', '');
 
-      var conditions = Reducers.getActiveFacets(
-        this.store.getState(),
-        this.store.getState().state.selected
-      ).map(function(c) {
-        return facetField + ':"' + c + '"';
-      });
+      var conditions = Reducers.getActiveFacets(this.store.getState(), this.store.getState().state.selected).map(
+        function(c) {
+          return facetField + ':"' + c + '"';
+        }
+      );
 
       if (operator == 'and' || operator == 'limit to') {
         this.queryUpdater.updateQuery(q, fieldName, 'limit', conditions, {

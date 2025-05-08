@@ -1,11 +1,12 @@
 define([
+  'lodash/dist/lodash.compat',
   'js/widgets/navbar/widget',
   'js/bugutils/minimal_pubsub',
   'js/components/user',
   'js/components/session',
   'js/modules/orcid/orcid_api',
   'js/services/api',
-], function(NavBarWidget, MinSub, User, Session, OrcidApi, Api) {
+], function(_, NavBarWidget, MinSub, User, Session, OrcidApi, Api) {
   describe('navigation bar widget', function() {
     afterEach(function() {
       $('#feedback-modal').remove();

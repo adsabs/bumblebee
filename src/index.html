@@ -1,248 +1,221 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-  <head>
-    <meta charset="utf-8" />
-    <base href="/" />
-    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
-    <meta name="viewport" content="width=device-width,user-scalable=no" />
-    <meta name="google-site-verification" content="XxQuw38lagr8-TgtCyhAMP_6ELS9dy35fgrqo9dxw3o" />
-    <title>Astrophysics Data System</title>
-    <meta name="description" content="A powerful, streamlined new Astrophysics Data System" />
-    <!-- favicon -->
-    <link rel="apple-touch-icon" sizes="180x180" href="./styles/favicon/apple-touch-icon.png" />
-    <link rel="icon" type="image/png" sizes="32x32" href="./styles/favicon/favicon-32x32.png" />
-    <link rel="icon" type="image/png" sizes="16x16" href="./styles/favicon/favicon-16x16.png" />
-    <link rel="manifest" href="./styles/favicon/site.webmanifest" />
-    <link rel="mask-icon" href="./styles/favicon/safari-pinned-tab.svg" color="#5bbad5" />
-    <meta name="apple-mobile-web-app-title" content="Astrophysics Data System" />
-    <meta name="application-name" content="Astrophysics Data System" />
-    <meta name="msapplication-TileColor" content="#ffc40d" />
-    <meta name="theme-color" content="#ffffff" />
-    <!-- /favicon -->
-    <link rel="preload" href="./styles/css/styles.css?v=<APP_VERSION>" as="style" />
-    <link rel="preload" href="./libs/require.js" as="script" />
-    <link rel="preload" href="config/init.js?v=<APP_VERSION>" as="script" />
-    <link rel="stylesheet" href="./styles/css/styles.css?v=<APP_VERSION>" />
+<head>
+  <meta charset="utf-8" />
+  <base href="/" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+  <meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=no" />
+  <title>Astrophysics Data System</title>
+  <meta name="description" content="A powerful, streamlined new Astrophysics Data System" />
+  <meta name="theme-color" content="#ffffff" />
+  <link rel="search" type="application/opensearchdescription+xml"
+        href="https://ui.adsabs.harvard.edu/config/opensearch.xml" title="ADS Search" />
+  <link rel="manifest" href="./assets/favicon/site.webmanifest" />
+  <meta name="apple-mobile-web-app-title" content="Astrophysics Data System" />
+  <meta name="application-name" content="Astrophysics Data System" />
+  <meta name="msapplication-TileColor" content="#ffc40d" />
+  <meta name="google-site-verification" content="XxQuw38lagr8-TgtCyhAMP_6ELS9dy35fgrqo9dxw3o" />
+  <style>
+    #loading-splash {
+      display: none;
+      opacity: 0;
+      transition: opacity 0.3s ease-in-out;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      position: relative;
+      text-align: center;
+    }
 
-    <link
-      rel="search"
-      type="application/opensearchdescription+xml"
-      href="https://ui.adsabs.harvard.edu/config/opensearch.xml"
-      title="ADS Search"
-    />
-    <noscript>
-      <style>
-        #app-container {
-          display: none;
-        }
+    #logo-splash {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      animation: pulse 2s ease-in-out infinite;
+      margin: 40px auto;
+      height: 100px;
+    }
 
-        body {
-          overflow: hidden;
-          position: absolute;
-          width: 100%;
-          height: 100%;
-          display: flex;
-          justify-content: center;
-          align-items: center;
-        }
+    .pulse-svg {
+      width: 160px;
+      height: auto;
+      filter: drop-shadow(0 0 5px rgba(0, 0, 0, 0.4)) drop-shadow(0 0 10px rgba(0, 0, 0, 0.3));
+    }
 
-        #noscriptmsg {
-          max-width: 450px;
-          padding: 10px;
-        }
-      </style>
-    </noscript>
-    <script src="https://www.google.com/recaptcha/api.js?render=6LcpTuUnAAAAAD6YCBdr_2-0b1AH8N6nXkYEG5G5"></script>
-    <!-- Google Tag Manager -->
-    <script>
-      (function(w, d, s, l, i) {
-        w[l] = w[l] || [];
-        w[l].push({
-          'gtm.start': new Date().getTime(),
-          event: 'gtm.js',
-        });
-        var f = d.getElementsByTagName(s)[0],
-          j = d.createElement(s),
-          dl = l != 'dataLayer' ? '&l=' + l : '';
-        j.async = true;
-        j.src = 'https://www.googletagmanager.com/gtm.js?id=' + i + dl;
-        f.parentNode.insertBefore(j, f);
-      })(window, document, 'script', 'dataLayer', 'GTM-NT2453N');
-    </script>
-    <!-- End Google Tag Manager -->
-  </head>
-
-  <body>
-    <noscript>
-      <div id="noscriptmsg">
-        <p>
-          Sorry, but the fully featured ADS requires JavaScript to be enabled.
-        </p>
-        <p>
-          <a class="btn btn-primary" href="https://ui.adsabs.harvard.edu/core">Click here to switch to Basic HTML</a>
-        </p>
-      </div>
-      <iframe
-        src="https://www.googletagmanager.com/ns.html?id=GTM-NT2453N"
-        height="0"
-        width="0"
-        style="display:none;visibility:hidden"
-      ></iframe>
-    </noscript>
-
-    <!--items for announcement of new page, and optional skip to main content link go here (inserted by master.js)-->
-
-    <div id="app-container">
-      <!--this is where bbb discovery gets inserted -->
-      <div id="body-template-container" role="main">
-        <article class="loading-screen" style="display: none">
-          <h1 id="loading-screen-title">
-            <span class="logo__astrophysics">astrophysics</span>
-            <span class="logo__data-system">data system</span>
-          </h1>
-          <section id="loading-screen-bar">
-            <span class="sr-only">loading...</span>
-            <div class="progress">
-              <div
-                class="progress-bar progress-bar-striped active"
-                role="progressbar"
-                id="loading-screen-progress"
-                aria-valuenow="0"
-                aria-valuemin="0"
-                aria-valuemax="100"
-                style="width: 0%"
-              >
-                <span class="sr-only">0% Complete</span>
-                <span id="loading-screen-message"></span>
-              </div>
-            </div>
-          </section>
-          <h3 id="basic-html-message">
-            Loading ADS |
-            <a href="https://ui.adsabs.harvard.edu/core">Click here to switch to Basic HTML</a>
-            (for slow connections/low resources)
-          </h3>
-          <div class="hidden well-sm center-block" id="app-error-container" data-testid="app-error">
-            <div class="alert alert-warning small">
-              <span id="app-error-message"></span>
-            </div>
-          </div>
-        </article>
-      </div>
-    </div>
-    <div id="darkSwitch" class="darkmode-toggle" title="Turn on dark mode">
-      🌓
-    </div>
-    <script type="application/ld+json">
-      {
-        "@context": "http://schema.org",
-        "@type": "WebSite",
-        "name": "ADS",
-        "url": "https://ui.absads.harvard.edu/",
-        "alternateName": "Astrophysics Data System",
-        "potentialAction": {
-          "@type": "SearchAction",
-          "target": "https://ui.adsabs.harvard.edu/search/q={search_term_string}",
-          "query-input": "required name=search_term_string"
-        }
+    @keyframes pulse {
+      0% {
+        transform: scale(1);
+        opacity: 1;
       }
-    </script>
-    <script>
-      // Progress Bar
-      (function() {
-        var loadingContainer = document.querySelector('.loading-screen');
-        var progressBar = document.getElementById('loading-screen-progress');
-        var message = document.getElementById('loading-screen-message');
-        var progressInner = document.querySelector('#loading-screen-progress>span');
-        var progressValue = 0;
+      50% {
+        transform: scale(1.08);
+        opacity: 0.85;
+      }
+      100% {
+        transform: scale(1);
+        opacity: 1;
+      }
+    }
 
-        // show nothing for the first 3 seconds
-        setTimeout(function() {
-          loadingContainer.setAttribute('style', '');
-        }, 3000);
+    #ads-core-message {
+      position: absolute;
+      bottom: 1rem;
+      right: 1rem;
+      font-size: 1.4rem;
+      color: #333;
+    }
 
-        /**
-         *
-         */
-        window.__setAppLoadingProgress = function(val, msg) {
-          if (typeof val === 'function') {
-            const newVal = val(progressValue);
-            if (typeof newVal === 'number') {
-              return window.__setAppLoadingProgress(newVal, msg);
-            }
-          }
+    #ads-core-message a {
+      color: #0056b3;
+      text-decoration: underline;
+    }
 
-          if (val < progressValue) return;
-          try {
-            progressBar.setAttribute('aria-valuenow', val);
-            progressBar.style = 'width: ' + val + '%';
-            progressInner.innerText = val + '% Complete';
-            message.innerHTML = msg ? msg : message.innerHTML;
-            progressValue = val;
-          } catch (e) {
-            // do nothing
-          }
-        };
-        setTimeout(__setAppLoadingProgress, 200, 20);
-        setTimeout(__setAppLoadingProgress, 500, 25);
-        window.__setAppLoadingProgress(15, 'Downloading Assets');
-        window.__PAGE_LOAD_TIMESTAMP = new Date();
-      })();
-    </script>
+    #ads-core-message span {
+      margin-left: 0.25rem;
+      color: #666;
+    }
+  </style>
+  <script>(function(w, d, s, l, i) {
+    w[l] = w[l] || [];
+    w[l].push({ 'gtm.start': new Date().getTime(), event: 'gtm.js' });
+    const f = d.getElementsByTagName(s)[0],
+      j = d.createElement(s);
+    j.async = true;
+    j.src = `https://www.googletagmanager.com/gtm.js?id=${i}`;
+    f.parentNode.insertBefore(j, f);
+  })(window, document, 'script', 'dataLayer', 'GTM-NT2453N');</script>
+  <script>window.MathJax = {
+    loader: { load: ['[tex]/ams'] },
+    tex: {
+      inlineMath: [['$', '$'], ['\\(', '\\)']],
+      displayMath: [['$$', '$$'], ['\\[', '\\]']],
+      processEscapes: true,
+      packages: { '[+]': ['ams'] },
+      tags: 'ams',
+    },
+  };</script>
+  <script async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
+  <script src="https://www.google.com/recaptcha/api.js?render=6LcpTuUnAAAAAD6YCBdr_2-0b1AH8N6nXkYEG5G5" async></script>
+  <noscript>
+    <style>#app-container {
+      display: none;
+    }
 
-    <script>
-      // Simulate a process.env-like environment
-      window.process = { env: { NODE_ENV: window.ENV ?? 'production' } };
+    body {
+      overflow: hidden;
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
 
-      // Define getSentry only once, always safe
-      window.getSentry = function(cb, errCb = () => {}) {
-        try {
-          if (!window.Sentry) throw new Error('Sentry not found');
-          cb.call(window, window.Sentry);
-        } catch (e) {
-          console.warn('unable to run sentry callback', e);
-          errCb.call(window, e);
-        }
-      };
+    #noscriptmsg {
+      max-width: 450px;
+      padding: 10px;
+    }</style>
+  </noscript>
+</head>
+<body>
+<noscript>
+  <div id="noscriptmsg"><p>Sorry, but the fully featured ADS requires JavaScript to be enabled.</p>
+    <p><a class="btn btn-primary" href="https://ui.adsabs.harvard.edu/core">Switch to Basic HTML</a></p></div>
+  <iframe src="https://www.googletagmanager.com/ns.html?id=GTM-NT2453N" height="0" width="0"
+          style="display:none;visibility:hidden"></iframe>
+</noscript>
+<div id="app-container">
+  <div id="body-template-container" role="main">
+    <main id="loading-splash" aria-live="polite">
+      <div id="logo-splash" aria-label="ADS Logo">
+        <svg class="pulse-svg" viewBox="0 0 1447 1271" xmlns="http://www.w3.org/2000/svg" aria-label="ADS Logo"
+             role="img">
+          <defs>
+            <linearGradient x1="100%" y1="80.465%" x2="0%" y2="21.014%" id="a">
+              <stop stop-color="#409FFF" offset="0%" />
+              <stop stop-color="#2157CF" offset="100%" />
+            </linearGradient>
+            <linearGradient x1="100%" y1="80.465%" x2="0%" y2="21.014%" id="b">
+              <stop stop-color="#001CFF" stop-opacity="0" offset="0%" />
+              <stop stop-color="#5AEAFF" stop-opacity=".201" offset="100%" />
+            </linearGradient>
+            <radialGradient cx="33.223%" cy="23.353%" fx="33.223%" fy="23.353%" r="100%" id="c">
+              <stop stop-color="#FFF" offset="0%" />
+              <stop stop-color="#FFF" offset="100%" />
+            </radialGradient>
+          </defs>
+          <g fill="none" fill-rule="evenodd">
+            <path
+              d="M1334.429 372.863c167.179 267.542 85.818 619.953-181.724 787.132-211.381 132.086-475.74 109.024-659.865-38.43l27.364-17.099c173.906 133.695 419.439 152.882 616.394 29.81 253.315-158.288 330.349-491.958 172.06-745.273-108.59-173.781-281.563-266.283-472.666-255.073-52.249 3.065-96.523 18.203-96.523 18.203s-2.311-15.904-5.64-25.633c234.03-63.227 455.082 13.486 600.6 246.363zM292.071 798.821l27.425-17.137c-25.37-126.991-7.42-249.52 55.129-361.336 0 0-15.407-16.785-24.442-21.548-66.77 120.84-88.28 263.448-58.112 400.021z"
+              fill="#A5A5A5" />
+            <g transform="rotate(58 401.872 931.722)">
+              <path
+                d="M16.58 303.935c16.406-56.528 45.044-110.483 86.197-157.824C254.594-28.534 519.243-47.04 693.889 104.777c174.645 151.817 193.151 416.466 41.334 591.112-151.817 174.645-416.466 193.151-591.112 41.334-42.007-36.516-74.98-79.56-98.724-126.31 25.115-38.958 39.689-85.353 39.689-135.151 0-66.57-26.043-127.056-68.495-171.827z"
+                fill="#9B9B9B" />
+              <circle fill="url(#a)" transform="rotate(-49 424.03 424.03)" cx="424.029" cy="424.029" r="300.029" />
+              <circle fill="url(#a)" transform="rotate(-49 424.03 424.03)" cx="424.029" cy="424.029" r="300.029" />
+              <circle fill="url(#b)" transform="rotate(-49 424 424)" cx="424" cy="424" r="260" />
+              <g fill="#9B9B9B">
+                <path d="M447.781 831.883v134h-71v-134z" />
+                <path
+                  d="M342.104 1118.535l-2.583-147.994.276 15.824c-.713-40.863 31.826-74.567 72.697-75.28 40.863-.714 74.567 31.836 75.28 72.697l-1-57.358 2.582 147.98 3.987 228.382c.713 40.86-31.826 74.562-72.697 75.276-40.863.713-74.567-31.836-75.28-72.705l-3.262-186.822z" />
+              </g>
+              <path
+                d="M403.676 1376.394c4.827.99 9.825 1.51 14.945 1.51 40.878 0 74-33.131 74-74v15.826-334.866c0-40.877-33.13-74.008-74-74.008a74.21 74.21 0 00-16.866 1.93c33.704 6.912 59.054 36.742 59.054 72.497v334.867-15.826c0 35.067-24.386 64.438-57.133 72.07z"
+                fill="#878787" />
+              <path fill="#878787" d="M414.887 836.373h35v85.38l-35-9.447z" />
+            </g>
+            <path
+              d="M891.207 286.103C891.207 208.726 828.48 146 751.103 146 673.726 146 611 208.726 611 286.103c0 77.377 62.726 140.104 140.103 140.104 77.377 0 140.104-62.727 140.104-140.104z"
+              fill="url(#c)" transform="translate(-263 -76)" />
+            <text transform="translate(652 182)" font-size="700" font-family="Helvetica-Bold, Helvetica" fill="#FFF"
+                  font-weight="bold">
+              <tspan x="0" y="679">a</tspan>
+            </text>
+            <path
+              d="M862.95 708.09c93.302-72.895 195.515-237.994 195.515-237.994s89.498 107.482 87.053 217.717c-2.417 108.93-74.034 203.027-131.433 241.841-57.4 38.814-161.214 65.778-237.776 46.616-118.307-29.61-182.9-130.34-182.9-130.34s176.24-64.945 269.541-137.84z"
+              fill-opacity=".09" fill="#000" />
+          </g>
+        </svg>
+      </div>
 
-      // Called after the SDK finishes loading
-      window.sentryOnLoad = function() {
-        try {
-          Sentry.init({
-            dsn: 'https://46062cbe0aeb7a3b2bb4c3a9b8cd1ac7@o1060269.ingest.us.sentry.io/4507341192036352',
-            tracesSampleRate: window.ENV === 'development' ? 1.0 : 0.75,
-            debug: false,
-            allowUrls: [
-              /https:\/\/.*\.adsabs\.harvard\.edu\/.*/,
-              /https:\/\/code\.jquery\.com\/.*/,
-              /https:\/\/cdn\.jsdelivr\.net\/.*/,
-            ],
-            replaysSessionSampleRate: window.ENV === 'development' ? 1.0 : 0.1,
-            replaysOnErrorSampleRate: 0.25,
-            environment: window.ENV ?? 'production',
-            integrations: [
-              Sentry.browserTracingIntegration(),
-              Sentry.replayIntegration({
-                maskAllText: false,
-                blockAllMedia: false,
-                unmask: ['[name=q]'],
-              }),
-            ],
-          });
-        } catch (e) {
-          console.error('Could not initialize Sentry', e);
-        }
-      };
-    </script>
-
-    <script
-      src="https://js.sentry-cdn.com/46062cbe0aeb7a3b2bb4c3a9b8cd1ac7.min.js"
-      crossorigin="anonymous"
-      onload="window.sentryOnLoad()"
-    ></script>
-
-    <!-- start the discovery application -->
-    <script src="./libs/require.js"></script>
-    <script src="config/init.js?v=<APP_VERSION>"></script>
-  </body>
+      <div id="ads-core-message" aria-label="Switch to basic version">
+        <a href="https://ui.adsabs.harvard.edu/core">
+          Click here to switch to Basic HTML
+        </a>
+        <span>(for slow connections/low resources)</span>
+      </div>
+      <div class="hidden well-sm center-block" id="app-error-container" data-testid="app-error">
+        <div class="alert alert-warning small"><span id="app-error-message"></span></div>
+      </div>
+    </main>
+  </div>
+</div>
+<div id="darkSwitch" class="darkmode-toggle" title="Toggle dark mode">🌓</div>
+<script type="application/ld+json">{
+  "@context": "http://schema.org",
+  "@type": "WebSite",
+  "name": "ADS",
+  "url": "https://ui.adsabs.harvard.edu/",
+  "alternateName": "Astrophysics Data System",
+  "potentialAction": {
+    "@type": "SearchAction",
+    "target": "https://ui.adsabs.harvard.edu/search/q={search_term_string}",
+    "query-input": "required name=search_term_string"
+  }
+}</script>
+<script>
+  // Delay splash screen to avoid flashing on fast loads
+  setTimeout(() => {
+    const splash = document.getElementById('loading-splash');
+    if (splash) {
+      splash.style.display = 'flex';
+      requestAnimationFrame(() => {
+        splash.style.opacity = '1';
+      });
+    }
+  }, 1000);
+</script>
+</body>
 </html>

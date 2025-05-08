@@ -29,20 +29,18 @@ define(['react'], function(React) {
    * @param {string} props.name the name of the template type
    */
   const TemplatePill = ({ name, disabled }) => {
-    let shortName = name || 'general';
-    let isHex = templateTypeConstants[shortName].color.startsWith('#');
+    const shortName = name || 'general';
+    const isHex = templateTypeConstants[shortName].color.startsWith('#');
     return (
       <span
-        className={`label label-${
-          isHex ? 'default' : templateTypeConstants[shortName].color
-        } ${disabled ? 'text-faded' : ''}`}
+        className={`label label-${isHex ? 'default' : templateTypeConstants[shortName].color} ${
+          disabled ? 'text-faded' : ''
+        }`}
         style={{
           maxWidth: 120,
           display: 'block',
           color: disabled ? '#999999' : 'white',
-          backgroundColor: isHex
-            ? templateTypeConstants[shortName].color
-            : 'auto',
+          backgroundColor: isHex ? templateTypeConstants[shortName].color : 'auto',
         }}
       >
         {getTemplateLabel(shortName)}

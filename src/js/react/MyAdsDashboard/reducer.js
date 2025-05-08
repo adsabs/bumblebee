@@ -1,8 +1,4 @@
-define(['./actions', 'redux', './constants'], function(
-  actions,
-  { combineReducers },
-  { page: PAGE }
-) {
+define(['./actions', 'redux', './constants'], function(actions, { combineReducers }, { page: PAGE }) {
   const {
     SET_NOTIFICATIONS,
     SET_EDITING_NOTIFICATION,
@@ -19,10 +15,7 @@ define(['./actions', 'redux', './constants'], function(
   const notificationsState = {};
   const notifications = (state = notificationsState, action) => {
     if (action.type === SET_NOTIFICATIONS && action.result) {
-      return action.result.reduce(
-        (acc, entry) => ({ ...acc, [entry.id]: entry }),
-        {}
-      );
+      return action.result.reduce((acc, entry) => ({ ...acc, [entry.id]: entry }), {});
     }
     return state;
   };

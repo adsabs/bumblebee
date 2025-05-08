@@ -1,7 +1,8 @@
 define([
-  'es6!js/widgets/library_actions/widget.jsx',
+  'lodash/dist/lodash.compat',
+  'js/widgets/library_actions/widget.jsx',
   'js/bugutils/minimal_pubsub'
-], function (Widget, MinSub) {
+], function (_, Widget, MinSub) {
 
   var fakeLibraryController = function (metadata, fn) {
     var lc = _.extend({}, {

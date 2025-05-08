@@ -17,18 +17,11 @@ define(['react', 'prop-types'], function(React, PropTypes) {
     };
 
     const changeDirectionText =
-      direction === 'asc'
-        ? 'Change sort direction to descending'
-        : 'Change sort direction to ascending';
+      direction === 'asc' ? 'Change sort direction to descending' : 'Change sort direction to ascending';
 
     return (
       <div className="btn-group">
-        <button
-          type="button"
-          className="btn btn-default"
-          onClick={setDirection}
-          title={changeDirectionText}
-        >
+        <button type="button" className="btn btn-default" onClick={setDirection} title={changeDirectionText}>
           <i className={`fa fa-sort-amount-${direction}`} aria-hidden="true" />
           <span className="sr-only">{changeDirectionText}</span>
         </button>
@@ -44,11 +37,7 @@ define(['react', 'prop-types'], function(React, PropTypes) {
         <ul className="dropdown-menu pull-right" role="menu">
           {options.map((o) => (
             <li key={o.id}>
-              <a
-                href="javascript:void(0)"
-                title={o.desc}
-                onClick={(e) => onSelect(o, e)}
-              >
+              <a href="javascript:void(0)" title={o.desc} onClick={(e) => onSelect(o, e)}>
                 {o.text}
               </a>
             </li>

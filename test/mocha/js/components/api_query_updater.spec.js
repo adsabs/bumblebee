@@ -1,5 +1,5 @@
 define([
-  'underscore',
+  'lodash/dist/lodash.compat',
   'js/components/api_query',
   'js/components/api_query_updater'
 ], function(
@@ -8,7 +8,7 @@ define([
   ApiQueryUpdater
   ) {
   describe("ApiQuery Updater (Utility)", function () {
-      
+
 
     it("should return bare API object", function() {
       expect(new ApiQueryUpdater('foo')).to.be.instanceof(ApiQueryUpdater);

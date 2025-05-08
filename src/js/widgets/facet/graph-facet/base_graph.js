@@ -1,10 +1,11 @@
 define([
+  'lodash/dist/lodash.compat',
   'marionette',
   'd3',
   'jquery',
   'jquery-ui',
-  'hbs!js/widgets/facet/graph-facet/templates/graph',
-], function(Marionette, d3, $, $ui, FacetGraphTemplate) {
+  'js/widgets/facet/graph-facet/templates/graph.hbs',
+], function(_, Marionette, d3, $, $ui, FacetGraphTemplate) {
   var ZoomableGraphView = Marionette.ItemView.extend({
     className: 'graph-facet',
 
@@ -24,6 +25,7 @@ define([
 
       // for citation and reads graph
       this.currentScale = 'linear';
+      _.bindAll(this, 'pulseApplyButton');
       this.on('facet:active', this.pulseApplyButton);
     },
 
@@ -38,9 +40,7 @@ define([
     template: FacetGraphTemplate,
 
     insertLegend: function() {
-      this.$('.graph-legend').html(
-        this.legendTemplate({ yAxisTitle: this.yAxisTitle })
-      );
+      this.$('.graph-legend').html(this.legendTemplate({ yAxisTitle: this.yAxisTitle }));
     },
 
     events: {
@@ -55,7 +55,7 @@ define([
     pulseApplyButton: function() {
       this.$('.apply').addClass('draw-attention-primary-faded');
       // this initiates an animation that lasts for 6 second
-      setTimeout(function() {
+      setTimeout(() => {
         this.$('.apply').removeClass('draw-attention-primary-faded');
       }, 2000);
     },

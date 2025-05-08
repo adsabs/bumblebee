@@ -2,7 +2,7 @@
 // in order for the view to be dynamically injected
 
 define([
-  'underscore',
+  'lodash/dist/lodash.compat',
   'js/widgets/base/base_widget',
   'js/components/api_request',
   'js/components/api_query',
@@ -135,12 +135,8 @@ define([
       });
       request.set('options', {
         ...options,
-        contentType:
-          target === 'search/query'
-            ? 'application/x-www-form-urlencoded'
-            : options.contentType,
-        data:
-          target === 'search/query' ? request.get('query').url() : options.data,
+        contentType: target === 'search/query' ? 'application/x-www-form-urlencoded' : options.contentType,
+        data: target === 'search/query' ? request.get('query').url() : options.data,
       });
 
       publish(ps.EXECUTE_REQUEST, request);

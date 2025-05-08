@@ -1,5 +1,5 @@
 define([
-  'moment',
+  'lodash/dist/lodash.compat',
   'jquery',
   'react',
   'enzyme',
@@ -10,7 +10,7 @@ define([
   'js/widgets/author_affiliation_tool/widget.jsx',
   'js/widgets/author_affiliation_tool/containers/App.jsx',
 ], function(
-  Moment,
+  _,
   $,
   React,
   Enzyme,
@@ -42,7 +42,7 @@ define([
     loading: false,
     exporting: false,
     ids: [],
-    currentYear: Number(new Moment().year()),
+    currentYear: Number(new Date().getFullYear()),
     year: 4,
     author: 3,
   };

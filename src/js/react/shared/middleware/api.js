@@ -19,8 +19,7 @@ define([], function() {
         const { responseJSON, statusText } = error;
         let errorMsg = defaultFail.responseJSON.error;
         if (responseJSON) {
-          errorMsg =
-            responseJSON.error || responseJSON.message || responseJSON.msg;
+          errorMsg = responseJSON.error || responseJSON.message || responseJSON.msg;
         } else if (statusText) {
           errorMsg = statusText;
         }
@@ -31,13 +30,7 @@ define([], function() {
         });
       };
 
-      const {
-        target,
-        query = {},
-        type = 'GET',
-        data,
-        headers,
-      } = action.options;
+      const { target, query = {}, type = 'GET', data, headers } = action.options;
 
       if (!target) {
         return;

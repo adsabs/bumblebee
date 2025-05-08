@@ -9,19 +9,17 @@
  */
 
 define([
-  'underscore',
-  'bootstrap',
+  'lodash/dist/lodash.compat',
   'jquery',
   'jquery-querybuilder',
   'js/components/generic_module',
   'js/components/query_builder/rules_translator',
   'js/components/api_query',
-  'hbs!js/components/query_builder/templates/group_template',
-  'hbs!js/components/query_builder/templates/rule_template',
+  'js/components/query_builder/templates/group_template.hbs',
+  'js/components/query_builder/templates/rule_template.hbs',
   'js/mixins/dependon',
 ], function(
   _,
-  Bootstrap,
   $,
   jQueryQueryBuilderPlugin,
   GenericModule,
@@ -181,20 +179,8 @@ define([
         ],
       });
 
-      var singleTokenOperators = [
-        'is',
-        'is_wildcard',
-        'is_exactly',
-        'is_not',
-        'is_not_wildcard',
-      ];
-      var multiTokenOperators = [
-        'contains',
-        'is_phrase',
-        'contains_not',
-        'is_not_phrase',
-        'is_wildcard',
-      ];
+      var singleTokenOperators = ['is', 'is_wildcard', 'is_exactly', 'is_not', 'is_not_wildcard'];
+      var multiTokenOperators = ['contains', 'is_phrase', 'contains_not', 'is_not_phrase', 'is_wildcard'];
       var functionOperators = ['is_function', 'is_not_function'];
 
       this.singleTokenOperators = singleTokenOperators;
@@ -907,11 +893,7 @@ define([
     loadCss: function() {
       var url = require.toUrl('jquery-querybuilder') + '.css';
 
-      if (
-        $(document.getElementsByTagName('head')[0]).find(
-          "link[href='" + url + "']"
-        ).length == 0
-      ) {
+      if ($(document.getElementsByTagName('head')[0]).find("link[href='" + url + "']").length == 0) {
         var link = document.createElement('link');
         link.type = 'text/css';
         link.rel = 'stylesheet';
@@ -1118,10 +1100,7 @@ define([
         activate: function(beehive) {
           this.setBeeHive(beehive);
           var pubsub = this.getPubSub();
-          pubsub.subscribe(
-            pubsub.DELIVERING_RESPONSE,
-            _.bind(this.getResponse, this)
-          );
+          pubsub.subscribe(pubsub.DELIVERING_RESPONSE, _.bind(this.getResponse, this));
         },
 
         /**
@@ -1134,10 +1113,7 @@ define([
          */
         getQTree: function(query) {
           this.promise = $.Deferred();
-          this.getPubSub().publish(
-            this.getPubSub().GET_QTREE,
-            new ApiQuery({ q: query })
-          );
+          this.getPubSub().publish(this.getPubSub().GET_QTREE, new ApiQuery({ q: query }));
           return this.promise;
         },
 

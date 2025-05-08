@@ -1,16 +1,7 @@
-define(['underscore', 'react', 'react-bootstrap', 'prop-types'], function(
+define(['lodash/dist/lodash.compat', 'react', 'react-bootstrap', 'prop-types'], function(
   { uniqueId },
   React,
-  {
-    Form,
-    FormControl,
-    Button,
-    FormGroup,
-    Tooltip,
-    OverlayTrigger,
-    Alert,
-    InputGroup,
-  },
+  { Form, FormControl, Button, FormGroup, Tooltip, OverlayTrigger, Alert, InputGroup },
   PropTypes
 ) {
   const initialState = {
@@ -115,10 +106,7 @@ define(['underscore', 'react', 'react-bootstrap', 'prop-types'], function(
       let valid = true;
       let error = '';
 
-      if (
-        type === 'ORCiD' &&
-        !text.match(/^\d{4}-?\d{4}-?\d{4}-?\d{3}[X\d]$/)
-      ) {
+      if (type === 'ORCiD' && !text.match(/^\d{4}-?\d{4}-?\d{4}-?\d{3}[X\d]$/)) {
         // orcid formatting is off
         valid = false;
         error = 'ORCiD must in the format: 9999-9999-9999-9999';
@@ -158,11 +146,7 @@ define(['underscore', 'react', 'react-bootstrap', 'prop-types'], function(
                 </tr>
               )}
               {entries.map(({ text, type, id }) => (
-                <Entry
-                  text={text}
-                  type={type}
-                  onRemove={() => this.removeEntry(id)}
-                />
+                <Entry text={text} type={type} onRemove={() => this.removeEntry(id)} />
               ))}
             </tbody>
           </table>
@@ -199,11 +183,7 @@ define(['underscore', 'react', 'react-bootstrap', 'prop-types'], function(
               </FormGroup>
             </div>
             <div className="col-xs-2">
-              <Button
-                type="button"
-                onClick={() => this.addEntry()}
-                aria-labelledby="action-heading"
-              >
+              <Button type="button" onClick={() => this.addEntry()} aria-labelledby="action-heading">
                 Add
               </Button>
             </div>
@@ -240,10 +220,7 @@ define(['underscore', 'react', 'react-bootstrap', 'prop-types'], function(
         <td>
           {text}
           {warning && (
-            <OverlayTrigger
-              placement="right"
-              overlay={<Tooltip id="warning-tooltip">{warning}</Tooltip>}
-            >
+            <OverlayTrigger placement="right" overlay={<Tooltip id="warning-tooltip">{warning}</Tooltip>}>
               <small className="text-warning" style={{ marginLeft: '1rem' }}>
                 <i className="fa fa-exclamation-triangle" aria-hidden="true" />
               </small>

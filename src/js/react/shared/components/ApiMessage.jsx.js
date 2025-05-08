@@ -1,8 +1,4 @@
-define(['react', 'react-bootstrap', 'prop-types'], function(
-  React,
-  { Alert },
-  PropTypes
-) {
+define(['react', 'react-bootstrap', 'prop-types'], function(React, { Alert }, PropTypes) {
   const TYPES = {
     pending: 'warning',
     error: 'danger',
@@ -21,8 +17,7 @@ define(['react', 'react-bootstrap', 'prop-types'], function(
         {error && (
           <span>
             <strong>
-              <i className="fa fa-exclamation-triangle" aria-hidden="true"></i>{' '}
-              Error:
+              <i className="fa fa-exclamation-triangle" aria-hidden="true" /> Error:
             </strong>{' '}
             {error}
           </span>

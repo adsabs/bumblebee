@@ -1,7 +1,4 @@
-define([
-  'js/widgets/network_vis/network_widget',
-  'js/components/api_targets',
-], function(NetworkWidget, ApiTargets) {
+define(['js/widgets/network_vis/network_widget', 'js/components/api_targets'], function(NetworkWidget, ApiTargets) {
   var options = {};
 
   options.endpoint = ApiTargets.SERVICE_AUTHOR_NETWORK;

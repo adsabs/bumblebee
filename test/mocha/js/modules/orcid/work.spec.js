@@ -1,5 +1,5 @@
 define([
-  'underscore',
+  'lodash/dist/lodash.compat',
   'js/modules/orcid/work'
 ], function (_, Work) {
 

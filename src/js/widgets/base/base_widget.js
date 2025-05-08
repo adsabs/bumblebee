@@ -1,4 +1,5 @@
 define([
+  'lodash/dist/lodash.compat',
   'backbone',
   'marionette',
   'js/components/api_query',
@@ -7,7 +8,7 @@ define([
   'js/components/api_targets',
   'js/mixins/dependon',
   'js/mixins/widget_state_manager',
-], function(Backbone, Marionette, ApiQuery, ApiRequest, WidgetMixin, ApiTargets, Dependon, WidgetStateManagerMixin) {
+], function(_, Backbone, Marionette, ApiQuery, ApiRequest, WidgetMixin, ApiTargets, Dependon, WidgetStateManagerMixin) {
   /**
    * Default PubSub based widget; the main functionality is inside
    *

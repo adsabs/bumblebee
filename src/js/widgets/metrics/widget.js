@@ -1,5 +1,6 @@
 define([
-  'underscore',
+  'lodash/dist/lodash.compat',
+  'backbone',
   'marionette',
   'd3',
   'js/widgets/base/base_widget',
@@ -9,18 +10,18 @@ define([
   'js/components/api_request',
   'js/components/api_query',
   'js/mixins/dependon',
-  'hbs!js/widgets/metrics/templates/metrics_container',
-  'hbs!js/widgets/metrics/templates/graph_template',
-  'hbs!js/widgets/metrics/templates/paper_table',
-  'hbs!js/widgets/metrics/templates/citations_table',
-  'hbs!js/widgets/metrics/templates/indices_table',
-  'hbs!js/widgets/metrics/templates/reads_table',
-  'bootstrap',
+  'js/widgets/metrics/templates/metrics_container.hbs',
+  'js/widgets/metrics/templates/graph_template.hbs',
+  'js/widgets/metrics/templates/paper_table.hbs',
+  'js/widgets/metrics/templates/citations_table.hbs',
+  'js/widgets/metrics/templates/indices_table.hbs',
+  'js/widgets/metrics/templates/reads_table.hbs',
   'js/components/api_feedback',
   'js/components/api_targets',
   './d3-tip',
 ], function(
   _,
+  Backbone,
   Marionette,
   d3,
   BaseWidget,
@@ -36,10 +37,8 @@ define([
   CitationsTableTemplate,
   IndicesTableTemplate,
   ReadsTableTemplate,
-  bs,
   ApiFeedback,
-  ApiTargets,
-  d3Tip
+  ApiTargets
 ) {
   /*
     NOTE: importing d3-tip from the metrics folder bc it is a modified file made to

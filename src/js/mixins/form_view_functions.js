@@ -1,4 +1,4 @@
-define(['underscore'], function(_) {
+define(['lodash/dist/lodash.compat', 'backbone', 'backbone-validation'], function(_, Backbone) {
   // some functions to be used by form views which auto-validate
   var formFunctions = {
     // for the view
@@ -21,8 +21,7 @@ define(['underscore'], function(_) {
       // don't need to reset because view will be disposed of after successful submit event
       this.submit = true;
       if (this.model.isValid(true)) {
-        var working =
-          '<i class="fa fa-lg fa-spinner fa-pulse" aria-hidden="true"></i> Working...';
+        var working = '<i class="fa fa-lg fa-spinner fa-pulse" aria-hidden="true"></i> Working...';
         this.trigger('submit-form', this.model);
         this.$('button[type=submit]')
           .prev('.help-block')

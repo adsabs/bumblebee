@@ -1,16 +1,16 @@
 define([
-  'underscore',
+  'lodash/dist/lodash.compat',
   'react',
   'redux',
   'react-redux',
-  'es6!../actions/index',
-  'es6!../constants/actionNames',
-  'es6!../components/ExportFormatControl.jsx',
-  'es6!../components/SelectionButtons.jsx',
-  'es6!../components/Row.jsx',
-  'es6!../components/Message.jsx',
-  'es6!../components/Loading.jsx',
-  'es6!../components/Closer.jsx',
+  'js/widgets/author_affiliation_tool/actions/index',
+  'js/widgets/author_affiliation_tool/constants/actionNames',
+  'js/widgets/author_affiliation_tool/components/ExportFormatControl.jsx',
+  'js/widgets/author_affiliation_tool/components/SelectionButtons.jsx',
+  'js/widgets/author_affiliation_tool/components/Row.jsx',
+  'js/widgets/author_affiliation_tool/components/Message.jsx',
+  'js/widgets/author_affiliation_tool/components/Loading.jsx',
+  'js/widgets/author_affiliation_tool/components/Closer.jsx',
 ], function(
   _,
   React,
@@ -42,16 +42,7 @@ define([
     });
 
   // actions
-  const {
-    toggleSelection,
-    toggleAll,
-    reset,
-    doExport,
-    closeWidget,
-    updateYear,
-    updateAuthor,
-    reload,
-  } = actions;
+  const { toggleSelection, toggleAll, reset, doExport, closeWidget, updateYear, updateAuthor, reload } = actions;
 
   /**
    * Main component
@@ -142,18 +133,7 @@ define([
     }
 
     render() {
-      const {
-        data,
-        showReload,
-        formats,
-        format,
-        message,
-        loading,
-        exporting,
-        year,
-        author,
-        currentYear,
-      } = this.props;
+      const { data, showReload, formats, format, message, loading, exporting, year, author, currentYear } = this.props;
 
       return (
         <div>
@@ -167,23 +147,17 @@ define([
               {!loading && (
                 <div>
                   <h4 className="col-xs-12 col-sm-6" style={{ marginTop: 0 }}>
-                    Viewing Affiliation Data For <strong>{data.length}</strong>{' '}
-                    Authors
+                    Viewing Affiliation Data For <strong>{data.length}</strong> Authors
                     <br />
                     <small>
-                      {year !== currentYear
-                        ? `From ${currentYear - year} to ${currentYear}`
-                        : ''}
+                      {year !== currentYear ? `From ${currentYear - year} to ${currentYear}` : ''}
                       {year !== currentYear && author !== 0 && ' | '}
                       {author !== 0 ? `${author} authors from each work` : ''}
                     </small>
                   </h4>
                   <div className="col-xs-12 col-sm-6">
                     <div className="col-xs-12 col-sm-offset-4 col-sm-8 no-padding-right">
-                      <div
-                        className="col-xs-3 text-right"
-                        style={{ marginTop: 4 }}
-                      >
+                      <div className="col-xs-3 text-right" style={{ marginTop: 4 }}>
                         <label htmlFor="max-author-select">Authors:</label>
                       </div>
                       <div className="col-xs-3 no-padding-right">
@@ -192,17 +166,12 @@ define([
                           className="form-control input-sm"
                           title="Select the number of authors from each article to be included (default is 3)"
                           value={author}
-                          onChange={(val) =>
-                            this.onAuthorChange(val.target.value)
-                          }
+                          onChange={(val) => this.onAuthorChange(val.target.value)}
                         >
                           {makeOptions([1, 2, 3, 4, 5, 10, 'All'], 0)}
                         </select>
                       </div>
-                      <div
-                        className="col-xs-3 text-right"
-                        style={{ marginTop: 4 }}
-                      >
+                      <div className="col-xs-3 text-right" style={{ marginTop: 4 }}>
                         <label htmlFor="year-select">Years:</label>
                       </div>
                       <div className="col-xs-3 no-padding-right">
@@ -211,9 +180,7 @@ define([
                           className="form-control input-sm"
                           title="Select the number of years to include in the results (default is 4)"
                           value={year}
-                          onChange={(val) =>
-                            this.onYearChange(val.target.value)
-                          }
+                          onChange={(val) => this.onYearChange(val.target.value)}
                         >
                           {makeOptions([1, 2, 3, 4, 5, 10, 'All'], 0)}
                         </select>
@@ -244,27 +211,14 @@ define([
                     />
                   </div>
                   <div className="col-xs-12 col-sm-2">
-                    <button
-                      className="btn btn-primary"
-                      onClick={() => this.doExport()}
-                      disabled={!!exporting}
-                    >
+                    <button className="btn btn-primary" onClick={() => this.doExport()} disabled={!!exporting}>
                       {/* If exporting, show a loading icon in the button */}
-                      {exporting ? (
-                        <i
-                          className="fa fa-spinner fa-fw fa-spin"
-                          aria-hidden="true"
-                        />
-                      ) : (
-                        'Export'
-                      )}
+                      {exporting ? <i className="fa fa-spinner fa-fw fa-spin" aria-hidden="true" /> : 'Export'}
                     </button>
                   </div>
                   <div className="col-xs-12 col-sm-4">
                     {/* Buttons that perform actions on the whole set */}
-                    <SelectionButtons
-                      onClick={(type) => this.onSelectionClick(type)}
-                    />
+                    <SelectionButtons onClick={(type) => this.onSelectionClick(type)} />
                   </div>
                 </div>
 
@@ -283,29 +237,15 @@ define([
                   {/* Map the data here into rows */}
                   {_.map(data, (d, i) => (
                     <div key={d.id}>
-                      <Row
-                        data={d}
-                        onChange={(el) => this.onCheckboxChange(d, el)}
-                      />
+                      <Row data={d} onChange={(el) => this.onCheckboxChange(d, el)} />
                       {data.length - 1 > i && <hr className="hr" />}
                     </div>
                   ))}
-                  {!showReload && _.isEmpty(data) && (
-                    <div className="text-center">No Results</div>
-                  )}
+                  {!showReload && _.isEmpty(data) && <div className="text-center">No Results</div>}
                   {showReload && (
                     <div className="text-center">
-                      <button
-                        onClick={() => this.doRefresh()}
-                        title="Retry"
-                        className="btn btn-default"
-                      >
-                        <i
-                          className={`fa fa-refresh ${
-                            this.state.reloadSpin ? 'fa-spin' : ''
-                          }`}
-                        />{' '}
-                        Retry
+                      <button onClick={() => this.doRefresh()} title="Retry" className="btn btn-default">
+                        <i className={`fa fa-refresh ${this.state.reloadSpin ? 'fa-spin' : ''}`} /> Retry
                       </button>
                     </div>
                   )}

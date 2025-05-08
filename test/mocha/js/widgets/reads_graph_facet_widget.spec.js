@@ -1,8 +1,9 @@
 define([
+  'lodash/dist/lodash.compat',
   'js/widgets/facet/factory',
   'js/components/api_response',
   'js/wraps/graph_tabs',
-], function(FacetFactory, ApiResponse, GraphTabs) {
+], function(_, FacetFactory, ApiResponse, GraphTabs) {
   var testJSON = {
     responseHeader: {
       status: 0,

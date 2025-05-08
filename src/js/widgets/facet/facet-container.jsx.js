@@ -2,17 +2,10 @@ define([
   'react',
   'react-redux',
   'prop-types',
-  'es6!./toggle_list.jsx',
-  'es6!./facet-dropdown.jsx',
-  './reducers',
-], function(
-  React,
-  { connect },
-  PropTypes,
-  ToggleList,
-  Dropdown,
-  { getActiveFacets }
-) {
+  'js/widgets/facet/toggle_list.jsx',
+  'js/widgets/facet/facet-dropdown.jsx',
+  'js/widgets/facet/reducers',
+], function(React, { connect }, PropTypes, ToggleList, Dropdown, { getActiveFacets }) {
   const ContainerComponent = ({
     activeFacets,
     reduxState: state,
@@ -60,13 +53,38 @@ define([
   ContainerComponent.defaultProps = {};
 
   ContainerComponent.propTypes = {
-    activeFacets: PropTypes.arrayOf(PropTypes.object).isRequired,
+    activeFacets: PropTypes.arrayOf(PropTypes.shape({})).isRequired,
     reduxState: PropTypes.shape({
-      config: PropTypes.object,
-      state: PropTypes.object,
-      pagination: PropTypes.object,
-      children: PropTypes.array,
-      facets: PropTypes.object,
+      config: PropTypes.shape({
+        preprocessors: PropTypes.arrayOf(PropTypes.func),
+        hierMaxLevels: PropTypes.number,
+        facetField: PropTypes.string,
+        openByDefault: PropTypes.bool,
+        facetTitle: PropTypes.string,
+      }),
+      state: PropTypes.shape({
+        open: PropTypes.bool,
+        visible: PropTypes.number,
+        selected: PropTypes.arrayOf(PropTypes.string),
+      }),
+      pagination: PropTypes.shape({
+        state: PropTypes.string,
+        finished: PropTypes.bool,
+      }),
+      children: PropTypes.arrayOf(PropTypes.string),
+      facets: PropTypes.objectOf(
+        PropTypes.shape({
+          state: PropTypes.shape({
+            open: PropTypes.bool,
+            visible: PropTypes.number,
+          }),
+          pagination: PropTypes.shape({
+            state: PropTypes.string,
+            finished: PropTypes.bool,
+          }),
+          children: PropTypes.arrayOf(PropTypes.string),
+        })
+      ),
     }).isRequired,
     showMoreFacets: PropTypes.func.isRequired,
     resetVisibleFacets: PropTypes.func.isRequired,

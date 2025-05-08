@@ -1,5 +1,5 @@
 define([
-  'underscore',
+  'lodash/dist/lodash.compat',
   'js/bugutils/minimal_pubsub',
   'js/mixins/widget_state_manager',
 ], function(_, MinimalPubsub, stateManager) {

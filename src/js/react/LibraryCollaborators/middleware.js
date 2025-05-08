@@ -1,13 +1,6 @@
-define(['underscore', './actions', 'js/react/shared/helpers'], function(
+define(['lodash/dist/lodash.compat', './actions', 'js/react/shared/helpers'], function(
   _,
-  {
-    GET_COLLABORATORS,
-    SET_COLLABORATORS,
-    ADD_COLLABORATOR,
-    EDIT_COLLABORATOR,
-    SET_LIBRARY_DATA,
-    getCollaborators,
-  },
+  { GET_COLLABORATORS, SET_COLLABORATORS, ADD_COLLABORATOR, EDIT_COLLABORATOR, SET_LIBRARY_DATA, getCollaborators },
   { delay, middleware, apiSuccess, parseScope }
 ) {
   const collaborators = middleware(({ next, action, dispatch, getState }) => {

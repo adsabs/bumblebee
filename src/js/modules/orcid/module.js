@@ -18,12 +18,12 @@
  *
  */
 
-define([
-  'backbone',
-  'underscore',
-  'js/components/generic_module',
-  './orcid_api',
-], function(Backbone, _, GenericModule, OrcidApi) {
+define(['backbone', 'lodash/dist/lodash.compat', 'js/components/generic_module', './orcid_api'], function(
+  Backbone,
+  _,
+  GenericModule,
+  OrcidApi
+) {
   var OrcidModule = GenericModule.extend({
     activate: function(beehive) {
       var config = beehive.getObject('DynamicConfig');
@@ -31,16 +31,13 @@ define([
         throw new Error('DynamicConfig is not available to Orcid module');
       }
 
-      var redirectUrlBase =
-        config.orcidRedirectUrlBase || location.protocol + '//' + location.host;
+      var redirectUrlBase = config.orcidRedirectUrlBase || location.protocol + '//' + location.host;
       var orcidClientId = config.orcidClientId;
       var orcidApiEndpoint = config.orcidApiEndpoint;
       var orcidLoginEndpoint = config.orcidLoginEndpoint;
 
       if (!orcidClientId || !orcidApiEndpoint) {
-        throw new Error(
-          'Missing configuration for ORCID module: orcidApiEndpoint, orcidClientId'
-        );
+        throw new Error('Missing configuration for ORCID module: orcidApiEndpoint, orcidClientId');
       }
 
       // TODO:rca - clean up this

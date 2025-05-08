@@ -1,9 +1,10 @@
 define([
-  './base_graph',
-  'hbs!js/widgets/facet/graph-facet/templates/h-index-graph-legend',
-  'hbs!js/widgets/facet/graph-facet/templates/h-index-slider-window',
+  'lodash/dist/lodash.compat',
+  'js/widgets/facet/graph-facet/base_graph',
+  'js/widgets/facet/graph-facet/templates/h-index-graph-legend.hbs',
+  'js/widgets/facet/graph-facet/templates/h-index-slider-window.hbs',
   'marionette',
-], function(BaseGraphView, legendTemplate, sliderWindowTemplate, Marionette) {
+], function(_, BaseGraphView, legendTemplate, sliderWindowTemplate, Marionette) {
   var HIndexGraphView = BaseGraphView.extend({
     legendTemplate: legendTemplate,
 
@@ -99,10 +100,7 @@ define([
       this.innerChart = chart
         .append('g')
         .classed('inner-chart', true)
-        .attr(
-          'transform',
-          'translate(' + this.margin.left + ',' + this.margin.top + ')'
-        );
+        .attr('transform', 'translate(' + this.margin.left + ',' + this.margin.top + ')');
 
       this.innerChart
         .append('g')
@@ -436,16 +434,12 @@ define([
     },
 
     addSliderWindows: function() {
-      this.$('.slider-data').html(
-        sliderWindowTemplate({ pastTenseTitle: this.pastTenseTitle })
-      );
+      this.$('.slider-data').html(sliderWindowTemplate({ pastTenseTitle: this.pastTenseTitle }));
     },
 
     convertGraphDataToCSV: function() {
       let data = 'data:text/csv;charset=utf-8,';
-      data += `Total, ${Number(
-        this.model.get('statsCount').replace(/,/g, '')
-      )}\n`;
+      data += `Total, ${Number(this.model.get('statsCount').replace(/,/g, ''))}\n`;
       data += `Article No., ${this.name}, Refereed`;
       this.model.get('graphData').forEach((obj) => {
         data += `\n${obj.x},${obj.y},${obj.refereed}`;
@@ -478,9 +472,7 @@ define([
 
     submitFacet: function() {
       // find citation limit
-      var limit = this.model.get('graphData')[
-        this.$('.slider').slider('value') - 1
-      ].y;
+      var limit = this.model.get('graphData')[this.$('.slider').slider('value') - 1].y;
       this.trigger('facet-applied', '[' + limit + ' TO 9999999]');
     },
   });

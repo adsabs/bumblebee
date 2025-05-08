@@ -2,12 +2,12 @@
  * Created by rchyla on 3/28/14.
  */
 
-define([
-  'underscore',
-  'backbone',
-  'js/components/facade',
-  'js/components/default_request',
-], function(_, Backbone, Facade, ApiRequestImpl) {
+define(['lodash/dist/lodash.compat', 'backbone', 'js/components/facade', 'js/components/default_request'], function(
+  _,
+  Backbone,
+  Facade,
+  ApiRequestImpl
+) {
   var hardenedInterface = {
     // add makes no sense with request
     get: 'get a key',
@@ -38,10 +38,7 @@ define([
     if (data instanceof ApiRequestImpl) {
       this.innerRequest = new Facade(hardenedInterface, data);
     } else {
-      this.innerRequest = new Facade(
-        hardenedInterface,
-        new ApiRequestImpl(data, options)
-      );
+      this.innerRequest = new Facade(hardenedInterface, new ApiRequestImpl(data, options));
     }
   };
 

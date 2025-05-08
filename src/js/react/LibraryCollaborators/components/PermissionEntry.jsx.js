@@ -2,26 +2,14 @@ define([
   'react',
   'prop-types',
   'react-bootstrap',
-  '../constants',
-  'es6!./ManageButton.jsx',
-], function(
-  React,
-  PropTypes,
-  { Button, Modal },
-  { Permissions },
-  ManageButton
-) {
+  'js/react/LibraryCollaborators/constants',
+  'js/react/LibraryCollaborators/components/ManageButton.jsx',
+], function(React, PropTypes, { Button, Modal }, { Permissions }, ManageButton) {
   const ConfirmModal = ({ show, onHide, onOk, children }) => {
     return (
-      <Modal
-        show={show}
-        onHide={onHide}
-        aria-labelledby="revoke-access-confirm__title"
-      >
+      <Modal show={show} onHide={onHide} aria-labelledby="revoke-access-confirm__title">
         <Modal.Header>
-          <Modal.Title id="revoke-access-confirm__title">
-            Confirm Revoke Access
-          </Modal.Title>
+          <Modal.Title id="revoke-access-confirm__title">Confirm Revoke Access</Modal.Title>
         </Modal.Header>
         <Modal.Body>{children}</Modal.Body>
         <Modal.Footer>
@@ -52,12 +40,8 @@ define([
         permission,
       };
       this.onManagePermissions = this.onManagePermissions.bind(this);
-      this.openConfirmRevocationModal = this.openConfirmRevocationModal.bind(
-        this
-      );
-      this.closeConfirmRevocationModal = this.closeConfirmRevocationModal.bind(
-        this
-      );
+      this.openConfirmRevocationModal = this.openConfirmRevocationModal.bind(this);
+      this.closeConfirmRevocationModal = this.closeConfirmRevocationModal.bind(this);
       this.doRevocation = this.doRevocation.bind(this);
     }
 
@@ -84,24 +68,15 @@ define([
         <tr>
           <td>
             <span>
-              <i className="fa fa-user-circle-o" aria-hidden="true" />{' '}
-              {this.state.email}
+              <i className="fa fa-user-circle-o" aria-hidden="true" /> {this.state.email}
             </span>
           </td>
           <td>
-            <ManageButton
-              permission={this.state.permission}
-              onChange={this.onManagePermissions}
-            />
+            <ManageButton permission={this.state.permission} onChange={this.onManagePermissions} />
           </td>
           <td style={{ display: 'grid', justifyContent: 'end' }}>
-            <Button
-              bsStyle="danger"
-              bsSize="sm"
-              onClick={this.openConfirmRevocationModal}
-            >
-              Revoke Access{' '}
-              <span className="sr-only">for {this.state.email}</span>
+            <Button bsStyle="danger" bsSize="sm" onClick={this.openConfirmRevocationModal}>
+              Revoke Access <span className="sr-only">for {this.state.email}</span>
             </Button>
           </td>
           <ConfirmModal
@@ -110,8 +85,7 @@ define([
             onOk={this.doRevocation}
           >
             <p>
-              This will revoke all permissions for{' '}
-              <strong>{this.state.email}</strong>.
+              This will revoke all permissions for <strong>{this.state.email}</strong>.
             </p>
             <p>Are you sure?</p>
           </ConfirmModal>

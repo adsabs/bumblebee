@@ -1,4 +1,4 @@
-define(['underscore', 'es6!../modules/api', 'es6!../modules/ui'], function(
+define(['lodash', 'js/widgets/resources/redux/modules/api', 'js/widgets/resources/redux/modules/ui'], function(
   _,
   api,
   ui
@@ -109,9 +109,7 @@ define(['underscore', 'es6!../modules/api', 'es6!../modules/ui'], function(
    * Processes incoming response from server and sends the data off to the
    * link generator, finally dispatching the parsed sources
    */
-  const processResponse = (ctx, { dispatch, getState }) => (next) => (
-    action
-  ) => {
+  const processResponse = (ctx, { dispatch, getState }) => (next) => (action) => {
     next(action);
     if (action.type === RECEIVED_RESPONSE) {
       // update the link server
@@ -143,10 +141,7 @@ define(['underscore', 'es6!../modules/api', 'es6!../modules/ui'], function(
             dispatch({ type: SET_DATA_PRODUCTS, result: data.dataProducts });
           }
 
-          if (
-            data.dataProducts.length === 0 &&
-            data.fullTextSources.length === 0
-          ) {
+          if (data.dataProducts.length === 0 && data.fullTextSources.length === 0) {
             dispatch({ type: SET_NO_RESULTS, result: true });
           }
 
@@ -175,13 +170,7 @@ define(['underscore', 'es6!../modules/api', 'es6!../modules/ui'], function(
    * binds it's first argument to the first argument of the middleware function
    * returns the wrapped middleware function
    */
-  const withContext = (...fns) => (context) =>
-    fns.map((fn) => _.partial(fn, context));
+  const withContext = (...fns) => (context) => fns.map((fn) => _.partial(fn, context));
 
-  return withContext(
-    displayDocuments,
-    processResponse,
-    fetchData,
-    sendAnalytics
-  );
+  return withContext(displayDocuments, processResponse, fetchData, sendAnalytics);
 });

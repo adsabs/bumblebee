@@ -1,5 +1,5 @@
 define([
-    'underscore',
+    'lodash/dist/lodash.compat',
     'js/mixins/add_stable_index_to_collection',
     'js/components/api_response',
     '../widgets/test_json/test1'

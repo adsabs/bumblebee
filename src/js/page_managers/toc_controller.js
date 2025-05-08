@@ -55,44 +55,44 @@ define([
 
       var self = this;
       BasicPageManagerController.prototype.assemble
-        .apply(this, arguments)
-        .done(function() {
-          var tocTemplate = Marionette.getOption(self, 'TOCTemplate');
+      .apply(this, arguments)
+      .done(function() {
+        var tocTemplate = Marionette.getOption(self, 'TOCTemplate');
 
-          if (self.TOCEvents) {
-            // initiate the TOC view
-            self.widgets.tocWidget = new TOCWidget({
-              template: tocTemplate,
-              events: Marionette.getOption(self, 'TOCEvents'),
-              navConfig: Marionette.getOption(self, 'navConfig'),
-            });
-          } else {
-            // initiate the TOC view
-            self.widgets.tocWidget = new TOCWidget({
-              template: tocTemplate,
-              navConfig: Marionette.getOption(self, 'navConfig'),
-            });
-          }
+        if (self.TOCEvents) {
+          // initiate the TOC view
+          self.widgets.tocWidget = new TOCWidget({
+            template: tocTemplate,
+            events: Marionette.getOption(self, 'TOCEvents'),
+            navConfig: Marionette.getOption(self, 'navConfig'),
+          });
+        } else {
+          // initiate the TOC view
+          self.widgets.tocWidget = new TOCWidget({
+            template: tocTemplate,
+            navConfig: Marionette.getOption(self, 'navConfig'),
+          });
+        }
 
-          // insert the TOC nav view into its slot
-          self.view
-            .$('.nav-container')
-            .append(self.widgets.tocWidget.render().el);
+        // insert the TOC nav view into its slot
+        self.view
+        .$('.nav-container')
+        .append(self.widgets.tocWidget.render().el);
 
-          _.each(
-            _.keys(self.widgets),
-            function(w) {
-              self.listenTo(
-                this.widgets[w],
-                'page-manager-event',
-                _.bind(this.onPageManagerEvent, this, this.widgets[w])
-              );
-              self.broadcast('page-manager-message', 'new-widget', w);
-            },
-            self
-          );
-          defer.resolve();
-        });
+        _.each(
+          _.keys(self.widgets),
+          function(w) {
+            self.listenTo(
+              this.widgets[w],
+              'page-manager-event',
+              _.bind(this.onPageManagerEvent, this, this.widgets[w])
+            );
+            self.broadcast('page-manager-message', 'new-widget', w);
+          },
+          self
+        );
+        defer.resolve();
+      });
 
       return defer.promise();
     },

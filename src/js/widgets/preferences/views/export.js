@@ -1,7 +1,7 @@
 define([
-  'underscore',
+  'lodash/dist/lodash.compat',
   'marionette',
-  'hbs!js/widgets/preferences/templates/export',
+  'js/widgets/preferences/templates/export.hbs',
   'js/widgets/config',
 ], function(_, Marionette, ExportTemplate, config) {
   var DEFAULTS = {
@@ -12,30 +12,18 @@ define([
     addCustomFormatOptions: [],
     bibtexMaxAuthors: {
       initialValue: 10,
-      initialOptions: [
-        ..._.range(1, 10, 1),
-        ..._.range(10, 110, 10, true),
-        'all',
-      ],
+      initialOptions: [..._.range(1, 10, 1), ..._.range(10, 110, 10, true), 'all'],
     },
     bibtexKeyFormat: {
       initialValue: '',
     },
     bibtexJournalFormat: {
       initialValue: 'Use AASTeX macros',
-      initialOptions: [
-        'Use AASTeX macros',
-        'Use Journal Abbreviations',
-        'Use Full Journal Name',
-      ],
+      initialOptions: ['Use AASTeX macros', 'Use Journal Abbreviations', 'Use Full Journal Name'],
     },
     bibtexABSMaxAuthors: {
       initialValue: 10,
-      initialOptions: [
-        ..._.range(1, 10, 1),
-        ..._.range(10, 110, 10, true),
-        'all',
-      ],
+      initialOptions: [..._.range(1, 10, 1), ..._.range(10, 110, 10, true), 'all'],
     },
     bibtexABSKeyFormat: {
       initialValue: '',
@@ -48,6 +36,7 @@ define([
       initialValue: 200,
       initialOptions: [..._.range(1, 11, 1), ..._.range(100, 600, 100)],
     },
+    loading: false,
   };
 
   const watchedProps = [
@@ -65,32 +54,16 @@ define([
   var ExportView = Marionette.ItemView.extend({
     initialize: function() {
       // Get the latest value from the incoming model, or just take the default
-      var exportFormat =
-        this.model.get('defaultExportFormat') ||
-        DEFAULTS.exportFormat.initialValue;
-      var addCustomFormatOptions =
-        this.model.get('customFormats') || DEFAULTS.addCustomFormatOptions;
-      var bibtexKeyFormat =
-        this.model.get('bibtexKeyFormat') ||
-        DEFAULTS.bibtexKeyFormat.initialValue;
-      var bibtexJournalFormat =
-        this.model.get('bibtexJournalFormat') ||
-        DEFAULTS.bibtexJournalFormat.initialValue;
-      var bibtexMaxAuthors =
-        this.model.get('bibtexMaxAuthors') ||
-        DEFAULTS.bibtexMaxAuthors.initialValue;
-      var bibtexABSKeyFormat =
-        this.model.get('bibtexABSKeyFormat') ||
-        DEFAULTS.bibtexABSKeyFormat.initialValue;
-      var bibtexABSMaxAuthors =
-        this.model.get('bibtexABSMaxAuthors') ||
-        DEFAULTS.bibtexABSMaxAuthors.initialValue;
-      var bibtexAuthorCutoff =
-        this.model.get('bibtexAuthorCutoff') ||
-        DEFAULTS.bibtexAuthorCutoff.initialValue;
+      var exportFormat = this.model.get('defaultExportFormat') || DEFAULTS.exportFormat.initialValue;
+      var addCustomFormatOptions = this.model.get('customFormats') || DEFAULTS.addCustomFormatOptions;
+      var bibtexKeyFormat = this.model.get('bibtexKeyFormat') || DEFAULTS.bibtexKeyFormat.initialValue;
+      var bibtexJournalFormat = this.model.get('bibtexJournalFormat') || DEFAULTS.bibtexJournalFormat.initialValue;
+      var bibtexMaxAuthors = this.model.get('bibtexMaxAuthors') || DEFAULTS.bibtexMaxAuthors.initialValue;
+      var bibtexABSKeyFormat = this.model.get('bibtexABSKeyFormat') || DEFAULTS.bibtexABSKeyFormat.initialValue;
+      var bibtexABSMaxAuthors = this.model.get('bibtexABSMaxAuthors') || DEFAULTS.bibtexABSMaxAuthors.initialValue;
+      var bibtexAuthorCutoff = this.model.get('bibtexAuthorCutoff') || DEFAULTS.bibtexAuthorCutoff.initialValue;
       var bibtexABSAuthorCutoff =
-        this.model.get('bibtexABSAuthorCutoff') ||
-        DEFAULTS.bibtexABSAuthorCutoff.initialValue;
+        this.model.get('bibtexABSAuthorCutoff') || DEFAULTS.bibtexABSAuthorCutoff.initialValue;
 
       // must clone the props that will get mutated
       this.model.set({
@@ -105,28 +78,19 @@ define([
         bibtexJournalFormatSelected: _.clone(bibtexJournalFormat),
         bibtexMaxAuthorsDefault: DEFAULTS.bibtexMaxAuthors.initialValue,
         bibtexMaxAuthorsOptions: DEFAULTS.bibtexMaxAuthors.initialOptions,
-        bibtexMaxAuthorsSelected: this._convertToNumber(
-          _.clone(bibtexMaxAuthors)
-        ),
+        bibtexMaxAuthorsSelected: this._convertToNumber(_.clone(bibtexMaxAuthors)),
         bibtexABSKeyFormatDefault: DEFAULTS.bibtexABSKeyFormat.initialValue,
         bibtexABSKeyFormatSelected: _.clone(bibtexABSKeyFormat),
         bibtexABSMaxAuthorsDefault: DEFAULTS.bibtexABSMaxAuthors.initialValue,
         bibtexABSMaxAuthorsOptions: DEFAULTS.bibtexABSMaxAuthors.initialOptions,
-        bibtexABSMaxAuthorsSelected: this._convertToNumber(
-          _.clone(bibtexABSMaxAuthors)
-        ),
+        bibtexABSMaxAuthorsSelected: this._convertToNumber(_.clone(bibtexABSMaxAuthors)),
         bibtexAuthorCutoffDefault: DEFAULTS.bibtexAuthorCutoff.initialValue,
         bibtexAuthorCutoffOptions: DEFAULTS.bibtexAuthorCutoff.initialOptions,
-        bibtexAuthorCutoffSelected: this._convertToNumber(
-          _.clone(bibtexAuthorCutoff)
-        ),
-        bibtexABSAuthorCutoffDefault:
-          DEFAULTS.bibtexABSAuthorCutoff.initialValue,
-        bibtexABSAuthorCutoffOptions:
-          DEFAULTS.bibtexABSAuthorCutoff.initialOptions,
-        bibtexABSAuthorCutoffSelected: this._convertToNumber(
-          _.clone(bibtexABSAuthorCutoff)
-        ),
+        bibtexAuthorCutoffSelected: this._convertToNumber(_.clone(bibtexAuthorCutoff)),
+        bibtexABSAuthorCutoffDefault: DEFAULTS.bibtexABSAuthorCutoff.initialValue,
+        bibtexABSAuthorCutoffOptions: DEFAULTS.bibtexABSAuthorCutoff.initialOptions,
+        bibtexABSAuthorCutoffSelected: this._convertToNumber(_.clone(bibtexABSAuthorCutoff)),
+        loading: DEFAULTS.loading,
       });
       this.model.trigger('change');
 
@@ -197,30 +161,20 @@ define([
       this.syncModel();
       this.trigger('change:exportSettings', {
         defaultExportFormat: this.model.get('exportFormatSelected'),
-        customFormats: _.map(this.model.get('addCustomFormatOptions'), function(
-          i
-        ) {
+        customFormats: _.map(this.model.get('addCustomFormatOptions'), function(i) {
           return _.pick(i, ['id', 'name', 'code']);
         }),
         bibtexMaxAuthors: this._convertToString(
-          this.model.get('bibtexMaxAuthorsSelected') === 'all'
-            ? 0
-            : this.model.get('bibtexMaxAuthorsSelected')
+          this.model.get('bibtexMaxAuthorsSelected') === 'all' ? 0 : this.model.get('bibtexMaxAuthorsSelected')
         ),
         bibtexKeyFormat: this.model.get('bibtexKeyFormatSelected'),
         bibtexJournalFormat: this.model.get('bibtexJournalFormatSelected'),
         bibtexABSMaxAuthors: this._convertToString(
-          this.model.get('bibtexABSMaxAuthorsSelected') === 'all'
-            ? 0
-            : this.model.get('bibtexABSMaxAuthorsSelected')
+          this.model.get('bibtexABSMaxAuthorsSelected') === 'all' ? 0 : this.model.get('bibtexABSMaxAuthorsSelected')
         ),
         bibtexABSKeyFormat: this.model.get('bibtexABSKeyFormatSelected'),
-        bibtexAuthorCutoff: this._convertToString(
-          this.model.get('bibtexAuthorCutoffSelected')
-        ),
-        bibtexABSAuthorCutoff: this._convertToString(
-          this.model.get('bibtexABSAuthorCutoffSelected')
-        ),
+        bibtexAuthorCutoff: this._convertToString(this.model.get('bibtexAuthorCutoffSelected')),
+        bibtexABSAuthorCutoff: this._convertToString(this.model.get('bibtexABSAuthorCutoffSelected')),
       });
       return false;
     },

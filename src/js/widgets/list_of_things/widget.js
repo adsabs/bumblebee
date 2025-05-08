@@ -14,6 +14,7 @@
  */
 
 define([
+  'lodash/dist/lodash.compat',
   'marionette',
   'backbone',
   'utils',
@@ -21,12 +22,13 @@ define([
   'js/components/api_query',
   'js/components/api_feedback',
   'js/widgets/base/base_widget',
-  'hbs!js/widgets/list_of_things/templates/item-template',
-  'hbs!js/widgets/list_of_things/templates/results-container-template',
+  'js/widgets/list_of_things/templates/item-template.hbs',
+  'js/widgets/list_of_things/templates/results-container-template.hbs',
   'js/mixins/add_stable_index_to_collection',
   './model',
   './paginated_view',
 ], function(
+  _,
   Marionette,
   Backbone,
   utils,
@@ -44,17 +46,7 @@ define([
     initialize: function(options) {
       options = options || {};
 
-      _.defaults(
-        options,
-        _.pick(this, [
-          'view',
-          'collection',
-          'pagination',
-          'model',
-          'description',
-          'childView',
-        ])
-      );
+      _.defaults(options, _.pick(this, ['view', 'collection', 'pagination', 'model', 'description', 'childView']));
 
       // widget.reset will restore these default pagination settings
       // for now, it doesn't make sense to pass them as options
@@ -128,10 +120,7 @@ define([
       _.bindAll(this, ['updatePaginationPreferences']);
       const ps = this.getPubSub();
 
-      if (
-        this.getBeeHive().getObject('User') &&
-        this.getBeeHive().getObject('User').getLocalStorage
-      ) {
+      if (this.getBeeHive().getObject('User') && this.getBeeHive().getObject('User').getLocalStorage) {
         var perPage = this.getBeeHive()
           .getObject('User')
           .getLocalStorage().perPage;
@@ -206,11 +195,7 @@ define([
     },
 
     updatePaginationPreferences: function(event, data) {
-      if (
-        event == 'user_info_change' &&
-        data.perPage &&
-        data.perPage !== this.pagination.perPage
-      ) {
+      if (event == 'user_info_change' && data.perPage && data.perPage !== this.pagination.perPage) {
         // update per-page value
         this.updatePagination({
           perPage: data.perPage,
@@ -257,9 +242,7 @@ define([
       var numFound = apiResponse.has('response.numFound')
         ? apiResponse.get('response.numFound')
         : this.hiddenCollection.length;
-      var start = apiResponse.has('response.start')
-        ? apiResponse.get('response.start')
-        : this.model.get('start');
+      var start = apiResponse.has('response.start') ? apiResponse.get('response.start') : this.model.get('start');
       var pagination = this.getPaginationInfo(apiResponse, docs);
       docs = this.processDocs(apiResponse, docs, pagination);
       var self = this;
@@ -293,10 +276,7 @@ define([
           // we must update the model before updating collection because the showRange
           // can automatically start fetching documents
           this.model.set(pagination);
-          this.hiddenCollection.showRange(
-            pagination.showRange[0],
-            pagination.showRange[1]
-          );
+          this.hiddenCollection.showRange(pagination.showRange[0], pagination.showRange[1]);
         }
         this.view.collection.reset(this.hiddenCollection.getVisibleModels());
         this.view.model.set('query', false);
@@ -314,25 +294,20 @@ define([
         numFound: numFound,
       });
 
-      var allLoaded =
-        this.model.has('perPage') &&
-        this.model.get('perPage') === this.collection.length;
-      var isLastPage =
-        this.model.has('pageData') &&
-        this.model.get('pageData').nextPossible === false;
+      var allLoaded = this.model.has('perPage') && this.model.get('perPage') === this.collection.length;
+      var isLastPage = this.model.has('pageData') && this.model.get('pageData').nextPossible === false;
       var noItems = this.view.collection.length === 0;
 
       // finally, loading view (from pagination template) can be removed or added
-      if (
-        noItems ||
-        allLoaded ||
-        (isLastPage && numFound <= start + docs.length)
-      ) {
+      if (noItems || allLoaded || (isLastPage && numFound <= start + docs.length)) {
         this.model.set('loading', false);
         this.updateState(this.STATES.IDLE);
       } else {
         this.model.set('loading', true);
       }
+
+      // force a re-render to update the view
+      this.view.render();
     },
 
     extractDocs: function(apiResponse) {
@@ -353,8 +328,7 @@ define([
 
       // this information is important for calculation of pages
       var numFound = apiResponse.get('response.numFound') || 0;
-      var perPage =
-        this.model.get('perPage') || (q.has('rows') ? q.get('rows')[0] : 10);
+      var perPage = this.model.get('perPage') || (q.has('rows') ? q.get('rows')[0] : 10);
       var start = this.model.get('start') || 0;
 
       // compute the page number of this request
@@ -419,18 +393,13 @@ define([
 
     updateLocalStorage: function(options) {
       // if someone has selected perPage, save it in to localStorage
-      if (
-        options.hasOwnProperty('perPage') &&
-        _.contains([25, 50, 100, 200, 500], options.perPage)
-      ) {
+      if (options.hasOwnProperty('perPage') && _.contains([25, 50, 100, 200, 500], options.perPage)) {
         this.getBeeHive()
           .getObject('User')
           .setLocalStorage({
             perPage: options.perPage,
           });
-        console.log(
-          "set user's page preferences in localStorage: " + options.perPage
-        );
+        console.log("set user's page preferences in localStorage: " + options.perPage);
       }
       // updatePagination will be called after localStorage triggers an event
     },
@@ -484,11 +453,7 @@ define([
         }
       } else {
         // otherwise compute the page using the start and perPage value
-        if (
-          _.isEmpty(this.collection.models) &&
-          _.isNumber(start) &&
-          _.isNumber(opts.perPage)
-        ) {
+        if (_.isEmpty(this.collection.models) && _.isNumber(start) && _.isNumber(opts.perPage)) {
           update.page = PaginationMixin.getPageVal(start, opts.perPage);
         } else if (_.isNumber(start) && _.isNumber(opts.perPage)) {
           var resIdx = this.collection.models[0].get('resultsIndex');
@@ -497,27 +462,18 @@ define([
       }
 
       var page = _.isNumber(update.page) ? update.page : this.model.get('page');
-      var perPage = _.isNumber(update.perPage)
-        ? update.perPage
-        : this.model.get('perPage');
-      var numFound = _.isNumber(update.numFound)
-        ? update.numFound
-        : this.model.get('numFound');
+      var perPage = _.isNumber(update.perPage) ? update.perPage : this.model.get('perPage');
+      var numFound = _.isNumber(update.numFound) ? update.numFound : this.model.get('numFound');
 
       // once the hash is updated, this is called again, return here so we don't recompute, and only on results page
-      const frag =
-        Backbone.history &&
-        Backbone.history.getFragment &&
-        Backbone.history.getFragment();
+      const frag = Backbone.history && Backbone.history.getFragment && Backbone.history.getFragment();
       if (
         '' + page !== (_.isArray(pageParam) && pageParam[0]) &&
         opts.updateHash &&
         /search/.test(frag) &&
         utils.qs('p_', frag) !== '' + page
       ) {
-        Backbone.history &&
-          Backbone.history.navigate &&
-          Backbone.history.navigate(utils.updateHash('p_', page, frag));
+        Backbone.history && Backbone.history.navigate && Backbone.history.navigate(utils.updateHash('p_', page, frag));
       }
 
       // compute the new start and pageData values
@@ -528,13 +484,9 @@ define([
       // start updating
       this.model.set(update);
       this.view.render();
-      this.hiddenCollection.showRange(
-        update.showRange[0],
-        update.showRange[1],
-        {
-          silent: !!opts.silentIndexUpdate,
-        }
-      );
+      this.hiddenCollection.showRange(update.showRange[0], update.showRange[1], {
+        silent: !!opts.silentIndexUpdate,
+      });
       this.collection.reset(this.hiddenCollection.getVisibleModels());
 
       // finally, scroll back to the top
@@ -570,12 +522,7 @@ define([
             var perPage = this.model.get('perPage');
             var currStart = this.model.get('start');
 
-            if (
-              !numFound ||
-              start >= numFound ||
-              (start !== currStart && currStart > 0)
-            )
-              return; // ignore this
+            if (!numFound || start >= numFound || (start !== currStart && currStart > 0)) return; // ignore this
 
             var q = this.model.get('currentQuery').clone();
             q.unset('hl');
@@ -621,10 +568,7 @@ define([
       this.executeRequest(req);
     },
     loadHighlights() {
-      const {
-        currentEndIndex,
-        currentStartIndex: start,
-      } = this.hiddenCollection;
+      const { currentEndIndex, currentStartIndex: start } = this.hiddenCollection;
 
       const totalToGet = currentEndIndex - start + 1;
 

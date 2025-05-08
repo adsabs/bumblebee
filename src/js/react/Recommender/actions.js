@@ -10,7 +10,7 @@ define([], function() {
     SET_TAB: 'SET_TAB',
     SET_ORACLE_TARGET: 'SET_ORACLE_TARGET',
     SET_QUERY_PARAMS: 'SET_QUERY_PARAMS',
-    UPDATE_USERNAME: 'UPDATE_USERNAME'
+    UPDATE_USERNAME: 'UPDATE_USERNAME',
   };
 
   const actionCreators = {

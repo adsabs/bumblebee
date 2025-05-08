@@ -1,10 +1,12 @@
 define([
+  'lodash/dist/lodash.compat',
   'jquery',
   'js/widgets/alerts/widget',
   'js/widgets/base/base_widget',
   'js/bugutils/minimal_pubsub',
   'js/components/alerts'
 ], function (
+  _,
   $,
   AlertsWidget,
   BaseWidget,

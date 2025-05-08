@@ -1,21 +1,13 @@
 define([
+  'lodash/dist/lodash.compat',
   'marionette',
   'js/components/api_query',
   'js/components/api_targets',
   'js/components/api_request',
   'js/widgets/base/base_widget',
-  'hbs!js/widgets/recommender/templates/recommender_template',
-  'bootstrap',
+  'js/widgets/recommender/templates/recommender_template.hbs',
   'analytics',
-], function(
-  Marionette,
-  ApiQuery,
-  ApiTargets,
-  ApiRequest,
-  BaseWidget,
-  RecommenderTemplate,
-  analytics
-) {
+], function(_, Marionette, ApiQuery, ApiTargets, ApiRequest, BaseWidget, RecommenderTemplate, analytics) {
   var RecommenderView = Marionette.ItemView.extend({
     initialize: function() {
       this.listenTo(this.collection, 'reset', this.render);
@@ -29,12 +21,7 @@ define([
     },
 
     emitAnalyticsEvent: function(e) {
-      analytics(
-        'send',
-        'event',
-        'interaction',
-        'suggested-article-link-followed'
-      );
+      analytics('send', 'event', 'interaction', 'suggested-article-link-followed');
     },
 
     toggleList: function() {

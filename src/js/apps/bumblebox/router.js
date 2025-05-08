@@ -1,6 +1,6 @@
 define([
   'jquery',
-  'underscore',
+  'lodash/dist/lodash.compat',
   'backbone',
   'js/components/api_query',
   'js/mixins/dependon',
@@ -8,17 +8,7 @@ define([
   'js/components/api_request',
   'js/components/api_targets',
   'js/components/api_query_updater',
-], function(
-  $,
-  _,
-  Backbone,
-  ApiQuery,
-  Dependon,
-  ApiFeedback,
-  ApiRequest,
-  ApiTargets,
-  ApiQueryUpdater
-) {
+], function($, _, Backbone, ApiQuery, Dependon, ApiFeedback, ApiRequest, ApiTargets, ApiQueryUpdater) {
   var Router = Backbone.Router.extend({
     initialize: function(options) {
       options = options || {};
@@ -27,9 +17,7 @@ define([
     activate: function(beehive) {
       this.setBeeHive(beehive);
       if (!this.hasPubSub()) {
-        throw new Error(
-          'Ooops! Who configured this #@$%! There is no PubSub service!'
-        );
+        throw new Error('Ooops! Who configured this #@$%! There is no PubSub service!');
       }
     },
     /*

@@ -1,4 +1,4 @@
-define(['underscore', 'js/components/transition'], function(_, Transition) {
+define(['lodash/dist/lodash.compat', 'js/components/transition'], function(_, Transition) {
   var TransitionCatalog = function(options) {
     this._catalog = {};
   };

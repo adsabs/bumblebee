@@ -1,17 +1,16 @@
 define([
-  'underscore',
+  'backbone',
+  'lodash/dist/lodash.compat',
   'utils',
   'js/widgets/base/base_widget',
   'js/components/api_query_updater',
-], function(_, utils, BaseWidget, ApiQueryUpdater) {
+], function(Backbone, _, utils, BaseWidget, ApiQueryUpdater) {
   var BaseFacetWidget = BaseWidget.extend({
     initialize: function(options) {
       options = options || {};
       this.processResponse = options.processResponse;
       this.model = new Backbone.Model();
-      this.view = new options.graphView(
-        _.extend(options.graphViewOptions, { model: this.model })
-      );
+      this.view = new options.graphView(_.extend(options.graphViewOptions, { model: this.model }));
       this.isActive = false;
       this.isDone = false;
 
@@ -23,21 +22,13 @@ define([
       this.on('active', this.onActive);
       this.on('hidden', this.onHidden);
 
-      this.dispatchRequest = _.debounce(
-        _.bind(this.dispatchRequest, this),
-        300
-      );
+      this.dispatchRequest = _.debounce(_.bind(this.dispatchRequest, this), 300);
     },
 
     activate: function(beehive) {
       var self = this;
       this.setBeeHive(beehive);
-      _.bindAll(
-        this,
-        'dispatchRequest',
-        'processResponse',
-        'onInvitingRequest'
-      );
+      _.bindAll(this, 'dispatchRequest', 'processResponse', 'onInvitingRequest');
       // custom dispatchRequest function goes here
       var pubsub = this.getPubSub();
       pubsub.subscribe(pubsub.INVITING_REQUEST, this.onInvitingRequest);
@@ -58,10 +49,7 @@ define([
 
     _sortChanged: function(apiQuery) {
       try {
-        var diff = utils.difference(
-          apiQuery.toJSON(),
-          this.getCurrentQuery().toJSON()
-        );
+        var diff = utils.difference(apiQuery.toJSON(), this.getCurrentQuery().toJSON());
       } catch (e) {
         // continue
       }
@@ -101,12 +89,7 @@ define([
     handleConditionApplied: function(val) {
       var fieldName = 'q';
       var q = this.getCurrentQuery();
-      q.set(
-        'q',
-        /^\(.*\)/.test(q.get('q')[0])
-          ? q.get('q')[0]
-          : '(' + q.get('q')[0] + ')'
-      );
+      q.set('q', /^\(.*\)/.test(q.get('q')[0]) ? q.get('q')[0] : '(' + q.get('q')[0] + ')');
       val = this.facetField + ':' + val;
       q = q.clone();
       q = this.removeAnyOldConditions(q, fieldName);

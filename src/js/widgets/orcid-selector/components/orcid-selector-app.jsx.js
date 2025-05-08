@@ -60,7 +60,7 @@ define(['react', 'prop-types'], function(React, PropTypes) {
               <div className="sr-only">Orcid Bulk Actions</div>
               <div className="text-center">
                 <img
-                  src="../../styles/img/orcid-active.svg"
+                  src="../../../../assets/images/orcid-active.svg"
                   alt="orcid logo active"
                   className="s-orcid-img"
                   aria-hidden="true"
@@ -73,15 +73,10 @@ define(['react', 'prop-types'], function(React, PropTypes) {
             </div>
             <div className="row">
               <div className="col-xs-12">
-                <div
-                  className="btn-group btn-group-justified btn-group-sm"
-                  role="group"
-                >
+                <div className="btn-group btn-group-justified btn-group-sm" role="group">
                   <button
                     type="button"
-                    className={`btn btn-primary-faded ${
-                      len === 0 ? 'disabled' : ''
-                    }`}
+                    className={`btn btn-primary-faded ${len === 0 ? 'disabled' : ''}`}
                     title="Claim all selected papers from Orcid"
                     style={styles.button}
                     onClick={() => this.onClaim()}
@@ -107,10 +102,7 @@ define(['react', 'prop-types'], function(React, PropTypes) {
                   {`${len > 1 ? 's' : ''}`}?
                 </div>
                 <div className="col-xs-12" style={{ marginTop: 5 }}>
-                  <div
-                    className="btn-group btn-group-sm pull-right"
-                    role="group"
-                  >
+                  <div className="btn-group btn-group-sm pull-right" role="group">
                     <button
                       className="btn btn-sm btn-success"
                       title={`${this.state.action} selected papers`}

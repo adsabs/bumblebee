@@ -2,7 +2,7 @@
  * Created by rchyla on 3/16/14.
  */
 
-define(['js/components/facade', 'underscore'], function(Facade, _) {
+define(['js/components/facade', 'lodash/dist/lodash.compat'], function(Facade, _) {
 
   describe("Facade protection (Component)", function () {
 

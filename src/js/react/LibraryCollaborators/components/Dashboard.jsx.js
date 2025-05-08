@@ -1,22 +1,12 @@
 define([
   'react',
   'react-bootstrap',
-  'es6!./AddCollaboratorModal.jsx',
-  'es6!./PermissionList.jsx',
+  'js/react/LibraryCollaborators/components/AddCollaboratorModal.jsx',
+  'js/react/LibraryCollaborators/components/PermissionList.jsx',
   'prop-types',
-], function(
-  React,
-  { Button, Alert },
-  AddCollaboratorModal,
-  PermissionList,
-  PropTypes
-) {
+], function(React, { Button, Alert }, AddCollaboratorModal, PermissionList, PropTypes) {
   const renderAlerts = ({ add, get, edit }) => {
-    if (
-      edit.status === 'pending' ||
-      add.status === 'pending' ||
-      get.status === 'pending'
-    ) {
+    if (edit.status === 'pending' || add.status === 'pending' || get.status === 'pending') {
       return (
         <div className="row text-center">
           <Alert bsStyle="info">
@@ -33,11 +23,8 @@ define([
           </Alert>
         </div>
       );
-    } else if (
-      edit.status === 'failure' ||
-      add.status === 'failure' ||
-      get.status === 'failure'
-    ) {
+    }
+    if (edit.status === 'failure' || add.status === 'failure' || get.status === 'failure') {
       return (
         <div className="row text-center">
           <Alert bsStyle="danger">
@@ -54,18 +41,15 @@ define([
           </Alert>
         </div>
       );
-    } else if (edit.status === 'success' || add.status === 'success') {
+    }
+    if (edit.status === 'success' || add.status === 'success') {
       return (
         <div className="row text-center">
           <Alert bsStyle="success">
             <strong>
               <i className="fa fa-check" aria-hidden="true" />
             </strong>{' '}
-            {edit.status
-              ? 'Permission updated!'
-              : add.status
-              ? 'Collaborator added!'
-              : ''}
+            {edit.status ? 'Permission updated!' : add.status ? 'Collaborator added!' : ''}
           </Alert>
         </div>
       );
@@ -125,13 +109,8 @@ define([
           </div>
           <div>
             <div className="row">
-              <Button
-                onClick={() =>
-                  this.setState({ showAddCollaboratorModal: true })
-                }
-              >
-                <i className="fa fa-user-plus fa-fw" aria-hidden="true" /> Add
-                Collaborator
+              <Button onClick={() => this.setState({ showAddCollaboratorModal: true })}>
+                <i className="fa fa-user-plus fa-fw" aria-hidden="true" /> Add Collaborator
               </Button>
             </div>
 
@@ -146,9 +125,7 @@ define([
             ) : (
               <div>
                 <hr />
-                <div className="row text-center">
-                  You have no collaborators, yet. Please add one above
-                </div>
+                <div className="row text-center">You have no collaborators, yet. Please add one above</div>
               </div>
             )}
             {renderAlerts(requests)}

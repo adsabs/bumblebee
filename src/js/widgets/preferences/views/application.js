@@ -1,9 +1,8 @@
-define([
-  'underscore',
-  'marionette',
-  'hbs!js/widgets/preferences/templates/application',
-  'js/widgets/config',
-], function (_, Marionette, ApplicationTemplate, config) {
+define(['lodash/dist/lodash.compat', 'marionette', 'js/widgets/preferences/templates/application.hbs'], function(
+  _,
+  Marionette,
+  ApplicationTemplate
+) {
   var DEFAULTS = {
     numAuthors: {
       initialOptions: _.range(1, 11).concat(['all']),
@@ -18,16 +17,17 @@ define([
       initialValue: 'Modern Form',
     },
     database: {
-      'All': false,
-      'Physics': false,
-      'Astronomy': false,
-      'General': false,
+      All: false,
+      Physics: false,
+      Astronomy: false,
+      General: false,
       'Earth Science': false,
     },
     hideSidebars: {
       initialValue: 'Show',
       initialOptions: ['Show', 'Hide'],
     },
+    loading: false,
   };
 
   const isEqualToDefault = (prop, value) => {
@@ -55,10 +55,7 @@ define([
    * @returns {*|*[]}
    */
   const mergeDatabases = (databases) => {
-    if (
-      !Array.isArray(databases) ||
-      (Array.isArray(databases) && databases.length === 0)
-    ) {
+    if (!Array.isArray(databases) || (Array.isArray(databases) && databases.length === 0)) {
       return DEFAULTS.database;
     }
 
@@ -93,19 +90,12 @@ define([
   ];
 
   const ApplicationView = Marionette.ItemView.extend({
-    initialize: function () {
+    initialize: function() {
       // Get the latest value from the incoming model, or just take the default
-      const numAuthors =
-        this.model.get('minAuthorsPerResult') ||
-        DEFAULTS.numAuthors.initialValue;
-      const externalLinks =
-        this.model.get('externalLinkAction') ||
-        DEFAULTS.externalLinks.initialValue;
-      const homePage =
-        this.model.get('homePage') || DEFAULTS.homePage.initialValue;
-      const hideSidebars =
-        this.model.get('defaultHideSidebars') ||
-        DEFAULTS.hideSidebars.initialValue;
+      const numAuthors = this.model.get('minAuthorsPerResult') || DEFAULTS.numAuthors.initialValue;
+      const externalLinks = this.model.get('externalLinkAction') || DEFAULTS.externalLinks.initialValue;
+      const homePage = this.model.get('homePage') || DEFAULTS.homePage.initialValue;
+      const hideSidebars = this.model.get('defaultHideSidebars') || DEFAULTS.hideSidebars.initialValue;
       const databases = mergeDatabases(this.model.get('defaultDatabase'));
 
       // must clone the props that will get mutated
@@ -126,12 +116,11 @@ define([
         hideSideBarsDefault: DEFAULTS.hideSidebars.initialValue,
         hideSideBarsOptions: DEFAULTS.hideSidebars.initialOptions,
         hideSideBarsSelected: _.clone(hideSidebars),
+        loading: DEFAULTS.loading,
 
         modifySections: [
           // databases section is modified if any of the entries are true
-          ...(Object.keys(databases).some((name) => databases[name])
-            ? ['database']
-            : []),
+          ...(Object.keys(databases).some((name) => databases[name]) ? ['database'] : []),
         ],
       });
       this.model.trigger('change');
@@ -156,7 +145,7 @@ define([
       change: 'render',
     },
 
-    onDatabaseALLSelect: function (e) {
+    onDatabaseALLSelect: function(e) {
       const checked = $(e.currentTarget).prop('checked');
 
       this.model.set('databaseSelected', {
@@ -167,7 +156,7 @@ define([
       this.model.trigger('change');
     },
 
-    onDatabaseSelect: function (e) {
+    onDatabaseSelect: function(e) {
       const dbState = this.model.get('databaseSelected');
 
       // if 'ALL' selected, then the other options are disabled
@@ -188,10 +177,7 @@ define([
 
     onModifySection(e) {
       const section = $(e.currentTarget).data('section');
-      this.model.set('modifySections', [
-        ...this.model.get('modifySections'),
-        section,
-      ]);
+      this.model.set('modifySections', [...this.model.get('modifySections'), section]);
     },
 
     onResetSection(e) {
@@ -200,14 +186,14 @@ define([
         modifySections: this.model.get('modifySections').filter((s) => s !== section),
         ...(section === 'database'
           ? {
-            databaseSelected: DEFAULTS.database,
-          }
+              databaseSelected: DEFAULTS.database,
+            }
           : {}),
       });
       this.model.trigger('change');
     },
 
-    _convertToNumber: function (val) {
+    _convertToNumber: function(val) {
       try {
         return _.isNaN(Number(val)) ? val : Number(val);
       } catch (e) {
@@ -215,7 +201,7 @@ define([
       }
     },
 
-    _convertToString: function (val) {
+    _convertToString: function(val) {
       try {
         return String(val) !== '[object Object]' ? String(val) : val;
       } catch (e) {
@@ -223,10 +209,10 @@ define([
       }
     },
 
-    syncModel: function () {
+    syncModel: function() {
       var update = {};
       var convert = this._convertToNumber;
-      $('.form-control', this.el).each(function () {
+      $('.form-control', this.el).each(function() {
         var $el = $(this);
         var val = $el.val();
 
@@ -238,7 +224,7 @@ define([
       this.model.set(update);
     },
 
-    onSubmit: function () {
+    onSubmit: function() {
       this.model.set({
         updateSucceeded: false,
         updateFailed: false,
@@ -247,9 +233,7 @@ define([
       this.syncModel();
 
       this.trigger('change:applicationSettings', {
-        minAuthorsPerResult: this._convertToString(
-          this.model.get('numAuthorsSelected'),
-        ),
+        minAuthorsPerResult: this._convertToString(this.model.get('numAuthorsSelected')),
         externalLinkAction: this.model.get('externalLinksSelected'),
         defaultDatabase: transformDatabases(this.model.get('databaseSelected')),
         defaultHideSidebars: this.model.get('hideSideBarsSelected'),
@@ -258,12 +242,12 @@ define([
       return false;
     },
 
-    onCancel: function (e) {
+    onCancel: function(e) {
       this.initialize();
       return false;
     },
 
-    onResetToDefaults: function () {
+    onResetToDefaults: function() {
       // clear the model
       this.model.set(
         {
@@ -274,13 +258,13 @@ define([
         },
         {
           unset: true,
-        },
+        }
       );
 
       this.onCancel.apply(this, arguments);
     },
 
-    onError: function () {
+    onError: function() {
       var model = this.model;
       model.set({
         updateFailed: true,
@@ -294,7 +278,7 @@ define([
       }, 5000);
     },
 
-    onSuccess: function () {
+    onSuccess: function() {
       var model = this.model;
       model.set({
         updateSucceeded: true,
@@ -308,13 +292,13 @@ define([
       }, 3000);
     },
 
-    hideMessage: function () {
-      $('#app-settings-msg').fadeOut(500, function () {
+    hideMessage: function() {
+      $('#app-settings-msg').fadeOut(500, function() {
         $(this).empty();
       });
     },
 
-    onSortChange: function (e, ui) {
+    onSortChange: function(e, ui) {
       var items = _.clone(this.model.get('addCustomFormatOptions'));
       var index = this.$('#addCustomFormat .list-group-item').index(ui.item);
       var id = this.$(ui.item).data('id');
@@ -330,7 +314,7 @@ define([
       this.model.set('addCustomFormatOptions', items);
     },
 
-    isEditing: function () {
+    isEditing: function() {
       return _.any(this.model.get('addCustomFormatOptions'), {
         editing: true,
       });
@@ -338,7 +322,7 @@ define([
 
     _renderCount: 1,
 
-    onRender: function () {
+    onRender: function() {
       // skip initial x renders, because when we first get data it'll render and detect a change
       if (this._renderCount > 0) {
         this._renderCount -= 1;

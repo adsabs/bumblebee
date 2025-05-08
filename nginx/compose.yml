@@ -1,19 +1,37 @@
 services:
-  nginx:
-    container_name: bbb-nginx
-    build:
-      context: .
-      dockerfile: ./Dockerfile
-      args:
-        ENABLE_MODULES: 'subs-filter'
+  dev:
+    container_name: bbb-nginx-dev
+    image: nginx:latest
     ports:
       - "8000:80"
     volumes:
-      - ./nginx.conf:/etc/nginx/nginx.conf:ro
-      - ./default.conf:/etc/nginx/templates/default.conf.template:ro
       - ${APP_DIR:-../dist}:/app/production:ro
-    environment:
-      ENVIRONMENT: "${ENV:-production}"
-      NGINX_ENTRYPOINT_QUIET_LOGS: 1
+      - ./default.dev.conf:/etc/nginx/conf.d/default.conf:ro
+      - ./nginx.conf:/etc/nginx/nginx.conf:ro
+#      - ./logs:/var/log/nginx
+    healthcheck:
+      test: 'curl --fail http://localhost:8000/ready || exit 1'
+  qa:
+    container_name: bbb-nginx-qa
+    image: nginx:latest
+    ports:
+      - "8000:80"
+    volumes:
+      - ${APP_DIR:-../dist}:/app/production:ro
+      - ./default.qa.conf:/etc/nginx/conf.d/default.conf:ro
+      - ./nginx.conf:/etc/nginx/nginx.conf:ro
+#      - ./logs:/var/log/nginx
+    healthcheck:
+      test: 'curl --fail http://localhost:8000/ready || exit 1'
+  prod:
+    container_name: bbb-nginx-prod
+    image: nginx:latest
+    ports:
+      - "8000:80"
+    volumes:
+      - ${APP_DIR:-../dist}:/app/production:ro
+      - ./default.prod.conf:/etc/nginx/conf.d/default.conf:ro
+      - ./nginx.conf:/etc/nginx/nginx.conf:ro
+#      - ./logs:/var/log/nginx
     healthcheck:
       test: 'curl --fail http://localhost:8000/ready || exit 1'

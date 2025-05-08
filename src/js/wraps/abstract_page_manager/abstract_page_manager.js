@@ -1,11 +1,12 @@
 define([
+  'lodash/dist/lodash.compat',
   'js/page_managers/toc_controller',
   'js/page_managers/three_column_view',
-  'hbs!js/wraps/abstract_page_manager/abstract-page-layout',
-  'hbs!js/wraps/abstract_page_manager/abstract-nav',
+  'js/wraps/abstract_page_manager/abstract-page-layout.hbs',
+  'js/wraps/abstract_page_manager/abstract-nav.hbs',
   'utils',
   'analytics',
-], function(PageManagerController, PageManagerView, PageManagerTemplate, TOCTemplate, utils) {
+], function(_, PageManagerController, PageManagerView, PageManagerTemplate, TOCTemplate, utils) {
   var PageManager = PageManagerController.extend({
     persistentWidgets: ['SearchWidget', 'ShowAbstract', 'ShowCitations', 'ShowToc', 'ShowReferences', 'tocWidget'],
 
@@ -36,8 +37,8 @@ define([
         window.matchMedia('(max-width: 788px)').matches &&
         $('.s-search-bar-widget').get(0) &&
         $('.s-search-bar-widget')
-          .get(0)
-          .getBoundingClientRect().bottom <= 0
+        .get(0)
+        .getBoundingClientRect().bottom <= 0
       ) {
         var height = $('#nav-button-container').outerHeight(true);
         this.stickElements(height);
@@ -130,13 +131,13 @@ define([
 
       if (!_.isEmpty(href)) {
         ret.$el
-          .find('.s-back-button-container')
-          .empty()
-          .html(
-            '<a href="#search/' +
-              href +
-              '" class="back-button btn btn-sm btn-default"> <i class="fa fa-arrow-left" aria-hidden="true"></i> Back to results</a>'
-          );
+        .find('.s-back-button-container')
+        .empty()
+        .html(
+          '<a href="#search/' +
+          href +
+          '" class="back-button btn btn-sm btn-default"> <i class="fa fa-arrow-left" aria-hidden="true"></i> Back to results</a>'
+        );
       }
 
       // when arriving at the abstract page, scroll back to the top

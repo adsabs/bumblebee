@@ -54,18 +54,14 @@ define([
 
   const getMiddleMessage = (page, isEditing) => {
     let msg = '';
-    if (
-      page !== PAGE.SELECT_TEMPLATE &&
-      page !== PAGE.IMPORT_NOTIFICATIONS &&
-      page !== PAGE.DASHBOARD
-    ) {
+    if (page !== PAGE.SELECT_TEMPLATE && page !== PAGE.IMPORT_NOTIFICATIONS && page !== PAGE.DASHBOARD) {
       msg = ` ${isEditing ? 'Editing' : 'Create New'} |`;
     }
     return msg;
   };
 
   const getPageTitle = (page, isEditing) => {
-    let title = TITLES[page];
+    const title = TITLES[page];
 
     if (title) {
       return `myADS |${getMiddleMessage(page, isEditing)} ${title}`;
@@ -103,10 +99,7 @@ define([
       return (
         <div className="panel panel-default" style={{ marginTop: 50 }}>
           <div className="panel-heading">
-            {getBackButton(
-              this.props.editingNotification ? null : this.props.page,
-              this.props.goTo
-            )}{' '}
+            {getBackButton(this.props.editingNotification ? null : this.props.page, this.props.goTo)}{' '}
             {getPageTitle(this.props.page, this.props.editingNotification)}
           </div>
           <div className="panel-body" style={{ minHeight: 600 }}>

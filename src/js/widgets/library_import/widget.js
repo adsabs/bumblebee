@@ -1,13 +1,16 @@
 define([
+  'lodash/dist/lodash.compat',
   'js/widgets/base/base_widget',
   'js/components/api_request',
   'js/components/api_targets',
-  'hbs!js/widgets/library_import/templates/tab-container',
-  'hbs!js/widgets/library_import/templates/import-view-labs',
-  'hbs!js/widgets/library_import/templates/import-view-classic',
-  'hbs!js/widgets/library_import/templates/success-template',
-  'bootstrap',
+  'js/widgets/library_import/templates/tab-container.hbs',
+  'js/widgets/library_import/templates/import-view-labs.hbs',
+  'js/widgets/library_import/templates/import-view-classic.hbs',
+  'js/widgets/library_import/templates/success-template.hbs',
+  'marionette',
+  'backbone',
 ], function(
+  _,
   BaseWidget,
   ApiRequest,
   ApiTargets,
@@ -15,7 +18,8 @@ define([
   ADS2ImportView,
   ClassicImportView,
   SuccessTemplate,
-  Bootstrap
+  Marionette,
+  Backbone
 ) {
   /* config vars */
 
@@ -33,13 +37,10 @@ define([
   var ImportView = Marionette.ItemView.extend({
     initialize: function(options) {
       if (options.endpoint !== CLASSIC && options.endpoint !== ADS2) {
-        throw new Error(
-          "we don't recognize that endpoint: " + options.endpoint
-        );
+        throw new Error("we don't recognize that endpoint: " + options.endpoint);
       }
       this.model = new ImportModel({ endpoint: options.endpoint });
-      this.template =
-        options.endpoint === CLASSIC ? ClassicImportView : ADS2ImportView;
+      this.template = options.endpoint === CLASSIC ? ClassicImportView : ADS2ImportView;
     },
 
     className: 'library-import-form',
@@ -131,11 +132,7 @@ define([
       submitCredentials = submitCredentials.bind(this);
 
       this.view.classicView.on('submit-credentials', function(data) {
-        submitCredentials(
-          ApiTargets.LIBRARY_IMPORT_CLASSIC_AUTH,
-          that.view.classicView,
-          data
-        );
+        submitCredentials(ApiTargets.LIBRARY_IMPORT_CLASSIC_AUTH, that.view.classicView, data);
       });
 
       /*
@@ -144,8 +141,7 @@ define([
        * has to update its internal store of library metadata on successful import
        * */
       function importLibraries(endpoint, view) {
-        var working =
-          '<i class="fa fa-lg fa-spinner fa-pulse" aria-hidden="true"></i> Working...';
+        var working = '<i class="fa fa-lg fa-spinner fa-pulse" aria-hidden="true"></i> Working...';
         view
           .$('button.import-all-libraries')
           .addClass('disabled')
@@ -193,8 +189,7 @@ define([
             view.model.set(
               {
                 successMessage: '',
-                errorMessage:
-                  'There was a problem and libraries were not imported.',
+                errorMessage: 'There was a problem and libraries were not imported.',
               },
               { silent: true }
             );
@@ -212,7 +207,6 @@ define([
 
     activate: function(beehive) {
       this.setBeeHive(beehive);
-      _.bindAll(this);
 
       var that = this;
       var pubsub = this.getPubSub();
@@ -261,8 +255,7 @@ define([
                 if (
                   response &&
                   response.responseJSON &&
-                  response.responseJSON.error ===
-                    'This user has not set up an ADS Classic account'
+                  response.responseJSON.error === 'This user has not set up an ADS Classic account'
                 ) {
                   return;
                 }

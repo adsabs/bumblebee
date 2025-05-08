@@ -2,12 +2,12 @@
  * Created by rchyla on 3/28/14.
  */
 
-define([
-  'underscore',
-  'backbone',
-  'js/components/api_query',
-  'js/components/multi_params',
-], function(_, Backbone, ApiQuery, MultiParams) {
+define(['lodash/dist/lodash.compat', 'backbone', 'js/components/api_query', 'js/components/multi_params'], function(
+  _,
+  Backbone,
+  ApiQuery,
+  MultiParams
+) {
   var basicCheck = function(s) {
     if (_.isString(s)) {
       return true;
@@ -53,7 +53,7 @@ define([
      * @private
      */
     _validate: function(attributes, options) {
-      _.forOwn(attributes, function(val, attr) {
+      _.each(attributes, function(val, attr) {
         var tempVal = attributes[attr];
 
         if (!(attr in allowedAttrs)) {
@@ -137,9 +137,7 @@ define([
         url += '?' + whatToSort.query.url();
       }
       if ('sender' in whatToSort) {
-        url +=
-          '#' +
-          MultiParams.prototype.url.call(this, { sender: whatToSort.sender });
+        url += '#' + MultiParams.prototype.url.call(this, { sender: whatToSort.sender });
       }
       return url;
     },
@@ -152,10 +150,7 @@ define([
      * @returns {Model}
      */
     load: function(query) {
-      return MultiParams.prototype.load.call(
-        this,
-        query.indexOf('?') > -1 ? query : query + '?'
-      );
+      return MultiParams.prototype.load.call(this, query.indexOf('?') > -1 ? query : query + '?');
     },
   });
 

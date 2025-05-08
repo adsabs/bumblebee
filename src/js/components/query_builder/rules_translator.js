@@ -6,11 +6,11 @@
  *
  */
 
-define([
-  'underscore',
-  'js/components/generic_module',
-  'js/components/api_query_updater',
-], function(_, GenericModule, ApiQueryUpdater) {
+define(['lodash/dist/lodash.compat', 'js/components/generic_module', 'js/components/api_query_updater'], function(
+  _,
+  GenericModule,
+  ApiQueryUpdater
+) {
   var TreeNode = function(operator, value) {
     this.operator = operator;
     this.value = value;
@@ -35,9 +35,7 @@ define([
       queries.push(child.toString(level + 1));
     });
 
-    var q = this.operator
-      ? queries.join(' ' + this.operator + ' ')
-      : queries.join(' ');
+    var q = this.operator ? queries.join(' ' + this.operator + ' ') : queries.join(' ');
     if (level > 0) {
       q = '(' + q + ')';
     }
@@ -55,8 +53,7 @@ define([
         this.condition = this.validOperators.DEFOP || 'AND';
         return;
       }
-      if (!this.validOperators.hasOwnProperty(val))
-        throw new Error('Unknown operator: ' + val);
+      if (!this.validOperators.hasOwnProperty(val)) throw new Error('Unknown operator: ' + val);
       this.condition = this.validOperators[val];
     },
     _serializeValue: function() {
@@ -77,9 +74,7 @@ define([
       return ret;
     },
     toJSON: function() {
-      var ret = _.clone(
-        _.pick(this, ['condition', 'id', 'field', 'type', 'input', 'operator'])
-      );
+      var ret = _.clone(_.pick(this, ['condition', 'id', 'field', 'type', 'input', 'operator']));
       var v = this._serializeValue();
       if (v) ret.value = v;
       this._modifyOperator(ret);
@@ -246,11 +241,7 @@ define([
           break;
         case 'CLAUSE':
           var childr = qtree;
-          while (
-            childr.children &&
-            childr.children.length == 1 &&
-            childr.children[0].name == 'OPERATOR'
-          ) {
+          while (childr.children && childr.children.length == 1 && childr.children[0].name == 'OPERATOR') {
             childr = childr.children[0];
           }
 
@@ -302,27 +293,17 @@ define([
               ruleNode.addChild(result);
             } else {
               ruleNode.setField(qtree.children[0].input);
-              this._extractRule(
-                qtree.children[qtree.children.length - 1],
-                ruleNode
-              );
+              this._extractRule(qtree.children[qtree.children.length - 1], ruleNode);
             }
           } else {
             // unfielded search
             ruleNode.setField('__all__');
-            this._extractRule(
-              qtree.children[qtree.children.length - 1],
-              ruleNode
-            );
+            this._extractRule(qtree.children[qtree.children.length - 1], ruleNode);
           }
           break;
         case 'MODIFIER':
-          if (qtree.children.length == 2)
-            ruleNode.setModifier(qtree.children[0].name);
-          this._extractRule(
-            qtree.children[qtree.children.length - 1],
-            ruleNode
-          );
+          if (qtree.children.length == 2) ruleNode.setModifier(qtree.children[0].name);
+          this._extractRule(qtree.children[qtree.children.length - 1], ruleNode);
           break;
         case 'TMODIFIER':
           _.each(qtree.children, function(c) {
@@ -330,12 +311,10 @@ define([
           });
           break;
         case 'BOOST':
-          if (qtree.children.length > 0)
-            ruleNode.setBoost(qtree.children[0].label);
+          if (qtree.children.length > 0) ruleNode.setBoost(qtree.children[0].label);
           break;
         case 'FUZZY':
-          if (qtree.children.length > 0)
-            ruleNode.setFuzzy(qtree.children[0].label);
+          if (qtree.children.length > 0) ruleNode.setFuzzy(qtree.children[0].label);
           break;
         case 'QNORMAL':
           ruleNode.setValue(qtree.children[0].input);
@@ -413,25 +392,17 @@ define([
 
             var originalQuery = this._getOriginalQuery(qtree);
             if (!originalQuery) {
-              throw new Error(
-                "Eeeek, we can't extract function values - bummmmmmer! Sorry boss"
-              );
+              throw new Error("Eeeek, we can't extract function values - bummmmmmer! Sorry boss");
             }
 
             var offset = qtree.children[0].end + 1;
             var end = qtree.children[qtree.children.length - 1].end;
 
             if (!(offset && end)) {
-              throw new Error(
-                "Eeeek, this is a weird query tree, i don't know how to parse it"
-              );
+              throw new Error("Eeeek, this is a weird query tree, i don't know how to parse it");
             }
 
-            ruleNode.setValue(
-              qtree.children[0].input +
-                originalQuery.substring(offset, end) +
-                ')'
-            );
+            ruleNode.setValue(qtree.children[0].input + originalQuery.substring(offset, end) + ')');
             ruleNode.setField('black_hole');
             ruleNode.setOperator('is_literal');
           }
@@ -596,8 +567,7 @@ define([
 
           case 'is_exactly':
           case 'is_not_exactly':
-            q =
-              '=' + field + ':' + this.apiQueryUpdater.quoteIfNecessary(input);
+            q = '=' + field + ':' + this.apiQueryUpdater.quoteIfNecessary(input);
             if (rule.operator.indexOf('_not_') > -1) q = 'NOT ' + q;
             break;
 
@@ -644,8 +614,7 @@ define([
                 q = 'topn(' + input.split('|').join(', ') + ')';
                 break;
               default:
-                q =
-                  field.replace('()', '(') + input.split('|').join(', ') + ')';
+                q = field.replace('()', '(') + input.split('|').join(', ') + ')';
               // throw 'unknown function' + field;
             }
 

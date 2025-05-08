@@ -82,12 +82,6 @@ module.exports = function(grunt) {
           dest: 'src/libs/react-hook-form.js',
         },
 
-        // moment
-        {
-          src: 'node_modules/moment/min/moment.min.js',
-          dest: 'src/libs/moment.js',
-        },
-
         // backbone
         {
           src: 'node_modules/backbone/backbone-min.js',

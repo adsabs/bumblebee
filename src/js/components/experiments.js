@@ -1,5 +1,5 @@
 define([
-  'underscore',
+  'lodash/dist/lodash.compat',
   'jquery',
   'js/components/generic_module',
   'js/mixins/dependon',
@@ -25,17 +25,12 @@ define([
         };
         window.gtag('event', 'optimize.callback', {
           callback: (value, name) => {
-            console.log(
-              'Experiment with ID: ' + name + ' is on variant: ' + value
-            );
+            console.log('Experiment with ID: ' + name + ' is on variant: ' + value);
           },
         });
       }
 
-      pubsub.subscribe(
-        pubsub.APP_BOOTSTRAPPED,
-        _.bind(this.onAppStarted, this)
-      );
+      pubsub.subscribe(pubsub.APP_BOOTSTRAPPED, _.bind(this.onAppStarted, this));
     },
 
     /**
@@ -63,9 +58,7 @@ define([
 
     toggleOptimize: function() {
       if (!window.dataLayer) {
-        console.warn(
-          'Optimize is not available, we are not running any experiment'
-        );
+        console.warn('Optimize is not available, we are not running any experiment');
         return;
       }
 
@@ -80,4 +73,4 @@ define([
   _.extend(Experiments.prototype, Dependon.BeeHive, Dependon.App);
 
   return Experiments;
-})
+});

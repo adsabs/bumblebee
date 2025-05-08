@@ -7,7 +7,7 @@
  */
 
 define([
-  'underscore',
+  'lodash/dist/lodash.compat',
   'jquery',
   'cache',
   'js/components/generic_module',
@@ -51,24 +51,16 @@ define([
         expiresAfterWrite: 5,
       });
       this.maxRetries = options.maxRetries || 3;
-      this.recoveryDelayInMs = _.isNumber(options.recoveryDelayInMs)
-        ? options.recoveryDelayInMs
-        : 700;
+      this.recoveryDelayInMs = _.isNumber(options.recoveryDelayInMs) ? options.recoveryDelayInMs : 700;
       this.__searchCycle = {
         waiting: {},
         inprogress: {},
         done: {},
         failed: {},
       };
-      this.shortDelayInMs = _.isNumber(options.shortDelayInMs)
-        ? options.shortDelayInMs
-        : 300;
-      this.longDelayInMs = _.isNumber(options.longDelayInMs)
-        ? options.longDelayInMs
-        : 100;
-      this.monitoringDelayInMs = _.isNumber(options.monitoringDelayInMs)
-        ? options.monitoringDelayInMs
-        : 200;
+      this.shortDelayInMs = _.isNumber(options.shortDelayInMs) ? options.shortDelayInMs : 300;
+      this.longDelayInMs = _.isNumber(options.longDelayInMs) ? options.longDelayInMs : 100;
+      this.monitoringDelayInMs = _.isNumber(options.monitoringDelayInMs) ? options.monitoringDelayInMs : 200;
       this.mostRecentQuery = new ApiQuery();
     },
 
@@ -102,18 +94,9 @@ define([
 
       // if you run discovery-mediator; this signal may be removed from the
       // queue (and instead, the discovery mediator will serve the request)
-      pubsub.subscribe(
-        pubsub.START_SEARCH,
-        _.bind(this.getQueryAndStartSearchCycle, this)
-      );
-      pubsub.subscribe(
-        pubsub.DELIVERING_REQUEST,
-        _.bind(this.receiveRequests, this)
-      );
-      pubsub.subscribe(
-        pubsub.EXECUTE_REQUEST,
-        _.bind(this.executeRequest, this)
-      );
+      pubsub.subscribe(pubsub.START_SEARCH, _.bind(this.getQueryAndStartSearchCycle, this));
+      pubsub.subscribe(pubsub.DELIVERING_REQUEST, _.bind(this.receiveRequests, this));
+      pubsub.subscribe(pubsub.EXECUTE_REQUEST, _.bind(this.executeRequest, this));
       pubsub.subscribe(pubsub.GET_QTREE, _.bind(this.getQTree, this));
     },
 
@@ -163,11 +146,7 @@ define([
 
       // Watch for simbid references and use a masked version of the
       // query to generate the url if any are found.
-      if (
-        this.original_url &&
-        apiQuery.get('q') &&
-        apiQuery.get('q')[0].indexOf('simbid') !== -1
-      ) {
+      if (this.original_url && apiQuery.get('q') && apiQuery.get('q')[0].indexOf('simbid') !== -1) {
         var newQ = apiQuery.clone();
         var origQ = apiQuery.get('q')[0];
 
@@ -186,10 +165,7 @@ define([
 
       // checking if it's a new big query
       if (apiQuery.get('__bigquery')) {
-        apiQuery.set(
-          'bigquery',
-          'bibcode\n' + apiQuery.get('__bigquery').join('\n')
-        );
+        apiQuery.set('bigquery', 'bibcode\n' + apiQuery.get('__bigquery').join('\n'));
         // don't need this anymore
         apiQuery.unset('__bigquery');
         // query might have a q, otherwise q is everything
@@ -220,10 +196,7 @@ define([
               that.startSearchCycle(newQuery, senderKey);
             },
             fail: function(jqXHR, textStatus, errorThrown) {
-              console.warn(
-                'bigquery failed:',
-                [].slice.apply(arguments).join(',')
-              );
+              console.warn('bigquery failed:', [].slice.apply(arguments).join(','));
 
               ps.publish(
                 ps.FEEDBACK,
@@ -279,11 +252,7 @@ define([
 
       // clear bigqueries by default when a new search cycle is started, unless
       // explicitly saved by using "__saveBigQuery" flag
-      if (
-        apiQuery.has('__saveBigQuery') &&
-        this.mostRecentQuery.has('__qid') &&
-        !apiQuery.has('__qid')
-      ) {
+      if (apiQuery.has('__saveBigQuery') && this.mostRecentQuery.has('__qid') && !apiQuery.has('__qid')) {
         this.mostRecentQuery.set('q', apiQuery.get('q'));
         apiQuery = this.mostRecentQuery;
       }
@@ -294,8 +263,7 @@ define([
         console.log(
           '[QM]: received query:',
           this.hasApp()
-            ? this.getApp().getPluginOrWidgetName(senderKey.getId()) ||
-                senderKey.getId()
+            ? this.getApp().getPluginOrWidgetName(senderKey.getId()) || senderKey.getId()
             : senderKey.getId(),
           apiQuery.url()
         );
@@ -312,26 +280,13 @@ define([
       }
       var ps = this.getPubSub();
 
-      if (
-        this.__searchCycle.running &&
-        this.__searchCycle.waiting &&
-        _.keys(this.__searchCycle.waiting)
-      ) {
-        console.error(
-          'The previous search cycle did not finish, and there already comes the next!'
-        );
+      if (this.__searchCycle.running && this.__searchCycle.waiting && _.keys(this.__searchCycle.waiting)) {
+        console.error('The previous search cycle did not finish, and there already comes the next!');
 
         // mark all current waiting requests with a STALE flag
-        _.forEach(
-          _.extend(
-            {},
-            this.__searchCycle.waiting,
-            this.__searchCycle.inprogress
-          ),
-          function(psks) {
-            psks.request.__STALE = true;
-          }
-        );
+        _.forEach(_.extend({}, this.__searchCycle.waiting, this.__searchCycle.inprogress), function(psks) {
+          psks.request.__STALE = true;
+        });
       }
 
       this.reset();
@@ -359,9 +314,7 @@ define([
         self.startExecutingQueries() && self.monitorExecution();
       };
 
-      this.shortDelayInMs
-        ? setTimeout(startExecuting, this.shortDelayInMs)
-        : startExecuting();
+      this.shortDelayInMs ? setTimeout(startExecuting, this.shortDelayInMs) : startExecuting();
     },
 
     /**
@@ -404,9 +357,7 @@ define([
       }
       if (!data) {
         if (this.debug)
-          console.warn(
-            'DynamicConfig does not tell us which request to execute first (grabbing random one).'
-          );
+          console.warn('DynamicConfig does not tell us which request to execute first (grabbing random one).');
 
         var kx;
         data = cycle.waiting[(kx = _.keys(cycle.waiting)[0])];
@@ -419,7 +370,6 @@ define([
 
       this._executeRequest(data.request, data.key)
         .done(function(resOrPromise) {
-
           const sendStartCycleEvent = (response) => {
             if (data.request.__STALE) {
               return;
@@ -548,10 +498,7 @@ define([
         return;
       }
 
-      if (
-        this.__searchCycle.inprogress &&
-        _.isEmpty(this.__searchCycle.inprogress)
-      ) {
+      if (this.__searchCycle.inprogress && _.isEmpty(this.__searchCycle.inprogress)) {
         if (this.__searchCycle.finished) return; // it was already signalled
 
         ps.publish(
@@ -599,8 +546,7 @@ define([
         console.log(
           '[QM]: received request:',
           this.hasApp()
-            ? this.getApp().getPluginOrWidgetName(senderKey.getId()) ||
-                senderKey.getId()
+            ? this.getApp().getPluginOrWidgetName(senderKey.getId()) || senderKey.getId()
             : senderKey.getId(),
           apiRequest.url()
         );
@@ -625,9 +571,7 @@ define([
      */
     executeRequest: function(apiRequest, senderKey) {
       if (!(apiRequest instanceof ApiRequest)) {
-        throw new Error(
-          'Sir, I belive you forgot to send me a valid ApiRequest!'
-        );
+        throw new Error('Sir, I belive you forgot to send me a valid ApiRequest!');
       } else if (!senderKey) {
         throw new Error('Request executed, but no widget id provided!');
       }
@@ -637,10 +581,7 @@ define([
 
     getFailCacheValue(key) {
       const failCache = this.failedRequestsCache;
-      return (
-        (failCache && failCache.getSync(key)) ||
-        (failCache._cache[key] && failCache._cache[key].value)
-      );
+      return (failCache && failCache.getSync(key)) || (failCache._cache[key] && failCache._cache[key].value);
     },
 
     _executeRequest: function(apiRequest, senderKey) {
@@ -651,10 +592,7 @@ define([
       // it's a bigquery
       if (apiRequest.get('query') && apiRequest.get('query').get('__qid')) {
         var qid = apiRequest.get('query').get('__qid')[0];
-        apiRequest.set(
-          'target',
-          ApiTargets.MYADS_STORAGE + '/execute_query/' + qid
-        );
+        apiRequest.set('target', ApiTargets.MYADS_STORAGE + '/execute_query/' + qid);
       }
 
       var ps = this.getPubSub();
@@ -774,32 +712,21 @@ define([
 
       // TODO: check the status responses
 
-      var response =
-        data.responseHeader && data.responseHeader.params
-          ? new ApiResponse(data)
-          : new JsonResponse(data);
+      var response = data.responseHeader && data.responseHeader.params ? new ApiResponse(data) : new JsonResponse(data);
 
       response.setApiQuery(this.request.get('query'));
 
       if (qm.debug) {
         console.log(
           '[QM]: sending response:',
-          qm.hasApp()
-            ? qm.getApp().getPluginOrWidgetName(this.key.getId()) ||
-                this.key.getId()
-            : this.key.getId(),
+          qm.hasApp() ? qm.getApp().getPluginOrWidgetName(this.key.getId()) || this.key.getId() : this.key.getId(),
           data
         );
       }
 
       var pubsub = qm.getBeeHive().getService('PubSub'); // we cant use getPubSub() as we are sending the key
 
-      if (pubsub)
-        pubsub.publish(
-          this.key,
-          pubsub.DELIVERING_RESPONSE + this.key.getId(),
-          response
-        );
+      if (pubsub) pubsub.publish(this.key, pubsub.DELIVERING_RESPONSE + this.key.getId(), response);
 
       if (qm.failedRequestsCache.getIfPresent(this.requestKey)) {
         qm.failedRequestsCache.invalidate(this.requestKey);
@@ -930,20 +857,15 @@ define([
     },
 
     getAlerter: function() {
-      return this.getApp().getController(
-        this.alertsController || 'AlertsController'
-      );
+      return this.getApp().getController(this.alertsController || 'AlertsController');
     },
 
     // display tugboat messages if they exist
     displayTugboatMessages: function() {
       var TUGBOAT_MESSAGES = {
-        AUTHOR_ANDED_WARNING:
-          'Author search terms combined with AND rather than OR',
-        ENTRY_DATE_OFFSET_ERROR:
-          'Can not combine a date and offset (negative value) for the Entry Date',
-        ENTRY_DATE_NON_NUMERIC_ERROR:
-          'Found a non numeric value in the Entry Date',
+        AUTHOR_ANDED_WARNING: 'Author search terms combined with AND rather than OR',
+        ENTRY_DATE_OFFSET_ERROR: 'Can not combine a date and offset (negative value) for the Entry Date',
+        ENTRY_DATE_NON_NUMERIC_ERROR: 'Found a non numeric value in the Entry Date',
         UNRECOGNIZABLE_VALUE: 'Invalid value for {} supplied',
       };
 
@@ -957,8 +879,7 @@ define([
         utils.qs('warning_message', this.original_url, false) || []
       );
 
-      var uParams =
-        utils.qs('unprocessed_parameter', this.original_url, false) || [];
+      var uParams = utils.qs('unprocessed_parameter', this.original_url, false) || [];
 
       messages = _.reduce(
         messages,
@@ -968,10 +889,7 @@ define([
             var updatedMsg = TUGBOAT_MESSAGES[msg];
             if (msg === 'UNRECOGNIZABLE_VALUE' && uParams.length > 0) {
               var param = encodeURIComponent(uParams.pop());
-              updatedMsg = updatedMsg.replace(
-                '{}',
-                /^\w+$/.test(param) ? param : 'parameter'
-              );
+              updatedMsg = updatedMsg.replace('{}', /^\w+$/.test(param) ? param : 'parameter');
             }
             acc.push(updatedMsg);
           }
