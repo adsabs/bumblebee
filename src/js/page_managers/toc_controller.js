@@ -166,7 +166,11 @@ define([
       if (subView) {
         widgetName = widgetName + '__' + subView;
       }
-      this.widgets.tocWidget.collection.selectOne(widgetName);
+
+      // Add defensive check to ensure tocWidget and its collection exist
+      if (this.widgets.tocWidget && this.widgets.tocWidget.collection) {
+        this.widgets.tocWidget.collection.selectOne(widgetName);
+      }
     },
 
     onDestroy: function() {

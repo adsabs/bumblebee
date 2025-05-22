@@ -97,9 +97,14 @@ define([
       switch (ev) {
         case 'timing:results-loaded':
           window.getSentry((sentry) => {
-            const activeSpan = sentry.getActiveSpan().getSpanJSON();
-            const time = new Date().getTime() - activeSpan.start_timestamp * 1000;
-            sentry.setMeasurement('timing.results.shown', time, 'millisecond');
+            const activeSpan = sentry.getActiveSpan();
+            if (activeSpan) {
+              const spanJSON = activeSpan.getSpanJSON();
+              if (spanJSON && spanJSON.start_timestamp) {
+                const time = new Date().getTime() - spanJSON.start_timestamp * 1000;
+                sentry.setMeasurement('timing.results.shown', time, 'millisecond');
+              }
+            }
           });
           break;
         case 'update-document-title':
