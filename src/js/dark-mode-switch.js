@@ -56,8 +56,12 @@ define(['analytics'], function(analytics) {
 
     const savedMode = getDarkSwitchValue();
     // 1. check app setting
-    if (!savedMode) {
-      savedMode !== 'on' ? turnOffDarkMode(false) : turnOnDarkMode(false);
+    if (savedMode) {
+      if (savedMode !== 'on') {
+        turnOffDarkMode(false);
+      } else {
+        turnOnDarkMode(false);
+      }
     } else if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
       // 2. check system setting
       turnOnDarkMode(false);
