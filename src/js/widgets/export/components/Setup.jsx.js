@@ -66,7 +66,7 @@ define(['react', 'prop-types'], function(React, ReactPropTypes) {
                     <a
                       title="Get Help With ADS Custom Format Syntax"
                       target="_blank"
-                      rel="noreferrer noopener"
+                      rel="noopener"
                       href="/help/actions/export"
                     >
                       <i
@@ -112,7 +112,7 @@ define(['react', 'prop-types'], function(React, ReactPropTypes) {
                     <a
                       title="Get Help With ADS Custom Format Syntax"
                       target="_blank"
-                      rel="noreferrer noopener"
+                      rel="noopener"
                       href="/help/actions/export"
                     >
                       <i

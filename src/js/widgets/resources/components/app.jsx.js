@@ -28,7 +28,7 @@ define(['underscore', 'react', 'prop-types'], function(_, React, PropTypes) {
                 <a
                   href={g.url}
                   target="_blank"
-                  rel="noreferrer noopener"
+                  rel="noopener"
                   onClick={() => onClick('ftl', g)}
                   title={`${g.description} ${
                     g.open
@@ -87,7 +87,7 @@ define(['underscore', 'react', 'prop-types'], function(_, React, PropTypes) {
             key={item.name}
             href={item.url}
             target="_blank"
-            rel="noreferrer noopener"
+            rel="noopener"
             onClick={() => onClick('data', item)}
             title={item.description}
             className="resources__content__link"

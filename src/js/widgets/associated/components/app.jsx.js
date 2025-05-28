@@ -33,7 +33,7 @@ define(['underscore', 'react', 'prop-types'], function(_, React, PropTypes) {
             <a
               href={item.url}
               target="_blank"
-              rel="noreferrer noopener"
+              rel="noopener"
               onClick={() => onClick(item)}
             >
               {item.name}{' '}
