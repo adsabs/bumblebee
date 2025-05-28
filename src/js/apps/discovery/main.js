@@ -195,10 +195,10 @@ define(['config/discovery.config', 'module'], function(config, module) {
             const msg = `
               <p>
                 You are using a proxied version of ADS, we recommend you switch to the regular non-proxied URL:
-                <a href="${url}${location.pathname}" rel="noopener noreferrer">${url}</a></p>
+                <a href="${url}${location.pathname}" rel="noopener">${url}</a></p>
               <p>
                 Configure authenticated access to publisher content via the Library Link Server in your account
-                <a href="${url}/user/settings/librarylink" rel="noopener noreferrer">preferences</a>.
+                <a href="${url}/user/settings/librarylink" rel="noopener">preferences</a>.
               </p>
             `;
 
