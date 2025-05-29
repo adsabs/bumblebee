@@ -174,17 +174,27 @@ define([
   };
 
   const extractErrorMessageFromAjax = (maybeXHR, defaultMessage) => {
-    if (
-      typeof maybeXHR !== 'undefined' &&
-      typeof maybeXHR.responseJSON !== 'undefined'
-    ) {
-      if (typeof maybeXHR.responseJSON.error === 'string') {
-        return maybeXHR.responseJSON.error;
-      } else if (typeof maybeXHR.responseJSON.message === 'string') {
-        return maybeXHR.responseJSON.message;
+    try {
+      if (
+        typeof maybeXHR !== 'undefined' &&
+        typeof maybeXHR.responseJSON !== 'undefined'
+      ) {
+        if (typeof maybeXHR.responseJSON.error === 'string') {
+          return maybeXHR.responseJSON.error;
+        }
+        if (typeof maybeXHR.responseJSON.message === 'string') {
+          return maybeXHR.responseJSON.message;
+        }
+        if (typeof maybeXHR.responseJSON.message === 'object') {
+          // if it is an object, we assume it is a list of messages
+          return Object.values(maybeXHR.responseJSON.message).join(', ');
+        }
       }
+      return defaultMessage;
+    } catch (e) {
+      console.error('Error extracting error message from AJAX response:', e);
+      return defaultMessage;
     }
-    return defaultMessage;
   };
 
   return {
