@@ -108,7 +108,7 @@ import ShowToc from '../js/wraps/table_of_contents';
 import SettingsPage from '../js/wraps/user_settings_page_manager/user_page_manager';
 import VisualizationDropdown from '../js/wraps/visualization_dropdown';
 import VizierFacet from '../js/wraps/vizier_facet';
-import DynamicConfig from './discovery.vars';
+import DynamicConfig from './dynamic-config';
 import Utils from '../js/utils';
 
 const staticConfig = {

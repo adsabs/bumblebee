@@ -211,6 +211,10 @@ module.exports = {
         { from: path.resolve(__dirname, 'src/500.html'), to: OUTPUT_DIR },
         { from: path.resolve(__dirname, 'src/assets/favicon'), to: path.resolve(OUTPUT_DIR, 'assets/favicon') },
         { from: path.resolve(__dirname, 'src/assets/images'), to: path.resolve(OUTPUT_DIR, 'assets/images') },
+        {
+          from: path.resolve(__dirname, 'src/config/discovery.vars.js'),
+          to: path.resolve(OUTPUT_DIR, 'src/config/discovery.vars.js'),
+        },
       ],
     }),
     new WebpackAssetsManifest({
