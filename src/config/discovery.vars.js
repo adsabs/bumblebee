@@ -1,6 +1,6 @@
 window.DISCOVERY_CONFIG = {
   clientVersion: '',
-  apiRoot: '/v1',
+  apiRoot: '/v1/',
   orcidProxy: '/oauth/',
   bootstrapUrls: ['/accounts/bootstrap'],
   routerConf: {
@@ -14,7 +14,7 @@ window.DISCOVERY_CONFIG = {
   googleTrackingOptions: 'auto',
   orcidClientId: 'APP-P5ANJTQRRTMA6GXZ',
   orcidLoginEndpoint: 'https://sandbox.orcid.org/oauth/authorize',
-  orcidApiEndpoint: 'https://devapi.adsabs.harvard.edu/v1/orcid/',
+  orcidApiEndpoint: 'https://devapi.adsabs.harvard.edu/v1/orcid',
   recaptchaKey: '6LcpTuUnAAAAAD6YCBdr_2-0b1AH8N6nXkYEG5G5',
   hourly: false,
 };
