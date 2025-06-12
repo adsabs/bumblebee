@@ -8,7 +8,7 @@
  */
 module.exports = {
   'google-analytics': {
-    src: 'http://www.google-analytics.com/analytics.js',
+    src: 'https://storage.googleapis.com/google-code-archive-downloads/v2/code.google.com/google-analytics-js/gajs.min.js',
     dest: 'src/libs/g.js',
   },
   'dsjslib-cache': {
