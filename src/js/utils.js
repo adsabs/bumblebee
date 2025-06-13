@@ -1,12 +1,12 @@
-define([
-  'jquery',
-  'underscore',
-  'analytics',
-  'react',
-  'js/components/api_query',
-  'js/components/api_request',
-], function($, _, analytics, React, ApiQuery, ApiRequest) {
-  const qs = function(key, str, separator) {
+define(['jquery', 'underscore', 'analytics', 'react', 'js/components/api_query', 'js/components/api_request'], function (
+  $,
+  _,
+  analytics,
+  React,
+  ApiQuery,
+  ApiRequest
+) {
+  const qs = function (key, str, separator) {
     // eslint-disable-next-line no-useless-escape
     const k = key.replace(/[*+?^$.[\]{}()|\\\/]/g, '\\$&'); // escape RegEx meta chars
     var pattern = '(^|[\\?&])' + k + '=[^&]*';
@@ -24,14 +24,14 @@ define([
       return decodeURIComponent(msg.replace(/\+/g, ' '));
     }
     if (separator === false) {
-      return _.map(clean, function(msg) {
+      return _.map(clean, function (msg) {
         return decodeURIComponent(msg.replace(/\+/g, ' '));
       });
     }
     return null;
   };
 
-  const updateHash = function(key, value, hash) {
+  const updateHash = function (key, value, hash) {
     // eslint-disable-next-line no-useless-escape
     const k = key.replace(/[*+?^$.[\]{}()|\\\/]/g, '\\$&');
     const h = _.isString(hash) ? hash : window.location.hash;
@@ -43,19 +43,16 @@ define([
     return hash;
   };
 
-  const difference = function(obj, base) {
-    return _.transform(obj, function(result, value, key) {
+  const difference = function (obj, base) {
+    return _.transform(obj, function (result, value, key) {
       if (!_.isEqual(value, base[key])) {
-        result[key] =
-          _.isObject(value) && _.isObject(base[key])
-            ? difference(value, base[key])
-            : value;
+        result[key] = _.isObject(value) && _.isObject(base[key]) ? difference(value, base[key]) : value;
       }
     });
   };
 
   // get the current browser information
-  const getBrowserInfo = function() {
+  const getBrowserInfo = function () {
     // do this inline, so we only request when necessary
     const $dd = $.Deferred();
 
@@ -78,11 +75,7 @@ define([
   };
 
   class TimingEvent {
-    constructor(
-      timingVar = 'Timers',
-      timingCategory = 'Generic Timer',
-      timingLabel
-    ) {
+    constructor(timingVar = 'Timers', timingCategory = 'Generic Timer', timingLabel) {
       this.timingCategory = timingCategory;
       this.timingVar = timingVar;
       this.timingLabel = timingLabel;
@@ -100,9 +93,7 @@ define([
         return;
       }
       const time = +new Date() - this.time;
-      analytics('send',
-        'timing',
-        {
+      analytics('send', 'timing', {
         timingCategory: this.timingCategory,
         timingVar: this.timingVar,
         timingLabel: this.timingLabel,
@@ -151,7 +142,7 @@ define([
 
       // replace the current marionette template renderer for a moment
       const _renderTmpl = view._renderTemplate;
-      view._renderTemplate = () => {};
+      view._renderTemplate = () => { };
 
       // reset template renderer on first model change
       view.model.once('change', () => {
@@ -173,28 +164,28 @@ define([
     return new ApiRequest(params);
   };
 
-  const extractErrorMessageFromAjax = (maybeXHR, defaultMessage) => {
-    try {
-      if (
-        typeof maybeXHR !== 'undefined' &&
-        typeof maybeXHR.responseJSON !== 'undefined'
-      ) {
+  const extractErrorMessageFromAjax = function (maybeXHR, defaultMessage = 'An error occurred') {
+    if (typeof maybeXHR !== 'undefined' && typeof maybeXHR.responseJSON !== 'undefined') {
+      try {
         if (typeof maybeXHR.responseJSON.error === 'string') {
           return maybeXHR.responseJSON.error;
         }
         if (typeof maybeXHR.responseJSON.message === 'string') {
           return maybeXHR.responseJSON.message;
         }
-        if (typeof maybeXHR.responseJSON.message === 'object') {
-          // if it is an object, we assume it is a list of messages
+        if (typeof maybeXHR.responseJSON.message === 'object' && maybeXHR.responseJSON.message !== null) {
+          // Check if it is an array or a plain object
+          if (Array.isArray(maybeXHR.responseJSON.message)) {
+            return maybeXHR.responseJSON.message.join(', ');
+          }
           return Object.values(maybeXHR.responseJSON.message).join(', ');
         }
+        return defaultMessage;
+      } catch (e) {
+        return defaultMessage;
       }
-      return defaultMessage;
-    } catch (e) {
-      console.error('Error extracting error message from AJAX response:', e);
-      return defaultMessage;
     }
+    return defaultMessage;
   };
 
   return {
