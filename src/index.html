@@ -191,6 +191,51 @@
     </script>
 
     <script>
+
+      /**
+       * Function to tag spans with specific descriptions based on URL parameters.
+       * @param span
+       */
+      const tagSpans = (span) => {
+        if (!span || !span.data || !span.data['http.url']) {
+          return span;
+        }
+        const url = new URL(span.data['http.url']);
+        const params = new URLSearchParams(url.search);
+
+        // check for search (left-side) facets
+        if (params.has('facet') && params.get('facet') === 'true') {
+          if (params.has('facet.field')) {
+            span.description = `${params.get('facet.field')} facet`;
+          }
+
+          // check for years graph
+          if (params.has('facet.pivot')) {
+            const pivot = params.get('facet.pivot');
+            if (pivot === 'property,year') {
+              span.description = 'years graph';
+            }
+          }
+        }
+        if (params.has('stats') && params.get('stats') === 'true') {
+          if (params.has('stats.field')) {
+            const field = params.get('stats.field');
+
+            // check for citations graph
+            if (field === 'citation_count') {
+              span.description = 'citations graph';
+            }
+
+            // check for reads graph
+            if (field === 'read_count') {
+              span.description = 'reads graph';
+            }
+          }
+        }
+
+        return span;
+      };
+
       // Simulate a process.env-like environment
       window.process = { env: { NODE_ENV: window.ENV ?? 'production' } };
 
@@ -228,6 +273,7 @@
                 unmask: ['[name=q]'],
               }),
             ],
+            beforeSendSpan: tagSpans
           });
         } catch (e) {
           console.error('Could not initialize Sentry', e);
