@@ -15,5 +15,8 @@ services:
     environment:
       ENVIRONMENT: "${ENV:-production}"
       NGINX_ENTRYPOINT_QUIET_LOGS: 1
+      DEV_API_URL: "https://devapi.adsabs.harvard.edu/v1"
+      QA_API_URL: "https://qa.adsabs.harvard.edu/v1"
+      PROD_API_URL: "https://api.adsabs.harvard.edu/v1"
     healthcheck:
       test: 'curl --fail http://localhost:8000/ready || exit 1'
