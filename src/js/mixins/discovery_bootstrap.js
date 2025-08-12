@@ -45,9 +45,9 @@ define([
     });
 
     var navigate = function(ev) {
-      if (window.bbb) {
+      if (window.__UNSAFE_BBB_APP_INSTANCE__) {
         try {
-          var nav = bbb.getBeeHive().getService('Navigator');
+          var nav = window.__UNSAFE_BBB_APP_INSTANCE__.getBeeHive().getService('Navigator');
           nav.router.navigate(ev.data.url, { trigger: true, replace: false });
           return false;
         } catch (e) {
