@@ -9,7 +9,10 @@ define([
   'analytics',
 ], function(_, BaseWidget, ApiRequest, ApiQuery, analytics) {
   const getBeeHive = () => {
-    return window.bbb.getBeeHive();
+    if (window.__UNSAFE_BBB_APP_INSTANCE__ && window.__UNSAFE_BBB_APP_INSTANCE__.getBeeHive) {
+      return window.__UNSAFE_BBB_APP_INSTANCE__.getBeeHive();
+    }
+    throw new Error('Bumblebee application is not initialized');
   };
 
   const getPubSub = () => {

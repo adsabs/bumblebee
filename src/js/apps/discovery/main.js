@@ -72,10 +72,8 @@ define(['config/discovery.config', 'module'], function(config, module) {
 
         app.onBootstrap(data);
 
-        var dynConf = app.getObject('DynamicConfig');
-        if (dynConf && dynConf.debugExportBBB) {
-          window.bbb = app;
-        }
+        // expose the app instance
+        window.__UNSAFE_BBB_APP_INSTANCE__ = app;
 
         pubsub.publish(pubsub.getCurrentPubSubKey(), pubsub.APP_BOOTSTRAPPED);
 
