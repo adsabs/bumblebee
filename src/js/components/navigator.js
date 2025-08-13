@@ -51,6 +51,20 @@ define([
     });
   };
 
+  const withSentry = function (callback) {
+    if (typeof window.whenSentryReady === 'function') {
+      window.whenSentryReady()
+        .then(callback)
+        .catch(() => {});
+      return;
+    }
+    if (typeof window.getSentry === 'function') {
+      try {
+        window.getSentry(callback);
+      } catch (_) {}
+    }
+  };
+
   var Navigator = GenericModule.extend({
     initialize: function (options) {
       options = options || {};
@@ -94,27 +108,23 @@ define([
     _onCustomEvent: function (ev, data) {
       switch (ev) {
         case 'timing:results-loaded':
-          if (typeof window.whenSentryReady === 'function') {
-            window.whenSentryReady()
-              .then((sentry) => {
-                try {
-                  const span = sentry.getActiveSpan && sentry.getActiveSpan();
-                  const startTs = span && span.startTimestamp ? span.startTimestamp * 1000 : null;
-                  const time = startTs ? Date.now() - startTs : null;
-                  if (time != null && typeof sentry.setMeasurement === 'function') {
-                    sentry.setMeasurement('timing.results.shown', time, 'millisecond');
-                  } else {
-                    sentry.addBreadcrumb({
-                      category: 'timing',
-                      level: 'info',
-                      message: 'results shown',
-                      data: { durationMs: time },
-                    });
-                  }
-                } catch (_) {}
-              })
-              .catch(() => {});
-          }
+          withSentry((sentry) => {
+            try {
+              const span = sentry.getActiveSpan && sentry.getActiveSpan();
+              const startTs = span && span.startTimestamp ? span.startTimestamp * 1000 : null;
+              const time = startTs ? Date.now() - startTs : null;
+              if (time != null && typeof sentry.setMeasurement === 'function') {
+                sentry.setMeasurement('timing.results.shown', time, 'millisecond');
+              } else if (typeof sentry.addBreadcrumb === 'function') {
+                sentry.addBreadcrumb({
+                  category: 'timing',
+                  level: 'info',
+                  message: 'results shown',
+                  data: { durationMs: time },
+                });
+              }
+            } catch (_) {}
+          });
           break;
         case 'update-document-title':
           this._updateDocumentTitle(data);
@@ -201,11 +211,11 @@ define([
         page_name: pageName,
         clean_route: this._cleanRoute(route),
       });
-      if (typeof window.whenSentryReady === 'function') {
-        window.whenSentryReady()
-          .then((sentry) => { sentry.setTag('page.name', pageName); })
-          .catch(() => {});
-      }
+      withSentry((sentry) => {
+        try {
+          sentry.setTag('page.name', pageName);
+        } catch (_) {}
+      });
     }, 300),
 
     /**
