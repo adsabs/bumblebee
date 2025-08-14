@@ -6,7 +6,7 @@ define([
 ], function (_, Marionette, ApplicationTemplate, config) {
   var DEFAULTS = {
     numAuthors: {
-      initialOptions: _.range(1, 11).concat(['all']),
+      initialOptions: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
       initialValue: 4,
     },
     externalLinks: {
