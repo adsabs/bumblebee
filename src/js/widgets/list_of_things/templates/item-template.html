@@ -174,22 +174,9 @@
 
                 {{#if extraAuthors}}
                 <li>
-                    <a href="javascript:void(0)" class="show-all-authors">
-                        <em>and {{extraAuthors}} more</em>
-                    </a>
+                    <em>and {{extraAuthors}} more</em>
                 </li>
                 {{/if}}
-            </ul>
-
-            <ul class="list-inline just-authors s-results-authors all-authors hidden" aria-label="authors">
-                {{#each allAuthorFormatted}}
-                    <li class="article-author">{{this}}</li>
-                {{/each}}
-                <li>
-                    <a href="javascript:void(0)" class="show-less-authors">
-                        <em>show less</em>
-                    </a>
-                </li>
             </ul>
             {{else}}
                 <span class="text-faded">no author information available</span>

@@ -43,6 +43,9 @@ define([
   SortWidget,
   SortActions
 ) {
+
+  const MAX_AUTHOR_COUNT = 3;
+
   var LibraryItemView = DefaultItemView.extend({
     template: LibraryItemEditTemplate,
 
@@ -242,7 +245,7 @@ define([
 
     defaultQueryArguments: {
       fl:
-        'title,bibcode,author,keyword,pub,volume,year,links_data,[citations],property,esources,data,pubdate,abstract,publisher',
+        'title,bibcode,author,[fields author=3],author_count,keyword,pub,volume,year,links_data,[citations],property,esources,data,pubdate,abstract,publisher',
       rows: 25,
       start: 0,
       sort: 'date desc',
@@ -384,25 +387,17 @@ define([
         docs,
         function(d, i) {
           d.identifier = d.bibcode ? d.bibcode : d.identifier;
-
           d.normCiteSort = normCiteSort;
 
-          var maxAuthorNames = 3;
-
-          if (d.author && d.author.length > maxAuthorNames) {
-            d.extraAuthors = d.author.length - maxAuthorNames;
-            var shownAuthors = d.author.slice(0, maxAuthorNames);
-          } else if (d.author) {
-            shownAuthors = d.author;
+          // handle author count
+          if (d.author_count && d.author_count > MAX_AUTHOR_COUNT) {
+            d.extraAuthors = d.author_count - MAX_AUTHOR_COUNT;
           }
 
           if (d.author) {
-            var l = shownAuthors.length - 1;
-            d.authorFormatted = _.map(shownAuthors, function(d, i) {
-              if (i == l || l == 0) {
-                return d; // last one, or only one
-              }
-              return d + ';';
+            d.authorFormatted = d.author.map((d, i, arr) => {
+              const lastIdx = arr.length - 1;
+              return i === lastIdx || lastIdx === 0 ? d : d + ';';
             });
           }
 

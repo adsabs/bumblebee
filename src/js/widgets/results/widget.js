@@ -93,7 +93,7 @@ define([
 
     defaultQueryArguments: {
       fl:
-        'title,abstract,bibcode,author,keyword,id,links_data,property,esources,data,citation_count,citation_count_norm,[citations],pub,email,volume,pubdate,doi,doctype,identifier,publisher',
+        'title,abstract,bibcode,author,author_count,keyword,id,links_data,property,esources,data,citation_count,citation_count_norm,[citations],pub,email,volume,pubdate,doi,doctype,identifier,publisher',
       rows: 25,
       start: 0,
       ui_tag: 'results/primary',
@@ -227,7 +227,23 @@ define([
       q.unlock();
 
       if (this.defaultQueryArguments) {
-        q = this.composeQuery(this.defaultQueryArguments, q);
+        var args = _.extend({}, this.defaultQueryArguments);
+        var limit = this.minAuthorsPerResult;
+
+        if (_.isFinite(limit) && limit >= 0) {
+          var fields = args.fl.split(',');
+          var limiters = [
+            '[fields author=' + limit + ']',
+            '[fields aff=' + limit + ']',
+            '[fields orcid_pub=' + limit + ']',
+            '[fields orcid_user=' + limit + ']',
+            '[fields orcid_other=' + limit + ']'
+          ];
+          fields = _.uniq(fields.concat(limiters));
+          args.fl = fields.join(',');
+        }
+
+        q = this.composeQuery(args, q);
       }
 
       return q;
@@ -264,14 +280,28 @@ define([
       var min = _.has(userData, 'minAuthorsPerResult')
         ? userData.minAuthorsPerResult
         : this.minAuthorsPerResult;
+      var normalized = String(min).toUpperCase();
 
-      if (String(min).toUpperCase() === 'ALL') {
-        this.minAuthorsPerResult = Number.MAX_SAFE_INTEGER;
-      } else if (String(min).toUpperCase() === 'NONE') {
-        this.minAuthorsPerResult = 0;
-      } else {
-        this.minAuthorsPerResult = Number(min);
+      if (normalized === 'ALL') {
+        this.minAuthorsPerResult = Number.POSITIVE_INFINITY;
+        return;
       }
+
+      if (normalized === 'NONE') {
+        this.minAuthorsPerResult = 0;
+        return;
+      }
+
+      var parsed = Number(min);
+      if (isNaN(parsed)) {
+        console.warn(
+          'ResultsWidget: minAuthorsPerResult is not a number, using default value of 3'
+        );
+        this.minAuthorsPerResult = 3;
+        return;
+      }
+
+      this.minAuthorsPerResult = parsed;
     },
 
     processDocs: function(apiResponse, docs, paginationInfo) {
@@ -347,26 +377,31 @@ define([
 
         d.highlights = h.highlights;
 
+        var authors = Array.isArray(d.author) ? d.author : [];
         var maxAuthorNames = self.minAuthorsPerResult;
-        var shownAuthors;
+        var shownAuthors = authors;
+        var totalAuthors = _.isNumber(d.author_count)
+          ? d.author_count
+          : authors.length;
 
-        if (d.author && d.author.length > maxAuthorNames) {
-          d.extraAuthors = d.author.length - maxAuthorNames;
-          shownAuthors = d.author.slice(0, maxAuthorNames);
-        } else if (d.author) {
-          shownAuthors = d.author;
+        if (_.isFinite(maxAuthorNames) && authors.length > maxAuthorNames) {
+          shownAuthors = authors.slice(0, maxAuthorNames);
         }
 
-        if (d.author) {
-          var format = function(d, i, arr) {
+        if (totalAuthors > shownAuthors.length) {
+          d.extraAuthors = totalAuthors - shownAuthors.length;
+        }
+
+        if (authors.length) {
+          var format = function(authorName, i, arr) {
             var l = arr.length - 1;
             if (i === l || l === 0) {
-              return d; // last one, or only one
+              return authorName; // last one, or only one
             }
-            return d + ';';
+            return authorName + ';';
           };
           d.authorFormatted = _.map(shownAuthors, format);
-          d.allAuthorFormatted = _.map(d.author, format);
+          d.allAuthorFormatted = _.map(authors, format);
         }
 
         d.formattedDate = d.pubdate
