@@ -96,6 +96,7 @@ define([
         'title,abstract,bibcode,author,keyword,id,links_data,property,esources,data,citation_count,citation_count_norm,[citations],pub,email,volume,pubdate,doi,doctype,identifier,publisher',
       rows: 25,
       start: 0,
+      tag: 'results/primary',
     },
 
     activate: function(beehive) {

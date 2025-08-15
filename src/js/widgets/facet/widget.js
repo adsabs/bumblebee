@@ -162,6 +162,14 @@ define([
       return diff && diff.sort && _.keys(diff).length === 1;
     },
 
+    customizeQuery(apiQuery) {
+      this.defaultQueryArguments = {
+        ...this.defaultQueryArguments,
+        tag: `results/facet/${this.store.getState().config.facetField}`,
+      };
+      return BaseWidget.prototype.customizeQuery.call(this, apiQuery);
+    },
+
     _dispatchRequest: function(id) {
       var pubsub = this.getPubSub();
       var that = this;
