@@ -70,6 +70,14 @@ define([
       return diff && diff.sort && _.keys(diff).length === 1;
     },
 
+    customizeQuery(apiQuery) {
+      this.defaultQueryArguments = {
+        ...this.defaultQueryArguments,
+        tag: `results/graph/${this.facetField}`,
+      };
+      return BaseWidget.prototype.customizeQuery.call(this, apiQuery);
+    },
+
     dispatchRequest: function(apiQuery) {
       if (this.isActive && !this.isDone && apiQuery.has('q')) {
         // reset the graph
