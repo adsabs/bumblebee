@@ -388,6 +388,25 @@ define([
 
       if (!(ps && api)) return; // application is gone
 
+      // filter out requests that do not have fields, probably it is a primer (i.e. navigation)
+      try {
+        Object.keys(cycle.waiting).forEach((key) => {
+          if (cycle.waiting[key]) {
+            if (
+              !cycle.waiting[key].request ||
+              !cycle.waiting[key].request.has('query') ||
+              !cycle.waiting[key].request.get('query').has('fl') ||
+              cycle.waiting[key].request.get('query').get('fl').length <= 0
+            ) {
+              // remove the request from the waiting list
+              delete cycle.waiting[key];
+            }
+          }
+        })
+      } catch (e) {
+        console.error('Error while filtering out requests without fields:', e, cycle.waiting);
+      }
+
       var app = this.getApp();
       var pskToExecuteFirst;
       if ((pskToExecuteFirst = app.getPskOfPluginOrWidget('widget:Results'))) {
