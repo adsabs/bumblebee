@@ -662,7 +662,7 @@ define([
       minsub.beehive.addObject('LibraryController', fakeLibraryController);
       minsub.beehive.addObject('User', fakeUser);
 
-      window.bbb = {
+      window.__UNSAFE_BBB_APP_INSTANCE__ = {
         getBeeHive() {
           return minsub.beehive;
         },
@@ -768,7 +768,7 @@ define([
       expect($('#test li[data-tab=visualization-AuthorNetwork]').length).to.eql(
         0
       );
-      window.bbb = null;
+      window.__UNSAFE_BBB_APP_INSTANCE__ = null;
     });
 
     it('should allow export to the search results page', function(done) {
@@ -853,7 +853,7 @@ define([
       minsub.beehive.addObject('LibraryController', fakeLibraryController);
       minsub.beehive.addObject('User', fakeUser);
 
-      window.bbb = {
+      window.__UNSAFE_BBB_APP_INSTANCE__ = {
         getBeeHive() {
           return minsub.beehive;
         },
@@ -871,7 +871,7 @@ define([
         '1',
         { public: true },
       ]);
-      window.bbb = null;
+      window.__UNSAFE_BBB_APP_INSTANCE__ = null;
     });
   });
 });

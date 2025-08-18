@@ -14,7 +14,7 @@
     "release": "grunt release",
     "release:sourcemaps": "grunt release && npm run sentry:sourcemaps",
     "start": "docker compose --project-directory nginx up --build",
-    "dev": "APP_DIR=../src ENV=development docker compose --project-directory nginx up --build",
+    "dev": "APP_DIR=../src ENV=development docker compose --project-directory nginx up --build --force-recreate",
     "test": "grunt --stack test",
     "test:prod": "grunt --stack test:prod",
     "test:debug": "grunt --stack test:debug",
