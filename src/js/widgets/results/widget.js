@@ -487,11 +487,26 @@ define([
       );
     },
 
+<<<<<<< HEAD
     reset: function() {
       // persist the sidebar state through resets
       var sidebarState = this.model.get('showSidebars');
       ListOfThingsWidget.prototype.reset.apply(this, arguments);
       this.model.set('showSidebars', sidebarState);
+=======
+    updateMinAuthorsFromUserData: function() {
+      const userData = this.getUserData();
+      const min = _.has(userData, 'minAuthorsPerResult') ? userData.minAuthorsPerResult : this.minAuthorsPerResult;
+      const result = Number(min);
+      if (String(min).toUpperCase() === 'ALL') {
+        this.minAuthorsPerResult = 10;
+      }
+      if (Number.isNaN(result)) {
+        this.minAuthorsPerResult = 3;
+      } else {
+        this.minAuthorsPerResult = result;
+      }
+>>>>>>> 1e07f947 (fix after review suggestion)
     },
   });
 
