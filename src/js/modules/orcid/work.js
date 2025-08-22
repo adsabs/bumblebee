@@ -84,7 +84,8 @@ define(['underscore', 'jsonpath'], function(_, jp) {
      */
     this.getSources = function() {
       if (_.isEmpty(this.sources)) {
-        return [this.getSourceName()];
+        var sourceName = this.getSourceName();
+        return sourceName ? [sourceName] : [];
       }
 
       return this.sources;
@@ -110,6 +111,10 @@ define(['underscore', 'jsonpath'], function(_, jp) {
      * @returns {*} - value found at path
      */
     this.get = function(path) {
+      if (!this._root || !path) {
+        return null;
+      }
+
       var val = jp.query(this._root, path);
       if (_.isEmpty(val)) {
         return null;
@@ -127,6 +132,10 @@ define(['underscore', 'jsonpath'], function(_, jp) {
      * @returns {*} - ORCiD formatted object
      */
     this.getAsOrcid = function() {
+      if (!this._root) {
+        return {};
+      }
+
       return _.reduce(
         ORCIDPATHS,
         _.bind(function(res, p) {

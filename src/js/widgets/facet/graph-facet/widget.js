@@ -100,7 +100,8 @@ define([
 
     handleConditionApplied: function(val) {
       var fieldName = 'q';
-      var q = this.getCurrentQuery();
+      var q = this.getCurrentQuery().clone();
+      q.unlock();
       q.set(
         'q',
         /^\(.*\)/.test(q.get('q')[0])
@@ -108,10 +109,8 @@ define([
           : '(' + q.get('q')[0] + ')'
       );
       val = this.facetField + ':' + val;
-      q = q.clone();
       q = this.removeAnyOldConditions(q, fieldName);
       this.queryUpdater.updateQuery(q, fieldName, 'limit', val);
-      // q.set('q', q.get('q')[0].replace(/^\((.*)\)$/, '$1'));
       this.dispatchNewQuery(q);
     },
 
