@@ -30,6 +30,111 @@ define([
   ApiFeedback
 ) {
   var ResultsWidget = ListOfThingsWidget.extend({
+    _clearResults: function() {
+      this.hiddenCollection.reset();
+      this.view.collection.reset();
+    },
+
+    _onSidebarsUpdate: function(value) {
+      this.model.set('showSidebars', value);
+    },
+
+    _onToggleSidebars: function() {
+      this.trigger(
+        'page-manager-event',
+        'side-bars-update',
+        this.model.get('showSidebars')
+      );
+    },
+
+    activate: function(beehive) {
+      ListOfThingsWidget.prototype.activate.apply(
+        this,
+        [].slice.apply(arguments)
+      );
+      var pubsub = beehive.getService('PubSub');
+      _.bindAll(
+        this,
+        'dispatchRequest',
+        'processResponse',
+        'onUserAnnouncement',
+        'onStoragePaperUpdate',
+        'onCustomEvent',
+        'onStartSearch'
+      );
+      pubsub.subscribe(pubsub.INVITING_REQUEST, this.dispatchRequest);
+      pubsub.subscribe(pubsub.DELIVERING_RESPONSE, this.processResponse);
+      pubsub.subscribe(pubsub.USER_ANNOUNCEMENT, this.onUserAnnouncement);
+      pubsub.subscribe(pubsub.STORAGE_PAPER_UPDATE, this.onStoragePaperUpdate);
+      pubsub.subscribe(pubsub.CUSTOM_EVENT, this.onCustomEvent);
+      pubsub.subscribe(pubsub.START_SEARCH, this.onStartSearch);
+      this.queryTimer = +new Date();
+    },
+
+    checkDetails: function() {
+      var hExists = false;
+      for (var i = 0; i < this.collection.models.length; i++) {
+        var m = this.collection.models[i];
+        if (m.attributes.highlights) {
+          hExists = true;
+          break;
+        }
+      }
+    },
+
+    customizeQuery: function(apiQuery) {
+      var q = apiQuery.clone();
+      q.unlock();
+
+      if (this.defaultQueryArguments) {
+        q = this.composeQuery({
+          ...this.defaultQueryArguments,
+            fl: [
+              ...this.defaultQueryArguments.fl.split(','),
+
+              // append field limiters for authors and the additional orcid fields
+              `[fields author=${this.minAuthorsPerResult}]`,
+              `[fields aff=${this.minAuthorsPerResult}]`,
+              `[fields orcid_pub=${this.minAuthorsPerResult}]`,
+              `[fields orcid_user=${this.minAuthorsPerResult}]`,
+              `[fields orcid_other=${this.minAuthorsPerResult}]`,
+            ].join(','),
+          },
+          q
+        );
+      }
+
+      return q;
+    },
+
+    defaultQueryArguments: {
+      fl: '[citations],abstract,author,author_count,bibcode,citation_count,citation_count_norm,data,doctype,doi,esources,id,identifier,keyword,links_data,property,pub,pubdate,publisher,title,volume',
+      rows: 25,
+      start: 0,
+    },
+
+    dispatchRequest: function(apiQuery) {
+      this.reset();
+      this.setCurrentQuery(apiQuery);
+      this.model.set('loading', true);
+      ListOfThingsWidget.prototype.dispatchRequest.call(this, apiQuery);
+    },
+
+    getUserData: function() {
+      try {
+        var beehive = _.isFunction(this.getBeeHive) && this.getBeeHive();
+        var user = _.isFunction(beehive.getObject) && beehive.getObject('User');
+        if (_.isPlainObject(user)) {
+          return (
+            _.isFunction(user.getUserData) && user.getUserData('USER_DATA')
+          );
+        }
+        return {};
+      } catch (e) {
+        return {};
+      }
+    },
+
     initialize: function() {
       ListOfThingsWidget.prototype.initialize.apply(this, arguments);
       // now adjusting the List Model
@@ -46,6 +151,7 @@ define([
           // often they won't exist
           showHighlights: 'closed',
           pagination: true,
+          mmm: 0
         };
       };
       this.model.set(this.model.defaults(), { silent: true });
@@ -73,63 +179,21 @@ define([
         'change:showSidebars',
         _.bind(this._onToggleSidebars, this)
       );
-
-      // update the default fields with whatever the abstract page needs
-      var abstractFields = AbstractWidget.prototype.defaultQueryArguments.fl.split(
-        ','
-      );
-      var resultsFields = this.defaultQueryArguments.fl.split(',');
-      resultsFields = _.union(abstractFields, resultsFields);
-
-      // remove 'aff' if in list
-      const affIdx = resultsFields.indexOf('aff');
-      if (affIdx > -1) {
-        resultsFields.splice(affIdx, 1);
-      }
-      this.defaultQueryArguments.fl = resultsFields.join(',');
       this.on('page-manager-message', _.bind(this.onPageManagerMessage, this));
     },
 
-    defaultQueryArguments: {
-      fl:
-        'title,abstract,bibcode,author,keyword,id,links_data,property,esources,data,citation_count,citation_count_norm,[citations],pub,email,volume,pubdate,doi,doctype,identifier,publisher',
-      rows: 25,
-      start: 0,
-    },
-
-    activate: function(beehive) {
-      ListOfThingsWidget.prototype.activate.apply(
-        this,
-        [].slice.apply(arguments)
-      );
-      var pubsub = beehive.getService('PubSub');
-      _.bindAll(
-        this,
-        'dispatchRequest',
-        'processResponse',
-        'onUserAnnouncement',
-        'onStoragePaperUpdate',
-        'onCustomEvent',
-        'onStartSearch'
-      );
-      pubsub.subscribe(pubsub.INVITING_REQUEST, this.dispatchRequest);
-      pubsub.subscribe(pubsub.DELIVERING_RESPONSE, this.processResponse);
-      pubsub.subscribe(pubsub.USER_ANNOUNCEMENT, this.onUserAnnouncement);
-      pubsub.subscribe(pubsub.STORAGE_PAPER_UPDATE, this.onStoragePaperUpdate);
-      pubsub.subscribe(pubsub.CUSTOM_EVENT, this.onCustomEvent);
-      pubsub.subscribe(pubsub.START_SEARCH, this.onStartSearch);
-      this.queryTimer = +new Date();
+    onCustomEvent: function(event) {
+      if (event === 'add-all-on-page') {
+        var bibs = this.collection.pluck('bibcode');
+        var pubsub = this.getPubSub();
+        pubsub.publish(pubsub.BULK_PAPER_SELECTION, bibs);
+      }
     },
 
     onPageManagerMessage: function(event, data) {
       if (event === 'side-bars-update') {
         this._onSidebarsUpdate(data);
       }
-    },
-
-    _clearResults: function() {
-      this.hiddenCollection.reset();
-      this.view.collection.reset();
     },
 
     onStartSearch: function(apiQuery) {
@@ -173,16 +237,35 @@ define([
       this.queryTimer = +new Date();
     },
 
-    _onToggleSidebars: function() {
-      this.trigger(
-        'page-manager-event',
-        'side-bars-update',
-        this.model.get('showSidebars')
-      );
-    },
-
-    _onSidebarsUpdate: function(value) {
-      this.model.set('showSidebars', value);
+    onStoragePaperUpdate: function() {
+      var appStorage;
+      if (this.hasBeeHive() && this.getBeeHive().hasObject('AppStorage')) {
+        appStorage = this.getBeeHive().getObject('AppStorage');
+      } else {
+        console.warn('AppStorage object disapperared!');
+        return;
+      }
+      this.collection.each(function(m) {
+        if (appStorage.isPaperSelected(m.get('identifier'))) {
+          m.set('chosen', true);
+        } else {
+          m.set('chosen', false);
+        }
+      });
+      this.hiddenCollection.each(function(m) {
+        if (appStorage.isPaperSelected(m.get('identifier'))) {
+          m.set('chosen', true);
+        } else {
+          m.set('chosen', false);
+        }
+      });
+      if (this.collection.where({ chosen: true }).length == 0) {
+        // make sure the "selectAll" button is unchecked
+        var $chk = this.view.$('input#select-all-docs-cb');
+        if ($chk.length > 0) {
+          $chk[0].checked = false;
+        }
+      }
     },
 
     onUserAnnouncement: function(message, data) {
@@ -203,73 +286,6 @@ define([
         this.view.collection.reset(this.hiddenCollection.getVisibleModels());
       }
       this.updateMinAuthorsFromUserData();
-    },
-
-    onCustomEvent: function(event) {
-      if (event === 'add-all-on-page') {
-        var bibs = this.collection.pluck('bibcode');
-        var pubsub = this.getPubSub();
-        pubsub.publish(pubsub.BULK_PAPER_SELECTION, bibs);
-      }
-    },
-
-    dispatchRequest: function(apiQuery) {
-      this.reset();
-      this.setCurrentQuery(apiQuery);
-      this.model.set('loading', true);
-      ListOfThingsWidget.prototype.dispatchRequest.call(this, apiQuery);
-    },
-
-    customizeQuery: function(apiQuery) {
-      var q = apiQuery.clone();
-      q.unlock();
-
-      if (this.defaultQueryArguments) {
-        q = this.composeQuery(this.defaultQueryArguments, q);
-      }
-
-      return q;
-    },
-
-    checkDetails: function() {
-      var hExists = false;
-      for (var i = 0; i < this.collection.models.length; i++) {
-        var m = this.collection.models[i];
-        if (m.attributes.highlights) {
-          hExists = true;
-          break;
-        }
-      }
-    },
-
-    getUserData: function() {
-      try {
-        var beehive = _.isFunction(this.getBeeHive) && this.getBeeHive();
-        var user = _.isFunction(beehive.getObject) && beehive.getObject('User');
-        if (_.isPlainObject(user)) {
-          return (
-            _.isFunction(user.getUserData) && user.getUserData('USER_DATA')
-          );
-        }
-        return {};
-      } catch (e) {
-        return {};
-      }
-    },
-
-    updateMinAuthorsFromUserData: function() {
-      var userData = this.getUserData();
-      var min = _.has(userData, 'minAuthorsPerResult')
-        ? userData.minAuthorsPerResult
-        : this.minAuthorsPerResult;
-
-      if (String(min).toUpperCase() === 'ALL') {
-        this.minAuthorsPerResult = Number.MAX_SAFE_INTEGER;
-      } else if (String(min).toUpperCase() === 'NONE') {
-        this.minAuthorsPerResult = 0;
-      } else {
-        this.minAuthorsPerResult = Number(min);
-      }
     },
 
     processDocs: function(apiResponse, docs, paginationInfo) {
@@ -301,7 +317,7 @@ define([
         .stashDocs(docs);
 
       // any preprocessing before adding the resultsIndex is done here
-      docs = _.map(docs, function(d) {
+      docs = _.map(docs, (d) => {
         d.normCiteSort = normCiteSort;
 
         if (normCiteSort) {
@@ -339,26 +355,16 @@ define([
 
         d.highlights = h.highlights;
 
-        var maxAuthorNames = self.minAuthorsPerResult;
-        var shownAuthors;
-
-        if (d.author && d.author.length > maxAuthorNames) {
-          d.extraAuthors = d.author.length - maxAuthorNames;
-          shownAuthors = d.author.slice(0, maxAuthorNames);
-        } else if (d.author) {
-          shownAuthors = d.author;
+        // handle author count
+        if (d.author_count && d.author_count > this.minAuthorsPerResult) {
+          d.extraAuthors = d.author_count - this.minAuthorsPerResult;
         }
 
         if (d.author) {
-          var format = function(d, i, arr) {
-            var l = arr.length - 1;
-            if (i === l || l === 0) {
-              return d; // last one, or only one
-            }
-            return d + ';';
-          };
-          d.authorFormatted = _.map(shownAuthors, format);
-          d.allAuthorFormatted = _.map(d.author, format);
+          d.authorFormatted = d.author.map((d, i, arr) => {
+            const lastIdx = arr.length - 1;
+            return i === lastIdx || lastIdx === 0 ? d : d + ';';
+          });
         }
 
         d.formattedDate = d.pubdate
@@ -404,35 +410,11 @@ define([
       return docs;
     },
 
-    onStoragePaperUpdate: function() {
-      var appStorage;
-      if (this.hasBeeHive() && this.getBeeHive().hasObject('AppStorage')) {
-        appStorage = this.getBeeHive().getObject('AppStorage');
-      } else {
-        console.warn('AppStorage object disapperared!');
-        return;
-      }
-      this.collection.each(function(m) {
-        if (appStorage.isPaperSelected(m.get('identifier'))) {
-          m.set('chosen', true);
-        } else {
-          m.set('chosen', false);
-        }
-      });
-      this.hiddenCollection.each(function(m) {
-        if (appStorage.isPaperSelected(m.get('identifier'))) {
-          m.set('chosen', true);
-        } else {
-          m.set('chosen', false);
-        }
-      });
-      if (this.collection.where({ chosen: true }).length == 0) {
-        // make sure the "selectAll" button is unchecked
-        var $chk = this.view.$('input#select-all-docs-cb');
-        if ($chk.length > 0) {
-          $chk[0].checked = false;
-        }
-      }
+    reset: function() {
+      // persist the sidebar state through resets
+      var sidebarState = this.model.get('showSidebars');
+      ListOfThingsWidget.prototype.reset.apply(this, arguments);
+      this.model.set('showSidebars', sidebarState);
     },
 
     triggerBulkAction: function(flag) {
@@ -444,11 +426,18 @@ define([
       );
     },
 
-    reset: function() {
-      // persist the sidebar state through resets
-      var sidebarState = this.model.get('showSidebars');
-      ListOfThingsWidget.prototype.reset.apply(this, arguments);
-      this.model.set('showSidebars', sidebarState);
+    updateMinAuthorsFromUserData: function() {
+      const userData = this.getUserData();
+      const min = _.has(userData, 'minAuthorsPerResult') ? userData.minAuthorsPerResult : this.minAuthorsPerResult;
+      const result = Number(min);
+      if (String(min).toUpperCase() === 'ALL') {
+        this.minAuthorsPerResult = 10;
+      }
+      if (Number.isNaN(result)) {
+        this.minAuthorsPerResult = 3;
+      } else {
+        this.minAuthorsPerResult = result;
+      }
     },
   });
 

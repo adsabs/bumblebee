@@ -92,7 +92,6 @@ define([
     }, 500),
 
     _onCustomEvent: function (ev, data) {
-      console.log('Custom Event', ev, data);
 
       switch (ev) {
         case 'timing:results-loaded':

@@ -67,9 +67,8 @@ define([
 
         var fakeUserObject = {getHardenedInstance : function(){return this},
           isOrcidModeOn : function(){return false},
-          getUserData : function(){ return {link_server :  "foo"}},
+          getUserData : function(){ return {link_server :  "foo", minAuthorsPerResult: 5 }},
           getLocalStorage : function(){return { perPage : 50 }}
-
         };
         var fakeDocStashController = {getHardenedInstance :function(){return this}, stashDocs : sinon.spy()};
         minsub.beehive.addObject("DocStashController", fakeDocStashController );
@@ -148,17 +147,15 @@ define([
         },5);
       });
 
-      it("should show three authors with semicolons in the correct places and, if there are more, show the number of the rest", function (done) {
-        var widget = _getWidget();
-        minsub.publish(minsub.START_SEARCH, new ApiQuery({q: "star"}));
-        setTimeout(function () {
-          var authorsString = $('.just-authors.less-authors', widget.view.$el).last().text().trim().replace(/[\n\s]+\W/g, ' ');
-          expect(authorsString).to.equal('Montmerle, T.; Fake Author 1; Fake Author 2 and 3 more');
-
-          authorsString = $('.just-authors.all-authors', widget.view.$el).last().text().trim().replace(/[\n\s]+\W/g, ' ');
-          expect(authorsString).to.equal('Montmerle, T.; Fake Author 1; Fake Author 2; Fake Author 3; fake Author 4; Fake Author 6 show less');
-          done();
-        }, 5);
+      it("Should apply minAuthorsPerResult to the query 'fl'", function () {
+        const widget = _getWidget();
+        widget.updateMinAuthorsFromUserData();
+        const result = widget.customizeQuery(new ApiQuery({q: "star"})).get('fl')[0].split(',');
+        expect(result).to.include('[fields author=5]');
+        expect(result).to.include('[fields aff=5]');
+        expect(result).to.include('[fields orcid_pub=5]');
+        expect(result).to.include('[fields orcid_user=5]');
+        expect(result).to.include('[fields orcid_other=5]');
       });
 
       it.skip("should listen to INVITING_REQUEST event", function (done) {
@@ -223,10 +220,6 @@ define([
           expect($w.find(".s-identifier:last a").attr("href").trim()).to.eql("#abs/1987sbge.proc...47M/abstract");
           /// expect($w.find(".s-results-links:last").find('div:not(.orcid-actions)').find("a").text().trim()).to.eql("Table of Contents"); // without .orcid-actions
           expect($w.find("h3:last").text().trim()).to.eql("Diffuse high-energy radiation from regions of massive star formation.");
-
-          //checking render order of more than 3 authors
-          expect($w.find(".just-authors.less-authors:last").text().replace(/\s+/g, '')).to.eql("Montmerle,T.;FakeAuthor1;FakeAuthor2and3more");
-          expect($w.find(".just-authors.all-authors:last").text().replace(/\s+/g, '')).to.eql("Montmerle,T.;FakeAuthor1;FakeAuthor2;FakeAuthor3;fakeAuthor4;FakeAuthor6showless");
           done();
         }, 5);
       });

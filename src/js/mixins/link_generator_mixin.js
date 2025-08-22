@@ -578,8 +578,6 @@ define(['underscore', 'js/mixins/openurl_generator'], function(_, { getOpenUrl }
       });
     }
 
-    console.log(fullTextSources);
-
     // check the data property
     _.forEach(data.data, function(product) {
       const parts = product.split(':');
