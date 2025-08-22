@@ -434,10 +434,10 @@ define([
         this.minAuthorsPerResult = 10;
       }
       if (Number.isNaN(result)) {
-        console.warn('ResultsWidget: minAuthorsPerResult is not a number, using default value of 3');
         this.minAuthorsPerResult = 3;
+      } else {
+        this.minAuthorsPerResult = result;
       }
-      this.minAuthorsPerResult = result;
     },
   });
 
