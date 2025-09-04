@@ -95,7 +95,6 @@ define([
     },
 
     onNewQuery: function(apiQuery, key) {
-      console.log('START_SEARCH', apiQuery.url(), key);
       this.listening = true;
     },
 
@@ -104,7 +103,6 @@ define([
 
       var q = apiRequest.get('query');
       if (q) {
-        console.log('NEW REQUEST', q);
         // remember who initiated the new-query
         this.getPubSub().subscribeOnce(
           this.getPubSub().DELIVERING_RESPONSE + key.getId(),
@@ -115,7 +113,6 @@ define([
     },
 
     onResponse: function(apiResponse) {
-      console.log('NEW RESPONSE', apiResponse);
     },
 
     /**
