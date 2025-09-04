@@ -253,7 +253,6 @@ define([
     },
 
     onUserConfirmation: function(data) {
-      console.log('user:confirmed', data);
       data = data || {};
       var app = data.application;
       var env = data.environment;

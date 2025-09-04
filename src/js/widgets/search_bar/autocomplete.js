@@ -349,29 +349,61 @@ define(['jquery', 'analytics'], function($, analytics) {
     });
 
     // render the suggestion list with some highlighting
-    $input.data('ui-autocomplete')._renderItem = function(ul, item) {
-      const re = new RegExp('(' + this.term + ')', 'i');
-      const label = item.label.replace(
-        re,
-        '<span class="ui-state-highlight">$1</span>'
-      );
-      if (item.desc) {
-        return $('<li class="search-bar-suggestion">')
-          .append(
-            '<a>' +
-              label +
-              '<span class="s-auto-description">&nbsp;&nbsp;' +
-              item.desc +
-              '</span></a>'
-          )
-          .appendTo(ul);
-      }
+  $input.data('ui-autocomplete')._renderItem = function (ul, item) {
+    const term = (this.term ?? '').toString().trim();
+    const label = (item?.label ?? item?.value ?? '').toString();
 
-      return $('<li class="search-bar-suggestion">')
-        .on('hover', (e) => e.preventDefault())
-        .append('<a>' + label + '</a>')
-        .appendTo(ul);
+    const $li = $('<li/>', { class: 'search-bar-suggestion' });
+    const $a = $('<a/>');
+
+    // Highlight without regex
+    const appendHighlighted = (text, needle) => {
+      if (!needle) {
+        $a.text(text);
+        return;
+      }
+      try {
+        const hay = text.toLowerCase();
+        const ned = needle.toLowerCase();
+        const idx = hay.indexOf(ned);
+
+        if (idx === -1) {
+          // No match — just text
+          $a.text(text);
+          return;
+        }
+
+        // Build: [before][<span>match</span>][after]
+        $a.append(document.createTextNode(text.slice(0, idx)));
+
+        $('<span/>', {
+          class: 'ui-state-highlight',
+          text: text.slice(idx, idx + needle.length),
+        }).appendTo($a);
+
+        $a.append(document.createTextNode(text.slice(idx + needle.length)));
+      } catch (error) {
+        // Fallback on any unexpected error
+        $a.text(text);
+      }
     };
+
+    appendHighlighted(label, term);
+
+    if (item?.desc) {
+      // Add a non-breaking space gap like your original
+      $('<span/>', {
+        class: 's-auto-description',
+        text: `  ${item.desc}`, // text, not HTML
+      }).appendTo($a);
+    }
+
+    // Avoid invalid 'hover' event — jQuery uses mouseenter/mouseleave
+    return $li
+      .on('mouseenter', (e) => e.preventDefault())
+      .append($a)
+      .appendTo(ul);
+  };
 
     $input.bind({
       keydown(event) {
