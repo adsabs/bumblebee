@@ -139,5 +139,14 @@ define(['js/components/multi_params', 'backbone'], function(MultiParams, Backbon
       expect(t.get('fq')).to.be.eql(['{!type=aqp cache=false cost=150 v=$fq_author}']);
     })
 
+    it("skips empty or missing parameter values when parsing", function() {
+      var t = new MultiParams().load('a=&b&c=1&&d==two&e=');
+      expect(t.get('c')).to.eql(['1']);
+      expect(t.get('d')).to.eql(['=two']);
+      expect(t.get('a')).to.equal(undefined);
+      expect(t.get('b')).to.equal(undefined);
+      expect(t.get('e')).to.equal(undefined);
+    });
+
   });
 });
