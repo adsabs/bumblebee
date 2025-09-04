@@ -223,9 +223,14 @@ define(['backbone', 'underscore', 'jquery'], function(Backbone, _, $) {
         key = decodeURIComponent(hash[0].split('+').join(' ')); // optimized: .replace(/\+/g, " ")
 
         var vall = hash[1];
+        // If there are additional '=' signs, re-join to preserve them in the value
         if (hash.length > 2) {
           hash.shift();
           vall = hash.join('=');
+        }
+
+        if (typeof vall === 'undefined' || vall === '') {
+          continue;
         }
 
         // replace literal '%' with code and '+' become literal spaces
@@ -235,6 +240,12 @@ define(['backbone', 'underscore', 'jquery'], function(Backbone, _, $) {
             .split('+')
             .join(' ')
         );
+
+        // Ignore empty strings after decoding to avoid validation errors later
+        if (value === '') {
+          continue;
+        }
+
         if (attrs[key] !== undefined) {
           attrs[key].push(value);
         } else {
