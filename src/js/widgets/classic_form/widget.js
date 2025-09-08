@@ -678,6 +678,11 @@ define([
         q: queryDict.q.join(' '),
       });
 
+      // if q is empty, set it to default
+      if (newQuery.q === '') {
+        newQuery.q = '*:*';
+      }
+
       newQuery = new ApiQuery(newQuery);
       var ps = this.getPubSub();
       var options = {
