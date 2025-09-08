@@ -299,7 +299,8 @@ define([
     updatePaginationOnDelete: function() {
       const deleted = this.model.get('itemDeleted');
       if (deleted && _.isNumber(deleted.id)) {
-        const { perPage = 25 } = this.model.get('pageData');
+        const pageData = this.model.has('pageData') ? this.model.get('pageData') : { perPage: 25 };
+        const { perPage } = pageData;
         const newPage = Math.floor(deleted.id / perPage);
 
         if (deleted.id !== 0 && deleted.id % perPage === 0) {
