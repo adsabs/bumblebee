@@ -59,6 +59,15 @@
 
   <div class="row">
     <h2 class="sr-only">Search Results</h2>
+    {{#if partialResults}}
+    <div class="col-sm-12">
+      <div class="alert alert-warning" role="alert" style="border-radius: 0">
+        <i class="fa fa-exclamation-triangle" aria-hidden="true"></i>
+        The search took too long, so some results may be missing. Try refining your query to make it faster and see
+        everything.
+      </div>
+    </div>
+    {{/if}}
     {{#if title}}
     <div class="col-sm-12">
       <h2 class="s-article-title">{{{title}}}</h2>

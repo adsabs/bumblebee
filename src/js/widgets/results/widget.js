@@ -46,6 +46,7 @@ define([
           // often they won't exist
           showHighlights: 'closed',
           pagination: true,
+          partialResults: false
         };
       };
       this.model.set(this.model.defaults(), { silent: true });
@@ -286,6 +287,12 @@ define([
       var link_server = userData.link_server;
       this.__exposeMetadata(docs);
       this.updateMinAuthorsFromUserData();
+
+      // handle showing a message if the response is partial
+      const response = apiResponse.has('response') ? apiResponse.get('response') : null;
+      if (response) {
+        this.model.set('partialResults', 'partialResults' in response ? !!response.partialResults : false);
+      }
 
       var appStorage = null;
       if (this.hasBeeHive() && this.getBeeHive().hasObject('AppStorage')) {
