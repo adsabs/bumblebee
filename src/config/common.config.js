@@ -306,9 +306,9 @@ define([], function () {
           };
       },
       () => {
-        window.getSentry((sentry) => {
-          sentry.captureMessage('d3 not loaded');
-        });
+        window.whenSentryReady && window.whenSentryReady()
+          .then((sentry) => sentry.captureMessage('d3 not loaded'))
+          .catch(() => {});
       }
     );
   });
@@ -352,9 +352,9 @@ define([], function () {
         };
       },
       () => {
-        window.getSentry((sentry) => {
-          sentry.captureMessage('jQuery not loaded');
-        });
+        window.whenSentryReady && window.whenSentryReady()
+          .then((sentry) => sentry.captureMessage('jQuery not loaded'))
+          .catch(() => {});
       }
     );
   });

@@ -106,6 +106,30 @@ define([
       var target = apiRequest.get('target');
       errorDetails.target = target;
       errorDetails.query = apiRequest.get('query').toJSON();
+      if (typeof window.whenSentryReady === 'function') {
+        window.whenSentryReady()
+          .then((sentry) => {
+            try {
+              const context = {
+                xhrStatus: xhr && typeof xhr.status !== 'undefined' ? xhr.status : undefined,
+                errorDetails,
+                apiRequest: (function() {
+                  try {
+                    return apiRequest
+                      ? { target: apiRequest.get('target'), query: apiRequest.get('query').toJSON() }
+                      : undefined;
+                  } catch (_) { return undefined; }
+                })(),
+              };
+              sentry.withScope((scope) => {
+                scope.setTag('context', 'search_cycle_failed_to_start');
+                scope.setContext('search_failure', context);
+                sentry.captureMessage('Search cycle failed to start', 'warning');
+              });
+            } catch (_) {}
+          })
+          .catch(() => {});
+      }
 
       switch (xhr.status) {
         case 403:
@@ -468,7 +492,20 @@ define([
 
             if (storage && storage.getCurrentQuery()) {
               try {
-                console.log('URL: ', storage.getCurrentQuery().url());
+                if (typeof window.whenSentryReady === 'function') {
+                  window.whenSentryReady()
+                    .then((sentry) => {
+                      try {
+                        sentry.addBreadcrumb({
+                          category: 'query',
+                          level: 'info',
+                          message: 'Current query URL',
+                          data: { url: storage.getCurrentQuery().url() },
+                        });
+                      } catch (_) {}
+                    })
+                    .catch(() => {});
+                }
               } catch (e) {
                 // XXX:rca huh?
               }
@@ -528,7 +565,20 @@ define([
       },
 
       onAppExit: function(data) {
-        console.log('App exit requested to: ' + data);
+        if (typeof window.whenSentryReady === 'function') {
+          window.whenSentryReady()
+            .then((sentry) => {
+              try {
+                sentry.addBreadcrumb({
+                  category: 'navigation',
+                  level: 'info',
+                  message: 'App exit requested',
+                  data: { destination: data },
+                });
+              } catch (_) {}
+            })
+            .catch(() => {});
+        }
         // TODO:rca - save the application history and persist it
 
         var alerts = this.getAlerter();

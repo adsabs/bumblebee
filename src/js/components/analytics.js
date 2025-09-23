@@ -36,9 +36,17 @@ define([], function () {
    */
   var sendEvent = function (url) {
     window.fetch(url, { method: 'GET' }).catch((error) => {
-      window.getSentry().captureMessage('Failed to send analytics event', {
-        extra: { url, error: error.message },
-      });
+      if (typeof window.whenSentryReady === 'function') {
+        window.whenSentryReady()
+          .then((sentry) => {
+            try {
+              sentry.captureMessage('Failed to send analytics event', {
+                extra: { url, error: error.message },
+              });
+            } catch (_) { /* swallow */ }
+          })
+          .catch(() => {});
+      }
     });
   };
 
