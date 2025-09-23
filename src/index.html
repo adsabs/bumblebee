@@ -239,52 +239,92 @@
       // Simulate a process.env-like environment
       window.process = { env: { NODE_ENV: window.ENV ?? 'production' } };
 
-      // Define getSentry only once, always safe
-      window.getSentry = function(cb, errCb = () => {}) {
-        try {
-          if (!window.Sentry) throw new Error('Sentry not found');
-          cb.call(window, window.Sentry);
-        } catch (e) {
-          console.warn('unable to run sentry callback', e);
-          errCb.call(window, e);
-        }
-      };
+      // Centralized Sentry loader state and helpers
+      (function initSentryLoader() {
+        const state = (window.__sentryState ||= { ready: false, error: null, queue: [] });
 
-      // Called after the SDK finishes loading
-      window.sentryOnLoad = function() {
-        try {
-          Sentry.init({
-            dsn: 'https://46062cbe0aeb7a3b2bb4c3a9b8cd1ac7@o1060269.ingest.us.sentry.io/4507341192036352',
-            tracesSampleRate: window.ENV === 'development' ? 1.0 : 0.75,
-            debug: false,
-            allowUrls: [
-              /https:\/\/.*\.adsabs\.harvard\.edu\/.*/,
-              /https:\/\/code\.jquery\.com\/.*/,
-              /https:\/\/cdn\.jsdelivr\.net\/.*/,
-            ],
-            replaysSessionSampleRate: 0,
-            replaysOnErrorSampleRate: 0.1,
-            environment: window.ENV ?? 'production',
-            integrations: [
-              Sentry.browserTracingIntegration(),
-              Sentry.replayIntegration({
-                maskAllText: false,
-                blockAllMedia: false,
-                unmask: ['[name=q]'],
-              }),
-            ],
-            beforeSendSpan: tagSpans
+        function flushQueue() {
+          const q = state.queue.splice(0, state.queue.length);
+          q.forEach(({ cb, errCb, res, rej }) => {
+            if (state.ready && window.Sentry) {
+              try { if (cb) cb.call(window, window.Sentry); if (res) res(window.Sentry); }
+              catch (e) { if (errCb) errCb.call(window, e); if (rej) rej(e); }
+            } else {
+              const err = state.error || new Error('Sentry failed to load');
+              if (errCb) errCb.call(window, err);
+              if (rej) rej(err);
+            }
           });
-        } catch (e) {
-          console.error('Could not initialize Sentry', e);
         }
-      };
+
+        // Back-compat callback API; queues until Sentry is ready
+        window.getSentry = function(cb, errCb = () => {}) {
+          if (state.ready && window.Sentry) {
+            try { cb.call(window, window.Sentry); } catch (e) { errCb.call(window, e); }
+            return;
+          }
+          if (state.error) { errCb.call(window, state.error); return; }
+          state.queue.push({ cb, errCb });
+        };
+
+        // Promise-based helper for newer code paths
+        window.whenSentryReady = function() {
+          return new Promise((res, rej) => {
+            if (state.ready && window.Sentry) { res(window.Sentry); return; }
+            if (state.error) { rej(state.error); return; }
+            state.queue.push({ res, rej });
+          });
+        };
+
+        // Called after the SDK finishes loading
+        window.sentryOnLoad = function() {
+          try {
+            if (state.ready && window.Sentry) { return; }
+            Sentry.init({
+              dsn: 'https://46062cbe0aeb7a3b2bb4c3a9b8cd1ac7@o1060269.ingest.us.sentry.io/4507341192036352',
+              tracesSampleRate: window.ENV === 'development' ? 1.0 : 0.75,
+              debug: false,
+              allowUrls: [
+                /https:\/\/.*\.adsabs\.harvard\.edu\/.*/,
+                /https:\/\/code\.jquery\.com\/.*/,
+                /https:\/\/cdn\.jsdelivr\.net\/.*/,
+              ],
+              replaysSessionSampleRate: 0,
+              replaysOnErrorSampleRate: 0.1,
+              environment: window.ENV ?? 'production',
+              integrations: [
+                Sentry.browserTracingIntegration(),
+                Sentry.replayIntegration({
+                  maskAllText: false,
+                  blockAllMedia: false,
+                  unmask: ['[name=q]'],
+                }),
+              ],
+              beforeSendSpan: tagSpans
+            });
+            state.ready = true;
+            flushQueue();
+          } catch (e) {
+            state.error = e;
+            flushQueue();
+          }
+        };
+
+        // Called if the SDK fails to load
+        window.sentryOnError = function(e) {
+          state.error = e instanceof Error ? e : new Error('Sentry script failed to load');
+          flushQueue();
+        };
+      })();
+
+      
     </script>
 
     <script
       src="https://js.sentry-cdn.com/46062cbe0aeb7a3b2bb4c3a9b8cd1ac7.min.js"
       crossorigin="anonymous"
       onload="window.sentryOnLoad()"
+      onerror="window.sentryOnError && window.sentryOnError(event)"
     ></script>
 
     <!-- start the discovery application -->

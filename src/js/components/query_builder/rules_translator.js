@@ -451,7 +451,6 @@ define([
           throw new Error('Not yet ready for: ' + JSON.stringify(qtree));
           break;
         default:
-          console.log('skipping', qtree);
           break;
       }
 

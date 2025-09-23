@@ -92,14 +92,29 @@ define([
     }, 500),
 
     _onCustomEvent: function (ev, data) {
-
       switch (ev) {
         case 'timing:results-loaded':
-          window.getSentry((sentry) => {
-            const activeSpan = sentry.getActiveSpan().getSpanJSON();
-            const time = new Date().getTime() - activeSpan.start_timestamp * 1000;
-            sentry.setMeasurement('timing.results.shown', time, 'millisecond');
-          });
+          if (typeof window.whenSentryReady === 'function') {
+            window.whenSentryReady()
+              .then((sentry) => {
+                try {
+                  const span = sentry.getActiveSpan && sentry.getActiveSpan();
+                  const startTs = span && span.startTimestamp ? span.startTimestamp * 1000 : null;
+                  const time = startTs ? Date.now() - startTs : null;
+                  if (time != null && typeof sentry.setMeasurement === 'function') {
+                    sentry.setMeasurement('timing.results.shown', time, 'millisecond');
+                  } else {
+                    sentry.addBreadcrumb({
+                      category: 'timing',
+                      level: 'info',
+                      message: 'results shown',
+                      data: { durationMs: time },
+                    });
+                  }
+                } catch (_) {}
+              })
+              .catch(() => {});
+          }
           break;
         case 'update-document-title':
           this._updateDocumentTitle(data);
@@ -182,9 +197,11 @@ define([
         page_name: pageName,
         clean_route: this._cleanRoute(route),
       });
-      getSentry((sentry) => {
-        sentry.setTag('page.name', pageName);
-      });
+      if (typeof window.whenSentryReady === 'function') {
+        window.whenSentryReady()
+          .then((sentry) => { sentry.setTag('page.name', pageName); })
+          .catch(() => {});
+      }
     }, 300),
 
     /**

@@ -49,14 +49,18 @@ define([
       }
 
       // provide this query to sentry
-      window.getSentry((sentry) => {
-        const currentQuery = apiQuery.toJSON();
-        Object.keys(currentQuery).forEach((key) => {
-          if (!key.startsWith('__') || key === 'fq') {
-            sentry.setTag(`query.${key}`, currentQuery[key].join(' | '));
-          }
-        });
-      });
+      if (typeof window.whenSentryReady === 'function') {
+        window.whenSentryReady()
+          .then((sentry) => {
+            const currentQuery = apiQuery.toJSON();
+            Object.keys(currentQuery).forEach((key) => {
+              if (!key.startsWith('__') || key === 'fq') {
+                sentry.setTag(`query.${key}`, currentQuery[key].join(' | '));
+              }
+            });
+          })
+          .catch(() => {});
+      }
     },
 
     setCurrentNumFound: function(numFound) {

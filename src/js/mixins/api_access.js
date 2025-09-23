@@ -56,12 +56,16 @@ define([
         }),
         {
           done: function (data) {
-            window.getSentry((sentry) => {
-              sentry.setUser({
-                id: data.access_token,
-                anonymous: data.anonymous,
-              });
-            });
+            if (typeof window.whenSentryReady === 'function') {
+              window.whenSentryReady()
+                .then((sentry) => {
+                  sentry.setUser({
+                    id: data.access_token,
+                    anonymous: data.anonymous,
+                  });
+                })
+                .catch(() => {});
+            }
             if (options.reconnect) {
               self.onBootstrap(data);
             }
