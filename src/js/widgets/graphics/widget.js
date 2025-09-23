@@ -134,22 +134,26 @@ define([
 
       this._bibcode = bibcode;
       this.deferredObject = $.Deferred();
+      var graphicsQuery = new ApiQuery();
+      graphicsQuery.set('ui_tag', 'results/graphics');
+
       var request = new ApiRequest({
         target: ApiTargets.GRAPHICS + '/' + this._bibcode,
-        query: new ApiQuery(),
+        query: graphicsQuery,
       });
       this.getPubSub().publish(this.getPubSub().DELIVERING_REQUEST, request);
 
       // now ask for the title if it's the main widget
       if (!Marionette.getOption(this, 'sidebar')) {
-        var query = this.getCurrentQuery().clone();
-        query.unlock();
-        query.set('q', 'bibcode:' + bibcode);
-        query.set('fl', 'title');
+        var titleQuery = this.getCurrentQuery().clone();
+        titleQuery.unlock();
+        titleQuery.set('q', 'bibcode:' + bibcode);
+        titleQuery.set('fl', 'title');
+        titleQuery.set('ui_tag', 'results/graphics/search_title');
 
         var request = new ApiRequest({
           target: ApiTargets.SEARCH,
-          query: query,
+          query: titleQuery,
         });
         this.getPubSub().publish(this.getPubSub().DELIVERING_REQUEST, request);
       }

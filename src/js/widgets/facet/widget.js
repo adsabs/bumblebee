@@ -183,6 +183,8 @@ define([
       });
 
       var q = this.customizeQuery(currentQuery);
+      // ensure ui_tag exists for span grouping
+      q.set('ui_tag', `results/facet/${this.store.getState().config.facetField}`);
       var children = id
         ? this.store.getState().facets[id].children
         : this.store.getState().children;

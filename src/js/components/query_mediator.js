@@ -290,6 +290,42 @@ define([
 
       this.mostRecentQuery = apiQuery;
 
+      // Track query complexity and cycle context in Sentry
+      if (typeof window.whenSentryReady === 'function') {
+        try {
+          const qArr = apiQuery.get('q');
+          const qStr = Array.isArray(qArr) ? (qArr[0] || '') : '';
+          const len = typeof qStr === 'string' ? qStr.length : 0;
+          const tokens = typeof qStr === 'string' ? (qStr.trim() ? qStr.trim().split(/\s+/).length : 0) : 0;
+          const bucket = (l => {
+            if (l <= 50) return '0-50';
+            if (l <= 150) return '51-150';
+            if (l <= 500) return '151-500';
+            return '500+';
+          })(len);
+          const hasBigquery = !!(apiQuery.get('__qid'));
+          const hasSimbid = typeof qStr === 'string' && qStr.indexOf('simbid') > -1;
+          const hasObject = typeof qStr === 'string' && qStr.indexOf('object:') > -1;
+          const cycleId = (senderKey && senderKey.getId ? senderKey.getId() : 'unknown') + '_' + Date.now();
+
+          window.whenSentryReady()
+            .then((sentry) => {
+              try {
+                if (typeof sentry.setMeasurement === 'function') {
+                  sentry.setMeasurement('query.length', len, 'character');
+                  sentry.setMeasurement('query.tokens', tokens, 'none');
+                }
+                sentry.setTag('query.length_bucket', bucket);
+                sentry.setTag('query.has_bigquery', String(!!hasBigquery));
+                sentry.setTag('query.has_simbid', String(!!hasSimbid));
+                sentry.setTag('query.has_object', String(!!hasObject));
+                sentry.setTag('search.cycle_id', cycleId);
+              } catch (_) {}
+            })
+            .catch(() => {});
+        } catch (_) {}
+      }
+
       if (this.debug) {
         console.log(
           '[QM]: received query:',

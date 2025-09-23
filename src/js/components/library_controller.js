@@ -363,6 +363,8 @@ define([
         q.set('fl', 'bibcode');
 
         q.set('start', start);
+        // ui_tag this library bibcodes fetch
+        q.set('ui_tag', 'libraries/list');
 
         var request = new ApiRequest({
           target: endpoint,

@@ -105,6 +105,8 @@ define([
         // get the first 1000 rows
         q.set('rows', 1000);
         q.set('fl', 'bibcode');
+        // ui_tag this Solr fetch for span grouping
+        q.set('ui_tag', 'results/author_aff/ids');
         const req = this.composeRequest(q);
 
         req.set('options', {
@@ -157,7 +159,7 @@ define([
 
       const req = new ApiRequest({
         target: ApiTargets.AUTHOR_AFFILIATION_SEARCH,
-        query: new ApiQuery({ bibcode: ids, numyears, maxauthor }),
+        query: new ApiQuery({ bibcode: ids, numyears, maxauthor, ui_tag: 'results/author_aff/search' }),
         options: {
           type: 'post',
           processData: false,
@@ -202,9 +204,12 @@ define([
       const pubsub = this.getPubSub();
       const $dd = $.Deferred();
 
+      const query = new ApiQuery();
+      query.set('ui_tag', 'actions/author_aff/export');
+
       const req = new ApiRequest({
         target: ApiTargets.AUTHOR_AFFILIATION_EXPORT,
-        query: new ApiQuery(),
+        query: query,
         options: {
           useFetch: true,
           fetchOptions: {

@@ -1575,6 +1575,7 @@ define([
         query: new ApiQuery({
           // endpoint caps at 1000
           bibcodes: bibcodes.slice(0, 1000),
+          ui_tag: 'results/network/' + (Marionette.getOption(this, 'networkType') || 'unknown'),
         }),
         options: {
           type: 'POST',
@@ -1599,13 +1600,14 @@ define([
         query.set('fl', 'bibcode');
         // limit is 1000
         query.set('rows', '1000');
+        query.set('ui_tag', 'results/network/' + (Marionette.getOption(this, 'networkType') || 'unknown'));
         var request = this.composeRequest(query);
         this.getPubSub().publish(this.getPubSub().DELIVERING_REQUEST, request);
       } else {
         query.set('rows', this.model.get('default'));
         query.unset('hl');
         query.unset('hl.fl');
-
+        query.set('ui_tag', 'results/network/' + (Marionette.getOption(this, 'networkType') || 'unknown'));
         var request = this.generateApiRequest(query);
         this.getPubSub().publish(this.getPubSub().EXECUTE_REQUEST, request);
       }

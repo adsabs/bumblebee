@@ -203,6 +203,17 @@
         const url = new URL(span.data['http.url']);
         const params = new URLSearchParams(url.search);
 
+        // Prefer explicit ui_tag param, then tag, for stable grouping
+        const uiTag = params.get('ui_tag') || params.get('tag');
+        if (uiTag) {
+          const tag = uiTag;
+          // stable, human-friendly span name
+          span.description = tag;
+          // attach the tag to span data for additional filtering
+          span.data['feature.ui_tag'] = tag;
+          return span;
+        }
+
         // check for search (left-side) facets
         if (params.has('facet') && params.get('facet') === 'true') {
           if (params.has('facet.field')) {

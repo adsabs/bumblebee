@@ -1121,6 +1121,7 @@ define([
       query.set('q', 'bibcode:(' + bibcodes.join(' OR ') + ')');
       query.set('rows', ApiTargets._limits.BubbleChart.default);
       query.set('fl', 'title,bibcode,citation_count,read_count,pubdate');
+      query.set('ui_tag', 'results/bubble_chart');
 
       var request = new ApiRequest({
         target: ApiTargets.SEARCH,
@@ -1139,6 +1140,7 @@ define([
       query.set('fl', 'title,bibcode,citation_count,read_count,pubdate');
       query.unset('hl');
       query.unset('hl.fl');
+      query.set('ui_tag', 'results/bubble_chart');
 
       var request = new ApiRequest({
         target: ApiTargets.SEARCH,
