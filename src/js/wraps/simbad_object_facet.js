@@ -62,6 +62,8 @@ define([
       }
 
       var q = this.customizeQuery(query);
+      // ui_tag for this facet request
+      q.set('ui_tag', 'results/object_facet/simbad');
       var children = id
         ? this.store.getState().facets[id].children
         : this.store.getState().children;

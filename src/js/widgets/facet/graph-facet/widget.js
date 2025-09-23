@@ -83,7 +83,9 @@ define([
         // reset the graph
         this.model.unset('graphData');
         this.model.unset('statsCount');
-        var q = this.customizeQuery(apiQuery);
+      var q = this.customizeQuery(apiQuery);
+      // ensure ui_tag exists for span grouping
+      q.set('ui_tag', `results/graph/${this.facetField}`);
         var req = this.composeRequest(q);
         var pubsub = this.getPubSub();
         pubsub.publish(pubsub.DELIVERING_REQUEST, req);

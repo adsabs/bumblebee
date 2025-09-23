@@ -159,6 +159,17 @@ define([
       cache: true, // do not generate _ parameters (let browser cache responses),
     };
 
+    // Attach a UI tag header if present on the query
+    try {
+      if (query && typeof query.get === 'function') {
+        var uiTagVal = query.get('ui_tag');
+        var uiTag = Array.isArray(uiTagVal) ? uiTagVal[0] : uiTagVal;
+        if (uiTag) {
+          opts.headers['X-UI-Tag'] = uiTag;
+        }
+      }
+    } catch (e) {}
+
     if (options.timeout) {
       opts.timeout = options.timeout;
     }

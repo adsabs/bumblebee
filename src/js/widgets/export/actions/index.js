@@ -279,6 +279,8 @@ define([
       q.set('journalformat', exports.bibtexJournalFormat);
     }
 
+    // ui_tag for span grouping
+    q.set('ui_tag', 'actions/export/' + format.value);
     const req = composeRequest(q);
     req.set({
       target: ApiTargets.EXPORT + format.value,

@@ -180,7 +180,7 @@ define([
 
       var request = new ApiRequest({
         target: ApiTargets.SERVICE_CITATION_HELPER,
-        query: new ApiQuery({ bibcodes: bibcodes }),
+        query: new ApiQuery({ bibcodes: bibcodes, ui_tag: 'results/citation_helper' }),
         options: options,
       });
       // so promise can be resolved
@@ -247,7 +247,7 @@ define([
 
       var request = new ApiRequest({
         target: ApiTargets.SERVICE_CITATION_HELPER,
-        query: new ApiQuery({ bibcodes: bibcodes }),
+        query: new ApiQuery({ bibcodes: bibcodes, ui_tag: 'results/citation_helper' }),
         options: {
           type: 'POST',
           contentType: 'application/json',

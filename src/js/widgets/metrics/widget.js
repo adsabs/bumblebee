@@ -1480,6 +1480,8 @@ define([
         'stats.field': 'citation_count',
         fl: 'id',
       });
+      // ui_tag for span grouping
+      query.set('ui_tag', 'results/metrics/check');
 
       return this._executeSearch(query).then(function(apiResponse) {
         var citationCount = apiResponse.get('stats.stats_fields.citation_count.sum');
@@ -1498,6 +1500,7 @@ define([
       var query = new ApiQuery({
         bibcodes: this.containerModel.get('bibcodes'),
         types: ['indicators', 'timeseries'],
+        ui_tag: 'results/metrics/indicators',
       });
 
       var request = new ApiRequest({
@@ -1571,6 +1574,7 @@ define([
 
         var query = new ApiQuery({
           bibcodes: bibcodes,
+          ui_tag: 'results/metrics/' + (simple ? 'simple' : 'series'),
         });
 
         if (simple) {

@@ -457,6 +457,9 @@ define([
   });
 
   var WordCloudWidget = BaseWidget.extend({
+    defaultQueryArguments: {
+      ui_tag: 'results/wordcloud',
+    },
     initialize: function(options) {
       options = options || {};
       this.listView = new ListView();
