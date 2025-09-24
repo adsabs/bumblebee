@@ -5861,6 +5861,9 @@ define([
         ],
         "fl": [
           "title,bibcode,citation_count,read_count,pubdate"
+        ],
+        "ui_tag": [
+          "results/bubble_chart"
         ]
       });
 

@@ -397,6 +397,8 @@ define([
           fl: ['id'],
           'facet.prefix': ['0/'],
           'facet.field': ['author_facet_hier'],
+          tag: ['results/facet/author_facet_hier'],
+          ui_tag: ['results/facet/author_facet_hier'],
           'facet.offset': [0],
           rows: [1],
         })
@@ -422,6 +424,8 @@ define([
           fl: ['id'],
           'facet.prefix': ['0/'],
           'facet.field': ['author_facet_hier'],
+          tag: ['results/facet/author_facet_hier'],
+          ui_tag: ['results/facet/author_facet_hier'],
           'facet.offset': [20],
           rows: [1],
         })

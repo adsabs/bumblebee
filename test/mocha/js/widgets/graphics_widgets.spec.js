@@ -144,7 +144,9 @@ define([
       g.onDisplayDocuments(new minsub.createQuery({q : "bibcode:fakeBibcode"}));
 
       expect(graphicsRequest.get("target")).to.eql("graphics/fakeBibcode");
-      expect(graphicsRequest.get("query").toJSON()).to.eql({})
+      expect(graphicsRequest.get("query").toJSON()).to.eql({
+        ui_tag: ['results/graphics'],
+      })
       expect(apiRequest.get("target")).to.eql("search/query");
       expect(apiRequest.get("query").toJSON().q).to.eql(["bibcode:fakeBibcode"]);
 

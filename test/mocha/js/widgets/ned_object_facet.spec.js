@@ -96,6 +96,8 @@ define([
           fl: ['id'],
           'facet.prefix': ['0/'],
           'facet.field': ['ned_object_facet_hier'],
+          tag: ['results/facet/ned_object_facet_hier'],
+          ui_tag: ['results/object_facet/ned'],
           'facet.offset': [0],
         };
         let actualRequest = pubStubs.publish.args[0][1];
