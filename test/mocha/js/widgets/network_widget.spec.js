@@ -1478,7 +1478,7 @@ define([
           .toJSON()
       ).to.eql({
         query: [
-          '{"q":["star"],"sort":["date desc, bibcode desc"],"rows":[400]}',
+          '{"q":["star"],"sort":["date desc, bibcode desc"],"rows":[400],"ui_tag":["results/network/author"]}',
         ],
       });
     });

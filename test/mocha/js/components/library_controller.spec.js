@@ -611,6 +611,9 @@ define([
         ],
         "start": [
           0
+        ],
+        "ui_tag": [
+          "libraries/list"
         ]
       });
 
@@ -624,6 +627,9 @@ define([
         ],
         "start": [
           100
+        ],
+        "ui_tag": [
+          "libraries/list"
         ]
       });
 

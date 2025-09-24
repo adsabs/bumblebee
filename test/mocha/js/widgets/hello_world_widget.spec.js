@@ -66,7 +66,10 @@ define([
         $('#test').append($w);
 
         var minsub = this.minsub;
-        minsub.publish(minsub.START_SEARCH, minsub.createQuery({'q': 'hello'}));
+        minsub.publish(
+          minsub.START_SEARCH,
+          minsub.createQuery({ q: 'hello', fl: 'bibcode' })
+        );
 
         expect($w.find('.message').text()).to.be.eql('The query found: 841359 results.');
       });

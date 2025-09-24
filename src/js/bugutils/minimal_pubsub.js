@@ -168,7 +168,12 @@ define([
     },
 
     createRequest: function(data) {
-      return new ApiRequest(data);
+      var request = new ApiRequest(data);
+      var query = request.get('query');
+      if (query && !query.has('fl')) {
+        query.set('fl', 'bibcode');
+      }
+      return request;
     },
 
     createFeedback: function(data) {

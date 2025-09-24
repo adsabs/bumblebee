@@ -160,6 +160,10 @@ define([
             item_list_id: 'search_results',
             item_list_name: 'Search Results',
             items: data.docs.map((doc) => {
+              const refereed = Array.isArray(doc.property)
+                ? doc.property.includes('REFEREED')
+                : doc.property === 'REFEREED';
+
               return {
                 item_id: doc.identifier,
                 item_name: doc.title[0],
@@ -174,7 +178,7 @@ define([
                 item_list_name: 'Search Results',
                 item_variant: 'search_result_item',
                 index: doc.resultsIndex,
-                refereed: doc.property.includes('REFEREED'),
+                refereed,
               };
             }),
           });

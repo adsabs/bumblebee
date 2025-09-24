@@ -46,8 +46,14 @@ define([
         var api = beehive.Services.get('Api');
         var key1 = pubsub.getPubSubKey();
         var key2 = pubsub.getPubSubKey();
-        var q1 = new ApiQuery({'q': 'foo'});
-        var q2 = new ApiQuery({'q': 'bar'});
+        var q1 = new ApiQuery({
+          q: 'foo',
+          fl: 'bibcode',
+        });
+        var q2 = new ApiQuery({
+          q: 'bar',
+          fl: 'bibcode',
+        });
         var req1 = new ApiRequest({target: 'search', query: q1});
         var req2 = new ApiRequest({target: 'search', query: q2});
 
@@ -345,6 +351,7 @@ define([
           sendRequest: function(q) {
             q = q.clone();
             q.unlock();
+            q.set('fl', 'bibcode');
             q.add('q', 'field:' + this.mid);
             var pubsub = this.bee.Services.get('PubSub');
             var r = new ApiRequest({target: 'search', query:q});
@@ -433,13 +440,16 @@ define([
 
       it("has _getCacheKey function", function(done) {
         var qm = new QueryMediator();
-        var req = new ApiRequest({target: 'search', query:new ApiQuery({'q': 'pluto'})});
+        var req = new ApiRequest({
+          target: 'search',
+          query: new ApiQuery({ q: 'pluto', fl: 'bibcode' }),
+        });
 
         req.get('query').set('__x', 'foo');
-        expect(req.url()).to.be.equal('search?__x=foo&q=pluto');
+        expect(req.url()).to.be.equal('search?__x=foo&fl=bibcode&q=pluto');
         var key = qm._getCacheKey(req);
-        expect(req.url()).to.be.equal('search?__x=foo&q=pluto');
-        expect(key).to.be.equal('search?q=pluto');
+        expect(req.url()).to.be.equal('search?__x=foo&fl=bibcode&q=pluto');
+        expect(key).to.be.equal('search?fl=bibcode&q=pluto');
         done();
       });
 

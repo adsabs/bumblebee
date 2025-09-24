@@ -80,7 +80,7 @@ define([
       f.setSenderKey(null);
       expect(fm._getCacheKey(f, 'bar')).to.be.eql('bar');
       // without key and sender key, use request url
-      expect(fm._getCacheKey(f)).to.be.eql('/foo?q=foo%3Abar');
+      expect(fm._getCacheKey(f)).to.be.eql('/foo?fl=bibcode&q=foo%3Abar');
 
 
       f.setSenderKey('fooId');

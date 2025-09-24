@@ -114,6 +114,9 @@ define([
       _dispatchRequest: function(apiQuery) {
         var q = this.customizeQuery(apiQuery);
         if (q) {
+          if (!q.has('fl') || q.get('fl').length <= 0) {
+            q.set('fl', this.defaultQueryFields || 'bibcode');
+          }
           var req = this.composeRequest(q);
           if (req) {
             var pubsub = this.getPubSub();
