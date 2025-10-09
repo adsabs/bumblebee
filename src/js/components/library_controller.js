@@ -155,6 +155,51 @@ define([
       return deferred.promise();
     },
 
+    _safeJsonParse: function(payload) {
+      if (!_.isString(payload)) {
+        return undefined;
+      }
+      try {
+        return JSON.parse(payload);
+      } catch (error) {
+        return undefined;
+      }
+    },
+
+    _getReadableError: function(jqXHR) {
+      if (!jqXHR) {
+        return null;
+      }
+
+      var responseJSON = jqXHR.responseJSON;
+      if (responseJSON && (responseJSON.error || responseJSON.message || responseJSON.msg)) {
+        return responseJSON.error || responseJSON.message || responseJSON.msg;
+      }
+
+      var responseText = jqXHR.responseText;
+      if (_.isString(responseText) && responseText.length) {
+        var parsed = this._safeJsonParse(responseText);
+        if (parsed && (parsed.error || parsed.message || parsed.msg)) {
+          return parsed.error || parsed.message || parsed.msg;
+        }
+
+        var trimmed = responseText.trim ? responseText.trim() : responseText;
+        if (trimmed && trimmed.toLowerCase() !== 'undefined') {
+          return trimmed;
+        }
+      }
+
+      if (_.isString(jqXHR.statusText) && jqXHR.statusText.length) {
+        return jqXHR.statusText;
+      }
+
+      if (_.isNumber(jqXHR.status)) {
+        return 'HTTP ' + jqXHR.status;
+      }
+
+      return null;
+    },
+
     _executeApiRequest: function(apiQuery) {
       var req = new ApiRequest({
         target: ApiTargets.SEARCH,
@@ -430,13 +475,12 @@ define([
             );
         })
         .fail(function(jqXHR) {
-          var error = JSON.parse(jqXHR.responseText).error;
+          var error = that._getReadableError(jqXHR);
           var message =
             'Library <b>' +
             name +
-            '</b> could not be deleted : (' +
-            error +
-            ')';
+            '</b> could not be deleted' +
+            (error ? ': (' + error + ')' : '. Please try again later.');
           that
             .getBeeHive()
             .getService('PubSub')
@@ -467,13 +511,22 @@ define([
           that.fetchLibraryMetadata(id);
         })
         .fail(function(jqXHR) {
-          var error = JSON.parse(jqXHR.responseText).error;
+          var error = that._getReadableError(jqXHR);
+          var library = that.collection.get(id);
+          var libraryTitle = id;
+          if (library) {
+            if (library.title) {
+              libraryTitle = library.title;
+            } else if (library.get) {
+              libraryTitle =
+                library.get('title') || library.get('name') || libraryTitle;
+            }
+          }
           var message =
             'Library <b>' +
-            that.collection.get(id).title +
-            '</b> could not be updated: (' +
-            error +
-            ')';
+            libraryTitle +
+            '</b> could not be updated' +
+            (error ? ': (' + error + ')' : '. Please try again later.');
           that
             .getBeeHive()
             .getService('PubSub')
@@ -570,13 +623,14 @@ define([
           that.collection.get(id).set(data);
         })
         .fail(function(jqXHR) {
-          var error = JSON.parse(jqXHR.responseText).error;
+          var error = that._getReadableError(jqXHR);
+          var library = that.collection.get(id);
+          var name = library && library.get ? library.get('name') : id;
           var message =
             'Library <b>' +
-            that.collection.get(id).get('name') +
-            '</b> could not be updated: (' +
-            error +
-            ')';
+            name +
+            '</b> could not be updated' +
+            (error ? ': (' + error + ')' : '. Please try again later.');
           that
             .getBeeHive()
             .getService('PubSub')
