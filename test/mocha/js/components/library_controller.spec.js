@@ -238,6 +238,55 @@ define([
       done();
     });
 
+    it('handles invalid error payloads when updating library contents', function(done) {
+      var controller = new LibraryController();
+      var minsub = new (MinSub.extend({
+        request: _.constant({})
+      }))({ verbose: false });
+      controller.activate(minsub.beehive);
+      controller.collection.reset([
+        { id: 'test-lib', title: 'Graceful Library', name: 'Graceful Library' }
+      ]);
+
+      var deferred = $.Deferred();
+      sinon.stub(controller, 'composeRequest').returns(deferred.promise());
+
+      var pubsub = controller.getBeeHive().getService('PubSub');
+      sinon.stub(pubsub, 'publish');
+
+      var cleanup = function() {
+        controller.composeRequest.restore();
+        pubsub.publish.restore();
+      };
+
+      setTimeout(function() {
+        deferred.reject({ responseText: 'undefined' });
+      }, 0);
+
+      controller.updateLibraryContents('test-lib', { bibcode: ['BIB'] }).then(
+        function() {
+          cleanup();
+          done(new Error('expected updateLibraryContents to reject'));
+        },
+        function() {
+          try {
+            var alertCall = _.find(pubsub.publish.args, function(args) {
+              return args[0] === pubsub.ALERT;
+            });
+            expect(alertCall).to.exist;
+            expect(alertCall[1].msg).to.contain('Graceful Library');
+            expect(alertCall[1].msg).to.contain('Please try again later');
+            expect(alertCall[1].msg).to.not.contain('undefined');
+            cleanup();
+            done();
+          } catch (error) {
+            cleanup();
+            done(error);
+          }
+        }
+      );
+    });
+
     it("should allow widgets to get a list of bibcodes from a library", function(){
 
       var l = new LibraryController();
