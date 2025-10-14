@@ -182,11 +182,7 @@ define([
         if (parsed && (parsed.error || parsed.message || parsed.msg)) {
           return parsed.error || parsed.message || parsed.msg;
         }
-
-        var trimmed = responseText.trim ? responseText.trim() : responseText;
-        if (trimmed && trimmed.toLowerCase() !== 'undefined') {
-          return trimmed;
-        }
+        return responseText.trim();
       }
 
       if (_.isString(jqXHR.statusText) && jqXHR.statusText.length) {
