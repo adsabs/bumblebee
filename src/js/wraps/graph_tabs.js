@@ -22,6 +22,7 @@ define([
         facet: 'true',
         'facet.minCount': '1',
         'facet.limit': '2000',
+        fl: 'id',
       },
 
       graphViewOptions: {
@@ -106,6 +107,7 @@ define([
         'json.facet': `{"citation_count":{"type":"terms","field":"citation_count","sort":{"index":"desc"},"limit":2000}}`,
         stats: 'true',
         'stats.field': 'citation_count',
+        fl: 'id',
       },
       graphViewOptions: {
         yAxisTitle: 'citations',
@@ -178,6 +180,7 @@ define([
         'json.facet': `{"read_count":{"type":"terms","field":"read_count","sort":{"index":"desc"},"limit":2000}}`,
         stats: 'true',
         'stats.field': 'read_count',
+        fl: 'id',
       },
       graphViewOptions: {
         yAxisTitle: 'recent reads',
