@@ -16,6 +16,9 @@ define([
   'js/modules/orcid/extension',
   'js/mixins/dependon',
   'js/components/api_feedback',
+  'js/components/api_request',
+  'js/components/api_query',
+  'js/components/api_targets',
 ], function(
   ListOfThingsWidget,
   AbstractWidget,
@@ -27,7 +30,10 @@ define([
   MetadataMixin,
   OrcidExtension,
   Dependon,
-  ApiFeedback
+  ApiFeedback,
+  ApiRequest,
+  ApiQuery,
+  ApiTargets
 ) {
   var ResultsWidget = ListOfThingsWidget.extend({
     initialize: function() {
@@ -57,8 +63,19 @@ define([
         this.trigger('toggle-all', flag);
       };
 
+      this.view.onExpandAuthors = function(e) {
+        e.preventDefault();
+        var bibcode = $(e.target).data('bibcode');
+        this.trigger('expand-authors', bibcode);
+        return false;
+      };
+
+      // Initialize events object if it doesn't exist
+      this.view.events = this.view.events || {};
+      
       _.extend(this.view.events, {
         'click input#select-all-docs-cb': 'toggleAll',
+        'click .expand-authors': 'onExpandAuthors',
       });
 
       this.view.resultsWidget = true;
@@ -68,6 +85,7 @@ define([
       // finally, listen
       // to this event on the view
       this.listenTo(this.view, 'toggle-all', this.triggerBulkAction);
+      this.listenTo(this.view, 'expand-authors', this.onExpandAuthorsEvent);
       this.minAuthorsPerResult = 3;
 
       this.model.on(
@@ -384,12 +402,23 @@ define([
           ? d.author_count
           : authors.length;
 
-        if (_.isFinite(maxAuthorNames) && authors.length > maxAuthorNames) {
-          shownAuthors = authors.slice(0, maxAuthorNames);
+        // With field limiting ([fields author=X]), authors.length is already limited
+        // So we use author_count as the source of truth for total authors
+        if (_.isFinite(maxAuthorNames) && totalAuthors > maxAuthorNames) {
+          // Only slice if we actually have more authors than maxAuthorNames
+          // When using field limiting, authors.length might already be <= maxAuthorNames
+          if (authors.length > maxAuthorNames) {
+            shownAuthors = authors.slice(0, maxAuthorNames);
+          } else {
+            shownAuthors = authors; // Use all we have
+          }
         }
 
+        // Calculate extra authors based on total count vs what we're showing
         if (totalAuthors > shownAuthors.length) {
           d.extraAuthors = totalAuthors - shownAuthors.length;
+          // Mark this item as potentially needing lazy loading
+          d.hasPartialAuthors = authors.length < totalAuthors;
         }
 
         if (authors.length) {
@@ -476,6 +505,80 @@ define([
           $chk[0].checked = false;
         }
       }
+    },
+
+    onExpandAuthorsEvent: function(bibcode) {
+      this.expandAuthors(bibcode);
+    },
+
+    expandAuthors: function(bibcode) {
+      // Find the model in our collection
+      var model = this.collection.find(function(m) {
+        return m.get('bibcode') === bibcode;
+      });
+      
+      if (!model || !model.get('hasPartialAuthors')) {
+        return; // Nothing to expand or already expanded
+      }
+
+      // Set loading state
+      model.set('expandingAuthors', true);
+
+      // Clone the current query and modify it to fetch full author data
+      var query = this.getCurrentQuery().clone();
+      query.unlock();
+      query.set('q', 'identifier:' + bibcode);
+      query.set('fl', ['author', 'bibcode']);
+      query.set('rows', 1);
+
+      var self = this;
+      var pubsub = this.getPubSub();
+      
+      pubsub.publish(
+        pubsub.EXECUTE_REQUEST,
+        new ApiRequest({
+          target: ApiTargets.SEARCH,
+          query: query,
+          options: {
+            done: function(response) {
+              model.set('expandingAuthors', false);
+              
+              if (response && response.response && response.response.docs && response.response.docs.length > 0) {
+                var doc = response.response.docs[0];
+                var fullAuthors = Array.isArray(doc.author) ? doc.author : [];
+                
+                if (fullAuthors.length > 0) {
+                  // Format all authors
+                  var format = function(authorName, i, arr) {
+                    var l = arr.length - 1;
+                    if (i === l || l === 0) {
+                      return authorName; // last one, or only one
+                    }
+                    return authorName + ';';
+                  };
+                  
+                  model.set({
+                    'allAuthorFormatted': _.map(fullAuthors, format),
+                    'authorsExpanded': true,
+                    'hasPartialAuthors': false,
+                    'extraAuthors': 0
+                  });
+                  
+                  // Force trigger a change event to ensure re-rendering
+                  model.trigger('change');
+                  
+                  // Also trigger collection change in case the collection view needs to know
+                  self.collection.trigger('change:' + model.cid, model);
+                }
+              }
+            },
+            fail: function(error) {
+              model.set('expandingAuthors', false);
+              console.warn('Failed to fetch complete author list for', bibcode, error);
+            }
+          }
+        })
+      );
     },
 
     triggerBulkAction: function(flag) {

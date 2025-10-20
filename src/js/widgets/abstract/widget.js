@@ -111,6 +111,9 @@ define([
           if (numAuthors > doc.aff.length) {
             doc.truncatedAuthorCount = numAuthors - doc.aff.length;
             doc.remainingAuthors = doc.author.slice(doc.aff.length);
+          } else {
+            doc.truncatedAuthorCount = 0;
+            doc.remainingAuthors = [];
           }
         } else {
           // Normal case - we have complete data
@@ -121,6 +124,8 @@ define([
             doc.orcid_user ? doc.orcid_user : defaultList,
             doc.orcid_other ? doc.orcid_other : defaultList
           );
+          doc.truncatedAuthorCount = 0;
+          doc.remainingAuthors = [];
         }
       } else if (doc.author) {
         doc.hasAffiliation = false;
