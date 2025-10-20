@@ -168,14 +168,28 @@
         {{#unless isOrcidWidget}}
             {{#if authorFormatted}}
             <ul class="list-inline just-authors s-results-authors less-authors" aria-label="authors">
-                {{#each authorFormatted}}
-                    <li class="article-author">{{this}}</li>
-                {{/each}}
+                {{#if authorsExpanded}}
+                    {{#each allAuthorFormatted}}
+                        <li class="article-author">{{this}}</li>
+                    {{/each}}
+                {{else}}
+                    {{#each authorFormatted}}
+                        <li class="article-author">{{this}}</li>
+                    {{/each}}
 
-                {{#if extraAuthors}}
-                <li>
-                    <em>and {{extraAuthors}} more</em>
-                </li>
+                    {{#if extraAuthors}}
+                    <li>
+                        {{#if expandingAuthors}}
+                        <em><i class="fa fa-spinner fa-pulse" aria-hidden="true"></i> Loading...</em>
+                        {{else}}
+                        {{#if hasPartialAuthors}}
+                        <em><a href="javascript:void(0)" class="expand-authors" data-bibcode="{{bibcode}}">and {{extraAuthors}} more</a></em>
+                        {{else}}
+                        <em>and {{extraAuthors}} more</em>
+                        {{/if}}
+                        {{/if}}
+                    </li>
+                    {{/if}}
                 {{/if}}
             </ul>
             {{else}}

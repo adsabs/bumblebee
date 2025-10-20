@@ -82,6 +82,9 @@ define([
       'change:showHighlights': 'render',
       'change:orcid': 'render',
       'change:chosen': 'render',
+      'change:authorsExpanded': 'render',
+      'change:allAuthorFormatted': 'render',
+      'change:expandingAuthors': 'render',
     },
 
     collectionEvents: {
