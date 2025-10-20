@@ -80,18 +80,48 @@ define([
       doc.aff = doc.aff.map(_.unescape);
 
       const numAuthors = doc.author.length;
-      const defaultList = _.range(numAuthors).map(() => '-');
+      
+      // Check if we have truncated data (fewer affiliations than authors might indicate limited field data)
+      const hasTruncatedData = doc.aff.length > 0 && doc.aff.length < numAuthors;
+      
+      // Create default lists, but only for the length we actually have data for
+      const createDefaultList = (length) => _.range(length).map(() => '-');
+      const defaultList = createDefaultList(numAuthors);
+      
       if (doc.aff.length) {
         doc.hasAffiliation = _.without(doc.aff, '-').length;
 
-        // joining author and aff
-        doc.authorAff = _.zip(
-          doc.author,
-          doc.aff,
-          doc.orcid_pub ? doc.orcid_pub : defaultList,
-          doc.orcid_user ? doc.orcid_user : defaultList,
-          doc.orcid_other ? doc.orcid_other : defaultList
-        );
+        // If we have truncated data, don't create placeholders for missing affiliations
+        if (hasTruncatedData) {
+          // Only create authorAff entries for authors that have affiliation data
+          const availableAuthors = doc.author.slice(0, doc.aff.length);
+          const availableOrcidPub = doc.orcid_pub ? doc.orcid_pub.slice(0, doc.aff.length) : createDefaultList(doc.aff.length);
+          const availableOrcidUser = doc.orcid_user ? doc.orcid_user.slice(0, doc.aff.length) : createDefaultList(doc.aff.length);
+          const availableOrcidOther = doc.orcid_other ? doc.orcid_other.slice(0, doc.aff.length) : createDefaultList(doc.aff.length);
+          
+          doc.authorAff = _.zip(
+            availableAuthors,
+            doc.aff,
+            availableOrcidPub,
+            availableOrcidUser,
+            availableOrcidOther
+          );
+          
+          // Store the remaining authors separately for potential lazy loading
+          if (numAuthors > doc.aff.length) {
+            doc.truncatedAuthorCount = numAuthors - doc.aff.length;
+            doc.remainingAuthors = doc.author.slice(doc.aff.length);
+          }
+        } else {
+          // Normal case - we have complete data
+          doc.authorAff = _.zip(
+            doc.author,
+            doc.aff,
+            doc.orcid_pub ? doc.orcid_pub : defaultList,
+            doc.orcid_user ? doc.orcid_user : defaultList,
+            doc.orcid_other ? doc.orcid_other : defaultList
+          );
+        }
       } else if (doc.author) {
         doc.hasAffiliation = false;
         doc.authorAff = _.zip(
@@ -402,6 +432,13 @@ define([
       this.model.clear({ silent: true });
       this.model.set(this._docs[bibcode]);
 
+      // Check if we need to fetch complete author data
+      if (this.needsCompleteAuthorData(this._docs[bibcode])) {
+        this.fetchAffiliations(() => {
+          // Data has been refreshed, re-render will happen automatically
+        });
+      }
+
       this._current = bibcode;
       // let other widgets know details
       var c = this._docs[bibcode]['[citations]'] || {
@@ -497,8 +534,11 @@ define([
     },
 
     fetchAffiliations: function(cb) {
+      const currentData = this.model.toJSON();
+      const needsCompleteData = this.needsCompleteAuthorData(currentData);
+      
       if (
-        (!this.model.has('aff') || this.model.get('aff').length === 0) &&
+        ((!this.model.has('aff') || this.model.get('aff').length === 0) || needsCompleteData) &&
         !this.isFetchingAff
       ) {
         this.isFetchingAff = true;
@@ -511,9 +551,9 @@ define([
           orcid_pub,
           orcid_user,
           orcid_other,
-        } = this.model.toJSON();
+        } = currentData;
         query.set('q', `identifier:${bibcode}`);
-        query.set('fl', ['aff', 'orcid_pub', 'orcid_user', 'orcid_other']);
+        query.set('fl', ['author', 'aff', 'orcid_pub', 'orcid_user', 'orcid_other']);
         query.set('rows', 1);
         ps.publish(
           ps.EXECUTE_REQUEST,
@@ -531,12 +571,13 @@ define([
                   resp.response.docs &&
                   resp.response.docs.length > 0
                 ) {
+                  const freshDoc = resp.response.docs[0];
                   const newEntries = this.model.parse({
-                    author: author,
-                    orcid_pub: orcid_pub,
-                    orcid_user: orcid_user,
-                    orcid_other: orcid_other,
-                    aff: resp.response.docs[0].aff,
+                    author: freshDoc.author || author,
+                    orcid_pub: freshDoc.orcid_pub || orcid_pub,
+                    orcid_user: freshDoc.orcid_user || orcid_user,
+                    orcid_other: freshDoc.orcid_other || orcid_other,
+                    aff: freshDoc.aff,
                   });
                   this._docs[bibcode] = {
                     ...this._docs[bibcode],
@@ -555,6 +596,25 @@ define([
       } else {
         cb();
       }
+    },
+
+    needsCompleteAuthorData: function(doc) {
+      // If we have truncatedAuthorCount, we definitely need complete data
+      if (doc.truncatedAuthorCount && doc.truncatedAuthorCount > 0) {
+        return true;
+      }
+      
+      // If we have authors but no affiliations, we might need complete data
+      if (doc.author && doc.author.length > 0 && (!doc.aff || doc.aff.length === 0)) {
+        return true;
+      }
+      
+      // If we have significantly fewer affiliations than authors, we likely have truncated data
+      if (doc.author && doc.aff && doc.author.length > doc.aff.length + 2) {
+        return true;
+      }
+      
+      return false;
     },
 
     _onAbstractLoaded: function() {
