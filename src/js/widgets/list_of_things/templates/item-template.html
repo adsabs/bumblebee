@@ -172,6 +172,9 @@
                     {{#each allAuthorFormatted}}
                         <li class="article-author">{{this}}</li>
                     {{/each}}
+                    <li>
+                        <em><a href="javascript:void(0)" class="collapse-authors" data-bibcode="{{bibcode}}">show less</a></em>
+                    </li>
                 {{else}}
                     {{#each authorFormatted}}
                         <li class="article-author">{{this}}</li>
