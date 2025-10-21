@@ -522,7 +522,7 @@ define([
             'Library <b>' +
             libraryTitle +
             '</b> could not be updated' +
-            (error ? ': (' + error + ')' : '. Please try again later.');
+            (error && error !== 'undefined' ? ': (' + error + ')' : '. Please try again later.');
           that
             .getBeeHive()
             .getService('PubSub')
@@ -626,7 +626,7 @@ define([
             'Library <b>' +
             name +
             '</b> could not be updated' +
-            (error ? ': (' + error + ')' : '. Please try again later.');
+            (error && error !== 'undefined' ? ': (' + error + ')' : '. Please try again later.');
           that
             .getBeeHive()
             .getService('PubSub')
