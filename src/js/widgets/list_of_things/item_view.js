@@ -85,6 +85,8 @@ define([
       'change:authorsExpanded': 'render',
       'change:allAuthorFormatted': 'render',
       'change:expandingAuthors': 'render',
+      'change:hasPartialAuthors': 'render',
+      'change:extraAuthors': 'render',
     },
 
     collectionEvents: {

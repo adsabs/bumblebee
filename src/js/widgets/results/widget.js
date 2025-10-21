@@ -70,12 +70,20 @@ define([
         return false;
       };
 
+      this.view.onCollapseAuthors = function(e) {
+        e.preventDefault();
+        var bibcode = $(e.target).data('bibcode');
+        this.trigger('collapse-authors', bibcode);
+        return false;
+      };
+
       // Initialize events object if it doesn't exist
       this.view.events = this.view.events || {};
       
       _.extend(this.view.events, {
         'click input#select-all-docs-cb': 'toggleAll',
         'click .expand-authors': 'onExpandAuthors',
+        'click .collapse-authors': 'onCollapseAuthors',
       });
 
       this.view.resultsWidget = true;
@@ -86,6 +94,7 @@ define([
       // to this event on the view
       this.listenTo(this.view, 'toggle-all', this.triggerBulkAction);
       this.listenTo(this.view, 'expand-authors', this.onExpandAuthorsEvent);
+      this.listenTo(this.view, 'collapse-authors', this.onCollapseAuthorsEvent);
       this.minAuthorsPerResult = 3;
 
       this.model.on(
@@ -511,6 +520,10 @@ define([
       this.expandAuthors(bibcode);
     },
 
+    onCollapseAuthorsEvent: function(bibcode) {
+      this.collapseAuthors(bibcode);
+    },
+
     expandAuthors: function(bibcode) {
       // Find the model in our collection
       var model = this.collection.find(function(m) {
@@ -579,6 +592,32 @@ define([
           }
         })
       );
+    },
+
+    collapseAuthors: function(bibcode) {
+      // Find the model in our collection
+      var model = this.collection.find(function(m) {
+        return m.get('bibcode') === bibcode;
+      });
+      
+      if (!model || !model.get('authorsExpanded')) {
+        return; // Nothing to collapse or already collapsed
+      }
+
+      // Calculate how many extra authors there should be
+      var totalAuthors = model.get('author_count') || 0;
+      var shownAuthors = model.get('authorFormatted') ? model.get('authorFormatted').length : 0;
+      var extraAuthors = totalAuthors > shownAuthors ? totalAuthors - shownAuthors : 0;
+
+      // Reset to collapsed state
+      model.set({
+        'authorsExpanded': false,
+        'hasPartialAuthors': extraAuthors > 0,
+        'extraAuthors': extraAuthors
+      });
+
+      // Force trigger change events to ensure re-rendering
+      model.trigger('change');
     },
 
     triggerBulkAction: function(flag) {
