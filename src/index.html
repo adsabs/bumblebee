@@ -250,92 +250,96 @@
       // Simulate a process.env-like environment
       window.process = { env: { NODE_ENV: window.ENV ?? 'production' } };
 
-      // Centralized Sentry loader state and helpers
-      (function initSentryLoader() {
-        const state = (window.__sentryState ||= { ready: false, error: null, queue: [] });
+      // Modern helper for accessing Sentry
+      const withSentry = function (callback) {
+        if (typeof window.Sentry !== 'undefined') {
+          try {
+            callback(window.Sentry);
+          } catch (e) {
+            // Silently handle errors in callback
+          }
+        }
+      };
 
-        function flushQueue() {
-          const q = state.queue.splice(0, state.queue.length);
-          q.forEach(({ cb, errCb, res, rej }) => {
-            if (state.ready && window.Sentry) {
-              try { if (cb) cb.call(window, window.Sentry); if (res) res(window.Sentry); }
-              catch (e) { if (errCb) errCb.call(window, e); if (rej) rej(e); }
+      // Legacy compatibility helpers for smooth transition
+      window.whenSentryReady = function() {
+        return new Promise((resolve) => {
+          if (typeof window.Sentry !== 'undefined') {
+            resolve(window.Sentry);
+          } else {
+            // If Sentry isn't loaded yet, wait for it
+            const checkSentry = () => {
+              if (typeof window.Sentry !== 'undefined') {
+                resolve(window.Sentry);
+              } else {
+                setTimeout(checkSentry, 50);
+              }
+            };
+            checkSentry();
+          }
+        });
+      };
+
+      window.getSentry = function(callback, errorCallback = () => {}) {
+        if (typeof window.Sentry !== 'undefined') {
+          try {
+            callback(window.Sentry);
+          } catch (e) {
+            errorCallback(e);
+          }
+        } else {
+          // If Sentry isn't loaded yet, wait for it
+          const checkSentry = () => {
+            if (typeof window.Sentry !== 'undefined') {
+              try {
+                callback(window.Sentry);
+              } catch (e) {
+                errorCallback(e);
+              }
             } else {
-              const err = state.error || new Error('Sentry failed to load');
-              if (errCb) errCb.call(window, err);
-              if (rej) rej(err);
+              setTimeout(checkSentry, 50);
             }
+          };
+          checkSentry();
+        }
+      };
+
+      // Initialize Sentry after the script loads
+      function initSentry() {
+        if (typeof Sentry !== 'undefined') {
+          Sentry.init({
+            dsn: 'https://46062cbe0aeb7a3b2bb4c3a9b8cd1ac7@o1060269.ingest.us.sentry.io/4507341192036352',
+            tracesSampleRate: window.ENV === 'development' ? 1.0 : 0.75,
+            debug: false,
+            allowUrls: [
+              /https:\/\/.*\.adsabs\.harvard\.edu\/.*/,
+              /https:\/\/code\.jquery\.com\/.*/,
+              /https:\/\/cdn\.jsdelivr\.net\/.*/,
+            ],
+            replaysSessionSampleRate: 0,
+            replaysOnErrorSampleRate: 0.01,
+            environment: window.ENV ?? 'production',
+            integrations: [
+              Sentry.browserTracingIntegration(),
+              Sentry.replayIntegration({
+                maskAllText: false,
+                blockAllMedia: false,
+                unmask: ['[name=q]'],
+              }),
+            ],
+            beforeSendSpan: tagSpans
           });
         }
-
-        // Back-compat callback API; queues until Sentry is ready
-        window.getSentry = function(cb, errCb = () => {}) {
-          if (state.ready && window.Sentry) {
-            try { cb.call(window, window.Sentry); } catch (e) { errCb.call(window, e); }
-            return;
-          }
-          if (state.error) { errCb.call(window, state.error); return; }
-          state.queue.push({ cb, errCb });
-        };
-
-        // Promise-based helper for newer code paths
-        window.whenSentryReady = function() {
-          return new Promise((res, rej) => {
-            if (state.ready && window.Sentry) { res(window.Sentry); return; }
-            if (state.error) { rej(state.error); return; }
-            state.queue.push({ res, rej });
-          });
-        };
-
-        // Called after the SDK finishes loading
-        window.sentryOnLoad = function() {
-          try {
-            if (state.ready && window.Sentry) { return; }
-            Sentry.init({
-              dsn: 'https://46062cbe0aeb7a3b2bb4c3a9b8cd1ac7@o1060269.ingest.us.sentry.io/4507341192036352',
-              tracesSampleRate: window.ENV === 'development' ? 1.0 : 0.75,
-              debug: false,
-              allowUrls: [
-                /https:\/\/.*\.adsabs\.harvard\.edu\/.*/,
-                /https:\/\/code\.jquery\.com\/.*/,
-                /https:\/\/cdn\.jsdelivr\.net\/.*/,
-              ],
-              replaysSessionSampleRate: 0,
-              replaysOnErrorSampleRate: 0.01,
-              environment: window.ENV ?? 'production',
-              integrations: [
-                Sentry.browserTracingIntegration(),
-                Sentry.replayIntegration({
-                  maskAllText: false,
-                  blockAllMedia: false,
-                  unmask: ['[name=q]'],
-                }),
-              ],
-              beforeSendSpan: tagSpans
-            });
-            state.ready = true;
-            flushQueue();
-          } catch (e) {
-            state.error = e;
-            flushQueue();
-          }
-        };
-
-        // Called if the SDK fails to load
-        window.sentryOnError = function(e) {
-          state.error = e instanceof Error ? e : new Error('Sentry script failed to load');
-          flushQueue();
-        };
-      })();
+      }
 
       
     </script>
 
     <script
-      src="https://js.sentry-cdn.com/46062cbe0aeb7a3b2bb4c3a9b8cd1ac7.min.js"
+      src="https://browser.sentry-cdn.com/10.21.0/bundle.tracing.replay.min.js"
+      integrity="sha384-qMX/qwnFA+J4Pv2Gnngz4M1WmLwT0ajrVIQgtdyRExx0QSoG9rSiLtydtCdYzhzk"
       crossorigin="anonymous"
-      onload="window.sentryOnLoad()"
-      onerror="window.sentryOnError && window.sentryOnError(event)"
+      onload="initSentry()"
     ></script>
 
     <!-- start the discovery application -->
