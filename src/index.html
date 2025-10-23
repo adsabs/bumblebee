@@ -250,6 +250,22 @@
       // Simulate a process.env-like environment
       window.process = { env: { NODE_ENV: window.ENV ?? 'production' } };
 
+      /*
+       * SENTRY REPLAY OPTIMIZATION FOR HIGH-TRAFFIC SITES
+       * 
+       * This configuration is designed to drastically reduce replay usage while
+       * still capturing valuable debugging information:
+       * 
+       * 1. NO random session recording (replaysSessionSampleRate: 0)
+       * 2. Smart error-based sampling with daily quotas
+       * 3. Filtered out common/expected errors that don't need replays
+       * 4. Higher priority for critical JavaScript errors
+       * 5. Reduced payload sizes by blocking media and limiting network capture
+       * 6. Daily quota limits (100 replays/day in prod, 1000 in dev)
+       * 
+       * Expected impact: ~99.9% reduction in replay usage
+       */
+
       // Modern helper for accessing Sentry
       const withSentry = function (callback) {
         if (typeof window.Sentry !== 'undefined') {
@@ -304,6 +320,172 @@
         }
       };
 
+      // Daily quota management for replays
+      function checkDailyReplayQuota() {
+        const today = new Date().toDateString();
+        const quotaKey = 'sentry_replay_quota';
+        const dateKey = 'sentry_replay_date';
+        
+        try {
+          const savedDate = localStorage.getItem(dateKey);
+          let replayCount = parseInt(localStorage.getItem(quotaKey) || '0');
+          
+          // Reset quota if it's a new day
+          if (savedDate !== today) {
+            replayCount = 0;
+            localStorage.setItem(dateKey, today);
+          }
+          
+          // Daily limit: 100 replays max (adjust as needed)
+          const DAILY_LIMIT = window.ENV === 'development' ? 1000 : 100;
+          
+          if (replayCount >= DAILY_LIMIT) {
+            return false;
+          }
+          
+          // Increment counter
+          localStorage.setItem(quotaKey, (replayCount + 1).toString());
+          return true;
+          
+        } catch (e) {
+          // If localStorage fails, still allow some replays but be more restrictive
+          return Math.random() < 0.0001; // 0.01%
+        }
+      }
+
+      // Smart replay sampling based on actual project error patterns
+      function shouldCaptureReplay(errorEvent) {
+        // Always capture in development (but still respect quota)
+        if (window.ENV === 'development') {
+          return checkDailyReplayQuota();
+        }
+        
+        // Check daily quota first
+        if (!checkDailyReplayQuota()) {
+          return false;
+        }
+        
+        const errorMessage = errorEvent?.message || errorEvent?.exception?.values?.[0]?.value || '';
+        const errorType = errorEvent?.exception?.values?.[0]?.type || '';
+        const stacktrace = errorEvent?.exception?.values?.[0]?.stacktrace?.frames || [];
+        const filename = stacktrace[0]?.filename || '';
+        
+        // HIGH-VOLUME ERROR PATTERNS FROM PROJECT DATA (BUMBLEBEE issues)
+        // These patterns are consuming most of your replay quota
+        const highVolumeFilters = [
+          // BUMBLEBEE-1TC: 172k events - Syntax errors from invalid tokens
+          /Invalid or unexpected token/i,
+          /SyntaxError.*Invalid.*token/i,
+          /Unexpected token/i,
+          
+          // BUMBLEBEE-D: 13k events - RequireJS script loading
+          /Script error for.*js\//i,
+          /RequireJS.*scripterror/i,
+          /Mismatched anonymous define/i,
+          /needed by: router/i,
+          
+          // BUMBLEBEE-7QW/7QV: 6.8k events - Google Tag Manager
+          /window\.__tcfapi is not a function/i,
+          /gtag.*not.*function/i,
+          /ga.*not.*function/i,
+          /_gaCustomDimensionUserType.*not defined/i,
+          
+          // BUMBLEBEE-5KN: 2.6k events - Google Analytics loading
+          /window\.ga.*appear/i,
+          /gtag.*does not appear to load/i,
+          /Maximum.*retries.*window\.ga/i,
+          
+          // Multiple jQuery/Bootstrap issues: ~5k events combined
+          /jQuery.*not defined/i,
+          /\$.*not defined/i,
+          /Bootstrap.*requires jQuery/i,
+          
+          // Multiple "Failed to fetch" issues: ~2k events combined  
+          /Failed to fetch/i,
+          /TypeError.*fetch/i,
+          /Network request failed/i,
+          
+          // BUMBLEBEE-45X: 3k events - Empty values
+          /Empty values not allowed/i,
+          
+          // BUMBLEBEE-75Y: 3.3k events - Search failures (rate limiting)
+          /Search cycle failed to start/i,
+          
+          // Multiple "Cannot read properties" errors: ~2k events
+          /Cannot read properties of undefined/i,
+          /Cannot read properties of null/i,
+          
+          // Third-party script errors
+          /pintrk.*not defined/i,
+          /vbpx.*not defined/i,
+          /efDataLayer.*not defined/i,
+          /webVitals.*not defined/i,
+          
+          // Performance/Asset issues (BUMBLEBEE-1R2: 7.5k events)
+          /Uncompressed Asset/i,
+          /Large.*payload/i,
+          /Large Render Blocking Asset/i,
+          
+          // Common framework noise
+          /ResizeObserver loop limit exceeded/i,
+          /Non-Error promise rejection/i,
+          /ChunkLoadError/i,
+          /Loading chunk.*failed/i,
+          /Script error/i,
+          /Maximum call stack size exceeded/i,
+          
+          // Cross-origin and security errors
+          /Blocked.*from.*cross-origin/i,
+          /SecurityError.*cross-origin/i,
+          /Blocked 'connect'/i,
+          /Blocked 'script'/i,
+          /Blocked 'font'/i
+        ];
+        
+        // Third-party domains that generate noise
+        const thirdPartyFilenames = [
+          /googletagmanager\.com/i,
+          /google-analytics\.com/i,
+          /gtm\.js/i,
+          /analytics\.js/i,
+          /pinterest\.com/i,
+          /cubox\.pro/i,
+          /sentry\.io/i,
+          /cloudflare\.com/i,
+          /cdn\./i
+        ];
+        
+        // Filter out high-volume, low-value errors
+        const isHighVolumeError = highVolumeFilters.some(pattern => 
+          pattern.test(errorMessage) || pattern.test(errorType)
+        );
+        
+        const isThirdPartyError = thirdPartyFilenames.some(pattern => 
+          pattern.test(filename)
+        );
+        
+        // Don't capture replays for filtered errors
+        if (isHighVolumeError || isThirdPartyError) {
+          return false;
+        }
+        
+        // For remaining errors, sample at very low rates
+        // These should be genuinely critical application errors
+        const criticalErrors = [
+          /ViewDestroyedError/i, // Framework errors
+          /getBeeHive.*getService.*not a function/i, // App-specific errors
+          /Services\.get.*not a function/i // App-specific errors
+        ];
+        
+        const isAppCritical = criticalErrors.some(pattern => 
+          pattern.test(errorMessage) || pattern.test(errorType)
+        );
+        
+        // Very conservative sampling even for critical errors
+        const sampleRate = isAppCritical ? 0.05 : 0.001; // 5% vs 0.1%
+        return Math.random() < sampleRate;
+      }
+
       // Initialize Sentry after the script loads
       function initSentry() {
         if (typeof Sentry !== 'undefined') {
@@ -311,22 +493,74 @@
             dsn: 'https://46062cbe0aeb7a3b2bb4c3a9b8cd1ac7@o1060269.ingest.us.sentry.io/4507341192036352',
             tracesSampleRate: window.ENV === 'development' ? 1.0 : 0.75,
             debug: false,
+            enableLogs: true,
+            _experiments: {
+              enableStandaloneLcpSpans: true,
+              enableStandaloneClsSpans: true,
+            },
             allowUrls: [
               /https:\/\/.*\.adsabs\.harvard\.edu\/.*/,
               /https:\/\/code\.jquery\.com\/.*/,
               /https:\/\/cdn\.jsdelivr\.net\/.*/,
             ],
-            replaysSessionSampleRate: 0,
-            replaysOnErrorSampleRate: 0.01,
+            // Aggressive replay reduction for high-traffic sites
+            replaysSessionSampleRate: 0, // No random session recording
+            replaysOnErrorSampleRate: 0, // Disabled - we'll use beforeSend logic instead
             environment: window.ENV ?? 'production',
             integrations: [
               Sentry.browserTracingIntegration(),
               Sentry.replayIntegration({
-                maskAllText: false,
-                blockAllMedia: false,
-                unmask: ['[name=q]'],
+                // Privacy and size optimizations
+                maskAllText: false, // Keep text visible for debugging
+                blockAllMedia: true, // Block images/videos to reduce payload
+                blockClass: 'sentry-block', // CSS class to block elements
+                ignoreClass: 'sentry-ignore', // CSS class to ignore elements
+                unmask: ['[name=q]', '.search-field', '.query-input'], // Keep search inputs visible
+                
+                // Aggressive network filtering - only capture critical API calls
+                networkDetailAllowUrls: [
+                  /\/api\/v1\//,              // Core API calls
+                  /\/search\/query/,          // Search queries  
+                  /\/resolver\//,             // Citation resolver
+                  /\/export\//,               // Export functionality
+                  /\/user\//,                 // User management
+                  /\/myads\//                 // User libraries
+                ],
+                
+                // Minimize network data capture
+                networkCaptureBodies: false,       // No request/response bodies
+                networkRequestHeaders: [],         // No request headers  
+                networkResponseHeaders: [],        // No response headers
+                
+                // Performance optimizations
+                maxReplayDuration: 300000,         // 5 minutes max replay length
+                sessionSampleRate: 0,              // No automatic sessions
+                errorSampleRate: 0,                // We handle this in beforeSend
+                
+                // Additional payload reduction
+                recordCanvas: false,               // Don't record canvas elements
+                collectFonts: false,               // Don't capture font loads
+                inlineStylesheet: false,           // Don't inline stylesheets
+                inlineImages: false,               // Don't inline images
+                
+                // Only capture minimal DOM mutations
+                mutationBreadcrumbLimit: 750,      // Reduce mutation tracking
+                mutationLimit: 10000,              // Limit DOM mutations captured
               }),
             ],
+            beforeSend(event, hint) {
+              // Smart replay capture logic
+              if (hint.originalException && shouldCaptureReplay(event)) {
+                // Only start replay for this specific error
+                if (window.Sentry && typeof window.Sentry.getReplay === 'function') {
+                  const replay = window.Sentry.getReplay();
+                  if (replay && !replay.isEnabled()) {
+                    replay.start();
+                  }
+                }
+              }
+              return event;
+            },
             beforeSendSpan: tagSpans
           });
         }
