@@ -111,6 +111,74 @@ define(['backbone', 'marionette', 'jquery', 'js/widgets/abstract/widget',
         expect($("article").text().trim().replace(/\s{2}/gi, "")).to.eql("Loading...")
       });
 
+      it("should preserve DOI during fetchAffiliations hydration", function(done){
+        // Test for SCIX-670: DOI disappearing after loading an abstract
+        var aw = new AbstractWidget();
+        aw.activate(minsub.beehive.getHardenedInstance());
+
+        // Set up initial document with DOI but no affiliations
+        aw._docs['test-bibcode'] = {
+          bibcode: 'test-bibcode',
+          doi: [{ doi: '10.1086/test123', href: 'https://doi.org/10.1086/test123' }],
+          author: ['Author, A.', 'Author, B.'],
+          aff: [],
+          title: 'Test Document',
+          abstract: 'Test abstract'
+        };
+        
+        // Set current document in model  
+        aw.model.set(aw._docs['test-bibcode']);
+        aw._current = 'test-bibcode';
+
+        // Verify DOI exists before hydration
+        expect(aw._docs['test-bibcode'].doi).to.exist;
+        expect(aw._docs['test-bibcode'].doi[0].doi).to.equal("10.1086/test123");
+
+        // Mock the PubSub to handle the EXECUTE_REQUEST
+        var pubsub = aw.getPubSub();
+        var originalPublish = pubsub.publish;
+        pubsub.publish = function(signal, request) {
+          if (signal === pubsub.EXECUTE_REQUEST) {
+            // Simulate the API response with DOI preserved
+            setTimeout(function() {
+              request.get('options').done({
+                "responseHeader": { "status": 0, "QTime": 10 },
+                "response": {
+                  "numFound": 1, "start": 0,
+                  "docs": [{
+                    "bibcode": "test-bibcode",
+                    "doi": ["10.1086/test123"],  // DOI preserved in hydration response
+                    "author": ["Author, A.", "Author, B."],
+                    "aff": ["Affiliation A", "Affiliation B"],
+                    "title": ["Test Document"],
+                    "abstract": "Test abstract"
+                  }]
+                }
+              });
+            }, 10);
+          } else {
+            return originalPublish.apply(this, arguments);
+          }
+        };
+
+        // Test fetchAffiliations
+        aw.fetchAffiliations(function(err) {
+          expect(err).to.be.undefined;
+          
+          // After hydration, DOI should still be preserved (this was the bug)
+          expect(aw._docs['test-bibcode'].doi).to.exist;
+          expect(aw._docs['test-bibcode'].doi[0].doi).to.equal("10.1086/test123");
+          expect(aw._docs['test-bibcode'].doi[0].href).to.contain("10.1086/test123");
+          
+          // And affiliations should now be populated
+          expect(aw._docs['test-bibcode'].aff).to.eql(["Affiliation A", "Affiliation B"]);
+          
+          // Restore original publish function
+          pubsub.publish = originalPublish;
+          done();
+        });
+      });
+
       it("should have a model that takes raw solr data and parses it to template-ready condition", function(){
         var aw = new AbstractWidget();
 
