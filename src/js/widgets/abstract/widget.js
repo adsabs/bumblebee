@@ -550,15 +550,9 @@ define([
         const ps = this.getPubSub();
         const query = this.getCurrentQuery().clone();
         query.unlock();
-        const {
-          bibcode,
-          author,
-          orcid_pub,
-          orcid_user,
-          orcid_other,
-        } = currentData;
+        const { bibcode, } = currentData;
         query.set('q', `identifier:${bibcode}`);
-        query.set('fl', ['author', 'aff', 'orcid_pub', 'orcid_user', 'orcid_other']);
+        query.set('fl', this.defaultQueryArguments.fl);
         query.set('rows', 1);
         ps.publish(
           ps.EXECUTE_REQUEST,
@@ -577,13 +571,7 @@ define([
                   resp.response.docs.length > 0
                 ) {
                   const freshDoc = resp.response.docs[0];
-                  const newEntries = this.model.parse({
-                    author: freshDoc.author || author,
-                    orcid_pub: freshDoc.orcid_pub || orcid_pub,
-                    orcid_user: freshDoc.orcid_user || orcid_user,
-                    orcid_other: freshDoc.orcid_other || orcid_other,
-                    aff: freshDoc.aff,
-                  });
+                  const newEntries = this.model.parse(freshDoc);
                   this._docs[bibcode] = {
                     ...this._docs[bibcode],
                     ...newEntries,
