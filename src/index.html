@@ -563,6 +563,31 @@
             },
             beforeSendSpan: tagSpans
           });
+
+          const enableFeedbackIntegration = (feedbackFactory) => {
+            if (typeof feedbackFactory !== 'function') {
+              return;
+            }
+            try {
+              const integration = feedbackFactory({
+                autoInject: false,
+                colorScheme: 'system',
+              });
+              if (integration && typeof Sentry.addIntegration === 'function') {
+                Sentry.addIntegration(integration);
+              }
+            } catch (_) {
+              // ignore feedback initialization errors to avoid blocking bootstrap
+            }
+          };
+
+          if (typeof Sentry.lazyLoadIntegration === 'function') {
+            Sentry.lazyLoadIntegration('feedbackIntegration')
+              .then(enableFeedbackIntegration)
+              .catch(() => {});
+          } else if (typeof Sentry.feedbackIntegration === 'function') {
+            enableFeedbackIntegration(Sentry.feedbackIntegration);
+          }
         }
       }
 
