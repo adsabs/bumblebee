@@ -13,6 +13,25 @@
                 <img class="s-ads-icon" src="/styles/img/transparent_logo.svg" alt="Astrophysics Data System Home Page"/>
                 <h1 style="font-weight: bold;">ads</h1>
             </a>
+            <div class="nav navbar-nav dropdown" style="padding-top: 5px;">
+                <button type="button" class="btn btn-link dropdown-toggle feedback-button" data-toggle="dropdown" aria-expanded="false">
+                    <img src="/styles/img/scix-logo.svg" style="width: 30px; height: 30px; padding-right: 2px;" alt="Scix logo"/>
+                    SciX has launched <span class="caret"></span>
+                </button>
+                  <ul class="dropdown-menu" role="menu">
+                    <li class="no-hover-style" style="padding:15px 10px;">SciX is the evolution of ADS, bringing its powerful capabilities into new domains</li>
+                    <li>
+                      <a href="https://scixplorer.org" target="_blank" rel="noopener">
+                        <i class="fa fa-globe" aria-hidden="true"></i> Visit SciX
+                      </a>
+                    </li>
+                    <li>
+                      <a href="https://scixplorer.org/adstoscix" target="_blank" rel="noopener">
+                        <i class="fa fa-info-circle" aria-hidden="true"></i> Learn More
+                      </a>
+                    </li>
+                  </ul>
+            </div>
             {{else}}
             <div class="s-hourly-warning">
                 <a class="navbar-brand s-navbar-brand" href="#"><i class="icon-danger fa-2x" aria-hidden="true"></i> ADS TEST</a>
@@ -153,6 +172,7 @@
                       <i class="fa fa-question-circle about-page-icon" aria-hidden="true"></i> About <span class="caret"></span>
                     </button>
                     <ul class="dropdown-menu" role="menu">
+                        <li> <a href="https://scixplorer.org/adstoscix" target="_blank" rel="noopener"> <i class="fa fa-bullhorn" aria-hidden="true"></i> Transition to SciX</a></li>
                         <li> <a href="/about/" target="_blank" rel="noopener"> <i class="fa fa-question-circle" aria-hidden="true"></i> About ADS </a></li>
                         <li> <a href="/help/whats_new/" target="_blank" rel="noopener"> <i class="fa fa-bullhorn" aria-hidden="true"></i> What's New </a></li>
                         <li> <a href="/blog/" target="_blank" rel="noopener"> <i class="fa fa-newspaper-o" aria-hidden="true"></i> ADS Blog </a></li>

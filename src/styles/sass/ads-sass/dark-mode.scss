@@ -4,8 +4,8 @@
   height: 4rem;
   position: fixed;
   border-radius: 50%;
-  right: 32px;
-  bottom: 32px;
+  right: 22px;
+  top: 12px;
   left: unset;
   cursor: pointer;
   transition: all 0.5s ease;
@@ -13,6 +13,9 @@
   justify-content: center;
   align-items: center;
   z-index: 100;
+  border-style: solid;
+  border-width: 1px;
+  border-color: #fff;
 }
 
 @media screen {
@@ -973,8 +976,7 @@
     }
 
     /* search page */
-    .s-landing-page-layout
-      .search-bar-rows-container.s-search-bar-rows-container {
+    .s-landing-page-layout .search-bar-rows-container.s-search-bar-rows-container {
       background: transparent;
     }
 
