@@ -191,151 +191,15 @@
     </script>
 
     <script>
-
-      /**
-       * Function to tag spans with specific descriptions based on URL parameters.
-       * @param span
-       */
-      const tagSpans = (span) => {
-        if (!span || !span.data || !span.data['http.url']) {
-          return span;
-        }
-        const url = new URL(span.data['http.url']);
-        const params = new URLSearchParams(url.search);
-
-        // Prefer explicit ui_tag param, then tag, for stable grouping
-        const uiTag = params.get('ui_tag') || params.get('tag');
-        if (uiTag) {
-          const tag = uiTag;
-          // stable, human-friendly span name
-          span.description = tag;
-          // attach the tag to span data for additional filtering
-          span.data['feature.ui_tag'] = tag;
-          return span;
-        }
-
-        // check for search (left-side) facets
-        if (params.has('facet') && params.get('facet') === 'true') {
-          if (params.has('facet.field')) {
-            span.description = `${params.get('facet.field')} facet`;
-          }
-
-          // check for years graph
-          if (params.has('facet.pivot')) {
-            const pivot = params.get('facet.pivot');
-            if (pivot === 'property,year') {
-              span.description = 'years graph';
-            }
-          }
-        }
-        if (params.has('stats') && params.get('stats') === 'true') {
-          if (params.has('stats.field')) {
-            const field = params.get('stats.field');
-
-            // check for citations graph
-            if (field === 'citation_count') {
-              span.description = 'citations graph';
-            }
-
-            // check for reads graph
-            if (field === 'read_count') {
-              span.description = 'reads graph';
-            }
-          }
-        }
-
-        return span;
-      };
-
-      // Simulate a process.env-like environment
       window.process = { env: { NODE_ENV: window.ENV ?? 'production' } };
-
-      // Centralized Sentry loader state and helpers
-      (function initSentryLoader() {
-        const state = (window.__sentryState ||= { ready: false, error: null, queue: [] });
-
-        function flushQueue() {
-          const q = state.queue.splice(0, state.queue.length);
-          q.forEach(({ cb, errCb, res, rej }) => {
-            if (state.ready && window.Sentry) {
-              try { if (cb) cb.call(window, window.Sentry); if (res) res(window.Sentry); }
-              catch (e) { if (errCb) errCb.call(window, e); if (rej) rej(e); }
-            } else {
-              const err = state.error || new Error('Sentry failed to load');
-              if (errCb) errCb.call(window, err);
-              if (rej) rej(err);
-            }
-          });
-        }
-
-        // Back-compat callback API; queues until Sentry is ready
-        window.getSentry = function(cb, errCb = () => {}) {
-          if (state.ready && window.Sentry) {
-            try { cb.call(window, window.Sentry); } catch (e) { errCb.call(window, e); }
-            return;
-          }
-          if (state.error) { errCb.call(window, state.error); return; }
-          state.queue.push({ cb, errCb });
-        };
-
-        // Promise-based helper for newer code paths
-        window.whenSentryReady = function() {
-          return new Promise((res, rej) => {
-            if (state.ready && window.Sentry) { res(window.Sentry); return; }
-            if (state.error) { rej(state.error); return; }
-            state.queue.push({ res, rej });
-          });
-        };
-
-        // Called after the SDK finishes loading
-        window.sentryOnLoad = function() {
-          try {
-            if (state.ready && window.Sentry) { return; }
-            Sentry.init({
-              dsn: 'https://46062cbe0aeb7a3b2bb4c3a9b8cd1ac7@o1060269.ingest.us.sentry.io/4507341192036352',
-              tracesSampleRate: window.ENV === 'development' ? 1.0 : 0.75,
-              debug: false,
-              allowUrls: [
-                /https:\/\/.*\.adsabs\.harvard\.edu\/.*/,
-                /https:\/\/code\.jquery\.com\/.*/,
-                /https:\/\/cdn\.jsdelivr\.net\/.*/,
-              ],
-              replaysSessionSampleRate: 0,
-              replaysOnErrorSampleRate: 0.01,
-              environment: window.ENV ?? 'production',
-              integrations: [
-                Sentry.browserTracingIntegration(),
-                Sentry.replayIntegration({
-                  maskAllText: false,
-                  blockAllMedia: false,
-                  unmask: ['[name=q]'],
-                }),
-              ],
-              beforeSendSpan: tagSpans
-            });
-            state.ready = true;
-            flushQueue();
-          } catch (e) {
-            state.error = e;
-            flushQueue();
-          }
-        };
-
-        // Called if the SDK fails to load
-        window.sentryOnError = function(e) {
-          state.error = e instanceof Error ? e : new Error('Sentry script failed to load');
-          flushQueue();
-        };
-      })();
-
-      
     </script>
+    <script src="config/sentry.js"></script>
 
     <script
-      src="https://js.sentry-cdn.com/46062cbe0aeb7a3b2bb4c3a9b8cd1ac7.min.js"
+      src="https://browser.sentry-cdn.com/10.21.0/bundle.tracing.replay.min.js"
+      integrity="sha384-qMX/qwnFA+J4Pv2Gnngz4M1WmLwT0ajrVIQgtdyRExx0QSoG9rSiLtydtCdYzhzk"
       crossorigin="anonymous"
-      onload="window.sentryOnLoad()"
-      onerror="window.sentryOnError && window.sentryOnError(event)"
+      onload="initSentry()"
     ></script>
 
     <!-- start the discovery application -->

@@ -361,6 +361,7 @@ define([
 
     submitForm: function($form, $modal) {
       const submit = () => {
+        this._sendFeedbackToSentry($form);
         var data = $form.serialize();
         // record the user agent string
         data += '&user-agent-string=' + encodeURIComponent(navigator.userAgent);
@@ -425,6 +426,145 @@ define([
             submit();
           });
       });
+    },
+
+    _sendFeedbackToSentry: function($form) {
+      if (
+        typeof window.whenSentryReady !== 'function' &&
+        typeof window.Sentry === 'undefined'
+      ) {
+        return;
+      }
+
+      const fields = {};
+      const extra = {};
+      const skipExtras = new Set([
+        'comments',
+        'name',
+        '_replyto',
+        '_subject',
+        '_gotcha',
+        'g-recaptcha-response',
+      ]);
+
+      $form.serializeArray().forEach(({ name, value }) => {
+        if (!Object.prototype.hasOwnProperty.call(fields, name)) {
+          fields[name] = value;
+        } else if (Array.isArray(fields[name])) {
+          fields[name].push(value);
+        } else {
+          fields[name] = [fields[name], value];
+        }
+
+        if (!skipExtras.has(name)) {
+          extra[name] = value;
+        }
+      });
+
+      const message =
+        typeof fields.comments === 'string' ? fields.comments.trim() : '';
+      if (!message) {
+        return;
+      }
+
+      const name =
+        typeof fields.name === 'string' && fields.name.trim()
+          ? fields.name.trim()
+          : undefined;
+      const email =
+        typeof fields._replyto === 'string' && fields._replyto.trim()
+          ? fields._replyto.trim()
+          : undefined;
+      const urlValue =
+        typeof fields.url === 'string' && fields.url.trim()
+          ? fields.url.trim()
+          : window.location.href;
+      const feedbackType =
+        typeof fields['feedback-type'] === 'string' && fields['feedback-type']
+          ? fields['feedback-type']
+          : 'feedback';
+
+      const tags = {
+        feedback_type: feedbackType,
+      };
+
+      if (fields.origin) {
+        tags.feedback_origin = fields.origin;
+      }
+
+      if (fields.current_page) {
+        tags.current_page = fields.current_page;
+      }
+
+      if (fields.current_query) {
+        tags.current_query = fields.current_query;
+      }
+
+      if (fields.currentuser) {
+        tags.current_user = fields.currentuser;
+      }
+
+      const captureContext = {
+        tags: _.extend({}, tags),
+        extra: _.extend(
+          {
+            userAgent: navigator.userAgent,
+          },
+          extra
+        ),
+      };
+
+      if (name || email) {
+        captureContext.user = {};
+        if (name) {
+          captureContext.user.username = name;
+        }
+        if (email) {
+          captureContext.user.email = email;
+        }
+      }
+
+      const payload = {
+        message,
+        source: 'general-feedback-form',
+        url: urlValue,
+        tags,
+      };
+
+      if (name) {
+        payload.name = name;
+      }
+      if (email) {
+        payload.email = email;
+      }
+
+      const whenReady =
+        typeof window.whenSentryReady === 'function'
+          ? window.whenSentryReady()
+          : Promise.resolve(window.Sentry);
+
+      whenReady
+        .then((sentry) => {
+          if (!sentry) {
+            return;
+          }
+
+          if (typeof sentry.captureFeedback === 'function') {
+            try {
+              sentry.captureFeedback(payload, { captureContext });
+            } catch (_) {}
+          } else if (typeof sentry.sendFeedback === 'function') {
+            try {
+              const sendResult = sentry.sendFeedback(payload, {
+                captureContext,
+              });
+              if (sendResult && typeof sendResult.catch === 'function') {
+                sendResult.catch(() => {});
+              }
+            } catch (_) {}
+          }
+        })
+        .catch(() => {});
     },
 
     navigateToOrcidLink: function() {
