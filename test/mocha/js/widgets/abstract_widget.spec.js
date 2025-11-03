@@ -116,18 +116,19 @@ define(['backbone', 'marionette', 'jquery', 'js/widgets/abstract/widget',
         var aw = new AbstractWidget();
         aw.activate(minsub.beehive.getHardenedInstance());
 
-        // Set up initial document with DOI but no affiliations
-        aw._docs['test-bibcode'] = {
+        // Set up initial document with DOI but no affiliations (parse it first)
+        var initialDoc = aw.model.parse({
           bibcode: 'test-bibcode',
-          doi: [{ doi: '10.1086/test123', href: 'https://doi.org/10.1086/test123' }],
+          doi: ['10.1086/test123'],
           author: ['Author, A.', 'Author, B.'],
           aff: [],
-          title: 'Test Document',
+          title: ['Test Document'],
           abstract: 'Test abstract'
-        };
-        
-        // Set current document in model  
-        aw.model.set(aw._docs['test-bibcode']);
+        });
+        aw._docs['test-bibcode'] = initialDoc;
+
+        // Set current document in model
+        aw.model.set(initialDoc);
         aw._current = 'test-bibcode';
 
         // Verify DOI exists before hydration
@@ -139,7 +140,7 @@ define(['backbone', 'marionette', 'jquery', 'js/widgets/abstract/widget',
         var originalPublish = pubsub.publish;
         pubsub.publish = function(signal, request) {
           if (signal === pubsub.EXECUTE_REQUEST) {
-            // Simulate the API response with DOI preserved
+            // Simulate the API response - only aff field (matching our fl param)
             setTimeout(function() {
               request.get('options').done({
                 "responseHeader": { "status": 0, "QTime": 10 },
@@ -147,11 +148,7 @@ define(['backbone', 'marionette', 'jquery', 'js/widgets/abstract/widget',
                   "numFound": 1, "start": 0,
                   "docs": [{
                     "bibcode": "test-bibcode",
-                    "doi": ["10.1086/test123"],  // DOI preserved in hydration response
-                    "author": ["Author, A.", "Author, B."],
-                    "aff": ["Affiliation A", "Affiliation B"],
-                    "title": ["Test Document"],
-                    "abstract": "Test abstract"
+                    "aff": ["Affiliation A", "Affiliation B"]
                   }]
                 }
               });
@@ -164,16 +161,160 @@ define(['backbone', 'marionette', 'jquery', 'js/widgets/abstract/widget',
         // Test fetchAffiliations
         aw.fetchAffiliations(function(err) {
           expect(err).to.be.undefined;
-          
+
           // After hydration, DOI should still be preserved (this was the bug)
           expect(aw._docs['test-bibcode'].doi).to.exist;
           expect(aw._docs['test-bibcode'].doi[0].doi).to.equal("10.1086/test123");
           expect(aw._docs['test-bibcode'].doi[0].href).to.contain("10.1086/test123");
-          
+
           // And affiliations should now be populated
           expect(aw._docs['test-bibcode'].aff).to.eql(["Affiliation A", "Affiliation B"]);
-          
+
           // Restore original publish function
+          pubsub.publish = originalPublish;
+          done();
+        });
+      });
+
+      it("should lazy load authors when hasPartialAuthors is true", function(done){
+        var aw = new AbstractWidget();
+        aw.activate(minsub.beehive.getHardenedInstance());
+
+        // Create authors array with exactly 20 authors (MAX_AUTHORS)
+        var authors = [];
+        for (var i = 1; i <= 20; i++) {
+          authors.push('Author ' + i);
+        }
+
+        // Parse the initial document with 20 loaded authors but author_count indicates 23 total
+        var parsed = aw.model.parse({
+          bibcode: 'test-bibcode-partial',
+          author: authors,
+          author_count: 23,
+          aff: [],
+          title: ['Test Document with Partial Authors'],
+          abstract: 'Test abstract'
+        });
+
+        aw._docs['test-bibcode-partial'] = parsed;
+        aw.model.set(parsed);
+        aw._current = 'test-bibcode-partial';
+
+        // Should detect partial authors based on author_count
+        expect(aw._docs['test-bibcode-partial'].hasPartialAuthors).to.be.true;
+        expect(aw._docs['test-bibcode-partial'].authorAff).to.have.lengthOf(20);
+        expect(aw._docs['test-bibcode-partial'].extraAuthorsCount).to.equal(3);
+
+        // Mock the PubSub to handle the EXECUTE_REQUEST
+        var pubsub = aw.getPubSub();
+        var originalPublish = pubsub.publish;
+        pubsub.publish = function(signal, request) {
+          if (signal === pubsub.EXECUTE_REQUEST) {
+            // Verify the query only requests author fields
+            var fl = request.get('query').get('fl');
+            expect(fl).to.deep.equal(['author,author_count,orcid_pub,orcid_user,orcid_other']);
+
+            // Simulate API response with more authors
+            var fullAuthors = authors.concat(['Author 21', 'Author 22', 'Author 23']);
+            setTimeout(function() {
+              request.get('options').done({
+                "responseHeader": { "status": 0, "QTime": 10 },
+                "response": {
+                  "numFound": 1,
+                  "start": 0,
+                  "docs": [{
+                    "bibcode": "test-bibcode-partial",
+                    "author": fullAuthors,
+                    "orcid_pub": fullAuthors.map(function() { return '-'; }),
+                    "orcid_user": fullAuthors.map(function() { return '-'; }),
+                    "orcid_other": fullAuthors.map(function() { return '-'; })
+                  }]
+                }
+              });
+            }, 10);
+          } else {
+            return originalPublish.apply(this, arguments);
+          }
+        };
+
+        // Test fetchAuthors
+        aw.fetchAuthors(function(err) {
+          expect(err).to.be.undefined;
+
+          // After lazy loading, should have all 23 authors
+          expect(aw._docs['test-bibcode-partial'].authorAff).to.have.lengthOf(20);
+          expect(aw._docs['test-bibcode-partial'].authorAffExtra).to.have.lengthOf(3);
+          expect(aw._docs['test-bibcode-partial'].hasPartialAuthors).to.be.false;
+
+          // Restore original publish function
+          pubsub.publish = originalPublish;
+          done();
+        });
+      });
+
+      it("should preserve existing data during fetchAuthors", function(done){
+        var aw = new AbstractWidget();
+        aw.activate(minsub.beehive.getHardenedInstance());
+
+        // Create document with partial authors and a DOI
+        var authors = [];
+        for (var i = 1; i <= 20; i++) {
+          authors.push('Author ' + i);
+        }
+
+        var parsed = aw.model.parse({
+          bibcode: 'test-bibcode-preserve',
+          doi: ['10.1086/test456'],
+          author: authors,
+          author_count: 22,
+          aff: [],
+          title: ['Test Document'],
+          abstract: 'Test abstract'
+        });
+
+        aw._docs['test-bibcode-preserve'] = parsed;
+        aw.model.set(parsed);
+        aw._current = 'test-bibcode-preserve';
+
+        // Mock PubSub
+        var pubsub = aw.getPubSub();
+        var originalPublish = pubsub.publish;
+        pubsub.publish = function(signal, request) {
+          if (signal === pubsub.EXECUTE_REQUEST) {
+            var fullAuthors = authors.concat(['Author 21', 'Author 22']);
+            setTimeout(function() {
+              request.get('options').done({
+                "responseHeader": { "status": 0, "QTime": 10 },
+                "response": {
+                  "numFound": 1,
+                  "start": 0,
+                  "docs": [{
+                    "bibcode": "test-bibcode-preserve",
+                    "author": fullAuthors,
+                    "orcid_pub": fullAuthors.map(function() { return '-'; }),
+                    "orcid_user": fullAuthors.map(function() { return '-'; }),
+                    "orcid_other": fullAuthors.map(function() { return '-'; })
+                  }]
+                }
+              });
+            }, 10);
+          } else {
+            return originalPublish.apply(this, arguments);
+          }
+        };
+
+        // Test fetchAuthors preserves DOI
+        aw.fetchAuthors(function(err) {
+          expect(err).to.be.undefined;
+
+          // DOI should still be preserved
+          expect(aw._docs['test-bibcode-preserve'].doi).to.exist;
+          expect(aw._docs['test-bibcode-preserve'].doi[0].doi).to.equal('10.1086/test456');
+
+          // And authors should be updated
+          expect(aw._docs['test-bibcode-preserve'].authorAff).to.have.lengthOf(20);
+          expect(aw._docs['test-bibcode-preserve'].authorAffExtra).to.have.lengthOf(2);
+
           pubsub.publish = originalPublish;
           done();
         });
@@ -189,7 +330,8 @@ define(['backbone', 'marionette', 'jquery', 'js/widgets/abstract/widget',
 
         expect(spy.callCount).to.eql(1);
         expect(aw._docs['foo'].hasAffiliation).to.equal(2);
-        expect(aw._docs['foo'].hasMoreAuthors).to.equal(undefined);
+        expect(aw._docs['foo'].hasMoreAuthors).to.equal(false);
+        expect(aw._docs['foo'].extraAuthorsCount).to.equal(0);
         expect(aw._docs['foo'].pubdate).to.equal("1981-00-00");
         expect(aw._docs['foo'].formattedDate).to.equal("1981");
         expect(aw._docs['foo'].pub).to.equal("IAU Colloq. 56: Reference Coordinate Systems for Earth Dynamics");
@@ -212,7 +354,8 @@ define(['backbone', 'marionette', 'jquery', 'js/widgets/abstract/widget',
         minsub.publish(minsub.DISPLAY_DOCUMENTS, minsub.createQuery({'q': 'bibcode:foo'}));
         expect(spy.callCount).to.eql(2);
         expect(aw._docs['foo'].hasAffiliation).to.eql(2);
-        expect(aw._docs['foo'].hasMoreAuthors).to.eql(1);
+        expect(aw._docs['foo'].hasMoreAuthors).to.eql(true);
+        expect(aw._docs['foo'].extraAuthorsCount).to.eql(1);
         expect(aw._docs['foo'].authorAff[0]).to.eql([
           'Lieske, J. H.',
           'Heidelberg, Universität, Heidelberg, Germany',

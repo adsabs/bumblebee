@@ -61,106 +61,97 @@ define([
       };
     },
 
-    parse: function(doc, maxAuthors = MAX_AUTHORS) {
-      const getDOIUrl = (doi) =>
-        LinkGeneratorMixin.createUrlByType(doc.bibcode, 'doi', doi);
+    updateAuthorAffiliation: function(doc, maxAuthors = MAX_AUTHORS) {
+      const createDefaultList = (length) => _.range(length).map(() => '-');
 
-      // generate URLs for each doi
-      doc.doi = Array.isArray(doc.doi)
-        ? doc.doi.map((doi) => ({ doi, href: getDOIUrl(doi) }))
-        : doc.doi
-        ? [{ doi: doc.doi, href: getDOIUrl(doc.doi) }]
-        : doc.doi;
-
-      // "aff" is the name of the affiliations array that comes from solr
+      // Normalize arrays
       doc.aff = Array.isArray(doc.aff) ? doc.aff : [];
       doc.author = Array.isArray(doc.author) ? doc.author : [];
 
-      // remove html-encoding from affiliations
-      doc.aff = doc.aff.map(_.unescape);
+      // Remove html-encoding from affiliations
+      if (doc.aff.length > 0) {
+        doc.aff = doc.aff.map(_.unescape);
+      }
 
       const numAuthors = doc.author.length;
-      
-      // Check if we have truncated data (fewer affiliations than authors might indicate limited field data)
-      const hasTruncatedData = doc.aff.length > 0 && doc.aff.length < numAuthors;
-      
-      // Create default lists, but only for the length we actually have data for
-      const createDefaultList = (length) => _.range(length).map(() => '-');
       const defaultList = createDefaultList(numAuthors);
-      
+
+      // Update hasAffiliation flag
       if (doc.aff.length) {
         doc.hasAffiliation = _.without(doc.aff, '-').length;
-
-        // If we have truncated data, don't create placeholders for missing affiliations
-        if (hasTruncatedData) {
-          // Only create authorAff entries for authors that have affiliation data
-          const availableAuthors = doc.author.slice(0, doc.aff.length);
-          const availableOrcidPub = doc.orcid_pub ? doc.orcid_pub.slice(0, doc.aff.length) : createDefaultList(doc.aff.length);
-          const availableOrcidUser = doc.orcid_user ? doc.orcid_user.slice(0, doc.aff.length) : createDefaultList(doc.aff.length);
-          const availableOrcidOther = doc.orcid_other ? doc.orcid_other.slice(0, doc.aff.length) : createDefaultList(doc.aff.length);
-          
-          doc.authorAff = _.zip(
-            availableAuthors,
-            doc.aff,
-            availableOrcidPub,
-            availableOrcidUser,
-            availableOrcidOther
-          );
-          
-          // Store the remaining authors separately for potential lazy loading
-          if (numAuthors > doc.aff.length) {
-            doc.truncatedAuthorCount = numAuthors - doc.aff.length;
-            doc.remainingAuthors = doc.author.slice(doc.aff.length);
-          } else {
-            doc.truncatedAuthorCount = 0;
-            doc.remainingAuthors = [];
-          }
-        } else {
-          // Normal case - we have complete data
-          doc.authorAff = _.zip(
-            doc.author,
-            doc.aff,
-            doc.orcid_pub ? doc.orcid_pub : defaultList,
-            doc.orcid_user ? doc.orcid_user : defaultList,
-            doc.orcid_other ? doc.orcid_other : defaultList
-          );
-          doc.truncatedAuthorCount = 0;
-          doc.remainingAuthors = [];
-        }
-      } else if (doc.author) {
+      } else {
         doc.hasAffiliation = false;
+      }
+
+      // Build authorAff array if we have author data
+      if (doc.author && doc.author.length > 0) {
+        const affList = doc.aff.length > 0 ? doc.aff : defaultList;
+
         doc.authorAff = _.zip(
           doc.author,
-          _.range(doc.author.length),
-          doc.orcid_pub ? doc.orcid_pub : defaultList,
-          doc.orcid_user ? doc.orcid_user : defaultList,
-          doc.orcid_other ? doc.orcid_other : defaultList
+          affList,
+          doc.orcid_pub || defaultList,
+          doc.orcid_user || defaultList,
+          doc.orcid_other || defaultList
         );
-      }
 
-      if (doc.page && doc.page.length) {
-        doc.page = doc.page[0];
-      }
-
-      // only true if there was an author array
-      // now add urls
-      if (doc.authorAff) {
+        // Add encoded URLs
         _.each(doc.authorAff, function(el, index) {
           doc.authorAff[index][5] = encodeURIComponent(
             '"' + el[0] + '"'
           ).replace(/%20/g, '+');
         });
 
-        if (doc.authorAff.length > maxAuthors) {
-          doc.authorAffExtra = doc.authorAff.slice(
-            maxAuthors,
-            doc.authorAff.length
-          );
-          doc.authorAff = doc.authorAff.slice(0, maxAuthors);
-        }
+        // Use author_count to determine if we have partial authors
+        const totalAuthors = _.isNumber(doc.author_count) ? doc.author_count : numAuthors;
+        const currentAuthors = doc.authorAff.length;
 
-        doc.hasMoreAuthors = doc.authorAffExtra && doc.authorAffExtra.length;
+        // Split authors into first maxAuthors and extra
+        if (currentAuthors > maxAuthors) {
+          doc.authorAffExtra = doc.authorAff.slice(maxAuthors);
+          doc.authorAff = doc.authorAff.slice(0, maxAuthors);
+          doc.hasMoreAuthors = true;
+          doc.hasPartialAuthors = false;
+          doc.extraAuthorsCount = doc.authorAffExtra.length;
+        } else if (totalAuthors > currentAuthors) {
+          doc.hasMoreAuthors = true;
+          doc.hasPartialAuthors = true;
+          doc.extraAuthorsCount = totalAuthors - currentAuthors;
+        } else {
+          doc.hasMoreAuthors = false;
+          doc.hasPartialAuthors = false;
+          doc.extraAuthorsCount = 0;
+        }
       }
+
+      return doc;
+    },
+
+    parse: function(doc, maxAuthors = MAX_AUTHORS) {
+      const getDOIUrl = (doi) =>
+        LinkGeneratorMixin.createUrlByType(doc.bibcode, 'doi', doi);
+
+      // generate URLs for each doi (only if not already parsed)
+      if (doc.doi && Array.isArray(doc.doi) && typeof doc.doi[0] === 'string') {
+        // Array of strings - parse them
+        doc.doi = doc.doi.map((doi) => ({ doi, href: getDOIUrl(doi) }));
+      } else if (doc.doi && typeof doc.doi === 'string') {
+        // Single string - parse it
+        doc.doi = [{ doi: doc.doi, href: getDOIUrl(doc.doi) }];
+      } else if (!doc.doi || (Array.isArray(doc.doi) && doc.doi.length === 0)) {
+        // No DOI or empty array
+        doc.doi = undefined;
+      }
+      // Otherwise, DOI is already parsed - leave it as-is
+
+      // Process author/affiliation data using helper method
+      this.updateAuthorAffiliation(doc, maxAuthors);
+
+      // Extract first page if page is an array
+      if (doc.page && Array.isArray(doc.page) && doc.page.length > 0) {
+        doc.page = doc.page[0];
+      }
+      // If page is already a string, it's been parsed - leave it as-is
 
       if (doc.pubdate) {
         doc.formattedDate = PapersUtils.formatDate(doc.pubdate, {
@@ -169,7 +160,7 @@ define([
         });
       }
 
-      if (doc.title && doc.title.length) {
+      if (doc.title && Array.isArray(doc.title) && doc.title.length > 0) {
         doc.title = doc.title[0];
         var docTitleLink = doc.title.match(/<a.*href="(.*?)".*?>(.*)<\/a>/i);
 
@@ -187,6 +178,7 @@ define([
           }
         }
       }
+      // If title is already a string, it's been parsed - leave it as-is
 
       if (doc.comment) {
         doc.comment = _.unescape(doc.comment);
@@ -196,11 +188,12 @@ define([
         doc.pubnote = _.unescape(doc.pubnote);
       }
 
-      // handle book_author field
+      // handle book_author field (only if not already parsed)
       if (
         doc.book_author &&
         Array.isArray(doc.book_author) &&
-        doc.book_author.length > 0
+        doc.book_author.length > 0 &&
+        typeof doc.book_author[0] === 'string'
       ) {
         doc.book_author = doc.book_author.map((name, i) => ({
           name,
@@ -208,21 +201,26 @@ define([
           delim: i < doc.book_author.length - 1 ? '; ' : '',
         }));
       }
+      // If book_author contains objects, it's already parsed - leave it as-is
 
-      const ids = Array.isArray(doc.identifier)
-        ? doc.identifier
-        : doc.original_identifier;
-      const id = (ids || []).find((v) => v.match(/^arxiv/i));
-      if (id) {
-        doc.arxiv = {
-          id: id,
-          href: LinkGeneratorMixin.createUrlByType(
-            doc.bibcode,
-            'arxiv',
-            id.split(':')[1]
-          ),
-        };
+      // handle arxiv field (only if not already parsed)
+      if (!doc.arxiv) {
+        const ids = Array.isArray(doc.identifier)
+          ? doc.identifier
+          : doc.original_identifier;
+        const id = (ids || []).find((v) => v.match(/^arxiv/i));
+        if (id) {
+          doc.arxiv = {
+            id: id,
+            href: LinkGeneratorMixin.createUrlByType(
+              doc.bibcode,
+              'arxiv',
+              id.split(':')[1]
+            ),
+          };
+        }
       }
+      // If arxiv already exists, it's already parsed - leave it as-is
 
       return doc;
     },
@@ -270,26 +268,56 @@ define([
     },
 
     toggleMoreAuthors: function() {
-      this.$('.author.extra').toggleClass('hide');
-      this.$('.author .extra-dots').toggleClass('hide');
-      if (this.$('.author.extra').hasClass('hide')) {
-        this.$('#toggle-more-authors').text('Show all authors');
+      const model = this.model.toJSON();
+      const extraCount = model.extraAuthorsCount || 0;
+
+      // Check if we need to fetch more authors first
+      if (model.hasPartialAuthors) {
+        if (this.isFetchingAuthors) {
+          return false;
+        }
+
+        this.$('#fail-authors').hide();
+        this.$('#pending-authors').show();
+
+        this.trigger('fetchAuthors', (err) => {
+          this.$('#pending-authors').hide();
+          if (err) {
+            this.$('#fail-authors').show();
+            setTimeout(() => this.$('#fail-authors').hide(), 3000);
+            return;
+          }
+
+          // After successful fetch, show the authors
+          this.$('.author.extra').removeClass('hide');
+          this.$('.author .extra-dots').addClass('hide');
+          this.$('#toggle-more-authors').text('Hide authors');
+        });
       } else {
-        this.$('#toggle-more-authors').text('Hide authors');
+        // Simple toggle for already-loaded authors
+        this.$('.author.extra').toggleClass('hide');
+        this.$('.author .extra-dots').toggleClass('hide');
+        if (this.$('.author.extra').hasClass('hide')) {
+          const showText = extraCount > 0
+            ? `Show ${extraCount} more authors`
+            : 'Show all authors';
+          this.$('#toggle-more-authors').text(showText);
+        } else {
+          this.$('#toggle-more-authors').text('Hide authors');
+        }
       }
+
       return false;
     },
 
     toggleAffiliation: function() {
-      this.$('fail-aff').hide();
+      this.$('#fail-aff').hide();
       this.$('#pending-aff').show();
       this.trigger('fetchAffiliations', (err) => {
         this.$('#pending-aff').hide();
         if (err) {
           this.$('#fail-aff').show();
-          setTimeout(() => {
-            this.$('#fail-aff').hide();
-          }, 3000);
+          setTimeout(() => this.$('#fail-aff').hide(), 3000);
           return;
         }
         this.$('.affiliation').toggleClass('hide');
@@ -360,6 +388,7 @@ define([
       this._docs = {};
       this.maxAuthors = MAX_AUTHORS;
       this.isFetchingAff = false;
+      this.isFetchingAuthors = false;
       this.listenTo(this.model, 'change:bibcode', this._onAbstractLoaded);
     },
 
@@ -391,7 +420,7 @@ define([
 
     defaultQueryArguments: {
       fl:
-        'identifier,[citations],abstract,author,book_author,orcid_pub,publisher,orcid_user,orcid_other,bibcode,citation_count,comment,doi,id,keyword,page,property,pub,pub_raw,pubdate,pubnote,read_count,title,volume,database',
+        'identifier,[citations],abstract,author,author_count,book_author,orcid_pub,publisher,orcid_user,orcid_other,bibcode,citation_count,comment,doi,id,keyword,page,property,pub,pub_raw,pubdate,pubnote,read_count,title,volume,database',
       rows: 1,
     },
 
@@ -400,7 +429,7 @@ define([
         docs,
         function(d) {
           if (!this._docs[d.bibcode]) {
-            this._docs[d.bibcode] = this.model.parse(d);
+            this._docs[d.bibcode] = this.model.parse(d, this.maxAuthors);
           }
         },
         this
@@ -436,13 +465,6 @@ define([
       // might not have every key
       this.model.clear({ silent: true });
       this.model.set(this._docs[bibcode]);
-
-      // Check if we need to fetch complete author data
-      if (this.needsCompleteAuthorData(this._docs[bibcode])) {
-        this.fetchAffiliations(() => {
-          // Data has been refreshed, re-render will happen automatically
-        });
-      }
 
       this._current = bibcode;
       // let other widgets know details
@@ -536,24 +558,26 @@ define([
       if (ev === 'fetchAffiliations') {
         this.fetchAffiliations(arg1);
       }
+
+      if (ev === 'fetchAuthors') {
+        this.fetchAuthors(arg1);
+      }
     },
 
     fetchAffiliations: function(cb) {
       const currentData = this.model.toJSON();
-      const needsCompleteData = this.needsCompleteAuthorData(currentData);
-      
-      if (
-        ((!this.model.has('aff') || this.model.get('aff').length === 0) || needsCompleteData) &&
-        !this.isFetchingAff
-      ) {
+      const { bibcode } = currentData;
+      const needsAffiliations = currentData.hasAffiliation === false || currentData.hasAffiliation === 0;
+
+      if (needsAffiliations && !this.isFetchingAff) {
         this.isFetchingAff = true;
         const ps = this.getPubSub();
         const query = this.getCurrentQuery().clone();
         query.unlock();
-        const { bibcode, } = currentData;
         query.set('q', `identifier:${bibcode}`);
-        query.set('fl', this.defaultQueryArguments.fl);
+        query.set('fl', 'aff');
         query.set('rows', 1);
+
         ps.publish(
           ps.EXECUTE_REQUEST,
           new ApiRequest({
@@ -571,12 +595,102 @@ define([
                   resp.response.docs.length > 0
                 ) {
                   const freshDoc = resp.response.docs[0];
-                  const newEntries = this.model.parse(freshDoc);
-                  this._docs[bibcode] = {
-                    ...this._docs[bibcode],
-                    ...newEntries,
-                  };
-                  this.model.set(newEntries);
+                  const existingDoc = this._docs[bibcode];
+
+                  // Guard against bibcode change during async operation
+                  if (!existingDoc || this._current !== bibcode) {
+                    cb();
+                    return;
+                  }
+
+                  // Explicitly copy full affiliation array before any slicing
+                  const fullAff = freshDoc.aff ? [...freshDoc.aff] : undefined;
+
+                  // Only slice affiliations if we have partial authors loaded
+                  // When hasPartialAuthors is true, we only have a subset of author names,
+                  // so we should only use affiliations for those loaded authors
+                  if (freshDoc.aff && existingDoc.hasPartialAuthors && existingDoc.author) {
+                    const loadedAuthorCount = existingDoc.author.length;
+                    if (freshDoc.aff.length > loadedAuthorCount) {
+                      freshDoc.aff = freshDoc.aff.slice(0, loadedAuthorCount);
+                    }
+                  }
+
+                  // Merge fresh affiliations with existing doc
+                  const mergedDoc = { ...existingDoc, ...freshDoc, fullAff };
+                  // Update only the author/affiliation data
+                  this.model.updateAuthorAffiliation(mergedDoc, this.maxAuthors);
+                  this._docs[bibcode] = mergedDoc;
+                  this.model.set(mergedDoc);
+                }
+                cb();
+              },
+              fail: (err) => {
+                cb(err);
+              },
+            },
+          })
+        );
+      } else {
+        const existingDoc = this._docs[bibcode];
+
+        // Guard against bibcode change during async operation
+        if (existingDoc && existingDoc.fullAff && this._current === bibcode) {
+          const mergedDoc = { ...existingDoc, aff: existingDoc.fullAff };
+          // Update only the author/affiliation data
+          this.model.updateAuthorAffiliation(mergedDoc, this.maxAuthors);
+          this._docs[bibcode] = mergedDoc;
+          this.model.set(mergedDoc);
+        }
+        cb();
+      }
+    },
+
+    fetchAuthors: function(cb) {
+      const currentData = this.model.toJSON();
+      const { bibcode, hasPartialAuthors } = currentData;
+
+      if (hasPartialAuthors && !this.isFetchingAuthors) {
+        this.isFetchingAuthors = true;
+        const ps = this.getPubSub();
+        const query = this.getCurrentQuery().clone();
+        query.unlock();
+
+        query.set('q', `identifier:${bibcode}`);
+        query.set('fl', 'author,author_count,orcid_pub,orcid_user,orcid_other');
+        query.set('rows', 1);
+
+        ps.publish(
+          ps.EXECUTE_REQUEST,
+          new ApiRequest({
+            target: ApiTargets.SEARCH,
+            query: query,
+            options: {
+              always: () => {
+                this.isFetchingAuthors = false;
+              },
+              done: (resp) => {
+                if (
+                  resp &&
+                  resp.response &&
+                  resp.response.docs &&
+                  resp.response.docs.length > 0
+                ) {
+                  const freshDoc = resp.response.docs[0];
+                  const existingDoc = this._docs[bibcode];
+
+                  // Guard against bibcode change during async operation
+                  if (!existingDoc || this._current !== bibcode) {
+                    cb();
+                    return;
+                  }
+
+                  // Merge fresh author data with existing doc
+                  const mergedDoc = { ...existingDoc, ...freshDoc };
+                  // Update only the author/affiliation data
+                  this.model.updateAuthorAffiliation(mergedDoc, this.maxAuthors);
+                  this._docs[bibcode] = mergedDoc;
+                  this.model.set(mergedDoc);
                 }
                 cb();
               },
@@ -589,25 +703,6 @@ define([
       } else {
         cb();
       }
-    },
-
-    needsCompleteAuthorData: function(doc) {
-      // If we have truncatedAuthorCount, we definitely need complete data
-      if (doc.truncatedAuthorCount && doc.truncatedAuthorCount > 0) {
-        return true;
-      }
-      
-      // If we have authors but no affiliations, we might need complete data
-      if (doc.author && doc.author.length > 0 && (!doc.aff || doc.aff.length === 0)) {
-        return true;
-      }
-      
-      // If we have significantly fewer affiliations than authors, we likely have truncated data
-      if (doc.author && doc.aff && doc.author.length > doc.aff.length + 2) {
-        return true;
-      }
-      
-      return false;
     },
 
     _onAbstractLoaded: function() {
