@@ -67,9 +67,7 @@ define([
 
       // orcid signed in, orcid mode on automatically
 
-      expect($('.orcid-dropdown h4').text()).to.eql(
-        ' Signed in to ORCID as  Testy Tester'
-      );
+      expect($('.orcid-dropdown h4').text()).to.eql(' Signed in to ORCID as  Testy Tester');
       expect($('input.orcid-mode').is(':checked')).to.eql(true);
 
       // orcid signed in, orcid mode off
@@ -140,11 +138,7 @@ define([
       $('#test')
         .find('.orcid-link')
         .click();
-      expect(n.getPubSub().publish.args[0]).to.eql([
-        '[Router]-Navigate-With-Trigger',
-        'orcid-page',
-        undefined,
-      ]);
+      expect(n.getPubSub().publish.args[0]).to.eql(['[Router]-Navigate-With-Trigger', 'orcid-page', undefined]);
     });
 
     // ADS user accounts
@@ -193,14 +187,14 @@ define([
       expect(n.view.$('li.login').length).to.eql(0);
       expect(n.view.$('li.register').length).to.eql(0);
 
-      expect(n.view.$('.btn.btn-link.dropdown-toggle').length).to.eql(4);
+      expect(n.view.$('.btn.btn-link.dropdown-toggle').length).to.eql(5);
       expect(
         n.view
           .$('.btn.btn-link.dropdown-toggle')
           .text()
           .trim()
           .replace(/\W+/g, ' ')
-      ).to.eql('Feedback ORCID About Account');
+      ).to.eql('SciX has launched Feedback ORCID About Account');
       expect(
         n.view
           .$('.dropdown-menu:last li:first')
@@ -212,12 +206,8 @@ define([
       // lack of email indicates user is logged out
       u.setUser(undefined);
 
-      minsub.publish(
-        minsub.pubsub.USER_ANNOUNCEMENT,
-        u.USER_INFO_CHANGE,
-        'USER'
-      );
-      expect(n.view.$('.btn.btn-link.dropdown-toggle').length).to.eql(3);
+      minsub.publish(minsub.pubsub.USER_ANNOUNCEMENT, u.USER_INFO_CHANGE, 'USER');
+      expect(n.view.$('.btn.btn-link.dropdown-toggle').length).to.eql(4);
       expect(n.view.$('li.login').length).to.eql(1);
       expect(n.view.$('li.register').length).to.eql(1);
     });
@@ -286,21 +276,14 @@ define([
 
       // now show navbar in logged in state
       u.setUser('foo');
-      minsub.publish(
-        minsub.pubsub.USER_ANNOUNCEMENT,
-        u.USER_SIGNED_IN,
-        'fakeUserName'
-      );
+      minsub.publish(minsub.pubsub.USER_ANNOUNCEMENT, u.USER_SIGNED_IN, 'fakeUserName');
 
       n._latestPage = 'orcid-page';
       $('#test')
         .find('.logout')
         .click();
       expect(publishSpy.callCount).to.eql(3);
-      expect(publishSpy.args[2]).to.eql([
-        '[Router]-Navigate-With-Trigger',
-        'index-page',
-      ]);
+      expect(publishSpy.args[2]).to.eql(['[Router]-Navigate-With-Trigger', 'index-page']);
 
       // calls session logout method explicitly
       expect(s.logout.callCount).to.eql(1);
@@ -321,12 +304,8 @@ define([
       // there are two buttons
       expect($('#test a[data-target="#feedback-modal"]').length).to.eql(2);
 
-      expect(
-        $('#test a[data-target="#feedback-modal"]:first').data('feedbackView')
-      ).to.eql('list');
-      expect(
-        $('#test a[data-target="#feedback-modal"]:last').data('feedbackView')
-      ).to.eql('general');
+      expect($('#test a[data-target="#feedback-modal"]:first').data('feedbackView')).to.eql('list');
+      expect($('#test a[data-target="#feedback-modal"]:last').data('feedbackView')).to.eql('general');
     });
 
     //TODO: fix this test
@@ -341,9 +320,7 @@ define([
       }))({ verbose: false });
       n.setInitialVals = function() {};
       var api = new Api();
-      var requestStub = sinon.stub(Api.prototype, 'request', function(
-        apiRequest
-      ) {
+      var requestStub = sinon.stub(Api.prototype, 'request', function(apiRequest) {
         apiRequest.toJSON().options.done();
       });
       minsub.beehive.removeService('Api');
@@ -364,7 +341,7 @@ define([
       window.grecaptcha = {
         ready: () => {},
         execute: () => ({
-          then: (cb) => cb('foo')
+          then: (cb) => cb('foo'),
         }),
       };
       container.find('button.feedback-button').click();
