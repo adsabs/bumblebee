@@ -80,8 +80,7 @@ const css = `
   // convert the ADS page path to SciX page path and open the page
   pageButton.onclick = () => {
     const currentUrl = window.location.href;
-    let correspondingUrl = currentUrl.replace('adsabs.harvard.edu', 'scixplorer.org');
-    correspondingUrl = correspondingUrl.replace('http://localhost:8000', 'https://scixplorer.org');
+    let correspondingUrl = currentUrl.replace(window.location.host, 'scixplorer.org');
     const pathname = window.location.pathname;
     let newpath = window.location.pathname;
     if (pathname.match(/\/export-([a-zA-Z]+)$/)) {
