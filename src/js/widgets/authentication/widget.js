@@ -15,6 +15,7 @@ define([
   'analytics',
   'backbone-validation',
   'backbone.stickit',
+  'js/utils/recaptcha',
 ], function(
   Marionette,
   BaseWidget,
@@ -29,7 +30,8 @@ define([
   ResetPassword2Template,
   ResendVerificationEmail,
   User,
-  analytics
+  analytics,
+  recaptchaUtils
 ) {
   // Creating module level variable since I can't figure out best way to pass this value into a subview from the model
   // This value should be always available, and unchanging, so should be safe to set like this here
@@ -71,17 +73,37 @@ define([
     triggerSubmit: function(ev) {
       ev.preventDefault();
       const formName = ev.currentTarget.dataset.formName;
-      if (!window.grecaptcha) {
-        this.showError('Sorry reCAPTCHA did not load properly. Please try refreshing the page.');
-        return;
-      }
       if (typeof formName === 'string') {
-        window.grecaptcha.ready(() =>
-          window.grecaptcha.execute(siteKey, { action: `auth/${formName}` }).then((token) => {
+        recaptchaUtils
+          .executeRecaptcha(siteKey, `auth/${formName}`)
+          .then((token) => {
             this.model.set('g-recaptcha-response', token);
             FormFunctions.triggerSubmit.apply(this, arguments);
           })
-        );
+          .catch((err) => {
+            analytics('send', 'event', 'auth', 'error', 'recaptcha');
+            const whenReady =
+              typeof window.whenSentryReady === 'function'
+                ? window.whenSentryReady()
+                : Promise.resolve(window.Sentry);
+            whenReady
+              .then((sentry) => {
+                if (sentry && typeof sentry.captureMessage === 'function') {
+                  sentry.captureMessage('auth-recaptcha-error', {
+                    level: 'error',
+                    extra: {
+                      message:
+                        (err && err.message) ||
+                        (typeof err === 'string' ? err : 'unknown'),
+                    },
+                  });
+                }
+              })
+              .catch(() => {});
+            this.showError(
+              'Sorry reCAPTCHA did not load properly. Please try refreshing the page.'
+            );
+          });
       } else {
         FormFunctions.triggerSubmit.apply(this, arguments);
       }
