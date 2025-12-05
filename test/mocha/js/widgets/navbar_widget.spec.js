@@ -194,7 +194,7 @@ define([
           .text()
           .trim()
           .replace(/\W+/g, ' ')
-      ).to.eql('SciX has launched Feedback ORCID About Account');
+      ).to.eql('SciX Transition Resources Feedback ORCID About Account');
       expect(
         n.view
           .$('.dropdown-menu:last li:first')
