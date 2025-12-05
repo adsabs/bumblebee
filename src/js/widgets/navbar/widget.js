@@ -9,6 +9,8 @@ define([
   'js/components/api_request',
   'js/components/api_targets',
   'utils',
+  'analytics',
+  'js/utils/recaptcha',
   'bootstrap',
 ], function(
   _,
@@ -20,7 +22,9 @@ define([
   ApiQuery,
   ApiRequest,
   ApiTargets,
-  utils
+  utils,
+  analytics,
+  recaptchaUtils
 ) {
   var NavView;
   var NavModel;
@@ -360,6 +364,17 @@ define([
     },
 
     submitForm: function($form, $modal) {
+      const showRecaptchaError = (message) => {
+        let $error = $form.find('.recaptcha-inline-error');
+        if (!$error.length) {
+          $error = $(
+            '<div class="alert alert-danger recaptcha-inline-error" role="alert"></div>'
+          );
+          $form.find('.g-recaptcha').prepend($error);
+        }
+        $error.text(message);
+      };
+
       const submit = () => {
         this._sendFeedbackToSentry($form);
         var data = $form.serialize();
@@ -386,14 +401,18 @@ define([
           }, 500);
         }
 
-        function fail(err) {
+        const fail = (err) => {
+          this._trackFeedbackIssue('submit-fail', {
+            status: err && err.status,
+            statusText: err && err.statusText,
+          });
           $form
             .find('button[type=submit]')
             .addClass('btn-danger')
             .html(
               '<i class="icon-danger" aria-hidden="true"></i> There was an error!'
             );
-        }
+        };
 
         var request = new ApiRequest({
           target: ApiTargets.FEEDBACK,
@@ -411,21 +430,66 @@ define([
           .request(request);
       };
 
-      const siteKey = this.getBeeHive().getObject('AppStorage').getConfigCopy().recaptchaKey;
-      window.grecaptcha.ready(() => {
-        window.grecaptcha
-          .execute(siteKey, { action: 'feedback/general' })
-          .then((token) => {
-            console.log('called', token);
-            const input = document.createElement('input');
-            input.type = 'hidden';
-            input.name = 'g-recaptcha-response';
-            input.value = token;
-            $form.append(input);
-            console.log('form', $form.html());
-            submit();
+      const siteKey = this.getBeeHive()
+        .getObject('AppStorage')
+        .getConfigCopy().recaptchaKey;
+
+      recaptchaUtils
+        .executeRecaptcha(siteKey, 'feedback/general')
+        .then((token) => {
+          $form.find('input[name="g-recaptcha-response"]').remove();
+
+          const input = document.createElement('input');
+          input.type = 'hidden';
+          input.name = 'g-recaptcha-response';
+          input.value = token;
+          $form.append(input);
+
+          submit();
+        })
+        .catch((err) => {
+          this._trackFeedbackIssue('recaptcha', {
+            action: 'feedback/general',
+            message: err && err.message ? err.message : err,
           });
-      });
+          showRecaptchaError(
+            'reCAPTCHA could not run. Please allow Google reCAPTCHA or email adshelp@cfa.harvard.edu to send your feedback.'
+          );
+          $form
+            .find('button[type=submit]')
+            .addClass('btn-danger')
+            .html(
+              '<i class="icon-danger" aria-hidden="true"></i> There was an error!'
+            );
+        });
+    },
+
+    _trackFeedbackIssue: function(reason, extra) {
+      if (reason) {
+        analytics('send', 'event', 'feedback', 'error', reason);
+      }
+      const message =
+        (extra && extra.message) || (typeof extra === 'string' ? extra : 'unknown');
+      const whenReady =
+        typeof window.whenSentryReady === 'function'
+          ? window.whenSentryReady()
+          : Promise.resolve(window.Sentry);
+
+      whenReady
+        .then((sentry) => {
+          if (!sentry || typeof sentry.captureMessage !== 'function') {
+            return;
+          }
+          sentry.captureMessage('feedback-issue', {
+            level: 'error',
+            extra: {
+              reason,
+              message,
+              extra,
+            },
+          });
+        })
+        .catch(() => {});
     },
 
     _sendFeedbackToSentry: function($form) {
