@@ -196,6 +196,59 @@ define([
         done();
       });
 
+      it("should not make non-ADS ORCID works clickable", function (done) {
+
+        var orcidMode = true;
+
+        var fakeUser = {
+          getHardenedInstance : function(){return this},
+          getLocalStorage : function(){return { perPage : 50 }},
+          isOrcidModeOn: function() {
+            return orcidMode;
+          },
+        };
+        this.minsub.beehive.removeObject("User");
+        this.minsub.beehive.addObject("User", fakeUser);
+
+        var orcidApi = getOrcidApi(this.minsub.beehive);
+        sinon.stub(orcidApi, 'hasAccess', function() {return true});
+        sinon.stub(orcidApi, 'getRecordInfo', function(work) {
+          var deferred = $.Deferred();
+          var knownIds = ['2018CNSNS..56..270Q', '2018CNSNS..56..296S'];
+          var isKnown = knownIds.indexOf(work.identifier) > -1;
+          deferred.resolve({
+            isCreatedByADS: false,
+            isCreatedByOthers: !isKnown,
+            isKnownToADS: isKnown,
+          });
+          return deferred.promise();
+        });
+
+        var widget = _getWidget(this.minsub.beehive);
+
+        var bio = new Bio(helpers.getMock('bio'));
+        var bioResponse = new JsonResponse(bio.toADSFormat());
+
+        var profile = new Profile(helpers.getMock('profile'));
+        var response = new JsonResponse(profile.toADSFormat());
+
+        response.setApiQuery(new ApiQuery(bioResponse.get('responseHeader.params')));
+        widget.processResponse(response);
+
+        var $w = widget.render().$el;
+        $('#test').append($w);
+
+        setTimeout(function() {
+          var first = widget.view.children.findByIndex(0);
+          expect(first.$('.abs-redirect-link').length).to.be.above(0);
+
+          var third = widget.view.children.findByIndex(2);
+          expect(third.$('.abs-redirect-link').length).to.eql(0);
+          expect(third.$('h3.s-results-title').text().trim()).to.eql('Work # 1');
+          done();
+        }, 0);
+      });
+
       it("should show a loading view before orcid profile is loaded", function(){
 
         var orcidApi = getOrcidApi(this.minsub.beehive);

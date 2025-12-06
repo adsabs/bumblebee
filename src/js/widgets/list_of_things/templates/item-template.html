@@ -12,9 +12,19 @@
     </div>
 
     <div class="col-xs-4 col-sm-3 s-top-row-col identifier s-identifier">
-        <a href="#abs/{{encodedIdentifier}}/abstract" data-item-index="{{indexToShow}}" aria-label="bibcode" class="abs-redirect-link">
-            {{identifier}}
-        </a>
+        {{#if isOrcidWidget}}
+            {{#if (and encodedIdentifier hasAdsMatch)}}
+                <a href="#abs/{{encodedIdentifier}}/abstract" data-item-index="{{indexToShow}}" aria-label="bibcode" class="abs-redirect-link">
+                    {{identifier}}
+                </a>
+            {{else}}
+                <span aria-label="bibcode">{{identifier}}</span>
+            {{/if}}
+        {{else}}
+            <a href="#abs/{{encodedIdentifier}}/abstract" data-item-index="{{indexToShow}}" aria-label="bibcode" class="abs-redirect-link">
+                {{identifier}}
+            </a>
+        {{/if}}
     </div>
     <div class="hidden-xs col-xs-1 col-md-1 col-md-offset-0 s-top-row-col print-visible-inline-1" aria-label="date published">
         {{formattedDate}}
@@ -147,7 +157,7 @@
 
     <div class="col-xs-10 col-xs-offset-1">
         {{#if isOrcidWidget}}
-            {{#if encodedIdentifier}}
+            {{#if (and encodedIdentifier hasAdsMatch)}}
                 <a href="#abs/{{encodedIdentifier}}/abstract" data-item-index="{{indexToShow}}" class="abs-redirect-link">
                     <h3 class="s-results-title">{{{title}}}</h3>
                 </a>
