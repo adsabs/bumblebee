@@ -251,12 +251,14 @@ define([
 
           // get the new set of actions
           var actions = self._getOrcidInfo(info);
+          var hasAdsMatch = !!info.isKnownToADS;
 
           // if the record was created by ADS, we can update it now
           if (info.sourcedByADS && _.isUndefined(work.source_name)) {
             work.source_name = 'NASA Astrophysics Data System';
           }
           work.orcid = _.extend({}, work.orcid, actions, { pending: false });
+          work.hasAdsMatch = hasAdsMatch;
 
           // make sure the doc has any information we gained
           if (_.isUndefined(work.identifier)) {
@@ -287,6 +289,7 @@ define([
 
             model.set({
               orcid: actions,
+              hasAdsMatch: hasAdsMatch,
               source_name: _.isArray(sources)
                 ? sources.join('; ')
                 : model.get('source_name'),
