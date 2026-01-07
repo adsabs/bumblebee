@@ -13,9 +13,9 @@ define([
   'hbs!js/widgets/authentication/templates/resend-verification-email',
   'js/components/user',
   'analytics',
+  'js/utils/recaptcha',
   'backbone-validation',
   'backbone.stickit',
-  'js/utils/recaptcha',
 ], function(
   Marionette,
   BaseWidget,
