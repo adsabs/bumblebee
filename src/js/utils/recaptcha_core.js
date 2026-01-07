@@ -1,7 +1,7 @@
 /* UMD-style module that works with RequireJS and CommonJS */
 (function(root, factory) {
   if (typeof define === 'function' && define.amd) {
-    define([], factory);
+    define('js/utils/recaptcha_core', [], factory);
   } else if (typeof module === 'object' && module.exports) {
     module.exports = factory();
   } else {
