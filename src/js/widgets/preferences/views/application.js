@@ -6,7 +6,7 @@ define([
 ], function (_, Marionette, ApplicationTemplate, config) {
   var DEFAULTS = {
     numAuthors: {
-      initialOptions: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
+      initialOptions: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 'ALL'],
       initialValue: 4,
     },
     externalLinks: {
@@ -209,6 +209,10 @@ define([
 
     _convertToNumber: function (val) {
       try {
+        var normalized = String(val).toUpperCase();
+        if (normalized === 'ALL' || normalized === 'NONE') {
+          return normalized;
+        }
         return _.isNaN(Number(val)) ? val : Number(val);
       } catch (e) {
         return val;
