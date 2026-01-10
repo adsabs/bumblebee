@@ -158,6 +158,18 @@ define([
         expect(result).to.include('[fields orcid_other=5]');
       });
 
+      it("Should NOT apply field limiters when minAuthorsPerResult is 'ALL'", function () {
+        const widget = _getWidget();
+        // Simulate 'ALL' setting which gets converted to POSITIVE_INFINITY
+        widget.minAuthorsPerResult = Number.POSITIVE_INFINITY;
+        const result = widget.customizeQuery(new ApiQuery({q: "star"})).get('fl')[0].split(',');
+        // Verify no [fields xxx] limiters are present
+        const hasFieldLimiters = result.some(function(field) {
+          return field.indexOf('[fields ') === 0;
+        });
+        expect(hasFieldLimiters).to.be.false;
+      });
+
       it.skip("should listen to INVITING_REQUEST event", function (done) {
 
         var stub = function (apiResponse) {
