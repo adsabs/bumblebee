@@ -373,7 +373,39 @@ define([
       done();
       })
 
+    it("should strip HTML tags from document title", function() {
+      var n = new Navigator();
 
+      var storedTitle = null;
+      var storage = {
+        getDocumentTitle: function() {
+          return storedTitle;
+        },
+        setDocumentTitle: function(t) {
+          storedTitle = t;
+        }
+      };
+
+      n.storage = storage;
+
+      // Test with MathML markup (like scientific article titles)
+      var htmlTitle = 'Observation of <inline-formula><mml:math><mml:mi>Λ</mml:mi></mml:math></inline-formula> Hyperon';
+      n._updateDocumentTitle(htmlTitle);
+
+      // The stored title should have HTML stripped
+      expect(storedTitle).to.eql('Observation of Λ Hyperon');
+      expect(document.title).to.contain('Observation of Λ Hyperon');
+
+      // Test with simple HTML tags
+      storedTitle = null;
+      n._updateDocumentTitle('A <i>fancy</i> title with <sup>superscript</sup>');
+      expect(storedTitle).to.eql('A fancy title with superscript');
+
+      // Test with plain text (no change expected)
+      storedTitle = null;
+      n._updateDocumentTitle('Plain text title');
+      expect(storedTitle).to.eql('Plain text title');
+    });
 
 
   });

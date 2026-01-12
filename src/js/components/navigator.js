@@ -278,6 +278,10 @@ define([
 
     _updateDocumentTitle: function (title) {
       if (_.isUndefined(title) || title === false) return;
+
+      // Strip HTML tags from title for document.title
+      var plainTitle = $('<div>').html(title).text();
+
       var currTitle = this.storage.getDocumentTitle();
       var setDocTitle = _.bind(function (t) {
         document.title = t === '' ? APP_TITLE : t + TITLE_SEP + APP_TITLE;
@@ -285,8 +289,8 @@ define([
       }, this);
 
       // title is defined and it is different from the current one, it should be updated
-      if (title !== currTitle) {
-        setDocTitle(title);
+      if (plainTitle !== currTitle) {
+        setDocTitle(plainTitle);
       }
     },
 
