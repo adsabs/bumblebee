@@ -195,6 +195,12 @@ define({
     syntax: ['title:"phrase"'],
     example: ['title:"weak lensing"'],
   },
+  uat: {
+    title: 'UAT keyword',
+    description: 'Search for a UAT keyword',
+    syntax: ['uat:"keyword"'],
+    example: ['uat:"cosmology"'],
+  },
   volume: {
     title: 'volume',
     description: 'Search for papers with a given volume',
