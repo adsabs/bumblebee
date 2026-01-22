@@ -289,13 +289,17 @@ define(['underscore', 'jsonpath'], function(_, jp) {
         erratum: 'JOURNAL_ARTICLE',
         proposal: 'OTHER',
         newsletter: 'NEWSLETTER_ARTICLE',
-        catalog: 'DATA_SET',
+        catalog: 'DATA-SET',
         intechreport: 'RESEARCH_TECHNIQUE',
         mastersthesis: 'DISSERTATION',
         obituary: 'OTHER',
         pressrelease: 'OTHER',
         software: 'RESEARCH_TECHNIQUE',
         talk: 'LECTURE_SPEECH',
+        dataset: 'DATA-SET',
+        instrument: 'PHYSICAL-OBJECT',
+        service: 'DATA-SET',
+        editorial: 'OTHER',
       };
       return oType[adsType] || 'JOURNAL_ARTICLE';
     };
