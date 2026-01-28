@@ -87,47 +87,53 @@ define([], function () {
     var spanRef = { span: null };
 
     window.whenSentryReady().then(function (Sentry) {
-      if (typeof Sentry.startSpan !== 'function') {
-        return;
-      }
-
-      Sentry.startSpan(
-        {
-          name: name,
-          op: 'user.flow',
-          attributes: tags || {},
-        },
-        function (span) {
-          spanRef.span = span;
+      try {
+        if (typeof Sentry.startSpan !== 'function') {
+          return;
         }
-      );
+
+        Sentry.startSpan(
+          {
+            name: name,
+            op: 'user.flow',
+            attributes: tags || {},
+          },
+          function (span) {
+            spanRef.span = span;
+          }
+        );
+      } catch (_) {
+        // Never let span creation break the main flow
+      }
     });
+
+    var endSpan = function (status, message) {
+      try {
+        if (spanRef.span) {
+          spanRef.span.setStatus({ code: status, message: message });
+          spanRef.span.end();
+        }
+      } catch (_) {
+        // Never let span operations break the main flow
+      }
+    };
 
     try {
       result = fn();
     } catch (err) {
-      if (spanRef.span) {
-        spanRef.span.setStatus({ code: 2, message: err.message || 'Error' });
-        spanRef.span.end();
-      }
+      endSpan(2, err.message || 'Error');
       throw err;
     }
 
     if (result && typeof result.then === 'function') {
       var handleSuccess = function (data) {
-        if (spanRef.span) {
-          spanRef.span.setStatus({ code: 1 });
-          spanRef.span.end();
-        }
+        endSpan(1);
         return data;
       };
 
       var handleError = function (err) {
-        if (spanRef.span) {
-          var msg = err && err.message ? err.message : 'Unknown error';
-          spanRef.span.setStatus({ code: 2, message: msg });
-          spanRef.span.end();
-        }
+        var msg = err && err.message ? err.message : 'Unknown error';
+        endSpan(2, msg);
         throw err;
       };
 
@@ -137,10 +143,7 @@ define([], function () {
         result.then(handleSuccess, handleError);
       }
     } else {
-      if (spanRef.span) {
-        spanRef.span.setStatus({ code: 1 });
-        spanRef.span.end();
-      }
+      endSpan(1);
     }
 
     return result;
@@ -159,20 +162,28 @@ define([], function () {
 
     if (typeof window.whenSentryReady === 'function') {
       window.whenSentryReady().then(function (Sentry) {
-        if (typeof Sentry.startInactiveSpan === 'function') {
-          spanRef.span = Sentry.startInactiveSpan({
-            name: name,
-            op: 'ui.render',
-            attributes: tags || {},
-          });
+        try {
+          if (typeof Sentry.startInactiveSpan === 'function') {
+            spanRef.span = Sentry.startInactiveSpan({
+              name: name,
+              op: 'ui.render',
+              attributes: tags || {},
+            });
+          }
+        } catch (_) {
+          // Never let span creation break the main flow
         }
       });
     }
 
     return {
       end: function () {
-        if (spanRef.span && typeof spanRef.span.end === 'function') {
-          spanRef.span.end();
+        try {
+          if (spanRef.span && typeof spanRef.span.end === 'function') {
+            spanRef.span.end();
+          }
+        } catch (_) {
+          // Never let span operations break the main flow
         }
       },
     };
