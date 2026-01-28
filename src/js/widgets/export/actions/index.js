@@ -7,7 +7,8 @@ define([
   'js/components/api_query',
   'js/components/api_targets',
   'filesaver',
-], function(_, $, ApiQuery, ApiTargets) {
+  'performance',
+], function(_, $, ApiQuery, ApiTargets, saveAs, performance) {
   // set of action names
   const actions = {
     SET_TAB: 'SET_TAB',
@@ -290,22 +291,25 @@ define([
       },
     });
 
-    // send off the request
-    return (
-      widget
-        ._executeApiRequest(req)
-        .done((res) => {
-          // if we are ignoring, then don't bother with the response
-          if (!exports.ignore) {
-            dispatch(receiveExport(res.get('export')));
-          }
+    // send off the request with performance tracking
+    return performance.trackDeferred(
+      performance.PERF_SPANS.EXPORT_API_REQUEST,
+      () =>
+        widget
+          ._executeApiRequest(req)
+          .done((res) => {
+            // if we are ignoring, then don't bother with the response
+            if (!exports.ignore) {
+              dispatch(receiveExport(res.get('export')));
+            }
 
-          // stop ignoring
-          dispatch(setIgnore(false));
-        })
+            // stop ignoring
+            dispatch(setIgnore(false));
+          })
 
-        // on failure, send off to our handler
-        .fail((...args) => dispatch(requestFailed(...args)))
+          // on failure, send off to our handler
+          .fail((...args) => dispatch(requestFailed(...args))),
+      { export_format: format.value }
     );
   };
 
