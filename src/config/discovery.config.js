@@ -175,6 +175,7 @@ require.config({
     router: 'js/apps/discovery/router',
     analytics: 'js/components/analytics',
     utils: 'js/utils',
+    performance: 'js/utils/performance',
     reactify: 'js/plugins/reactify',
     es6: 'js/plugins/es6',
     suit: 'shared/dist/index.umd.development',

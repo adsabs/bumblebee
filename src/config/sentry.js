@@ -182,6 +182,11 @@
       tracesSampleRate: window.ENV === 'development' ? 1.0 : 0.75,
       debug: false,
       enableLogs: true,
+      initialScope: {
+        tags: {
+          app: 'bumblebee',
+        },
+      },
       _experiments: {
         enableStandaloneLcpSpans: true,
         enableStandaloneClsSpans: true,
