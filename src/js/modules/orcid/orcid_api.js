@@ -55,6 +55,7 @@ define([
   'js/modules/orcid/work',
   'js/modules/orcid/profile',
   'js/modules/orcid/bio',
+  'performance',
 ], function(
   _,
   Bootstrap,
@@ -72,7 +73,8 @@ define([
   ApiFeedback,
   Work,
   Profile,
-  Bio
+  Bio,
+  performance
 ) {
   var OrcidApi = GenericModule.extend({
     /**
@@ -422,30 +424,39 @@ define([
      */
     _getUserProfile: function() {
       var self = this;
-      var request = this.createRequest(this.getUrl('profile_full'));
 
       // get everything so far in the cache
       var cache = self.getUserProfileCache.splice(0);
 
-      request.done(function(profile) {
-        _.forEach(cache, function(promise) {
-          orcidProfile = new Profile(profile);
-          promise.resolve(
-            orcidProfile.setWorks(
-              _.map(profile, function(profile, idx) {
-                return new Work(profile);
-              })
-            )
-          );
-        });
-      });
+      // Track the profile load with performance span
+      performance.trackDeferred(
+        performance.PERF_SPANS.ORCID_PROFILE_LOAD,
+        function() {
+          var request = self.createRequest(self.getUrl('profile_full'));
 
-      request.fail(function() {
-        var args = arguments;
-        _.forEach(cache, function(promise) {
-          promise.reject.apply(promise, args);
-        });
-      });
+          request.done(function(profile) {
+            _.forEach(cache, function(promise) {
+              orcidProfile = new Profile(profile);
+              promise.resolve(
+                orcidProfile.setWorks(
+                  _.map(profile, function(profile, idx) {
+                    return new Work(profile);
+                  })
+                )
+              );
+            });
+          });
+
+          request.fail(function() {
+            var args = arguments;
+            _.forEach(cache, function(promise) {
+              promise.reject.apply(promise, args);
+            });
+          });
+
+          return request;
+        }
+      );
     },
 
     /**
