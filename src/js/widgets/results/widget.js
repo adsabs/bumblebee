@@ -19,6 +19,7 @@ define([
   'js/components/api_request',
   'js/components/api_query',
   'js/components/api_targets',
+  'performance',
 ], function(
   ListOfThingsWidget,
   AbstractWidget,
@@ -33,7 +34,8 @@ define([
   ApiFeedback,
   ApiRequest,
   ApiQuery,
-  ApiTargets
+  ApiTargets,
+  performance
 ) {
   var ResultsWidget = ListOfThingsWidget.extend({
     initialize: function() {
@@ -200,6 +202,20 @@ define([
         this.focusInterval = focusInterval;
       }
       this.queryTimer = +new Date();
+
+      // Publish search started event with performance tags
+      var pubsub = this.getPubSub();
+      if (pubsub) {
+        var qArr = apiQuery && apiQuery.get('q');
+        var qStr = Array.isArray(qArr) ? (qArr[0] || '') : '';
+        pubsub.publish(
+          pubsub.CUSTOM_EVENT,
+          'timing:search-started',
+          {
+            query_type: performance.getQueryType(qStr),
+          }
+        );
+      }
     },
 
     _onToggleSidebars: function() {

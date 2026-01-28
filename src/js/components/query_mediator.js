@@ -23,6 +23,7 @@ define([
   'js/components/alerts',
   'utils',
   'analytics',
+  'performance',
 ], function(
   _,
   $,
@@ -39,7 +40,8 @@ define([
   ApiQuery,
   Alerts,
   utils,
-  analytics
+  analytics,
+  performance
 ) {
   var QueryMediator = GenericModule.extend({
     initialize: function(options) {

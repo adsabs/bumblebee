@@ -21,6 +21,7 @@ define([
   'js/components/transition',
   'js/components/transition_catalog',
   'analytics',
+  'performance',
 ], function (
   _,
   $,
@@ -30,6 +31,7 @@ define([
   Transition,
   TransitionCatalog,
   analytics,
+  performance,
 ) {
   // Document Title Constants
   var APP_TITLE = 'Astrophysics Data System';
@@ -108,6 +110,11 @@ define([
     _onCustomEvent: function (ev, data) {
       switch (ev) {
         case 'timing:results-loaded':
+          // End search submit span if one was started
+          if (this._searchSubmitSpan) {
+            this._searchSubmitSpan.end();
+            this._searchSubmitSpan = null;
+          }
           withSentry((sentry) => {
             try {
               const span = sentry.getActiveSpan && sentry.getActiveSpan();
@@ -125,6 +132,13 @@ define([
               }
             } catch (_) {}
           });
+          break;
+        case 'timing:search-started':
+          // Start search submit span
+          this._searchSubmitSpan = performance.startRenderSpan(
+            performance.PERF_SPANS.SEARCH_SUBMIT_TOTAL,
+            data
+          );
           break;
         case 'update-document-title':
           this._updateDocumentTitle(data);
