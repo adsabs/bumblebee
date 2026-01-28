@@ -8,6 +8,7 @@ define([
   'js/components/api_query',
   'js/mixins/dependon',
   'utils',
+  'performance',
 ], function(
   Backbone,
   GenericModule,
@@ -17,7 +18,8 @@ define([
   ApiFeedback,
   ApiQuery,
   Dependon,
-  utils
+  utils,
+  performance
 ) {
   var LibraryModel = Backbone.Model.extend({
     defaults: function() {
@@ -269,10 +271,15 @@ define([
       var that = this;
 
       var endpoint = ApiTargets.LIBRARIES;
-      return this.composeRequest(endpoint, 'GET').done(function(data) {
-        that._metadataLoaded = true;
-        that.collection.reset(data.libraries);
-      });
+      return performance.trackDeferred(
+        performance.PERF_SPANS.LIBRARY_LIST_LOAD,
+        function() {
+          return that.composeRequest(endpoint, 'GET').done(function(data) {
+            that._metadataLoaded = true;
+            that.collection.reset(data.libraries);
+          });
+        }
+      );
     },
 
     /*
@@ -435,10 +442,15 @@ define([
       var that = this;
 
       var endpoint = ApiTargets.LIBRARIES;
-      return this.composeRequest(endpoint, 'POST', { data: data }).done(
+      return performance.trackDeferred(
+        performance.PERF_SPANS.LIBRARY_CREATE_TOTAL,
         function() {
-          // refresh collection
-          that._fetchAllMetadata();
+          return that.composeRequest(endpoint, 'POST', { data: data }).done(
+            function() {
+              // refresh collection
+              that._fetchAllMetadata();
+            }
+          );
         }
       );
     },
@@ -644,29 +656,32 @@ define([
      */
     addBibcodesToLib: function(data) {
       var that = this;
-      var promise = this._getBibcodes(data).then(function(bibcodes) {
-        // should return success or fail message
-        return that
-          .updateLibraryContents(data.library, {
-            bibcode: bibcodes,
-            action: 'add',
-          })
-          .fail(function() {
-            var message =
-              'Library <b>' +
-              that.collection.get(data.library).title +
-              '</b> could not be updated';
-            that
-              .getBeeHive()
-              .getService('PubSub')
-              .publish(
-                that.getBeeHive().getService('PubSub').ALERT,
-                new ApiFeedback({ code: 0, msg: message, type: 'danger' })
-              );
+      return performance.trackDeferred(
+        performance.PERF_SPANS.LIBRARY_ADD_TOTAL,
+        function() {
+          return that._getBibcodes(data).then(function(bibcodes) {
+            // should return success or fail message
+            return that
+              .updateLibraryContents(data.library, {
+                bibcode: bibcodes,
+                action: 'add',
+              })
+              .fail(function() {
+                var message =
+                  'Library <b>' +
+                  that.collection.get(data.library).title +
+                  '</b> could not be updated';
+                that
+                  .getBeeHive()
+                  .getService('PubSub')
+                  .publish(
+                    that.getBeeHive().getService('PubSub').ALERT,
+                    new ApiFeedback({ code: 0, msg: message, type: 'danger' })
+                  );
+              });
           });
-      });
-
-      return promise;
+        }
+      );
     },
 
     /* fetch the bibcodes, then POST to the create endpoint with the bibcodes
