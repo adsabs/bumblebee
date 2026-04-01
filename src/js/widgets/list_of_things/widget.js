@@ -611,7 +611,7 @@ define([
       q.set({
         hl: 'true',
         'hl.fl': 'title,abstract,body,ack,*',
-        'hl.maxAnalyzedChars': '150000',
+        'hl.maxAnalyzedChars': '1000000',
         'hl.requireFieldMatch': 'true',
         'hl.usePhraseHighlighter': 'true',
         start: start,
