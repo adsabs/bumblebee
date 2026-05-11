@@ -47,6 +47,9 @@ define([], function() {
     /** ORCID API proxy base URL */
     orcidApiEndpoint: '//ecs-staging-elb-2044121877.us-east-1.elb.amazonaws.com/v1/orcid',
 
+    /** FingerprintJS Pro public API key */
+    fingerprintApiKey: '',
+
     /** reCAPTCHA site key */
     recaptchaKey: '6LfE6AITAAAAALdSy2qxVW4TBqy5RdmREiv-AwlJ',
 

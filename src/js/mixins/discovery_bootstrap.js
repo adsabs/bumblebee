@@ -9,6 +9,7 @@ define([
   'js/components/pubsub_events',
   'hbs',
   'js/components/api_targets',
+  'js/utils/fingerprint_core',
 ], function(
   _,
   Backbone,
@@ -16,7 +17,8 @@ define([
   ApiRequest,
   PubSubEvents,
   HandleBars,
-  ApiTargets
+  ApiTargets,
+  fingerprintCore
 ) {
   var startGlobalHandler = function() {
     var routes = [
@@ -123,6 +125,14 @@ define([
           api.clientVersion = conf.version;
         }
 
+        try {
+          if (conf.fingerprintApiKey) {
+            fingerprintCore.load(conf.fingerprintApiKey);
+          }
+        } catch (e) {
+          // fingerprinting must never halt bootstrap
+        }
+
         // ApiTargets has a _needsCredentials array that contains all endpoints
         // that require cookies
         api.modifyRequestOptions = function(opts, request) {
@@ -135,6 +145,16 @@ define([
             opts.xhrFields = {
               withCredentials: true,
             };
+          }
+
+          try {
+            var fpId = fingerprintCore.getVisitorId();
+            // only attach to first-party ADS API requests
+            if (fpId && opts.url && opts.url.indexOf(api.url) === 0) {
+              opts.headers['X-Fp-Visitor-Id'] = fpId;
+            }
+          } catch (e) {
+            // header is best-effort; never disrupt request
           }
         };
 
