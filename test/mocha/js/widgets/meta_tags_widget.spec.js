@@ -31,6 +31,7 @@ define([
       '{"access": "", "instances": "", "title": "IRSA References (2MASS)", "type": "data", "url": "https://irsa.ipac.caltech.edu/bibdata/2017/H/2017MNRAS.467.4015H.html"}',
     ],
     year: '2017',
+    doctype: 'article',
     property: [
       'DATA',
       'ESOURCE',
@@ -260,7 +261,36 @@ define([
 
     afterEach(function() {
       sandbox.restore();
+      // Keep <head> clean so tags from one test don't leak into the next.
+      $('head')
+        .find('meta[data-highwire="true"]')
+        .remove();
+      $('head')
+        .find('script[data-ads-jsonld]')
+        .remove();
     });
+
+    const makeDoc = function(doctype) {
+      return {
+        bibcode: '2017MNRAS.467.4015H',
+        title: ['Some title'],
+        abstract: 'Some abstract',
+        author: ['Doe, J.'],
+        aff: ['Inst X'],
+        pub: 'Journal X',
+        pub_raw: 'Journal X, Volume 1',
+        volume: '1',
+        pubdate: '2017-06-00',
+        doi: ['10.1/x'],
+        keyword: ['kw1'],
+        doctype: doctype,
+      };
+    };
+
+    const getJsonLd = function() {
+      const node = $('head').find('script[data-ads-jsonld]');
+      return node.length ? JSON.parse(node.first().text()) : null;
+    };
 
     it('extends from BaseWidget', function() {
       expect(widget).to.be.instanceOf(BaseWidget);
@@ -316,6 +346,63 @@ define([
         expect(tags[i]).to.equal(metas[i]);
       }
       expect(zoteroSpy.called).to.be.true;
+    });
+
+    it('renders citation_ tags for a whitelisted doctype', function() {
+      widget.updateMetaTags(makeDoc('article'));
+
+      const citationTags = $('head').find('meta[name^="citation_"]');
+      expect(citationTags.length).to.be.above(0);
+    });
+
+    it('omits citation_ tags for a removed doctype', function() {
+      widget.updateMetaTags(makeDoc('dataset'));
+
+      const citationTags = $('head').find('meta[name^="citation_"]');
+      expect(citationTags.length).to.equal(0);
+      // OpenGraph/Twitter tags remain for all doctypes.
+      expect($('head').find('meta[name="og:title"]').length).to.be.above(0);
+      expect($('head').find('meta[name="twitter:title"]').length).to.be.above(0);
+    });
+
+    it('omits citation_ tags for an unlisted doctype', function() {
+      widget.updateMetaTags(makeDoc('intechreport'));
+
+      expect($('head').find('meta[name^="citation_"]').length).to.equal(0);
+    });
+
+    it('emits Schema.org JSON-LD for all doctypes, including removed ones', function() {
+      widget.updateMetaTags(makeDoc('dataset'));
+
+      const jsonld = getJsonLd();
+      expect(jsonld).to.not.equal(null);
+      expect(jsonld['@type']).to.equal('ScholarlyArticle');
+      expect(jsonld['@context']).to.equal('https://schema.org');
+    });
+
+    it('leaves exactly one JSON-LD node after repeated invocations', function() {
+      widget.updateMetaTags(makeDoc('article'));
+      widget.updateMetaTags(makeDoc('article'));
+      widget.updateMetaTags(makeDoc('dataset'));
+
+      expect($('head').find('script[data-ads-jsonld]').length).to.equal(1);
+    });
+
+    it('builds JSON-LD from the raw record before author/doi mutation', function() {
+      widget.updateMetaTags(makeDoc('article'));
+
+      const jsonld = getJsonLd();
+      expect(jsonld.author).to.be.an('array');
+      expect(jsonld.author[0]).to.eql({ '@type': 'Person', name: 'Doe, J.' });
+    });
+
+    it('keeps JSON-LD authors correct when the same record is processed twice', function() {
+      const doc = makeDoc('article');
+      widget.updateMetaTags(doc); // reshapes doc.author into { name, aff }
+      widget.updateMetaTags(doc); // re-process the now-mutated object
+
+      const jsonld = getJsonLd();
+      expect(jsonld.author[0]).to.eql({ '@type': 'Person', name: 'Doe, J.' });
     });
   });
 });
