@@ -1,13 +1,17 @@
 <meta name="og:type" content="article" data-highwire="true">
 <meta name="twitter:card" content="summary" data-highwire="true">
 
+{{#if showScholarTags}}
 <meta name="citation_title" content="{{title}}" data-highwire="true">
+{{/if}}
 <meta name="og:title" content="{{title}}" data-highwire="true">
 <meta name="twitter:title" content="{{title}}" data-highwire="true">
 
 <meta name="og:url" content="{{url}}" data-highwire="true">
 <meta name="twitter:url" content="{{url}}" data-highwire="true">
+{{#if showScholarTags}}
 <meta name="citation_abstract_html_url" content="{{url}}" data-highwire="true">
+{{/if}}
 
 <meta name="og:image" content="https://ui.adsabs.harvard.edu/styles/img/transparent_logo.svg" data-highwire="true">
 <meta name="twitter:image" content="https://ui.adsabs.harvard.edu/styles/img/transparent_logo.svg" data-highwire="true">
@@ -16,6 +20,7 @@
 <meta name="og:description" content="{{abstract}}" data-highwire="true">
 <meta name="twitter:description" content="{{abstract}}" data-highwire="true">
 {{/if}}
+{{#if showScholarTags}}
 {{#each author}}
 <meta name="citation_author" content="{{this.name}}" data-highwire="true">
 <meta xmlns="http://www.w3.org/1999/xhtml" name="citation_author_institution" content="{{this.aff}}" data-highwire="true">
@@ -46,4 +51,5 @@
 {{/each}}
 {{#if pdfUrl}}
 <meta name="citation_pdf_url" content="{{pdfUrl}}" data-highwire="true">
+{{/if}}
 {{/if}}

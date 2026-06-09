@@ -5,7 +5,18 @@ define([
   'js/widgets/base/base_widget',
   'hbs!js/widgets/meta_tags/template/metatags',
   'js/mixins/link_generator_mixin',
-], function($, Backbone, _, BaseWidget, metatagsTemplate, LinkGenerator) {
+  'js/widgets/meta_tags/jsonld',
+  'js/widgets/meta_tags/scholar_doctypes',
+], function(
+  $,
+  Backbone,
+  _,
+  BaseWidget,
+  metatagsTemplate,
+  LinkGenerator,
+  JsonLd,
+  ScholarDoctypes
+) {
   var View = Backbone.View.extend({
     destroy: function() {
       this.remove();
@@ -78,6 +89,12 @@ define([
     updateMetaTags: function(data) {
       data.url = Backbone.history.location.href;
 
+      // Build JSON-LD from the raw record before the mutations below reshape
+      // `author` and flatten `doi`. Emitted for all doctypes; the citation_*
+      // tags are gated by the doctype whitelist.
+      const jsonld = JsonLd.buildJsonLd(data, data.url);
+      data.showScholarTags = ScholarDoctypes.showsGoogleScholarTags(data.doctype);
+
       var sources = {};
       try {
         sources = this.parseResourcesData(data);
@@ -123,6 +140,19 @@ define([
         });
       });
 
+      // Replace any prior JSON-LD node so repeated invocations (search
+      // results + abstract display) leave exactly one block, reflecting the
+      // most recently displayed record.
+      $('head')
+        .find('script[type="application/ld+json"][data-ads-jsonld]')
+        .remove();
+      $('head').append(
+        $('<script>', {
+          type: 'application/ld+json',
+          'data-ads-jsonld': 'true',
+        }).text(JSON.stringify(jsonld))
+      );
+
       // fire off dom events
       this.emitDOMEvents();
     },
@@ -141,7 +171,7 @@ define([
     },
     defaultQueryArguments: {
       fl:
-        'links_data,[citations],keyword,property,first_author,year,issn,isbn,title,aff,abstract,bibcode,pub,pub_raw,volume,author,issue,pubdate,doi,page,esources,data',
+        'links_data,[citations],keyword,property,first_author,year,issn,isbn,title,aff,abstract,bibcode,pub,pub_raw,volume,author,issue,pubdate,doi,page,esources,data,doctype',
       rows: 1,
     },
   });
