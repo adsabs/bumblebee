@@ -82,6 +82,15 @@ const css = `
     const currentUrl = window.location.href;
     let correspondingUrl = currentUrl.replace(window.location.host, 'scixplorer.org');
     const pathname = window.location.pathname;
+
+    // landing page, default to astrophysics discipline
+    if (pathname === '/') {
+      const index = correspondingUrl.lastIndexOf('/');
+      correspondingUrl = correspondingUrl.slice(0, index) + '/astrophysics';
+      window.open(correspondingUrl, '_blank');
+      return;
+    }
+
     let newpath = window.location.pathname;
     if (pathname.match(/\/export-([a-zA-Z]+)$/)) {
       // this check must come before /search/
