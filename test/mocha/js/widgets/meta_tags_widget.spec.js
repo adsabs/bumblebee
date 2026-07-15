@@ -404,5 +404,34 @@ define([
       const jsonld = getJsonLd();
       expect(jsonld.author[0]).to.eql({ '@type': 'Person', name: 'Doe, J.' });
     });
+
+    it('strips ADS "-00" placeholders to a valid ISO datePublished', function() {
+      widget.updateMetaTags(makeDoc('article')); // pubdate: '2017-06-00'
+      expect(getJsonLd().datePublished).to.equal('2017-06');
+
+      $('head')
+        .find('script[data-ads-jsonld]')
+        .remove();
+      widget.updateMetaTags({ ...makeDoc('article'), pubdate: '2017-00-00' });
+      expect(getJsonLd().datePublished).to.equal('2017');
+    });
+
+    it('omits datePublished when pubdate has no usable year', function() {
+      widget.updateMetaTags({ ...makeDoc('article'), pubdate: 'n/a' });
+      expect(getJsonLd().datePublished).to.equal(undefined);
+    });
+
+    it('omits isAccessibleForFree unless the record is open access', function() {
+      widget.updateMetaTags(makeDoc('article')); // no property field
+      expect(getJsonLd().isAccessibleForFree).to.equal(undefined);
+    });
+
+    it('sets isAccessibleForFree for open-access records', function() {
+      widget.updateMetaTags({
+        ...makeDoc('article'),
+        property: ['REFEREED', 'OPENACCESS'],
+      });
+      expect(getJsonLd().isAccessibleForFree).to.equal(true);
+    });
   });
 });
