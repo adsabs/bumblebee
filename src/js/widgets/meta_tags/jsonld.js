@@ -28,11 +28,13 @@ define(['underscore'], function(_) {
     return v == null ? [] : [v];
   }
 
-  // Pass through ADS pubdate-like strings (YYYY, YYYY-MM, YYYY-MM-DD, and
-  // "-00" placeholder forms); reject anything without a 4-digit year.
+  // Normalize ADS pubdate-like strings to valid ISO 8601. ADS uses "-00"
+  // placeholders for unknown month/day (e.g. "2017-06-00", "2017-00-00");
+  // day/month 00 is not a valid ISO date, so strip the placeholder segments
+  // down to YYYY-MM or YYYY. Reject anything that isn't a clean YYYY[-MM[-DD]].
   function normalizePubdate(d) {
-    const raw = (d == null ? '' : String(d)).trim();
-    return /^\d{4}/.test(raw) ? raw : undefined;
+    const raw = (d == null ? '' : String(d)).trim().replace(/(-00)+$/, '');
+    return /^\d{4}(-\d{2}){0,2}$/.test(raw) ? raw : undefined;
   }
 
   // Remove undefined/null, empty strings, and empty arrays; keep booleans.
@@ -115,7 +117,11 @@ define(['underscore'], function(_) {
       headline: name,
       abstract: abstract || undefined,
       inLanguage: 'en',
-      isAccessibleForFree: true,
+      // Only claim free access when the record is flagged open access;
+      // asserting it for paywalled content is a false structured-data signal.
+      isAccessibleForFree: _.contains(toArray(doc.property), 'OPENACCESS')
+        ? true
+        : undefined,
       datePublished: normalizePubdate(doc.pubdate),
       author: buildAuthors(doc),
       keywords: buildKeywords(doc),

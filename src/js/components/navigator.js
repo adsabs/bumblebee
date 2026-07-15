@@ -271,7 +271,7 @@ define([
 
         // clear any metadata added to head on the previous page
         $('head')
-        .find('meta[data-highwire]')
+        .find('meta[data-highwire], script[data-ads-jsonld]')
         .remove();
         this._updateDocumentTitle(transition.title);
         defer.resolve();
