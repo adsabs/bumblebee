@@ -128,17 +128,13 @@ define([
         });
       }
 
-      // Update the <head> with the meta tags
-      $('head').append(function() {
-        return $(metatagsTemplate(data)).filter(function() {
-          var name = $(this).attr('name');
-          if (name) {
-            // check to see if the tag already exists
-            return !$('head>meta[name="' + name + '"]').length;
-          }
-          return true;
-        });
-      });
+      // Clear the widget's prior tags before rendering so the current record
+      // is authoritative. The old append-if-absent logic could leave stale
+      // citation_* tags in <head> when a later record omits them.
+      $('head')
+        .find('meta[data-highwire="true"]')
+        .remove();
+      $('head').append(metatagsTemplate(data));
 
       // Replace any prior JSON-LD node so repeated invocations (search
       // results + abstract display) leave exactly one block, reflecting the
