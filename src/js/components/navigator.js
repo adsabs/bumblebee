@@ -95,10 +95,18 @@ define([
     _onUserAnnouncement: function (ev, data) {
       if (ev === 'user_signed_in' && typeof data === 'string') {
         // the user is signed in, we can associate the user with the session
-        digestMessage(data).then((userIdHash) => {
-          analytics('send', 'user_update', {
-            user_id: userIdHash,
-          });
+        digestMessage(data)
+          .then((userIdHash) => {
+            analytics('send', 'user_update', {
+              user_id: userIdHash,
+            });
+          })
+          .catch(() => {});
+        return;
+      }
+      if (ev === 'user_signed_out') {
+        analytics('send', 'user_update', {
+          user_id: null,
         });
       }
     },
