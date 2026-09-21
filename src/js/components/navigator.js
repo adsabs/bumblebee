@@ -37,20 +37,20 @@ define([
   var APP_TITLE = 'Astrophysics Data System';
   var TITLE_SEP = ' - ';
 
-  // This function is used to hash the user id before sending it to Analytics
   const digestMessage = function (message) {
     const crypto = window.crypto || window.msCrypto;
-    if (!crypto) {
+    // crypto.subtle is undefined on insecure origins
+    if (!crypto || !crypto.subtle) {
       return Promise.reject(new Error('Crypto not available'));
     }
-    // encode as (utf-8) Uint8Array
-    const msgUi8 = new TextEncoder().encode(message);
-
-    // hash the message
-    return crypto.subtle.digest('SHA-256', msgUi8).then((hashBuffer) => {
-      const hashArray = Array.from(new Uint8Array(hashBuffer));
-      return hashArray.map((b) => b.toString(16).padStart(2, '0')).join('');
-    });
+    // TextEncoder/digest() can throw synchronously; wrap so callers only
+    // ever see rejections
+    return Promise.resolve()
+      .then(() => crypto.subtle.digest('SHA-256', new TextEncoder().encode(message)))
+      .then((hashBuffer) => {
+        const hashArray = Array.from(new Uint8Array(hashBuffer));
+        return hashArray.map((b) => b.toString(16).padStart(2, '0')).join('');
+      });
   };
 
   const withSentry = function (callback) {
@@ -72,6 +72,7 @@ define([
       options = options || {};
       this.router = options.router;
       this.catalog = new TransitionCatalog(); // catalog of nagivation points (later we can build FST)
+      this._userIdToken = 0;
     },
 
     /**
@@ -94,9 +95,15 @@ define([
 
     _onUserAnnouncement: function (ev, data) {
       if (ev === 'user_signed_in' && typeof data === 'string') {
-        // the user is signed in, we can associate the user with the session
+        // digest is async: bump the token so a sign-out can invalidate a
+        // hash still in flight from a prior session
+        this._userIdToken += 1;
+        const token = this._userIdToken;
         digestMessage(data)
           .then((userIdHash) => {
+            if (token !== this._userIdToken) {
+              return;
+            }
             analytics('send', 'user_update', {
               user_id: userIdHash,
             });
@@ -105,6 +112,7 @@ define([
         return;
       }
       if (ev === 'user_signed_out') {
+        this._userIdToken += 1;
         analytics('send', 'user_update', {
           user_id: null,
         });
