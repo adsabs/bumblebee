@@ -38,14 +38,14 @@ define([], function() {
     /** Google Optimize options */
     googleOptimizeOptions: null,
 
-    /** ORCID OAuth client ID */
-    orcidClientId: 'APP-P5ANJTQRRTMA6GXZ',
+    /** ORCID OAuth client ID (set your own in the non-default copy of this file) */
+    orcidClientId: 'APP-XXXXXXXXXXXXXXXX',
 
     /** ORCID login/authorize endpoint */
     orcidLoginEndpoint: 'http://sandbox.orcid.org/oauth/authorize',
 
-    /** ORCID API proxy base URL */
-    orcidApiEndpoint: '//ecs-staging-elb-2044121877.us-east-1.elb.amazonaws.com/v1/orcid',
+    /** ORCID API proxy base URL (set your own in the non-default copy of this file) */
+    orcidApiEndpoint: '//example-orcid-proxy.invalid/v1/orcid',
 
     /** FingerprintJS Pro public API key */
     fingerprintApiKey: '',
