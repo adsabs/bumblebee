@@ -67,7 +67,7 @@
     "redux-thunk": "^2.3.0",
     "regenerator-runtime": "^0.13.9",
     "requirejs": "^2.3.6",
-    "select2": "^4.0.3",
+    "select2": "~4.0.13",
     "sprintf-js": "^1.1.2",
     "styled-components": "^5.1.0"
   },
@@ -120,7 +120,7 @@
     "require-handlebars-plugin": "^2.0.0-beta.0",
     "requirejs-async": "^0.1.2",
     "requirejs-babel": "^0.0.9",
-    "sass": "^1.38.0",
+    "sass": "~1.99.0",
     "sinon": "^1.9.0",
     "time-grunt": "^1.4.0"
   },
