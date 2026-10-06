@@ -20,8 +20,8 @@ define([
   Marionette,
   BaseWidget,
   ApiQuery,
-  Alerts,
   ApiFeedback,
+  Alerts,
   ModalView,
   BannerView,
   $,
@@ -35,6 +35,8 @@ define([
       title: undefined,
       events: undefined,
       modal: false,
+      dismissable: true,
+      bgColor: undefined,
     },
   });
 
@@ -80,8 +82,7 @@ define([
           } else {
             promise.resolve(key);
           }
-          // unless it is modal, close it automatically
-          if (!this.model.get('modal')) {
+          if (!this.model.get('modal') && this.model.get('dismissable') !== false) {
             this.model.set('msg', null);
           }
           return false;
@@ -135,6 +136,8 @@ define([
         title: feedback.title,
         type: feedback.type || 'info',
         modal: feedback.modal,
+        dismissable: feedback.dismissable !== false,
+        bgColor: feedback.bgColor,
         promise: promise,
       });
       return promise.promise();

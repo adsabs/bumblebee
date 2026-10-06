@@ -50,32 +50,38 @@ define([
       var user = self.getBeeHive().getObject('User');
       if (user) {
         user.getSiteConfig('site_wide_message').done(function(val) {
-          // no site-wide message
-          if (!(val && _.isString(val))) return;
+          var config = _.isObject(val) && !_.isArray(val) ? val : null;
+          var message =
+            _.isString(val) && val ? val : config && _.isString(config.msg) && config.msg ? config.msg : null;
+
+          if (!message) return;
 
           // ignore it other alert is there
           if (self._dirty) return;
 
-          // ignore if it was already seen
-          if (user.isLoggedIn()) {
-            var uData = user.getUserData();
-            if (uData.last_seen_message == val) return;
-          }
-
-          // if the user was not logged in, consult the local storage
+          var dismissable = !config || config.dismissable !== false;
           var storage = self.getBeeHive().getService('PersistentStorage');
-          if (storage) {
-            var msg = storage.get('last_seen_message');
-            if (msg && msg == val) {
-              return;
+
+          if (dismissable) {
+            if (user.isLoggedIn()) {
+              var uData = user.getUserData();
+              if (uData.last_seen_message == message) return;
+            }
+
+            if (storage) {
+              var seenMessage = storage.get('last_seen_message');
+              if (seenMessage && seenMessage == message) {
+                return;
+              }
             }
           }
 
-          // display the site-wide message
           self
             .alert(
               new ApiFeedback({
-                msg: val,
+                msg: message,
+                dismissable: config ? config.dismissable : undefined,
+                bgColor: config ? config.bgColor : undefined,
                 events: {
                   'click button.close': 'dismissed',
                 },
@@ -84,8 +90,8 @@ define([
             .done(function(v) {
               if (v == 'dismissed') {
                 if (user && user.isLoggedIn())
-                  user.setMyADSData({ last_seen_message: val });
-                if (storage) storage.set('last_seen_message', val);
+                  user.setMyADSData({ last_seen_message: message });
+                if (storage) storage.set('last_seen_message', message);
               }
             });
         });
