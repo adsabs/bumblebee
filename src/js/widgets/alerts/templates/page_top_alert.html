@@ -1,8 +1,9 @@
 {{#if msg}}
-<div class="alert alert-{{type}}" id="page-top-alert">
+<div class="alert alert-{{type}}" id="page-top-alert" role="{{role}}" aria-live="{{ariaLive}}">
   <div>
     {{{msg}}}
   </div>
+  {{#if dismissable}}
   <div>
     <button type="button" class="close">
       <span aria-hidden="true"
@@ -10,5 +11,6 @@
       ><span class="sr-only">Close</span>
     </button>
   </div>
+  {{/if}}
 </div>
 {{/if}}
